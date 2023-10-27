@@ -18,6 +18,7 @@
 package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
@@ -25,6 +26,7 @@ import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
+import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
 
 import org.apache.commons.lang3.StringUtils
 
@@ -99,6 +101,18 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
 
   private[jdbc] val serverURL = props.getProperty("URL")
 
+  private[jdbc] val fixedSessionEnabled =
+    if (
+        props
+          .containsKey(FIXED_SESSION) && "true".equalsIgnoreCase(props.getProperty(FIXED_SESSION))
+    ) {
+      true
+    } else {
+      false
+    }
+
+  private val connectionId = JDBCUtils.getUniqId()
+
   private val labelMap: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
 
   private val startupParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
@@ -113,7 +127,14 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       if (params != null & params.length() > 0) {
         params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
           case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) =>
-            return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            if (v.contains('-')) {
+              val factory = LabelBuilderFactoryContext.getLabelBuilderFactory
+              val label = factory.createLabel(classOf[EngineTypeLabel])
+              label.setStringValue(v)
+              return label
+            } else {
+              return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            }
           case _ =>
         }
       }
@@ -429,8 +450,10 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     val runType = EngineType.mapStringToEngineType(engine) match {
       case EngineType.SPARK => RunType.SQL
       case EngineType.HIVE => RunType.HIVE
+      case EngineType.REPL => RunType.REPL
       case EngineType.TRINO => RunType.TRINO_SQL
       case EngineType.PRESTO => RunType.PRESTO_SQL
+      case EngineType.NEBULA => RunType.NEBULA_SQL
       case EngineType.ELASTICSEARCH => RunType.ES_SQL
       case EngineType.JDBC => RunType.JDBC
       case EngineType.PYTHON => RunType.SHELL
@@ -444,6 +467,10 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel.getStringValue)
     labelMap.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, s"$user-$creator")
     labelMap.put(LabelKeyConstant.CODE_TYPE_KEY, engineToCodeType(engineTypeLabel.getEngineType))
+    if (fixedSessionEnabled) {
+      labelMap.put(LabelKeyConstant.FIXED_EC_KEY, connectionId)
+      logger.info("Fixed session is enable session id is {}", connectionId)
+    }
 
     val jobSubmitAction = JobSubmitAction.builder
       .addExecuteCode(code)
@@ -461,5 +488,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     }
     result
   }
+
+  override def toString: String = "LinkisConnection_" + connectionId
 
 }

@@ -70,6 +70,7 @@ public interface TaskConstant {
   String ENGINE_CONN_TASK_ID = "engineConnTaskId";
   String ENGINE_CONN_SUBMIT_TIME = "engineConnSubmitTime";
   String FAILOVER_FLAG = "failoverFlag";
+  String DEBUG_ENBALE = "debug.enable";
 
   String PARAMS_DATA_SOURCE = "dataSources";
 

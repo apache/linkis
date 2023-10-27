@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.source;
 
+import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.utils.StorageUtils;
 
@@ -36,9 +37,18 @@ public class ResultsetFileSource extends AbstractFileSource {
                     .map(
                         r -> {
                           if (r == null || r.equals("NULL")) {
-                            return nullValue;
+                            if (nullValue.equals(Dolphin.LINKIS_NULL)) {
+                              return r;
+                            } else {
+                              return nullValue;
+                            }
                           } else if (r.equals("")) {
-                            return getParams().getOrDefault("nullValue", "");
+                            String emptyValue = getParams().getOrDefault("nullValue", "");
+                            if (emptyValue.equals(Dolphin.LINKIS_NULL)) {
+                              return "";
+                            } else {
+                              return nullValue;
+                            }
                           } else if (r instanceof Double) {
                             return StorageUtils.doubleToString((Double) r);
                           } else {

@@ -237,6 +237,10 @@ The following file are provided under the Apache 2.0 License.
     linkis-web/public/favicon.ico
     linkis-engineconn-plugins/seatunnel/src/main/java/org/apache/seatunnel/*
     linkis-commons/linkis-storage/src/test/resources/scritpis-test.sql
+    linkis-engineconn-plugins/hbase/hbase-shims-1.2.0/src/main/resources/hbase-ruby/*
+    linkis-engineconn-plugins/hbase/hbase-shims-1.4.3/src/main/resources/hbase-ruby/*
+    linkis-engineconn-plugins/hbase/hbase-shims-2.2.6/src/main/resources/hbase-ruby/*
+    linkis-engineconn-plugins/hbase/hbase-shims-2.5.3/src/main/resources/hbase-ruby/*
 
 The files:
     .mvn/wrapper/MavenWrapperDownloader.java

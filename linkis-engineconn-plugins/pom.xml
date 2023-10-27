@@ -41,6 +41,8 @@
     <module>trino</module>
     <module>elasticsearch</module>
     <module>seatunnel</module>
+    <module>hbase</module>
+    <module>repl</module>
   </modules>
   <profiles>
     <profile>

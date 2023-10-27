@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineplugin.spark.client.context;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +50,10 @@ public class SparkConfig {
 
   private String k8sNamespace;
   private String k8sFileUploadPath;
+
+  private String k8sDriverRequestCores;
+  private String k8sExecutorRequestCores;
+  private String k8sSparkUIPort;
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
   private String appName; // ("")
@@ -73,6 +79,7 @@ public class SparkConfig {
   private String principal; // ("--principal", "")
   private String keytab; // ("--keytab", "")
   private String queue; // ("--queue", "")
+  private String pyFiles; // ("--py-files", "")
 
   public String getK8sFileUploadPath() {
     return k8sFileUploadPath;
@@ -131,6 +138,10 @@ public class SparkConfig {
   }
 
   public void setK8sConfigFile(String k8sConfigFile) {
+    if (StringUtils.isNotBlank(k8sConfigFile) && k8sConfigFile.startsWith("~")) {
+      String user = System.getProperty("user.home");
+      k8sConfigFile = k8sConfigFile.replaceFirst("~", user);
+    }
     this.k8sConfigFile = k8sConfigFile;
   }
 
@@ -168,6 +179,30 @@ public class SparkConfig {
 
   public void setK8sImage(String k8sImage) {
     this.k8sImage = k8sImage;
+  }
+
+  public String getK8sDriverRequestCores() {
+    return k8sDriverRequestCores;
+  }
+
+  public void setK8sDriverRequestCores(String k8sDriverRequestCores) {
+    this.k8sDriverRequestCores = k8sDriverRequestCores;
+  }
+
+  public String getK8sExecutorRequestCores() {
+    return k8sExecutorRequestCores;
+  }
+
+  public void setK8sExecutorRequestCores(String k8sExecutorRequestCores) {
+    this.k8sExecutorRequestCores = k8sExecutorRequestCores;
+  }
+
+  public String getK8sSparkUIPort() {
+    return k8sSparkUIPort;
+  }
+
+  public void setK8sSparkUIPort(String k8sSparkUIPort) {
+    this.k8sSparkUIPort = k8sSparkUIPort;
   }
 
   public String getJavaHome() {
@@ -394,6 +429,14 @@ public class SparkConfig {
     this.queue = queue;
   }
 
+  public String getPyFiles() {
+    return pyFiles;
+  }
+
+  public void setPyFiles(String pyFiles) {
+    this.pyFiles = pyFiles;
+  }
+
   @Override
   public String toString() {
     return "SparkConfig{"
@@ -435,6 +478,15 @@ public class SparkConfig {
         + '\''
         + ", k8sNamespace='"
         + k8sNamespace
+        + '\''
+        + ", k8sDriverRequestCores='"
+        + k8sDriverRequestCores
+        + '\''
+        + ", k8sExecutorRequestCores='"
+        + k8sExecutorRequestCores
+        + '\''
+        + ", k8sSparkUIPort='"
+        + k8sSparkUIPort
         + '\''
         + ", deployMode='"
         + deployMode
@@ -502,6 +554,9 @@ public class SparkConfig {
         + '\''
         + ", queue='"
         + queue
+        + '\''
+        + ", pyFiles='"
+        + pyFiles
         + '\''
         + '}';
   }

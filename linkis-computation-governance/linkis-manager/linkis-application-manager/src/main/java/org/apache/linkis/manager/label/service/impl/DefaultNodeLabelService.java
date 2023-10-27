@@ -196,6 +196,44 @@ public class DefaultNodeLabelService implements NodeLabelService {
     }
   }
 
+  @Override
+  public void labelsFromInstanceToNewInstance(
+      ServiceInstance oldServiceInstance, ServiceInstance newServiceInstance) {
+    List<PersistenceLabel> labels =
+        labelManagerPersistence.getLabelByServiceInstance(newServiceInstance);
+    List<String> newKeyList = labels.stream().map(Label::getLabelKey).collect(Collectors.toList());
+    List<PersistenceLabel> nodeLabels =
+        labelManagerPersistence.getLabelByServiceInstance(oldServiceInstance);
+
+    List<String> oldKeyList =
+        nodeLabels.stream().map(InheritableLabel::getLabelKey).collect(Collectors.toList());
+
+    List<String> willBeAdd = new ArrayList<>(oldKeyList);
+    willBeAdd.removeAll(newKeyList);
+
+    // Assign the old association to the newServiceInstance
+    if (!CollectionUtils.isEmpty(willBeAdd)) {
+      nodeLabels.forEach(
+          nodeLabel -> {
+            if (willBeAdd.contains(nodeLabel.getLabelKey())) {
+              PersistenceLabel persistenceLabel =
+                  LabelManagerUtils.convertPersistenceLabel(nodeLabel);
+              int labelId = tryToAddLabel(persistenceLabel);
+              if (labelId > 0) {
+                List<Integer> labelIds = new ArrayList<>();
+                labelIds.add(labelId);
+                labelManagerPersistence.addLabelToNode(newServiceInstance, labelIds);
+              }
+            }
+          });
+    }
+
+    // Delete an old association
+    List<Integer> oldLabelId =
+        nodeLabels.stream().map(PersistenceLabel::getId).collect(Collectors.toList());
+    labelManagerPersistence.removeNodeLabels(oldServiceInstance, oldLabelId);
+  }
+
   /**
    * Remove the labels related by node instance
    *

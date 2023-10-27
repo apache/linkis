@@ -202,6 +202,43 @@ public class DriverAndYarnResource extends Resource {
     return !notLess(r);
   }
 
+  @Override
+  public int compare(Resource resource) {
+    DriverAndYarnResource r = new DriverAndYarnResource(resource);
+
+    if (isModuleOperate(r)) {
+      return loadInstanceResource.compare(r.loadInstanceResource);
+    } else {
+      if (loadInstanceResource.getMemory() > r.loadInstanceResource.getMemory()) {
+        return 1;
+      } else if (loadInstanceResource.getMemory() < r.loadInstanceResource.getMemory()) {
+        return -1;
+      } else {
+        // If memory is equal, compare cores
+        if (loadInstanceResource.getCores() > r.loadInstanceResource.getCores()) {
+          return 1;
+        } else if (loadInstanceResource.getCores() < r.loadInstanceResource.getCores()) {
+          return -1;
+        } else {
+          // If cores are equal, compare instances
+          if (loadInstanceResource.getInstances() > r.loadInstanceResource.getInstances()) {
+            return 1;
+          } else if (loadInstanceResource.getInstances() < r.loadInstanceResource.getInstances()) {
+            return -1;
+          } else {
+            if (yarnResource.getQueueMemory() > r.yarnResource.getQueueMemory()) {
+              return 1;
+            } else if (yarnResource.getQueueMemory() < r.yarnResource.getQueueMemory()) {
+              return -1;
+            } else {
+              return Integer.compare(yarnResource.getQueueCores(), r.yarnResource.getQueueCores());
+            }
+          }
+        }
+      }
+    }
+  }
+
   public String toJson() {
     String load = "null";
     String yarn = "null";

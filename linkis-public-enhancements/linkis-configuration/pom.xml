@@ -59,6 +59,13 @@
       <artifactId>linkis-computation-client</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--    batch to create test data-->
+    <dependency>
+      <groupId>org.instancio</groupId>
+      <artifactId>instancio-junit</artifactId>
+      <version>2.16.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

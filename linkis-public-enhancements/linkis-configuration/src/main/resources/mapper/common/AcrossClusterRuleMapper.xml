@@ -47,14 +47,14 @@
             acr.username, acr.create_time, acr.create_by,
             acr.update_time, acr.update_by, acr.rules
         FROM
-            `linkis_cg_lm_across_cluster_rule` acr
+            `linkis_ps_configuration_across_cluster_rule` acr
         WHERE
             id = #{id}
     </select>
 
     <select id="queryAcrossClusterRuleList" resultMap="acrossClusterRuleMap">
         SELECT <include refid="AcrossClusterRule_Column_List"/>
-        FROM `linkis_cg_lm_across_cluster_rule`
+        FROM `linkis_ps_configuration_across_cluster_rule`
         <where>
             <if test="username != null"> username = #{username}</if>
             <if test="creator != null">and creator = #{creator}</if>
@@ -65,7 +65,7 @@
 
     <insert id="insertAcrossClusterRule" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
         INSERT INTO
-            linkis_cg_lm_across_cluster_rule (<include refid="AcrossClusterRule_insert_Column_List"/>)
+            linkis_ps_configuration_across_cluster_rule (<include refid="AcrossClusterRule_insert_Column_List"/>)
         VALUES
             (#{acrossClusterRule.clusterName},#{acrossClusterRule.creator}, #{acrossClusterRule.username},
             <choose>
@@ -91,14 +91,14 @@
     <delete id="deleteAcrossClusterRule">
         DELETE
         FROM
-            `linkis_cg_lm_across_cluster_rule`
+            `linkis_ps_configuration_across_cluster_rule`
         WHERE
             creator = #{creator} AND username = #{username}
     </delete>
 
     <update id="updateAcrossClusterRule" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
         UPDATE
-            `linkis_cg_lm_across_cluster_rule`
+            `linkis_ps_configuration_across_cluster_rule`
         SET
             cluster_name = #{acrossClusterRule.clusterName}, creator = #{acrossClusterRule.creator},
             username=#{acrossClusterRule.username}, create_time=#{acrossClusterRule.createTime},
@@ -119,7 +119,7 @@
 
     <update id="validAcrossClusterRule">
         UPDATE
-            `linkis_cg_lm_across_cluster_rule`
+            `linkis_ps_configuration_across_cluster_rule`
         SET
             is_valid = #{isValid}
         WHERE

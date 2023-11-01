@@ -718,7 +718,8 @@ public class FsRestfulApi {
       @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
       @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
       @RequestParam(value = "limit", defaultValue = "0") Integer limit,
-      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
+      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat,
+      @RequestParam(value = "keepNewline", defaultValue = "false") Boolean keepNewline)
       throws WorkSpaceException, IOException {
     ServletOutputStream outputStream = null;
     FsWriter fsWriter = null;
@@ -766,7 +767,8 @@ public class FsRestfulApi {
         case "csv":
           if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
             fsWriter =
-                CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
+                CSVFsWriter.getCSVFSWriter(
+                    charset, csvSeparator, quoteRetouchEnable, outputStream, keepNewline);
           } else {
             fsWriter =
                 ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);

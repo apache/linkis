@@ -17,9 +17,6 @@
 
 package org.apache.linkis.engineconnplugin.flink.executor
 
-import java.util.concurrent.{Future, TimeUnit}
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatServiceHolder
 import org.apache.linkis.engineconn.executor.service.ManagerService
@@ -31,6 +28,10 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.operator.StatusOperator
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+
+import org.apache.commons.lang3.StringUtils
+
+import java.util.concurrent.{Future, TimeUnit}
 
 import scala.concurrent.duration.Duration
 
@@ -108,7 +109,9 @@ class FlinkJarOnceExecutor(
           if (!StatusOperator.isHandshaked) {
             StatusOperator.addHandshake()
           } else {
-            logger.info("submit to yarn, report heartbeat to LinkisManager, and add handshake succeed, now exit this detach ec.")
+            logger.info(
+              "submit to yarn, report heartbeat to LinkisManager, and add handshake succeed, now exit this detach ec."
+            )
             trySucceed()
           }
         }

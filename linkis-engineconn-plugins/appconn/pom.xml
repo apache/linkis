@@ -10,7 +10,7 @@
 
   <artifactId>linkis-engineplugin-appconn</artifactId>
   <properties>
-  <dss.revision>1.1.0.17-SNAPSHOT</dss.revision>
+    <dss.revision>1.1.0.17-SNAPSHOT</dss.revision>
   </properties>
   <dependencies>
     <dependency>

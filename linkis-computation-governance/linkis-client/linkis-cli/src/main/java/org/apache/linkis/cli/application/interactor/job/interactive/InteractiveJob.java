@@ -137,7 +137,9 @@ public class InteractiveJob implements Job {
     logRetriever.retrieveLogAsync();
 
     // wait complete
-    jobInfoResult = waitJobComplete(submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
+    jobInfoResult =
+        waitJobComplete(
+            submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
     logRetriever.waitIncLogComplete();
 
     // get result-set
@@ -217,8 +219,7 @@ public class InteractiveJob implements Job {
       // query progress
       try {
         jobInfoResult = oper.queryJobInfo(user, jobId);
-        oper.queryJobStatus(
-            jobInfoResult.getUser(), jobInfoResult.getJobID(), execId);
+        oper.queryJobStatus(jobInfoResult.getUser(), jobInfoResult.getJobID(), execId);
       } catch (Exception e) {
         logger.warn("", e);
         retryCnt++;

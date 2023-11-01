@@ -35,6 +35,19 @@ class StorageCSVWriter(
 ) extends CSVFsWriter
     with Logging {
 
+  var keepNewline: Boolean = false;
+
+  def this(
+      charset: String,
+      separator: String,
+      quoteRetouchEnable: Boolean,
+      outputStream: OutputStream,
+      keepNewline: Boolean
+  ) {
+    this(charset, separator, quoteRetouchEnable, outputStream)
+    this.keepNewline = keepNewline
+  }
+
   private val delimiter = separator match {
     // Compatible with possible missing escape characters
     case "t" => '\t'
@@ -61,7 +74,9 @@ class StorageCSVWriter(
         if (quoteRetouchEnable) {
           res = s"$quotationMarks${v.replaceAll(quotationMarks, "")}$quotationMarks"
         }
-        res = res.replaceAll(dealNewlineSymbolMarks, " ")
+        if (!this.keepNewline) {
+          res = res.replaceAll(dealNewlineSymbolMarks, " ")
+        }
         logger.debug("decorateValue with input:" + v + " output:" + res)
         res
       }

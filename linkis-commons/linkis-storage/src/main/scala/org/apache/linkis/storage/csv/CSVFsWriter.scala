@@ -36,4 +36,13 @@ object CSVFsWriter {
       outputStream: OutputStream
   ): CSVFsWriter = new StorageCSVWriter(charset, separator, quoteRetouchEnable, outputStream)
 
+  def getCSVFSWriter(
+      charset: String,
+      separator: String,
+      quoteRetouchEnable: Boolean,
+      outputStream: OutputStream,
+      keepNewline: Boolean
+  ): CSVFsWriter =
+    new StorageCSVWriter(charset, separator, quoteRetouchEnable, outputStream, keepNewline)
+
 }

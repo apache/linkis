@@ -110,4 +110,7 @@ object GatewayConfiguration {
 
   val LINKIS_CLUSTER_NAME = CommonVars("linkis.cluster.name", "")
 
+  val ENGINECONN_MANAGER_SPRING_NAME =
+    CommonVars("wds.linkis.engineconnmanager.name", "linkis-cg-engineconnmanager")
+
 }

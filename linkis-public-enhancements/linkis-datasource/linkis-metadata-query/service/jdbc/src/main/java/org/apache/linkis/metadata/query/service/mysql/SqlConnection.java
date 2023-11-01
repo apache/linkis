@@ -109,11 +109,12 @@ public class SqlConnection implements Closeable {
 
   public List<String> getAllTables(String database) throws SQLException {
     List<String> tableNames = new ArrayList<>();
-    Statement stmt = null;
+    PreparedStatement stmt = null;
     ResultSet rs = null;
     try {
-      stmt = conn.createStatement();
-      rs = stmt.executeQuery("SHOW TABLES FROM `" + database + "`");
+      stmt = conn.prepareStatement("SHOW TABLES FROM ?");
+      stmt.setString(1, database);
+      rs = stmt.executeQuery();
       while (rs.next()) {
         tableNames.add(rs.getString(1));
       }
@@ -126,13 +127,15 @@ public class SqlConnection implements Closeable {
   public List<MetaColumnInfo> getColumns(String database, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    String columnSql = "SELECT * FROM `" + database + "`.`" + table + "` WHERE 1 = 2";
+    String columnSql = "SELECT * FROM `?`.`?` WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
       List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
       ps = conn.prepareStatement(columnSql);
+      ps.setString(1, database);
+      ps.setString(2, table);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
       int columnCount = meta.getColumnCount();

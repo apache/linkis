@@ -21,12 +21,12 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.github.pjfanning.xlsx.StreamingReader;
 
@@ -78,5 +78,38 @@ public class XlsxUtils {
         inputStream.close();
       }
     }
+  }
+
+  public static Map<String, Map<String, String>> getSheetsInfo(
+      InputStream inputStream, Boolean hasHeader) {
+    // use xlsx file
+    Workbook workbook = null;
+    try {
+      workbook = new XSSFWorkbook(inputStream);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    Map<String, Map<String, String>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
+    // foreach Sheet
+    for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+      Sheet sheet = workbook.getSheetAt(i);
+
+      Map<String, String> sheetMap = new LinkedHashMap<>();
+
+      // get first row as column name
+      Row headerRow = sheet.getRow(0);
+
+      // foreach column
+      for (int j = 0; j < headerRow.getPhysicalNumberOfCells(); j++) {
+        Cell cell = headerRow.getCell(j);
+        if (hasHeader) {
+          sheetMap.put(cell.getStringCellValue(), "string");
+        } else {
+          sheetMap.put("col_" + (j + 1), "string");
+        }
+      }
+      res.put(sheet.getSheetName(), sheetMap);
+    }
+    return res;
   }
 }

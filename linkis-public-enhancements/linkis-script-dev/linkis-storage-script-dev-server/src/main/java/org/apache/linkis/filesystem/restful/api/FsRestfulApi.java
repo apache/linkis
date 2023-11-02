@@ -34,9 +34,7 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.csv.CSVFsWriter;
 import org.apache.linkis.storage.domain.FsPathListWithError;
-import org.apache.linkis.storage.excel.ExcelFsWriter;
-import org.apache.linkis.storage.excel.ExcelStorageReader;
-import org.apache.linkis.storage.excel.StorageMultiExcelWriter;
+import org.apache.linkis.storage.excel.*;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
@@ -1002,6 +1000,101 @@ public class FsRestfulApi {
         res.put("columnType", column[1]);
       }
       return Message.ok().data("formate", res);
+    }
+  }
+
+  @ApiOperation(value = "getSheetInfo", notes = "getSheetInfo", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+    @ApiImplicitParam(
+        name = "encoding",
+        required = true,
+        dataType = "String",
+        defaultValue = "utf-8"),
+    @ApiImplicitParam(
+        name = "fieldDelimiter",
+        required = true,
+        dataType = "String",
+        defaultValue = ","),
+    @ApiImplicitParam(
+        name = "hasHeader",
+        required = true,
+        defaultValue = "false",
+        dataType = "Boolean"),
+    @ApiImplicitParam(name = "quote", required = true, dataType = "String", defaultValue = "\""),
+    @ApiImplicitParam(
+        name = "escapeQuotes",
+        required = true,
+        dataType = "Boolean",
+        defaultValue = "false")
+  })
+  @RequestMapping(path = "getSheetInfo", method = RequestMethod.GET)
+  public Message getSheetInfo(
+      HttpServletRequest req,
+      @RequestParam(value = "path", required = false) String path,
+      @RequestParam(value = "encoding", defaultValue = "utf-8") String encoding,
+      @RequestParam(value = "fieldDelimiter", defaultValue = ",") String fieldDelimiter,
+      @RequestParam(value = "hasHeader", defaultValue = "false") Boolean hasHeader,
+      @RequestParam(value = "quote", defaultValue = "\"") String quote,
+      @RequestParam(value = "escapeQuotes", defaultValue = "false") Boolean escapeQuotes)
+      throws Exception {
+    if (StringUtils.isEmpty(path)) {
+      throw WorkspaceExceptionManager.createException(80004, path);
+    }
+    String userName = ModuleUserUtils.getOperationUser(req, "getSheetInfo " + path);
+    if (!checkIsUsersDirectory(path, userName)) {
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
+    }
+    String suffix = path.substring(path.lastIndexOf("."));
+    FsPath fsPath = new FsPath(path);
+    Map<String, Object> res = new HashMap<>();
+    Map<String, Map<String, String>> sheetInfo;
+    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    try (InputStream in = fileSystem.read(fsPath)) {
+      if (".xlsx".equalsIgnoreCase(suffix)) {
+        res.put("type", "xlsx");
+        sheetInfo = XlsxUtils.getSheetsInfo(in, hasHeader);
+      } else if (".xls".equalsIgnoreCase(suffix)) {
+        res.put("type", "xls");
+        sheetInfo = XlsUtils.getSheetsInfo(in, hasHeader);
+      } else if (".csv".equalsIgnoreCase(suffix)) {
+        res.put("type", "csv");
+        HashMap<String, String> csvMap = new HashMap<>();
+        String[][] column = null;
+        // fix csv file with utf-8 with bom chart[&#xFEFF]
+        BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
+
+        String header = reader.readLine();
+        if (StringUtils.isEmpty(header)) {
+          throw WorkspaceExceptionManager.createException(80016);
+        }
+        String[] line = header.split(fieldDelimiter, -1);
+        int colNum = line.length;
+        column = new String[2][colNum];
+        if (hasHeader) {
+          for (int i = 0; i < colNum; i++) {
+            column[0][i] = line[i];
+            if (escapeQuotes) {
+              try {
+                csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
+              } catch (StringIndexOutOfBoundsException e) {
+                throw WorkspaceExceptionManager.createException(80017);
+              }
+            }
+          }
+        } else {
+          for (int i = 0; i < colNum; i++) {
+            csvMap.put("col_" + (i + 1), "string");
+          }
+        }
+        sheetInfo = new HashMap<>(1);
+        sheetInfo.put("Sheet1", csvMap);
+      } else {
+        throw WorkspaceExceptionManager.createException(80004, path);
+      }
+      res.put("sheets", sheetInfo);
+      return Message.ok().data("sheetInfo", sheetInfo);
     }
   }
 

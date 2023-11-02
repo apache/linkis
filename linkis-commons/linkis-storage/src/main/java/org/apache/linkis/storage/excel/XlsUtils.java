@@ -21,12 +21,16 @@ import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,5 +84,38 @@ public class XlsUtils {
       xlsReader.close();
     }
     return hdfsPath;
+  }
+
+  public static Map<String, Map<String, String>> getSheetsInfo(
+      InputStream inputStream, Boolean hasHeader) {
+    // use xls file
+    Workbook workbook = null;
+    try {
+      workbook = new HSSFWorkbook(inputStream);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    Map<String, Map<String, String>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
+    // foreach Sheet
+    for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+      Sheet sheet = workbook.getSheetAt(i);
+
+      Map<String, String> sheetMap = new LinkedHashMap<>();
+
+      // get first row as column name
+      Row headerRow = sheet.getRow(0);
+
+      // foreach column
+      for (int j = 0; j < headerRow.getPhysicalNumberOfCells(); j++) {
+        Cell cell = headerRow.getCell(j);
+        if (hasHeader) {
+          sheetMap.put(cell.getStringCellValue(), "string");
+        } else {
+          sheetMap.put("col_" + (j + 1), "string");
+        }
+      }
+      res.put(sheet.getSheetName(), sheetMap);
+    }
+    return res;
   }
 }

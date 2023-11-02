@@ -42,6 +42,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`(
   `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
   `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
   `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+  `boundary_type` TINYINT(2) NULL DEFAULT '0' COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
   `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
   `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
   `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',

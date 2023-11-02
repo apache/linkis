@@ -55,10 +55,16 @@ public class ConfigVo {
 
   @Override
   public String toString() {
-    return "ConfigVo{" +
-            "key='" + key + '\'' +
-            ", defaultValue='" + defaultValue + '\'' +
-            ", configValue='" + configValue + '\'' +
-            '}';
+    return "ConfigVo{"
+        + "key='"
+        + key
+        + '\''
+        + ", defaultValue='"
+        + defaultValue
+        + '\''
+        + ", configValue='"
+        + configValue
+        + '\''
+        + '}';
   }
 }

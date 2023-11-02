@@ -520,17 +520,17 @@ public class EMRestfulApi {
         .data("isError", engineOperateResponse.isError());
   }
 
-
-
-
-  @ApiOperation(value = "taskprediction", notes = "linkis task taskprediction", response = Message.class)
+  @ApiOperation(
+      value = "taskprediction",
+      notes = "linkis task taskprediction",
+      response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "username", dataType = "String", example = "hadoop"),
-          @ApiImplicitParam(name = "engineType", dataType = "String", example = "spark/hive"),
-          @ApiImplicitParam(name = "creator", dataType = "String", value = "ide"),
-          @ApiImplicitParam(name = "clustername", dataType = "String", example = "clustername"),
-          @ApiImplicitParam(name = "queueName", dataType = "String", example = "queueName"),
-          @ApiImplicitParam(name = "tenant", dataType = "String", defaultValue = "tenant"),
+    @ApiImplicitParam(name = "username", dataType = "String", example = "hadoop"),
+    @ApiImplicitParam(name = "engineType", dataType = "String", example = "spark/hive"),
+    @ApiImplicitParam(name = "creator", dataType = "String", value = "ide"),
+    @ApiImplicitParam(name = "clustername", dataType = "String", example = "clustername"),
+    @ApiImplicitParam(name = "queueName", dataType = "String", example = "queueName"),
+    @ApiImplicitParam(name = "tenant", dataType = "String", defaultValue = "tenant"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/taskprediction", method = RequestMethod.GET)
@@ -542,7 +542,7 @@ public class EMRestfulApi {
       @RequestParam(value = "clustername", required = false) String clusterName,
       @RequestParam(value = "queueName", required = false) String queueName,
       @RequestParam(value = "tenant", required = false) String tenant)
-      throws PersistenceErrorException, RMErrorException {
+          throws PersistenceErrorException, RMErrorException {
     String tokenName = ModuleUserUtils.getOperationUser(req, "taskprediction");
     if (StringUtils.isBlank(username)) {
       username = tokenName;
@@ -556,6 +556,7 @@ public class EMRestfulApi {
 
     // 获取用户配置信息
     List<ConfigVo> configlist = EMUtils.getUserConf(username, creator, engineType);
+    configlist.addAll(EMUtils.getUserConf(username, "全局设置", engineType));
 
     // 获取租户标签数据
     if (StringUtils.isBlank(tenant)) {
@@ -580,11 +581,7 @@ public class EMRestfulApi {
     if (engineType.toLowerCase().contains("spark")) {
       if (StringUtils.isBlank(queueName)) {
         // 如果没有传 队列名称，从用户配置获取
-        for (ConfigVo configVo : configlist) {
-          if (configVo.getKey().equals(AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY())) {
-            queueName = configVo.getConfigValue();
-          }
-        }
+        queueName = EMUtils.getConfValue(configlist, AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY());
       }
       // 获取yarn资源数据
       ClusterLabel clusterLabel = LabelManagerUtils.labelFactory().createLabel(ClusterLabel.class);

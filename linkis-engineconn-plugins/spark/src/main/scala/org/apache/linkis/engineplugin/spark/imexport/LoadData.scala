@@ -182,7 +182,7 @@ object LoadData {
     } finally {
       if (fs != null) {
         fs.delete(new Path(path), true)
-        fs.close()
+        // fs.close()
       }
     }
     // warn(s"create table $database $tableName Success")

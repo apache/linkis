@@ -389,7 +389,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     val sb = new StringBuilder
 
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
-      sb.append(s"${key}=${value.toString}\n")
+      // skip log jobId because it corresponding jobid when the ec created
+      if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
+        sb.append(s"${key}=${value.toString}\n")
+      }
     })
 
     sb.append("\n")

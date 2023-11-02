@@ -104,37 +104,40 @@ class DefaultEngineAskEngineService
     }
 
     val taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties)
-    LoggerUtils.setJobIdMDC(taskId)
-    logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
-    if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
-      val engineReuseRequest = new EngineReuseRequest()
-      engineReuseRequest.setLabels(engineAskRequest.getLabels)
-      engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
-      engineReuseRequest.setUser(engineAskRequest.getUser)
-      engineReuseRequest.setProperties(engineAskRequest.getProperties)
-      val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
-        t: Throwable =>
-          t match {
-            case retryException: LinkisRetryException =>
-              logger.info(
-                s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
-              )
-            case _ =>
-              logger.info(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed", t)
-          }
-          null
-      }
-      if (null != reuseNode) {
-        logger.info(
-          s"Finished to ask engine for task: $taskId user ${engineAskRequest.getUser} by reuse node $reuseNode"
-        )
-        LoggerUtils.removeJobIdMDC()
-        return reuseNode
-      }
-    }
-
     val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
+      LoggerUtils.setJobIdMDC(taskId)
+      logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
+      if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
+        val engineReuseRequest = new EngineReuseRequest()
+        engineReuseRequest.setLabels(engineAskRequest.getLabels)
+        engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
+        engineReuseRequest.setUser(engineAskRequest.getUser)
+        engineReuseRequest.setProperties(engineAskRequest.getProperties)
+        val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
+          t: Throwable =>
+            t match {
+              case retryException: LinkisRetryException =>
+                logger.info(
+                  s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
+                )
+              case _ =>
+                logger.info(
+                  s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed",
+                  t
+                )
+            }
+            null
+        }
+        if (null != reuseNode) {
+          logger.info(
+            s"Finished to ask engine for task: $taskId user ${engineAskRequest.getUser} by reuse node $reuseNode"
+          )
+          LoggerUtils.removeJobIdMDC()
+          return reuseNode
+        }
+      }
+
       LoggerUtils.setJobIdMDC(taskId)
       logger.info(
         s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"

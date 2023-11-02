@@ -136,7 +136,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
-    LOG.info("Set group with path:" + dest.getPath() + "and group:" + user);
+    LOG.info("Set group with path:" + dest.getPath() + " and group:" + group);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;

@@ -28,11 +28,6 @@ import com.webank.wedatasphere.dss.standard.app.development.utils.DevelopmentOpe
 import com.webank.wedatasphere.dss.standard.app.sso.Workspace;
 import com.webank.wedatasphere.dss.standard.common.entity.ref.ResponseRef;
 
-/**
- * @author enjoyyin
- * @date 2022-03-18
- * @since 0.5.0
- */
 public class AppConnExecutionUtils {
 
   public static ResponseRef tryToOperation(

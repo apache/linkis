@@ -20,21 +20,29 @@ package org.apache.linkis.manager.rm.utils
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.manager.common.constant.RMConstant
-import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
+import org.apache.linkis.manager.common.entity.persistence.{
+  PersistenceLabelRel,
+  PersistenceResource
+}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
-import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.label.LabelManagerUtils.labelFactory
+import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.rm.conf.ResourceStatus
-import org.apache.linkis.manager.rm.restful.vo.UserResourceVo
+import org.apache.linkis.manager.rm.restful.vo.{UserCreatorEngineType, UserResourceVo}
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
 import java.util
-import java.util.UUID
+import java.util.{List, UUID}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
+import com.google.common.collect.Lists
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 
@@ -58,7 +66,7 @@ object RMUtils extends Logging {
   val EXTERNAL_RESOURCE_REFRESH_TIME =
     CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
 
-  val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
+  var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
   val ENGINE_TYPE = CommonVars.apply(
     "wds.linkis.configuration.engine.type",
@@ -253,5 +261,44 @@ object RMUtils extends Logging {
   }
 
   def getECTicketID: String = UUID.randomUUID().toString
+
+  def getCombinedLabel: String = {
+    if (COMBINED_USERCREATOR_ENGINETYPE == null) {
+      val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
+      val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])
+      val combinedLabelBuilder = new CombinedLabelBuilder
+      val combinedLabel =
+        combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel))
+      COMBINED_USERCREATOR_ENGINETYPE = combinedLabel.getLabelKey
+      COMBINED_USERCREATOR_ENGINETYPE
+    } else {
+      COMBINED_USERCREATOR_ENGINETYPE
+    }
+  }
+
+  def getUserResources(
+      userLabels: util.List[PersistenceLabelRel],
+      resources: util.List[PersistenceResource]
+  ): util.ArrayList[UserResourceVo] = {
+    val userResources = new util.ArrayList[UserResourceVo]()
+    // 4. Store users and resources in Vo
+    resources.asScala.foreach(resource => {
+      val userResource = ResourceUtils.fromPersistenceResourceAndUser(resource)
+      val userLabel = userLabels.asScala.find(_.getResourceId.equals(resource.getId)).orNull
+      if (userLabel != null) {
+        val userCreatorEngineType =
+          BDPJettyServerHelper.gson
+            .fromJson(userLabel.getStringValue, classOf[UserCreatorEngineType])
+        if (userCreatorEngineType != null) {
+          userResource.setUsername(userCreatorEngineType.getUser)
+          userResource.setCreator(userCreatorEngineType.getCreator)
+          userResource.setEngineType(userCreatorEngineType.getEngineType)
+          userResource.setVersion(userCreatorEngineType.getVersion)
+        }
+      }
+      userResources.add(RMUtils.toUserResourceVo(userResource))
+    })
+    userResources
+  }
 
 }

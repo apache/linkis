@@ -20,6 +20,8 @@ package org.apache.linkis.manager.am.restful;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
+import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
+import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
@@ -29,22 +31,31 @@ import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.em.ECMOperateService;
 import org.apache.linkis.manager.am.service.em.EMInfoService;
 import org.apache.linkis.manager.am.utils.AMUtils;
+import org.apache.linkis.manager.am.vo.ConfigVo;
 import org.apache.linkis.manager.am.vo.EMNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabelRel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.common.protocol.OperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
+import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
+import org.apache.linkis.manager.rm.restful.vo.UserResourceVo;
+import org.apache.linkis.manager.rm.utils.RMUtils;
+import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -52,6 +63,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +74,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,6 +83,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -95,6 +112,11 @@ public class EMRestfulApi {
   @Autowired private ECMOperateService ecmOperateService;
 
   @Autowired private ECResourceInfoService ecResourceInfoService;
+
+  @Autowired private ResourceManagerPersistence resourceManagerPersistence;
+
+  @Autowired private LabelManagerPersistence labelManagerPersistence;
+
   private LabelBuilderFactory stdLabelBuilderFactory =
       LabelBuilderFactoryContext.getLabelBuilderFactory();
 
@@ -491,5 +513,106 @@ public class EMRestfulApi {
         .data("result", engineOperateResponse.getResult())
         .data("errorMsg", engineOperateResponse.errorMsg())
         .data("isError", engineOperateResponse.isError());
+  }
+
+  @ApiOperationSupport(ignoreParameters = {"jsonNode"})
+  @RequestMapping(path = "/taskprediction", method = RequestMethod.GET)
+  public Message taskprediction(
+      HttpServletRequest req,
+      @RequestParam(value = "username", required = false) String username,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "queueName", required = false) String queueName,
+      @RequestParam(value = "tenant", required = false) String tenant)
+      throws PersistenceErrorException {
+    //    String userName = ModuleUserUtils.getOperationUser(req, "taskprediction");
+    String tokenName = "";
+    if (StringUtils.isBlank(username)) {
+      username = tokenName;
+    }
+    if (StringUtils.isBlank(engineType)) {
+      Message.error("parameters:engineType can't be null (请求参数【engineType】不能为空)");
+    }
+    if (StringUtils.isBlank(creator)) {
+      Message.error("parameters:creator can't be null (请求参数【creator】不能为空)");
+    }
+    // 获取yarn资源数据和用户资源数据
+    String labelValuePattern =
+        MessageFormat.format("%{0}%,%{1}%,%{2}%,%", creator, username, engineType);
+    List<PersistenceLabelRel> userLabels =
+        labelManagerPersistence.getLabelByPattern(
+            labelValuePattern, RMUtils.getCombinedLabel(), 0, 0);
+    List<PersistenceResource> resources =
+        resourceManagerPersistence.getResourceByLabels(userLabels);
+    ArrayList<UserResourceVo> userResources = RMUtils.getUserResources(userLabels, resources);
+
+    // 获取租户标签数据
+    if (StringUtils.isBlank(tenant)) {
+      Sender sender =
+          Sender.getSender(
+              Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());
+      TenantResponse response = (TenantResponse) sender.ask(new TenantRequest(username, creator));
+      if (StringUtils.isBlank(response.tenant())) {
+        response = (TenantResponse) sender.ask(new TenantRequest(username, "*"));
+        if (StringUtils.isBlank(response.tenant())) {
+          response = (TenantResponse) sender.ask(new TenantRequest("*", creator));
+        }
+      }
+      tenant = response.tenant();
+    }
+
+    // 获取ecm列表数据
+    List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
+    String finalTenant = tenant;
+    List<EMNodeVo> collect =
+        emNodeVos.stream()
+            .filter(
+                emNodeVo -> {
+                  Stream<Label> labelStream = emNodeVo.getLabels().stream();
+                  if (StringUtils.isNotBlank(finalTenant)) {
+                    return labelStream.anyMatch(
+                        label ->
+                            KEY_TENANT.equals(label.getLabelKey())
+                                && label.getStringValue().contains(finalTenant));
+                  } else {
+                    return labelStream.noneMatch(label -> KEY_TENANT.equals(label.getLabelKey()));
+                  }
+                })
+            .collect(Collectors.toList());
+
+    // 获取配置值
+    String responseStr = "";
+    List<ConfigVo> configlist = new ArrayList<>();
+    try {
+      HttpClient httpClient = HttpClients.createDefault();
+      String url =
+          MessageFormat.format(
+              "/api/rest_j/v1/configuration/getFullTreesByAppName?creator={0}&engineType={1}",
+              creator, engineType);
+      HttpGet httpGet = new HttpGet(Configuration.getGateWayURL() + url);
+      httpGet.addHeader("Token-User", username);
+      httpGet.addHeader("Token-Code", "BML-AUTH");
+      responseStr = EntityUtils.toString(httpClient.execute(httpGet).getEntity());
+      ObjectMapper objectMapper = new ObjectMapper();
+      JsonNode fullTree = objectMapper.readTree(responseStr).get("data").get("fullTree");
+      for (JsonNode node : fullTree) {
+        JsonNode settingsList = node.get("settings");
+        for (JsonNode key : settingsList) {
+          configlist.add(
+              new ConfigVo(
+                  key.get("key").asText(),
+                  key.get("configValue").asText(),
+                  key.get("defaultValue").asText()));
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return Message.ok()
+        .data("test", userResources)
+        .data("tenant", tenant)
+        .data("test3", collect)
+        .data("test4", configlist);
   }
 }

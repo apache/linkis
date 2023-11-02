@@ -115,6 +115,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-computation-governance-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

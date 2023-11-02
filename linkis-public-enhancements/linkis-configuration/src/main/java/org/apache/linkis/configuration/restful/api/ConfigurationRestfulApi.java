@@ -505,12 +505,12 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     Message message = Message.ok();
     String username = ModuleUserUtils.getOperationUser(req, "saveKey");
-    String engineType = (String) json.getOrDefault("engineType", "*");
-    String user = (String) json.getOrDefault("user", "");
-    String version = (String) json.getOrDefault("version", "*");
-    String creator = (String) json.getOrDefault("creator", "*");
-    String configKey = (String) json.get("configKey");
-    String value = (String) json.get("configValue");
+    String engineType = ((String) json.getOrDefault("engineType", "*")).trim();
+    String user = ((String) json.getOrDefault("user", "")).trim();
+    String version = ((String) json.getOrDefault("version", "*")).trim();
+    String creator = ((String) json.getOrDefault("creator", "*")).trim();
+    String configKey = ((String) json.get("configKey")).trim();
+    String value = ((String) json.get("configValue")).trim();
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
       return Message.error("Only admin can modify other user configuration data");
@@ -562,10 +562,10 @@ public class ConfigurationRestfulApi {
   public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
     String username = ModuleUserUtils.getOperationUser(req, "deleteKeyValue");
-    String engineType = (String) json.getOrDefault("engineType", "*");
-    String version = (String) json.getOrDefault("version", "*");
-    String creator = (String) json.getOrDefault("creator", "*");
-    String configKey = (String) json.get("configKey");
+    String engineType = ((String) json.getOrDefault("engineType", "*")).trim();
+    String version = ((String) json.getOrDefault("version", "*")).trim();
+    String creator = ((String) json.getOrDefault("creator", "*")).trim();
+    String configKey = ((String) json.get("configKey")).trim();
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }

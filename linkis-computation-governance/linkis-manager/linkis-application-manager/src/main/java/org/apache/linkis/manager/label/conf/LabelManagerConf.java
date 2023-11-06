@@ -23,4 +23,7 @@ public class LabelManagerConf {
 
   public static final String LONG_LIVED_LABEL =
       CommonVars.apply("wds.linkis.label.node.long.lived.label.keys", "tenant").getValue();
+
+  public static final boolean COMBINED_WITHOUT_YARN_DEFAULT =
+      CommonVars.apply("linkis.combined.without.yarn.default", true).getValue();
 }

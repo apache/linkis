@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<svg width="11.6666667px" height="11.6666667px" viewBox="0 0 11.6666667 11.6666667" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>微服务管理-常规</title>
+    <g id="参数配置-0807" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="参数配置备份" transform="translate(-18.166667, -361.166667)">
+            <g id="编组-6" transform="translate(0.000000, 54.000000)">
+                <g id="01-导航/一级标题/默认备份-8" transform="translate(0.000000, 286.000000)">
+                    <g id="微服务管理-常规" transform="translate(17.000000, 20.000000)">
+                        <rect id="矩形" x="0" y="0" width="14" height="14"></rect>
+                        <g id="编组" transform="translate(1.166667, 1.166667)">
+                            <rect id="矩形" stroke="#000000" stroke-width="0.875" x="0.4375" y="0.4375" width="10.7916667"
+                                height="10.7916667" rx="1.16666667"></rect>
+                            <rect id="矩形" fill="#000000" x="0.559305324" y="3.65339243" width="10.5" height="1"></rect>
+                            <rect id="矩形备份-2" fill="#000000" x="0.593468141" y="7.30439284" width="10.5" height="1">
+                            </rect>
+                            <rect id="矩形" fill="#000000" x="2.35698621" y="1.83169087" width="1.75" height="1"></rect>
+                            <rect id="矩形备份" fill="#000000" x="2.34965853" y="5.46943139" width="1.75" height="1"></rect>
+                            <rect id="矩形备份-3" fill="#000000" x="2.36104614" y="9.01246211" width="1.75" height="1">
+                            </rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -177,3 +177,7 @@ export PROMETHEUS_ENABLE=false
 export ENABLE_HDFS=true
 export ENABLE_HIVE=true
 export ENABLE_SPARK=true
+
+## define  MYSQL_CONNECT_JAVA_PATH&OLK_JDBC_PATH, the linkis can check JDBC driver
+MYSQL_CONNECT_JAVA_PATH=
+OLK_JDBC_PATH=

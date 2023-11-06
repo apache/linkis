@@ -68,6 +68,7 @@ object SparkConfiguration extends Logging {
   val SPARK_K8S_RESTART_POLICY = CommonVars[String]("linkis.spark.k8s.restartPolicy", "Never")
   val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
   val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
+  val SPARK_K8S_UI_PORT = CommonVars[String]("linkis.spark.k8s.ui.port", "4040")
 
   val SPARK_K8S_EXECUTOR_REQUEST_CORES =
     CommonVars[String]("linkis.spark.k8s.executor.request.cores", "1")
@@ -79,6 +80,8 @@ object SparkConfiguration extends Logging {
     CommonVars[String]("spark.kubernetes.file.upload.path", "local:///opt/spark/tmp")
 
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
+
+  val SPARK_PYTHON_FILES = CommonVars[String]("spark.submit.pyFiles", "")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
@@ -162,6 +165,7 @@ object SparkConfiguration extends Logging {
 
   val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
 
+  val LINKIS_SPARK_CONF = CommonVars[String]("spark.conf", "")
   val SPARK_APPLICATION_ARGS = CommonVars("spark.app.args", "")
   val SPARK_APPLICATION_MAIN_CLASS = CommonVars("spark.app.main.class", "")
 

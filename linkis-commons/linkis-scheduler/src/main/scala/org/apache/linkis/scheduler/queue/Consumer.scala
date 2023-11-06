@@ -41,7 +41,6 @@ abstract class Consumer(schedulerContext: SchedulerContext, executeService: Exec
   def start(): Unit
 
   def shutdown(): Unit = {
-    logger.info(s"$toString is ready to stop!")
     terminate = true
     logger.info(s"$toString stopped!")
   }

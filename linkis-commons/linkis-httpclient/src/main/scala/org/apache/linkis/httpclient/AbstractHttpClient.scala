@@ -143,23 +143,31 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       val req = prepareReq(action)
       val startTime = System.currentTimeMillis
       val response = executeRequest(req, Some(waitTime).filter(_ > 0))
+      val taken = System.currentTimeMillis - startTime
+      attempts.add(taken)
+      val costTime = ByteTimeUtils.msDurationToString(taken)
+      logger.info(
+        s"invoke ${req.getURI} get status ${response.getStatusLine.getStatusCode} taken: ${costTime}."
+      )
       if (response.getStatusLine.getStatusCode == 401) {
         tryLogin(action, getRequestUrl(action), true)
-        logger.info("The user is not logged in, please log in first, you can set a retry")
         val msg = Utils.tryCatch(EntityUtils.toString(response.getEntity)) { t =>
           logger.warn("failed to parse entity", t)
           ""
         }
         IOUtils.closeQuietly(response)
-        throw new HttpClientRetryException(
-          "The user is not logged in, please log in first, you can set a retry, message: " + msg
-        )
+        if (attempts.size() <= 1) {
+          logger.info("The user is not logged in, default retry once")
+          addAttempt()
+        } else {
+          logger.info("The user is not logged in, you can set a retry")
+          throw new HttpClientRetryException(
+            "The user is not logged in, please log in first, you can set a retry, message: " + msg
+          )
+        }
+      } else {
+        response
       }
-      val taken = System.currentTimeMillis - startTime
-      attempts.add(taken)
-      val costTime = ByteTimeUtils.msDurationToString(taken)
-      logger.info(s"invoke ${req.getURI} taken: ${costTime}.")
-      response
     }
 
     val response =

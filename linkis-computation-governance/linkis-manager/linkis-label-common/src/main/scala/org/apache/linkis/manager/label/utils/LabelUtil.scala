@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.label.utils
 
+import org.apache.linkis.manager.label.constant.LabelValueConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
@@ -133,6 +134,15 @@ object LabelUtil {
       case _ =>
     }
     null.asInstanceOf[A]
+  }
+
+  def isYarnClusterMode(labels: util.List[Label[_]]): Boolean = {
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(labels)
+    val isYarnClusterMode: Boolean = {
+      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
+      else false
+    }
+    isYarnClusterMode
   }
 
 }

@@ -166,7 +166,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
       if (serviceInstance != null) {
         logger.info(
             "Client request ip: "
-                + gatewayContext.getRequest().getRemoteAddress()
+                + gatewayContext.getRequest().getRequestRealIpAddr()
                 + " and uri: "
                 + gatewayContext.getRequest().getRequestURI()
                 + "GatewayRouter route requestUri: "

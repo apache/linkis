@@ -66,7 +66,6 @@ object UJESClientFactory extends Logging {
     clientConfigBuilder.setAuthenticationStrategy(new StaticAuthenticationStrategy())
     clientConfigBuilder.readTimeout(100000)
     clientConfigBuilder.maxConnectionSize(20)
-    clientConfigBuilder.readTimeout(10000)
     val params = props.getProperty(PARAMS)
     var versioned = false
     if (StringUtils.isNotBlank(params)) {

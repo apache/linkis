@@ -19,9 +19,6 @@ package org.apache.linkis.storage.resultset.table;
 
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.storage.resultset.ResultRecord;
-import org.apache.linkis.storage.utils.StorageUtils;
-
-import java.util.Arrays;
 
 public class TableRecord implements ResultRecord {
 
@@ -34,11 +31,5 @@ public class TableRecord implements ResultRecord {
   @Override
   public Record cloneRecord() {
     return new TableRecord(row.clone());
-  }
-
-  public String[] tableRecordToString(String nullValue) {
-    return Arrays.stream(row)
-        .map(col -> StorageUtils.colToString(col, nullValue))
-        .toArray(String[]::new);
   }
 }

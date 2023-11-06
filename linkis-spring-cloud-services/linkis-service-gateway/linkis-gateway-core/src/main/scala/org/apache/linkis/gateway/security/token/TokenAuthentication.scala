@@ -93,7 +93,7 @@ object TokenAuthentication extends Logging {
     })
     if (ok) {
       logger.info(
-        s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
+        s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser, host: $host."
       )
       if (login) {
         logger.info(
@@ -115,6 +115,9 @@ object TokenAuthentication extends Logging {
       }
       true
     } else {
+      logger.info(
+        s"Token authentication fail, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser, host: $host."
+      )
       SecurityFilter.filterResponse(gatewayContext, authMsg)
       false
     }

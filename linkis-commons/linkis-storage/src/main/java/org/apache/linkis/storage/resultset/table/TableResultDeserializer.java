@@ -52,13 +52,13 @@ public class TableResultDeserializer extends ResultDeserializer<TableMetaData, T
     List<Column> columns = new ArrayList<>();
     for (int i = 0; i < colArray.length; i += 3) {
       int len = Integer.parseInt(colArray[i]);
-      String colName = Dolphin.getString(bytes, index, len);
+      String colName = Dolphin.toStringValue(Dolphin.getString(bytes, index, len));
       index += len;
       len = Integer.parseInt(colArray[i + 1]);
-      String colType = Dolphin.getString(bytes, index, len);
+      String colType = Dolphin.toStringValue(Dolphin.getString(bytes, index, len));
       index += len;
       len = Integer.parseInt(colArray[i + 2]);
-      String colComment = Dolphin.getString(bytes, index, len);
+      String colComment = Dolphin.toStringValue(Dolphin.getString(bytes, index, len));
       index += len;
       columns.add(new Column(colName, DataType.toDataType(colType), colComment));
     }

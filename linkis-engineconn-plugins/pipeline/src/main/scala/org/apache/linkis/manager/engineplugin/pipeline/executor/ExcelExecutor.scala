@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.ResultSetUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
@@ -84,8 +85,9 @@ class ExcelExecutor extends PipeLineExecutor {
       if (fsPathListWithError == null) {
         throw new PipeLineErrorException(EMPTY_DIR.getErrorCode, EMPTY_DIR.getErrorDesc)
       }
-      fileSource =
-        FileSource.create(fsPathListWithError.getFsPaths.toArray(Array[FsPath]()), sourceFs)
+      val fsPathList = fsPathListWithError.getFsPaths
+      ResultSetUtils.sortByNameNum(fsPathList)
+      fileSource = FileSource.create(fsPathList.toArray(Array[FsPath]()), sourceFs)
     }
     if (!FileSource.isTableResultSet(fileSource)) {
       throw new PipeLineErrorException(

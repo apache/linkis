@@ -161,6 +161,18 @@ public class YarnResource extends Resource {
   }
 
   @Override
+  public int compare(Resource resource) {
+    YarnResource r = toYarnResource(resource);
+    if (this.getQueueMemory() > r.getQueueMemory()) {
+      return 1;
+    } else if (this.getQueueMemory() < r.getQueueMemory()) {
+      return -1;
+    } else {
+      return Integer.compare(this.getQueueCores(), r.getQueueCores());
+    }
+  }
+
+  @Override
   public String toJson() {
     return String.format(
         "{\"queueName\":\"%s\",\"queueMemory\":\"%s\",\"queueCpu\":%d, \"instance\":%d}",

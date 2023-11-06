@@ -28,9 +28,36 @@ PG_SCHEMA=
 PG_USER=
 PG_PASSWORD=
 
-
 ### Provide the DB information of Hive metadata database.
 ### Attention! If there are special characters like "&", they need to be enclosed in quotation marks.
 HIVE_META_URL=""
 HIVE_META_USER=""
 HIVE_META_PASSWORD=""
+
+### define openLookeng  parameters for connection.
+OLK_HOST=
+OLK_PORT=
+OLK_CATALOG=
+OLK_SCHEMA=
+OLK_USER=
+OLK_PASSWORD=
+
+### define Presto parameters for connection.
+PRESTO_HOST=
+PRESTO_PORT=
+PRESTO_CATALOG=
+PRESTO_SCHEMA=
+
+### define impala parameters for connection.
+IMPALA_HOST=
+IMPALA_PORT=
+
+### define trino parameters for connection.
+TRINO_COORDINATOR_HOST=
+TRINO_COORDINATOR_PORT=
+TRINO_COORDINATOR_CATALOG=
+TRINO_COORDINATOR_SCHEMA=
+
+### define seatunnel parameters for connection.
+SEATUNNEL_HOST=
+SEATUNNEL_PORT=

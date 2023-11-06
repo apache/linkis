@@ -29,8 +29,13 @@ public class ClusterDescriptorAdapterFactory {
     ClusterDescriptorAdapter clusterDescriptorAdapter =
         new YarnApplicationClusterDescriptorAdapter(executionContext);
 
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
+    if (StringUtils.isNotBlank(master)) {
+      if (master.equalsIgnoreCase("k8s-operator")) {
+        clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
+      } else if (master.equalsIgnoreCase("k8s-native")) {
+        clusterDescriptorAdapter =
+            new KubernetesApplicationClusterDescriptorAdapter(executionContext);
+      }
     }
 
     return clusterDescriptorAdapter;

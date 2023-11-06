@@ -62,6 +62,12 @@
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

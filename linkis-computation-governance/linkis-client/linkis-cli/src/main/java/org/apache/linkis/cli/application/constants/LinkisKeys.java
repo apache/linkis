@@ -47,4 +47,5 @@ public class LinkisKeys {
   public static final String KEY_YARN_QUEUE = "wds.linkis.rm.yarnqueue";
   public static final String KEY_HIVE_RESULT_DISPLAY_TBALE =
       "hive.resultset.use.unique.column.names";
+  public static final String CLI_VERSION = "cli.version";
 }

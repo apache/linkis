@@ -53,9 +53,7 @@ public class RMMessageService {
     } catch (Exception e) {
       RMLabelContainer nodeLabels = new RMLabelContainer(labels);
       String value =
-          Optional.of(nodeLabels.getCombinedUserCreatorEngineTypeLabel())
-              .map(Object::toString)
-              .orElse("");
+          Optional.of(nodeLabels.getCombinedResourceLabel()).map(Object::toString).orElse("");
       logger.warn(
           String.format(
               "usedResource failed, request from:%s, request engine: %s, ",

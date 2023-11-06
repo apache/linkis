@@ -46,9 +46,11 @@ import org.apache.linkis.cli.application.utils.LoggerManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +158,23 @@ public class CtxBuilder {
             .init();
     logger.info("==========std_var============\n" + CliUtils.GSON.toJson(varAccess));
 
-    return new CliCtxImpl(params.getCmdType(), template, varAccess, new HashMap<>());
+    Properties props = new Properties();
+    try (InputStream inputStream =
+        CtxBuilder.class.getClassLoader().getResourceAsStream("version.properties")) {
+      try (InputStreamReader reader = new InputStreamReader(inputStream)) {
+        try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+          props.load(bufferedReader);
+        }
+      }
+    } catch (Exception e) {
+      logger.warn("Failed to load version info", e);
+    }
+
+    String verion = props.getProperty(CliKeys.VERSION);
+
+    Map<String, Object> extraMap = new HashMap<>();
+    extraMap.put(CliKeys.VERSION, verion);
+
+    return new CliCtxImpl(params.getCmdType(), template, varAccess, extraMap);
   }
 }

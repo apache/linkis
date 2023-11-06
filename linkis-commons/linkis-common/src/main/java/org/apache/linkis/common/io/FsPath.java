@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -166,6 +168,10 @@ public class FsPath {
 
   public File toFile() {
     return new File(uri);
+  }
+
+  public Path toPath() {
+    return FileSystems.getDefault().getPath(uri.toString());
   }
 
   public String getUriString() {

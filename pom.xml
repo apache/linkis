@@ -1860,7 +1860,7 @@
               <forkCount>3</forkCount>
               <reuseForks>true</reuseForks>
               <argLine>-XX:MaxMetaspaceSize=2g ${extraJavaTestArgs}
-                                -Dio.netty.tryReflectionSetAccessible=true</argLine>
+                -Dio.netty.tryReflectionSetAccessible=true</argLine>
             </configuration>
           </plugin>
         </plugins>

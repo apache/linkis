@@ -96,6 +96,15 @@ class DriverAndYarnReqResourceService(
             .isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)
       ) {
 
+        val clusterYarnResource =
+          externalResourceService.getResource(
+            ResourceType.Yarn,
+            labelContainer,
+            new YarnResourceIdentifier("root")
+          )
+        val (clusterMaxCapacity, clusterUsedCapacity) =
+          (clusterYarnResource.getMaxResource, clusterYarnResource.getUsedResource)
+
         logger.info(
           s"user: $user, creator: $creator task enter cross cluster resource judgment, " +
             s"CPUThreshold: $CPUThreshold, MemoryThreshold: $MemoryThreshold," +
@@ -106,6 +115,8 @@ class DriverAndYarnReqResourceService(
             queueLeftResource.asInstanceOf[YarnResource],
             usedCapacity.asInstanceOf[YarnResource],
             maxCapacity.asInstanceOf[YarnResource],
+            clusterMaxCapacity.asInstanceOf[YarnResource],
+            clusterUsedCapacity.asInstanceOf[YarnResource],
             CPUThreshold.toInt,
             MemoryThreshold.toInt,
             CPUPercentageThreshold.toDouble,

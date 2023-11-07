@@ -542,7 +542,7 @@ public class EMRestfulApi {
       @RequestParam(value = "clustername", required = false) String clusterName,
       @RequestParam(value = "queueName", required = false) String queueName,
       @RequestParam(value = "tenant", required = false) String tenant)
-          throws PersistenceErrorException, RMErrorException {
+      throws PersistenceErrorException, RMErrorException {
     String tokenName = ModuleUserUtils.getOperationUser(req, "taskprediction");
     if (StringUtils.isBlank(username)) {
       username = tokenName;

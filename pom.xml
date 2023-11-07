@@ -925,6 +925,12 @@
         <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -997,6 +1003,10 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -1014,11 +1024,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
     </dependency>
   </dependencies>
 

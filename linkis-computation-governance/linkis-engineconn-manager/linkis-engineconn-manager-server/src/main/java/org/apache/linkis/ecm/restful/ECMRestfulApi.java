@@ -17,7 +17,9 @@
 
 package org.apache.linkis.ecm.restful;
 
-import org.apache.linkis.ecm.server.exception.ECMErrorException;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.ecm.server.conf.ECMConfiguration;
+import org.apache.linkis.ecm.server.util.ECMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -34,6 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileOwnerAttributeView;
+import java.nio.file.attribute.UserPrincipal;
 import java.text.MessageFormat;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -52,6 +56,8 @@ import static org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary.*
 public class ECMRestfulApi {
 
   private final Logger logger = LoggerFactory.getLogger(ECMRestfulApi.class);
+  private final String[] adminOperations =
+      ECMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
   @ApiOperation(
       value = "downloadEngineLog",
@@ -65,42 +71,46 @@ public class ECMRestfulApi {
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/downloadEngineLog", method = RequestMethod.GET)
-  public void downloadEngineLog(
+  public Message downloadEngineLog(
       HttpServletRequest req,
       HttpServletResponse response,
       @RequestParam(value = "emInstance") String emInstance,
       @RequestParam(value = "instance") String instance,
       @RequestParam(value = "logDirSuffix") String logDirSuffix,
       @RequestParam(value = "logType") String logType)
-      throws IOException, ECMErrorException {
-    ModuleUserUtils.getOperationUser(req, "downloadEngineLog");
+      throws IOException {
+    String userName = ModuleUserUtils.getOperationUser(req, "downloadEngineLog");
     if (StringUtils.isBlank(instance)) {
-      throw new ECMErrorException(
-          PARAMETER_NOT_NULL.getErrorCode(),
-          MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "instance"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "instance"));
     }
     if (StringUtils.isBlank(logDirSuffix)) {
-      throw new ECMErrorException(
-          PARAMETER_NOT_NULL.getErrorCode(),
-          MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "logDirSuffix"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "logDirSuffix"));
     }
     if (StringUtils.isBlank(logType)) {
-      throw new ECMErrorException(
-          PARAMETER_NOT_NULL.getErrorCode(),
-          MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "logType"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_NULL.getErrorDesc(), "logType"));
+    } else if (!logType.equals("stdout")
+        && !logType.equals("stderr")
+        && !logType.equals("gc")
+        && !logType.equals("yarnApp")) {
+      return Message.error(LOGTYPE_ERROR.getErrorDesc());
+    }
+    // 获取文件的权限归属者
+    FileOwnerAttributeView ownerView =
+        Files.getFileAttributeView(
+            Paths.get(logDirSuffix + "/" + logType), FileOwnerAttributeView.class);
+    UserPrincipal owner = ownerView.getOwner();
+    if (!owner.getName().equals(userName) && Configuration.isNotAdmin(userName)) {
+      return Message.error(
+          MessageFormat.format(NOT_PERMISSION.getErrorDesc(), userName, emInstance));
     }
     File inputFile = new File(logDirSuffix, logType);
     if (!inputFile.exists()) {
-      throw new ECMErrorException(
-          LOG_IS_NOT_EXISTS.getErrorCode(),
-          MessageFormat.format(LOG_IS_NOT_EXISTS.getErrorDesc(), logDirSuffix));
+      return Message.error(MessageFormat.format(LOG_IS_NOT_EXISTS.getErrorDesc(), logDirSuffix));
     } else {
       long fileSizeInBytes = inputFile.length();
       long fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
       if (fileSizeInMegabytes > 100) {
-        throw new ECMErrorException(
-            FILE_IS_OVERSIZE.getErrorCode(),
-            MessageFormat.format(FILE_IS_OVERSIZE.getErrorDesc(), logDirSuffix));
+        return Message.error(MessageFormat.format(FILE_IS_OVERSIZE.getErrorDesc(), logDirSuffix));
       }
       ServletOutputStream outputStream = null;
       FileInputStream inputStream = null;
@@ -124,7 +134,7 @@ public class ECMRestfulApi {
           outputStream.write(buffer, 0, bytesRead);
         }
       } catch (IOException e) {
-        logger.error("download failed:", e);
+        logger.error("Download EngineLog Failed Msg :" + ECMUtils.getLog(e));
         response.reset();
         response.setCharacterEncoding(Consts.UTF_8.toString());
         response.setContentType("text/plain; charset=utf-8");
@@ -139,6 +149,7 @@ public class ECMRestfulApi {
         IOUtils.closeQuietly(fis);
         IOUtils.closeQuietly(inputStream);
       }
+      return Message.ok();
     }
   }
 }

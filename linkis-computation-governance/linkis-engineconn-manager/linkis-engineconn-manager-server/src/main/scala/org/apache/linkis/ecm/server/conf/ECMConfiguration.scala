@@ -116,4 +116,6 @@ object ECMConfiguration {
   val ECM_PROCESS_SCRIPT_KILL: Boolean =
     CommonVars[Boolean]("wds.linkis.ecm.script.kill.engineconn", true).getValue
 
+  val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
+
 }

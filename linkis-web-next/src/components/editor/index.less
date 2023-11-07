@@ -1,0 +1,61 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// @import '~@/common/style/variables.scss';
+.we-editor {
+    height: 100%;
+    width: 100%;
+    a {
+        color: #646465 !important;
+    }
+    .glyphMarginClass {
+        background: #ff9900;
+    }
+    .contentClass {
+        background: #fad8a483;
+    }
+    .inlineDecoration {
+        position: relative;
+        color: #ff9900 !important;
+        cursor: pointer;
+        font-style: oblique;
+        // wavy line(波浪线)
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background: -webkit-linear-gradient(
+                    315deg,
+                    transparent,
+                    transparent 45%,
+                    #ed4014,
+                    transparent 55%,
+                    transparent 100%
+                ),
+                -webkit-linear-gradient(45deg, transparent, transparent 45%, #ed4014, transparent
+                            55%, transparent 100%);
+            background-size: 4px 4px;
+            background-repeat: repeat-x;
+        }
+    }
+    .highRiskGrammar {
+        color: red;
+    }
+}

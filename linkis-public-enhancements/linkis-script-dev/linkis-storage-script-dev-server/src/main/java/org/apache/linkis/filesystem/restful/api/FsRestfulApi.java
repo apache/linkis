@@ -1059,7 +1059,7 @@ public class FsRestfulApi {
         sheetInfo = XlsUtils.getSheetsInfo(in, hasHeader);
       } else if (".csv".equalsIgnoreCase(suffix)) {
         res.put("type", "csv");
-        HashMap<String, String> csvMap = new HashMap<>();
+        HashMap<String, String> csvMap = new LinkedHashMap<>();
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
@@ -1081,6 +1081,8 @@ public class FsRestfulApi {
               } catch (StringIndexOutOfBoundsException e) {
                 throw WorkspaceExceptionManager.createException(80017);
               }
+            } else {
+              csvMap.put(column[0][i], "string");
             }
           }
         } else {

@@ -57,9 +57,6 @@ public class SqlConnection extends AbstractSqlConnection {
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
     super(host, port, username, password, database, extraParams);
-    // security check
-    SecurityUtils.checkJdbcConnParams(host, port, username, password, database, extraParams);
-    SecurityUtils.appendMysqlForceParams(extraParams);
     connectMessage.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
     connectMessage.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
   }
@@ -136,6 +133,16 @@ public class SqlConnection extends AbstractSqlConnection {
   public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
     Class.forName(SQL_DRIVER_CLASS.getValue());
+    // security check
+    SecurityUtils.checkJdbcConnParams(
+        connectMessage.host,
+        connectMessage.port,
+        connectMessage.username,
+        connectMessage.password,
+        database,
+        connectMessage.extraParams);
+    SecurityUtils.appendMysqlForceParams(connectMessage.extraParams);
+
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);

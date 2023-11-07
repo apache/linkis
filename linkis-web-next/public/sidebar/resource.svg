@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<svg width="12.5468839px" height="13.2289519px" viewBox="0 0 12.5468839 13.2289519" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>资源管理-常规</title>
+    <g id="参数配置-0807" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="参数配置备份" transform="translate(-18.284722, -145.020833)">
+            <g id="编组-6" transform="translate(0.000000, 54.000000)">
+                <g id="01-导航/一级标题/默认" transform="translate(0.000000, 70.000000)">
+                    <g id="资源管理-常规" transform="translate(17.000000, 20.000000)">
+                        <rect id="矩形" x="0" y="0" width="14" height="14"></rect>
+                        <g id="编组" transform="translate(1.722222, 1.458333)">
+                            <path
+                                d="M4.69444444,11.0833333 L0.527777778,11.0833333 C0.23629416,11.0833333 0,10.8470392 0,10.5555556 L0,0.527777778 C0,0.23629416 0.23629416,0 0.527777778,0 L10.0277778,0 C10.3192614,0 10.5555556,0.23629416 10.5555556,0.527777778 L10.5555556,4.95833333"
+                                id="路径" stroke="#000000" stroke-width="0.875" stroke-linecap="round"></path>
+                            <rect id="矩形" fill="#000000" x="2.06944444" y="2.91666667" width="6.125" height="1"
+                                rx="0.5"></rect>
+                            <rect id="矩形备份" fill="#000000" x="2.06944444" y="6.125" width="3.5" height="1" rx="0.5">
+                            </rect>
+                            <path
+                                d="M8.36625329,6.71371015 L10.4422517,7.77388849 L10.5621095,10.101845 L8.60596893,11.3696232 L6.52997054,10.3094448 L6.41011272,7.98148833 L8.36625329,6.71371015 Z"
+                                id="多边形" stroke="#000000" stroke-width="0.875"
+                                transform="translate(8.486111, 9.041667) rotate(-330.000000) translate(-8.486111, -9.041667) ">
+                            </path>
+                            <circle id="椭圆形" fill="#000000" cx="8.47926479" cy="9.06071342" r="1"></circle>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

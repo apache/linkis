@@ -51,6 +51,8 @@ public class EngineTypeLabelCreator {
           defaultVersion.put(
               EngineType.PYTHON().toString(), LabelCommonConfig.PYTHON_ENGINE_VERSION.getValue());
           defaultVersion.put(
+              EngineType.REPL().toString(), LabelCommonConfig.REPL_ENGINE_VERSION.getValue());
+          defaultVersion.put(
               EngineType.IO_ENGINE_FILE().toString(),
               LabelCommonConfig.FILE_ENGINE_VERSION.getValue());
           defaultVersion.put(

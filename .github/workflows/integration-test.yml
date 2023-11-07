@@ -110,11 +110,13 @@ jobs:
           ./mvnw install -Pdocker -Dmysql.connector.scope=compile -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
       - name: Set up chart-testing
-        uses: ./.github/actions/chart-testing-action
+#        uses: ./.github/actions/chart-testing-action
+        uses: helm/chart-testing-action@v2.6.0
 
 
       - name: Create Kind cluster
-        uses: ./.github/actions/kind-action
+#        uses: ./.github/actions/kind-action
+        uses: helm/kind-action@v1.4.0
         with:
           config: ${{ env.KIND_CONFIG_PATH }}
           node_image: ${{ matrix.kubernetes-version }}

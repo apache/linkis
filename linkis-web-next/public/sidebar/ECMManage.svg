@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<svg width="13px" height="13px" viewBox="0 0 13 13" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ECM管理-常规</title>
+    <g id="参数配置-0807" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="参数配置备份" transform="translate(-18.000000, -307.000000)">
+            <g id="编组-6" transform="translate(0.000000, 54.000000)">
+                <g id="01-导航/一级标题/默认" transform="translate(0.000000, 232.000000)">
+                    <g id="ECM管理-常规" transform="translate(17.000000, 20.000000)">
+                        <rect id="矩形" x="0" y="0" width="14" height="14"></rect>
+                        <g id="编组" transform="translate(1.000000, 1.000000)" fill="#000000" fill-rule="nonzero">
+                            <path
+                                d="M0.970130164,3.54538517 L6.49993605,6.34320531 L12.0297419,3.54538517 L6.49993605,0.844102986 L0.970130164,3.54538517 Z M1.7462343,7.88679513 L0.582078098,7.30794895 C0.194026033,7.11500022 0,6.82564072 0,6.43974327 C0,6.05384582 0.194026033,5.76435913 0.582078098,5.57153759 L1.7462343,4.99269141 L0.582078098,4.41384523 C0.0969490658,4.22076931 -0.097076967,3.64192313 0.0969490658,3.15948771 C0.193898132,2.96653899 0.388052066,2.77359026 0.485001131,2.77359026 L6.01493492,0.0723080761 C6.30603792,-0.024102692 6.59701302,-0.024102692 6.88811602,0.0723080761 L12.4179219,2.77359026 C12.902923,2.96653899 13.0969491,3.54538517 12.805974,4.02769339 C12.7090249,4.22064212 12.5149989,4.41359085 12.4179219,4.41359085 L11.2537657,4.99243703 L12.3209728,5.47487244 C12.805974,5.66782117 13,5.95718067 13,6.43961608 C13,6.82551353 12.805974,7.21141099 12.3209728,7.40435972 L11.2537657,7.88679513 L12.3209728,8.36923054 C12.805974,8.56217927 13,8.85153877 13,9.33397418 C13,9.71987163 12.805974,10.1057691 12.3209728,10.2987178 L6.98519298,12.9035892 C6.88811602,13 6.69408998,13 6.50006395,13 C6.30603792,13 6.20896095,13 6.01493492,12.9035892 L0.485001131,10.202307 C0.0969490658,10.0093583 0,9.71987163 0,9.33397418 C0,8.94807673 0.194026033,8.65859004 0.582078098,8.46564131 L1.7462343,7.88679513 Z M2.81344143,8.46564131 L0.970130164,9.33397418 L6.49993605,12.1317943 L12.0297419,9.43051214 L10.1864307,8.56217927 L6.98506508,10.1057691 C6.88798812,10.2021799 6.69396208,10.2021799 6.49993605,10.2021799 C6.30591002,10.2021799 6.20883305,10.2021799 6.01480702,10.1057691 L2.81344143,8.46564131 Z M10.1864307,5.5714104 L6.98506508,7.11500022 C6.69396208,7.21153818 6.40298698,7.21153818 6.11188398,7.11500022 L2.81344143,5.5714104 L0.970130164,6.43974327 L6.49993605,9.23743622 L12.0297419,6.43961608 L10.1864307,5.5714104 Z"
+                                id="形状"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

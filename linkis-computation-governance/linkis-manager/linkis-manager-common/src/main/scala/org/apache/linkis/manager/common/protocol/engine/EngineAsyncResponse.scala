@@ -28,8 +28,12 @@ trait EngineAsyncResponse extends RequestProtocol {
 case class EngineAskAsyncResponse(override val id: String, managerInstance: ServiceInstance)
     extends EngineAsyncResponse
 
-case class EngineCreateSuccess(override val id: String, engineNode: EngineNode)
-    extends EngineAsyncResponse
+case class EngineCreateSuccess(
+    override val id: String,
+    engineNode: EngineNode,
+    isReuse: Boolean = false
+) extends EngineAsyncResponse
+ extends EngineAsyncResponse
 
 case class EngineCreateError(override val id: String, exception: String, retry: Boolean = false)
     extends EngineAsyncResponse

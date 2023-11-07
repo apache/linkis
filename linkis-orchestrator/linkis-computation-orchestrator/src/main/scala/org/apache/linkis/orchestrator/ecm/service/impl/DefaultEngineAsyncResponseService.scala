@@ -36,7 +36,7 @@ class DefaultEngineAsyncResponseService extends EngineAsyncResponseService with 
 
   @Receiver
   override def onSuccess(engineCreateSuccess: EngineCreateSuccess, sender: Sender): Unit = {
-    logger.info(s"Success to create engine $engineCreateSuccess")
+    logger.info(s"Success to create/reuse engine $engineCreateSuccess")
     Utils.tryCatch(cacheMap.put(engineCreateSuccess.id, engineCreateSuccess)) { t: Throwable =>
       logger.error(s"client could be timeout, now to unlock engineNone", t)
       val requestManagerUnlock = RequestManagerUnlock(

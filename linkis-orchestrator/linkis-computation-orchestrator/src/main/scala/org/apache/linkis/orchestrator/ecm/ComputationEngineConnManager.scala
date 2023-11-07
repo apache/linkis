@@ -169,12 +169,12 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           id,
           Duration(engineAskRequest.getTimeOut + 100000, TimeUnit.MILLISECONDS)
         ) match {
-          case EngineCreateSuccess(id, engineNode) =>
+          case EngineCreateSuccess(id, engineNode, reuse) =>
             logger.info(
-              "{} async id: {} success to async get EngineNode {}",
+              "{} async id: {} success to async get create EngineNode {}",
               Array(mark.getMarkId(), id, engineNode): _*
             )
-            (engineNode, false)
+            (engineNode, reuse)
           case EngineCreateError(id, exception, retry) =>
             logger.debug(
               "{} async id: {} Failed  to async get EngineNode, {}",

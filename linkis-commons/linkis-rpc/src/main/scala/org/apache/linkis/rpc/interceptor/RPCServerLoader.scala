@@ -28,15 +28,10 @@ import java.text.MessageFormat
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
-import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer, Server}
-
 trait RPCServerLoader {
 
   @throws[NoInstanceExistsException]
   def getOrRefreshServiceInstance(serviceInstance: ServiceInstance): Unit
-
-  @throws[NoInstanceExistsException]
-  def getServer(lb: ILoadBalancer, serviceInstance: ServiceInstance): Server
 
   def getServiceInstances(applicationName: String): Array[ServiceInstance]
 
@@ -50,19 +45,12 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
 
   def refreshAllServers(): Unit
 
-  protected def refreshServerList(lb: ILoadBalancer): Unit = {
-    refreshAllServers()
-    lb match {
-      case d: DynamicServerListLoadBalancer[_] => d.updateListOfServers()
-      case _ =>
-    }
-  }
-
   private def getOrRefresh(
       refresh: => Unit,
       refreshed: => Boolean,
       serviceInstance: ServiceInstance
   ): Unit = {
+
     val instanceNotExists = new NoInstanceExistsException(
       APPLICATION_IS_NOT_EXISTS.getErrorCode,
       MessageFormat.format(
@@ -100,15 +88,6 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
     getServiceInstances(serviceInstance.getApplicationName).contains(serviceInstance),
     serviceInstance
   )
-
-  override def getServer(lb: ILoadBalancer, serviceInstance: ServiceInstance): Server = {
-    getOrRefresh(
-      refreshServerList(lb),
-      lb.getAllServers.asScala.exists(_.getHostPort == serviceInstance.getInstance),
-      serviceInstance
-    )
-    lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
-  }
 
   def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance
 

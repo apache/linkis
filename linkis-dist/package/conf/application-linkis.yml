@@ -42,6 +42,11 @@ pagehelper:
   params: countSql
 
 spring:
+  main:
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   servlet:
     multipart:
       max-file-size: 500MB

@@ -19,32 +19,17 @@ package org.apache.linkis.rpc.sender
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{Configuration => DWCConfiguration}
-import org.apache.linkis.protocol.Protocol
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
-import org.apache.linkis.rpc.conf.RPCConfiguration
-import org.apache.linkis.rpc.interceptor.{
-  RPCInterceptor,
-  RPCLoadBalancer,
-  ServiceInstanceRPCInterceptorChain
-}
-import org.apache.linkis.rpc.message.utils.LoadBalancerOptionsUtils
-import org.apache.linkis.rpc.transform.RPCConsumer
-import org.apache.linkis.server.{BDPJettyServerHelper, Message}
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
 
 import org.apache.commons.lang3.StringUtils
 
-import org.springframework.cloud.netflix.ribbon.ServerIntrospector
-import org.springframework.cloud.openfeign.ribbon.{
-  CachingSpringLoadBalancerFactory,
-  FeignLoadBalancer,
-  LoadBalancerFeignClient
-}
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties
+import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient
+import org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient
+import org.springframework.core.env.Environment
 
-import java.lang.reflect.Field
-
-import com.netflix.client.ClientRequest
-import com.netflix.client.config.IClientConfig
-import com.netflix.loadbalancer.reactive.LoadBalancerCommand
 import feign._
 
 private[rpc] class SpringMVCRPCSender private[rpc] (
@@ -59,70 +44,25 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
   override protected def createRPCInterceptorChain() =
     new ServiceInstanceRPCInterceptorChain(0, getRPCInterceptors, serviceInstance)
 
-  protected def getRPCLoadBalancers: Array[RPCLoadBalancer] =
-    RPCSpringBeanCache.getRPCLoadBalancers
+  @Autowired
+  private var env: Environment = _
 
   override protected def doBuilder(builder: Feign.Builder): Unit = {
-    val client = getClient.asInstanceOf[LoadBalancerFeignClient]
-    val newClient = new LoadBalancerFeignClient(
-      client.getDelegate,
-      new CachingSpringLoadBalancerFactory(getClientFactory) {
-        override def create(clientName: String): FeignLoadBalancer = {
-          val serverIntrospector =
-            getClientFactory.getInstance(clientName, classOf[ServerIntrospector])
-          new FeignLoadBalancer(
-            getClientFactory.getLoadBalancer(clientName),
-            getClientFactory.getClientConfig(clientName),
-            serverIntrospector
-          ) {
-            override def customizeLoadBalancerCommandBuilder(
-                request: FeignLoadBalancer.RibbonRequest,
-                config: IClientConfig,
-                builder: LoadBalancerCommand.Builder[FeignLoadBalancer.RibbonResponse]
-            ): Unit = {
-              val instance =
-                if (getRPCLoadBalancers.isEmpty) None
-                else {
-                  val requestBody = SpringMVCRPCSender.getRequest(request).body()
-                  val requestStr = new String(requestBody, DWCConfiguration.BDP_ENCODING.getValue)
-                  val obj = RPCConsumer.getRPCConsumer.toObject(
-                    BDPJettyServerHelper.gson.fromJson(requestStr, classOf[Message])
-                  )
-                  obj match {
-                    case protocol: Protocol =>
-                      var serviceInstance: Option[ServiceInstance] = None
-                      for (lb <- getRPCLoadBalancers if serviceInstance.isEmpty)
-                        serviceInstance = lb.choose(
-                          protocol,
-                          SpringMVCRPCSender.this.serviceInstance,
-                          getLoadBalancer
-                        )
-                      serviceInstance.foreach(f =>
-                        logger.info(
-                          "origin serviceInstance: " + SpringMVCRPCSender.this.serviceInstance + ", chose serviceInstance: " + f
-                        )
-                      ) // TODO just for test
-                      serviceInstance
-                    case _ => None
-                  }
-                }
-              instance
-                .orElse(Option(SpringMVCRPCSender.this.serviceInstance))
-                .filter(s => StringUtils.isNotBlank(s.getInstance))
-                .foreach { serviceInstance =>
-                  val server = RPCSpringBeanCache.getRPCServerLoader
-                    .getServer(getLoadBalancer, serviceInstance)
-                  builder.withServer(server)
-                }
-            }
-          }
-        }
-      },
-      getClientFactory
+    val client = getClient.asInstanceOf[FeignBlockingLoadBalancerClient]
+    val loadBalancerClientFactory =
+      new LinkisLoadBalancerClientFactory(serviceInstance, new LoadBalancerClientsProperties)
+
+    val blockingLoadBalancerClient: BlockingLoadBalancerClient = new BlockingLoadBalancerClient(
+      loadBalancerClientFactory
     )
-    if (RPCConfiguration.ENABLE_SPRING_PARAMS) {
-      builder.options(LoadBalancerOptionsUtils.getDefaultOptions)
-    }
+
+    val newClient = new FeignBlockingLoadBalancerClient(
+      client.getDelegate,
+      blockingLoadBalancerClient,
+      //      getLoadBalancedRetryFactory,
+      loadBalancerClientFactory
+    )
+
     super.doBuilder(builder)
     builder
       .contract(getContract)
@@ -158,20 +98,5 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
     if (StringUtils.isBlank(serviceInstance.getInstance)) {
       s"RPCSender(${serviceInstance.getApplicationName})"
     } else s"RPCSender($getApplicationName, ${serviceInstance.getInstance})"
-
-}
-
-private object SpringMVCRPCSender {
-  private var requestField: Field = _
-
-  def getRequest(req: ClientRequest): Request = {
-    if (requestField == null) synchronized {
-      if (requestField == null) {
-        requestField = req.getClass.getDeclaredField("request")
-        requestField.setAccessible(true)
-      }
-    }
-    requestField.get(req).asInstanceOf[Request]
-  }
 
 }

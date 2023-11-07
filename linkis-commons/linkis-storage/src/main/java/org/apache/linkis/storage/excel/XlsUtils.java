@@ -22,6 +22,7 @@ import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -91,9 +92,14 @@ public class XlsUtils {
     // use xls file
     Workbook workbook = null;
     try {
+      // 压缩膨胀比率，处理excel行或者列过多的情况，不能设置再小了，会导致内存过大
+      ZipSecureFile.setMinInflateRatio(0.005);
       workbook = new HSSFWorkbook(inputStream);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    } finally {
+      // 使用完最后需要还原
+      ZipSecureFile.setMinInflateRatio(0.01);
     }
     Map<String, Map<String, String>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
     // foreach Sheet

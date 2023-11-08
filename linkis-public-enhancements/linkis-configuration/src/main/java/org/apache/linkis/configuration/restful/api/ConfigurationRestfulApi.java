@@ -690,10 +690,6 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException, InstantiationException, IllegalAccessException {
     checkAdmin(ModuleUserUtils.getOperationUser(req, "saveBaseKeyValue"));
     String key = configKey.getKey();
-    String name = configKey.getName();
-    String treeName = configKey.getTreeName();
-    String description = configKey.getDescription();
-    Integer boundaryType = configKey.getBoundaryType();
     String defaultValue = configKey.getDefaultValue();
     String validateType = configKey.getValidateType();
     String validateRange = configKey.getValidateRange();
@@ -701,13 +697,14 @@ public class ConfigurationRestfulApi {
     if (StringUtils.isBlank(key)) {
       return Message.error("key cannot be empty");
     }
-    if (StringUtils.isBlank(name)) {
+    configKey.setKey(configKey.getKey().trim());
+    if (StringUtils.isBlank(configKey.getName())) {
       return Message.error("name cannot be empty");
     }
-    if (StringUtils.isBlank(description)) {
+    if (StringUtils.isBlank(configKey.getDescription())) {
       return Message.error("description cannot be empty");
     }
-    if (StringUtils.isBlank(treeName)) {
+    if (StringUtils.isBlank(configKey.getTreeName())) {
       return Message.error("treeName cannot be empty");
     }
     if (StringUtils.isBlank(validateType)) {
@@ -716,7 +713,7 @@ public class ConfigurationRestfulApi {
     if (!validateType.equals("None") && StringUtils.isBlank(validateRange)) {
       return Message.error("validateRange cannot be empty");
     }
-    if (null == boundaryType) {
+    if (null == configKey.getBoundaryType()) {
       return Message.error("boundaryType cannot be empty");
     }
     if (StringUtils.isNotEmpty(defaultValue)
@@ -730,6 +727,7 @@ public class ConfigurationRestfulApi {
               key, validateType, validateRange, defaultValue);
       throw new ConfigurationException(msg);
     }
+    configKey.setDefaultValue(configKey.getDefaultValue().trim());
     if (null == configKey.getId()) {
       List<ConfigKey> configBykey =
           configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));

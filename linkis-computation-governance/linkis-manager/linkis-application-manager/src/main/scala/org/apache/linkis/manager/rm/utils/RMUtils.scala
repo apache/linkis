@@ -19,12 +19,13 @@ package org.apache.linkis.manager.rm.utils
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.manager.am.vo.EMNodeVo
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.persistence.{
   PersistenceLabelRel,
   PersistenceResource
 }
-import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.entity.resource.{Resource, _}
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.LabelManagerUtils.labelFactory
@@ -276,29 +277,123 @@ object RMUtils extends Logging {
     }
   }
 
-  def getUserResources(
-      userLabels: util.List[PersistenceLabelRel],
+  def getUserYarnResources(
       resources: util.List[PersistenceResource]
-  ): util.ArrayList[UserResourceVo] = {
-    val userResources = new util.ArrayList[UserResourceVo]()
-    // 4. Store users and resources in Vo
+  ): util.HashMap[String, util.HashMap[String, Any]] = {
+    val userResourceMap = new util.HashMap[String, util.HashMap[String, Any]]
     resources.asScala.foreach(resource => {
       val userResource = ResourceUtils.fromPersistenceResourceAndUser(resource)
-      val userLabel = userLabels.asScala.find(_.getResourceId.equals(resource.getId)).orNull
-      if (userLabel != null) {
-        val userCreatorEngineType =
-          BDPJettyServerHelper.gson
-            .fromJson(userLabel.getStringValue, classOf[UserCreatorEngineType])
-        if (userCreatorEngineType != null) {
-          userResource.setUsername(userCreatorEngineType.getUser)
-          userResource.setCreator(userCreatorEngineType.getCreator)
-          userResource.setEngineType(userCreatorEngineType.getEngineType)
-          userResource.setVersion(userCreatorEngineType.getVersion)
-        }
-      }
-      userResources.add(RMUtils.toUserResourceVo(userResource))
+      userResourceMap.put("maxResource", getYarnResourceMap(userResource.getMaxResource))
+      userResourceMap.put("usedResource", getYarnResourceMap(userResource.getUsedResource))
+      userResourceMap.put("lockedResource", getYarnResourceMap(userResource.getLockedResource))
+      userResourceMap.put("leftResource", getYarnResourceMap(userResource.getLeftResource))
     })
-    userResources
+    userResourceMap
+  }
+
+  def getLinkisResources(
+      resources: util.List[PersistenceResource],
+      engineType: String
+  ): util.HashMap[String, util.HashMap[String, Any]] = {
+    val userResourceMap = new util.HashMap[String, util.HashMap[String, Any]]
+    resources.asScala.foreach(resource => {
+      val userResource = ResourceUtils.fromPersistenceResourceAndUser(resource)
+      userResourceMap.put("maxResource", getEcmResourceMap(userResource.getMaxResource, engineType))
+      userResourceMap.put(
+        "usedResource",
+        getEcmResourceMap(userResource.getUsedResource, engineType)
+      )
+      userResourceMap.put(
+        "lockedResource",
+        getEcmResourceMap(userResource.getLockedResource, engineType)
+      )
+      userResourceMap.put(
+        "leftResource",
+        getEcmResourceMap(userResource.getLeftResource, engineType)
+      )
+    })
+    userResourceMap
+  }
+
+  def getYarnResourceMap(resource: Resource): util.HashMap[String, Any] = {
+    val resourceMap = new util.HashMap[String, Any]
+    val yarnResource = resource.asInstanceOf[DriverAndYarnResource].yarnResource
+    resourceMap.put(
+      "queueMemory",
+      ByteTimeUtils.negativeByteStringAsGb(yarnResource.queueMemory + "b") + "G"
+    )
+    resourceMap.put("queueCpu", yarnResource.queueCores)
+    resourceMap.put("instance", yarnResource.queueInstances)
+    resourceMap
+  }
+
+  def getEcmResourceMap(resource: Resource, engineType: String): util.HashMap[String, Any] = {
+    val resourceMap = new util.HashMap[String, Any]
+    var loadInstanceResource = new LoadInstanceResource(0, 0, 0)
+    if (engineType.contains("spark")) {
+      loadInstanceResource = resource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+    } else {
+      loadInstanceResource = resource.asInstanceOf[LoadInstanceResource]
+    }
+
+    resourceMap.put(
+      "memory",
+      ByteTimeUtils.negativeByteStringAsGb(loadInstanceResource.memory + "b") + "G"
+    )
+    resourceMap.put("core", loadInstanceResource.cores)
+    resourceMap
+  }
+
+  def dealYarnData(
+      providedYarnResource: NodeResource,
+      linkisYarnResources: util.HashMap[String, util.HashMap[String, Any]]
+  ): util.HashMap[String, Any] = {
+    val yarnResource = new util.HashMap[String, Any]
+    val realYarnMap = new util.HashMap[String, Any]
+    // deal real yarn data
+    val realMaxResource = providedYarnResource.getMaxResource.asInstanceOf[YarnResource]
+    val realMaxResourceMap = new util.HashMap[String, Any]
+    realMaxResourceMap.put(
+      "queueMemory",
+      ByteTimeUtils.negativeByteStringAsGb(realMaxResource.queueMemory + "b") + "G"
+    )
+    realMaxResourceMap.put("queueCpu", realMaxResource.queueCores)
+    realMaxResourceMap.put("instance", realMaxResource.queueInstances)
+
+    val realUsedResource = providedYarnResource.getUsedResource.asInstanceOf[YarnResource]
+    val realUsedResourceMap = new util.HashMap[String, Any]
+    realUsedResourceMap.put(
+      "queueMemory",
+      ByteTimeUtils.negativeByteStringAsGb(realUsedResource.queueMemory + "b") + "G"
+    )
+    realUsedResourceMap.put("queueCpu", realUsedResource.queueCores)
+    realUsedResourceMap.put("instance", realUsedResource.queueInstances)
+
+    realYarnMap.put("queueName", realMaxResource.queueName)
+    realYarnMap.put("maxResource", realMaxResourceMap)
+    realYarnMap.put("usedResource", realUsedResourceMap)
+
+    yarnResource.put("real", realYarnMap)
+    yarnResource.put("limit", linkisYarnResources)
+    yarnResource
+  }
+
+  def dealEcmData(emList: util.List[EMNodeVo]): util.HashMap[String, Any] = {
+    val ecmDataMap = new util.HashMap[String, Any]
+    val emNodeList = new util.ArrayList[util.HashMap[String, Any]]
+    emList.asScala.foreach(emNode => {
+      val emNodeMap = new util.HashMap[String, Any]
+      emNodeMap.put("instance", emNode.getInstance())
+      emNodeMap.put("maxResource", emNode.getMaxResource())
+      emNodeMap.put("usedResource", emNode.getUsedResource())
+      emNodeMap.put("lockedResource", emNode.getLockedResource())
+      emNodeMap.put("leftResource", emNode.getLeftResource())
+      emNodeMap.put("nodeHealthy", emNode.getNodeHealthy())
+      emNodeMap.put("startTime", emNode.getStartTime())
+      emNodeList.add(emNodeMap)
+    })
+    ecmDataMap.put("list", emNodeList)
+    ecmDataMap
   }
 
 }

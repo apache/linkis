@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,11 +86,19 @@ public class EMUtils {
     } catch (IOException e) {
       logger.error("获取用户配置信息失败(Failed to obtain user configuration information)");
     }
-    return configlist;
+    return configlist.stream()
+        .filter(
+            confInfo -> {
+              String configValue = confInfo.getConfigValue();
+              String defaultValue = confInfo.getDefaultValue();
+              return (StringUtils.isNotBlank(configValue) && !configValue.equals("null"))
+                  || (StringUtils.isNotBlank(defaultValue) && !defaultValue.equals("null"));
+            })
+        .collect(Collectors.toList());
   }
 
   public static String getConfValue(List<ConfigVo> configVoList, String confKey) {
-    String confValue = "";
+    String confValue = "0";
     for (ConfigVo configVo : configVoList) {
       if (configVo.getKey().equals(confKey)) {
         confValue = configVo.getConfigValue();

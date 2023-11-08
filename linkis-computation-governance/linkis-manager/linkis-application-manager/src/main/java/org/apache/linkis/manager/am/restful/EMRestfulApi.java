@@ -62,7 +62,6 @@ import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
 import org.apache.linkis.manager.rm.domain.RMLabelContainer;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier;
-import org.apache.linkis.manager.rm.restful.vo.UserResourceVo;
 import org.apache.linkis.manager.rm.utils.RMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -548,10 +547,10 @@ public class EMRestfulApi {
       username = tokenName;
     }
     if (StringUtils.isBlank(engineType)) {
-      Message.error("parameters:engineType can't be null (请求参数【engineType】不能为空)");
+      return Message.error("parameters:engineType can't be null (请求参数【engineType】不能为空)");
     }
     if (StringUtils.isBlank(creator)) {
-      Message.error("parameters:creator can't be null (请求参数【creator】不能为空)");
+      return Message.error("parameters:creator can't be null (请求参数【creator】不能为空)");
     }
 
     // 获取用户配置信息
@@ -574,13 +573,15 @@ public class EMRestfulApi {
             labelValuePattern, RMUtils.getCombinedLabel(), 0, 0);
     List<PersistenceResource> resources =
         resourceManagerPersistence.getResourceByLabels(userLabels);
-    ArrayList<UserResourceVo> userResources = RMUtils.getUserResources(userLabels, resources);
-
+    HashMap<String, HashMap<String, Object>> linkisResources =
+        RMUtils.getLinkisResources(resources, engineType);
     Map<String, Object> yarnResource = new HashMap<>();
     boolean checkYarnResult = false;
     if (engineType.toLowerCase().contains("spark")) {
+      HashMap<String, HashMap<String, Object>> linkisYarnResources =
+          RMUtils.getUserYarnResources(resources);
       if (StringUtils.isBlank(queueName)) {
-        // 如果没有传 队列名称，从用户配置获取
+        // 如果没有传队列名称，从用户配置获取
         queueName = EMUtils.getConfValue(configlist, AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY());
       }
       // 获取yarn资源数据
@@ -592,9 +593,9 @@ public class EMRestfulApi {
           externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
       YarnResource maxResource = (YarnResource) providedYarnResource.getMaxResource();
       YarnResource usedResource = (YarnResource) providedYarnResource.getUsedResource();
-      yarnResource.put("maxResource", maxResource.toJson());
-      yarnResource.put("usedResource", usedResource.toJson());
-      // 获取用户配置值于对比yarn资源进行对比
+
+      yarnResource = RMUtils.dealYarnData(providedYarnResource, linkisYarnResources);
+      // 获取用户配置值于对比yarn真实资源进行对比
       long confMemory = Long.parseLong(EMUtils.getConfValue(configlist, "spark.executor.memory"));
       int confInstances =
           Integer.parseInt(EMUtils.getConfValue(configlist, "spark.executor.instances"));
@@ -604,7 +605,19 @@ public class EMRestfulApi {
       boolean yarnMemoryResult = maxMemory - usedMemory > confMemory * confInstances;
       boolean yarnCoresResult =
           maxResource.queueCores() - usedResource.queueCores() > confCores * confInstances;
-      checkYarnResult = yarnCoresResult && yarnMemoryResult;
+      // 用户配置值于对比资源配置yarn进行对比
+      HashMap<String, Object> linkisConfLeftResource =
+          linkisYarnResources.getOrDefault("leftResource", new HashMap<>());
+      long linkisConfLeftMemory =
+          Long.parseLong(
+              EMUtils.removeUnit(
+                  linkisConfLeftResource.getOrDefault("queueMemory", "0").toString()));
+      boolean linkisConfMemoryResult = linkisConfLeftMemory > confMemory * confInstances;
+      boolean linkisConfCoresResult =
+          Integer.parseInt(linkisConfLeftResource.getOrDefault("queueCpu", 0) + "")
+              > confCores * confInstances;
+      checkYarnResult =
+          yarnCoresResult && yarnMemoryResult && linkisConfMemoryResult && linkisConfCoresResult;
     }
     // 获取ecm列表数据
     List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
@@ -625,37 +638,49 @@ public class EMRestfulApi {
                 })
             .filter(emNodeVo -> emNodeVo.getNodeHealthy().equals(NodeHealthy.Healthy))
             .collect(Collectors.toList());
+    HashMap<String, Object> ecmResourceMap = RMUtils.dealEcmData(ecmResource);
     // 数据对比（ecm内存资源的比对)，内存剩余资源 > 引擎启动配置，剩余核心>0，剩余实例>0
-    long ecmMemory = 0L;
-    long ecmCores = 0L;
-    if (engineType.toLowerCase().equals("spark")) {
-      ecmMemory = Long.parseLong(EMUtils.getConfValue(configlist, "spark.executor.memory"));
-      ecmCores = Integer.parseInt(EMUtils.getConfValue(configlist, "spark.driver.cores"));
+    long userConfMemory = 0L;
+    int userConfCores = 0;
+    if (engineType.equals("spark")) {
+      userConfMemory = Long.parseLong(EMUtils.getConfValue(configlist, "spark.executor.memory"));
+      userConfCores = Integer.parseInt(EMUtils.getConfValue(configlist, "spark.driver.cores"));
     } else {
-      ecmMemory =
+      userConfMemory =
           Long.parseLong(
               EMUtils.getConfValue(configlist, "wds.linkis.engineconn.java.driver.memory"));
 
-      ecmCores =
+      userConfCores =
           Integer.parseInt(
               EMUtils.getConfValue(configlist, "wds.linkis.engineconn.java.driver.cores"));
     }
-    boolean ecmResult = false;
-    boolean ecmResults = false;
+    HashMap<String, Object> linkisLeftResourceMap =
+        linkisResources.getOrDefault("leftResource", new HashMap<>());
+    long linkisLeftMemory =
+        Long.parseLong(
+            EMUtils.removeUnit(linkisLeftResourceMap.getOrDefault("memory", "0").toString()));
+    int linkisLeftCores = (int) linkisLeftResourceMap.getOrDefault("core", 0);
+    boolean ecmCheckResults = false;
     for (EMNodeVo emNodeVo : ecmResource) {
-      Map leftResource = emNodeVo.getLeftResource();
-      long memory =
-          ByteTimeUtils.negativeByteStringAsGb(leftResource.get("memory").toString() + "b");
-      int cores = (int) leftResource.get("cores");
-      ecmResult = memory > ecmMemory;
-      ecmResults = cores > ecmCores;
+      Map ecmLeftResource = emNodeVo.getLeftResource();
+      long ecmLeftMemory =
+          Long.parseLong(
+              EMUtils.removeUnit(ecmLeftResource.getOrDefault("memory", "0").toString()));
+      int ecmLeftCores = (int) ecmLeftResource.getOrDefault("cores", 0);
+      boolean ecmLeftResult = ecmLeftMemory > userConfMemory;
+      boolean linkisLeft = linkisLeftMemory > userConfMemory;
+      boolean ecmLeftResults = ecmLeftCores > userConfCores;
+      boolean linkisLeftResults = linkisLeftCores > userConfCores;
+      if (ecmLeftResult && linkisLeft && ecmLeftResults && linkisLeftResults) {
+        ecmCheckResults = true;
+      }
     }
     return Message.ok()
         .data("tenant", tenant)
         .data("userConf", configlist)
-        .data("userResource", userResources)
-        .data("ecmResource", ecmResource)
+        .data("userResource", linkisResources)
+        .data("ecmResource", ecmResourceMap)
         .data("yarnResource", yarnResource)
-        .data("checkResult", checkYarnResult && ecmResult && ecmResults);
+        .data("checkResult", checkYarnResult && ecmCheckResults);
   }
 }

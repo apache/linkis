@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescriptorAdapter {
   private static final Logger logger =
-      LoggerFactory.getLogger(KubernetesOperatorClusterDescriptorAdapter.class);
+      LoggerFactory.getLogger(KubernetesApplicationClusterDescriptorAdapter.class);
 
   protected SparkConfig sparkConfig;
   protected KubernetesClient client;
@@ -66,7 +66,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
         .setJavaHome(sparkConfig.getJavaHome())
         .setSparkHome(sparkConfig.getSparkHome())
         .setMaster(sparkConfig.getK8sMasterUrl())
-        .setDeployMode(sparkConfig.getDeployMode())
+        .setDeployMode("cluster")
         .setAppName(sparkConfig.getAppName())
         .setVerbose(true);
     this.driverPodName = generateDriverPodName(sparkConfig.getAppName());
@@ -196,12 +196,16 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
   @Override
   public void close() {
     logger.info("Start to close job {}.", getApplicationId());
+    client.close();
+    if (isDisposed()) {
+      logger.info("Job has finished, close action return.");
+      return;
+    }
     PodResource<Pod> sparkDriverPodResource =
         client.pods().inNamespace(namespace).withName(driverPodName);
     if (null != sparkDriverPodResource.get()) {
       sparkDriverPodResource.delete();
     }
-    client.close();
   }
 
   @Override

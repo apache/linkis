@@ -33,7 +33,6 @@ case class EngineCreateSuccess(
     engineNode: EngineNode,
     isReuse: Boolean = false
 ) extends EngineAsyncResponse
- extends EngineAsyncResponse
 
 case class EngineCreateError(override val id: String, exception: String, retry: Boolean = false)
     extends EngineAsyncResponse

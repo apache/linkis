@@ -29,8 +29,7 @@
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_config_key`;
-CREATE TABLE `linkis_ps_configuration_config_key`
-(
+CREATE TABLE `linkis_ps_configuration_config_key`(
     `id`               bigint(20) NOT NULL AUTO_INCREMENT,
     `key`              varchar(50)  DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
     `description`      varchar(200) DEFAULT NULL,
@@ -48,7 +47,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`
     `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
     `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
     PRIMARY KEY (`id`)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_key_engine_relation`;

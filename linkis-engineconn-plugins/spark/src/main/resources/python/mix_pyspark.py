@@ -118,6 +118,7 @@ java_import(gateway.jvm, "org.apache.spark.SparkConf")
 java_import(gateway.jvm, "org.apache.spark.api.java.*")
 java_import(gateway.jvm, "org.apache.spark.api.python.*")
 java_import(gateway.jvm, "org.apache.spark.mllib.api.python.*")
+java_import(gateway.jvm, "org.apache.spark.sql.api.python.*")
 
 intp = gateway.entry_point
 

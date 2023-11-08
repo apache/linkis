@@ -99,7 +99,9 @@ public class ECMRestfulApi {
         Files.getFileAttributeView(
             Paths.get(logDirSuffix + "/" + logType), FileOwnerAttributeView.class);
     UserPrincipal owner = ownerView.getOwner();
-    if (!owner.getName().equals(userName) && Configuration.isNotAdmin(userName)) {
+    if (!owner.getName().equals(userName)
+        && Configuration.isNotAdmin(userName)
+        && Configuration.isNotJobHistoryAdmin(userName)) {
       return Message.error(
           MessageFormat.format(NOT_PERMISSION.getErrorDesc(), userName, emInstance));
     }

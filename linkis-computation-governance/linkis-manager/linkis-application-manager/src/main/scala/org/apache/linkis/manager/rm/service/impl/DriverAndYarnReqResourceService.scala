@@ -105,11 +105,18 @@ class DriverAndYarnReqResourceService(
         val (clusterMaxCapacity, clusterUsedCapacity) =
           (clusterYarnResource.getMaxResource, clusterYarnResource.getUsedResource)
 
+        val clusterCPUPercentageThreshold =
+          AMConfiguration.ACROSS_CLUSTER_TOTAL_CPU_PERCENTAGE_THRESHOLD
+        val clusterMemoryPercentageThreshold =
+          AMConfiguration.ACROSS_CLUSTER_TOTAL_MEMORY_PERCENTAGE_THRESHOLD
+
         logger.info(
           s"user: $user, creator: $creator task enter cross cluster resource judgment, " +
             s"CPUThreshold: $CPUThreshold, MemoryThreshold: $MemoryThreshold," +
-            s"CPUPercentageThreshold: $CPUPercentageThreshold, MemoryPercentageThreshold: $MemoryPercentageThreshold"
+            s"CPUPercentageThreshold: $CPUPercentageThreshold, MemoryPercentageThreshold: $MemoryPercentageThreshold" +
+            s"clusterCPUPercentageThreshold: $clusterCPUPercentageThreshold, clusterMemoryPercentageThreshold: $clusterMemoryPercentageThreshold"
         )
+
         try {
           AcrossClusterRulesJudgeUtils.acrossClusterRuleCheck(
             queueLeftResource.asInstanceOf[YarnResource],
@@ -120,7 +127,9 @@ class DriverAndYarnReqResourceService(
             CPUThreshold.toInt,
             MemoryThreshold.toInt,
             CPUPercentageThreshold.toDouble,
-            MemoryPercentageThreshold.toDouble
+            MemoryPercentageThreshold.toDouble,
+            clusterCPUPercentageThreshold,
+            clusterMemoryPercentageThreshold
           )
         } catch {
           case ex: Exception =>

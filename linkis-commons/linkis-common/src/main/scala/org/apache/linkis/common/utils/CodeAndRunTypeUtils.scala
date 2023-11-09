@@ -21,8 +21,6 @@ import org.apache.linkis.common.conf.CommonVars
 
 import org.apache.commons.lang3.StringUtils
 
-import scala.collection.mutable
-
 object CodeAndRunTypeUtils {
   private val CONF_LOCK = new Object()
 
@@ -103,14 +101,7 @@ object CodeAndRunTypeUtils {
   def getLanguageTypeAndCodeTypeRelationMap: Map[String, String] = {
     val codeTypeAndRunTypeRelationMap = getCodeTypeAndLanguageTypeRelationMap
     if (codeTypeAndRunTypeRelationMap.isEmpty) Map()
-    else {
-      // codeTypeAndRunTypeRelationMap.flatMap(x => x._2.map(y => (y, x._1)))
-      val map = mutable.Map[String, String]()
-      codeTypeAndRunTypeRelationMap.foreach(kv => {
-        kv._2.foreach(v => map.put(v, kv._1))
-      })
-      map.toMap
-    }
+    else codeTypeAndRunTypeRelationMap.flatMap(x => x._2.map(y => (y, x._1)))
   }
 
   def getLanguageTypeByCodeType(codeType: String, defaultLanguageType: String = ""): String = {

@@ -576,7 +576,7 @@ public class EMRestfulApi {
     HashMap<String, HashMap<String, Object>> linkisResources =
         RMUtils.getLinkisResources(resources, engineType);
     Map<String, Object> yarnResource = new HashMap<>();
-    boolean checkYarnResult = false;
+    boolean checkYarnResult = true;
     if (engineType.toLowerCase().contains("spark")) {
       HashMap<String, HashMap<String, Object>> linkisYarnResources =
           RMUtils.getUserYarnResources(resources);

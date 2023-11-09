@@ -79,8 +79,8 @@ public class EMUtils {
           configlist.add(
               new ConfigVo(
                   key.get("key").asText(),
-                  key.get("configValue").asText(),
-                  key.get("defaultValue").asText()));
+                  key.get("defaultValue").asText(),
+                  key.get("configValue").asText()));
         }
       }
     } catch (IOException e) {

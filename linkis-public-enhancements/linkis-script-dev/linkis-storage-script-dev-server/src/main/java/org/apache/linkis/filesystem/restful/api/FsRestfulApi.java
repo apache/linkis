@@ -1047,18 +1047,14 @@ public class FsRestfulApi {
     }
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
-    Map<String, Object> res = new HashMap<>();
     Map<String, Map<String, String>> sheetInfo;
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     try (InputStream in = fileSystem.read(fsPath)) {
       if (".xlsx".equalsIgnoreCase(suffix)) {
-        res.put("type", "xlsx");
-        sheetInfo = XlsxUtils.getSheetsInfo(in, hasHeader);
+        sheetInfo = XlsxUtils.getAllSheetInfo(in, null, hasHeader);
       } else if (".xls".equalsIgnoreCase(suffix)) {
-        res.put("type", "xls");
         sheetInfo = XlsUtils.getSheetsInfo(in, hasHeader);
       } else if (".csv".equalsIgnoreCase(suffix)) {
-        res.put("type", "csv");
         HashMap<String, String> csvMap = new LinkedHashMap<>();
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
@@ -1091,11 +1087,10 @@ public class FsRestfulApi {
           }
         }
         sheetInfo = new HashMap<>(1);
-        sheetInfo.put("Sheet1", csvMap);
+        sheetInfo.put("sheet_csv", csvMap);
       } else {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
-      res.put("sheets", sheetInfo);
       return Message.ok().data("sheetInfo", sheetInfo);
     }
   }

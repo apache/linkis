@@ -49,8 +49,8 @@
           <artifactId>spring-cloud-starter-gateway</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>jackson-core-asl</artifactId>
           <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-core-asl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

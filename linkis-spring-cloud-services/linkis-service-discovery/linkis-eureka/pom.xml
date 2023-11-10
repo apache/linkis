@@ -80,8 +80,8 @@
           <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>snakeyaml</artifactId>
           <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

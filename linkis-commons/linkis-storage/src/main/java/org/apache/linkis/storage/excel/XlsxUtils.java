@@ -17,12 +17,10 @@
 
 package org.apache.linkis.storage.excel;
 
-import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,41 +79,53 @@ public class XlsxUtils {
     }
   }
 
-  public static Map<String, Map<String, String>> getSheetsInfo(
-      InputStream inputStream, Boolean hasHeader) {
-    // use xlsx file
-    Workbook workbook = null;
+  public static Map<String, Map<String, String>> getAllSheetInfo(
+      InputStream inputStream, File file, Boolean hasHeader) throws IOException {
     try {
-      // 压缩膨胀比率，处理excel行或者列过多的情况，不能设置再小了，会导致内存过大
-      ZipSecureFile.setMinInflateRatio(0.005);
-      workbook = new XSSFWorkbook(inputStream);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } finally {
-      // 使用完最后需要还原
-      ZipSecureFile.setMinInflateRatio(0.01);
-    }
-    Map<String, Map<String, String>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
-    // foreach Sheet
-    for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-      Sheet sheet = workbook.getSheetAt(i);
-
-      Map<String, String> sheetMap = new LinkedHashMap<>();
-
-      // get first row as column name
-      Row headerRow = sheet.getRow(0);
-
-      // foreach column
-      for (int j = 0; j < headerRow.getPhysicalNumberOfCells(); j++) {
-        Cell cell = headerRow.getCell(j);
-        if (hasHeader) {
-          sheetMap.put(cell.getStringCellValue(), "string");
-        } else {
-          sheetMap.put("col_" + (j + 1), "string");
-        }
+      Workbook wb = null;
+      if (inputStream != null) {
+        wb =
+            StreamingReader.builder()
+                // number of rows to keep in memory (defaults to 10)
+                .rowCacheSize(2)
+                .open(inputStream);
+      } else {
+        wb =
+            StreamingReader.builder()
+                // number of rows to keep in memory (defaults to 10)
+                .rowCacheSize(2)
+                .open(file);
       }
-      res.put(sheet.getSheetName(), sheetMap);
+      Map<String, Map<String, String>> res = new LinkedHashMap<>(wb.getNumberOfSheets());
+      for (Sheet sheet : wb) {
+        Map<String, String> item = new HashMap<>();
+        Iterator<Row> iterator = sheet.iterator();
+        Row row = null;
+        while (iterator.hasNext() && row == null) {
+          row = iterator.next();
+        }
+
+        if (row == null) {
+          res.put(sheet.getSheetName(), new HashMap<>(0));
+          continue;
+        }
+
+        int cellIdx = 0;
+        for (Cell cell : row) {
+          if (hasHeader) {
+            item.put(cell.getStringCellValue(), "string");
+          } else {
+            item.put("col_" + (cellIdx + 1), "string");
+          }
+          cellIdx++;
+        }
+        res.put(sheet.getSheetName(), item);
+      }
+      return res;
+    } finally {
+      if (inputStream != null) {
+        inputStream.close();
+      }
     }
-    return res;
   }
 }

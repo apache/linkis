@@ -154,7 +154,7 @@ public class ExcelStorageReaderTest {
   @Test
   public void getXlsxSheetInfo() throws Exception {
     Map<String, Map<String, String>> sheetsInfo =
-        XlsxUtils.getSheetsInfo(createExcelAndGetInputStream(1), true);
+        XlsxUtils.getAllSheetInfo(createExcelAndGetInputStream(1), null, true);
     Assertions.assertTrue(sheetsInfo.containsKey("Sheet2"));
     Assertions.assertEquals("string", sheetsInfo.get("Sheet2").get("Work1"));
   }

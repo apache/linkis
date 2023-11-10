@@ -18,7 +18,6 @@
 package org.apache.linkis.ecm.restful;
 
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.util.ECMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -56,16 +55,34 @@ import static org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary.*
 public class ECMRestfulApi {
 
   private final Logger logger = LoggerFactory.getLogger(ECMRestfulApi.class);
-  private final String[] adminOperations =
-      ECMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
+  /**
+   * * Reason for using the get method: Added gateway forwarding rules, which only support get
+   * requests
+   *
+   * @param req
+   * @param response
+   * @param emInstance
+   * @param instance
+   * @param logDirSuffix
+   * @param logType
+   * @throws IOException
+   */
   @ApiOperation(
       value = "downloadEngineLog",
       notes = "download engine log",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "emInstance", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "instance", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "emInstance",
+        required = true,
+        dataType = "String",
+        example = "xxx0002:9102"),
+    @ApiImplicitParam(
+        name = "instance",
+        required = true,
+        dataType = "String",
+        example = "xxx0002:35873"),
     @ApiImplicitParam(name = "logDirSuffix", required = true, dataType = "String"),
     @ApiImplicitParam(name = "logType", required = true, dataType = "String")
   })
@@ -126,7 +143,7 @@ public class ECMRestfulApi {
         response.setCharacterEncoding(Consts.UTF_8.toString());
         java.nio.file.Path source = Paths.get(inputFile.getPath());
         response.addHeader("Content-Type", Files.probeContentType(source));
-        // filename eg:bdpdws110002_11529_stdout.txt
+        // filename eg:xxx002_11529_stdout.txt
         response.addHeader(
             "Content-Disposition",
             "attachment;filename=" + instance.replace(":", "_") + "_" + logType + ".txt");

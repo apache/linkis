@@ -663,9 +663,10 @@ public class EMRestfulApi {
     boolean ecmCheckResults = false;
     for (EMNodeVo emNodeVo : ecmResource) {
       Map ecmLeftResource = emNodeVo.getLeftResource();
+
       long ecmLeftMemory =
-          Long.parseLong(
-              EMUtils.removeUnit(ecmLeftResource.getOrDefault("memory", "0").toString()));
+          ByteTimeUtils.negativeByteStringAsGb(
+              ecmLeftResource.getOrDefault("memory", "0").toString() + "b");
       int ecmLeftCores = (int) ecmLeftResource.getOrDefault("cores", 0);
       boolean ecmLeftResult = ecmLeftMemory > userConfMemory;
       boolean linkisLeft = linkisLeftMemory > userConfMemory;

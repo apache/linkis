@@ -27,14 +27,11 @@ import org.apache.linkis.gateway.springcloud.http.{
 }
 import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.cloud.client
-import org.springframework.cloud.client.DefaultServiceInstance
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.gateway.config.{GatewayAutoConfiguration, GatewayProperties}
 import org.springframework.cloud.gateway.filter._
@@ -44,8 +41,6 @@ import org.springframework.cloud.gateway.route.builder.{
   PredicateSpec,
   RouteLocatorBuilder
 }
-import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient
-import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import org.springframework.web.reactive.socket.server.WebSocketService
@@ -133,127 +128,6 @@ class SpringCloudGatewayConfiguration {
     )
     .build()
 
-  //  @Bean
-  //  def createLoadBalancerClient(springClientFactory: SpringClientFactory): RibbonLoadBalancerClient =
-  //    new RibbonLoadBalancerClient(springClientFactory) {
-  //
-  //      override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
-  //        val serviceInstance = getServiceInstance(serviceId)
-  //        logger.info("redirect to " + serviceInstance)
-  //        val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-  //        lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
-  //      } else super.getServer(serviceId)
-  //
-  //      def isSecure(server: Server, serviceId: String) = {
-  //        val config = springClientFactory.getClientConfig(serviceId)
-  //        val serverIntrospector = serverIntrospectorFun(serviceId)
-  //        RibbonUtils.isSecure(config, serverIntrospector, server)
-  //      }
-  //
-  //      def serverIntrospectorFun(serviceId: String) = {
-  //        var serverIntrospector =
-  //          springClientFactory.getInstance(serviceId, classOf[ServerIntrospector])
-  //        if (serverIntrospector == null) serverIntrospector = new DefaultServerIntrospector
-  //        serverIntrospector
-  //      }
-  //
-  //      override def choose(serviceId: String, hint: Any): client.ServiceInstance =
-  //        if (isMergeModuleInstance(serviceId)) {
-  //          val serviceInstance = getServiceInstance(serviceId)
-  //          logger.info("redirect to " + serviceInstance)
-  //          val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-  //          val serverOption =
-  //            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance)
-  //          if (serverOption.isDefined) {
-  //            val server = serverOption.get
-  //            new RibbonLoadBalancerClient.RibbonServer(
-  //              serviceId,
-  //              server,
-  //              isSecure(server, serviceId),
-  //              serverIntrospectorFun(serviceId).getMetadata(server)
-  //            )
-  //          } else {
-  //            logger.warn(
-  //              "RibbonLoadBalancer not have Server, execute default super choose method" + serviceInstance
-  //            )
-  //            super.choose(serviceInstance.getApplicationName, hint)
-  //          }
-  //        } else super.choose(serviceId, hint)
-  //
-  //    }
-
-  @Bean
-  def createLoadBalancerClient(
-      loadBalancerClientFactory: LoadBalancerClientFactory
-  ): BlockingLoadBalancerClient =
-    new BlockingLoadBalancerClient(loadBalancerClientFactory) {
-
-      override def choose(serviceId: String): client.ServiceInstance = {
-        //  serviceId = merge-gw-18linkis-cg-entrance192—168—217–172—9104
-        if (isMergeModuleInstance(serviceId)) {
-          // serviceInstance = (linkis-cg-entrance,192.168.217.172:9104)
-          val serviceInstance = getServiceInstance(serviceId)
-          logger.info("redirect to " + serviceInstance)
-
-          val serverOption: Option[ServiceInstance] = ServiceInstanceUtils.getRPCServerLoader
-            .getServiceInstances(serviceInstance.getApplicationName)
-            .find(_.getInstance == serviceInstance.getInstance)
-
-          if (serverOption.isDefined) {
-            val server = serverOption.get
-            // serviceInstance.getApplicationName = linkis-cg-entrance
-            //            super.choose(server.getApplicationName)
-            //            SpringCloudFeignConfigurationCache.getDiscoveryClient
-            //                        .getInstances(server.getApplicationName).get(0)
-            val hostAndPort: Array[String] = server.getInstance.split(":")
-            new DefaultServiceInstance(
-              server.getApplicationName,
-              serviceId,
-              hostAndPort.head,
-              hostAndPort.last.toInt,
-              true
-            )
-          } else {
-            logger.warn(
-              "BlockingLoadBalancer not have Server, execute default super choose method" + serviceInstance
-            )
-            super.choose(serviceInstance.getApplicationName)
-          }
-        } else super.choose(serviceId)
-      }
-
-    }
-
-  //  @Bean
-  //  def createLoadBalancerClient(
-  //      loadBalancerClientFactory: LoadBalancerClientFactory
-  //  ): BlockingLoadBalancerClient =
-  //    new BlockingLoadBalancerClient(loadBalancerClientFactory) {
-  //      override def choose(serviceId: String): client.ServiceInstance = {
-  //        //  serviceId = merge-gw-18linkis-cg-entrance192—168—217–172—9104
-  //        if (isMergeModuleInstance(serviceId)) {
-  //          // serviceInstance = (linkis-cg-entrance,192.168.217.172:9104)
-  //          val serviceInstance = getServiceInstance(serviceId)
-  //          logger.info("redirect to " + serviceInstance)
-  //
-  //          val serverOption: Option[client.ServiceInstance] = SpringCloudFeignConfigurationCache.getDiscoveryClient
-  //            .getInstances(serviceInstance.getApplicationName).iterator()
-  //            .asScala.find(s => s.getHost + ":" + s.getPort == serviceInstance.getInstance)
-  //
-  //          if (serverOption.isDefined) {
-  //            val server: client.ServiceInstance = serverOption.get
-  //            // serviceInstance.getApplicationName = linkis-cg-entrance
-  // //            super.choose(serviceInstance.getApplicationName)
-  //            super.choose(server.getServiceId)
-  //          } else {
-  //            logger.warn(
-  //              "BlockingLoadBalancer not have Server, execute default super choose method" + serviceInstance
-  //            )
-  //            super.choose(serviceId)
-  //          }
-  //        } else super.choose(serviceId)
-  //      }
-  //    }
   @Bean
   @ConditionalOnProperty(name = Array("spring.cloud.gateway.url.enabled"), matchIfMissing = true)
   def linkisGatewayHttpHeadersFilter(): LinkisGatewayHttpHeadersFilter = {

@@ -27,6 +27,7 @@ import org.apache.linkis.gateway.security.LinkisPreFilter;
 import org.apache.linkis.gateway.security.LinkisPreFilter$;
 import org.apache.linkis.gateway.security.SecurityFilter;
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
+import org.apache.linkis.gateway.springcloud.constant.GatewayConstant;
 import org.apache.linkis.server.Message;
 
 import org.apache.commons.lang3.StringUtils;
@@ -118,7 +119,8 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     return gatewayContext;
   }
 
-  private Route getRealRoute(Route route, ServiceInstance serviceInstance) {
+  private Route getRealRoute(
+      Route route, ServiceInstance serviceInstance, ServerWebExchange exchange) {
     String routeUri = route.getUri().toString();
     String scheme = route.getUri().getScheme();
     if (routeUri.startsWith(SpringCloudGatewayConfiguration.ROUTE_URI_FOR_WEB_SOCKET_HEADER())) {
@@ -130,7 +132,10 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     }
     String uri = scheme + serviceInstance.getApplicationName();
     if (StringUtils.isNotBlank(serviceInstance.getInstance())) {
-      uri = scheme + SpringCloudGatewayConfiguration.mergeServiceInstance(serviceInstance);
+      exchange
+          .getRequest()
+          .mutate()
+          .header(GatewayConstant.FIXED_INSTANCE, serviceInstance.getInstance());
     }
     return Route.async()
         .id(route.getId())
@@ -196,7 +201,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     }
     Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
     if (serviceInstance != null) {
-      Route realRoute = getRealRoute(route, serviceInstance);
+      Route realRoute = getRealRoute(route, serviceInstance, exchange);
       exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR, realRoute);
     } else {
       RouteDefinition realRd = null;

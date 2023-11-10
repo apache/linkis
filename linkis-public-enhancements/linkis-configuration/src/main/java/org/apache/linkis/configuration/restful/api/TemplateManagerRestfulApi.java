@@ -52,10 +52,9 @@ import org.slf4j.LoggerFactory;
 @Api(tags = "configuration template")
 @RestController
 @RequestMapping(path = "/configuration/template")
-public class ConfigurationTemplateRestfulApi {
+public class TemplateManagerRestfulApi {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(ConfigurationTemplateRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(TemplateManagerRestfulApi.class);
 
   @Autowired private TemplateConfigKeyService templateConfigKeyService;
 

@@ -30,7 +30,7 @@ public class CommonLockSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public CommonLockService getDefaultLockManagerPersistence(CommonLockMapper commonLockMapper) {
+  public CommonLockService getCommonLockService(CommonLockMapper commonLockMapper) {
     DefaultCommonLockService defaultCommonLockService = new DefaultCommonLockService();
     defaultCommonLockService.setLockManagerMapper(commonLockMapper);
     return defaultCommonLockService;

@@ -32,7 +32,7 @@
 
     <sql id="udf_Version_List">
         "id", "udf_id", "path", "bml_resource_id", "bml_resource_version", "is_published","register_format",
-        "use_format", "description", "create_time","md5"
+        "use_format", "description", "create_time","md5","update_time"
     </sql>
 
     <sql id="udf_Version_List_Insert">
@@ -47,7 +47,7 @@
         ) VALUES (
         #{udfId,jdbcType=BIGINT},#{path,jdbcType=VARCHAR},#{bmlResourceId,jdbcType=VARCHAR},
         #{bmlResourceVersion,jdbcType=VARCHAR},#{isPublished,jdbcType=TINYINT},#{registerFormat,jdbcType=VARCHAR},
-        #{useFormat,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{md5,jdbcType=VARCHAR}
+        #{useFormat,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{md5,jdbcType=VARCHAR},now()
         )
     </insert>
 
@@ -65,7 +65,7 @@
     </select>
 
     <update id="updatePublishStatus">
-        update linkis_ps_udf_version set is_published=#{isPublished} where udf_id=#{udfId} and
+        update linkis_ps_udf_version set is_published=#{isPublished},update_time =now() where udf_id=#{udfId} and
         bml_resource_version=#{version}
     </update>
 

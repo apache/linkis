@@ -26,6 +26,8 @@ data:
     DROP TABLE IF EXISTS `linkis_ps_configuration_key_engine_relation`;
     DROP TABLE IF EXISTS `linkis_ps_configuration_config_value`;
     DROP TABLE IF EXISTS `linkis_ps_configuration_category`;
+    DROP  TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
+    DROP  TABLE IF EXISTS `linkis_ps_configutation_lm_across_cluster_rule`;
     DROP TABLE IF EXISTS `linkis_ps_job_history_group_history`;
     DROP TABLE IF EXISTS `linkis_ps_job_history_detail`;
     DROP TABLE IF EXISTS `linkis_ps_common_lock`;
@@ -84,19 +86,23 @@ data:
     DROP TABLE IF EXISTS `linkis_mg_gateway_auth_token`;
   {{- end }}
 
-    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_config_key`(
-    `id` bigint(20) NOT NULL AUTO_INCREMENT,
-    `key` varchar(50) DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
-    `description` varchar(200) DEFAULT NULL,
-    `name` varchar(50) DEFAULT NULL,
-    `default_value` varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
-    `validate_type` varchar(50) DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
-    `validate_range` varchar(50) DEFAULT NULL COMMENT 'Validate range',
-    `engine_conn_type` varchar(50) DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
-    `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
-    `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
-    `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
-    `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    CREATE TABLE `linkis_ps_configuration_config_key`(
+    `id`               bigint(20) NOT NULL AUTO_INCREMENT,
+    `key`              varchar(50)  DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
+    `description`      varchar(200) DEFAULT NULL,
+    `name`             varchar(50)  DEFAULT NULL,
+    `default_value`    varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
+    `validate_type`    varchar(50)  DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
+    `validate_range`   varchar(50)  DEFAULT NULL COMMENT 'Validate range',
+    `engine_conn_type` varchar(50)  DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
+    `is_hidden`        tinyint(1)   DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
+    `is_advanced`      tinyint(1)   DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
+    `level`            tinyint(1)   DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
+    `treeName`         varchar(20)  DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    `boundary_type`     int(2) NOT NULL DEFAULT '0'  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
+    `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
+    `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
+    `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -132,7 +138,37 @@ data:
     PRIMARY KEY (`id`),
     UNIQUE INDEX(`label_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
+    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_limit_for_user` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `user_name` VARCHAR(50) NOT NULL COMMENT 'username',
+    `combined_label_value` VARCHAR(128) NOT NULL COMMENT 'Combined label combined_userCreator_engineType such as hadoop-IDE,spark-2.4.3',
+    `key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT 'configuration value',
+    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'upper limit value',
+    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Lower limit value (reserved)',
+    `latest_update_template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid template id recorded by the third party',
+    `is_valid` VARCHAR(2) DEFAULT 'Y' COMMENT 'Is it valid? Reserved Y/N',
+    `create_by` VARCHAR(50) NOT NULL COMMENT 'Creator',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Update by',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+    CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
+    id INT AUTO_INCREMENT COMMENT 'Rule ID, auto-increment primary key',
+    cluster_name char(32) NOT NULL COMMENT 'Cluster name, cannot be empty',
+    creator char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    username char(32) NOT NULL COMMENT 'User, cannot be empty',
+    create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time, cannot be empty',
+    create_by char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    update_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Modification time, cannot be empty',
+    update_by char(32) NOT NULL COMMENT 'Updater, cannot be empty',
+    rules varchar(256) NOT NULL COMMENT 'Rule content, cannot be empty',
+    is_valid VARCHAR(2) DEFAULT 'N' COMMENT 'Is it valid Y/N',
+    PRIMARY KEY (id),
+    UNIQUE KEY idx_creator_username (creator, username)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
     --
     -- New linkis job
     --
@@ -146,7 +182,7 @@ data:
     `labels` text DEFAULT NULL COMMENT 'job labels',
     `params` text DEFAULT NULL COMMENT 'job params',
     `progress` varchar(32) DEFAULT NULL COMMENT 'Job execution progress',
-    `status` varchar(50) DEFAULT NULL COMMENT 'Script execution status, must be one of the following: Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout',
+    `status` varchar(50) DEFAULT NULL,
     `log_path` varchar(200) DEFAULT NULL COMMENT 'File path of the job log',
     `error_code` int DEFAULT NULL COMMENT 'Error code. Generated when the execution of the script fails',
     `error_desc` varchar(1000) DEFAULT NULL COMMENT 'Execution description. Generated when the execution of script fails',
@@ -180,6 +216,7 @@ data:
     CREATE TABLE IF NOT EXISTS `linkis_ps_common_lock` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `locker` varchar(255) COLLATE utf8_bin NOT NULL,
     `time_out` longtext COLLATE utf8_bin,
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -195,6 +232,8 @@ data:
     CREATE TABLE IF NOT EXISTS `linkis_ps_udf_manager` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `user_name` varchar(20) DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -207,6 +246,8 @@ data:
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `udf_id` bigint(20) NOT NULL,
     `shared_group` varchar(50) NOT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -214,7 +255,9 @@ data:
     (
     `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `udf_id` bigint(20) NOT NULL,
-    `user_name` varchar(50) NOT NULL
+    `user_name` varchar(50) NOT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
     -- ----------------------------
@@ -229,7 +272,8 @@ data:
     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_parent_name_uname_category` (`parent`,`name`,`user_name`,`category`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
@@ -241,7 +285,10 @@ data:
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `udf_id` bigint(20) NOT NULL,
     `user_name` varchar(50) NOT NULL,
-    PRIMARY KEY (`id`)
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+     PRIMARY KEY (`id`),
+     UNIQUE KEY `uniq_uid_uname` (`udf_id`, `user_name`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
     CREATE TABLE IF NOT EXISTS `linkis_ps_udf_baseinfo` (
@@ -271,6 +318,7 @@ data:
     `use_format` varchar(255) DEFAULT NULL,
     `description` varchar(255) NOT NULL COMMENT 'version desc',
     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `md5` varchar(100) DEFAULT NULL,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -503,7 +551,8 @@ data:
     `max_version` int(20) DEFAULT 10 COMMENT 'The default is 10, which means to keep the latest 10 versions',
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Updated time',
     `updator` varchar(50) DEFAULT NULL COMMENT 'updator',
-    `enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+    `enable_flag` tinyint(1) NOT NULL DEFAULT '1' ,
+    unique key `uniq_rid_eflag`(`resource_id`, `enable_flag`),
        PRIMARY KEY (`id`)
     ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
@@ -522,7 +571,7 @@ data:
     `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Stoped time',
     `client_ip` varchar(200) NOT NULL COMMENT 'Client ip',
     `updator` varchar(50) DEFAULT NULL COMMENT 'updator',
-    `enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+    `enable_flag` tinyint(1) NOT NULL DEFAULT '1',
     unique key `resource_id_version`(`resource_id`, `version`),
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -565,7 +614,7 @@ data:
     `operation` varchar(20) NOT NULL COMMENT 'Operation type. upload = 0, update = 1',
     `state` varchar(20) NOT NULL DEFAULT 'Schduled' COMMENT 'Current status of the task:Schduled, Running, Succeed, Failed,Cancelled',
     `submit_user` varchar(20) NOT NULL DEFAULT '' COMMENT 'Job submission user name',
-    `system` varchar(20) DEFAULT 'dss' COMMENT 'Subsystem name: wtss',
+    `system` varchar(20) DEFAULT 'dss',
     `instance` varchar(128) NOT NULL COMMENT 'Material library example',
     `client_ip` varchar(50) DEFAULT NULL COMMENT 'Request IP',
     `extra_params` text COMMENT 'Additional key information. Such as the resource IDs and versions that are deleted in batches, and all versions under the resource are deleted',
@@ -1008,12 +1057,6 @@ data:
     INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.cores', '取值范围：只能取1，单位：个', 'spark驱动器核心个数', '1', 'NumInterval', '[1,1]', '0', '1', '1', 'spark资源设置','spark');
     INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.memory', '取值范围：1-15，单位：G', 'spark驱动器内存大小','1g', 'Regex', '^([1-9]|1[0-5])(G|g)$', '0', '0', '1', 'spark资源设置', 'spark');
     INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.max.free.time', '取值范围：3m,15m,30m,1h,2h', '引擎空闲退出时间','1h', 'OFT', '[\"1h\",\"2h\",\"30m\",\"15m\",\"3m\"]', '0', '0', '1', 'spark引擎设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.pd.addresses', NULL, NULL, 'pd0:2379', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.addr', NULL, NULL, 'tidb', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.password', NULL, NULL, NULL, 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.port', NULL, NULL, '4000', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.user', NULL, NULL, 'root', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
-    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'spark引擎设置', 'spark');
     -- hive
     INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'hive引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'hive');
     INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小','1g', 'Regex', '^([1-9]|10)(G|g)$', '0', '0', '1', 'hive引擎设置', 'hive');
@@ -1231,8 +1274,9 @@ data:
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01101','ECM资源不足，请联系管理员扩容','ECM resources are insufficient',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01102','ECM 内存资源不足，请联系管理员扩容','ECM memory resources are insufficient',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01103','ECM CPU资源不足，请联系管理员扩容','ECM CPU resources are insufficient',0);
-    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','ECM 实例资源不足，请联系管理员扩容','ECM Insufficient number of instances',0);
-    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01005','机器内存不足，请联系管理员扩容','Cannot allocate memory',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01104','ECM 实例资源不足，请联系管理员扩容','ECM Insufficient number of instances',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01105','机器内存不足，请联系管理员扩容','Cannot allocate memory',0);
+
 
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12001','队列CPU资源不足，可以调整Spark执行器个数','Queue CPU resources are insufficient',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12002','队列内存资源不足，可以调整Spark执行器个数','Insufficient queue memory',0);
@@ -1256,8 +1300,11 @@ data:
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','Spark app应用退出，可能是复杂任务导致','Spark application has already stopped',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','Spark context退出，可能是复杂任务导致','Spark application sc has already stopped',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','Pyspark子进程意外退出，可能是复杂任务导致','Pyspark process  has stopped',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13009','您的任务因为引擎退出（退出可能是引擎进程OOM或者主动kill引擎）导致失败','ERROR EC exits unexpectedly and actively kills the task',0);
+
     -- 21 cluster Authority  22 db Authority
-    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue (\\S+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue ([A-Za-z._0-9]+)',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21002','创建Python解释器失败，请联系管理员','initialize python executor failed',0);
     INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21003','创建单机Python解释器失败，请联系管理员','PythonSession process cannot be initialized',0);
 

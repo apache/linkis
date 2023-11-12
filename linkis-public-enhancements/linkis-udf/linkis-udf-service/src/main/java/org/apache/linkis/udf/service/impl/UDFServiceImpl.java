@@ -113,6 +113,8 @@ public class UDFServiceImpl implements UDFService {
     // 锁同一用户
     CommonLock commonLock = new CommonLock();
     commonLock.setLockObject(userName + _LOCK);
+    commonLock.setCreator(userName);
+    commonLock.setLocker(Utils.getLocalHostname());
     commonLock.setCreateTime(new Date());
     commonLock.setUpdateTime(new Date());
     try {
@@ -322,6 +324,8 @@ public class UDFServiceImpl implements UDFService {
     //        udfInfo.setPath(StringUtils.replace(udfInfo.getPath(), "file://", ""));
     CommonLock persistenceLock = new CommonLock();
     persistenceLock.setLockObject(userName + _LOCK);
+    persistenceLock.setCreator(userName);
+    persistenceLock.setLocker(Utils.getLocalHostname());
     persistenceLock.setCreateTime(new Date());
     persistenceLock.setUpdateTime(new Date());
     try {

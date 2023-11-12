@@ -30,7 +30,7 @@ public enum LinkisConfigurationErrorCodeSummary implements LinkisErrorCode {
   CONFIGKEY_CANNOT_BE_NULL(14100, "ConfigKey cannot be null(configKey 不能为空)"),
   CONFIG_KEY_NOT_EXISTS(14100, "Config key not exists:{0}(配置键不存在：{0})"),
   LABEL_NOT_EXISTS(14100, "Label not exists:{0}(标签不存在{0})"),
-  KEY_OR_VALUE_CANNOT(14100, "Key or value cannot be null(键或值不能为空)"),
+  KEY_CANNOT_EMPTY(14100, "Key cannot be null(Key 不能为空)"),
   PARAMS_CANNOT_BE_EMPTY(14100, "Params cannot be empty!(参数不能为空！)"),
   TOKEN_IS_ERROR(14100, "Token is error(令牌是错误的)"),
   IS_NULL_CANNOT_BE_ADDED(14100, "CategoryName is null, cannot be added(categoryName 为空，无法添加)"),
@@ -39,9 +39,9 @@ public enum LinkisConfigurationErrorCodeSummary implements LinkisErrorCode {
   ENGINE_TYPE_IS_NULL(14100, "Engine type is null, cannot be added(引擎类型为空，无法添加)"),
   INCORRECT_FIXED_SUCH(
       14100,
-      "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-3.2.1(保存的引擎类型参数有误，请按照固定格式传送，例如spark-3.2.1)"),
+      "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)"),
   INCOMPLETE_RECONFIRM(14100, "Incomplete request parameters, please reconfirm(请求参数不完整，请重新确认)"),
-  ONLY_ADMIN_CAN_MODIFY(14100, "Only admin can modify category(只有管理员才能修改目录)"),
+  ONLY_ADMIN_PERFORM(14100, "Only admin have permission to perform this operation(限管理员执行此操作)"),
   THE_LABEL_PARAMETER_IS_EMPTY(14100, " The label parameter is empty(标签参数为空)"),
   ERROR_VALIDATOR_RANGE(14100, "Error validator range！(错误验证器范围！)"),
   TYPE_OF_LABEL_NOT_SUPPORTED(14100, "This type of label is not supported:{0}(不支持这种类型的标签：{0})");

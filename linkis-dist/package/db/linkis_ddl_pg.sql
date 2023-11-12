@@ -40,10 +40,12 @@ CREATE TABLE linkis_ps_configuration_config_key (
 	is_hidden bool NULL,
 	is_advanced bool NULL,
 	"level" int2 NULL,
+    boundary_type int2 null,
 	"treeName" varchar(20) NULL,
 	en_description varchar(200) NULL,
 	en_name varchar(100) NULL,
 	"en_treeName" varchar(100) NULL,
+    `boundary_type`     int2 NOT NULL,
 	CONSTRAINT linkis_configuration_config_key_pkey PRIMARY KEY (id)
 );
 COMMENT ON COLUMN "linkis_ps_configuration_config_key"."key" IS 'Set key, e.g. spark.executor.instances';
@@ -58,7 +60,7 @@ COMMENT ON COLUMN "linkis_ps_configuration_config_key"."treeName" IS 'Reserved f
 COMMENT ON COLUMN "linkis_ps_configuration_config_key"."treeName" IS 'english description';
 COMMENT ON COLUMN "linkis_ps_configuration_config_key"."treeName" IS 'english name';
 COMMENT ON COLUMN "linkis_ps_configuration_config_key"."treeName" IS 'english treeName';
-
+CREATE UNIQUE INDEX uniq_key_ectype ON linkis_ps_configuration_config_key USING btree ("key","engine_conn_type");
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_key_engine_relation";
 CREATE TABLE linkis_ps_configuration_key_engine_relation (
@@ -98,6 +100,53 @@ CREATE TABLE linkis_ps_configuration_category (
 );
 CREATE UNIQUE INDEX uniq_label_id_cc ON linkis_ps_configuration_category USING btree (label_id);
 
+DROP TABLE IF EXISTS linkis_ps_configuration_template_config_key;
+CREATE TABLE linkis_ps_configuration_template_config_key (
+    id BIGINT PRIMARY KEY NOT NULL,
+    template_name VARCHAR(200) NOT NULL,
+    template_uuid VARCHAR(36) NOT NULL,
+    key_id BIGINT NOT NULL,
+    config_value VARCHAR(200) NULL DEFAULT NULL,
+    max_value VARCHAR(50) NULL DEFAULT NULL,
+    min_value VARCHAR(50) NULL DEFAULT NULL,
+    validate_range VARCHAR(50) NULL DEFAULT NULL,
+    is_valid VARCHAR(2) DEFAULT 'Y',
+    create_by VARCHAR(50) NOT NULL,
+    create_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    update_by VARCHAR(50) NULL DEFAULT NULL,
+    update_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
+
+DROP  TABLE IF EXISTS linkis_ps_configuration_key_limit_for_user;
+CREATE TABLE IF NOT EXISTS linkis_ps_configuration_key_limit_for_user (
+    id bigint NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    user_name varchar(50) NOT NULL,
+    combined_label_value varchar(128) NOT NULL,
+    key_id bigint NOT NULL,
+    config_value varchar(200) NULL DEFAULT NULL,
+    max_value varchar(50) NULL DEFAULT NULL,
+    min_value varchar(50) NULL DEFAULT NULL,
+    latest_update_template_uuid varchar(36) NOT NULL,
+    is_valid varchar(2) DEFAULT 'Y',
+    create_by varchar(50) NOT NULL,
+    create_time timestamp without time zone DEFAULT now(),
+    update_by varchar(50) NULL DEFAULT NULL,
+    update_time timestamp without time zone DEFAULT now()
+    );
+
+DROP  TABLE IF EXISTS linkis_ps_configutation_lm_across_cluster_rule;
+CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
+    rule_id INT PRIMARY KEY AUTOINCREMENT,
+    cluster_name varchar(32) NOT NULL,
+    creator varchar(32) NOT NULL,
+    username varchar(32) NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    create_by varchar(32) NOT NULL,
+    update_time TIMESTAMP NOT NULL DEFAULT NOW(),
+    update_by varchar(32),
+    rules TEXT NOT NULL,
+    is_valid varchar(1) DEFAULT'N'
+);
 
 DROP TABLE IF EXISTS "linkis_ps_job_history_group_history";
 CREATE TABLE linkis_ps_job_history_group_history (
@@ -176,6 +225,7 @@ DROP TABLE IF EXISTS "linkis_ps_common_lock";
 CREATE TABLE linkis_ps_common_lock (
 	id bigserial NOT NULL,
 	lock_object varchar(255) NULL,
+    locker varchar(255) NOT NULL,
     time_out text NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -188,6 +238,8 @@ DROP TABLE IF EXISTS "linkis_ps_udf_manager";
 CREATE TABLE linkis_ps_udf_manager (
 	id bigserial NOT NULL,
 	user_name varchar(20) NULL,
+    update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
+    create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_udf_manager_pkey PRIMARY KEY (id)
 );
 
@@ -197,6 +249,8 @@ CREATE TABLE linkis_ps_udf_shared_group (
 	id bigserial NOT NULL,
 	udf_id int8 NOT NULL,
 	shared_group varchar(50) NOT NULL,
+    update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
+    create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_udf_shared_group_pkey PRIMARY KEY (id)
 );
 
@@ -206,6 +260,8 @@ CREATE TABLE linkis_ps_udf_shared_info (
 	id bigserial NOT NULL,
 	udf_id int8 NOT NULL,
 	user_name varchar(50) NOT NULL,
+    update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
+    create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_ps_udf_shared_info_pkey PRIMARY KEY (id)
 );
 
@@ -224,16 +280,18 @@ CREATE TABLE linkis_ps_udf_tree (
 );
 COMMENT ON COLUMN "linkis_ps_udf_tree"."name" IS 'Category name of the function. It would be displayed in the front-end';
 COMMENT ON COLUMN "linkis_ps_udf_tree"."category" IS 'Used to distinguish between udf and function';
-
+CREATE UNIQUE INDEX uniq_parent_name_uname_category ON linkis_ps_udf_tree USING btree (parent,name,user_name,category);
 
 DROP TABLE IF EXISTS "linkis_ps_udf_user_load";
 CREATE TABLE linkis_ps_udf_user_load (
     id bigserial NOT NULL,
 	udf_id int4 NOT NULL,
 	user_name varchar(50) NOT NULL,
+    update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
+    create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_ps_udf_user_load_pkey PRIMARY KEY (id)
 );
-
+CREATE UNIQUE INDEX uniq_uid_uname ON linkis_ps_udf_user_load USING btree (udf_id, user_name);
 
 DROP TABLE IF EXISTS "linkis_ps_udf_baseinfo";
 CREATE TABLE linkis_ps_udf_baseinfo (
@@ -264,6 +322,7 @@ CREATE TABLE linkis_ps_udf_version (
 	use_format varchar(255) NULL,
 	description varchar(255) NOT NULL,
 	create_time timestamptz(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	md5 varchar(100) NULL,
 	CONSTRAINT linkis_ps_udf_version_pkey PRIMARY KEY (id)
 );
@@ -509,7 +568,7 @@ COMMENT ON COLUMN "linkis_ps_bml_resources"."max_version" IS '默认为10，指�
 COMMENT ON COLUMN "linkis_ps_bml_resources"."update_time" IS '更新时间';
 COMMENT ON COLUMN "linkis_ps_bml_resources"."updator" IS '更新者';
 COMMENT ON COLUMN "linkis_ps_bml_resources"."enable_flag" IS '状态，1：正常，0：冻结';
-
+CREATE UNIQUE INDEX uniq_rid_eflag ON linkis_ps_bml_resources USING btree (resource_id, enable_flag);
 
 DROP TABLE IF EXISTS "linkis_ps_bml_resources_version";
 CREATE TABLE linkis_ps_bml_resources_version (

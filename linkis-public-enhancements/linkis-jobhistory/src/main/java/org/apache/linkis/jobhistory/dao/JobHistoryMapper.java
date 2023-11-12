@@ -33,12 +33,10 @@ public interface JobHistoryMapper {
   void updateJobHistory(JobHistory jobReq);
 
   List<JobHistory> searchWithIdOrderAsc(
-      @Param("id") Long id,
-      @Param("umUser") String username,
-      @Param("status") List<String> status,
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
-      @Param("engineType") String engineType);
+      @Param("startId") Long startId,
+      @Param("status") List<String> status);
 
   List<JobHistory> search(
       @Param("id") Long id,

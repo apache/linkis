@@ -33,7 +33,7 @@ object LogUtils {
   }
 
   def generateERROR(rawLog: String): String = {
-    getTimeFormat + " " + "ERROR" + " " + rawLog
+    getTimeFormat + " " + ERROR_STR + " " + rawLog
   }
 
   def generateWarn(rawLog: String): String = {
@@ -51,5 +51,7 @@ object LogUtils {
   def generateSystemWarn(rawLog: String): String = {
     getTimeFormat + " " + "SYSTEM-WARN" + " " + rawLog
   }
+
+  val ERROR_STR = "ERROR"
 
 }

@@ -73,7 +73,7 @@ public class LinkisErrorCodeHandler
     return linkisErrorCodeHandler;
   }
 
-  private LinkisErrorCodeHandler() {}
+  public LinkisErrorCodeHandler() {}
 
   static {
     // Initialize our timing thread and other thread pools through the getInstance method.

@@ -20,6 +20,7 @@ package org.apache.linkis.filesystem.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
+import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
 import org.apache.linkis.filesystem.entity.LogLevel;
@@ -42,6 +43,7 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 
@@ -88,14 +90,13 @@ public class FsRestfulApi {
    * @param userName
    * @return
    */
-  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+  private boolean checkIsUsersDirectory(String requestPath, String userName, Boolean withAdmin) {
+    // 配置文件默认关闭检查，withadmin默认true，特殊情况传false 开启权限检查（
+    // The configuration file defaults to disable checking, with admin defaulting to true, and in
+    // special cases, false is passed to enable permission checking）
     boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
-    if (!ownerCheck) {
+    if (!ownerCheck && withAdmin) {
       LOGGER.debug("not check filesystem owner.");
-      return true;
-    }
-    if (requestPath.contains(WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue()))
-        || Configuration.isAdmin(userName)) {
       return true;
     }
     requestPath = requestPath.toLowerCase().trim() + "/";
@@ -106,7 +107,11 @@ public class FsRestfulApi {
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (Configuration.isJobHistoryAdmin(userName)) {
+    // 管理员修改其他用户文件目录时，会导致用户无法使用文件，故此优化管理员不能修改(When administrators modify the file directory of other
+    // users,
+    // it will cause users to be unable to use the file, so the optimization administrator cannot
+    // modify it)
+    if (withAdmin && Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
@@ -115,6 +120,10 @@ public class FsRestfulApi {
     LOGGER.debug("enginconnPath:" + enginconnPath);
     LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
+  }
+
+  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+    return checkIsUsersDirectory(requestPath, userName, true);
   }
 
   @ApiOperation(value = "getUserRootPath", notes = "get user root path", response = Message.class)
@@ -233,7 +242,7 @@ public class FsRestfulApi {
       PathValidator$.MODULE$.validate(oldDest, userName);
       PathValidator$.MODULE$.validate(newDest, userName);
     }
-    if (!checkIsUsersDirectory(newDest, userName)) {
+    if (!checkIsUsersDirectory(newDest, userName, false)) {
       throw WorkspaceExceptionManager.createException(80010, userName, newDest);
     }
     if (StringUtils.isEmpty(oldDest)) {
@@ -561,6 +570,7 @@ public class FsRestfulApi {
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
       @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
+      @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
       @RequestParam(value = "limitBytes", defaultValue = "0") Long limitBytes,
       @RequestParam(value = "limitColumnLength", defaultValue = "0") Integer limitColumnLength)
       throws IOException, WorkSpaceException {
@@ -582,7 +592,13 @@ public class FsRestfulApi {
     FileSource fileSource = null;
     try {
       fileSource = FileSource.create(fsPath, fileSystem);
+      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
+        nullValue = "";
+      }
       if (FileSource.isResultSet(fsPath.getPath())) {
+        if (!StringUtils.isEmpty(nullValue)) {
+          fileSource.addParams("nullValue", nullValue);
+        }
         fileSource = fileSource.page(page, pageSize);
       }
       if (limitBytes > 0) {
@@ -853,7 +869,12 @@ public class FsRestfulApi {
       if (fsPathListWithError == null) {
         throw WorkspaceExceptionManager.createException(80029);
       }
-      FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
+
+      List<FsPath> fsPathList = fsPathListWithError.getFsPaths();
+      // sort asc by _num.dolphin of num
+      ResultSetUtils.sortByNameNum(fsPathList);
+      FsPath[] fsPaths = fsPathList.toArray(new FsPath[] {});
+
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
       Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
       if (limit > 0) {
@@ -867,7 +888,9 @@ public class FsRestfulApi {
       response.setCharacterEncoding(StandardCharsets.UTF_8.name());
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
-      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
+      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
+        nullValue = "";
+      }
       fileSource = FileSource.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
       if (!FileSource.isTableResultSet(fileSource)) {
         throw WorkspaceExceptionManager.createException(80024);
@@ -952,7 +975,10 @@ public class FsRestfulApi {
         res.put("sheetName", info.get(0));
       } else {
         String[][] column = null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
+        // fix csv file with utf-8 with bom chart[&#xFEFF]
+        BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
+
         String header = reader.readLine();
         if (StringUtils.isEmpty(header)) {
           throw WorkspaceExceptionManager.createException(80016);

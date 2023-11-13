@@ -532,7 +532,7 @@ public class EMRestfulApi {
     @ApiImplicitParam(name = "tenant", dataType = "String", defaultValue = "tenant"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
-  @RequestMapping(path = "/taskprediction", method = RequestMethod.GET)
+  @RequestMapping(path = "/task-prediction", method = RequestMethod.GET)
   public Message taskprediction(
       HttpServletRequest req,
       @RequestParam(value = "username", required = false) String username,
@@ -542,9 +542,9 @@ public class EMRestfulApi {
       @RequestParam(value = "queueName", required = false) String queueName,
       @RequestParam(value = "tenant", required = false) String tenant)
       throws PersistenceErrorException, RMErrorException {
-    String tokenName = ModuleUserUtils.getOperationUser(req, "taskprediction");
+    String loginUser = ModuleUserUtils.getOperationUser(req, "taskprediction");
     if (StringUtils.isBlank(username)) {
-      username = tokenName;
+      username = loginUser;
     }
     if (StringUtils.isBlank(engineType)) {
       return Message.error("parameters:engineType can't be null (请求参数【engineType】不能为空)");

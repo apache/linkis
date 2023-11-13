@@ -24,13 +24,15 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.MDQErrorException
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
+import org.apache.linkis.governance.common.constant.CodeConstants
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.protocol.mdq.{DDLRequest, DDLResponse}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.storage.utils.StorageUtils
 
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
-import org.springframework.util.StringUtils
 
 import javax.annotation.PostConstruct
 
@@ -63,6 +65,13 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
     if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) {
       return code
     }
+    if (StringUtils.isBlank(code)) {
+      return code
+    }
+    if (CodeConstants.SCALA_CODE_AUTO_APPEND_CODE.equalsIgnoreCase(code.trim)) {
+      return code
+    }
+
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)
     val params = new util.HashMap[String, Object]()
     params.put("user", StorageUtils.getJvmUser)

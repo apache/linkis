@@ -71,7 +71,7 @@ class MultiUserEngineReuseLabelChooser extends EngineReuseLabelChooser with Logg
         val userAdmin = userMap.get(engineTypeLabel.getEngineType)
         val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
         logger.info(
-          s"For multi user engine to reset userCreatorLabel user ${userCreatorLabel.getUser} to Admin $userAdmin "
+          s"For multi user engine to reset userCreatorLabel user ${userCreatorLabel.getUser} to admin $userAdmin "
         )
         userCreatorLabel.setUser(userAdmin)
         return labels.asJava

@@ -22,6 +22,8 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineplugin.spark.common.SparkKind
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.extension.SparkPostExecutionHook
+import org.apache.linkis.governance.common.constant.CodeConstants
+import org.apache.linkis.governance.common.constant.job.TaskInfoConstants
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
 import org.apache.linkis.rpc.Sender
@@ -49,6 +51,12 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
       executeResponse: ExecuteResponse,
       code: String
   ): Unit = {
+    if (StringUtils.isBlank(code)) {
+      return
+    }
+    if (CodeConstants.SCALA_CODE_AUTO_APPEND_CODE.equalsIgnoreCase(code.trim)) {
+      return
+    }
     val codeLanguageLabel = engineExecutionContext.getLabels
       .filter(l => null != l && l.isInstanceOf[CodeLanguageLabel])
       .head

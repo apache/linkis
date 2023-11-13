@@ -96,7 +96,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
       } else {
         if (concurrentExecutor.isIdle())
           synchronized (EXECUTOR_STATUS_LOCKER) {
-            LOG.info("monitor turn to executor status from busy to unlock");
+            LOG.info("monitor turn to executor status from unlock to busy");
             concurrentExecutor.transition(NodeStatus.Busy);
           }
       }

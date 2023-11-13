@@ -98,7 +98,7 @@ public class XlsxUtils {
       }
       Map<String, Map<String, String>> res = new LinkedHashMap<>(wb.getNumberOfSheets());
       for (Sheet sheet : wb) {
-        Map<String, String> item = new HashMap<>();
+        Map<String, String> item = new LinkedHashMap<>();
         Iterator<Row> iterator = sheet.iterator();
         Row row = null;
         while (iterator.hasNext() && row == null) {

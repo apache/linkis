@@ -176,7 +176,6 @@
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.springframework:spring-webmvc:jar</exclude>
                 <exclude>org.tukaani:xz:jar</exclude>
-                <exclude>org.yaml:snakeyaml:jar</exclude>
                 <exclude>software.amazon.ion:ion-java:jar</exclude>
                 <exclude>xerces:xercesImpl:jar</exclude>
                 <exclude>xmlenc:xmlenc:jar</exclude>

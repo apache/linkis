@@ -6,9 +6,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,27 +21,49 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-engineconn-plugins</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>hbase-shims-1.2.1</artifactId>
 
-  <modules>
-    <module>hive</module>
-    <module>spark</module>
-    <module>python</module>
-    <module>openlookeng</module>
-    <module>io_file</module>
-    <module>shell</module>
-    <module>pipeline</module>
-    <module>jdbc</module>
-    <module>flink</module>
-    <module>sqoop</module>
-    <module>presto</module>
-    <module>trino</module>
-    <module>elasticsearch</module>
-    <module>seatunnel</module>
-    <module>hbase</module>
-  </modules>
+  <properties>
+    <hbase.version>1.2.1</hbase.version>
+  </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-common</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.scala-lang.modules</groupId>
+          <artifactId>scala-xml_2.11</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-server</artifactId>
+      <version>${hbase.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-testing-util</artifactId>
+      <version>${hbase.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -25,6 +25,7 @@ import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.yarn.YarnClientYarnClusterInformationRetriever;
 import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnLogConfigUtil;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.client.api.YarnClient;
@@ -33,7 +34,12 @@ import org.apache.hadoop.yarn.exceptions.YarnException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +65,16 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
   private void initYarnClient(Configuration configuration) {
     checkNotNull(configuration);
     String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
+    List<String> paths = configuration.get(YarnConfigOptions.SHIP_FILES);
+    Optional<String> firstLog4jPath =
+        paths.stream().filter(path -> path.contains(FlinkEnvConfiguration.FLINK_CONSTANT_CONFIGURATION().getValue())).findFirst();
+    if (firstLog4jPath.isPresent()) {
+      Path parentAbsolutePath = Paths.get(firstLog4jPath.get()).toAbsolutePath().getParent();
+      configurationDirectory = parentAbsolutePath.toString();
+      LOG.info(FlinkEnvConfiguration.FLINK_CONSTANT_CONFIGURATION().getValue()+ "path：" + configurationDirectory);
+    } else {
+      LOG.info("No matching path found,Use system default path ：" + configurationDirectory);
+    }
     YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
     String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);
     this.configuration = configuration;

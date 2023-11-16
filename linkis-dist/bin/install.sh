@@ -304,25 +304,25 @@ fi
 currentTime=`date +%Y%m%d%H%M%S`
 
 ##eureka
-sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-eureka.yml
-sed -i ${txt}  "s#port:.*#port: $EUREKA_PORT#g" $LINKIS_HOME/conf/application-eureka.yml
-sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-eureka.yml
+sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-eureka.properties
+sed -i ${txt}  "s#port:.*#port: $EUREKA_PORT#g" $LINKIS_HOME/conf/application-eureka.properties
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-eureka.properties
 
 ##server application.yml
-sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.yml
-sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.yml
+sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.properties
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.properties
 
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-engineconn.yml
 sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-engineconn.yml
 
 if [ "$EUREKA_PREFER_IP" == "true" ]; then
-  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-eureka.yml
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-eureka.properties
 
-  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-linkis.yml
-  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-linkis.properties
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.properties
 
   sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-engineconn.yml
-  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.properties
 
   sed -i ${txt}  "s#linkis.discovery.prefer-ip-address.*#linkis.discovery.prefer-ip-address=true#g" $common_conf
 fi
@@ -448,8 +448,8 @@ if [ "true" == "$PROMETHEUS_ENABLE" ]
 then
   echo "prometheus is enabled"
   sed -i ${txt}  "s#\#wds.linkis.prometheus.enable.*#wds.linkis.prometheus.enable=true#g" $common_conf
-  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
-  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-eureka.yml
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.properties
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-eureka.properties
   sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-engineconn.yml
 fi
 

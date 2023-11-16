@@ -76,6 +76,8 @@
       "hideAdvancedSearch": "Hide Advanced Search",
       "manageView": "Switch to the Admin View",
       "back": "Back",
+      "download": "Download Log",
+      "confirmText": "Confirm downloading the log",
       "prev": "Previous Step",
       "complete": "Complete",
       "close": "Close",

@@ -67,6 +67,7 @@
       :current="page.pageNow"
       :total="page.totalPage"
       @on-change="changePage"
+      show-total
       size="small"
       show-elevator
       :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"

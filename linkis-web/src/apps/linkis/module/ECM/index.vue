@@ -399,14 +399,14 @@ export default {
       this.page.pageNow = 1;
     },
     // search(搜索)
-    search(e) {
+    async search(e) {
       let param = {
         instance: e.instance.replace(/ /g, ''),
         nodeHealthy: e.nodeHealthy,
         owner: e.owner,
         tenantLabel: e.tenant,
       }
-      api.fetch('/linkisManager/listAllEMs',param,'get').then((res)=>{
+      await api.fetch('/linkisManager/listAllEMs',param,'get').then((res)=>{
         this.tableData = res.EMs
       })
 

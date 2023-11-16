@@ -76,6 +76,8 @@
           "hideAdvancedSearch": "隐藏高级筛选",
           "manageView": "切换管理员视图",
           "back": "返回",
+          "download": "下载日志",
+          "confirmText": "确认下载该日志",
           "prev": "上一步",
           "complete": "完成",
           "close": "关闭",

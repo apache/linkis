@@ -388,16 +388,29 @@ export default {
   },
   computed: {
   },
-  created() {
+  async created() {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(async (res) => {
       this.isLogAdmin = res.admin;
-      this.initExpandList();
+      if(this.isLogAdmin) {
+        this.isAdminModel = true;
+        this.page = {
+          totalSize: 0,
+          sizeOpts: [15, 30, 45],
+          pageSize: 15,
+          pageNow: 1
+        }
+        await this.search()
+      } else {
+        await this.initExpandList();
+      }
       this.getKeyList();
+      
     })
-    api.fetch('/linkisManager/rm/engineType', 'get').then(res => {
+    await api.fetch('/linkisManager/rm/engineType', 'get').then(res => {
       this.engines =  ['all'].concat(res.engineType)
     })
+    
 
   },
   methods: {
@@ -576,17 +589,22 @@ export default {
       }
       return data;
     },
-    switchAdmin() {
+    async switchAdmin() {
       this.isAdminModel = !this.isAdminModel
-      this.page = {
-        totalSize: 0,
-        sizeOpts: [15, 30, 45],
-        pageSize: 15,
-        pageNow: 1
+      if(this.isAdminModel) {
+        this.page = {
+          totalSize: 0,
+          sizeOpts: [15, 30, 45],
+          pageSize: 15,
+          pageNow: 1
+        }
+        this.search()
+      } else {
+        await this.initExpandList();
       }
-      this.search()
+      
     },
-    search() {
+    async search() {
       const param = {
         username: this.searchBar.userName,
         creator: this.searchBar.appType,
@@ -594,7 +612,7 @@ export default {
         page: this.page.pageNow,
         size: this.page.pageSize
       }
-      api.fetch('/linkisManager/rm/allUserResource', param, 'get').then((res) => {
+      await api.fetch('/linkisManager/rm/allUserResource', param, 'get').then((res) => {
         this.adminTableData = res.resources
         this.page.totalSize = res.total
       }).catch(() => {

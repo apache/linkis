@@ -69,7 +69,7 @@
       </div>
       <div class="queue-app">
         <div class="queue-app-item pl60">Num Pending Applications: {{infos.queueInfo.numPendingApps}}</div>
-      </div>l
+      </div>
       <div class="queue-manager-top">
         <span class="queue-manager-title">{{ $t('message.common.resourceSimple.ZYSYPHB') }}</span>
         <div

@@ -98,15 +98,29 @@ export default {
       isAdminModel: false,
       jobhistoryTask: null,
       hasEngine: false,
+      param: {}
     }
   },
   created() {
     this.hasResultData = false
   },
-  mounted() {
+  async mounted() {
     let taskID = this.$route.query.taskID
     let engineInstance = this.$route.query.engineInstance
-    this.initHistory(taskID, engineInstance);
+
+    if(engineInstance) {
+      let url = '/linkisManager/ecinfo/ecrHistoryList?';
+      const endDate = new Date(); 
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 3);
+      url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+      const res = await api.fetch(url,'get')
+      const param = res.engineList[0]
+      this.param = param;
+      this.hasEngine = !!param;
+         
+    }
+    this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85
   },
@@ -131,6 +145,18 @@ export default {
             desc: this.$t('message.linkis.serverTip')
           })
         }
+      } else if(name === 'engineLog') {
+        if(this.param) {
+          this.$refs.logPanel.getLogs(0, {
+            applicationName: "linkis-cg-engineconn",
+            emInstance: this.param?.ecmInstance || '',
+            instance: this.param?.serviceInstance || '',
+            ticketId: this.param?.ticketId || '',
+            engineType: this.param?.engineType || '',
+            logDirSuffix: this.param?.logDirSuffix || '',
+          })
+        }
+
       }
     },
     changeResultSet(data, cb) {
@@ -299,30 +325,8 @@ export default {
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
     // Get historical details(获取历史详情)
-    async initHistory(jobId, engineInstance) {
+    async initHistory(jobId) {
       try {
-        if(engineInstance) {
-          this.hasEngine = true;
-          let url = '/linkisManager/ecinfo/ecrHistoryList?';
-          const endDate = new Date(); 
-          const startDate = new Date();
-          startDate.setMonth(startDate.getMonth() - 3);
-          url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
-          const res = await api.fetch(url,'get')
-          const param = res.engineList[0]
-          if(param) {
-            this.$refs.logPanel.getLogs(0, {
-              applicationName: "linkis-cg-engineconn",
-              emInstance: param?.ecmInstance || '',
-              instance: param?.serviceInstance || '',
-              ticketId: param?.ticketId || '',
-              engineType: param?.engineType || '',
-              logDirSuffix: param?.logDirSuffix || '',
-            })
-          } else {
-            this.hasEngine = false
-          }
-        }
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
         this.jobhistoryTask = option

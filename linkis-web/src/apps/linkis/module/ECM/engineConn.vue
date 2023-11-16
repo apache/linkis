@@ -224,11 +224,12 @@ export default {
                   click: () => {
                     this.showviewlog = true
                     this.$refs.logPanel.clearLogs()
+                    
                     this.$refs.logPanel.getLogs(0, {
-                      emInstance: params.row.emInstance,
-                      instance: params.row.instance,
-                      applicationName: params.row.applicationName,
-                      engineType: params.row.engineType,
+                      emInstance: params?.row?.emInstance || '',
+                      instance: params?.row?.instance || '',
+                      applicationName: params?.row?.applicationName || '',
+                      engineType: params?.row?.engineType || '',
                     })
                   }
                 }

@@ -78,6 +78,7 @@
       @on-change="changePage"
       size="small"
       show-elevator
+      show-total
       :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
       style="position: absoulute; bottom: 10px; overflow: hidden; text-align: center;"
     ></Page>

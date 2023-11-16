@@ -84,6 +84,7 @@
       :page-size="page.pageSize"
       :current="page.pageNow"
       :total="page.totalPage"
+      show-total
       @on-change="changePage"
       size="small"
       show-elevator

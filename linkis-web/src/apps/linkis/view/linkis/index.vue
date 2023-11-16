@@ -366,6 +366,7 @@ export default {
     // Whether the result set can be downloaded
     api.fetch('/user/baseinfo', 'get').then((res) => {
       storage.set('resultSetExportEnable', res.resultSetExportEnable ? true : false,'session')
+      storage.set('clusterInfo', res.linkisClusterName || '')
     })
   },
   methods: {

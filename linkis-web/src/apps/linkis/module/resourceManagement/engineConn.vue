@@ -207,11 +207,11 @@ export default {
                     this.$refs.logPanel.clearLogs();
                     this.$refs.logPanel.getLogs(0, {
                       applicationName: "linkis-cg-engineconn",
-                      emInstance: params.row.ecmInstance,
-                      instance: params.row.serviceInstance,
-                      ticketId: params.row.ticketId,
-                      engineType: params.row.engineType,
-                      logDirSuffix: params.row.logDirSuffix,
+                      emInstance: params?.row?.ecmInstance || '',
+                      instance: params?.row?.serviceInstance || '',
+                      ticketId: params?.row?.ticketId || '',
+                      engineType: params?.row?.engineType || '',
+                      logDirSuffix: params?.row?.logDirSuffix || '',
                     })
                   }
                 }
@@ -334,7 +334,7 @@ export default {
       this.$refs.search.search(true);
     },
     // search(搜索)
-    search(e) {
+    async search(e) {
       let url = '/linkisManager/ecinfo/ecrHistoryList?';
       if (e.instance) url += `instance=${e.instance?.replace(/ /g, '') || ''}&`
       if (e.owner) url += `creator=${e.owner}&`
@@ -351,9 +351,9 @@ export default {
       if (e.status) url += `status=${e.status}&`
       if (this.page.pageNow) url += `pageNow=${this.page.pageNow}&`
       if (this.page.pageSize) url += `pageSize=${this.page.pageSize}`
-      api.fetch(url,'get').then((res)=>{
+      await api.fetch(url,'get').then((res)=>{
         this.tableData=res.engineList
-        this.page.totalSize = res.totalPage ? res.totalPage : this.page.totalSize;
+        this.page.totalSize = res.totalPage ? res.totalPage : res.engineList.length;
       })
     },
     // time format conversion(时间格式转换)

@@ -81,7 +81,7 @@ import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasou
     produces = {"application/json"})
 public class DataSourceCoreRestfulApi {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DataSourceCoreRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(DataSourceCoreRestfulApi.class);
 
   @Autowired private DataSourceInfoService dataSourceInfoService;
 
@@ -850,6 +850,10 @@ public class DataSourceCoreRestfulApi {
           if (StringUtils.isNotBlank(keyDefinition.getDefaultValue())
               && !connectParams.containsKey(key)) {
             connectParams.put(key, keyDefinition.getDefaultValue());
+            logger.info(
+                "connectParams put key:{} with default value:{}",
+                key,
+                keyDefinition.getDefaultValue());
           }
         });
 
@@ -857,6 +861,7 @@ public class DataSourceCoreRestfulApi {
         (k, v) -> {
           if (v instanceof String) {
             connectParams.put(k, v.toString().trim());
+            logger.info("connectParams put key:{} with value:{}", k, v.toString().trim());
           }
         });
   }

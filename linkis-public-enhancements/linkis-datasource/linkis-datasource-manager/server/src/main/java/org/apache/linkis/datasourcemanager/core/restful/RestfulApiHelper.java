@@ -31,8 +31,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** Helper of restful api entrance */
 public class RestfulApiHelper {
+
+  private static final Logger logger = LoggerFactory.getLogger(RestfulApiHelper.class);
   /**
    * If is administrator
    *
@@ -65,9 +70,10 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
+            Object password = connectParams.get(keyDefinition.getKey());
             if (null != password) {
-              connectParams.put(keyDefinition.getKey(), CryptoUtils.object2String(password));
+              connectParams.put(
+                  keyDefinition.getKey(), CryptoUtils.object2String(String.valueOf(password)));
             }
           }
         });
@@ -84,9 +90,10 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
+            Object password = connectParams.get(keyDefinition.getKey());
             if (null != password) {
-              connectParams.put(keyDefinition.getKey(), CryptoUtils.string2Object(password));
+              connectParams.put(
+                  keyDefinition.getKey(), CryptoUtils.string2Object(String.valueOf(password)));
             }
           }
         });
@@ -107,6 +114,7 @@ public class RestfulApiHelper {
     } catch (WarnException e) {
       return Message.warn(e.getMessage());
     } catch (Exception e) {
+      e.printStackTrace();
       return Message.error(failMessage, e);
     }
   }

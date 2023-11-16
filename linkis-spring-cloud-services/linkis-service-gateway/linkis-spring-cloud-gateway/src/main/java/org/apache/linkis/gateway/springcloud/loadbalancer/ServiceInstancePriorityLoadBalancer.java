@@ -18,6 +18,8 @@
 package org.apache.linkis.gateway.springcloud.loadbalancer;
 
 import org.apache.linkis.gateway.springcloud.constant.GatewayConstant;
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
+import org.apache.linkis.rpc.exception.NoInstanceExistsException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,7 @@ import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBal
 import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -94,25 +97,37 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
   private Response<ServiceInstance> getInstanceResponse(
       List<ServiceInstance> instances, String clientIp) {
     if (instances.isEmpty()) {
-      if (log.isWarnEnabled()) {
-        log.warn("No servers available for service: " + serviceId);
-      }
+      log.warn("No servers available for service: " + serviceId);
       return new EmptyResponse();
     }
     int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
 
-    if (StringUtils.isEmpty(clientIp)) {
+    if (StringUtils.isBlank(clientIp)) {
       return new DefaultResponse(instances.get(pos % instances.size()));
     }
+    String[] ipAndPort = clientIp.split(":");
+    if (ipAndPort.length != 2) {
+      throw new NoInstanceExistsException(
+          LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
+          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
+    }
+    ServiceInstance chooseInstance = null;
     for (ServiceInstance instance : instances) {
-      String[] ipAndPort = clientIp.split(":");
-      if (ipAndPort.length == 2
-          && Objects.equals(ipAndPort[0], instance.getHost())
+      if (Objects.equals(ipAndPort[0], instance.getHost())
           && Objects.equals(ipAndPort[1], instance.getPort())) {
-        return new DefaultResponse(instance);
+        chooseInstance = instance;
+        break;
       }
     }
-
-    return new DefaultResponse(instances.get(pos % instances.size()));
+    if (null == chooseInstance) {
+      throw new NoInstanceExistsException(
+          LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode(),
+          MessageFormat.format(
+              LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorDesc(),
+              clientIp,
+              serviceId));
+    } else {
+      return new DefaultResponse(chooseInstance);
+    }
   }
 }

@@ -251,6 +251,19 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     result
   }
 
+  override def killTask(taskID: String): Unit = {
+    logger.info(s"Start to kill scala task: $taskID")
+    super.killTask(taskID)
+
+    if (null != sparkILoop && SparkConfiguration.SPARK_SCALA_KILL_COLSE_ILOOP_ENABLE.getValue) {
+      logger.info(s"Start to kill sparkILoop task $taskID")
+      Utils.tryAndWarn(sparkILoop.closeInterpreter())
+    } else {
+      logger.info(s"Skip to kill sparkILoop task: $taskID")
+    }
+
+  }
+
   private def matchFatalLog(errorMsg: String): Boolean = {
     var flag = false
     if (StringUtils.isNotBlank(errorMsg)) {

@@ -194,7 +194,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
                   userRunningNumber.addNumber(astContext.getExecuteUser, astContext.getLabels)
                 logger.info(
                   s"user key ${userRunningNumber.getKey(astContext.getLabels, astContext.getExecuteUser)}, " +
-                    s"executionTaskId $executionTaskId to addNumber: ${oldNumber + 1}"
+                    s"executionTaskId $executionTaskId to addNumber: ${oldNumber + 1}, maxRunning:${maxRunning}"
                 )
                 taskRunnerBuffer
               } else {

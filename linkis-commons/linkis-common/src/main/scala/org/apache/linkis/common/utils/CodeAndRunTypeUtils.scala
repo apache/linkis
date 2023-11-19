@@ -18,6 +18,7 @@
 package org.apache.linkis.common.utils
 
 import org.apache.linkis.common.conf.CommonVars
+
 import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable

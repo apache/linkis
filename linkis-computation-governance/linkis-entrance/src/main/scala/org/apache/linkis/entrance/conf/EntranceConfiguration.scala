@@ -223,4 +223,44 @@ object EntranceConfiguration {
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", false)
 
+  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", true).getValue
+
+  val ENTRANCE_FAILOVER_SCAN_INIT_TIME =
+    CommonVars("linkis.entrance.failover.scan.init.time", 3 * 1000).getValue
+
+  val ENTRANCE_FAILOVER_SCAN_INTERVAL =
+    CommonVars("linkis.entrance.failover.scan.interval", 30 * 1000).getValue
+
+  val ENTRANCE_FAILOVER_DATA_NUM_LIMIT =
+    CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
+
+  val ENTRANCE_FAILOVER_DATA_INTERVAL_TIME =
+    CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("1d").toLong).getValue
+
+  // if true, the waitForRetry job in runningJobs can be failover
+  val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED =
+    CommonVars("linkis.entrance.failover.retry.job.enable", false)
+
+  val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
+
+  // if true, the job in ConsumeQueue can be failover
+  val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
+    CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
+
+  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
+
+  val ENTRANCE_GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
+
+  val ENTRANCE_GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
+
+  val ENTRANCE_FAILOVER_RETAIN_METRIC_ENGINE_CONN_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.metric.engine.conn.enable", false)
+
+  val ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.metric.yarn.resource.enable", false)
+
+  // if true, job whose status is running will be set to Cancelled
+  val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
+    CommonVars("linkis.entrance.failover.running.kill.enable", false)
+
 }

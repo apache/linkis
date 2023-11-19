@@ -38,6 +38,8 @@ public interface JobHistoryQueryService {
 
     JobRespProtocol query(JobReqQuery jobReqQuery);
 
+    JobRespProtocol queryFailoverJobs(RequestFailoverJob requestFailoverJob);
+
     JobHistory getJobHistoryByIdAndName(Long jobID, String userName);
 
     List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance);

@@ -15,17 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.constant;
+package org.apache.linkis.protocol.engine
 
-/** unify bean's spring config name */
-public final class ServiceNameConsts {
-  private ServiceNameConsts() {}
-
-  public static final String ENTRANCE_CONTEXT = "entranceContext";
-
-  public static final String ENTRANCE_SERVER = "entranceServer";
-
-  public static final String ENTRANCE_INTERCEPTOR = "entranceInterceptors";
-
-  public static final String ENTRANCE_FAILOVER_SERVER = "entranceFailoverServer";
-}
+case class JobInstance(
+    status: String,
+    instances: String,
+    jobReqId: String,
+    createTimestamp: Long,
+    instanceRegistryTimestamp: Long
+)

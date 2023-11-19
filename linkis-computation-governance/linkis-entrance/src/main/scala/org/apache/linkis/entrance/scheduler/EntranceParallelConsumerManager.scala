@@ -77,7 +77,6 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
   }
 
   def refreshAllGroupMaxAllowRunningJobs(validInsCount: Int): Unit = {
-    if (validInsCount <= 1) return
     listConsumers()
       .foreach(item => {
         item.getGroup match {

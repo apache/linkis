@@ -87,8 +87,10 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends 
 
   override def getHeaders: JMap[String, Array[String]] = headers
 
-  override def addHeader(headerName: String, headers: Array[String]): Unit =
+  override def addHeader(headerName: String, headers: Array[String]): Unit = {
+    this.headers.put(headerName, headers)
     addHeaders.put(headerName, headers)
+  }
 
   override def addCookie(cookieName: String, cookies: Array[Cookie]): Unit = {
     this.cookies.put(cookieName, cookies)

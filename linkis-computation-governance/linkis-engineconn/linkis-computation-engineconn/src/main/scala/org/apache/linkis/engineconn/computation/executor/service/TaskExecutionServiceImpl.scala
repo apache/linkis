@@ -187,7 +187,7 @@ class TaskExecutionServiceImpl
       if (!lockService.isLockExist(requestTask.getLock)) {
         logger.error(s"Lock ${requestTask.getLock} not exist, cannot execute.")
         return ErrorExecuteResponse(
-          "Lock not exixt",
+          "Lock not exist",
           new EngineConnExecutorErrorException(
             EngineConnExecutorErrorCode.INVALID_LOCK,
             "Lock : " + requestTask.getLock + " not exist(您的锁无效，请重新获取后再提交)."

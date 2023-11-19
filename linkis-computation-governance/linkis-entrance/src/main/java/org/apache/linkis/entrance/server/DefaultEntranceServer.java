@@ -20,12 +20,16 @@ package org.apache.linkis.entrance.server;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.job.EntranceExecutionJob;
 import org.apache.linkis.entrance.log.LogReader;
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest;
 import org.apache.linkis.rpc.Sender;
+
+import org.apache.commons.io.IOUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -94,13 +98,19 @@ public class DefaultEntranceServer extends EntranceServer {
     if (shutdownFlag) {
       logger.warn("event has been handled");
     } else {
+      if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED()) {
+        logger.warn("Entrance exit to update and clean all ConsumeQueue task instances");
+        updateAllNotExecutionTaskInstances(false);
+      }
+
       logger.warn("Entrance exit to stop all job");
-      EntranceJob[] allUndoneJobs = getAllUndoneTask(null);
-      if (null != allUndoneJobs) {
-        for (EntranceJob job : allUndoneJobs) {
+      EntranceJob[] allUndoneTask = getAllUndoneTask(null);
+      if (null != allUndoneTask) {
+        for (EntranceJob job : allUndoneTask) {
           job.onFailure(
               "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)",
               null);
+          IOUtils.closeQuietly(((EntranceExecutionJob) job).getLogWriter().get());
         }
       }
     }

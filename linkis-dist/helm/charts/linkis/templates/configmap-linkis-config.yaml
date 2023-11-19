@@ -241,8 +241,8 @@ data:
     wds.linkis.gateway.conf.enable.token.auth=true
     wds.linkis.is.gateway=true
     wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
-    wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.instance.label.entity
-    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.instance.label.dao,org.apache.linkis.gateway.authentication.dao
+    wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.instance.label.entity,org.apache.linkis.jobhistory.entity
+    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.instance.label.dao,org.apache.linkis.gateway.authentication.dao,org.apache.linkis.jobhistory.dao
     wds.linkis.label.entity.packages=org.apache.linkis.gateway.ujes.route.label
     wds.linkis.login_encrypt.enable=false
     ##LDAP:q
@@ -316,6 +316,11 @@ data:
     {{- else }}
     wds.linkis.resultSet.store.path=hdfs://{{ .Values.linkis.locations.runtimeDir }}
     {{- end }}
+
+    ##mybatis
+    wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
+    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.publicservice.common.lock.dao
+    wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.publicservice.common.lock.entity
 
     ##Spring
     spring.server.port={{ .Values.cgEntrance.port }}

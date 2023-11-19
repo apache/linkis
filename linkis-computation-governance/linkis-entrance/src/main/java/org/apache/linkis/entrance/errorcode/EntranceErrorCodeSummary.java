@@ -71,7 +71,11 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   SHELL_BLACKLISTED_CODE(50081, "Shell code contains blacklisted code(shell中包含黑名单代码)"),
   JOB_HISTORY_FAILED_ID(50081, ""),
 
-  LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)");
+  LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)"),
+
+  FAILOVER_RUNNING_TO_CANCELLED(
+      30001,
+      "Job {0} failover, status changed from Running to Cancelled (任务故障转移，状态从Running变更为Cancelled)");
 
   /** (errorCode)错误码 */
   private final int errorCode;

@@ -23,10 +23,17 @@ abstract class AbstractGroup extends Group {
 
   private var _status: GroupStatus = _
   private var maxRunningJobs: Int = _
+  private var maxAllowRunningJobs: Int = 0
   private var maxAskExecutorTimes: Long = 0L
 
   def setMaxRunningJobs(maxRunningJobs: Int): Unit = this.maxRunningJobs = maxRunningJobs
   def getMaxRunningJobs: Int = maxRunningJobs
+
+  def setMaxAllowRunningJobs(maxAllowRunningJobs: Int): Unit = this.maxAllowRunningJobs =
+    maxAllowRunningJobs
+
+  def getMaxAllowRunningJobs: Int =
+    if (maxAllowRunningJobs <= 0) maxRunningJobs else Math.min(maxAllowRunningJobs, maxRunningJobs)
 
   def setMaxAskExecutorTimes(maxAskExecutorTimes: Long): Unit = this.maxAskExecutorTimes =
     maxAskExecutorTimes

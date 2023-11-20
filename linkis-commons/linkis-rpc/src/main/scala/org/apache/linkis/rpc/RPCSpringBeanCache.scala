@@ -33,6 +33,7 @@ private[rpc] object RPCSpringBeanCache extends Logging {
   private var rpcServerLoader: RPCServerLoader = _
   private var senderBuilders: Array[BroadcastSenderBuilder] = _
   private var rpcReceiveRestful: RPCReceiveRestful = _
+  private var rpcReceiveRemote: RPCReceiveRemote = _
 
   def registerReceiver(receiverName: String, receiver: Receiver): Unit = {
     if (beanNameToReceivers == null) {
@@ -61,6 +62,13 @@ private[rpc] object RPCSpringBeanCache extends Logging {
       rpcReceiveRestful = getApplicationContext.getBean(classOf[RPCReceiveRestful])
     }
     rpcReceiveRestful
+  }
+
+  def getRPCReceiveRemote: RPCReceiveRemote = {
+    if (rpcReceiveRemote == null) {
+      rpcReceiveRemote = getApplicationContext.getBean(classOf[RPCReceiveRemote])
+    }
+    rpcReceiveRemote
   }
 
   private[rpc] def getReceivers: util.Map[String, Receiver] = {

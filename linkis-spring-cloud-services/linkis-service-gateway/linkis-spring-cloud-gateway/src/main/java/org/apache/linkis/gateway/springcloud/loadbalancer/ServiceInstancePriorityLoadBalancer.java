@@ -114,7 +114,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     ServiceInstance chooseInstance = null;
     for (ServiceInstance instance : instances) {
       if (Objects.equals(ipAndPort[0], instance.getHost())
-          && Objects.equals(ipAndPort[1], instance.getPort())) {
+          && Objects.equals(ipAndPort[1], String.valueOf(instance.getPort()))) {
         chooseInstance = instance;
         break;
       }

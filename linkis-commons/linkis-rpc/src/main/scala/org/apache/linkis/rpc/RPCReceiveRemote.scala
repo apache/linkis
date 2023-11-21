@@ -17,13 +17,10 @@
 
 package org.apache.linkis.rpc
 
-import org.apache.linkis.rpc.constant.RpcConstant
 import org.apache.linkis.server.Message
 
-import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod}
 
-@FeignClient(name = RpcConstant.LINKIS_LOAD_BALANCER_TYPE_RPC)
 private[rpc] trait RPCReceiveRemote {
 
   @RequestMapping(

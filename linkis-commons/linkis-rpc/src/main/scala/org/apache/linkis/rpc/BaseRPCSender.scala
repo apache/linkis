@@ -37,8 +37,6 @@ import java.util
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-import feign.{Feign, Retryer}
-
 private[rpc] class BaseRPCSender extends Sender with Logging {
   private var name: String = _
   private var rpc: RPCReceiveRemote = _
@@ -75,9 +73,6 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
   }
 
   private[rpc] def getApplicationName = name
-
-  protected def doBuilder(builder: Feign.Builder): Unit =
-    builder.retryer(Retryer.NEVER_RETRY)
 
   protected def newRPC: RPCReceiveRemote = {
     getDynamicFeignClient.getFeignClient(classOf[RPCReceiveRemote], name)

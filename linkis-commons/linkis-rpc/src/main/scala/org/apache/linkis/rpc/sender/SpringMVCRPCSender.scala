@@ -18,25 +18,17 @@
 package org.apache.linkis.rpc.sender
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.conf.{Configuration => DWCConfiguration}
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
 import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
 
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties
-import org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient
-import org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient
 import org.springframework.core.env.Environment
-
-import feign._
 
 private[rpc] class SpringMVCRPCSender private[rpc] (
     private[rpc] val serviceInstance: ServiceInstance
 ) extends BaseRPCSender(serviceInstance.getApplicationName) {
-
-  import SpringCloudFeignConfigurationCache._
 
   override protected def getRPCInterceptors: Array[RPCInterceptor] =
     RPCSpringBeanCache.getRPCInterceptors
@@ -46,31 +38,6 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
 
   @Autowired
   private var env: Environment = _
-
-  override protected def doBuilder(builder: Feign.Builder): Unit = {
-    val client = getClient.asInstanceOf[FeignBlockingLoadBalancerClient]
-    val loadBalancerClientFactory =
-      new LinkisLoadBalancerClientFactory(serviceInstance, new LoadBalancerClientsProperties)
-
-    val blockingLoadBalancerClient: BlockingLoadBalancerClient = new BlockingLoadBalancerClient(
-      loadBalancerClientFactory
-    )
-
-    val newClient = new FeignBlockingLoadBalancerClient(
-      client.getDelegate,
-      blockingLoadBalancerClient,
-      //      getLoadBalancedRetryFactory,
-      loadBalancerClientFactory
-    )
-
-    super.doBuilder(builder)
-    builder
-      .contract(getContract)
-      .encoder(getEncoder)
-      .decoder(getDecoder)
-      .client(newClient)
-      .requestInterceptor(getRPCTicketIdRequestInterceptor)
-  }
 
   /**
    * Deliver is an asynchronous method that requests the target microservice asynchronously,

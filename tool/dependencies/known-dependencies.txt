@@ -730,6 +730,7 @@ spring-cloud-starter-3.1.7.jar
 spring-cloud-starter-gateway-2.2.9.RELEASE.jar
 spring-cloud-starter-gateway-3.1.8.jar
 spring-cloud-starter-loadbalancer-2.2.9.RELEASE.jar
+spring-cloud-starter-loadbalancer-3.1.7.jar
 spring-cloud-starter-gateway-3.1.8.jar
 spring-cloud-starter-netflix-archaius-2.2.9.RELEASE.jar
 spring-cloud-starter-netflix-eureka-client-3.1.7.jar

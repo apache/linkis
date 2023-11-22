@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.springcloud.loadbalancer;
+package org.apache.linkis.rpc.loadbalancer;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;

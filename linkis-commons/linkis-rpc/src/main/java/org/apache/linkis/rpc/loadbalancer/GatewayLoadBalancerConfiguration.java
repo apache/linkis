@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.springcloud.constant;
+package org.apache.linkis.rpc.loadbalancer;
 
-public class GatewayConstant {
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
+import org.springframework.context.annotation.Configuration;
 
-  public static final String FIXED_INSTANCE = "client-ip";
-}
+@Configuration
+@LoadBalancerClients(defaultConfiguration = {LinkisLoadBalancerClientConfiguration.class})
+public class GatewayLoadBalancerConfiguration {}

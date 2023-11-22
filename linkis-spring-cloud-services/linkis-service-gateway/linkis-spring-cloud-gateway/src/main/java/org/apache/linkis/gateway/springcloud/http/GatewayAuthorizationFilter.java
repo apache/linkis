@@ -27,7 +27,7 @@ import org.apache.linkis.gateway.security.LinkisPreFilter;
 import org.apache.linkis.gateway.security.LinkisPreFilter$;
 import org.apache.linkis.gateway.security.SecurityFilter;
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
-import org.apache.linkis.gateway.springcloud.constant.GatewayConstant;
+import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.server.Message;
 
 import org.apache.commons.lang3.StringUtils;
@@ -135,7 +135,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
       exchange
           .getRequest()
           .mutate()
-          .header(GatewayConstant.FIXED_INSTANCE, serviceInstance.getInstance());
+          .header(RpcConstant.FIXED_INSTANCE, serviceInstance.getInstance());
     }
     return Route.async()
         .id(route.getId())

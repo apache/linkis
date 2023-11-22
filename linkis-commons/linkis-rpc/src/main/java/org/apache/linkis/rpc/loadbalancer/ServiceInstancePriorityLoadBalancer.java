@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.springcloud.loadbalancer;
+package org.apache.linkis.rpc.loadbalancer;
 
-import org.apache.linkis.gateway.springcloud.constant.GatewayConstant;
 import org.apache.linkis.rpc.conf.EurekaClientCacheManualRefresher;
 import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
@@ -78,7 +77,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
         ((RequestDataContext) request.getContext())
             .getClientRequest()
             .getHeaders()
-            .get(GatewayConstant.FIXED_INSTANCE);
+            .get(RpcConstant.FIXED_INSTANCE);
     String clientIp = CollectionUtils.isNotEmpty(clientIpList) ? clientIpList.get(0) : null;
     ServiceInstanceListSupplier supplier =
         serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);

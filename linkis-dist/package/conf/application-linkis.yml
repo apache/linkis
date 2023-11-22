@@ -42,6 +42,10 @@ pagehelper:
   params: countSql
 
 spring:
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
   main:
     allow-circular-references: true
   mvc:

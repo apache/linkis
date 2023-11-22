@@ -18,8 +18,11 @@
 package org.apache.linkis.gateway.springcloud.loadbalancer;
 
 import org.apache.linkis.gateway.springcloud.constant.GatewayConstant;
+import org.apache.linkis.rpc.conf.EurekaClientCacheManualRefresher;
+import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
 import org.apache.linkis.rpc.exception.NoInstanceExistsException;
+import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache$;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
@@ -45,6 +49,9 @@ import reactor.core.publisher.Mono;
 public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
   private static final Log log = LogFactory.getLog(ServiceInstancePriorityLoadBalancer.class);
+
+  @Autowired private EurekaClientCacheManualRefresher eurekaClientCacheManualRefresher;
+
   private final String serviceId;
 
   final AtomicInteger position;
@@ -78,20 +85,60 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     return supplier
         .get(request)
         .next()
-        .map(serviceInstances -> processInstanceResponse(supplier, serviceInstances, clientIp));
+        .map(
+            serviceInstances ->
+                processInstanceResponse(request, supplier, serviceInstances, clientIp));
   }
 
   private Response<ServiceInstance> processInstanceResponse(
+      Request request,
       ServiceInstanceListSupplier supplier,
       List<ServiceInstance> serviceInstances,
       String clientIp) {
     Response<ServiceInstance> serviceInstanceResponse =
         getInstanceResponse(serviceInstances, clientIp);
+    Long endTtime = System.currentTimeMillis() + 2 * 60 * 1000;
+
+    List<String> linkisLoadBalancerTypeList =
+        ((RequestDataContext) request.getContext())
+            .getClientRequest()
+            .getHeaders()
+            .get(RpcConstant.LINKIS_LOAD_BALANCER_TYPE);
+    String linkisLoadBalancerType =
+        CollectionUtils.isNotEmpty(linkisLoadBalancerTypeList)
+            ? linkisLoadBalancerTypeList.get(0)
+            : null;
+
+    while (null == serviceInstanceResponse
+        && StringUtils.isNoneBlank(clientIp)
+        && isRPC(linkisLoadBalancerType)
+        && System.currentTimeMillis() < endTtime) {
+      eurekaClientCacheManualRefresher.refresh();
+      List<ServiceInstance> instances =
+          SpringCloudFeignConfigurationCache$.MODULE$.discoveryClient().getInstances(serviceId);
+      serviceInstanceResponse = getInstanceResponse(instances, clientIp);
+      if (null == serviceInstanceResponse) {
+        try {
+          this.wait(5000L);
+          eurekaClientCacheManualRefresher.refresh();
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      } else {
+        break;
+      }
+    }
+
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
       ((SelectedInstanceCallback) supplier)
           .selectedServiceInstance(serviceInstanceResponse.getServer());
     }
     return serviceInstanceResponse;
+  }
+
+  private boolean isRPC(String linkisLoadBalancerType) {
+    return StringUtils.isNotBlank(linkisLoadBalancerType)
+        && linkisLoadBalancerType.equalsIgnoreCase(RpcConstant.LINKIS_LOAD_BALANCER_TYPE_RPC);
   }
 
   private Response<ServiceInstance> getInstanceResponse(
@@ -119,15 +166,15 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
         break;
       }
     }
-    if (null == chooseInstance) {
-      throw new NoInstanceExistsException(
-          LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode(),
-          MessageFormat.format(
-              LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorDesc(),
-              clientIp,
-              serviceId));
-    } else {
-      return new DefaultResponse(chooseInstance);
-    }
+    //    if (null == chooseInstance) {
+    //      throw new NoInstanceExistsException(
+    //          LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode(),
+    //          MessageFormat.format(
+    //              LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorDesc(),
+    //              clientIp,
+    //              serviceId));
+    //    } else {
+    return new DefaultResponse(chooseInstance);
+    //    }
   }
 }

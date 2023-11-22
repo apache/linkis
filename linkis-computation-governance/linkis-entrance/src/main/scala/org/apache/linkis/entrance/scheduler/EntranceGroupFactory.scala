@@ -51,7 +51,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     .maximumSize(EntranceConfiguration.GROUP_CACHE_MAX.getValue)
     .build()
 
-  private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 5000)
+  private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 1000)
 
   private val SPECIFIED_USERNAME_REGEX =
     CommonVars("wds.linkis.entrance.specified.username.regex", "hduser.*")

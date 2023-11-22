@@ -18,12 +18,15 @@
 package org.apache.linkis.rpc.loadbalancer;
 
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-
+@Configuration
+@LoadBalancerClients(defaultConfiguration = {LinkisLoadBalancerClientConfiguration.class})
 public class LinkisLoadBalancerClientConfiguration {
   @Bean
   public ReactorLoadBalancer<ServiceInstance> customLoadBalancer(

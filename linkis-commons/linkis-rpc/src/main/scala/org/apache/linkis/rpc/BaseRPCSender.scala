@@ -17,23 +17,20 @@
 
 package org.apache.linkis.rpc
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.Protocol
 import org.apache.linkis.rpc.conf.DynamicFeignClient
-import org.apache.linkis.rpc.conf.RPCConfiguration.{
-  BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX,
-  BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX,
-  BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY
-}
+import org.apache.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY}
+import org.apache.linkis.rpc.constant.RpcConstant
 import org.apache.linkis.rpc.interceptor._
 import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.Message
 
 import java.util
-
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
@@ -74,6 +71,11 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   private[rpc] def getApplicationName = name
 
+
+  def getSenderInstance(): String = {
+    null
+  }
+
   protected def newRPC: RPCReceiveRemote = {
     getDynamicFeignClient.getFeignClient(classOf[RPCReceiveRemote], name)
   }
@@ -87,6 +89,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   override def ask(message: Any): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     val response = getRPC.receiveAndReply(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
@@ -95,6 +100,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
   override def ask(message: Any, timeout: Duration): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     msg.data("duration", timeout.toMillis)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     val response = getRPC.receiveAndReplyInMills(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
@@ -102,6 +110,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   private def sendIt(message: Any, op: Message => Message): Unit = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     RPCConsumer.getRPCConsumer.toObject(op(msg)) match {
       case w: WarnException => logger.warn("RPC requests an alarm!(RPC请求出现告警！)", w)
@@ -170,6 +181,18 @@ private[rpc] object BaseRPCSender extends Logging {
     val name = map.get("name").toString
     val instance = map.get("instance").toString
     ServiceInstance(name, instance)
+  }
+
+  def addFixedInstanceInfo(map: util.Map[String, Object], fixedInstance: String): Unit = {
+    map.put(RpcConstant.FIXED_INSTANCE, fixedInstance)
+  }
+
+  def getFixedInstanceInfo(message: Message): String = {
+    if (null != message && null != message.getData) {
+      message.getData.getOrDefault(RpcConstant.FIXED_INSTANCE, null).asInstanceOf[String]
+    } else {
+      null
+    }
   }
 
 }

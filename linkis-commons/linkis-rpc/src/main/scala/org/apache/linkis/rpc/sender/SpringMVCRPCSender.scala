@@ -66,4 +66,11 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
       s"RPCSender(${serviceInstance.getApplicationName})"
     } else s"RPCSender($getApplicationName, ${serviceInstance.getInstance})"
 
+  override def getSenderInstance(): String = {
+    if (null != serviceInstance) {
+      serviceInstance.getInstance
+    } else {
+      null
+    }
+  }
 }

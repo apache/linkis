@@ -118,13 +118,10 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
       serviceInstanceResponse = getInstanceResponse(instances, clientIp);
       if (null == serviceInstanceResponse) {
         try {
-          this.wait(5000L);
-          eurekaClientCacheManualRefresher.refresh();
+          Thread.sleep(5000L);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
-      } else {
-        break;
       }
     }
 
@@ -144,7 +141,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
       List<ServiceInstance> instances, String clientIp) {
     if (instances.isEmpty()) {
       log.warn("No servers available for service: " + serviceId);
-      return new EmptyResponse();
+      return null;
     }
     int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
 
@@ -165,15 +162,10 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
         break;
       }
     }
-    //    if (null == chooseInstance) {
-    //      throw new NoInstanceExistsException(
-    //          LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode(),
-    //          MessageFormat.format(
-    //              LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorDesc(),
-    //              clientIp,
-    //              serviceId));
-    //    } else {
-    return new DefaultResponse(chooseInstance);
-    //    }
+    if (null == chooseInstance) {
+      return null;
+    } else {
+      return new DefaultResponse(chooseInstance);
+     }
   }
 }

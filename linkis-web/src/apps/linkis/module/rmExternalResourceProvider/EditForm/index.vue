@@ -102,15 +102,6 @@ export default {
           props: {
             placeholder: "",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.labels'),
-              trigger: 'blur',
-            },
-          ],
         },
         {
           type: 'v-jsoneditor',
@@ -136,7 +127,7 @@ export default {
     getData(data){
       this.formData = {...data}
       window.console.log(this.formData)
-      if(this.formData.config.length>0){
+      if(this.formData.config?.length>0){
         this.formData.config = JSON.parse(this.formData.config)
       }else{
         this.formData.config= {}

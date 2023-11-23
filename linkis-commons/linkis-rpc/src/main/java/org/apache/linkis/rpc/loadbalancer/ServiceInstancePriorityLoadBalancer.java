@@ -166,6 +166,6 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
       return null;
     } else {
       return new DefaultResponse(chooseInstance);
-     }
+    }
   }
 }

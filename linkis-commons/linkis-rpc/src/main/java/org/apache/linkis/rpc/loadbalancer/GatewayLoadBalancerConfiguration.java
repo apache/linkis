@@ -17,8 +17,4 @@
 
 package org.apache.linkis.rpc.loadbalancer;
 
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
-import org.springframework.context.annotation.Configuration;
-
-
 public class GatewayLoadBalancerConfiguration {}

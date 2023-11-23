@@ -21,12 +21,14 @@
       <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
+      <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
     </Tabs>
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
     <log v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" />
     <result
       v-if="tabName === 'result'"
+      class="result-class"
       ref="result"
       :script="script"
       :dispatch="dispatch"
@@ -38,6 +40,7 @@
       @on-analysis="openAnalysisTab"
       :visualParams="visualParams"
     />
+    <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
   </div>
 </template>
 <script>
@@ -46,12 +49,14 @@ import log from '@/components/consoleComponent/log.vue'
 import api from '@/common/service/api'
 import mixin from '@/common/service/mixin'
 import util from '@/common/util'
+import ViewLog from '@/apps/linkis/module/resourceManagement/log.vue'
 import { isUndefined } from 'lodash'
 export default {
   name: 'viewHistory',
   components: {
     log,
-    result
+    result,
+    ViewLog
   },
   mixins: [mixin],
   props: {},
@@ -88,17 +93,34 @@ export default {
         warning: '',
         info: ''
       },
+      engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
-      jobhistoryTask: null
+      jobhistoryTask: null,
+      hasEngine: false,
+      param: {}
     }
   },
   created() {
     this.hasResultData = false
   },
-  mounted() {
+  async mounted() {
     let taskID = this.$route.query.taskID
-    this.initHistory(taskID)
+    let engineInstance = this.$route.query.engineInstance
+
+    if(engineInstance) {
+      let url = '/linkisManager/ecinfo/ecrHistoryList?';
+      const endDate = new Date(); 
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 3);
+      url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+      const res = await api.fetch(url,'get')
+      const param = res.engineList[0]
+      this.param = param;
+      this.hasEngine = !!param;
+         
+    }
+    this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85
   },
@@ -123,6 +145,18 @@ export default {
             desc: this.$t('message.linkis.serverTip')
           })
         }
+      } else if(name === 'engineLog') {
+        if(this.param) {
+          this.$refs.logPanel.getLogs(0, {
+            applicationName: "linkis-cg-engineconn",
+            emInstance: this.param?.ecmInstance || '',
+            instance: this.param?.serviceInstance || '',
+            ticketId: this.param?.ticketId || '',
+            engineType: this.param?.engineType || '',
+            logDirSuffix: this.param?.logDirSuffix || '',
+          })
+        }
+
       }
     },
     changeResultSet(data, cb) {
@@ -280,6 +314,16 @@ export default {
         }
       }
     },
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
     // Get historical details(获取历史详情)
     async initHistory(jobId) {
       try {
@@ -351,7 +395,7 @@ export default {
         if (rst.dirFileTrees) {
           // The order of the result set in the background is sorted by string according to the name of the result set. When displaying, there will be a problem that the result set cannot be matched, so add sorting(后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序)
           let scriptResultList = rst.dirFileTrees.children.sort(
-            (a, b) => parseInt(a.name, 10) - parseInt(b.name, 10)
+            (a, b) => parseInt(a.name.split('_')[1].split('.')[0], 10) - parseInt(b.name.split('_')[1].split('.')[0], 10)
           )
           if (scriptResultList.length) {
             const currentResultPath = rst.dirFileTrees.children[0].path
@@ -436,6 +480,9 @@ export default {
 }
 /deep/ .table-div {
   height: 100% !important;
+}
+/deep/ .log {
+    height: calc(100% - 70px)
 }
 </style>
 

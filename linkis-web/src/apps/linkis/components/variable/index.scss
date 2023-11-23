@@ -89,6 +89,11 @@
                     border: 1px solid red;
                 }
             }
+            .two-lines {
+                height: 60px;
+                resize: none;
+                overflow-y: scroll;
+            }
             .we-variable-content-input[disabled] {
                 background-color: #f3f3f3;
                 opacity: 1;

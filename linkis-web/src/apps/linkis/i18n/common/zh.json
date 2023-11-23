@@ -36,6 +36,7 @@
           "log": "任务日志",
           "detail": "任务详情",
           "result": "任务结果",
+          "engineLog": "引擎日志",
           "startUp": "启动",
           "tagEdit": "编辑",
           "tipForKill": "将要停止此ECM实例 【{instance}】上的空闲引擎",
@@ -71,8 +72,12 @@
           "noselection": "请先选择",
           "searchName": "请输入用户名搜索",
           "generalView": "切换普通视图",
+          "showAdvancedSearch": "高级筛选",
+          "hideAdvancedSearch": "隐藏高级筛选",
           "manageView": "切换管理员视图",
           "back": "返回",
+          "download": "下载日志",
+          "confirmText": "确认下载该日志",
           "prev": "上一步",
           "complete": "完成",
           "close": "关闭",
@@ -129,8 +134,8 @@
               "maximumAvailableResources": "最大可用资源",
               "minimumAvailableResources": "最小可用资源",
               "startTime": "启动时间",
-              "executeApplicationName": "执行引擎",
-              "requestApplicationName": "创建者",
+              "executeApplicationName": "引擎",
+              "requestApplicationName": "应用",
               "user": "用户",
               "createdTime": "创建时间",
               "updateTime": "更新时间",
@@ -145,8 +150,8 @@
               "engineRemain": "引擎剩余资源",
               "engineUsed": "引擎已用资源",
               "engineTop": "引擎上限资源",
-            "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
-            "applicationRole": "应用方"
+              "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
+              "applicationRole": "应用方"
           },
           "logLoading": "日志请求中，请稍后",
           "title": "Linkis管理台",
@@ -177,6 +182,7 @@
                       "userResourceManagement": "用户资源管理",
                       "tenantTagManagement": "租户标签管理",
                       "ipListManagement": "白名单管理",
+                      "acrossClusterRule": "跨集群规则管理",
                       "errorCode": "错误码管理",
                       "gatewayAuthToken": "令牌管理",
                       "rmExternalResourceProvider": "扩展资源管理",
@@ -190,7 +196,10 @@
                       "basedataManagement": "基础数据管理",
                       "codeQuery": "代码检索",
                       "engineConfigurationTemplate": "引擎配置模板",
-                      "EngineConnList": "引擎列表"
+                      "EngineConnList": "引擎列表",
+                      "opsTool": "运维工具",
+                      "userConfig": "用户配置",
+                      "configManagement": "配置项管理"
                   }
               }
           },
@@ -212,7 +221,7 @@
                   "placeholder": "请选择起始日期"
               },
               "instance": {
-                  "label": "实例",
+                  "label": "Entrance 实例",
                   "placeholder": "请输入实例"
               },
               "creator": {
@@ -300,7 +309,8 @@
               "hide": "隐藏",
               "show": "显示",
               "advancedSetting": "高级设置",
-              "dataDev": "数据开发"
+              "dataDev": "数据开发",
+              "maxLimit": "(资源模板指定上限值为{limit})"
           },
           "globalValiable": "全局变量",
           "rules": {
@@ -432,7 +442,55 @@
               "userIsExisted": "用户标签已存在",
               "addSuccessful": "添加成功",
               "confirmDel": "确认删除",
-              "isConfirmDel": "确定要删除这条数据吗({name})"
+              "isConfirmDel": "确定要删除这条数据吗({name})",
+              "cluster": "集群标签",
+              "inputCluster": "请输入集群标签",
+              "rules": "规则",
+              "startTime": "开始时间",
+              "endTime": "结束时间",
+              "CPUThreshold": "CPU阈值(核)",
+              "MemoryThreshold": "内存阈值(G)",
+              "CPUPercentageThreshold": "CPU百分比阈值",
+              "MemoryPercentageThreshold": "内存百分比阈值",
+              "view": "查看",
+              "errorJson": "请输入格式正确且不为空的JSON",
+              "deleteSuccess": "删除成功",
+              "createRules": "新建",
+              "editRules": "编辑",
+              "viewRules": "查看规则",
+              "yes": "是",
+              "no": "否",
+              "isValid": "是否生效",
+              "engineType": "引擎类型",
+              "key": "配置Key",
+              "inputKey": "请输入Key",
+              "name": "配置名称",
+              "description": "配置描述",
+              "defaultValue": "默认值",
+              "validType": "校验类型",
+              "validRange": "校验范围",
+              "dataType": "边界值类型",
+              "category": "分类",
+              "treeName": "目录名称",
+              "none": "无",
+              "regex": "正则校验",
+              "numInterval": "数值校验",
+              "oft": "选择校验",
+              "enName": "配置名称(英文)",
+              "enDescription": "配置描述(英文）",
+              "enTreeName": "目录名称(英文)",
+              "noZH": "不允许输入中文",
+              "customLen": "长度不能超过{length}",
+              "timeError": "时间格式应为XX:XX，请输入正确的时间",
+              "thresholdError": "请输入0-10000的整数",
+              "percentageThresholdError": "请输入0-1的数字",
+              "enable": "启用",
+              "disable": "停用",
+              "confirmEnable": "确认是否启用[{name}]该规则?",
+              "confirmDisable": "确认是否停用[{name}]该规则?",
+              "enableSuccessfully": "启用成功",
+              "disableSuccessfully": "停用成功",
+              "templateRequired": "是否必填"
           },
           "basedataManagement": {
             "add": "新增",
@@ -608,6 +666,7 @@
         "codeQuery": {
           "executionCode": "执行代码",
           "dateRange": "时间范围",
+          "engineType": "引擎类型",
           "placeholder": {
               "executionCode": "请输入执行代码",
               "dateRange": "时间范围",
@@ -623,7 +682,15 @@
           "submitUser": "提交用户",
           "createdTime": "创建时间",
           "searchRange": "仅可查询T-1的历史代码"
+        },
+        "userConfig": {
+          "keyName": "配置项名称",
+          "defaultValue": "配置项默认值",
+          "configVKey": "配置项",
+          "configValue": "配置值",
+          "configValuePro": "请输入配置值",
+          "versionInputPro": "请输入引擎版本"
         }
-      }
+    }
   }
 }

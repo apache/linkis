@@ -51,12 +51,13 @@
             v-for="(th, index) in columns"
             :key="th.key"
             :style="{'text-align': th.align}"
-            class="we-table-row-cell">
+            class="we-table-row-cell"
+            :aria-label="td[th.key]"
+            :class="[!th.ellipsis ? '' : 'hint--bottom hint--rounded']">
             <div
               class="we-table-row-label"
               :style="{'width': th.width ? th.width + 'px' : getComputedWidth(th)}"
-              :class="{'ellipsis': th.ellipsis, [th.className]: true}"
-              :title="th.ellipsis ? td[th.key] : ''">
+              :class="{'ellipsis': th.ellipsis, [th.className]: true}">
               <table-expand
                 v-if="th.renderType"
                 :row="td"

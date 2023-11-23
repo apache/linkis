@@ -23,7 +23,11 @@
       <TabPane name="gc" label="gc"></TabPane>
       <TabPane v-if="['hive', 'spark'].includes(engineType)" name="yarnApp" label="yarnApp"></TabPane>
     </Tabs>
-    <Button class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+    <div class="btns">
+      <Button class="downloadButton" :style="!inHistory ? 'margin-right: 10px' : 'margin-right: 0px'" type="default" @click="downloadLog">{{$t('message.linkis.download')}}</Button>
+      <Button v-if="!inHistory" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+    </div>
+    
     <log :logs="logs" :scriptViewState="scriptViewState"/>
     <Page
       ref="page"
@@ -44,6 +48,12 @@ export default {
   components: {
     log
   },
+  props: {
+    inHistory: {
+      default: false,
+      type: Boolean,
+    }
+  },
   data() {
     return {
       tabName: 'stdout',
@@ -58,6 +68,7 @@ export default {
       scriptViewState: {
         bottomContentHeight: window.innerHeight - 353
       },
+      param: {},
       engineType: '',
     };
   },
@@ -80,6 +91,33 @@ export default {
       this.page.pageNow = val;
       this.getLogs((val - 1) * this.page.pageSize)
     },
+    clearLogs() {
+      this.logs = {
+        all: '',
+      }
+      this.tabName = 'stdout'
+    },
+    async downloadLog() {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.download'),
+        content: this.$t('message.linkis.confirmText'),
+        onOk: async () => {
+          const {emInstance, instance, logPath } = this.param;
+          // eslint-disable-next-line no-unused-vars
+          
+          const url = `/api/rest_j/v1/engineconnManager/downloadEngineLog?emInstance=${emInstance}&instance=${instance}&logDirSuffix=${encodeURIComponent(logPath)}&logType=${this.tabName}`;
+
+          const downloadLink = document.createElement('a');
+          downloadLink.href = url;
+          downloadLink.download = 'log';
+          downloadLink.style.display = 'none';
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        }
+      })
+      
+    },
     async getLogs(fromLine, param) {
       if (param) {
         this.param = param
@@ -99,6 +137,7 @@ export default {
           }
         }
         let res = await api.fetch('/linkisManager/openEngineLog', params, 'post') || {};
+        this.param.logPath = res.result.logPath.split('/').slice(0, -1).join('/');
         if (res && res.result) {
           if (res.result.rows < 1000) { // the last page(最后一页)
             this.page.totalSize = this.page.pageNow * 1000
@@ -131,10 +170,19 @@ export default {
 .log {
   height: 100%;
 }
- .backButton {
+.btns {
   position: absolute;
   top: -2px;
   right: 20px;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-items: end;
+  .downloadButton {
+    margin-top: 2px
+  }
+  .backButton {
+    margin-top: 2px
+  }
 }
 .page {
   text-align: center

@@ -29,7 +29,7 @@
             src="../../assets/images/Linkis.svg"
             :alt="$t('message.common.logoName')"
           >
-          <span class="version">{{sysVersion}}</span>
+          <span class="version">{{sysVersion}}{{clusterInfo ? `(${clusterInfo})`:''}}</span>
         </div>
       </div>
       <div
@@ -74,6 +74,7 @@ export default {
       isUserMenuShow: false,
       userName: "",
       isSandbox: process.env.NODE_ENV === "sandbox",
+      clusterInfo: '',
     };
   },
   mixins: [mixin],
@@ -83,6 +84,7 @@ export default {
   methods: {
     init() {
       this.userName = storage.get('userName');
+      this.clusterInfo = storage.get('clusterInfo') || ''
     },
     handleOutsideClick() {
       this.isUserMenuShow = false;

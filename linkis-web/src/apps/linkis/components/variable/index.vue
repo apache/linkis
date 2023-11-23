@@ -36,7 +36,7 @@
       <template v-for="(item, index) in variable.settings">
         <div
           :key="index"
-          :title="item.description"
+          :title="`${item.description}${item.specialLimit ? $t('message.linkis.setting.maxLimit', { limit: item.specialLimit.maxValue }) : ''}`"
           class="we-variable-content-item"
           v-if="getItemIsShow(item)">
           <span class="we-variable-content-label-group">
@@ -54,6 +54,13 @@
               :key="i"
               :value="validateItem">{{ validateItem }}</Option>
           </Select>
+          <textarea
+            v-model="item.configValue"
+            :placeholder="item.defaultValue ? `${$t('message.linkis.defaultValue')}:${item.defaultValue}` : $t('message.linkis.noDefaultValue')"
+            class="two-lines we-variable-content-input"
+            :class="{'un-valid': unValid && unValid.key === item.key}"
+            v-else-if="item.key === 'spark.conf'">
+         </textarea>
           <input
             v-model="item.configValue"
             :placeholder="item.defaultValue ? `${$t('message.linkis.defaultValue')}:${item.defaultValue}` : $t('message.linkis.noDefaultValue')"
@@ -138,5 +145,4 @@ export default {
 };
 </script>
 <style lang="scss" src="./index.scss">
-
 </style>

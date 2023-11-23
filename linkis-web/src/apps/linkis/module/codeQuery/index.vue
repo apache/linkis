@@ -47,6 +47,21 @@
           :editable="false"
         />
       </FormItem>
+
+      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')" :label-width="38">
+        <Input
+          :maxlength="50"
+          v-model.trim="searchBar.creator"
+          :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+          style="width:90px;"
+        />
+      </FormItem>
+
+      <FormItem prop="engineType" :label="$t('message.linkis.formItems.engineType')" :label-width="60">
+        <Select v-model="searchBar.engineType" style="width: 90px">
+          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
+        </Select>
+      </FormItem>
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')" :label-width="38">
         <Select v-model="searchBar.status" style="width: 90px">
           <Option
@@ -157,6 +172,7 @@ export default {
           return date.valueOf() > Date.now() - 86400000
         }
       },
+      getEngineTypes: [],
       statusType: [
         {
           label: this.$t('message.linkis.statusType.all'),
@@ -314,7 +330,7 @@ export default {
           throw Error(this.$t('message.linkis.codeQuery.inputCode'));
         }
         this.beforeSearch = false;
-        const { executionCode, shortcut, status } = this.searchParams;
+        const { executionCode, shortcut, status, engineType,creator } = this.searchParams;
         const { pageNow, pageSize } = this.page;
         const params = {
           executionCode,
@@ -323,7 +339,9 @@ export default {
           isAdminView: this.isAdminModel,
           pageNow,
           pageSize,
-          status
+          status,
+          engineType,
+          creator
         }
         if (!shortcut[0]) {
           delete params.startDate
@@ -332,12 +350,18 @@ export default {
         if (!status || status === 'all') {
           delete params.status
         }
+        if (!engineType || engineType === 'all') {
+          delete params.engineType
+        }
+        if (!creator) {
+          delete params.creator
+        }
+
         const res = await api.fetch(`/jobhistory/es/search`, params, 'get');
         this.tableData = res.tasks.content
         this.page.totalPage = res.tasks.totalElements
         this.tableLoading = false
       } catch (err) {
-        window.console.warn(err);
         this.tableLoading = false
       }
     },
@@ -374,6 +398,9 @@ export default {
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
       this.isLogAdmin = res.admin
     })
+    api.fetch('/configuration/engineType', 'get').then(res => {
+      this.getEngineTypes = ['all', ...res.engineType]
+    })
   },
   beforeRouteEnter(to, from, next) {
     if(from.name !== 'codeDetail') {
@@ -385,6 +412,7 @@ export default {
     next();
   },
   mounted() {
+
     if(sessionStorage.getItem('code-use-cache') === 'true') {
       this.searchParams = JSON.parse(sessionStorage.getItem('code-search'));
       this.searchBar = JSON.parse(sessionStorage.getItem('code-search'));

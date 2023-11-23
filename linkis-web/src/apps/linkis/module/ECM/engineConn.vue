@@ -223,11 +223,13 @@ export default {
                 on: {
                   click: () => {
                     this.showviewlog = true
+                    this.$refs.logPanel.clearLogs()
+                    
                     this.$refs.logPanel.getLogs(0, {
-                      emInstance: params.row.emInstance,
-                      instance: params.row.instance,
-                      applicationName: params.row.applicationName,
-                      engineType: params.row.engineType,
+                      emInstance: params?.row?.emInstance || '',
+                      instance: params?.row?.instance || '',
+                      applicationName: params?.row?.applicationName || '',
+                      engineType: params?.row?.engineType || '',
                     })
                   }
                 }
@@ -383,7 +385,6 @@ export default {
         })
         this.loading = false;
       } catch (err) {
-        window.console.log(err)
         this.loading = false;
       }
     },
@@ -406,7 +407,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -416,7 +417,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // add tag(添加tag)

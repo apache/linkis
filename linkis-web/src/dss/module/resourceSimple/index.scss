@@ -47,9 +47,20 @@
                 }
             }
         }
+        .queue-app {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 10px;
+            .queue-app-item {
+                text-align: left;
+            }
+            .pl60 {
+                padding-left: 20px;
+            }
+        }
         .queue-manager-top {
             .queue-manager-top-content {
-                height: 180px;
+                height: 134px;
                 overflow-y: auto;
             }
             .queue-manager-item {
@@ -296,9 +307,9 @@
     }
 }
 // engine manager style(引擎管理器样式)
+
 .engine-box {
     height: 100%;
-    overflow-y: auto;
     position: $relative;
     .no-data {
         font-size: $font-size-base;
@@ -325,114 +336,120 @@
         background: $tooltip-color ;
     }
 }
-.engine-content {
-    padding: 0 15px;
-    .engine-header-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        .data-type-title {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .classify {
-            flex-basis: 30%;
+.engine-content-wrapper {
+    
+    overflow-y: auto;
+    height: 100%;
+    .engine-content {
+        padding: 0 15px;
+        .engine-header-bar {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            >span {
-                margin-right: 5px;
-                width: 40px;
-                font-size: $font-size-base;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            .data-type-title {
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .classify {
+                flex-basis: 30%;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                >span {
+                    margin-right: 5px;
+                    width: 40px;
+                    font-size: $font-size-base;
+                }
             }
         }
-    }
-    .engine-list {
-        display: flex;
-        align-items: center;
-        padding-left: 30px;
-        .engline-name {
-            flex-basis: 62px;
-            font-size: 16px;
-            margin-right: 20px;
-        }
-        .engine-ul {
-            flex: 1;
+        .engine-list {
             display: flex;
-            justify-content: flex-start;
             align-items: center;
-            flex-wrap: wrap;
-            .engine-li {
-                border: $border-width-base $border-style-base $border-color-base;
-                border-radius: $border-radius-base;
-                padding: 5px;
-                position: $relative;
-                width: 60px;
-                height: 60px;
-                margin: 8px 20px 8px 0;
-                box-sizing: border-box;
+            padding-left: 30px;
+            .engline-name {
+                flex-basis: 62px;
+                font-size: 16px;
+                margin-right: 20px;
+            }
+            .engine-ul {
+                flex: 1;
                 display: flex;
-                justify-content: center;
+                justify-content: flex-start;
                 align-items: center;
-                &:hover {
-                    background-color: $background-color-base;
+                flex-wrap: wrap;
+                .engine-li {
+                    border: $border-width-base $border-style-base $border-color-base;
                     border-radius: $border-radius-base;
-                    cursor: pointer;
-                }
-                &.active.yellow {
-                    border: $border-width-base $border-style-base $yellow-color;
-                    background-color: $background-color-base;
-                }
-                &.active.green {
-                    border: $border-width-base $border-style-base $success-color;
-                    background-color: $background-color-base;
-                }
-                &.active.blue {
-                    border: $border-width-base $border-style-base $primary-color;
-                    background-color: $background-color-base;
-                }
-                .engine-icon {
-                    &::before {
-                        font-size: 40px;
+                    padding: 5px;
+                    position: $relative;
+                    width: 60px;
+                    height: 60px;
+                    margin: 8px 20px 8px 0;
+                    box-sizing: border-box;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    &:hover {
+                        background-color: $background-color-base;
+                        border-radius: $border-radius-base;
+                        cursor: pointer;
                     }
-                }
-                .engine-icon.yellow {
-                    &::before {
-                        color: $yellow-color;
+                    &.active.yellow {
+                        border: $border-width-base $border-style-base $yellow-color;
+                        background-color: $background-color-base;
                     }
-                }
-                .engine-icon.green {
-                    &::before {
-                        color: $success-color;
+                    &.active.green {
+                        border: $border-width-base $border-style-base $success-color;
+                        background-color: $background-color-base;
                     }
-                }
-                .engine-icon.blue {
-                    &::before {
-                        color: $primary-color;
+                    &.active.blue {
+                        border: $border-width-base $border-style-base $primary-color;
+                        background-color: $background-color-base;
                     }
-                }
-                .engine-right {
-                    position: $absolute;
-                    top: 0;
-                    left: 0;
-                    border-radius: 0 0 5px 0;
-                    font-weight: bold;
-                    &:before {
-                        color: $background-color-base;
+                    .engine-icon {
+                        &::before {
+                            font-size: 40px;
+                        }
                     }
-                    &.yellow {
-                        background-color: $yellow-color;
+                    .engine-icon.yellow {
+                        &::before {
+                            color: $yellow-color;
+                        }
                     }
-                    &.green {
-                        background-color: $success-color;
+                    .engine-icon.green {
+                        &::before {
+                            color: $success-color;
+                        }
                     }
-                    &.blue {
-                        background-color: $primary-color;
+                    .engine-icon.blue {
+                        &::before {
+                            color: $primary-color;
+                        }
+                    }
+                    .engine-right {
+                        position: $absolute;
+                        top: 0;
+                        left: 0;
+                        border-radius: 0 0 5px 0;
+                        font-weight: bold;
+                        &:before {
+                            color: $background-color-base;
+                        }
+                        &.yellow {
+                            background-color: $yellow-color;
+                        }
+                        &.green {
+                            background-color: $success-color;
+                        }
+                        &.blue {
+                            background-color: $primary-color;
+                        }
                     }
                 }
             }
         }
     }
 }
+

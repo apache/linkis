@@ -127,6 +127,7 @@ RANDOM_LINKISCLI_TOKEN="LINKISCLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{
 if [ $DEBUG_MODE != "true" ];then
   sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
   sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/admin/configuration_helper.sh
   sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
   sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $common_conf
   sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $common_conf
@@ -532,6 +533,7 @@ sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spri
 if [ "$RESULT_SET_ROOT_PATH" != "" ]
 then
   sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
+  sed -i ${txt}  "s#resultSetRootDir=.*#resultSetRootDir=$RESULT_SET_ROOT_PATH#g" $LINKIS_HOME/admin/linkis_task_res_log_clear.sh
 fi
 
 publicservice_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties

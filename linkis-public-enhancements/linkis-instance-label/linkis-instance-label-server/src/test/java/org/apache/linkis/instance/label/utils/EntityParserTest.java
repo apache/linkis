@@ -17,30 +17,40 @@
 
 package org.apache.linkis.instance.label.utils;
 
+import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.vo.InstanceInfoVo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /** EntityParser Tester */
 public class EntityParserTest {
 
-  //  @Test
-  //  public void testParseToInstanceVoInstanceInfo() throws Exception {
-  //    // TODO: Test goes here...
-  //    InstanceInfo instanceInfo = new InstanceInfo();
-  //    instanceInfo.setId(1);
-  //    instanceInfo.setInstance("testInstance");
-  //    instanceInfo.setApplicationName("testApplicationName");
-  //    InstanceInfoVo instanceInfoVo = EntityParser.parseToInstanceVo(instanceInfo);
-  //    assertTrue(instanceInfoVo.getInstance().equals(instanceInfo.getInstance()));
-  //  }
-  //
-  //  @Test
-  //  public void testParseToInstanceVoInstanceInfos() throws Exception {
-  //    // TODO: Test goes here...
-  //    List<InstanceInfo> list = new ArrayList<>();
-  //    InstanceInfo instanceInfo = new InstanceInfo();
-  //    instanceInfo.setId(1);
-  //    instanceInfo.setInstance("testInstance");
-  //    instanceInfo.setApplicationName("testApplicationName");
-  //    list.add(instanceInfo);
-  //    List<InstanceInfoVo> instanceInfoVoList = EntityParser.parseToInstanceVo(list);
-  //    assertTrue(list.get(0).getInstance().equals(instanceInfoVoList.get(0).getInstance()));
-  //  }
+  @Test
+  public void testParseToInstanceVoInstanceInfo() throws Exception {
+    // TODO: Test goes here...
+    InstanceInfo instanceInfo = new InstanceInfo();
+    instanceInfo.setId(1);
+    instanceInfo.setInstance("testInstance");
+    instanceInfo.setApplicationName("testApplicationName");
+    InstanceInfoVo instanceInfoVo = EntityParser.parseToInstanceVo(instanceInfo);
+    assertTrue(instanceInfoVo.getInstance().equals(instanceInfo.getInstance()));
+  }
+
+  @Test
+  public void testParseToInstanceVoInstanceInfos() throws Exception {
+    // TODO: Test goes here...
+    List<InstanceInfo> list = new ArrayList<>();
+    InstanceInfo instanceInfo = new InstanceInfo();
+    instanceInfo.setId(1);
+    instanceInfo.setInstance("testInstance");
+    instanceInfo.setApplicationName("testApplicationName");
+    list.add(instanceInfo);
+    List<InstanceInfoVo> instanceInfoVoList = EntityParser.parseToInstanceVo(list);
+    assertTrue(list.get(0).getInstance().equals(instanceInfoVoList.get(0).getInstance()));
+  }
 }

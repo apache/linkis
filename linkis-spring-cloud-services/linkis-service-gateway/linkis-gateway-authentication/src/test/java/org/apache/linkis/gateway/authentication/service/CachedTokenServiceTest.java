@@ -20,11 +20,13 @@ package org.apache.linkis.gateway.authentication.service;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.gateway.authentication.Scan;
 import org.apache.linkis.gateway.authentication.WebApplicationServer;
+import org.apache.linkis.gateway.authentication.exception.TokenAuthException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,43 +43,41 @@ public class CachedTokenServiceTest {
 
   @Autowired CachedTokenService tokenService;
 
-  //  @Test
-  //  void testIsTokenValid() {
-  //    boolean isOk = tokenService.isTokenValid(TokenName);
-  //    assertTrue(isOk);
-  //  }
-  //
-  //  @Test
-  //  void testIsTokenAcceptableWithUser() {
-  //    boolean isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test");
-  //    assertTrue(isOk);
-  //    isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test1");
-  //    assertFalse(isOk);
-  //  }
-  //
-  //  @Test
-  //  void testIsTokenAcceptableWithHost() {
-  //    boolean isOk = tokenService.isTokenAcceptableWithHost(TokenName, "127.0.0.1");
-  //    assertTrue(isOk);
-  //    isOk = tokenService.isTokenAcceptableWithHost(TokenName, "10.10.10.10");
-  //    assertFalse(isOk);
-  //  }
-  //
-  //  @Test
-  //  void testDoAuth() {
-  //    boolean isOk = tokenService.doAuth(TokenName, "test", "127.0.0.1");
-  //    assertTrue(isOk);
-  //
-  //    Exception exception =
-  //        assertThrows(
-  //            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test1",
-  // "127.0.0.1"));
-  //    logger.info("assertThrows：{}", exception.getMessage());
-  //
-  //    exception =
-  //        assertThrows(
-  //            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test",
-  // "10.10.10.10"));
-  //    logger.info("assertThrows：{}", exception.getMessage());
-  //  }
+  @Test
+  void testIsTokenValid() {
+    boolean isOk = tokenService.isTokenValid(TokenName);
+    assertTrue(isOk);
+  }
+
+  @Test
+  void testIsTokenAcceptableWithUser() {
+    boolean isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test");
+    assertTrue(isOk);
+    isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test1");
+    assertFalse(isOk);
+  }
+
+  @Test
+  void testIsTokenAcceptableWithHost() {
+    boolean isOk = tokenService.isTokenAcceptableWithHost(TokenName, "127.0.0.1");
+    assertTrue(isOk);
+    isOk = tokenService.isTokenAcceptableWithHost(TokenName, "10.10.10.10");
+    assertFalse(isOk);
+  }
+
+  @Test
+  void testDoAuth() {
+    boolean isOk = tokenService.doAuth(TokenName, "test", "127.0.0.1");
+    assertTrue(isOk);
+
+    Exception exception =
+        assertThrows(
+            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test1", "127.0.0.1"));
+    logger.info("assertThrows：{}", exception.getMessage());
+
+    exception =
+        assertThrows(
+            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test", "10.10.10.10"));
+    logger.info("assertThrows：{}", exception.getMessage());
+  }
 }

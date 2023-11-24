@@ -57,9 +57,29 @@ public class DefaultCommonLockService implements CommonLockService {
     return isLocked;
   }
 
+  @Override
+  public Boolean reentrantLock(CommonLock commonLock, Long timeOut) {
+    CommonLock oldLock =
+        commonLockMapper.getLockByLocker(commonLock.getLockObject(), commonLock.getLocker());
+    if (oldLock != null) {
+      return true;
+    }
+    long startTime = System.currentTimeMillis();
+    Boolean isLocked = tryLock(commonLock, timeOut);
+    while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
+      try {
+        Thread.sleep(1000);
+        isLocked = tryLock(commonLock, timeOut);
+      } catch (InterruptedException e) {
+        logger.warn("lock waiting interrupted", e);
+      }
+    }
+    return isLocked;
+  }
+
   private boolean tryLock(CommonLock commonLock, Long timeOut) {
     try {
-      commonLockMapper.lock(commonLock.getLockObject(), timeOut);
+      commonLockMapper.lock(commonLock, timeOut);
       return true;
     } catch (DataAccessException e) {
       logger.warn("Failed to obtain lock:" + commonLock.getLockObject());
@@ -69,7 +89,7 @@ public class DefaultCommonLockService implements CommonLockService {
 
   @Override
   public void unlock(CommonLock commonLock) {
-    commonLockMapper.unlock(commonLock.getLockObject());
+    commonLockMapper.unlock(commonLock);
   }
 
   @Override

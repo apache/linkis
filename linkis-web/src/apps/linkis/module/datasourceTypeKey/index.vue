@@ -20,7 +20,7 @@
     <div class="search-bar" style="display: flex;align-items: flex-start">
 
       <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.datasourceTypeKey.searchName')">{{$t('message.linkis.basedataManagement.datasourceTypeKey.searchName')}}</span>
-      <Input style="width: 150px" v-model="searchName" clearable class="input" :placeholder="$t('message.linkis.basedataManagement.datasourceTypeKey.searchPlaceholder')"></Input>
+      <Input style="width: 150px; marigin-right:15px;" v-model="searchName" clearable class="input" :placeholder="$t('message.linkis.basedataManagement.datasourceTypeKey.searchPlaceholder')"></Input>
 
       <span :style="{ whiteSpace: 'nowrap',marginLeft:'5px', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.datasourceTypeKey.searchType')">{{$t('message.linkis.basedataManagement.datasourceTypeKey.searchType')}}</span>
       <Select style="width: 150px;margin-right: 15px" v-model="datasourceType" >

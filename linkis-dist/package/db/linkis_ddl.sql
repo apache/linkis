@@ -30,23 +30,24 @@ SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_config_key`;
 CREATE TABLE `linkis_ps_configuration_config_key`(
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `key` varchar(50) DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
-  `description` varchar(200) DEFAULT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `default_value` varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
-  `validate_type` varchar(50) DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
-  `validate_range` varchar(50) DEFAULT NULL COMMENT 'Validate range',
-  `engine_conn_type` varchar(50) DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
-  `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
-  `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
-  `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
-  `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
-  `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
-  `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
-  `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+    `id`               bigint(20) NOT NULL AUTO_INCREMENT,
+    `key`              varchar(50)  DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
+    `description`      varchar(200) DEFAULT NULL,
+    `name`             varchar(50)  DEFAULT NULL,
+    `default_value`    varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
+    `validate_type`    varchar(50)  DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
+    `validate_range`   varchar(50)  DEFAULT NULL COMMENT 'Validate range',
+    `engine_conn_type` varchar(50)  DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
+    `is_hidden`        tinyint(1)   DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
+    `is_advanced`      tinyint(1)   DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
+    `level`            tinyint(1)   DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
+    `treeName`         varchar(20)  DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    `boundary_type`     int(2) NOT NULL DEFAULT '0'  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
+    `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
+    `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
+    `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_key_engine_relation`;
@@ -83,6 +84,43 @@ CREATE TABLE `linkis_ps_configuration_category` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uniq_label_id` (`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+DROP  TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
+CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_limit_for_user` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `user_name` VARCHAR(50) NOT NULL COMMENT 'username',
+    `combined_label_value` VARCHAR(128) NOT NULL COMMENT 'Combined label combined_userCreator_engineType such as hadoop-IDE,spark-2.4.3',
+    `key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT 'configuration value',
+    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'upper limit value',
+    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Lower limit value (reserved)',
+    `latest_update_template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid template id recorded by the third party',
+    `is_valid` VARCHAR(2) DEFAULT 'Y' COMMENT 'Is it valid? Reserved Y/N',
+    `create_by` VARCHAR(50) NOT NULL COMMENT 'Creator',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Update by',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+DROP  TABLE IF EXISTS `linkis_ps_configutation_lm_across_cluster_rule`;
+CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
+    id INT AUTO_INCREMENT COMMENT 'Rule ID, auto-increment primary key',
+    cluster_name char(32) NOT NULL COMMENT 'Cluster name, cannot be empty',
+    creator char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    username char(32) NOT NULL COMMENT 'User, cannot be empty',
+    create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time, cannot be empty',
+    create_by char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    update_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Modification time, cannot be empty',
+    update_by char(32) NOT NULL COMMENT 'Updater, cannot be empty',
+    rules varchar(256) NOT NULL COMMENT 'Rule content, cannot be empty',
+    is_valid VARCHAR(2) DEFAULT 'N' COMMENT 'Is it valid Y/N',
+    PRIMARY KEY (id),
+    UNIQUE KEY idx_creator_username (creator, username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- New linkis job
@@ -135,6 +173,7 @@ DROP  TABLE IF EXISTS `linkis_ps_common_lock`;
 CREATE TABLE `linkis_ps_common_lock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `locker` varchar(255) COLLATE utf8_bin NOT NULL,
   `time_out` longtext COLLATE utf8_bin,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -153,6 +192,8 @@ DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
 CREATE TABLE `linkis_ps_udf_manager` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -166,6 +207,8 @@ CREATE TABLE `linkis_ps_udf_shared_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `shared_group` varchar(50) NOT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -174,7 +217,9 @@ CREATE TABLE `linkis_ps_udf_shared_info`
 (
    `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
    `udf_id` bigint(20) NOT NULL,
-   `user_name` varchar(50) NOT NULL
+   `user_name` varchar(50) NOT NULL,
+   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -190,7 +235,8 @@ CREATE TABLE `linkis_ps_udf_tree` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_parent_name_uname_category` (`parent`,`name`,`user_name`,`category`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
@@ -203,7 +249,10 @@ CREATE TABLE `linkis_ps_udf_user_load` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_uid_uname` (`udf_id`, `user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;
@@ -235,6 +284,7 @@ CREATE TABLE `linkis_ps_udf_version` (
   `use_format` varchar(255) DEFAULT NULL,
   `description` varchar(255) NOT NULL COMMENT 'version desc',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `md5` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -486,6 +536,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources` (
 	`update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Updated time',
 	`updator` varchar(50) DEFAULT NULL COMMENT 'updator',
 	`enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+	unique key `uniq_rid_eflag`(`resource_id`, `enable_flag`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 

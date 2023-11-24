@@ -128,12 +128,13 @@ CREATE TABLE `linkis_cg_rm_external_resource_provider`
 
 
 DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
-CREATE TABLE `linkis_ps_udf_manager`
-(
-    `id`        bigint(20) NOT NULL AUTO_INCREMENT,
-    `user_name` varchar(20) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-);
+CREATE TABLE `linkis_ps_udf_manager` (
+   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+   `user_name` varchar(20) DEFAULT NULL,
+   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `linkis_ps_udf_tree`;
 CREATE TABLE `linkis_ps_udf_tree`
@@ -232,6 +233,22 @@ CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources`
     `last_update_time`     datetime     NOT NULL COMMENT 'updated time',
     PRIMARY KEY (`id`)
 );
+
+DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;
+CREATE TABLE `linkis_ps_udf_baseinfo` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `create_user` varchar(50) NOT NULL,
+    `udf_name` varchar(255) NOT NULL,
+    `udf_type` int(11) DEFAULT '0',
+    `tree_id` bigint(20) NOT NULL,
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `sys` varchar(255) NOT NULL DEFAULT 'ide' COMMENT 'source system',
+    `cluster_name` varchar(255) NOT NULL,
+    `is_expire` bit(1) DEFAULT NULL,
+    `is_shared` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DELETE FROM linkis_ps_datasource_access;
 INSERT INTO `linkis_ps_datasource_access` (`id`, `table_id`, `visitor`, `fields`, `application_id`, `access_time`) VALUES (1, 1, 'test', 'test', 1, '2022-12-20 22:54:36');

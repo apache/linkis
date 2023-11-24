@@ -23,6 +23,7 @@
       ref="toolbar"
       v-show="result.path"
       :current-path="result.path"
+      :all-path="result.allPath"
       :show-filter="tableData.type !== 'normal'"
       :script="script"
       :row="hightLightRow"
@@ -248,9 +249,13 @@ export default {
         total: 0,
         path: '',
         cache: {},
+        allPath: []
       };
       if (this.script.resultList && this.script.resultSet !== undefined) {
-        res =  this.script.resultList[this.script.resultSet].result
+        res = this.script.resultList[this.script.resultSet].result
+        if(res) {
+          res.allPath = this.script.resultList.map(result => result.path);
+        }
       }
       if(!res && this.script.result){
         res = this.script.result

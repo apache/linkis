@@ -32,7 +32,7 @@
         ></Input>
       </Col>
       <Col span="6" class="search-item">
-        <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.appName')}}</span>
+        <span :title="$t('message.linkis.tenantTagManagement.appName')" :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
           class="input"
@@ -78,6 +78,7 @@
       @on-change="changePage"
       size="small"
       show-elevator
+      show-total
       :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
       style="position: absoulute; bottom: 10px; overflow: hidden; text-align: center;"
     ></Page>
@@ -281,7 +282,6 @@ export default {
           })
         this.tableLoading = false;
       } catch(err) {
-        window.console.log(err);
         this.tableLoading = false;
       }
 
@@ -332,7 +332,6 @@ export default {
             })
             this.isRequesting = false
           } catch (err) {
-            window.console.log(err);
             this.isRequesting = false
           }
         }
@@ -380,7 +379,6 @@ export default {
             this.isRequesting = false;
           } catch(err) {
             this.isRequesting = false;
-            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
@@ -410,16 +408,13 @@ export default {
           await this.confirmDelete(data);
           await this.getTableData();
         },
-        onCancel: () => {
-          window.console.log('cancel');
-        }
       })
     },
     async confirmDelete(data) {
       try {
         await api.fetch('configuration/tenant-mapping/delete-tenant', {id: data.id}, 'get');
       } catch(err) {
-        window.console.log(err);
+        return;
       }
     },
     async handleChange() {

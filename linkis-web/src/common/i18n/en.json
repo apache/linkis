@@ -308,7 +308,7 @@
         "lineFilter": "Line Filter",
         "resultGroupLineFilter": "Result Group Line Filter",
         "resultGroup": "Result Group",
-        "all": "all",
+        "all": "All Results({count})",
         "autoFormat": "Auto Format",
         "downloadMode": "Download Mode :",
         "deepAnalysis": "Deep Analysis",

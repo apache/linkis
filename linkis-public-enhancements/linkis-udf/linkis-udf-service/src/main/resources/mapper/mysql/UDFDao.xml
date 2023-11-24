@@ -31,6 +31,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="sys" property="sys" jdbcType="VARCHAR"/>
         <result column="cluster_name" property="clusterName" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="UDFInfoMap" type="org.apache.linkis.udf.entity.UDFInfo">
@@ -102,7 +103,7 @@
     </delete>
 
     <insert id="addLoadInfo">
-        INSERT INTO linkis_ps_udf_user_load (`udf_id`,`user_name`) VALUES (#{arg0},#{arg1})
+        INSERT INTO linkis_ps_udf_user_load (`udf_id`,`user_name`,`create_time`,`update_time`) VALUES (#{arg0},#{arg1},now(),now())
     </insert>
 
     <select id="getUDFSByUserName" resultMap="UDFResultMap">
@@ -114,9 +115,26 @@
 
     <select id="getUDFSByUsers" resultMap="UDFResultMap">
         SELECT
-        <include refid="udf_Column_List"/>
-        FROM linkis_ps_udf_baseinfo
-        WHERE create_user in
+        info.id,info.`create_user`,info.`udf_name`,info.`udf_type`,info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,
+        info.`sys`,info.`cluster_name`,udf_version.description
+        FROM
+        linkis_ps_udf_baseinfo info ,
+        (SELECT
+        udf_version.*
+        FROM
+        linkis_ps_udf_version udf_version , (
+        SELECT
+        udf_id , MAX(bml_resource_version) AS bml_resource_version
+        FROM
+        linkis_ps_udf_version
+        GROUP BY
+        udf_id) version_tmp
+        WHERE
+        version_tmp.udf_id = udf_version.udf_id
+        AND version_tmp.bml_resource_version = udf_version.bml_resource_version) udf_version
+        WHERE
+        info.id = udf_version.udf_id
+        AND info.create_user in
         <foreach collection="arg0" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
@@ -124,10 +142,29 @@
 
     <select id="getSharedUDFByUser" resultMap="UDFResultMap">
         SELECT
-        <include refid="udf_Column_List"/>
-        FROM linkis_ps_udf_baseinfo
-        WHERE id IN
-        (SELECT udf_id FROM linkis_ps_udf_shared_info WHERE user_name=#{userName})
+            info.id,info.`create_user`,info.`udf_name`,info.`udf_type`,info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,
+            info.`sys`,info.`cluster_name`,	version_tmp.description
+        FROM
+            linkis_ps_udf_baseinfo info ,
+            (
+                SELECT
+                    version_info.*
+                FROM
+                    linkis_ps_udf_version version_info , (
+                    SELECT
+                        udf_id , MAX(bml_resource_version) AS bml_resource_version
+                    FROM
+                        linkis_ps_udf_version
+                    GROUP BY
+                        udf_id
+                ) version_max
+                WHERE
+                    version_max.udf_id = version_info.udf_id
+                  AND version_max.bml_resource_version = version_info.bml_resource_version
+            )  version_tmp
+        WHERE
+            info.id = version_tmp.udf_id
+          AND info.id in (SELECT	udf_id FROM	linkis_ps_udf_shared_info WHERE user_name =	#{userName})
     </select>
 
     <select id="getUDFSByTreeIdAndUser" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
@@ -359,7 +396,7 @@
 
     <update id="updateLoadUser">
         UPDATE linkis_ps_udf_user_load
-        SET user_name = #{newUser}
+        SET user_name = #{newUser},update_time =now()
         WHERE udf_id = #{udfId}
         AND user_name = #{oldUser}
     </update>

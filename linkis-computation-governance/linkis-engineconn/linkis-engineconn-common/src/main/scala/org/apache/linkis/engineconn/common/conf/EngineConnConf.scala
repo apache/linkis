@@ -61,6 +61,8 @@ object EngineConnConf {
 
   val ENGINE_CONN_LOCAL_LOG_DIRS_KEY = CommonVars("wds.linkis.engine.logs.dir.key", "LOG_DIRS")
 
+  val ENGINE_CONN_LOCAL_TMP_DIR = CommonVars("wds.linkis.engine.tmp.dir", "TEMP_DIRS")
+
   val ENGINE_CONN_CREATION_WAIT_TIME =
     CommonVars("wds.linkis.engine.connector.init.time", new TimeType("8m"))
 
@@ -83,6 +85,8 @@ object EngineConnConf {
     CommonVars("wds.linkis.seatunnel.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
 
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
+
+  def getEngineTmpDir: String = System.getenv(ENGINE_CONN_LOCAL_TMP_DIR.getValue)
 
   def getLogDir: String = {
     val logDir = System.getenv(ENGINE_CONN_LOCAL_LOG_DIRS_KEY.getValue)

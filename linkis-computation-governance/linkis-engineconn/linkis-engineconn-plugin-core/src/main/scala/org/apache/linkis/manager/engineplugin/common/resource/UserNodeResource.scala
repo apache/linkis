@@ -34,9 +34,6 @@ class UserNodeResource extends NodeResource {
   private var leftResource: Resource = _
   private var createTime: Date = _
   private var updateTime: Date = _
-  private var maxApps: Int = _
-  private var numPendingApps: Int = _
-  private var numActiveApps: Int = _
 
   def getUser: String = user
 
@@ -90,23 +87,4 @@ class UserNodeResource extends NodeResource {
   override def getId: Integer = id
 
   override def setId(id: Integer): Unit = this.id = id
-
-  override def getMaxApps: Integer = maxApps
-
-  override def setMaxApps(maxApps: Integer): Unit = {
-    this.maxApps = maxApps
-  }
-
-  override def getNumPendingApps: Integer = numPendingApps
-
-  override def setNumPendingApps(numPendingApps: Integer): Unit = {
-    this.numPendingApps = numPendingApps
-  }
-
-  override def getNumActiveApps: Integer = numActiveApps
-
-  override def setNumActiveApps(numActiveApps: Integer): Unit = {
-    this.numActiveApps = numActiveApps
-  }
-
 }

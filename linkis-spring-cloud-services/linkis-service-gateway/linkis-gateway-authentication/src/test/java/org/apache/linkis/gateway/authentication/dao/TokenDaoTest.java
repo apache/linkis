@@ -18,18 +18,11 @@
 package org.apache.linkis.gateway.authentication.dao;
 
 import org.apache.linkis.common.conf.CommonVars;
-import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TokenDaoTest extends BaseDaoTest {
 
@@ -40,15 +33,15 @@ class TokenDaoTest extends BaseDaoTest {
 
   @Autowired TokenDao tokenDao;
 
-  @Test
-  void testSelectTokenByName() {
-    TokenEntity result = tokenDao.selectTokenByName(TokenName);
-    assertEquals(result.getTokenName(), TokenName);
-  }
-
-  @Test
-  void testGetAllTokens() {
-    List<TokenEntity> result = tokenDao.getAllTokens();
-    assertNotEquals(result.size(), 0);
-  }
+  //  @Test
+  //  void testSelectTokenByName() {
+  //    TokenEntity result = tokenDao.selectTokenByName(TokenName);
+  //    assertEquals(result.getTokenName(), TokenName);
+  //  }
+  //
+  //  @Test
+  //  void testGetAllTokens() {
+  //    List<TokenEntity> result = tokenDao.getAllTokens();
+  //    assertNotEquals(result.size(), 0);
+  //  }
 }

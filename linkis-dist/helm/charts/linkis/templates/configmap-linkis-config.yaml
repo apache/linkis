@@ -100,6 +100,16 @@ data:
       reasonable: true
       support-methods-arguments: true
       params: countSql
+    spring:
+      cloud:
+        loadbalancer:
+          cache:
+            enabled: false
+      main:
+        allow-circular-references: true
+      mvc:
+        pathmatch:
+          matching-strategy: ant_path_matcher
 
     #ribbon:
     #  ReadTimeout: 10000
@@ -239,6 +249,8 @@ data:
     spring.spring.servlet.multipart.max-request-size=500MB
     # note:value of zero means Jetty will never write to disk.
     spring.spring.servlet.multipart.file-size-threshold=50MB
+    spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+    spring.spring.cloud.loadbalancer.cache.enabled=false
 
   linkis-mg-gateway.properties: |
     #wds.linkis.server.restful.uri=/
@@ -374,6 +386,7 @@ data:
     spring.spring.main.allow-bean-definition-overriding=true
     spring.spring.jackson.serialization.FAIL_ON_EMPTY_BEANS=false
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+    spring.spring.cloud.loadbalancer.cache.enabled=false
     # ps-cs prefix must be started with 'cs_'
     spring.eureka.instance.metadata-map.route=cs_1_dev
 

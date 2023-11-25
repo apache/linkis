@@ -17,20 +17,12 @@
 
 package org.apache.linkis.entrance.persistence
 
-import org.apache.linkis.common.io.{FsPath, MetaData, Record}
-import org.apache.linkis.common.io.resultset.ResultSet
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
-import org.apache.linkis.entrance.execute.StorePathExecuteRequest
-import org.apache.linkis.entrance.job.{EntranceExecuteRequest, EntranceExecutionJob}
-import org.apache.linkis.entrance.scheduler.cache.CacheOutputExecuteResponse
-import org.apache.linkis.governance.common.entity.job.SubJobDetail
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.scheduler.queue.Job
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
-import org.apache.linkis.storage.utils.FileSystemUtils
+import org.apache.linkis.storage.resultset.ResultSetFactory
 
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
 class EntranceResultSetEngine extends ResultSetEngine with Logging {
@@ -46,15 +38,11 @@ class EntranceResultSetEngine extends ResultSetEngine with Logging {
             EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getDesc
           )
         }
-      case CacheOutputExecuteResponse(alias, output) =>
-        if (ResultSetFactory.getInstance.isResultSetPath(output)) {
-          getDir(output)
-        } else {
-          throw new EntranceErrorException(
-            EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
-            EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getDesc
-          )
-        }
+      case _ =>
+        throw new EntranceErrorException(
+          EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
+          EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getDesc
+        )
     }
   }
 
@@ -64,7 +52,7 @@ class EntranceResultSetEngine extends ResultSetEngine with Logging {
     } else {
       val arr = str.split("/").filter(StringUtils.isNotBlank)
       if (arr.length <= 2) {
-        return str
+        str
       } else {
         str.substring(0, str.lastIndexOf("/"))
       }

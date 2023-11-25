@@ -48,7 +48,7 @@ object OrchestratorConfiguration {
     CommonVars("wds.linkis.orchestrator.execution.task.max.parallelism", 5)
 
   val TASK_RUNNER_MAX_SIZE =
-    CommonVars("wds.linkis.orchestrator.execution.task.runner.max.size", 200)
+    CommonVars("wds.linkis.orchestrator.execution.task.runner.max.size", 1000)
 
   val EXEC_RUNNER_FACTORY_CLASS =
     CommonVars("wds.linkis.orchestrator.exec.task.runner.factory.class", "")

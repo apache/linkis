@@ -67,7 +67,7 @@ object UserCreatorIPCheckUtils extends Logging {
 
   def checkUserIp(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     // Get IP address
-    val jobIp = jobRequest.getSource.get(TaskConstant.REQUEST_IP)
+    val jobIp = jobRequest.getSource.getOrDefault(TaskConstant.REQUEST_IP, "")
     logger.debug(s"start to checkTenantLabel $jobIp")
     if (StringUtils.isNotBlank(jobIp)) {
       jobRequest match {

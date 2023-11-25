@@ -36,6 +36,7 @@
       "log": "Task Log",
       "detail": "Task Detail",
       "result": "Task Result",
+      "engineLog": "Engine Log",
       "startUp": "Start-up",
       "tagEdit": "Edit",
       "tipForKill": "The unlock engines of ECM [{instance}}] will be killed",
@@ -71,8 +72,12 @@
       "noselection": "Please select first",
       "searchName": "Please enter username to search",
       "generalView": "Switch to the Common View",
+      "showAdvancedSearch": "Advanced Search",
+      "hideAdvancedSearch": "Hide Advanced Search",
       "manageView": "Switch to the Admin View",
       "back": "Back",
+      "download": "Download Log",
+      "confirmText": "Confirm downloading the log",
       "prev": "Previous Step",
       "complete": "Complete",
       "close": "Close",
@@ -130,8 +135,8 @@
         "minimumAvailableResources": "Minimum Available Resources",
         "startTime": "Start Time",
         "costTime": "Time Elapsed",
-        "executeApplicationName": "Execution Engine",
-        "requestApplicationName": "Created From",
+        "executeApplicationName": "Engine",
+        "requestApplicationName": "App",
         "user": "User",
         "createdTime": "Created at",
         "updateTime": "Update Time",
@@ -177,6 +182,7 @@
             "userResourceManagement": "User Resource Management",
             "tenantTagManagement": "Tenant Tag Management",
             "ipListManagement": "White List Management",
+            "acrossClusterRule": "Across Cluster Rule Management",
             "errorCode": "Error Manage",
             "gatewayAuthToken": "Token Manage",
             "engineConfigurationTemplate": "Engine Configuration Template",
@@ -190,13 +196,38 @@
             "EnginePluginManagement": "Engine Plugin Management",
             "basedataManagement": "Basic Data Management",
             "codeQuery": "Code Retrieval",
-            "EngineConnList": "Engine Conn List"
+            "EngineConnList": "Engine Conn List",
+            "opsTool": "OPS Tool",
+            "userConfig": "User Configuration",
+            "configManagement": "Configuration Management"
           }
         }
       },
+      "EnginePluginManagement": {
+        "engineConnType": "Engine Type",
+        "engineConnVersion": "Engine Version",
+        "create": "Add Engine Plugin",
+        "fileName": "File Name",
+        "fileSize": "File Size",
+        "lastModified": "File Update Time",
+        "bmlResourceId": "Material Resource Id",
+        "bmlResourceVersion": "Material Resource Version",
+        "lastUpdateTime": "Update Time",
+        "createTime": "Creation Time",
+        "Reset": "Reset",
+        "delete": "Delete the version of the selected material",
+        "update": "Update Engine Plugin",
+        "updateFileOnly": "Update",
+        "resourceVersion": "Engine Material BML Version",
+        "user": "Affiliated Person",
+        "deleteCurrentbml": "Delete",
+        "versionList": "Version List",
+        "rollback": "Roll Back ",
+        "action": "Operation"
+      },
       "modal": {
         "modalTitle": "Prompt message ",
-        "modalDelete": "Confirm whether to delete the [{name} option?",
+        "modalDelete": "Confirm whether to delete the [{name}] option?",
         "modalDeleteRecord": "Confirm whether to delete the record?",
         "modalDeleteTask": "Confirm whether to stop the selected task?",
         "modalDeleteInstance": "Determines whether to stop the current selected instance?",
@@ -212,12 +243,12 @@
           "placeholder": "Please choose the start date"
         },
         "instance": {
-          "label": "Instance",
+          "label": "Entrance Instance",
           "placeholder": "Please search by entering the instance"
       },
         "creator": {
-          "label": "Creator",
-          "placeholder": "Please search by entering the creator"
+          "label": "App",
+          "placeholder": "Please search by entering the application name"
         },
         "engine": {
           "label": "Engine"
@@ -226,7 +257,7 @@
           "label": "Status"
         },
         "appType": "App Type",
-        "engineType": "Engine"
+        "engineType": "Engine Type"
       },
       "columns": {
         "taskID": "Task ID",
@@ -300,7 +331,8 @@
         "hide": "Hide",
         "show": "Show",
         "advancedSetting": "Advanced Settings",
-        "dataDev": "Data Development"
+        "dataDev": "Data Development",
+        "maxLimit": "(The resource template specifies an upper limit value of {limit})"
       },
       "globalValiable": "Global Variables",
       "rules": {
@@ -400,7 +432,7 @@
         "addSuccessful": "Successfully Addded",
         "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
-        "isConfirmDel": "Are you sure you want to delete this tag({name})"
+        "isConfirmDel": "Confirm whether to delete the [{name}] option?"
       },
       "ipListManagement": {
         "userName": "User Name",
@@ -417,7 +449,7 @@
         "inputApp": "Please Input Application",
         "inputIpList": "Please Input IP List",
         "inputDesc": "Please Input Description",
-        "inputCreateUser": "Please Input Creare User",
+        "inputCreateUser": "Please Input Create User",
         "yourTagMapping": "Your Tag Mapping",
         "notEmpty": "Cannot be empty",
         "maxLen": "A maximum of 100 characters is allowed",
@@ -435,17 +467,66 @@
         "addSuccessful": "Successfully Addded",
         "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
-        "isConfirmDel": "Are you sure you want to delete this tag({name})"
+        "isConfirmDel": "Confirm whether to delete the [{name}] option?",
+        "cluster": "Cluster Label",
+        "inputCluster": "Please Input Cluster Label",
+        "rules": "Rules",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "CPUThreshold": "CPU Threshold(Core)",
+        "MemoryThreshold": "Memory Threshold(G)",
+        "CPUPercentageThreshold": "CPU Percentage Threshold",
+        "MemoryPercentageThreshold": "Memory Percentage Threshold",
+        "timeError": "The time format should be XX:XX, please enter the correct time",
+        "thresholdError": "Please enter an integer between 0 and 10000",
+        "percentageThresholdError": "Please enter an integer between 0 and 1",
+        "view": "View",
+        "errorJson": "Please enter a JSON that is formatted correctly and not empty",
+        "deleteSuccess": "Delete Successfully",
+        "createRules": "Create",
+        "editRules": "Edit",
+        "viewRules": "View Rules",
+        "yes": "Yes",
+        "no": "No",
+        "isValid": "Effective or Not",
+        "engineType": "Engine Type",
+        "key": "Config Key",
+        "inputKey": "Please Input Key",
+        "name": "Name",
+        "description": "Description",
+        "defaultValue": "Default Value",
+        "validType": "Validate Type",
+        "validRange": "Validate Range",
+        "dataType": "Boundary Type",
+        "category": "Category",
+        "none": "None",
+        "regex": "Regex",
+        "numInterval": "Number InterVal",
+        "oft": "OFT",
+        "enName": "Configuration Name(EN)",
+        "enDescription": "Configuration Description(EN)",
+        "enTreeName": "Tree Name(EN)",
+        "treeName": "Tree Name",
+        "noZH": "Chinese input not allowed",
+        "customLen": "The length cannot exceed {length}",
+        "enable": "Enable",
+        "disable": "Disable",
+        "confirmEnable": "Confirm whether to enable the [{name}] option?",
+        "confirmDisable": "Confirm whether to disable the [{name}] option?",
+        "enableSuccessfully": "Enable Successfully",
+        "disableSuccessfully": "Disable Successfully",
+        "templateRequired": "Required"
       },
       "codeQuery": {
         "executionCode": "Execution Code",
         "dateRange": "Date Range",
+        "engineType": "Engine Type",
         "placeholder": {
-            "executionCode": "Please input execution code",
+            "executionCode": "Please Input Execution Code",
             "dateRange": "Please select date range",
             "status": "Please select status"
         },
-        "inputCode": "Please input execution code",
+        "inputCode": "Please Input Execution Code",
         "id": "ID",
         "code": "Code",
         "check": "View",
@@ -602,8 +683,8 @@
           "createTime": "Create Time",
           "updateTime": "Update Time",
           "searchPlaceholder": "Name",
-          "searchName": "名称",
-          "searchType": "类型",
+          "searchName": "Name",
+          "searchType": "Type",
           "all": "All"
         }
       },
@@ -633,6 +714,14 @@
         "rollback": "Rollback",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
         "upload": "Please click the button to upload the engine plugin"
+      },
+      "userConfig": {
+        "keyName": "Configuration Name",
+        "defaultValue": "Default Value",
+        "configVKey": "Configuration",
+        "configValue": "Configuration Value",
+        "configValuePro": "Please Input Configuration Value",
+        "versionInputPro": "Please Input Engine Version"
       }
     }
   }

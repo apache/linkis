@@ -69,6 +69,11 @@ object JobHistoryHelper extends Logging {
     else task.getStatus
   }
 
+  def getProgressByTaskID(taskID: Long): String = {
+    val task = getTaskByTaskID(taskID)
+    if (task == null) "0" else task.getProgress
+  }
+
   def getRequestIpAddr(req: HttpServletRequest): String = {
     val addrList = List(
       Option(req.getHeader("x-forwarded-for")).getOrElse("").split(",")(0),
@@ -123,7 +128,144 @@ object JobHistoryHelper extends Logging {
     sender.ask(jobReqBatchUpdate)
   }
 
-  private def getTaskByTaskID(taskID: Long): JobRequest = {
+  /**
+   * Get all consume queue task and batch update instances(获取所有消费队列中的任务进行批量更新)
+   *
+   * @param taskIdList
+   * @param retryWhenUpdateFail
+   */
+  def updateAllConsumeQueueTask(
+      taskIdList: util.List[Long],
+      retryWhenUpdateFail: Boolean = false
+  ): Unit = {
+
+    if (taskIdList.isEmpty) return
+
+    val updateTaskIds = new util.ArrayList[Long]()
+
+    if (
+        EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
+        taskIdList.size() > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue
+    ) {
+      for (i <- 0 until EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
+        updateTaskIds.add(taskIdList.get(i))
+      }
+    } else {
+      updateTaskIds.addAll(taskIdList)
+    }
+    val list = new util.ArrayList[Long]()
+    list.addAll(taskIdList)
+    try {
+      val successTaskIds = updateBatchInstancesEmpty(updateTaskIds)
+      if (retryWhenUpdateFail) {
+        list.removeAll(successTaskIds)
+      } else {
+        list.removeAll(updateTaskIds)
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn("update batch instances failed, wait for retry", e)
+        Thread.sleep(1000)
+    }
+    updateAllConsumeQueueTask(list, retryWhenUpdateFail)
+
+  }
+
+  /**
+   * Batch update instances(批量更新instances字段)
+   *
+   * @param taskIdList
+   * @return
+   */
+  def updateBatchInstancesEmpty(taskIdList: util.List[Long]): util.List[Long] = {
+    val jobReqList = new util.ArrayList[JobRequest]()
+    taskIdList.asScala.foreach(taskID => {
+      val jobRequest = new JobRequest
+      jobRequest.setId(taskID)
+      jobRequest.setInstances("")
+      jobReqList.add(jobRequest)
+    })
+    val jobReqBatchUpdate = JobReqBatchUpdate(jobReqList)
+    Utils.tryCatch {
+      val response = sender.ask(jobReqBatchUpdate)
+      response match {
+        case resp: util.List[JobRespProtocol] =>
+          // todo filter success data, rpc have bug
+//          resp.asScala
+//            .filter(r =>
+//              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
+//            )
+//            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
+//            .toList
+
+          taskIdList
+        case _ =>
+          throw JobHistoryFailedException(
+            "update batch instances from jobhistory not a correct List type"
+          )
+      }
+    } {
+      case errorException: ErrorException => throw errorException
+      case e: Exception =>
+        val e1 =
+          JobHistoryFailedException(
+            s"update batch instances ${taskIdList.asScala.mkString(",")} error"
+          )
+        e1.initCause(e)
+        throw e
+    }
+  }
+
+  /**
+   * query wait for failover task(获取待故障转移的任务)
+   *
+   * @param reqMap
+   * @param statusList
+   * @param startTimestamp
+   * @param limit
+   * @return
+   */
+  def queryWaitForFailoverTask(
+      reqMap: util.Map[String, java.lang.Long],
+      statusList: util.List[String],
+      startTimestamp: Long,
+      limit: Int
+  ): util.List[JobRequest] = {
+    val requestFailoverJob = RequestFailoverJob(reqMap, statusList, startTimestamp, limit)
+    val tasks = Utils.tryCatch {
+      val response = sender.ask(requestFailoverJob)
+      response match {
+        case responsePersist: JobRespProtocol =>
+          val status = responsePersist.getStatus
+          if (status != SUCCESS_FLAG) {
+            logger.error(s"query from jobHistory status failed, status is $status")
+            throw JobHistoryFailedException("query from jobHistory status failed")
+          }
+          val data = responsePersist.getData
+          data.get(JobRequestConstants.JOB_HISTORY_LIST) match {
+            case tasks: List[JobRequest] =>
+              tasks.asJava
+            case _ =>
+              throw JobHistoryFailedException(
+                s"query from jobhistory not a correct List type, instances ${reqMap.keySet()}"
+              )
+          }
+        case _ =>
+          logger.error("get query response incorrectly")
+          throw JobHistoryFailedException("get query response incorrectly")
+      }
+    } {
+      case errorException: ErrorException => throw errorException
+      case e: Exception =>
+        val e1 =
+          JobHistoryFailedException(s"query failover task error, instances ${reqMap.keySet()} ")
+        e1.initCause(e)
+        throw e
+    }
+    tasks
+  }
+
+  def getTaskByTaskID(taskID: Long): JobRequest = {
     val jobRequest = new JobRequest
     jobRequest.setId(taskID)
     jobRequest.setSource(null)
@@ -176,15 +318,15 @@ object JobHistoryHelper extends Logging {
     val ecResourceMap =
       if (resourceInfo == null) new util.HashMap[String, ResourceWithStatus] else resourceInfo
     if (resourceMap != null) {
-      resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
+      resourceMap.asInstanceOf[util.Map[String, ResourceWithStatus]].putAll(ecResourceMap)
     } else {
       metricsMap.put(TaskConstant.JOB_YARNRESOURCE, ecResourceMap)
     }
-    var engineInstanceMap: util.HashMap[String, AnyRef] = null
+    var engineInstanceMap: util.Map[String, AnyRef] = null
     if (metricsMap.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       engineInstanceMap = metricsMap
         .get(TaskConstant.JOB_ENGINECONN_MAP)
-        .asInstanceOf[util.HashMap[String, AnyRef]]
+        .asInstanceOf[util.Map[String, AnyRef]]
     } else {
       engineInstanceMap = new util.HashMap[String, AnyRef]()
       metricsMap.put(TaskConstant.JOB_ENGINECONN_MAP, engineInstanceMap)
@@ -194,7 +336,7 @@ object JobHistoryHelper extends Logging {
       val ticketId = infoMap.get(TaskConstant.TICKET_ID).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
         .getOrDefault(ticketId, new util.HashMap[String, AnyRef])
-        .asInstanceOf[util.HashMap[String, AnyRef]]
+        .asInstanceOf[util.Map[String, AnyRef]]
       engineExtraInfoMap.putAll(infoMap)
       engineInstanceMap.put(ticketId, engineExtraInfoMap)
     } else {

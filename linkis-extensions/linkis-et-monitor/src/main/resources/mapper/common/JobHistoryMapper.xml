@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper">
+
+    <resultMap id="jobHistoryMap" type="org.apache.linkis.monitor.jobhistory.entity.JobHistory"
+               autoMapping="false">
+        <id property="id" column="id"/>
+        <result property="jobReqId" column="job_req_id"/>
+        <result property="submitUser" column="submit_user"/>
+        <result property="executeUser" column="execute_user"/>
+        <result property="source" column="source"/>
+        <result property="labels" column="labels"/>
+        <result property="params" column="params"/>
+        <result property="progress" column="progress"/>
+        <result property="status" column="status"/>
+        <result property="logPath" column="log_path"/>
+        <result property="errorCode" column="error_code"/>
+        <result property="errorDesc" column="error_desc"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="updatedTime" column="updated_time"/>
+        <result property="instances" column="instances"/>
+        <result property="metrics" column="metrics"/>
+        <result property="engineType" column="engine_type"/>
+        <result property="executionCode" column="execution_code"/>
+        <result property="observeInfo" column="observe_info"/>
+    </resultMap>
+
+    <sql id="jobhistory_query">
+        `id`,`job_req_id`,`submit_user`,`execute_user`,`labels`,`params`,`status`,`error_code`,`created_time`,
+        `updated_time`,`instances`,`observe_info`
+    </sql>
+
+    <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"
+            parameterType="org.apache.linkis.monitor.jobhistory.entity.JobHistory">
+        SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="job_req_id != null">and job_req_id = #{job_req_id}</if>
+            <if test="submit_user != null">and submit_user = #{submit_user}</if>
+            <if test="execute_user != null">and execute_user = #{execute_user}</if>
+            <!--            <if test="source != null">and source = #{source}</if>-->
+            <!--            <if test="labels != null">and labels = #{labels}</if>-->
+            <!--            <if test="params != null">and params = #{params}</if>-->
+            <if test="progress != null">and progress = #{progress}</if>
+            <if test="status != null">and status = #{status}</if>
+            <!--            <if test="log_path != null">and log_path = #{log_path}</if>-->
+            <!--            <if test="error_code != null">and error_code = #{error_code}</if>-->
+            <!--            <if test="error_desc != null">and error_desc = #{error_desc}</if>-->
+            <if test="created_time != null">and created_time = #{created_time}</if>
+            <if test="updated_time != null">and updated_time = #{updated_time}</if>
+            <if test="instances != null">and instances = #{instances}</if>
+            <!--            <if test="metrics != null">and metrics = #{metrics}</if>-->
+            <if test="engine_type != null">and engine_type = #{engine_type}</if>
+            <!--            <if test="execution_code != null">and execution_code = #{execution_code }</if>-->
+        </where>
+    </select>
+
+    <select id="search" useCache="true" resultMap="jobHistoryMap">
+        SELECT
+        <include refid="jobhistory_query"/>
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="status != null">and
+                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                    #{element}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+    </select>
+
+    <update id="updateIncompleteJobStatusGivenIDList">
+        UPDATE linkis_ps_job_history_group_history
+        <set>
+            status = #{targetStatus}
+        </set>
+        <where>
+            <foreach collection="list" index="index" item="element" close=")" separator="," open="id in (">
+                #{element}
+            </foreach>
+        </where>
+    </update>
+
+    <update id="updateJobStatusForInstanceGivenStatusList">
+        UPDATE linkis_ps_job_history_group_history
+        <set>
+            status = #{targetStatus}, error_code=21304, error_desc='Automatically killed because entrance is dead'
+        </set>
+        <where>
+            created_time >= #{startDate}
+            AND instances = #{instanceName}
+            AND
+            <foreach collection="statusList" index="index" item="element" close=")" separator="," open="status in (">
+                #{element}
+            </foreach>
+        </where>
+        LIMIT 5000
+    </update>
+
+    <select id="searchByCache" useCache="true" resultMap="jobHistoryMap">
+        SELECT
+        <include refid="jobhistory_query"/>
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id > #{id}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="status != null">and
+                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                    #{element}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY linkis_ps_job_history_group_history.id
+    </select>
+
+    <select id="searchByCacheAndUpdateTime" useCache="true" resultMap="jobHistoryMap">
+        SELECT
+        <include refid="jobhistory_query"/>
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id > #{id}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and updated_time >= #{startDate} AND updated_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="status != null">and
+                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                    #{element}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY linkis_ps_job_history_group_history.id
+    </select>
+
+    <select id="selectIdByHalfDay" resultType="java.lang.Long">
+        SELECT MIN(id) FROM linkis_ps_job_history_group_history
+        <where>
+            updated_time >= date_sub(now(),interval 12 hour)
+            <if test="id != null">and id > #{id}</if>
+        </where>
+    </select>
+
+    <select id="selectMaxId" resultType="java.lang.Long">
+        SELECT MAX(id) FROM linkis_ps_job_history_group_history
+    </select>
+</mapper>

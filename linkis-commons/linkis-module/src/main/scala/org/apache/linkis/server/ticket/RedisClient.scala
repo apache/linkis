@@ -70,7 +70,7 @@ object RedisClient {
           SessionHAConfiguration.RedisHost,
           SessionHAConfiguration.RedisPort,
           redisTimeout,
-          SessionHAConfiguration.RedisSentinalServer
+          SessionHAConfiguration.RedisPassword
         )
       }
 

@@ -21,4 +21,9 @@
         margin-top: 16px;
         height: 610px;
     }
+    .datepicker {
+        /deep/.ivu-input-with-suffix {
+            padding-right: 0px;
+        }
+    }
 }

@@ -55,8 +55,20 @@
             suffixe="GB"
             width="120px"
             height="120px"
-            :title="$t('message.common.resourceSimple.NC')"></v-circle>
+            :title="$t('message.common.resourceSimple.NC')"
+            class="queue-manager-circle"></v-circle>
+          <v-circle
+            :percent="getPercentage(infos.queueInfo.numActiveApps, infos.queueInfo.maxApps)"
+            :used="infos.queueInfo.numActiveApps"
+            :max="infos.queueInfo.maxApps"
+            suffixe=""
+            width="120px"
+            height="120px"
+            title="Applications"></v-circle>
         </div>
+      </div>
+      <div class="queue-app">
+        <div class="queue-app-item pl60">Num Pending Applications: {{infos.queueInfo.numPendingApps}}</div>
       </div>
       <div class="queue-manager-top">
         <span class="queue-manager-title">{{ $t('message.common.resourceSimple.ZYSYPHB') }}</span>
@@ -111,6 +123,13 @@ export default {
     };
   },
   methods: {
+    getPercentage(numerator, denominator) {
+      if(denominator !== 0) {
+        return numerator / denominator
+      } else {
+        return 0
+      }
+    },
     getQueueList() {
       this.loading = true;
       // Get queue resource usage status(获取队列资源使用状态)

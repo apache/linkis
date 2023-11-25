@@ -28,6 +28,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>linkis-io-file-client</module>
+    <module>linkis-et-monitor</module>
   </modules>
 
 </project>

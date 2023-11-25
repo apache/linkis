@@ -71,7 +71,6 @@ export default {
           validate: [
             {
               required: true,
-              pattern: /^[A-Za-z]+-[A-Za-z]+$/g,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),

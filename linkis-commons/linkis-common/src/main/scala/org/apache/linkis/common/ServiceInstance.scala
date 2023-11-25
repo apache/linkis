@@ -20,10 +20,16 @@ package org.apache.linkis.common
 class ServiceInstance {
   private var applicationName: String = _
   private var instance: String = _
+  private var registryTimestamp: Long = _
   def setApplicationName(applicationName: String): Unit = this.applicationName = applicationName
   def getApplicationName: String = applicationName
   def setInstance(instance: String): Unit = this.instance = instance
   def getInstance: String = instance
+
+  def setRegistryTimestamp(registryTimestamp: Long): Unit = this.registryTimestamp =
+    registryTimestamp
+
+  def getRegistryTimestamp: Long = registryTimestamp
 
   override def equals(other: Any): Boolean = other match {
     case that: ServiceInstance =>
@@ -42,7 +48,9 @@ class ServiceInstance {
       .foldLeft(0)((a, b) => 31 * a + b)
   }
 
-  override def toString: String = s"ServiceInstance($applicationName, $instance)"
+  override def toString: String =
+    s"ServiceInstance($applicationName, $instance, $registryTimestamp)"
+
 }
 
 object ServiceInstance {
@@ -51,6 +59,14 @@ object ServiceInstance {
     val serviceInstance = new ServiceInstance
     serviceInstance.setApplicationName(applicationName)
     serviceInstance.setInstance(instance)
+    serviceInstance
+  }
+
+  def apply(applicationName: String, instance: String, registryTimestamp: Long): ServiceInstance = {
+    val serviceInstance = new ServiceInstance
+    serviceInstance.setApplicationName(applicationName)
+    serviceInstance.setInstance(instance)
+    serviceInstance.setRegistryTimestamp(registryTimestamp)
     serviceInstance
   }
 

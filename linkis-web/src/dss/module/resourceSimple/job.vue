@@ -112,7 +112,7 @@ export default {
       if(this.loading) return;
       this.jobList = [];
       this.loading = true;
-      api.fetch('/jobhistory/list', {
+      api.fetch('/jobhistory/listundonetasks', {
         pageSize: 100,
         status: 'Running,Inited,Scheduled',
       }, 'get').then((rst) => {

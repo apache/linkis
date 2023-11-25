@@ -41,10 +41,39 @@
     height: 100%;
     .global-history-searchbar {
         position: $relative;
-        .float-right {
-            position: $absolute;
-            right: 10px;
+        .search-btns {
+            display: inline-block;
+            vertical-align: top;
+            .search-btn {
+                margin: 0 10px 10px 0
+            }
         }
+        .searchbar-items {
+            display: inline-block;
+            .searchbar-item {
+                display: inline-block;
+                margin-right: 4px;
+                margin-bottom: 10px;
+                .ivu-input-suffix {
+                    display: none;
+                }
+                .ivu-input-with-suffix {
+                    padding-right: 0;
+                }
+                .label {
+                    text-align: right;
+                    vertical-align: middle;
+                    float: left;
+                    font-size: 12px;
+                    color: #515a6e;
+                    line-height: 1;
+                    padding: 10px 12px 10px 0;
+                    box-sizing: border-box;
+                }
+            }
+        }
+        
+        
     }
     .ivu-form {
         display: flex;

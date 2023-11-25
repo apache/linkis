@@ -142,16 +142,29 @@
   overflow: auto;
 }
 .bottom-td {
-  overflow: hidden;
-  white-space: nowrap;
   box-sizing: border-box;
   text-align: center;
-  text-overflow: ellipsis;
   vertical-align: middle;
   border-bottom: 1px solid #e8eaec;
   border-right: 1px solid #e8eaec;
   transition: background-color 0.2s ease-in-out;
 }
+.scroll {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.scroll::-webkit-scrollbar {
+ display: none;
+}
+.scroll::-webkit-scrollbar-thumb {
+  background: transparent
+}
+.wrap {
+  white-space: pre-line;
+  word-break: break-all;
+}
+
 .trselect td {
   background-color: #ebf7ff;
 }

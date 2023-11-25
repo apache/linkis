@@ -24,7 +24,7 @@
       @click.stop="showList"
       class="ivu-select-selection">
       <div class="">
-        <span class="ivu-select-selected-value">{{$t('message.common.resultList')}}{{ current - 0 + 1 }}</span>
+        <span class="ivu-select-selected-value">{{$t('message.common.resultList')}}{{ +current + 1 }}</span>
         <i class="ivu-icon ivu-icon-ios-arrow-down ivu-select-arrow"></i>
       </div>
     </div>
@@ -45,7 +45,7 @@
           v-for="(item, index) in list"
           :class="{current: current-0 === index}"
           :data-index="index"
-          :key="item.path">{{$t('message.common.resultList')}}{{ +item.name.split('.')[0].substring(1) + 1 }}</li>
+          :key="item.path">{{$t('message.common.resultList')}}{{ index + 1 }}</li>
       </virtual-list>
     </div>
   </div>

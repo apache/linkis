@@ -81,6 +81,13 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!-- jobhistory -->
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-jobhistory</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>

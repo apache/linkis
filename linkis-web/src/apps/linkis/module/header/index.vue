@@ -27,7 +27,7 @@
             src=""
             :alt="$t('message.common.logoName')"
           >
-          <span class="version">v{{sysVersion}}</span>
+          <span class="version">{{sysVersion}}{{clusterInfo ? `(${clusterInfo})`:''}}</span>
         </div>
       </div>
       <div
@@ -72,6 +72,7 @@ export default {
   data() {
     return {
       sysVersion: process.env.VUE_APP_VERSION,
+      clusterInfo: '',
       isUserMenuShow: false,
       userName: "",
       isSandbox: process.env.NODE_ENV === "sandbox",
@@ -84,6 +85,7 @@ export default {
   methods: {
     init() {
       this.userName = storage.get('userName');
+      this.clusterInfo = storage.get('clusterInfo') || ''
     },
     handleOutsideClick() {
       this.isUserMenuShow = false;

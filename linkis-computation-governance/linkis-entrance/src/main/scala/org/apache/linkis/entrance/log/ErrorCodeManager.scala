@@ -18,6 +18,12 @@
 package org.apache.linkis.entrance.log
 
 import org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler
+import org.apache.linkis.errorcode.client.manager.LinkisErrorCodeManager
+import org.apache.linkis.errorcode.common.LinkisErrorCode
+
+import java.util
+
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 abstract class ErrorCodeManager {
 
@@ -35,6 +41,22 @@ abstract class ErrorCodeManager {
     None
   }
 
+  def errorMatchAndGetContent(log: String): Option[(String, String, String)] = {
+    getErrorCodes.foreach(e =>
+      if (e.regex.findFirstIn(log).isDefined) {
+        val matched = e.regex.unapplySeq(log)
+        if (matched.nonEmpty) {
+          return Some(
+            e.code,
+            e.message.format(matched.get: _*),
+            e.regex.findFirstIn(log).getOrElse("")
+          )
+        } else Some(e.code, e.message, "")
+      }
+    )
+    None
+  }
+
 }
 
 /**
@@ -44,7 +66,24 @@ object FlexibleErrorCodeManager extends ErrorCodeManager {
 
   private val errorCodeHandler = LinkisErrorCodeHandler.getInstance()
 
-  override def getErrorCodes: Array[ErrorCode] = Array.empty
+  private val linkisErrorCodeManager = LinkisErrorCodeManager.getInstance
+
+  override def getErrorCodes: Array[ErrorCode] = {
+    val errorCodes: util.List[LinkisErrorCode] = linkisErrorCodeManager.getLinkisErrorCodes
+    if (errorCodes == null) {
+      Array.empty
+    } else {
+      errorCodes.asScala
+        .map(linkisErrorCode =>
+          ErrorCode(
+            linkisErrorCode.getErrorRegex,
+            linkisErrorCode.getErrorCode,
+            linkisErrorCode.getErrorDesc
+          )
+        )
+        .toArray
+    }
+  }
 
   override def errorMatch(log: String): Option[(String, String)] = {
     val errorCodes = errorCodeHandler.handle(log)

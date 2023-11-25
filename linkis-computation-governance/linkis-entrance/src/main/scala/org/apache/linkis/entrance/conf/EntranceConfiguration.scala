@@ -220,7 +220,29 @@ object EntranceConfiguration {
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
+  val TEMPLATE_CONF_SWITCH =
+    CommonVars("linkis.entrance.template.conf.interceptor.switch", false)
+
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", false)
+
+  val ENTRANCE_CREATOR_JOB_LIMIT: CommonVars[Int] =
+    CommonVars[Int](
+      "linkis.entrance.creator.job.concurrency.limit",
+      10000,
+      "Creator task concurrency limit parameters"
+    )
+
+  val ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE =
+    CommonVars("linkis.entrance.creator.job.concurrency.limit.conf.cache.time", 30L)
+
+  val ENTRANCE_TASK_TIMEOUT =
+    CommonVars("linkis.entrance.task.timeout", new TimeType("48h"))
+
+  val ENTRANCE_TASK_TIMEOUT_SCAN =
+    CommonVars("linkis.entrance.task.timeout.scan", new TimeType("12h"))
+
+  val ENABLE_HDFS_JVM_USER =
+    CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", true).getValue
 
 }

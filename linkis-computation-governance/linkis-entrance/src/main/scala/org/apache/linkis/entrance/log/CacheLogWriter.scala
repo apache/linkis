@@ -41,6 +41,8 @@ class CacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user:
         val sb = new StringBuilder
         if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
+        // need append latest msg before clear
+        sb.append(msg).append("\n")
         sharedCache.cachedLogs.fakeClear()
         super.write(sb.toString())
         pushTime.setTime(

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.log
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.job.EntranceExecutionJob
@@ -59,10 +60,19 @@ abstract class LogManager extends LogListener with Logging {
               }
             }
           }
-          entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
-          errorCodeManager.foreach(_.errorMatch(log).foreach { case (code, errorMsg) =>
-            errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
+          var writeLog = log
+          errorCodeManager.foreach(_.errorMatchAndGetContent(log).foreach {
+            case (code, errorMsg, targetMsg) =>
+              if (!targetMsg.contains(LogUtils.ERROR_STR) && log.contains(LogUtils.ERROR_STR)) {
+                writeLog = LogUtils.generateERROR(
+                  s"error code: $code, errorMsg: $errorMsg, errorLine: $targetMsg \n" + log
+                )
+              }
+              errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
+            case _ =>
           })
+          entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(writeLog))
+
         case _ =>
       }
     } {

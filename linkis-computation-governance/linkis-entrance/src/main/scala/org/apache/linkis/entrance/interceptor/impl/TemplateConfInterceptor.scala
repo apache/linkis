@@ -15,10 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.scheduler.cache
+package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.interceptor.EntranceInterceptor
+import org.apache.linkis.governance.common.entity.job.JobRequest
 
-case class CacheOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse {
-  override def getOutput: String = output
+import java.lang
+
+class TemplateConfInterceptor extends EntranceInterceptor {
+
+  override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+    if (EntranceConfiguration.TEMPLATE_CONF_SWITCH.getValue) {
+      TemplateConfUtils.dealWithTemplateConf(jobRequest, logAppender)
+    } else {
+      jobRequest
+    }
+  }
+
 }

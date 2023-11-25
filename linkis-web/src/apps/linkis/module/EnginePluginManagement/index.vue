@@ -64,7 +64,7 @@
         </div>
       </div>
     </Modal>
-    <Modal
+    <!-- <Modal
       width="800"
       class="modal"
       v-model="showFileOperate"
@@ -99,45 +99,31 @@
           </div>
         </div>
       </div>
-    </Modal>
-    <Row class="search-bar" type="flex" justify="start">
-      <Col span="5">
-        <div class="search-item">
-          <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{ $t('message.linkis.EnginePluginManagement.engineConnType') }}</span>
-          <Select  v-model="ecType" clearable style="width: 180px; margin-left: 5px;">
-            <Option
-              v-for="(item) in typeList"
-              :label="item"
-              :value="item"
-              :key="item"/>
-          </Select>
-        </div>
-      </Col>
-      <Col span="5">
-        <div class="search-item">
-          <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnVersion')">{{ $t('message.linkis.EnginePluginManagement.engineConnVersion') }}</span>
-          <Select  v-model="version" clearable style="width: 180px; margin-left: 5px;">
-            <Option
-              v-for="(item) in typeVersionList"
-              :label="item"
-              :value="item"
-              :key="item"/>
-          </Select>
-        </div>
-      </Col>
-      <Col span="12">
-        <Button type="primary" class="button" :style="{width: '60px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="initECMList()">{{
-          $t('message.linkis.search') }}</Button>
-        <Button type="primary" :style="{width: '60px', marginRight: '5px', padding: '5px'}" @click="resetSearch">{{
-          $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
-        <!-- <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
-          $t('message.linkis.EnginePluginManagement.update')}}</Button>
-        <Button type="error" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="deleteBML">{{
-          $t('message.linkis.EnginePluginManagement.delete')}}</Button> -->
-        <!-- <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(0)">{{
-          $t('message.linkis.EnginePluginManagement.create') }}</Button> -->
-      </Col>
-    </Row>
+    </Modal> -->
+    <div class="search-bar" style="display: flex;align-items: flex-start">
+
+      <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{$t('message.linkis.EnginePluginManagement.engineConnType')}}</span>
+      <Select  v-model="ecType" clearable style="width: 180px">
+        <Option
+          v-for="(item) in typeList"
+          :label="item"
+          :value="item"
+          :key="item"/>
+      </Select>
+
+      <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', marginLeft: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.EnginePluginManagement.engineConnVersion')">{{$t('message.linkis.EnginePluginManagement.engineConnVersion')}}</span>
+      <Select  v-model="version" clearable style="width: 180px; margin-right: 5px;">
+        <Option
+          v-for="(item) in typeVersionList"
+          :label="item"
+          :value="item"
+          :key="item"/>
+      </Select>
+      <Button type="primary" class="Button" @click="initECMList()">{{
+        $t('message.linkis.search') }}</Button>
+      <Button type="primary" :style="{ marginLeft: '10px' }" @click="resetSearch">{{
+        $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
+    </div>
     <Table
       border
       size="small"

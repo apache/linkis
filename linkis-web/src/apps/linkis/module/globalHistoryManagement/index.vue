@@ -17,114 +17,130 @@
 
 <template>
   <div class="global-history">
-    <Form class="global-history-searchbar" :model="searchBar" inline>
-      <FormItem prop="id" :label="$t('message.linkis.jobId')">
-        <InputNumber
-          v-model="searchBar.id"
-          :placeholder="$t('message.linkis.formItems.id.placeholder')"
-          style="width:60px;"
-          :min="1"
-        ></InputNumber>
-      </FormItem>
-      <FormItem prop="proxyUser" :label="$t('message.linkis.userName')" v-if="isAdminModel">
-        <Input
-          :maxlength="50"
-          v-model="searchBar.proxyUser"
-          :placeholder="$t('message.linkis.searchName')"
-          style="width:60px;"
-        />
-      </FormItem>
-      <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
-        <DatePicker
-          :transfer="true"
-          class="datepicker"
-          :options="shortcutOpt"
-          v-model="searchBar.shortcut"
-          type="daterange"
-          placement="bottom-start"
-          format="yyyy-MM-dd"
-          :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 160px"
-          :editable="false"
-        />
-      </FormItem>
-      <FormItem prop="instance" :label="$t('message.linkis.formItems.instance.label')">
-        <Input
-          :maxlength="50"
-          v-model="searchBar.instance"
-          :placeholder="$t('message.linkis.formItems.instance.placeholder')"
-          style="width:100px;"
-        />
-      </FormItem>
-      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
-        <Input
-          :maxlength="50"
-          v-model="searchBar.creator"
-          :placeholder="$t('message.linkis.formItems.creator.placeholder')"
-          style="width:80px;"
-        />
-      </FormItem>
-      <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
-        <Select v-model="searchBar.engine" style="width: 70px">
-          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
-        </Select>
-      </FormItem>
-      <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
-        <Select v-model="searchBar.status" style="width: 70px">
-          <Option
-            v-for="(item) in statusType"
-            :label="item.label"
-            :value="item.value"
-            :key="item.value"
+    <div class="global-history-searchbar">
+      <div class="searchbar-items">
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.jobId')}}</label>
+          <InputNumber
+            v-model="searchBar.id"
+            :placeholder="$t('message.linkis.formItems.id.placeholder')"
+            style="width:100px;"
+            :min="1"
+          ></InputNumber>
+        </div>
+        <div v-if="isAdminModel" class="searchbar-item">
+          <label class="label">{{$t('message.linkis.userName')}}</label>
+          <Input
+            :maxlength="50"
+            v-model="searchBar.proxyUser"
+            :placeholder="$t('message.linkis.searchName')"
+            style="width:60px;"
           />
-        </Select>
-      </FormItem>
-      <FormItem>
+        </div>
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.date.label')}}</label>
+          <DatePicker
+            :transfer="true"
+            class="datepicker"
+            :options="shortcutOpt"
+            v-model="searchBar.shortcut"
+            type="daterange"
+            placement="bottom-start"
+            format="yyyy-MM-dd"
+            :placeholder="$t('message.linkis.formItems.date.placeholder')"
+            style="width: 160px"
+            :editable="false"
+          />
+        </div>
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.creator.label')}}</label>
+          <Input
+            :maxlength="50"
+            v-model.trim="searchBar.creator"
+            :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+            style="width:80px;"
+          />
+        </div>
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.engine.label')}}</label>
+          <Select v-model="searchBar.engine" style="width: 70px">
+            <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
+          </Select>
+        </div>
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.status.label')}}</label>
+          <Select v-model="searchBar.status" style="width: 70px">
+            <Option
+              v-for="(item) in statusType"
+              :label="item.label"
+              :value="item.value"
+              :key="item.value"
+            />
+          </Select>
+        </div>
+        <Form v-show="showAdvance" class="global-history-searchbar" :model="searchBar" inline>
+          <FormItem prop="instance" :label="$t('message.linkis.formItems.instance.label')">
+            <Input
+              v-model="searchBar.instance"
+              :placeholder="$t('message.linkis.formItems.instance.placeholder')"
+              style="width:150px;"
+            />
+          </FormItem>
+        </Form>
+      </div>
+      <div class="search-btns">
         <Button
+          class="search-btn"
           type="primary"
           @click="search"
           style="margin-right: 10px;"
         >{{ $t('message.linkis.search') }}</Button>
         <Button
+          class="search-btn"
           type="warning"
           @click="reset"
           style="margin-right: 10px;"
         >{{ $t('message.linkis.clearSearch') }}</Button>
-        <Button type="error" @click="stop" style="margin-right: 10px;">{{$t('message.linkis.stop')}}</Button>
+        <Button class="search-btn" type="error" @click="stop" style="margin-right: 10px;">{{$t('message.linkis.stop')}}</Button>
         <Button
+          class="search-btn"
           type="primary"
           @click="switchAdmin"
-          v-if="isLogAdmin || isHistoryAdmin"
+          v-show="isLogAdmin || isHistoryAdmin"
+          style="margin-right: 10px;"
         >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
-      </FormItem>
-    </Form>
-    <div >
-      <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight+'px'}">
-        <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
-        <history-table
-          v-if="!isLoading"
-          :columns="column"
-          :data="list"
-          :height="moduleHeight"
-          :no-data-text="$t('message.linkis.noDataText')"
-          border
-          stripe
-          @checkall="checkChange"
-          @select-change="selectChange"
-        />
+        <Button
+          class="search-btn"
+          type="primary"
+          @click="clickAdvance"
+        >{{ showAdvance ? $t('message.linkis.hideAdvancedSearch') :  $t('message.linkis.showAdvancedSearch') }}</Button>
       </div>
-      <div class="global-history-page">
-        <Page
-          :total="pageSetting.total"
-          :page-size="pageSetting.pageSize"
-          :current="pageSetting.current"
-          size="small"
-          show-total
-          show-elevator
-          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
-          @on-change="changePage"
-        />
-      </div>
+    </div>
+    <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight +'px'}">
+      <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
+      <history-table
+        v-if="!isLoading"
+        :columns="column"
+        :data="list"
+        :height="moduleHeight"
+        :no-data-text="$t('message.linkis.noDataText')"
+        border
+        stripe
+        @checkall="checkChange"
+        @select-change="selectChange"
+      />
+    </div>
+    <div class="global-history-page">
+      <Page
+        :total="pageSetting.total"
+        :page-size="pageSetting.pageSize"
+        :current="pageSetting.current"
+        size="small"
+        show-total
+        show-elevator
+        :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+        @on-change="changePage"
+      />
     </div>
   </div>
 </template>
@@ -146,6 +162,7 @@ export default {
       column: [],
       getEngineTypes: [],
       isLoading: false,
+      showAdvance: false,
       pageSetting: {
         total: 0,
         pageSize: 50,
@@ -265,13 +282,13 @@ export default {
       moduleHeight: 300
     }
   },
-  created() {
+  async created() {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
+    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
       this.isLogAdmin = res.admin
       this.isHistoryAdmin = res.historyAdmin
     })
-    api.fetch('/configuration/engineType', 'get').then(res => {
+    await api.fetch('/configuration/engineType', 'get').then(res => {
       this.getEngineTypes = ['all', ...res.engineType]
     })
   },
@@ -292,6 +309,7 @@ export default {
       sessionStorage.removeItem('last-admin-model');
       sessionStorage.removeItem('last-searchbar-status');
       sessionStorage.removeItem('last-pageSetting-status');
+      sessionStorage.removeItem('last-searchbar-advance');
     }
     next();
   },
@@ -301,11 +319,20 @@ export default {
   methods: {
     getHeight() {
       this.moduleHeight = this.$parent.$el.clientHeight - 228
+      if(this.showAdvance) {
+        this.moduleHeight -= 42
+      }
+    },
+    clickAdvance() {
+      this.showAdvance = !this.showAdvance
+      this.getHeight()
     },
     init() {
       let isAdminModel = storage.get('last-admin-model')
       const lastSearch = storage.get('last-searchbar-status')
       const lastPage = storage.get('last-pageSetting-status')
+      this.showAdvance = storage.get('last-searchbar-advance')
+      this.getHeight()
       if (lastSearch) {
         if (lastSearch.shortcut[0] && lastSearch.shortcut[1]) {
           lastSearch.shortcut = [new Date(lastSearch.shortcut[0]), new Date(lastSearch.shortcut[1])]
@@ -365,13 +392,15 @@ export default {
         taskID: params.row.taskID,
         execID: params.row.strongerExecId,
         status: params.row.status,
-        fileName
+        fileName,
+        engineInstance: params.row.engineInstance,
       }
       if (this.isAdminModel) {
         query.proxyUser = params.row.executeUser
       }
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)
+      storage.set('last-searchbar-advance', this.showAdvance)
       // Jump to view the history details page(跳转查看历史详情页面)
       this.$router.push({
         path: '/console/viewHistory',
@@ -479,7 +508,8 @@ export default {
             progress: item.progress,
             failedReason: getFailedReason(item),
             runType: item.runType,
-            instance: item.instance
+            instance: item.instance,
+            engineInstance: item.engineInstance,
           }
         })
       }
@@ -535,13 +565,13 @@ export default {
           key: 'source',
           align: 'center',
           ellipsis: true,
-          width: 190
+          width: 170
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 440,
+          width: 420,
           // overflow to show(溢出以...显示)
           ellipsis: true
           // renderType: 'tooltip',
@@ -568,7 +598,7 @@ export default {
           key: 'failedReason',
           align: 'center',
           className: 'history-failed',
-          width: 210,
+          width: 200,
           renderType: 'a',
           renderParams: {
             hasDoc: this.checkIfHasDoc,
@@ -576,16 +606,15 @@ export default {
           }
         },
         {
-          title: `${this.$t(
-            'message.linkis.tableColumns.requestApplicationName'
-          )}/${this.$t('message.linkis.tableColumns.executeApplicationName')}`,
+          title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
           key: 'requestApplicationName',
           align: 'center',
-          width: 140,
+          width: 130,
           renderType: 'concat',
           renderParams: {
             concatKey: 'executeApplicationName'
           }
+
         },
         {
           title: this.$t('message.linkis.tableColumns.user'),

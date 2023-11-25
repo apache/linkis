@@ -94,6 +94,12 @@ data:
             include: refresh,info
     logging:
       config: classpath:log4j2.xml
+    springfox:
+      documentation:
+        enabled: false
+        auto-startup: false
+        swagger-ui:
+          enabled: false
 
     pagehelper:
       helper-dialect: mysql
@@ -139,6 +145,12 @@ data:
         prefer-file-system-access: false
     server:
       port: {{ .Values.mgEureka.port }}
+    springfox:
+      documentation:
+        enabled: false
+        auto-startup: false
+        swagger-ui:
+          enabled: false
     eureka:
       instance:
         preferIpAddress: true
@@ -186,6 +198,12 @@ data:
            defaultZone: {{- include "linkis.registration.url" . | quote | indent 1 }}
         registry-fetch-interval-seconds: 8
         initial-instance-info-replication-interval-seconds: 10
+    springfox:
+      documentation:
+        enabled: false
+        auto-startup: false
+        swagger-ui:
+          enabled: false
     management:
       endpoints:
         web:

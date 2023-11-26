@@ -22,7 +22,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.scheduler.SchedulerContext
-import org.apache.linkis.scheduler.queue.Group
+import org.apache.linkis.scheduler.queue.{Consumer, Group}
 import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import java.util
@@ -65,6 +65,47 @@ class EntranceFIFOUserConsumer(
     // general logic
     super.loop()
 
+  }
+
+  override def runScheduleIntercept: Boolean = {
+    val consumers = getSchedulerContext.getOrCreateConsumerManager.listConsumers
+    var creatorRunningJobNum = 0
+    // APP_TEST_hadoop_hive or IDE_hadoop_hive
+    val groupNameStr = getGroup.getGroupName
+    val groupNames = groupNameStr.split("_")
+    val length = groupNames.length
+    if (length < 3) return true
+    // APP_TEST
+    val lastIndex = groupNameStr.lastIndexOf("_")
+    val secondLastIndex = groupNameStr.lastIndexOf("_", lastIndex - 1)
+    val creatorName = groupNameStr.substring(0, secondLastIndex)
+    // hive
+    val ecType = groupNames(length - 1)
+    for (consumer <- consumers) {
+      val groupName = consumer.getGroup.getGroupName
+      if (groupName.startsWith(creatorName) && groupName.endsWith(ecType))
+        creatorRunningJobNum += consumer.getRunningEvents.length
+    }
+    val creatorECTypeMaxRunningJobs =
+      CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creatorName, ecType)
+    if (logger.isDebugEnabled)
+      logger.debug(
+        "Creator: {} EC: {} there are currently:{} jobs running and maximum limit: {}",
+        creatorName,
+        ecType,
+        creatorRunningJobNum,
+        creatorECTypeMaxRunningJobs
+      )
+    if (creatorRunningJobNum > creatorECTypeMaxRunningJobs) {
+      logger.error(
+        "Creator: {} EC: {} there are currently:{} jobs running that exceed the maximum limit: {}",
+        creatorName,
+        ecType,
+        creatorRunningJobNum,
+        creatorECTypeMaxRunningJobs
+      )
+      false
+    } else true
   }
 
 }

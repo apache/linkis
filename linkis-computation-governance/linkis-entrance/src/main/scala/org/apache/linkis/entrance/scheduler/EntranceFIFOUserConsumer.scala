@@ -92,20 +92,12 @@ class EntranceFIFOUserConsumer(
       CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creatorName, ecType)
     if (logger.isDebugEnabled) {
       logger.debug(
-        "Creator: {} EC: {} there are currently:{} jobs running and maximum limit: {}",
-        creatorName,
-        ecType,
-        creatorRunningJobNum,
-        creatorECTypeMaxRunningJobs
+        s"Creator: $creatorName EC:$ecType there are currently:$creatorRunningJobNum jobs running and maximum limit: $creatorECTypeMaxRunningJobs"
       )
     }
     if (creatorRunningJobNum > creatorECTypeMaxRunningJobs) {
       logger.error(
-        "Creator: {} EC: {} there are currently:{} jobs running that exceed the maximum limit: {}",
-        creatorName,
-        ecType,
-        creatorRunningJobNum,
-        creatorECTypeMaxRunningJobs
+        s"Creator: $creatorName EC:$ecType there are currently:$creatorRunningJobNum  jobs running that exceed the maximum limit: $creatorECTypeMaxRunningJobs"
       )
       false
     } else true

@@ -45,8 +45,8 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
 
   if (EntranceConfiguration.ENTRANCE_GROUP_SCAN_ENABLED.getValue) {
     Utils.defaultScheduler.scheduleAtFixedRate(
-      () => {
-        Utils.tryAndError {
+      new Runnable {
+        override def run(): Unit = Utils.tryAndWarn {
           // refresh all group maxAllowRunningJobs
           refreshAllGroupMaxAllowRunningJobs(EntranceUtils.getRunningEntranceNumber())
           logger.info("Finished to refresh consumer group maxAllowRunningJobs")

@@ -33,6 +33,12 @@ object ComputationExecutorConf {
     "Maximum number of tasks executed by the synchronization EC"
   )
 
+  val PRINT_TASK_PARAMS_SKIP_KEYS = CommonVars(
+    "linkis.engineconn.print.task.params.skip.keys",
+    "jobId",
+    "skip to print params key at job logs"
+  )
+
   val ENGINE_PROGRESS_FETCH_INTERVAL =
     CommonVars(
       "wds.linkis.engineconn.progresss.fetch.interval-in-seconds",

@@ -51,7 +51,7 @@ class LoopArray[T](maxCapacity: Int) {
     } else if (index > _max) {
       throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
     }
-    val _index = (flag + (index - realSize)) % maxCapacity
+    val _index = (flag + (index - realSize + maxCapacity - 1)) % maxCapacity
     eventQueue(_index).asInstanceOf[T]
   }
 

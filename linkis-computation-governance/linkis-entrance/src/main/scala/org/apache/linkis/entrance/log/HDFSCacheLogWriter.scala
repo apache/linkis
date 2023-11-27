@@ -37,11 +37,15 @@ import java.util
 class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user: String)
     extends LogWriter(charset) {
 
-  if (StringUtils.isBlank(logPath))
+  if (StringUtils.isBlank(logPath)) {
     throw new EntranceErrorException(LOGPATH_NOT_NULL.getErrorCode, LOGPATH_NOT_NULL.getErrorDesc)
+  }
 
-  protected var fileSystem =
+  protected var fileSystem = if (EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
+    FSFactory.getFs(new FsPath(logPath)).asInstanceOf[FileSystem]
+  } else {
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+  }
 
   override protected var outputStream: OutputStream = null
 
@@ -55,7 +59,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   private def init(): Unit = {
     fileSystem.init(new util.HashMap[String, String]())
-    FileSystemUtils.createNewFileWithFileSystem(fileSystem, new FsPath(logPath), user, true)
+    FileSystemUtils.createNewFileAndSetOwnerWithFileSystem(
+      fileSystem,
+      new FsPath(logPath),
+      user,
+      true
+    )
   }
 
   @throws[IOException]
@@ -99,6 +108,8 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
         val sb = new StringBuilder
         if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
+        // need append latest msg before fake clear
+        sb.append(msg).append("\n")
         sharedCache.cachedLogs.fakeClear()
         writeToFile(sb.toString())
         pushTime.setTime(

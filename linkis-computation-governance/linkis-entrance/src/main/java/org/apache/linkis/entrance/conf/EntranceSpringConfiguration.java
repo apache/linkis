@@ -150,7 +150,7 @@ public class EntranceSpringConfiguration {
       new ScalaCodeInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
-      new SetTenantLabelInterceptor(),
+      //      new SetTenantLabelInterceptor(),
       new UserCreatorIPCheckInterceptor()
     };
   }

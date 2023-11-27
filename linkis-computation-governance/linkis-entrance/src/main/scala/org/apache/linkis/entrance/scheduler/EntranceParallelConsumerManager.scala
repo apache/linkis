@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.scheduler
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
@@ -45,29 +46,10 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
   if (EntranceConfiguration.ENTRANCE_GROUP_SCAN_ENABLED.getValue) {
     Utils.defaultScheduler.scheduleAtFixedRate(
       new Runnable {
-        override def run(): Unit = {
-          Utils.tryAndError {
-            logger.info("start refresh consumer group maxAllowRunningJobs")
-            // get all entrance server from eureka
-            val serviceInstances =
-              Sender.getInstances(Sender.getThisServiceInstance.getApplicationName)
-            if (null == serviceInstances || serviceInstances.isEmpty) return
-
-            // get all offline label server
-            val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
-              .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
-            val labels = new util.ArrayList[Label[_]]
-            labels.add(routeLabel)
-            val labelInstances = InstanceLabelClient.getInstance.getInstanceFromLabel(labels)
-
-            // get active entrance server
-            val allInstances = new util.ArrayList[ServiceInstance]()
-            allInstances.addAll(serviceInstances.toList.asJava)
-            allInstances.removeAll(labelInstances)
-            // refresh all group maxAllowRunningJobs
-            refreshAllGroupMaxAllowRunningJobs(allInstances.size())
-            logger.info("Finished to refresh consumer group maxAllowRunningJobs")
-          }
+        override def run(): Unit = Utils.tryAndWarn {
+          // refresh all group maxAllowRunningJobs
+          refreshAllGroupMaxAllowRunningJobs(EntranceUtils.getRunningEntranceNumber())
+          logger.info("Finished to refresh consumer group maxAllowRunningJobs")
         }
       },
       EntranceConfiguration.ENTRANCE_GROUP_SCAN_INIT_TIME.getValue,

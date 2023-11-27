@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.scheduler
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.utils.JobHistoryHelper
@@ -34,7 +34,8 @@ class EntranceFIFOUserConsumer(
     schedulerContext: SchedulerContext,
     executeService: ExecutorService,
     private var group: Group
-) extends FIFOUserConsumer(schedulerContext, executeService, group) {
+) extends FIFOUserConsumer(schedulerContext, executeService, group)
+    with Logging {
 
   override def loop(): Unit = {
     // When offlineFlag=true, the unsubmitted tasks will be failover, and the running tasks will wait for completion.
@@ -65,6 +66,41 @@ class EntranceFIFOUserConsumer(
     // general logic
     super.loop()
 
+  }
+
+  override def runScheduleIntercept: Boolean = {
+    val consumers = getSchedulerContext.getOrCreateConsumerManager.listConsumers
+    var creatorRunningJobNum = 0
+    // APP_TEST_hadoop_hive or IDE_hadoop_hive
+    val groupNameStr = getGroup.getGroupName
+    val groupNames = groupNameStr.split("_")
+    val length = groupNames.length
+    if (length < 3) return true
+    // APP_TEST
+    val lastIndex = groupNameStr.lastIndexOf("_")
+    val secondLastIndex = groupNameStr.lastIndexOf("_", lastIndex - 1)
+    val creatorName = groupNameStr.substring(0, secondLastIndex)
+    // hive
+    val ecType = groupNames(length - 1)
+    for (consumer <- consumers) {
+      val groupName = consumer.getGroup.getGroupName
+      if (groupName.startsWith(creatorName) && groupName.endsWith(ecType)) {
+        creatorRunningJobNum += consumer.getRunningEvents.length
+      }
+    }
+    val creatorECTypeMaxRunningJobs =
+      CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creatorName, ecType)
+    if (logger.isDebugEnabled) {
+      logger.debug(
+        s"Creator: $creatorName EC:$ecType there are currently:$creatorRunningJobNum jobs running and maximum limit: $creatorECTypeMaxRunningJobs"
+      )
+    }
+    if (creatorRunningJobNum > creatorECTypeMaxRunningJobs) {
+      logger.error(
+        s"Creator: $creatorName EC:$ecType there are currently:$creatorRunningJobNum  jobs running that exceed the maximum limit: $creatorECTypeMaxRunningJobs"
+      )
+      false
+    } else true
   }
 
 }

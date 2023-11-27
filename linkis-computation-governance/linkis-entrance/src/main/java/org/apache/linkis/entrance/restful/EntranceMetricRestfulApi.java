@@ -20,8 +20,7 @@ package org.apache.linkis.entrance.restful;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.execute.EntranceJob;
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
-import org.apache.linkis.manager.label.utils.LabelUtil;
+import org.apache.linkis.entrance.scheduler.CreatorECTypeDefaultConf;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -67,7 +66,7 @@ public class EntranceMetricRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "user", required = false) String user,
       @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "engineTypeLabel", required = false) String engineTypeLabelValue) {
+      @RequestParam(value = "ecType", required = false) String ecType) {
     String userName = ModuleUserUtils.getOperationUser(req, "taskinfo");
     String queryUser = user;
     if (Configuration.isNotAdmin(userName)) {
@@ -83,23 +82,12 @@ public class EntranceMetricRestfulApi {
     } else if (StringUtils.isBlank(creator)) {
       filterWords = queryUser;
     }
-    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask(filterWords);
-    int taskNumber = 0;
+    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask(filterWords, ecType);
     int runningNumber = 0;
     int queuedNumber = 0;
 
     if (null != undoneTasks) {
       for (EntranceJob task : undoneTasks) {
-        if (StringUtils.isNotBlank(engineTypeLabelValue)) {
-          EngineTypeLabel engineTypeLabel =
-              LabelUtil.getEngineTypeLabel(task.getJobRequest().getLabels());
-          // Task types do not match, do not count
-          if (null == engineTypeLabel
-              || !engineTypeLabelValue.equalsIgnoreCase(engineTypeLabel.getStringValue())) {
-            continue;
-          }
-        }
-        taskNumber++;
         if (task.isRunning()) {
           runningNumber++;
         } else {
@@ -107,17 +95,25 @@ public class EntranceMetricRestfulApi {
         }
       }
     }
-    return Message.ok("success")
-        .data("taskNumber", taskNumber)
-        .data("runningNumber", runningNumber)
-        .data("queuedNumber", queuedNumber);
+    Message resp =
+        Message.ok("success")
+            .data("taskNumber", undoneTasks.length)
+            .data("runningNumber", runningNumber)
+            .data("queuedNumber", queuedNumber);
+    if (StringUtils.isNoneBlank(creator, ecType)) {
+      int creatorECTypeMaxRunningJobs =
+          CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creator, ecType);
+      resp.data("creatorECTypeMaxRunningJobs", creatorECTypeMaxRunningJobs);
+      resp.data("limitExceeded", runningNumber > creatorECTypeMaxRunningJobs);
+    }
+    return resp;
   }
 
-  @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
+  @ApiOperation(value = "runningtask", notes = "get running task number ", response = Message.class)
   @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
-  public Message status(HttpServletRequest req) {
+  public Message runningtask(HttpServletRequest req) {
     ModuleUserUtils.getOperationUser(req, "runningtask");
-    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
+    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("", null);
     Boolean isCompleted = false;
     if (null == undoneTasks || undoneTasks.length < 1) {
       isCompleted = true;

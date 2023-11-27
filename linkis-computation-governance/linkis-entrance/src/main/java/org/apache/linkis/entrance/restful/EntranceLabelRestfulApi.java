@@ -24,6 +24,7 @@ import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
+import org.apache.linkis.protocol.label.InsLabelRemoveRequest;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.SchedulerContext;
 import org.apache.linkis.server.Message;
@@ -57,6 +58,8 @@ public class EntranceLabelRestfulApi {
     this.entranceServer = entranceServer;
   }
 
+  private static Boolean offlineFlag = false;
+
   @ApiOperation(value = "update", notes = "update route label", response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/update", method = RequestMethod.POST)
@@ -82,12 +85,15 @@ public class EntranceLabelRestfulApi {
   public Message updateRouteLabel(HttpServletRequest req) {
     ModuleUserUtils.getOperationUser(req, "markoffline");
     Map<String, Object> labels = new HashMap<String, Object>();
-    logger.info("Prepare to modify the routelabel of entry to offline");
+    logger.info("Prepare to modify the routelabel of entrance to offline");
     labels.put(LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE);
     InsLabelRefreshRequest insLabelRefreshRequest = new InsLabelRefreshRequest();
     insLabelRefreshRequest.setLabels(labels);
     insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().refreshLabelsToInstance(insLabelRefreshRequest);
+    synchronized (offlineFlag) {
+      offlineFlag = true;
+    }
     logger.info("Finished to modify the routelabel of entry to offline");
 
     logger.info("Prepare to update all not execution task instances to empty string");
@@ -100,5 +106,30 @@ public class EntranceLabelRestfulApi {
     logger.info("Finished to update all not execution task instances to empty string");
 
     return Message.ok();
+  }
+
+  @ApiOperation(
+      value = "backonline",
+      notes = "from offline status to recover",
+      response = Message.class)
+  @RequestMapping(path = "/backonline", method = RequestMethod.GET)
+  public Message backOnline(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "backonline");
+    logger.info("Prepare to modify the routelabel of entrance to remove offline");
+    InsLabelRemoveRequest insLabelRemoveRequest = new InsLabelRemoveRequest();
+    insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance());
+    InstanceLabelClient.getInstance().removeLabelsFromInstance(insLabelRemoveRequest);
+    synchronized (offlineFlag) {
+      offlineFlag = false;
+    }
+    logger.info("Finished to backonline");
+    return Message.ok();
+  }
+
+  @ApiOperation(value = "isOnline", notes = "entrance isOnline", response = Message.class)
+  @RequestMapping(path = "/isOnline", method = RequestMethod.GET)
+  public Message isOnline(HttpServletRequest req) {
+    logger.info("Whether Entrance is online: {}", !offlineFlag);
+    return Message.ok().data("isOnline", !offlineFlag);
   }
 }

@@ -57,6 +57,8 @@ object SparkExplain extends Explain {
   private val sy = Pattern.compile("sys\\.")
   private val scCancelAllJobs = Pattern.compile("sc\\.cancelAllJobs(\\s*)")
   private val runtime = Pattern.compile("Runtime\\.getRuntime")
+  private val LINE_BREAK = "\n"
+  private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
     if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
@@ -99,6 +101,7 @@ object SQLExplain extends Explain {
   private val LIMIT: String = "limit"
   private val LIMIT_UPPERCASE: String = "LIMIT"
   private val IDE_ALLOW_NO_LIMIT = "--set wds.linkis.engine.no.limit.allow=true"
+  private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
     true
@@ -131,6 +134,8 @@ object SQLExplain extends Explain {
           .generateWarn("please pay attention ,SQL full export mode opened(请注意,SQL全量导出模式打开)\n")
       )
     }
+    var isFirstTimePrintingLimit = true
+    var isFirstTimePrintingOverLimit = true
     if (tempCode.contains("""\;""")) {
       val semicolonIndexes = findRealSemicolonIndex(tempCode)
       var oldIndex = 0
@@ -140,20 +145,27 @@ object SQLExplain extends Explain {
         if (isSelectCmd(singleCode)) {
           val trimCode = singleCode.trim
           if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
-            logAppender.append(
-              LogUtils.generateWarn(
-                s"You submitted a sql without limit, DSS will add limit 5000 to your sql"
-              ) + "\n"
-            )
+            if (isFirstTimePrintingLimit) {
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"You submitted a sql without limit, DSS will add limit 5000 to your sql"
+                ) + "\n"
+              )
+              isFirstTimePrintingLimit = false
+            }
+            // 将注释先干掉,然后再进行添加limit
             val realCode = cleanComment(trimCode)
             fixedCode += (realCode + SQL_APPEND_LIMIT)
           } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
             val trimCode = singleCode.trim
-            logAppender.append(
-              LogUtils.generateWarn(
-                s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
-              ) + "\n"
-            )
+            if (isFirstTimePrintingOverLimit) {
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
+                ) + "\n"
+              )
+              isFirstTimePrintingOverLimit = false
+            }
             fixedCode += repairSelectOverLimit(trimCode)
           } else {
             fixedCode += singleCode.trim
@@ -167,20 +179,27 @@ object SQLExplain extends Explain {
         if (isSelectCmd(singleCode)) {
           val trimCode = singleCode.trim
           if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
-            logAppender.append(
-              LogUtils.generateWarn(
-                s"You submitted a sql without limit, DSS will add limit 5000 to your sql"
-              ) + "\n"
-            )
+            if (isFirstTimePrintingLimit) {
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"You submitted a sql without limit, DSS will add limit 5000 to your sql"
+                ) + "\n"
+              )
+              isFirstTimePrintingLimit = false
+            }
+            // 将注释先干掉,然后再进行添加limit
             val realCode = cleanComment(trimCode)
             fixedCode += (realCode + SQL_APPEND_LIMIT)
           } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
             val trimCode = singleCode.trim
-            logAppender.append(
-              LogUtils.generateWarn(
-                s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
-              ) + "\n"
-            )
+            if (isFirstTimePrintingOverLimit) {
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
+                ) + "\n"
+              )
+              isFirstTimePrintingOverLimit = false
+            }
             fixedCode += repairSelectOverLimit(trimCode)
           } else {
             fixedCode += singleCode.trim
@@ -210,6 +229,8 @@ object SQLExplain extends Explain {
     array.toArray
   }
 
+  private def addNoLimit(code: String) = code + NO_LIMIT_STRING
+
   protected def needNoLimit(code: String): Boolean = code.endsWith(NO_LIMIT_STRING)
 
   def isSelectCmd(code: String): Boolean = {
@@ -217,16 +238,17 @@ object SQLExplain extends Explain {
       return false
     }
     val realCode = cleanComment(code)
-    realCode.trim.split("\\s+")(0).toLowerCase().contains("select")
+    realCode.trim.split("\\s+")(0).toLowerCase(Locale.getDefault).contains("select")
   }
 
-  def continueWhenError: Boolean = false
+  // def continueWhenError = false
 
   def isSelectCmdNoLimit(cmd: String): Boolean = {
     if (StringUtils.isEmpty(cmd)) {
       return false
     }
     val realCode = cmd.trim
+    // limit is often the last in a sql statement, so you need to make a final judgment
     val arr = realCode.split("\\s+")
     val words = new ArrayBuffer[String]()
     arr foreach { w =>
@@ -235,8 +257,10 @@ object SQLExplain extends Explain {
     val a = words.toArray
     val length = a.length
     if (a.length > 1) {
-      val second_last = a(length - 2)
-      !"limit".equals(second_last.toLowerCase())
+      val second_last = a(length - 2).toLowerCase(Locale.getDefault)
+      // for some case eg:"SELECT * from dual WHERE (1=1)LIMIT 1;"
+      val result = !("limit".equals(second_last) || second_last.contains(")limit"))
+      result
     } else {
       false
     }

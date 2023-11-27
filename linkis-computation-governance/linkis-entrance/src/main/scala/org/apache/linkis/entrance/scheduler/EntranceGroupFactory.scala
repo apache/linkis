@@ -23,19 +23,14 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.protocol.conf.{
   RequestQueryEngineConfigWithGlobalConfig,
   ResponseQueryConfig
 }
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{
-  ConcurrentEngineConnLabel,
-  EngineTypeLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
-import org.apache.linkis.protocol.constants.TaskConstant
-import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
@@ -45,8 +40,6 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-
-import scala.collection.JavaConverters._
 
 import com.google.common.cache.{Cache, CacheBuilder}
 
@@ -58,7 +51,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     .maximumSize(EntranceConfiguration.GROUP_CACHE_MAX.getValue)
     .build()
 
-  private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)
+  private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 1000)
 
   private val SPECIFIED_USERNAME_REGEX =
     CommonVars("wds.linkis.entrance.specified.username.regex", "hduser.*")
@@ -76,29 +69,16 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     }
 
   override def getOrCreateGroup(event: SchedulerEvent): Group = {
-    val (labels, params) = event match {
+    val labels = event match {
       case job: EntranceJob =>
-        (job.getJobRequest.getLabels, job.getJobRequest.getParams)
+        job.getJobRequest.getLabels
+      case _ =>
+        throw new EntranceErrorException(LABEL_NOT_NULL.getErrorCode, LABEL_NOT_NULL.getErrorDesc)
     }
-    val groupName = EntranceGroupFactory.getGroupNameByLabels(labels, params)
+    val groupName = EntranceGroupFactory.getGroupNameByLabels(labels)
     val cacheGroup = groupNameToGroups.getIfPresent(groupName)
     if (null == cacheGroup) synchronized {
       val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
-      if (groupName.startsWith(EntranceGroupFactory.CONCURRENT)) {
-        if (null == groupNameToGroups.getIfPresent(groupName)) synchronized {
-          if (null == groupNameToGroups.getIfPresent(groupName)) {
-            val group = new ParallelGroup(
-              groupName,
-              100,
-              EntranceConfiguration.CONCURRENT_FACTORY_MAX_CAPACITY.getValue
-            )
-            group.setMaxRunningJobs(EntranceConfiguration.CONCURRENT_MAX_RUNNING_JOBS.getValue)
-            group.setMaxAskExecutorTimes(EntranceConfiguration.CONCURRENT_EXECUTOR_TIME.getValue)
-            groupNameToGroups.put(groupName, group)
-            return group
-          }
-        }
-      }
       val sender: Sender =
         Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
       val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
@@ -136,8 +116,11 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       group.setMaxRunningJobs(maxRunningJobs)
       group.setMaxAskExecutorTimes(maxAskExecutorTimes)
       groupNameToGroups.put(groupName, group)
+      group
     }
-    groupNameToGroups.getIfPresent(groupName)
+    else {
+      cacheGroup
+    }
   }
 
   override def getGroup(groupName: String): Group = {
@@ -151,10 +134,18 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
+  /**
+   * User task concurrency control is controlled for multiple Entrances, which will be evenly
+   * distributed based on the number of existing Entrances
+   * @param keyAndValue
+   * @return
+   */
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
+    val userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    val entranceNum = EntranceUtils.getRunningEntranceNumber()
     Math.max(
       EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
-      EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      userDefinedRunningJobs / entranceNum
     )
   }
 
@@ -162,64 +153,21 @@ class EntranceGroupFactory extends GroupFactory with Logging {
 
 object EntranceGroupFactory {
 
-  val CACHE = "_Cache"
-
-  val CONCURRENT = "Concurrent_"
-
-  def getGroupName(
-      creator: String,
-      user: String,
-      params: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
-  ): String = {
-    val runtime = TaskUtils.getRuntimeMap(params)
-    val cache =
-      if (
-          runtime.get(TaskConstant.READ_FROM_CACHE) != null && runtime
-            .get(TaskConstant.READ_FROM_CACHE)
-            .asInstanceOf[Boolean]
-      ) {
-        CACHE
-      } else ""
-    if (StringUtils.isNotEmpty(creator)) creator + "_" + user + cache
-    else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue + "_" + user + cache
-  }
-
-  def getGroupNameByLabels(
-      labels: java.util.List[Label[_]],
-      params: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
-  ): String = {
-
-    val userCreator = labels.asScala.find(_.isInstanceOf[UserCreatorLabel])
-    val engineType = labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
-    val concurrent = labels.asScala.find(_.isInstanceOf[ConcurrentEngineConnLabel])
-    if (userCreator.isEmpty || engineType.isEmpty) {
+  /**
+   * Entrance group rule creator_username_engineType eg:IDE_PEACEWONG_SPARK
+   * @param labels
+   * @param params
+   * @return
+   */
+  def getGroupNameByLabels(labels: java.util.List[Label[_]]): String = {
+    val userCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
+    val engineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
+    if (null == userCreatorLabel || null == engineTypeLabel) {
       throw new EntranceErrorException(LABEL_NOT_NULL.getErrorCode, LABEL_NOT_NULL.getErrorDesc)
     }
-
-    if (concurrent.isDefined) {
-
-      val engineTypeLabel = engineType.get.asInstanceOf[EngineTypeLabel]
-      val groupName = CONCURRENT + engineTypeLabel.getEngineType
-      groupName
-
-    } else {
-      val userCreatorLabel = userCreator.get.asInstanceOf[UserCreatorLabel]
-
-      val engineTypeLabel = engineType.get.asInstanceOf[EngineTypeLabel]
-
-      val runtime = TaskUtils.getRuntimeMap(params)
-      val cache =
-        if (
-            runtime.get(TaskConstant.READ_FROM_CACHE) != null && runtime
-              .get(TaskConstant.READ_FROM_CACHE)
-              .asInstanceOf[Boolean]
-        ) {
-          CACHE
-        } else ""
-      val groupName =
-        userCreatorLabel.getCreator + "_" + userCreatorLabel.getUser + "_" + engineTypeLabel.getEngineType + cache
-      groupName
-    }
+    val groupName =
+      userCreatorLabel.getCreator + "_" + userCreatorLabel.getUser + "_" + engineTypeLabel.getEngineType
+    groupName
   }
 
 }

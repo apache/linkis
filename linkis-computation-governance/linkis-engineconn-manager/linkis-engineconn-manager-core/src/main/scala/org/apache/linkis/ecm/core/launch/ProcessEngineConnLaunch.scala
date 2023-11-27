@@ -176,8 +176,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue)
       .toString
 
-    var springConf = Map("server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn")
-
+    var springConf =
+      Map[String, String]("server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn")
+    val properties =
+      PortUtils.readFromProperties(Configuration.getLinkisHome + "/conf/version.properties")
+    if (StringUtils.isNotBlank(properties.getProperty("version"))) {
+      springConf += ("eureka.instance.metadata-map.linkis.app.version" -> properties.getProperty(
+        "version"
+      ))
+    }
     request.creationDesc.properties.asScala.filter(_._1.startsWith("spring.")).foreach {
       case (k, v) =>
         springConf = springConf + (k -> v)

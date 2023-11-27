@@ -19,6 +19,7 @@ package org.apache.linkis.governance.common.paser
 
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.constant.CodeConstants
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
 
 import org.apache.commons.lang3.StringUtils
@@ -116,7 +117,7 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
     if (statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
     // Make sure the last line is not a comment
     codeBuffer.append("\n")
-    codeBuffer.append("val linkisVar=123")
+    codeBuffer.append(CodeConstants.SCALA_CODE_AUTO_APPEND_CODE)
     codeBuffer.toArray
   }
 

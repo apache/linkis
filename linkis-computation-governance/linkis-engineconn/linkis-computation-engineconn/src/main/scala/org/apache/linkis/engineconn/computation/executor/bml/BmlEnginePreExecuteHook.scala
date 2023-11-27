@@ -62,7 +62,6 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging {
   ): String = {
     val props = engineExecutionContext.getProperties
     if (null != props && props.containsKey(GovernanceConstant.TASK_RESOURCES_STR)) {
-      val workDir = ComputationEngineUtils.getCurrentWorkDir
       val jobId = engineExecutionContext.getJobId
       props.get(GovernanceConstant.TASK_RESOURCES_STR) match {
         case resources: util.List[Object] =>
@@ -71,9 +70,7 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging {
               val fileName = resource.get(GovernanceConstant.TASK_RESOURCE_FILE_NAME_STR).toString
               val resourceId = resource.get(GovernanceConstant.TASK_RESOURCE_ID_STR).toString
               val version = resource.get(GovernanceConstant.TASK_RESOURCE_VERSION_STR).toString
-              val fullPath =
-                if (workDir.endsWith(seperator)) pathType + workDir + fileName
-                else pathType + workDir + seperator + fileName
+              val fullPath = fileName
               val response = Utils.tryCatch {
                 bmlClient.downloadShareResource(processUser, resourceId, version, fullPath, true)
               } {

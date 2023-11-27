@@ -19,7 +19,11 @@ package org.apache.linkis.entrance.log
 
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{InputStream, IOException}
 import java.util
@@ -36,13 +40,26 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
   var closed = false
 
   private def createInputStream: InputStream = {
+    if (!logPath.contains(user)) {
+      throw new LogReadFailedException(
+        s"${user} does not have permission to read the path $logPath"
+      )
+    }
+    val fsPath = new FsPath(logPath)
     if (fileSystem == null) lock synchronized {
       if (fileSystem == null) {
-        fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
+
+        fileSystem =
+          if (StorageUtils.isHDFSPath(fsPath) && EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
+            FSFactory.getFs(new FsPath(logPath)).asInstanceOf[FileSystem]
+          } else {
+            FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+          }
+
         fileSystem.init(new util.HashMap[String, String]())
       }
     }
-    val inputStream: InputStream = fileSystem.read(new FsPath(logPath))
+    val inputStream: InputStream = fileSystem.read(fsPath)
     inputStream
   }
 

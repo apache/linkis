@@ -272,4 +272,8 @@ public class StorageUtils {
     System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
     return mergedArray;
   }
+
+  public static boolean isHDFSPath(FsPath fsPath) {
+    return HDFS.equalsIgnoreCase(fsPath.getFsType());
+  }
 }

@@ -62,6 +62,11 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
 
   INVALID_RESULTSETS(20053, "Invalid resultsets, cannot use cache(结果集无效，无法使用 cache)"),
   SUBMITTING_QUERY_FAILED(30009, "Submitting the query failed(提交查询失败)!"),
+
+  SUBMIT_CODE_ISEMPTY(
+      30010,
+      "Submitting the execution code, after code preprocessing, the real execution code is empty, please check the executed code(提交的执行代码，经过预处理后为空，请检查执行的代码是否为空或则只有注解)!"),
+
   QUERY_STATUS_FAILED(50081, "Query from jobHistory status failed(从 jobHistory 状态查询失败)"),
   GET_QUERY_RESPONSE(50081, "Get query response incorrectly(获取查询响应结果不正确)"),
   QUERY_TASKID_ERROR(50081, "Query task of taskId:{0} error(查询任务id：{}的任务出错)"),

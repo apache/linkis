@@ -38,8 +38,8 @@ class JobTimeoutManager extends Logging {
   private[this] final val timeoutJobByName: ConcurrentMap[String, EntranceJob] =
     new ConcurrentHashMap[String, EntranceJob]
 
-  val timeoutCheck: Boolean = EntranceConfiguration.ENABLE_JOB_TIMEOUT_CHECK.getValue
-  val timeoutScanInterval: Int = EntranceConfiguration.TIMEOUT_SCAN_INTERVAL.getValue
+  private val timeoutCheck: Boolean = EntranceConfiguration.ENABLE_JOB_TIMEOUT_CHECK.getValue
+  private val timeoutScanInterval: Int = EntranceConfiguration.TIMEOUT_SCAN_INTERVAL.getValue
 
   def add(jobKey: String, job: EntranceJob): Unit = {
     logger.info(s"Adding timeout job: ${job.getId()}")
@@ -77,75 +77,75 @@ class JobTimeoutManager extends Logging {
   }
 
   private def timeoutDetective(): Unit = {
-    if (timeoutCheck) {
-      def checkAndSwitch(job: EntranceJob): Unit = {
-        logger.info(s"Checking whether the job id ${job.getJobRequest.getId()} timed out. ")
-        val currentTimeSeconds = System.currentTimeMillis() / 1000
-        // job.isWaiting == job in queue
-        val jobScheduleStartTimeSeconds =
-          if (job.isWaiting) job.createTime / 1000 else currentTimeSeconds
-        val queuingTimeSeconds = currentTimeSeconds - jobScheduleStartTimeSeconds
-        val jobRunningStartTimeSeconds =
-          if (job.getStartTime > 0) job.getStartTime / 1000 else currentTimeSeconds
-        val runningTimeSeconds = currentTimeSeconds - jobRunningStartTimeSeconds
-        if (!job.isCompleted) {
-          job.jobRequest.getLabels.asScala foreach {
-            case queueTimeOutLabel: JobQueuingTimeoutLabel =>
-              if (
-                  job.isWaiting && queueTimeOutLabel.getQueuingTimeout > 0 && queuingTimeSeconds >= queueTimeOutLabel.getQueuingTimeout
-              ) {
-                logger.warn(
-                  s"Job ${job.getJobRequest.getId()} queued time : ${queuingTimeSeconds} seconds, which was over queueTimeOut : ${queueTimeOutLabel.getQueuingTimeout} seconds, cancel it now! "
-                )
-                job.onFailure(
-                  s"Job queued ${queuingTimeSeconds} seconds over max queue time : ${queueTimeOutLabel.getQueuingTimeout} seconds.",
-                  null
-                )
-              }
-            case jobRunningTimeoutLabel: JobRunningTimeoutLabel =>
-              if (
-                  job.isRunning && jobRunningTimeoutLabel.getRunningTimeout > 0 && runningTimeSeconds >= jobRunningTimeoutLabel.getRunningTimeout
-              ) {
-                logger.warn(
-                  s"Job ${job.getJobRequest.getId()} run timeout ${runningTimeSeconds} seconds, which was over runTimeOut : ${jobRunningTimeoutLabel.getRunningTimeout} seconds, cancel it now! "
-                )
-                job.onFailure(
-                  s"Job run ${runningTimeSeconds} seconds over max run time : ${jobRunningTimeoutLabel.getRunningTimeout} seconds.",
-                  null
-                )
-              }
-            case _ =>
-          }
+    def checkAndSwitch(job: EntranceJob): Unit = {
+      logger.info(s"Checking whether the job id ${job.getJobRequest.getId()} timed out. ")
+      val currentTimeSeconds = System.currentTimeMillis() / 1000
+      // job.isWaiting == job in queue
+      val jobScheduleStartTimeSeconds =
+        if (job.isWaiting) job.createTime / 1000 else currentTimeSeconds
+      val queuingTimeSeconds = currentTimeSeconds - jobScheduleStartTimeSeconds
+      val jobRunningStartTimeSeconds =
+        if (job.getStartTime > 0) job.getStartTime / 1000 else currentTimeSeconds
+      val runningTimeSeconds = currentTimeSeconds - jobRunningStartTimeSeconds
+      if (!job.isCompleted) {
+        job.jobRequest.getLabels.asScala foreach {
+          case queueTimeOutLabel: JobQueuingTimeoutLabel =>
+            if (
+                job.isWaiting && queueTimeOutLabel.getQueuingTimeout > 0 && queuingTimeSeconds >= queueTimeOutLabel.getQueuingTimeout
+            ) {
+              logger.warn(
+                s"Job ${job.getJobRequest.getId()} queued time : ${queuingTimeSeconds} seconds, which was over queueTimeOut : ${queueTimeOutLabel.getQueuingTimeout} seconds, cancel it now! "
+              )
+              job.onFailure(
+                s"Job queued ${queuingTimeSeconds} seconds over max queue time : ${queueTimeOutLabel.getQueuingTimeout} seconds.",
+                null
+              )
+            }
+          case jobRunningTimeoutLabel: JobRunningTimeoutLabel =>
+            if (
+                job.isRunning && jobRunningTimeoutLabel.getRunningTimeout > 0 && runningTimeSeconds >= jobRunningTimeoutLabel.getRunningTimeout
+            ) {
+              logger.warn(
+                s"Job ${job.getJobRequest.getId()} run timeout ${runningTimeSeconds} seconds, which was over runTimeOut : ${jobRunningTimeoutLabel.getRunningTimeout} seconds, cancel it now! "
+              )
+              job.onFailure(
+                s"Job run ${runningTimeSeconds} seconds over max run time : ${jobRunningTimeoutLabel.getRunningTimeout} seconds.",
+                null
+              )
+            }
+          case _ =>
         }
       }
-
-      timeoutJobByName.asScala.foreach(item => {
-        logger.info(s"Running timeout detection!")
-        synchronized {
-          jobCompleteDelete(item._1)
-          if (jobExist(item._1)) checkAndSwitch(item._2)
-        }
-      })
     }
+
+    timeoutJobByName.asScala.foreach(item => {
+      logger.info(s"Running timeout detection!")
+      synchronized {
+        jobCompleteDelete(item._1)
+        if (jobExist(item._1)) checkAndSwitch(item._2)
+      }
+    })
   }
 
   // Thread periodic scan timeout task
-  val woker = Utils.defaultScheduler.scheduleAtFixedRate(
-    new Runnable() {
+  if (timeoutCheck) {
+    val woker = Utils.defaultScheduler.scheduleAtFixedRate(
+      new Runnable() {
 
-      override def run(): Unit = {
-        Utils.tryCatch {
-          timeoutDetective()
-        } { case t: Throwable =>
-          logger.error(s"TimeoutDetective task failed. ${t.getMessage}", t)
+        override def run(): Unit = {
+          Utils.tryCatch {
+            timeoutDetective()
+          } { case t: Throwable =>
+            logger.warn(s"TimeoutDetective task failed. ${t.getMessage}", t)
+          }
         }
-      }
 
-    },
-    0,
-    timeoutScanInterval,
-    TimeUnit.SECONDS
-  )
+      },
+      0,
+      timeoutScanInterval,
+      TimeUnit.SECONDS
+    )
+  }
 
 }
 

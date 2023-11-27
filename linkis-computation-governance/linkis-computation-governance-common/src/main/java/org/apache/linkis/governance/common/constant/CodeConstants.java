@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.scheduler.cache
+package org.apache.linkis.governance.common.constant;
 
-import org.apache.linkis.scheduler.executer.OutputExecuteResponse
-
-case class CacheOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse {
-  override def getOutput: String = output
+public class CodeConstants {
+  // will auto append at end of scala code; make sure the last line is not a comment
+  public static String SCALA_CODE_AUTO_APPEND_CODE = "val linkisVar=123";
 }

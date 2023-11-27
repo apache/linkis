@@ -114,15 +114,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     JobRequest jobReq = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobReq.getId();
     ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
-    pushLog(
-        LogUtils.generateInfo(
-            "You have submitted a new job, script code (after variable substitution) is"),
-        job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
-    pushLog(jobReq.getExecutionCode(), job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
     String execID =
         ZuulEntranceUtils.generateExecID(
             job.getId(),
@@ -166,15 +157,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobRequest.getId();
     ModuleUserUtils.getOperationUser(req, "submit jobReqId: " + jobReqId);
-    pushLog(
-        LogUtils.generateInfo(
-            "You have submitted a new job, script code (after variable substitution) is"),
-        job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
-    pushLog(jobRequest.getExecutionCode(), job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
     pushLog(
         LogUtils.generateInfo(
             "Your job is accepted,  jobID is "
@@ -809,9 +791,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
           logger.error("kill job {} failed ", job.get().getId(), t);
           message =
               Message.error(
-                  "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
+                  "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)",
+                  t);
           message.setMethod("/api/entrance/" + id + "/kill");
-          message.setStatus(1);
         }
       }
       messages.add(message);
@@ -937,10 +919,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         logger.error("kill job {} failed ", job.get().getId(), t);
         message =
             Message.error(
-                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)"
-                    + "message: "
-                    + t.getMessage());
+                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败) with error:"
+                    + t.getMessage(),
+                t);
         message.setMethod("/api/entrance/" + id + "/kill");
+        message.setStatus(1);
       }
     }
     return message;

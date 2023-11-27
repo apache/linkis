@@ -219,14 +219,9 @@ data:
     wds.linkis.client.common.tokenValue=BML-AUTH
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
     #wds.linkis.client.noncustomizable.enable.user.specification=true
     #wds.linkis.client.noncustomizable.enable.proxy.user=true
 
@@ -288,14 +283,9 @@ data:
     spring.spring.servlet.multipart.file-size-threshold=50MB
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
 
   linkis-mg-gateway.properties: |
     #wds.linkis.server.restful.uri=/
@@ -323,14 +313,9 @@ data:
     spring.eureka.instance.metadata-map.linkis.conf.version=v1
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
 
   linkis-cg-linkismanager.properties: |
     ##restful
@@ -349,14 +334,10 @@ data:
     spring.eureka.instance.metadata-map.linkis.conf.version=v1
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
+
     ##Spring
     spring.server.port={{ .Values.cgLinkisManager.port }}
 
@@ -375,14 +356,9 @@ data:
     spring.eureka.instance.metadata-map.linkis.conf.version=v1
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
 
 
   linkis-cg-engineplugin.properties: |
@@ -402,14 +378,9 @@ data:
     spring.server.port={{ .Values.cgEnginePlugin.port }}
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
 
   linkis-cg-entrance.properties: |
     ##restful
@@ -437,14 +408,9 @@ data:
     spring.eureka.instance.metadata-map.linkis.conf.version=v1
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
 
   linkis-ps-publicservice.properties: |
     wds.linkis.server.mdm.service.instance.expire-in-seconds=1800
@@ -482,14 +448,9 @@ data:
     spring.spring.jackson.serialization.FAIL_ON_EMPTY_BEANS=false
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
-    spring.mvc.pathmatch.matching-strategy=ant_path_matcher
-    spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
     springfox.documentation.auto-startup=false
     springfox.documentation.swagger-ui.enabled=false
-    spring.springfox.documentation.enabled=false
-    spring.springfox.documentation.auto-startup=false
-    spring.springfox.documentation.swagger-ui.enabled=false
     # ps-cs prefix must be started with 'cs_'
     spring.eureka.instance.metadata-map.route=cs_1_dev
 

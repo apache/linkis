@@ -17,12 +17,12 @@
 
 package org.apache.linkis.entrance.scheduler
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.scheduler.SchedulerContext
-import org.apache.linkis.scheduler.queue.{Consumer, Group}
+import org.apache.linkis.scheduler.queue.Group
 import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import java.util
@@ -34,7 +34,8 @@ class EntranceFIFOUserConsumer(
     schedulerContext: SchedulerContext,
     executeService: ExecutorService,
     private var group: Group
-) extends FIFOUserConsumer(schedulerContext, executeService, group) {
+) extends FIFOUserConsumer(schedulerContext, executeService, group)
+    with Logging {
 
   override def loop(): Unit = {
     // When offlineFlag=true, the unsubmitted tasks will be failover, and the running tasks will wait for completion.
@@ -83,12 +84,13 @@ class EntranceFIFOUserConsumer(
     val ecType = groupNames(length - 1)
     for (consumer <- consumers) {
       val groupName = consumer.getGroup.getGroupName
-      if (groupName.startsWith(creatorName) && groupName.endsWith(ecType))
+      if (groupName.startsWith(creatorName) && groupName.endsWith(ecType)) {
         creatorRunningJobNum += consumer.getRunningEvents.length
+      }
     }
     val creatorECTypeMaxRunningJobs =
       CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creatorName, ecType)
-    if (logger.isDebugEnabled)
+    if (logger.isDebugEnabled) {
       logger.debug(
         "Creator: {} EC: {} there are currently:{} jobs running and maximum limit: {}",
         creatorName,
@@ -96,6 +98,7 @@ class EntranceFIFOUserConsumer(
         creatorRunningJobNum,
         creatorECTypeMaxRunningJobs
       )
+    }
     if (creatorRunningJobNum > creatorECTypeMaxRunningJobs) {
       logger.error(
         "Creator: {} EC: {} there are currently:{} jobs running that exceed the maximum limit: {}",

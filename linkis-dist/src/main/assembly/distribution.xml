@@ -260,6 +260,20 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
+        <!--lib-->
+        <!--linkis-public-enhancements-->
+        <!--bml-->
+        <fileSet>
+            <directory>
+                ../linkis-extensions/linkis-et-monitor/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-extensions/linkis-et-monitor
+            </outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
 
     </fileSets>
 

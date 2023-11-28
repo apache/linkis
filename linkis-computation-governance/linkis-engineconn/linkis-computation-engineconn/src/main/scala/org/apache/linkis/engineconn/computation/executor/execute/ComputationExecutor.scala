@@ -22,6 +22,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
+  TaskLogUpdateEvent,
   TaskResponseErrorEvent,
   TaskStatusChangedEvent
 }
@@ -40,7 +41,14 @@ import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  CodeLanguageLabel,
+  EngineType,
+  EngineTypeLabel,
+  RunType,
+  UserCreatorLabel
+}
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 
@@ -49,6 +57,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+
+import scala.collection.JavaConverters._
 
 import com.google.common.cache.{Cache, CacheBuilder}
 
@@ -132,6 +142,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   override def close(): Unit = {
     if (null != lastTask) CLOSE_LOCKER.synchronized {
+      listenerBusContext.getEngineConnSyncListenerBus.postToAll(
+        TaskLogUpdateEvent(
+          lastTask.getTaskId,
+          LogUtils.generateERROR("EC exits unexpectedly and actively kills the task")
+        )
+      )
       killTask(lastTask.getTaskId)
     }
     else {
@@ -169,9 +185,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     Utils.tryFinally {
       transformTaskStatus(engineConnTask, ExecutionNodeStatus.Running)
       val engineExecutionContext = createEngineExecutionContext(engineConnTask)
+
+      val engineCreationContext = EngineConnObject.getEngineCreationContext
+
       var hookedCode = engineConnTask.getCode
       Utils.tryCatch {
-        val engineCreationContext = EngineConnObject.getEngineCreationContext
         ComputationExecutorHook.getComputationExecutorHooks.foreach(hook => {
           hookedCode =
             hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
@@ -182,12 +200,24 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       } else {
         logger.info(s"hooked after code: $hookedCode ")
       }
+
+      // task params log
+      // spark engine: at org.apache.linkis.engineplugin.spark.executor.SparkEngineConnExecutor.executeLine log special conf
+      Utils.tryAndWarn {
+        val engineType = LabelUtil.getEngineType(engineCreationContext.getLabels())
+        EngineType.mapStringToEngineType(engineType) match {
+          case EngineType.HIVE | EngineType.TRINO => printTaskParamsLog(engineExecutionContext)
+          case _ =>
+        }
+      }
+
       val localPath = EngineConnConf.getLogDir
       engineExecutionContext.appendStdout(
         LogUtils.generateInfo(
           s"EngineConn local log path: ${DataWorkCloudApplication.getServiceInstance.toString} $localPath"
         )
       )
+
       var response: ExecuteResponse = null
       val incomplete = new StringBuilder
       val codes =
@@ -244,6 +274,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         case s: SuccessExecuteResponse =>
           succeedTasks.increase()
           s
+        case incompleteExecuteResponse: IncompleteExecuteResponse =>
+          ErrorExecuteResponse(
+            s"The task cannot be an incomplete response ${incompleteExecuteResponse.message}",
+            null
+          )
         case _ => response
       }
       response
@@ -334,6 +369,30 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         transformTaskStatus(task, ExecutionNodeStatus.Cancelled)
       }
     }
+  }
+
+  /**
+   * job task log print task params info
+   *
+   * @param engineExecutorContext
+   * @return
+   *   Unit
+   */
+
+  def printTaskParamsLog(engineExecutorContext: EngineExecutionContext): Unit = {
+    val sb = new StringBuilder
+
+    EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
+      // skip log jobId because it corresponding jobid when the ec created
+      if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
+        sb.append(s"${key}=${value.toString}\n")
+      }
+    })
+
+    sb.append("\n")
+    engineExecutorContext.appendStdout(
+      LogUtils.generateInfo(s"Your job exec with configs:\n${sb.toString()}\n")
+    )
   }
 
   def transformTaskStatus(task: EngineConnTask, newStatus: ExecutionNodeStatus): Unit = {

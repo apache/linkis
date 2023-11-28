@@ -17,7 +17,7 @@
 
 package org.apache.linkis.gateway.security
 
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.LinkisException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
@@ -43,6 +43,7 @@ object SecurityFilter extends Logging {
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue
   private val referers = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
   protected val testUser: String = ServerConfiguration.BDP_TEST_USER.getValue
+  private val ACCESS_CONTROL_USER_PREFIX = "linkis.client.access.control.user."
 
   private val ipSet = new util.HashSet[String]()
 
@@ -104,11 +105,12 @@ object SecurityFilter extends Logging {
     val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(r =>
       !r.equals("") && gatewayContext.getRequest.getRequestURI.startsWith(r)
     )
-    if (
-        gatewayContext.getRequest.getRequestURI.startsWith(
-          ServerConfiguration.BDP_SERVER_USER_URI.getValue
-        )
-    ) {
+
+    val isUserRestful = gatewayContext.getRequest.getRequestURI.startsWith(
+      ServerConfiguration.BDP_SERVER_USER_URI.getValue
+    )
+
+    if (isUserRestful) {
       Utils.tryCatch(userRestful.doUserRequest(gatewayContext)) { t =>
         val message = t match {
           case dwc: LinkisException => dwc.getMessage
@@ -120,10 +122,9 @@ object SecurityFilter extends Logging {
           Message.error(message).<<(gatewayContext.getRequest.getRequestURI)
         )
       }
-      false
+      return false
     } else if (isPassAuthRequest && !GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
       logger.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
-      true
     } else if (TokenAuthentication.isTokenRequest(gatewayContext)) {
       TokenAuthentication.tokenAuth(gatewayContext)
     } else {
@@ -142,22 +143,20 @@ object SecurityFilter extends Logging {
           throw t
       }
       if (userName.isDefined) {
-        true
+        logger.info(s"User $userName has logged in.")
       } else if (Configuration.IS_TEST_MODE.getValue) {
         logger.info("test mode! login for uri: " + gatewayContext.getRequest.getRequestURI)
         GatewaySSOUtils.setLoginUser(gatewayContext, testUser)
-        true
       } else if (GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
         val user = SSOInterceptor.getSSOInterceptor.getUser(gatewayContext)
         if (StringUtils.isNotBlank(user)) {
           GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, user)
-          true
         } else if (isPassAuthRequest) {
           gatewayContext.getResponse.redirectTo(
             SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)
           )
           gatewayContext.getResponse.sendResponse()
-          false
+          return false
         } else {
           filterResponse(
             gatewayContext,
@@ -169,7 +168,7 @@ object SecurityFilter extends Logging {
                 SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)
               ) << gatewayContext.getRequest.getRequestURI
           )
-          false
+          return false
         }
       } else if (
           gatewayContext.getRequest.getRequestURI.matches(
@@ -179,7 +178,6 @@ object SecurityFilter extends Logging {
         logger.info(
           "Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI
         )
-        true
       } else {
         filterResponse(
           gatewayContext,
@@ -187,9 +185,56 @@ object SecurityFilter extends Logging {
             "You are not logged in, please login first(您尚未登录，请先登录)!"
           ) << gatewayContext.getRequest.getRequestURI
         )
-        false
+        return false
       }
     }
+
+    // 访问控制, 先判断当前用户是否可以在当前IP执行，再判断当前IP是否有权限调用当前接口
+    // Access control
+    // first determine whether the current user can perform operations from the current IP address,
+    // and then determine whether the current IP address has permission to call the current interface.
+    if (
+        GatewayConfiguration.ACCESS_CONTROL_USER_ENABLED.getValue && !isPassAuthRequest && !isUserRestful
+    ) {
+      val userName = GatewaySSOUtils.getLoginUsername(gatewayContext)
+      val userIps =
+        CommonVars.apply(ACCESS_CONTROL_USER_PREFIX + userName, "").getValue
+      val host =
+        gatewayContext.getRequest.getRemoteAddress.getAddress.toString.replaceAll("/", "")
+      if (StringUtils.isNotEmpty(userIps)) {
+        if (!userIps.contains(host)) {
+          val message =
+            Message.error(
+              s"Unauthorized access! User $userName is prohibited from accessing from the current IP $host. (未授权的访问！用户${userName}禁止在当前IP${host}访问。)"
+            )
+          filterResponse(gatewayContext, message)
+          return false
+        }
+      }
+    }
+    if (
+        GatewayConfiguration.ACCESS_CONTROL_ENABLED.getValue && !isPassAuthRequest && !isUserRestful
+    ) {
+      if (
+          StringUtils.isNotEmpty(GatewayConfiguration.ACCESS_CONTROL_IP.getValue) && StringUtils
+            .isNotEmpty(GatewayConfiguration.ACCESS_CONTROL_URL.getValue)
+      ) {
+        val host =
+          gatewayContext.getRequest.getRemoteAddress.getAddress.toString.replaceAll("/", "")
+        if (GatewayConfiguration.ACCESS_CONTROL_IP.getValue.contains(host)) {
+          val requestUrl = gatewayContext.getRequest.getRequestURI
+          if (!GatewayConfiguration.ACCESS_CONTROL_URL.getValue.contains(requestUrl)) {
+            val message =
+              Message.error(
+                s"Unauthorized access! IP $host is prohibited from accessing this URL. (未授权的访问！当前IP${host}禁止访问此URL。)"
+              )
+            filterResponse(gatewayContext, message)
+            return false
+          }
+        }
+      }
+    }
+    true
   }
 
   private var userRestful: UserRestful = _

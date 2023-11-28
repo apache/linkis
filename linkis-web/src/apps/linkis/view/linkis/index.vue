@@ -180,7 +180,6 @@ export default {
             ),
             showSubMenu: true,
           },
-          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
           {
             key: '1-12',
             name: this.$t(
@@ -268,13 +267,6 @@ export default {
               'message.linkis.sideNavList.function.children.ipListManagement'
             ),
             path: '/console/ipListManagement',
-          },
-          {
-            key: '1-10-7',
-            name: this.$t(
-              'message.linkis.sideNavList.function.children.acrossClusterRule'
-            ),
-            path: '/console/acrossClusterRule',
           },
           {
             key: '1-10-8',
@@ -396,8 +388,8 @@ export default {
         return
       }
       if (index === '1-12') {
-        this.sideNavList.children[10].showSubMenu =
-          !this.sideNavList.children[10].showSubMenu
+        this.sideNavList.children[9].showSubMenu =
+          !this.sideNavList.children[9].showSubMenu
         return
       }
       // index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单

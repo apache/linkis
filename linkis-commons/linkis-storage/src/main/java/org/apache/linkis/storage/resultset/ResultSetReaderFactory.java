@@ -49,7 +49,7 @@ public class ResultSetReaderFactory {
     return new StorageResultSetReader<>(resultSet, value);
   }
 
-  public static ResultSetReader getResultSetReader(String res) {
+  public static ResultSetReader getResultSetReader(String res) throws IOException {
     ResultSetFactory rsFactory = ResultSetFactory.getInstance();
     if (rsFactory.isResultSet(res)) {
       ResultSet<? extends MetaData, ? extends Record> resultSet = rsFactory.getResultSet(res);
@@ -58,21 +58,12 @@ public class ResultSetReaderFactory {
       FsPath resPath = new FsPath(res);
       ResultSet<? extends MetaData, ? extends Record> resultSet =
           rsFactory.getResultSetByPath(resPath);
-      try {
-        FSFactory.getFs(resPath).init(null);
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs init failed", e);
-      }
-      ResultSetReader reader = null;
-      try {
-        reader =
-            ResultSetReaderFactory.getResultSetReader(
-                resultSet, FSFactory.getFs(resPath).read(resPath));
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs read failed", e);
-      }
+      Fs fs = FSFactory.getFs(resPath);
+      fs.init(null);
+      ResultSetReader reader =
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath));
       if (reader instanceof StorageResultSetReader) {
-        ((StorageResultSetReader<?, ?>) reader).setFs(FSFactory.getFs(resPath));
+        ((StorageResultSetReader<?, ?>) reader).setFs(fs);
       }
       return (StorageResultSetReader<?, ?>) reader;
     }

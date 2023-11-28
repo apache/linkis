@@ -47,7 +47,7 @@ public class ResultsetFileSource extends AbstractFileSource {
                             if (emptyValue.equals(Dolphin.LINKIS_NULL)) {
                               return "";
                             } else {
-                              return nullValue;
+                              return emptyValue;
                             }
                           } else if (r instanceof Double) {
                             return StorageUtils.doubleToString((Double) r);

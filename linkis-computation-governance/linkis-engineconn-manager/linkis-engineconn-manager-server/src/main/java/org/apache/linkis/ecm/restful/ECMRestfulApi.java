@@ -18,7 +18,6 @@
 package org.apache.linkis.ecm.restful;
 
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.ecm.server.util.ECMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 

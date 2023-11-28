@@ -51,28 +51,25 @@ public class ResultSetWriterFactory {
   public static Record[] getRecordByWriter(
       org.apache.linkis.common.io.resultset.ResultSetWriter<? extends MetaData, ? extends Record>
           writer,
-      long limit) {
+      long limit)
+      throws IOException {
     String res = writer.toString();
     return getRecordByRes(res, limit);
   }
 
-  public static Record[] getRecordByRes(String res, long limit) {
+  public static Record[] getRecordByRes(String res, long limit) throws IOException {
     ResultSetReader reader = ResultSetReaderFactory.getResultSetReader(res);
     int count = 0;
     List<Record> records = new ArrayList<>();
-    try {
-      reader.getMetaData();
-      while (reader.hasNext() && count < limit) {
-        records.add(reader.getRecord());
-        count++;
-      }
-    } catch (IOException e) {
-      logger.warn("ResultSetWriter getRecordByRes failed", e);
+    reader.getMetaData();
+    while (reader.hasNext() && count < limit) {
+      records.add(reader.getRecord());
+      count++;
     }
     return records.toArray(new Record[0]);
   }
 
-  public static Record getLastRecordByRes(String res) {
+  public static Record getLastRecordByRes(String res) throws IOException {
     ResultSetReader reader = ResultSetReaderFactory.getResultSetReader(res);
     Record record = null;
     try {

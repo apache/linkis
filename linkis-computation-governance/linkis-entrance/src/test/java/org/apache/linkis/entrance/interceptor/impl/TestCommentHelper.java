@@ -17,53 +17,49 @@
 
 package org.apache.linkis.entrance.interceptor.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Arrays;
-import org.apache.linkis.common.utils.CodeAndRunTypeUtils;
+
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
-import scala.reflect.internal.TypeDebugging;
 
 public class TestCommentHelper {
-    String sqlCode=""
-        + "--注解\n"
-        + "select * from table;\n"
-        + "   --注解 \n"
-        + "--注解\n"
-        + "   select \"--注解\" as test\n"
-        + " --@set yy=123\n"
-        + "  --注解";
+  String sqlCode =
+      ""
+          + "--注解\n"
+          + "select * from table;\n"
+          + "   --注解 \n"
+          + "--注解\n"
+          + "   select \"--注解\" as test\n"
+          + " --@set yy=123\n"
+          + "  --注解";
 
-    String scalaCode=""
-        + "// 注解\n"
-        + "print(1+1)\n"
-        + "//@set yy=123\n"
-        + " print(2)\n"
-        + " // 注解 \n"
-        + "// test\n"
-        + "print(\"//注解测试\")";
+  String scalaCode =
+      ""
+          + "// 注解\n"
+          + "print(1+1)\n"
+          + "//@set yy=123\n"
+          + " print(2)\n"
+          + " // 注解 \n"
+          + "// test\n"
+          + "print(\"//注解测试\")";
 
-    String scalaCodeRes="print(1+1)\n"
-        + "print(2)\n"
-        + "print(\"//注解测试\")";
+  String scalaCodeRes = "print(1+1)\n" + "print(2)\n" + "print(\"//注解测试\")";
 
-    @Test
-    void sqlDealCommentTest() {
-        String  code=SQLCommentHelper.dealComment(sqlCode);
-        //System.out.println(code);
-    }
+  @Test
+  void sqlDealCommentTest() {
+    String code = SQLCommentHelper.dealComment(sqlCode);
+    // System.out.println(code);
+  }
 
-    @Test
-    void scalaDealCommentTest() {
-        String code=ScalaCommentHelper.dealComment(scalaCode);
-        String[] lines = Arrays.stream(code.split("\n"))
+  @Test
+  void scalaDealCommentTest() {
+    String code = ScalaCommentHelper.dealComment(scalaCode);
+    String[] lines =
+        Arrays.stream(code.split("\n"))
             .map(String::trim)
             .filter(x -> StringUtils.isNotBlank(x))
             .toArray(String[]::new);
-        String result=String.join("\n",lines);
-      // assertEquals(result,scalaCodeRes);
-    }
-
-
+    String result = String.join("\n", lines);
+    // assertEquals(result,scalaCodeRes);
+  }
 }

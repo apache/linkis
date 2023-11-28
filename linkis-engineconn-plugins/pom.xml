@@ -42,6 +42,7 @@
     <module>elasticsearch</module>
     <module>seatunnel</module>
     <module>hbase</module>
+    <module>nebula</module>
     <module>repl</module>
   </modules>
   <profiles>

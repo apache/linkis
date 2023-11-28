@@ -60,6 +60,7 @@ chill_2.12-0.7.6.jar
 classgraph-4.1.7.jar
 classmate-1.5.1.jar
 clickhouse-jdbc-0.4.6.jar
+client-3.0.0.jar
 commons-beanutils-1.9.4.jar
 commons-cli-1.3.1.jar
 commons-crypto-1.0.0.jar
@@ -373,6 +374,7 @@ jsr305-3.0.1.jar
 jsr305-3.0.2.jar
 jsr311-api-1.1.1.jar
 jta-1.1.jar
+jts-core-1.16.1.jar
 jul-to-slf4j-1.7.30.jar
 kafka-clients-2.5.1.jar
 kafka-clients-2.7.0.jar

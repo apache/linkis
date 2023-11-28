@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `linkis_cg_manager_label`;
 CREATE TABLE `linkis_cg_manager_label`
 (
     `id`               int(20)      NOT NULL AUTO_INCREMENT,
-    `label_key`        varchar(50)  NOT NULL,
+    `label_key`        varchar(32)  NOT NULL,
     `label_value`      varchar(255) NOT NULL,
     `label_feature`    varchar(16)  NOT NULL,
     `label_value_size` int(20)      NOT NULL,
@@ -48,6 +48,10 @@ CREATE TABLE `linkis_ps_configuration_config_key`
     `is_advanced`      tinyint(1)   DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
     `level`            tinyint(1)   DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
     `treeName`         varchar(20)  DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    `boundary_type`     int(2) NOT NULL DEFAULT '0'  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
+    `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
+    `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
+    `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
     PRIMARY KEY (`id`)
 );
 
@@ -88,65 +92,42 @@ CREATE TABLE `linkis_ps_configuration_category`
     UNIQUE INDEX (`label_id`)
 );
 
-DROP TABLE IF EXISTS `linkis_cg_user_ip_config`;
-CREATE TABLE `linkis_cg_user_ip_config` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
-  `user` varchar(50) NOT NULL,
-  `creator` varchar(50) NOT NULL,
-  `ip_list` text NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `desc` varchar(100) NOT NULL,
-  `bussiness_user` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_creator_uic` (`user`,`creator`)
+
+DROP TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
+CREATE TABLE `linkis_ps_configuration_template_config_key` (
+        `id` int(20) NOT NULL AUTO_INCREMENT,
+        `template_name` varchar(200) NOT NULL COMMENT '配置模板名称 冗余存储',
+        `template_uuid` varchar(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
+        `key_id` int(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+        `config_value` varchar(200) NULL DEFAULT NULL COMMENT '配置值',
+        `max_value` varchar(50) NULL DEFAULT NULL COMMENT '上限值',
+        `min_value` varchar(50) NULL DEFAULT NULL COMMENT '下限值（预留）',
+        `validate_range` varchar(50) NULL DEFAULT NULL COMMENT '校验正则(预留) ',
+        `is_valid` varchar(2) DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
+        `create_by` varchar(50) NOT NULL COMMENT '创建人',
+        `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+        `update_by` varchar(50) NULL DEFAULT NULL COMMENT '更新人',
+        `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+        PRIMARY KEY (`id`),
+        UNIQUE INDEX `uniq_tid_kid` (`template_uuid`, `key_id`)
 );
 
-DROP TABLE IF EXISTS `linkis_cg_tenant_label_config`;
-CREATE TABLE `linkis_cg_tenant_label_config` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
-  `user` varchar(50)  NOT NULL,
-  `creator` varchar(50)  NOT NULL,
-  `tenant_value` varchar(128)  NOT NULL,
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `desc` varchar(100) NOT NULL,
-  `bussiness_user` varchar(50)  NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_creator_tlc` (`user`,`creator`)
+
+DROP TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
+CREATE TABLE `linkis_ps_configuration_key_limit_for_user` (
+        `id` int(20) NOT NULL AUTO_INCREMENT,
+        `user_name` varchar(50) NOT NULL COMMENT '用户名',
+        `combined_label_value` varchar(200) NOT NULL COMMENT '组合标签 combined_userCreator_engineType  如 hadoop-IDE,spark-2.4.3',
+        `key_id` int(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+        `config_value` varchar(200) NULL DEFAULT NULL COMMENT '配置值',
+        `max_value` varchar(50) NULL DEFAULT NULL COMMENT '上限值',
+        `min_value` varchar(50) NULL DEFAULT NULL COMMENT '下限值（预留）',
+        `latest_update_template_uuid` varchar(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
+        `is_valid` varchar(2)  DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
+        `create_by` varchar(50) NOT NULL COMMENT '创建人',
+        `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+        `update_by` varchar(50) NULL DEFAULT NULL COMMENT '更新人',
+        `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+        PRIMARY KEY (`id`),
+        UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
 );
-
-DELETE FROM linkis_cg_manager_label;
-
-insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-*,*-*', 'OPTIONAL', 2, now(), now());
-insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-IDE,*-*', 'OPTIONAL', 2, now(), now());
-insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-Visualis,*-*', 'OPTIONAL', 2, now(), now());
-insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-nodeexecution,*-*', 'OPTIONAL', 2, now(), now());
-
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue', 'yarn队列名', 'yarn队列名', 'ide', 'None', NULL, '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.instance.max', '取值范围：1-128，单位：个', '队列实例最大个数', '30', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.cores.max', '取值范围：1-500，单位：个', '队列CPU使用上限', '150', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|500)$', '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', '全局各个引擎内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', '全局各个引擎核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1][0-2][0-8])$', '0', '0', '1', '队列资源');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '全局各个引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源');
-
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (1,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (2,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (3,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (4,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (5,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (6,1);
-insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`) values (7,1);
-
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (1,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (2,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (3,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (4,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (5,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (6,'1',1);
-insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`) values (7,'1',1);
-
-insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (1, 1);
-insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (2, 1);
-insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (3, 1);

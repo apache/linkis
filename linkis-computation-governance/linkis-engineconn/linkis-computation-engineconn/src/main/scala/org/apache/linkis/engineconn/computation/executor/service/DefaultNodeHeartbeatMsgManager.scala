@@ -66,6 +66,10 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
           ECConstants.EC_TOTAL_LOCK_TIME_MILLS_KEY,
           ComputationEngineConnMetrics.getTotalLockTimeMills(status).asInstanceOf[Object]
         )
+        msgMap.put(
+          ECConstants.EC_LAST_UNLOCK_TIMESTAMP,
+          ComputationEngineConnMetrics.getLastUnlockTimestamp(status).asInstanceOf[Object]
+        )
       case _ =>
     }
     val engineParams = EngineConnObject.getEngineCreationContext.getOptions

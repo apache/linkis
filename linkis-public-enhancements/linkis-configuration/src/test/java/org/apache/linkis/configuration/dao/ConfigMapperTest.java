@@ -17,23 +17,6 @@
 
 package org.apache.linkis.configuration.dao;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import org.apache.linkis.configuration.entity.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,11 +71,6 @@ public class ConfigMapperTest extends BaseDaoTest {
     assertEquals(7, configKeyValueList.size());
   }
 
-  /**
-   * When using the h2 library for testing,if the function(on conflict) is not supported,an error
-   * will be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
-   * conflict）会报错，pg实体库不会报错
-   */
   @Test
   void testInsertValue() {
     ConfigValue result = insertConfigValue();
@@ -160,12 +138,6 @@ public class ConfigMapperTest extends BaseDaoTest {
   }
 
   @Test
-  void testInsertCreator() {
-    // mapper方法没有对应的实现类
-    //        configMapper.insertCreator("tom");
-  }
-
-  @Test
   void testGetCategory() {
     List<CategoryLabel> categoryLabelList = configMapper.getCategory();
     assertEquals(3, categoryLabelList.size());
@@ -208,6 +180,7 @@ public class ConfigMapperTest extends BaseDaoTest {
   void testInsertKey() {
     ConfigKey configKey = new ConfigKey();
     configKey.setKey("wds.linkis.rm.instance.max.max");
+    configKey.setBoundaryType(3);
     configMapper.insertKey(configKey);
     ConfigKey result = configMapper.selectKeyByKeyID(8L);
     //        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());

@@ -18,7 +18,6 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils
-import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil

@@ -71,44 +71,49 @@
           style="width:100%;table-layout:fixed;"
           :style="{height:`${loadedNum*tdHeight}px`}"
         >
-          <tr
-            v-for="(items,indexs) in showTableList"
-            @click="rowClick(items,indexs+dataTop/tdHeight+1)"
-            @dblclick="rowDblclick(items,indexs+dataTop/tdHeight+1)"
-            :key="indexs"
-            :style="{'line-height':`${tdHeight}px`}"
-            :class="selectIndex==indexs?'trselect':'trhover'"
-          >
-            <td
-              class="bottom-td"
-              v-if="columns[0].type=='index'"
-              :style="{width: columns[0].width? `${columns[0].width}px` : 'auto', height:`${tdHeight}px`}"
+          <tbody>
+            <tr
+              v-for="(items,indexs) in showTableList"
+              @click="rowClick(items,indexs+dataTop/tdHeight)"
+              @dblclick="rowDblclick(items,indexs+dataTop/tdHeight+1)"
+              :key="indexs"
+              :style="{'line-height':`${tdHeight}px`}"
+              :class="selectIndex==indexs?'trselect':'trhover'"
             >
-              {{indexs+dataTop/tdHeight+1}}</td>
-            <td
-              class="bottom-td"
-              v-if="columns[0].type=='select'"
-            ></td>
-            <template v-for="(item,index) in columnsBottom">
               <td
-                v-if="item.key"
                 class="bottom-td"
-                :key="index"
-                :style="{width: item.width?`${item.width}px`:'auto', height:`${tdHeight}px`}"
-                :title="item.logic==undefined?items[item.key]:item.logic(items)"
+                v-if="columns[0].type=='index'"
+                :style="{width: columns[0].width? `${columns[0].width}px` : 'auto', height:`${tdHeight}px`}"
               >
-                {{item.logic==undefined?items[item.key]:item.logic(items)}}
-              </td>
+                {{indexs+dataTop/tdHeight+1}}</td>
               <td
-                v-if="item.slot"
                 class="bottom-td"
-                :key="index"
-                :style="{width: item.width?`${item.width}px`:'auto', height:`${tdHeight}px`}"
-              >
-                <slot :name="item.slot" :row="items" :index="indexs+dataTop/tdHeight+1"></slot>
-              </td>
-            </template>
-          </tr>
+                v-if="columns[0].type=='select'"
+              ></td>
+              <template v-for="(item,index) in columnsBottom">
+                <td
+                  v-if="item.key"
+                  :key="`${index}-${indexs}`"
+                  class="bottom-td"
+                  :class="[hasLineBreak(item.logic==undefined?items[item.key]:item.logic(items)) ? '' : 'hint--bottom hint--rounded']"
+                  :style="{width: item.width?`${item.width}px`:'auto'}"
+                  :aria-label="item.logic==undefined?items[item.key]:item.logic(items)"
+                >
+                  <p v-if="hasLineBreak(item.logic==undefined?items[item.key]:item.logic(items))" style="width: 100%" class="wrap">{{item.logic==undefined?items[item.key]:item.logic(items)}}</p>
+                  <div v-else class="scroll" :aria-label="item.logic==undefined?items[item.key]:item.logic(items)" :style="{width: '100%', height:`${tdHeight}px`}">{{item.logic==undefined?items[item.key]:item.logic(items)}}</div>
+                
+                </td>
+                <td
+                  v-if="item.slot"
+                  class="bottom-td"
+                  :key="index"
+                  :style="{width: item.width?`${item.width}px`:'auto', height:`${tdHeight}px`}"
+                >
+                  <slot :name="item.slot" :row="items" :index="indexs+dataTop/tdHeight+1"></slot>
+                </td>
+              </template>
+            </tr>
+          </tbody>
         </table>
         <div v-show="showTableList.length < 1" class="no-data-tip" :style="noDataStyle">
           暂无数据
@@ -324,6 +329,13 @@ export default {
         }
       }
     },
+    hasLineBreak(content) {
+      if (content.split(/\n/).length > 1) {
+        return true
+      }
+      return false
+    },
+
     //scroll bar scroll down(滚动条向下滚动)
     handleScrollBottom() {
       if (this.dataTop > this.scrollTop) {

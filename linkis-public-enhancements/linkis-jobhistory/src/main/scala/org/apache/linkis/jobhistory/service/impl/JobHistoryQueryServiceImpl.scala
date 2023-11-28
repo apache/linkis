@@ -113,7 +113,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           logger.info(s"${jobReq.getErrorDesc}")
         }
       }
-      if (jobReq.getStatus != null) {
+      if (jobReq.getUpdateOrderFlag && jobReq.getStatus != null) {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
         if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
           throw new QueryException(
@@ -178,7 +178,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
               logger.info(s"${jobReq.getErrorDesc}")
             }
           }
-          if (jobReq.getStatus != null) {
+          if (jobReq.getUpdateOrderFlag && jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
             if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
               throw new QueryException(
@@ -241,6 +241,30 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       jobResp.setData(map)
     } { case e: Exception =>
       logger.error(s"Failed to query job ${jobReqQuery.jobReq.getId}", e)
+      jobResp.setStatus(1)
+      jobResp.setMsg(ExceptionUtils.getRootCauseMessage(e))
+    }
+    jobResp
+  }
+
+  @Receiver
+  override def queryFailoverJobs(requestFailoverJob: RequestFailoverJob): JobRespProtocol = {
+    val reqMap = requestFailoverJob.reqMap
+    val statusList = requestFailoverJob.statusList
+    val startTimestamp = requestFailoverJob.startTimestamp
+    val limit = requestFailoverJob.limit
+    logger.info(s"query failover jobs, start timestamp:${startTimestamp}， limit:${limit}")
+    val jobResp = new JobRespProtocol
+    Utils.tryCatch {
+      val jobList =
+        jobHistoryMapper.selectFailoverJobHistory(reqMap, statusList, startTimestamp, limit)
+      val jobReqList = jobList.asScala.map(jobHistory2JobRequest).toList
+      val map = new util.HashMap[String, Object]()
+      map.put(JobRequestConstants.JOB_HISTORY_LIST, jobReqList)
+      jobResp.setStatus(0)
+      jobResp.setData(map)
+    } { case e: Exception =>
+      logger.error(s"Failed to query failover job, instances ${reqMap.keySet()}", e)
       jobResp.setStatus(1)
       jobResp.setMsg(ExceptionUtils.getRootCauseMessage(e))
     }
@@ -353,10 +377,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       startJobId: lang.Long
   ): Integer = {
     val cacheKey =
-      if (StringUtils.isNoneBlank(username, creator, engineType)) ""
-      else {
+      if (StringUtils.isNoneBlank(username, creator, engineType)) {
         s"${username}_${creator}_${engineType}"
-      }
+      } else ""
     if (StringUtils.isBlank(cacheKey)) {
       getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
     } else {

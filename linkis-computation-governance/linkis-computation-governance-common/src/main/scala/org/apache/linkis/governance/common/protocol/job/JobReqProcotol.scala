@@ -51,3 +51,10 @@ class RequestOneJob extends JobReq {
 }
 
 case class RequestAllJob(instance: String) extends JobReq
+
+case class RequestFailoverJob(
+    reqMap: util.Map[String, java.lang.Long],
+    statusList: util.List[String],
+    startTimestamp: Long,
+    limit: Int = 10
+) extends JobReq

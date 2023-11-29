@@ -45,4 +45,15 @@ public class EngineAskAsyncResponse implements EngineAsyncResponse {
   public void setManagerInstance(ServiceInstance managerInstance) {
     this.managerInstance = managerInstance;
   }
+
+  @Override
+  public String toString() {
+    return "EngineAskAsyncResponse{"
+        + "id='"
+        + id
+        + '\''
+        + ", managerInstance="
+        + managerInstance
+        + '}';
+  }
 }

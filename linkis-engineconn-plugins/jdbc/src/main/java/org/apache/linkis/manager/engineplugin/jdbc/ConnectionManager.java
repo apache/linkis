@@ -23,16 +23,19 @@ import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConsta
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 import org.apache.linkis.manager.engineplugin.jdbc.utils.JdbcParamUtils;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import javax.sql.DataSource;
 
+import java.io.Closeable;
 import java.security.PrivilegedExceptionAction;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,7 +45,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.USERNAME;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.of;
 import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
 
 public class ConnectionManager {
@@ -103,8 +107,10 @@ public class ConnectionManager {
     }
     for (DataSource dataSource : this.dataSourceFactories.values()) {
       try {
-        ((BasicDataSource) dataSource).close();
-      } catch (SQLException e) {
+        if (dataSource instanceof Closeable) {
+          ((Closeable) dataSource).close();
+        }
+      } catch (Exception e) {
         LOG.error("Error while closing datasource...", e);
       }
     }

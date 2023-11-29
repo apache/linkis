@@ -108,7 +108,13 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val flinkHome = FLINK_HOME.getValue(options)
     val flinkConfDir = FLINK_CONF_DIR.getValue(options)
     val flinkProvidedLibPath = FLINK_PROVIDED_LIB_PATH.getValue(options)
-    val flinkDistJarPath = FLINK_DIST_JAR_PATH.getValue(options)
+    val flinkVersion = FlinkEnvConfiguration.FLINK_VERSION.getValue(options)
+    var flinkDistJarPath = FLINK_DIST_JAR_PATH.getValue(options)
+    if (
+        StringUtils.isNotBlank(flinkVersion) && flinkVersion.equalsIgnoreCase(FLINK_1_12_2_VERSION)
+    ) {
+      flinkDistJarPath = flinkDistJarPath.replaceFirst("flink-dist", "flink-dist_2.11")
+    }
     // Local lib path
     val providedLibDirsArray = FLINK_LIB_LOCAL_PATH.getValue(options).split(",")
     // Ship directories
@@ -126,7 +132,6 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       )
     }
     otherParams.put(GovernanceCommonConf.EC_APP_MANAGE_MODE.key, flinkClientType.toLowerCase())
-    val flinkVersion = FlinkEnvConfiguration.FLINK_VERSION.getValue(options)
     FlinkVersionThreadLocal.setFlinkVersion(flinkVersion)
     val context = new EnvironmentContext(
       defaultEnv,

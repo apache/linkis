@@ -61,16 +61,12 @@ public class FileSystemUtils {
     createNewFile(filePath, StorageUtils.getJvmUser(), createParentWhenNotExists);
   }
 
-  public static void createNewFile(
-      FsPath filePath, String user, boolean createParentWhenNotExists) {
+  public static void createNewFile(FsPath filePath, String user, boolean createParentWhenNotExists)
+      throws Exception {
     FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(filePath, user);
     try {
       fileSystem.init(null);
       createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists);
-    } catch (IOException e) {
-      logger.warn("FileSystemUtils createNewFile failed", e);
-    } catch (Exception e) {
-      logger.warn("FileSystemUtils createNewFile failed", e);
     } finally {
       IOUtils.closeQuietly(fileSystem);
     }

@@ -111,11 +111,11 @@ public class ElasticConnection implements Closeable {
   }
 
   public Map<Object, Object> getProps(String index, String type) throws Exception {
-    Request request = new Request("GET", index + "/_mappings/" + type);
+    Request request = new Request("GET", index + "/_mappings");
     Response response = restClient.performRequest(request);
     Map<String, Map<String, Object>> result =
         Json.fromJson(response.getEntity().getContent(), Map.class);
-    Map mappings = (Map) result.get(index).get("mappings");
+    Map mappings = (Map) result.get(index).get(DEFAULT_MAPPING_NAME);
     Map propsMap = mappings;
     if (mappings.containsKey(type)) {
       Object typeMap = mappings.get(type);
@@ -124,10 +124,10 @@ public class ElasticConnection implements Closeable {
       }
     }
     Object props = propsMap.get(FIELD_PROPS);
-    if (props instanceof Map) {
+    if (null != props && props instanceof Map) {
       return (Map) props;
     }
-    return null;
+    return propsMap;
   }
 
   public void ping() throws IOException {

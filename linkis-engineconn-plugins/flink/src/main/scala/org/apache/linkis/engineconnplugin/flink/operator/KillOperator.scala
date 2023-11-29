@@ -68,13 +68,23 @@ class KillOperator extends Operator with Logging {
         val rs = YarnUtil.triggerSavepoint(appIdStr, checkPointPath, restClient)
         rsMap.put(FlinkECConstant.MSG_KEY, rs)
       }
-      val jobs = restClient.listJobs().get()
-      if (null == jobs || jobs.isEmpty) {
-        val msg = s"App : ${appIdStr} have no jobs, but is not ended."
-        throw logAndException(msg)
+      var msg = ""
+      Utils.tryCatch {
+        val jobs = restClient.listJobs().get()
+        if (null == jobs || jobs.isEmpty) {
+          val msg = s"App : ${appIdStr} have no jobs, but is not ended."
+          throw logAndException(msg)
+        }
+        msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
+        jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
+      } { case e: Exception =>
+        logger.error(
+          s"Error on killing jobs of appid : ${appIdStr}, will kill it by yarn, because : ${e.getMessage}",
+          e
+        )
+        YarnUtil.getYarnClient().killApplication(appId)
+        FlinkRestClientManager.removeFlinkRestClient(appIdStr, restClient)
       }
-      val msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
-      jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
       rsMap += (FlinkECConstant.MSG_KEY -> msg)
     }
 

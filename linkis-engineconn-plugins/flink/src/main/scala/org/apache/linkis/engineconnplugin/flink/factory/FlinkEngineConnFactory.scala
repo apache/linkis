@@ -239,6 +239,16 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     } else {
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.SESSION.getName)
     }
+    // manage ec highavailable
+    if (isManager) {
+      flinkConfig.set(
+        HighAvailabilityOptions.HA_MODE,
+        FlinkEnvConfiguration.FLINK_MANAGER_HIGHAVAILABLE_MODE.getHotValue()
+      )
+      logger.info(
+        s"set ha_mode to ${FlinkEnvConfiguration.FLINK_MANAGER_HIGHAVAILABLE_MODE.getHotValue()}"
+      )
+    }
     context
   }
 

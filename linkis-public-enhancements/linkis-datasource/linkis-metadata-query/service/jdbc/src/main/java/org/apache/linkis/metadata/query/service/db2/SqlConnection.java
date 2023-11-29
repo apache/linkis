@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.db2;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.exception.LinkisSecurityException;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
 import org.apache.commons.collections.MapUtils;
@@ -41,6 +42,10 @@ public class SqlConnection extends AbstractSqlConnection {
 
   private static final CommonVars<String> SQL_CONNECT_URL =
       CommonVars.apply("wds.linkis.server.mdm.service.db2.url", "jdbc:db2://%s:%s/%s");
+
+  /** clientRerouteServerListJNDIName */
+  private static final CommonVars<String> DB2_SENSITIVE_PARAMS =
+      CommonVars.apply("linkis.db2.sensitive.params", "clientRerouteServerListJNDIName");
 
   public SqlConnection(
       String host,
@@ -114,6 +119,9 @@ public class SqlConnection extends AbstractSqlConnection {
               .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
               .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
+    }
+    if (url.toLowerCase().contains(DB2_SENSITIVE_PARAMS.getValue().toLowerCase())) {
+      throw new LinkisSecurityException(35000, "Invalid db2 connection params.");
     }
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }

@@ -81,6 +81,12 @@ object SQLCommentHelper extends CommentHelper {
       while (matcher.find()) {
         val commentKeyword = matcher.group(1)
         val comment = matcher.group(2)
+
+        /**
+         * Since we are in a Scala string, and each backslash needs to be escaped in the string
+         * itself, we need two additional backslashes. Therefore, we end up with a total of four
+         * backslashes to represent a single literal backslash in the replacement string.
+         */
         val escapedComment = comment.replaceAll(";", "\\\\\\\\;")
         matcher.appendReplacement(sb, commentKeyword + " '" + escapedComment + "'")
       }

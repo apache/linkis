@@ -21,7 +21,6 @@ import org.junit.jupiter.api.{Assertions, Test}
 
 class TestReplaceComment {
 
-
   @Test
   def TestRepComm: Unit = {
     val realCode = "drop table if exists default.test;" +

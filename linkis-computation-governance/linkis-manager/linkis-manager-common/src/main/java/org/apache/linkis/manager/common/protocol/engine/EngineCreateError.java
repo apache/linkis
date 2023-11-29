@@ -58,4 +58,9 @@ public class EngineCreateError implements EngineAsyncResponse {
   public void setRetry(Boolean retry) {
     this.retry = retry;
   }
+
+  @Override
+  public String toString() {
+    return "EngineCreateError{" + "id='" + id + '\'' + ", retry=" + retry + '}';
+  }
 }

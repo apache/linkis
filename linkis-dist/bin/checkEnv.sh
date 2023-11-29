@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+source ~/.bash_profile
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
 source ${workDir}/deploy-config/db.sh
-
+source
 say() {
     printf 'check command fail \n %s\n' "$1"
 }

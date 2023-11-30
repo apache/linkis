@@ -38,7 +38,7 @@ import org.apache.linkis.storage.fs.FileSystem
 
 import org.apache.commons.io.{FileUtils, IOUtils}
 
-import java.io.{File, InputStream, PrintWriter, StringWriter, Writer}
+import java.io.{File, InputStream}
 import java.util
 
 import scala.collection.JavaConverters._
@@ -114,13 +114,6 @@ object ECMUtils extends Logging {
     } else {
       ECM_MAX_MEMORY_AVAILABLE
     }
-  }
-
-  def getLog(e: Throwable): String = {
-    val result = new StringWriter
-    val printWriter = new PrintWriter(result)
-    e.printStackTrace(printWriter)
-    e.toString
   }
 
 }

@@ -18,7 +18,6 @@
 package org.apache.linkis.ecm.restful;
 
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.ecm.server.util.ECMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -153,7 +152,7 @@ public class ECMRestfulApi {
           outputStream.write(buffer, 0, bytesRead);
         }
       } catch (IOException e) {
-        logger.error("Download EngineLog Failed Msg :" + ECMUtils.getLog(e));
+        logger.error("Download EngineLog Failed Msg :", e);
         response.reset();
         response.setCharacterEncoding(Consts.UTF_8.toString());
         response.setContentType("text/plain; charset=utf-8");

@@ -12,7 +12,7 @@ and session management.
 
 ### Related issues/PRs
 
-Related issues: #590
+Related issues: close #590 close #591
 Related pr:#591
 
 

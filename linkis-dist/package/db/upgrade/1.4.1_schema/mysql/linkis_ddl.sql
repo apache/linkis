@@ -30,3 +30,5 @@ ALTER TABLE linkis_ps_common_lock ADD COLUMN locker VARCHAR(255) NOT NULL COMMEN
 ALTER TABLE linkis_ps_configuration_config_key ADD column template_required tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must'
 
 ALTER TABLE linkis_ps_configuration_config_value modify COLUMN  config_value varchar(500);
+
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01006','没有健康可用的ecm节点，可能任务量大,导致节点资源处于不健康状态，尝试kill空闲引擎释放资源','There are corresponding ECM tenant labels',0);

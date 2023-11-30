@@ -149,18 +149,20 @@ class DefaultEngineCreateService
     // 2. Get all available ECMs by labels
     val emScoreNodeList =
       getEMService().getEMNodes(emLabelList.asScala.filter(!_.isInstanceOf[EngineTypeLabel]).asJava)
-
-    // 3. Get the ECM with the lowest load by selection algorithm
-    val choseNode =
-      if (null == emScoreNodeList || emScoreNodeList.isEmpty) null
-      else {
-        logger.info(s"Suitable ems size is ${emScoreNodeList.length}")
-        nodeSelector.choseNode(emScoreNodeList.toArray)
-      }
-    if (null == choseNode || choseNode.isEmpty) {
+    if (null == emScoreNodeList || emScoreNodeList.isEmpty) {
       throw new LinkisRetryException(
         AMConstant.EM_ERROR_CODE,
         s" The em of labels ${engineCreateRequest.getLabels} not found"
+      )
+    }
+
+    // 3. Get the ECM with the lowest load by selection algorithm
+    logger.info(s"Suitable ems size is ${emScoreNodeList.length}")
+    val choseNode = nodeSelector.choseNode(emScoreNodeList.toArray)
+    if (null == choseNode || choseNode.isEmpty) {
+      throw new LinkisRetryException(
+        AMConstant.EM_ERROR_CODE,
+        s" There are corresponding ECM tenant labels ${engineCreateRequest.getLabels}, but none of them are healthy"
       )
     }
     val emNode = choseNode.get.asInstanceOf[EMNode]

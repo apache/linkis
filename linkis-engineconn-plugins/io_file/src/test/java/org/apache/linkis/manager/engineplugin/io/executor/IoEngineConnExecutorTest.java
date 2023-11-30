@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package executor;
+package org.apache.linkis.manager.engineplugin.io.executor;
 
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext;
-import org.apache.linkis.manager.engineplugin.io.executor.IoEngineConnExecutor;
 import org.apache.linkis.scheduler.executer.AliasOutputExecuteResponse;
 import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.storage.domain.MethodEntity;

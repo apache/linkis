@@ -19,7 +19,7 @@ workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
 source ${workDir}/deploy-config/db.sh
-source
+source ~/.bash_profile
 say() {
     printf 'check command fail \n %s\n' "$1"
 }

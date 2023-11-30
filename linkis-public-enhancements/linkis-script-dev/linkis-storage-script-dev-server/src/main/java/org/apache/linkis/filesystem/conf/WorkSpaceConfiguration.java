@@ -58,6 +58,9 @@ public class WorkSpaceConfiguration {
       CommonVars$.MODULE$.apply(
           "linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
 
+  public static final CommonVars<Long> FILESYSTEM_FILE_CHECK_SIZE =
+      CommonVars$.MODULE$.apply("linkis.filesystem.file.size.limit", 30 * 1024 * 1024L);
+
   public static final CommonVars<Boolean> ENABLE_USER_GROUP =
       CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 

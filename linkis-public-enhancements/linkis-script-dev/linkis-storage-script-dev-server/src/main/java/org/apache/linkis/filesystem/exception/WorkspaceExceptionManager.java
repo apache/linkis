@@ -71,6 +71,9 @@ public class WorkspaceExceptionManager {
           put("80029", "Empty dir(空目录)!");
           put("80030", "Creating user path: {0} failed(创建用户路径:{0}失败)");
           put("80031", "User: {0} not initialized(用户:{0}未初始化)");
+          put(
+              "80032",
+              "The file size exceeds 30M and page viewing is currently not supported. Please download to view or view in a shared directory(文件大小超过30M，暂不支持页面查看。请下载查看或在共享目录中查看)");
         }
       };
 

@@ -464,4 +464,9 @@ public class HDFSFileSystem extends FileSystem {
     }
     return path;
   }
+
+  @Override
+  public long getLength(FsPath dest) throws IOException {
+    return 0;
+  }
 }

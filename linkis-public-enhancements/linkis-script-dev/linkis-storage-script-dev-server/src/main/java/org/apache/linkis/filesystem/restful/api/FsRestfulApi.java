@@ -586,6 +586,10 @@ public class FsRestfulApi {
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80012);
     }
+    // Increase file size limit, making it easy to OOM without limitation
+    if (fileSystem.getLength(fsPath) > FILESYSTEM_FILE_CHECK_SIZE.getValue()) {
+      throw WorkspaceExceptionManager.createException(80032);
+    }
     FileSource fileSource = null;
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);

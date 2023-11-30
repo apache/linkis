@@ -489,4 +489,11 @@ public class LocalFileSystem extends FileSystem {
     PosixFileAttributes attr = Files.readAttributes(Paths.get(path), PosixFileAttributes.class);
     return attr.owner().getName();
   }
+
+  @Override
+  public long getLength(FsPath dest) throws IOException {
+    String path = dest.getPath();
+    LOG.info("Get file length with path:" + path);
+    return new File(path).length();
+  }
 }

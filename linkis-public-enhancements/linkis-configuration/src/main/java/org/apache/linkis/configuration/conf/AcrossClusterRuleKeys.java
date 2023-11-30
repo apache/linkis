@@ -19,9 +19,7 @@ package org.apache.linkis.configuration.conf;
 
 public class AcrossClusterRuleKeys {
 
-  public static final String KEY_QUEUE_SUFFIX = "suffix";
-
-  public static final String KEY_ACROSS_CLUSTER_QUEUE_SUFFIX = "bdap2bdp";
+  public static final String KEY_CROSS_QUEUE = "crossQueue";
 
   public static final String KEY_START_TIME = "startTime";
 

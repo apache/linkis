@@ -178,6 +178,7 @@ public class AcrossClusterRuleRestfulApi {
     @ApiImplicitParam(name = "isValid", dataType = "String", value = "isValid"),
     @ApiImplicitParam(name = "startTime", dataType = "String", value = "startTime"),
     @ApiImplicitParam(name = "endTime", dataType = "String", value = "endTime"),
+    @ApiImplicitParam(name = "crossQueue", dataType = "String", value = "crossQueue"),
     @ApiImplicitParam(name = "CPUThreshold", dataType = "String", value = "CPUThreshold"),
     @ApiImplicitParam(name = "MemoryThreshold", dataType = "String", value = "MemoryThreshold"),
     @ApiImplicitParam(
@@ -207,6 +208,7 @@ public class AcrossClusterRuleRestfulApi {
     String isValid = (String) json.get("isValid");
     String startTime = (String) json.get("startTime");
     String endTime = (String) json.get("endTime");
+    String crossQueue = (String) json.get("crossQueue");
     String CPUThreshold = (String) json.get("CPUThreshold");
     String MemoryThreshold = (String) json.get("MemoryThreshold");
     String CPUPercentageThreshold = (String) json.get("CPUPercentageThreshold");
@@ -217,6 +219,7 @@ public class AcrossClusterRuleRestfulApi {
         || StringUtils.isBlank(isValid)
         || StringUtils.isBlank(startTime)
         || StringUtils.isBlank(endTime)
+        || StringUtils.isBlank(crossQueue)
         || StringUtils.isBlank(CPUThreshold)
         || StringUtils.isBlank(MemoryThreshold)
         || StringUtils.isBlank(CPUPercentageThreshold)
@@ -229,6 +232,7 @@ public class AcrossClusterRuleRestfulApi {
           CommonUtils.ruleMap2String(
               startTime,
               endTime,
+              crossQueue,
               CPUThreshold,
               MemoryThreshold,
               CPUPercentageThreshold,
@@ -261,6 +265,7 @@ public class AcrossClusterRuleRestfulApi {
     @ApiImplicitParam(name = "isValid", dataType = "String", value = "isValid"),
     @ApiImplicitParam(name = "startTime", dataType = "String", value = "startTime"),
     @ApiImplicitParam(name = "endTime", dataType = "String", value = "endTime"),
+    @ApiImplicitParam(name = "crossQueue", dataType = "String", value = "crossQueue"),
     @ApiImplicitParam(name = "CPUThreshold", dataType = "String", value = "CPUThreshold"),
     @ApiImplicitParam(name = "MemoryThreshold", dataType = "String", value = "MemoryThreshold"),
     @ApiImplicitParam(
@@ -287,6 +292,7 @@ public class AcrossClusterRuleRestfulApi {
     String isValid = (String) json.get("isValid");
     String startTime = (String) json.get("startTime");
     String endTime = (String) json.get("endTime");
+    String crossQueue = (String) json.get("crossQueue");
     String CPUThreshold = (String) json.get("CPUThreshold");
     String MemoryThreshold = (String) json.get("MemoryThreshold");
     String CPUPercentageThreshold = (String) json.get("CPUPercentageThreshold");
@@ -297,6 +303,7 @@ public class AcrossClusterRuleRestfulApi {
         || StringUtils.isBlank(isValid)
         || StringUtils.isBlank(startTime)
         || StringUtils.isBlank(endTime)
+        || StringUtils.isBlank(crossQueue)
         || StringUtils.isBlank(CPUThreshold)
         || StringUtils.isBlank(MemoryThreshold)
         || StringUtils.isBlank(CPUPercentageThreshold)
@@ -309,6 +316,7 @@ public class AcrossClusterRuleRestfulApi {
           CommonUtils.ruleMap2String(
               startTime,
               endTime,
+              crossQueue,
               CPUThreshold,
               MemoryThreshold,
               CPUPercentageThreshold,

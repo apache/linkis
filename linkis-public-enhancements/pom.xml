@@ -34,7 +34,6 @@
     <module>linkis-pes-publicservice</module>
     <module>linkis-bml</module>
     <module>linkis-context-service</module>
-    <module>linkis-datasource/linkis-metadata</module>
     <module>linkis-datasource</module>
     <module>linkis-udf/linkis-udf-service</module>
     <module>linkis-jobhistory</module>

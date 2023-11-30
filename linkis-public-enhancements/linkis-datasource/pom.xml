@@ -28,11 +28,12 @@
   <packaging>pom</packaging>
   <modules>
     <module>linkis-datasource-manager/server</module>
-    <module>linkis-metadata-query/service/elasticsearch</module>
-    <module>linkis-metadata-query/service/hive</module>
-    <module>linkis-metadata-query/service/kafka</module>
-    <module>linkis-metadata-query/service/jdbc</module>
-    <module>linkis-metadata-query/service/hdfs</module>
-    <module>linkis-metadata-query/service/mongodb</module>
+    <module>linkis-datasource-manager/service/elasticsearch</module>
+    <module>linkis-datasource-manager/service/hive</module>
+    <module>linkis-datasource-manager/service/kafka</module>
+    <module>linkis-datasource-manager/service/jdbc</module>
+    <module>linkis-datasource-manager/service/hdfs</module>
+    <module>linkis-datasource-manager/service/mongodb</module>
+    <module>linkis-metadata</module>
   </modules>
 </project>

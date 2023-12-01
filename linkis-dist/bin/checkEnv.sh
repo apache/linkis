@@ -203,8 +203,10 @@ echo -e "\n<-----End to check service status---->"
 # --- check Service Port
 echo -e "\n3. <-----Start to check service Port---->"
 
-SERVER_PORT=$EUREKA_PORT
-check_service_port
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  SERVER_PORT=$EUREKA_PORT
+  check_service_port
+fi
 
 SERVER_PORT=$GATEWAY_PORT
 check_service_port

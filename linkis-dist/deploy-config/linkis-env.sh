@@ -111,6 +111,9 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #            Linkis in a distributed manner and set the following microservice parameters
 #
 
+###  DISCOVERY
+DISCOVERY=EUREKA
+
 ###  EUREKA install information
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA: Microservices Service Registration Discovery Center
@@ -118,6 +121,10 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 EUREKA_PORT=20303
 export EUREKA_PREFER_IP=false
 #EUREKA_HEAP_SIZE="512M"
+
+###  NACOS install information
+###  NACOS
+NACOS_SERVER_ADDR=127.0.0.1:8848
 
 ##linkis-mg-gateway
 #GATEWAY_INSTALL_IP=127.0.0.1

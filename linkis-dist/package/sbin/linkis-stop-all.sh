@@ -103,8 +103,10 @@ SERVER_IP=$MANAGER_INSTALL_IP
 stopApp
 
 #linkis-mg-eureka
-export SERVER_NAME="mg-eureka"
-SERVER_IP=$EUREKA_INSTALL_IP
-stopApp
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  export SERVER_NAME="mg-eureka"
+  SERVER_IP=$EUREKA_INSTALL_IP
+  stopApp
+fi
 
 echo "stop-all shell script executed completely"

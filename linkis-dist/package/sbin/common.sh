@@ -27,6 +27,8 @@ NC='\033[0m' # No Color
 GREEN='\033[0;32m'
 #used as: echo -e "Apache ${RED}Linkis ${NC} Test \n"
 
+export DISCOVERY=EUREKA
+
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
         return 0

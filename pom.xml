@@ -217,6 +217,7 @@
     <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
     <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
     <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1354,6 +1355,11 @@
             <artifactId>HikariCP</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        <version>${spring.cloud.nacos.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

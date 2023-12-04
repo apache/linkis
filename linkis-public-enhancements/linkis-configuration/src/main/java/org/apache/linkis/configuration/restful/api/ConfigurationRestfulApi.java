@@ -142,7 +142,8 @@ public class ConfigurationRestfulApi {
         ModuleUserUtils.getOperationUser(
             req,
             MessageFormat.format(
-                "getFullTreesByAppName,engineType:{0},version:{1},creator:{2}", engineType, version, creator));
+                "getFullTreesByAppName,engineType:{0},version:{1},creator:{2}",
+                engineType, version, creator));
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
             username, creator, engineType, version);

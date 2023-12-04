@@ -224,26 +224,32 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             : "not submit to  ec";
 
     StringBuffer sb = new StringBuffer();
-    sb.append("Task creation time(任务创建时间): ")
+    sb.append("Task time point information(任务时间节点信息):\n")
+        .append("[Task creation time(任务创建时间)]  :")
         .append(createTime)
-        .append(", Task scheduling time(任务调度时间): ")
+        .append("\n")
+        .append("[Task scheduling time(任务调度时间)]:")
         .append(scheduleTime)
-        .append(", Task start time(任务开始时间): ")
+        .append("\n")
+        .append("[Task start time(任务开始时间)]     :")
         .append(startTime)
-        .append(", Mission end time(任务结束时间): ")
+        .append("\n")
+        .append("[Task end time(任务结束时间)]       :")
         .append(endTime)
         .append("\n")
         .append(LogUtils.generateInfo(""))
-        .append("Task submit to Orchestrator time:")
+        .append("[Task submit to Orchestrator time]:")
         .append(jobToOrchestrator)
-        .append(", Task request EngineConn time:")
+        .append("\n")
+        .append("[Task request EngineConn time]    :")
         .append(jobRequestEC)
-        .append(", Task submit to EngineConn time:")
+        .append("\n")
+        .append("[Task submit to EngineConn time]  :")
         .append(jobSubmitToEC)
         .append("\n")
         .append(
             LogUtils.generateInfo(
-                "Your mission(您的任务) "
+                "Your task jobId(您的任务) "
                     + this.getJobRequest().getId()
                     + " The total time spent is(总耗时时间为): "
                     + runTime));

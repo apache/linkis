@@ -31,7 +31,8 @@ import org.apache.linkis.engineplugin.spark.exception.{
   SparkSessionNullException
 }
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
-import org.apache.linkis.governance.common.paser.{EmptyCodeParser, ScalaCodeParser}
+import org.apache.linkis.governance.common.paser.ScalaCodeParser
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
   ExecuteResponse,
@@ -52,6 +53,7 @@ import org.apache.spark.util.SparkUtils
 import java.io.{BufferedReader, File}
 import java.util.Locale
 
+import scala.collection.JavaConverters._
 import scala.tools.nsc.interpreter.{
   isReplPower,
   replProps,
@@ -98,15 +100,20 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
 
   private val fatalLogs = SparkConfiguration.ENGINE_SHUTDOWN_LOGS.getValue.split(";")
 
+  private val closeIloopCretors =
+    SparkConfiguration.SPARK_SCALA_KILL_COLSE_ILOOP_CREATORS.getValue.split(";")
+
   protected implicit val executor =
     Utils.newCachedExecutionContext(5, "Spark-Scala-REPL-Thread-", true)
 
   override def init(): Unit = {
-
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
-
     setCodeParser(new ScalaCodeParser)
+    super.init()
+    logger.info("spark sql executor start")
+  }
 
+  def lazyInitLoadILoop(): Unit = {
     if (sparkILoop == null) {
       synchronized {
         if (sparkILoop == null) createSparkILoop
@@ -146,6 +153,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       jobGroup: String
   ): ExecuteResponse = {
     this.jobGroup.append(jobGroup)
+    lazyInitLoadILoop()
     if (null != sparkILoop.intp && null != sparkILoop.intp.classLoader) {
       Thread.currentThread().setContextClassLoader(sparkILoop.intp.classLoader)
     }
@@ -153,7 +161,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       lineOutputStream.reset(engineExecutionContext)
     }
 
-    lazyLoadILoop
+    doBindSparkSession()
+
     lineOutputStream.ready()
     if (sparkILoopInited) {
       this.engineExecutionContextFactory.setEngineExecutionContext(engineExecutionContext)
@@ -275,11 +284,10 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     }
   }
 
-  private def lazyLoadILoop = { // lazy loaded.
+  private def doBindSparkSession() = { // lazy loaded.
     if (!bindFlag) {
       bindSparkSession
     }
-
   }
 
   private def initSparkILoop = {
@@ -418,6 +426,42 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override protected def getExecutorIdPreFix: String = "SparkScalaExecutor_"
+
+  override def killTask(taskID: String): Unit = {
+    logger.info(s"Start to kill scala task: $taskID")
+    super.killTask(taskID)
+
+    if (null != sparkILoop) {
+
+      // getExecutorLabels() results maybe not contain all labels
+      val labels =
+        this.engineExecutionContextFactory.getEngineExecutionContext.getLabels.toList.asJava
+      val userCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
+
+      val creator = userCreatorLabel.getCreator.toLowerCase(Locale.getDefault())
+
+      val findResult = closeIloopCretors.find(_.equalsIgnoreCase(creator))
+      if (findResult.isDefined || closeIloopCretors.contains("*")) {
+        logger.info(s"Start to kill sparkILoop task $taskID for creator:${creator}")
+        Utils.tryAndWarn(sparkILoop.closeInterpreter())
+
+        this.bindFlag = false
+        this.sparkILoopInited = false
+        logger.info(s"Finished to kill sparkILoop task $taskID for creator:${creator}")
+        logger.info(s"To delete scala executor")
+        Utils.tryAndError(
+          ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
+        )
+        logger.info("Finished to delete scala executor")
+
+      } else {
+        logger.info(s"Skip to kill sparkILoop task: $taskID")
+      }
+      logger.info(s"Finished to kill scala task")
+    }
+
+  }
+
 }
 
 class EngineExecutionContextFactory {

@@ -306,7 +306,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     if (!sc.isStopped) {
       sc.cancelAllJobs
       if (null != thread) {
+        logger.info(s"try to interrupt thread:${thread.getName}")
         Utils.tryAndWarn(thread.interrupt())
+        logger.info(s"thread isInterrupted:${thread.isInterrupted}")
       }
       killRunningTask()
     }

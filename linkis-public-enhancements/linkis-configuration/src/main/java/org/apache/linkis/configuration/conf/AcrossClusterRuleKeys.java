@@ -21,6 +21,8 @@ public class AcrossClusterRuleKeys {
 
   public static final String KEY_CROSS_QUEUE = "crossQueue";
 
+  public static final int KEY_CROSS_QUEUE_LENGTH = 25;
+
   public static final String KEY_START_TIME = "startTime";
 
   public static final String KEY_END_TIME = "endTime";

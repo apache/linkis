@@ -131,9 +131,11 @@ sleep 3
 }
 
 #linkis-mg-eureka
-export SERVER_NAME="mg-eureka"
-SERVER_IP=$EUREKA_INSTALL_IP
-checkServer
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  export SERVER_NAME="mg-eureka"
+  SERVER_IP=$EUREKA_INSTALL_IP
+  checkServer
+fi
 
 
 #linkis-mg-gateway

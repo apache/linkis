@@ -64,10 +64,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -276,5 +272,81 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>eureka</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>discovery</name>
+          <value>eureka</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>nacos</id>
+      <activation>
+        <property>
+          <name>discovery</name>
+          <value>nacos</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.alibaba.cloud</groupId>
+          <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>*</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework.cloud</groupId>
+              <artifactId>spring-cloud-commons</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework.cloud</groupId>
+              <artifactId>spring-cloud-context</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-databind</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.google.code.findbugs</groupId>
+              <artifactId>jsr305</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.yaml</groupId>
+              <artifactId>snakeyaml</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>io.prometheus</groupId>
+              <artifactId>simpleclient</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.google.guava</groupId>
+              <artifactId>guava</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
 </project>

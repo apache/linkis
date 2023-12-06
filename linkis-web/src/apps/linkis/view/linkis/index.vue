@@ -30,25 +30,25 @@
             <CellGroup v-for="(item, index2) in sideNavList.children" :key="index2"
               @on-click="handleCellClick">
               <Cell
-                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10'):true"
+                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10')&&(item.key !== '1-12'):true"
                 :key="index2" :class="{ crrentItem: crrentItem === item.key }" :title="item.name"
                 :name="item.key">
                 <div>
                   <span>{{item.name}}</span>
                   <div class="sub-menu-row">
                     <Icon
-                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10')"
+                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
                       type="ios-arrow-down" class="user-icon" />
                     <Icon
-                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10')"
+                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
                       type="ios-arrow-up" class="user-icon" />
                   </div>
                 </div>
                 <div
-                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10') && !item.showSubMenu">
+                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12') && !item.showSubMenu">
                   <div @click.stop="">
                     <CellGroup
-                      v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
+                      v-for="(item3, index3) in getChildMap(item.key).children"
                       :key="index3" @on-click="clickToRoute">
                       <div
                         v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-1'">
@@ -180,7 +180,13 @@ export default {
             ),
             showSubMenu: true,
           },
-          // { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
+          {
+            key: '1-12',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.opsTool'
+            ),
+            showSubMenu: true,
+          },
         ],
       },
       datasourceNavList: {
@@ -204,7 +210,7 @@ export default {
             path: '/console/datasourceEnv',
           },
           {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
-          // {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
           {
             key: '1-8-5',
             name: this.$t(
@@ -262,6 +268,13 @@ export default {
             ),
             path: '/console/ipListManagement',
           },
+          {
+            key: '1-10-8',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.configManagement'
+            ),
+            path: '/console/configManagement',
+          },
         ],
       },
       urmSideNavList: {
@@ -286,6 +299,21 @@ export default {
           },
           {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
           {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
+        ],
+      },
+      opsTool: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.children.opsTool'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {
+            key: '1-12-1',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.userConfig'
+            ),
+            path: '/console/userConfig',
+          },
         ],
       },
       breadcrumbSecondName: this.$t(
@@ -330,9 +358,19 @@ export default {
     // Whether the result set can be downloaded
     api.fetch('/user/baseinfo', 'get').then((res) => {
       storage.set('resultSetExportEnable', res.resultSetExportEnable ? true : false,'session')
+      storage.set('clusterInfo', res.linkisClusterName || '')
     })
   },
   methods: {
+    getChildMap(key) {
+      const map = {
+        '1-8': this.datasourceNavList,
+        '1-9': this.urmSideNavList,
+        '1-10': this.basedataNavList,
+        '1-12': this.opsTool,
+      }
+      return map[key]
+    },
     handleCellClick(index) {
       if (index === '1-8') {
         this.sideNavList.children[6].showSubMenu =
@@ -347,6 +385,11 @@ export default {
       if (index === '1-10') {
         this.sideNavList.children[8].showSubMenu =
           !this.sideNavList.children[8].showSubMenu
+        return
+      }
+      if (index === '1-12') {
+        this.sideNavList.children[9].showSubMenu =
+          !this.sideNavList.children[9].showSubMenu
         return
       }
       // index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
@@ -396,11 +439,7 @@ export default {
       })
     },
     clickToRoute(index) {
-      const activedCellParent = index.split('-').slice(0, 2).join('-') === '1-9'
-        ? this.urmSideNavList
-        : index.split('-').slice(0, 2).join('-') === '1-8'
-          ? this.datasourceNavList
-          : this.basedataNavList
+      const activedCellParent = this.getChildMap(index.split('-').slice(0, 2).join('-'))
       this.crrentItem = index
       const activedCell = activedCellParent.children.find(
         (item) => item.key === index

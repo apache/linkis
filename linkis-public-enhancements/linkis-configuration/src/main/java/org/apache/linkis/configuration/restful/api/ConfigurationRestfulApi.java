@@ -26,6 +26,7 @@ import org.apache.linkis.configuration.service.ConfigurationService;
 import org.apache.linkis.configuration.util.ConfigurationConfiguration;
 import org.apache.linkis.configuration.util.JsonNodeUtil;
 import org.apache.linkis.configuration.util.LabelEntityParser;
+import org.apache.linkis.configuration.validate.ValidatorManager;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
@@ -33,6 +34,7 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -70,6 +73,8 @@ public class ConfigurationRestfulApi {
   @Autowired private CategoryService categoryService;
 
   @Autowired private ConfigKeyService configKeyService;
+
+  @Autowired private ValidatorManager validatorManager;
 
   ObjectMapper mapper = new ObjectMapper();
 
@@ -144,6 +149,7 @@ public class ConfigurationRestfulApi {
     ArrayList<ConfigTree> configTrees =
         configurationService.getFullTreeByLabelList(
             labelList, true, req.getHeader("Content-Language"));
+
     return Message.ok().data("fullTree", configTrees);
   }
 
@@ -152,7 +158,40 @@ public class ConfigurationRestfulApi {
   public Message getCategory(HttpServletRequest req) {
     List<CategoryLabelVo> categoryLabelList =
         categoryService.getAllCategory(req.getHeader("Content-Language"));
+
     return Message.ok().data("Category", categoryLabelList);
+  }
+
+  @ApiOperation(
+      value = "getItemList",
+      notes = "get configuration list by engineType",
+      response = Message.class)
+  @RequestMapping(path = "/getItemList", method = RequestMethod.GET)
+  public Message getItemList(
+      HttpServletRequest req, @RequestParam(value = "engineType") String engineType)
+      throws ConfigurationException {
+    ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    // Adding * represents returning all configuration information
+    if ("*".equals(engineType)) {
+      engineType = null;
+    }
+    List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
+    List<Map<String, Object>> filterResult = new ArrayList<>();
+    for (ConfigKey configKey : result) {
+      Map<String, Object> temp = new HashMap<>();
+      temp.put("key", configKey.getKey());
+      temp.put("name", configKey.getName());
+      temp.put("description", configKey.getDescription());
+      temp.put("engineType", configKey.getEngineType());
+      temp.put("validateType", configKey.getValidateType());
+      temp.put("validateRange", configKey.getValidateRange());
+      temp.put("boundaryType", configKey.getBoundaryType());
+      temp.put("defaultValue", configKey.getDefaultValue());
+      temp.put("require", configKey.getTemplateRequired());
+      filterResult.add(temp);
+    }
+
+    return Message.ok().data("itemList", filterResult);
   }
 
   @ApiOperation(
@@ -254,10 +293,23 @@ public class ConfigurationRestfulApi {
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
     ArrayList<ConfigValue> createList = new ArrayList<>();
     ArrayList<ConfigValue> updateList = new ArrayList<>();
+    ArrayList<List<ConfigKeyValue>> chekList = new ArrayList<>();
+    String sparkConf = "";
     for (Object o : fullTrees) {
       String s = BDPJettyServerHelper.gson().toJson(o);
       ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
       List<ConfigKeyValue> settings = fullTree.getSettings();
+      chekList.add(settings);
+      for (ConfigKeyValue configKeyValue : settings) {
+        if (configKeyValue.getKey().equals("spark.conf")
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          sparkConf = configKeyValue.getConfigValue().trim();
+          configKeyValue.setConfigValue(sparkConf);
+        }
+      }
+    }
+    for (List<ConfigKeyValue> settings : chekList) {
+      sparkConfCheck(settings, sparkConf);
       Integer userLabelId =
           configurationService.checkAndCreateUserLabel(settings, username, creator);
       for (ConfigKeyValue setting : settings) {
@@ -304,10 +356,37 @@ public class ConfigurationRestfulApi {
                       engineVersion);
                 }
               });
+      configurationService.clearAMCacheConf(username, creator, null, null);
     } else {
       configurationService.clearAMCacheConf(username, creator, engine, version);
     }
     return Message.ok();
+  }
+
+  private void sparkConfCheck(List<ConfigKeyValue> settings, String sparkConf)
+      throws ConfigurationException {
+    if (StringUtils.isNotBlank(sparkConf)) {
+      // Check if there are any duplicates in spark. conf
+      // spark.conf : spark.shuffle.compress=ture;spark.executor.memory=4g
+      String[] split = sparkConf.split(";");
+      int setSize =
+          Arrays.stream(split).map(s -> s.split("=")[0].trim()).collect(Collectors.toSet()).size();
+      int listSize =
+          Arrays.stream(split).map(s -> s.split("=")[0].trim()).collect(Collectors.toList()).size();
+      if (listSize != setSize) {
+        throw new ConfigurationException("Spark.conf contains duplicate keys");
+      }
+      // Check if there are any duplicates in the spark.conf configuration and other individual
+      for (String keyValue : split) {
+        String key = keyValue.split("=")[0].trim();
+        boolean matchResult =
+            settings.stream().anyMatch(settingKey -> key.equals(settingKey.getKey()));
+        if (matchResult) {
+          throw new ConfigurationException(
+              "Saved key is duplicated with the spark conf key , key :" + key);
+        }
+      }
+    }
   }
 
   @ApiOperation(
@@ -376,7 +455,7 @@ public class ConfigurationRestfulApi {
 
   private void checkAdmin(String userName) throws ConfigurationException {
     if (!org.apache.linkis.common.conf.Configuration.isAdmin(userName)) {
-      throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
+      throw new ConfigurationException(ONLY_ADMIN_PERFORM.getErrorDesc());
     }
   }
 
@@ -395,7 +474,7 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "creator", required = false, defaultValue = "*") String creator,
       @RequestParam(value = "configKey") String configKey)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "getKeyValue");
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -424,17 +503,26 @@ public class ConfigurationRestfulApi {
   @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
   public Message saveKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
+    Message message = Message.ok();
     String username = ModuleUserUtils.getOperationUser(req, "saveKey");
     String engineType = (String) json.getOrDefault("engineType", "*");
+    String user = (String) json.getOrDefault("user", "");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
     String configKey = (String) json.get("configKey");
     String value = (String) json.get("configValue");
+    boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
+      return Message.error("Only admin can modify other user configuration data");
+    }
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
-    if (StringUtils.isBlank(configKey) || StringUtils.isBlank(value)) {
-      return Message.error("key or value cannot be empty");
+    if (StringUtils.isBlank(configKey)) {
+      return Message.error("key cannot be empty");
+    }
+    if (StringUtils.isNotBlank(user)) {
+      username = user;
     }
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
@@ -444,9 +532,22 @@ public class ConfigurationRestfulApi {
     configKeyValue.setKey(configKey);
     configKeyValue.setConfigValue(value);
 
+    try {
+      configurationService.paramCheck(configKeyValue);
+    } catch (Exception e) {
+      if (force && e instanceof ConfigurationException) {
+        message.data(
+            "msg",
+            "The update was successful, but the value verification failed. Please confirm if it has any impact："
+                + "（更新成功，但是值校验失败，请确认是否有影响）\n"
+                + e.getMessage());
+      } else {
+        return Message.error(e.getMessage());
+      }
+    }
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);
-    return Message.ok().data("configValue", configValue);
+    return message.data("configValue", configValue);
   }
 
   @ApiOperation(value = "deleteKeyValue", notes = "delete key value", response = Message.class)
@@ -460,7 +561,7 @@ public class ConfigurationRestfulApi {
   @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
   public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "deleteKeyValue");
     String engineType = (String) json.getOrDefault("engineType", "*");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
@@ -476,5 +577,227 @@ public class ConfigurationRestfulApi {
             username, creator, engineType, version);
     List<ConfigValue> configValues = configKeyService.deleteConfigValue(configKey, labelList);
     return Message.ok().data("configValues", configValues);
+  }
+
+  @ApiOperation(value = "getBaseKeyValue", notes = "get key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "key", required = false, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "20"),
+  })
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.GET)
+  public Message getBaseKeyValue(
+      HttpServletRequest req,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
+      throws ConfigurationException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "getBaseKeyValue"));
+    if (StringUtils.isBlank(engineType)) {
+      engineType = null;
+    }
+    if (StringUtils.isBlank(key)) {
+      key = null;
+    }
+    PageHelper.startPage(pageNow, pageSize);
+    List<ConfigKey> list = null;
+    try {
+      list = configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<ConfigKey> pageInfo = new PageInfo<>(list);
+    long total = pageInfo.getTotal();
+    return Message.ok().data("configKeyList", list).data("totalPage", total);
+  }
+
+  @ApiOperation(value = "deleteBaseKeyValue", notes = "delete key", response = Message.class)
+  @ApiImplicitParams({@ApiImplicitParam(name = "id", required = true, dataType = "Integer")})
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.DELETE)
+  public Message deleteBaseKeyValue(HttpServletRequest req, @RequestParam(value = "id") Integer id)
+      throws ConfigurationException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "deleteBaseKeyValue  ID:" + id));
+    configKeyService.deleteConfigById(id);
+    return Message.ok();
+  }
+
+  @ApiOperation(value = "saveBaseKeyValue", notes = "save key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "id", required = false, dataType = "Integer", value = "id"),
+    @ApiImplicitParam(name = "key", required = true, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "name", required = true, dataType = "String", value = "name"),
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "String",
+        value = "description"),
+    @ApiImplicitParam(
+        name = "defaultValue",
+        required = true,
+        dataType = "String",
+        value = "defaultValue"),
+    @ApiImplicitParam(
+        name = "validateType",
+        required = true,
+        dataType = "String",
+        value = "validateType"),
+    @ApiImplicitParam(
+        name = "validateRange",
+        required = true,
+        dataType = "String",
+        value = "validateRange"),
+    @ApiImplicitParam(
+        name = "boundaryType",
+        required = true,
+        dataType = "String",
+        value = "boundaryType"),
+    @ApiImplicitParam(name = "treeName", required = true, dataType = "String", value = "treeName"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "enName", required = false, dataType = "String", value = "enName"),
+    @ApiImplicitParam(
+        name = "enDescription",
+        required = false,
+        dataType = "String",
+        value = "enDescription"),
+    @ApiImplicitParam(
+        name = "enTreeName",
+        required = false,
+        dataType = "String",
+        value = "enTreeName"),
+    @ApiImplicitParam(
+        name = "templateRequired",
+        required = false,
+        dataType = "String",
+        value = "1"),
+  })
+  @ApiOperationSupport(ignoreParameters = {"json"})
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.POST)
+  public Message saveBaseKeyValue(HttpServletRequest req, @RequestBody ConfigKey configKey)
+      throws ConfigurationException, InstantiationException, IllegalAccessException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "saveBaseKeyValue"));
+    String key = configKey.getKey();
+    String name = configKey.getName();
+    String treeName = configKey.getTreeName();
+    String description = configKey.getDescription();
+    Integer boundaryType = configKey.getBoundaryType();
+    String defaultValue = configKey.getDefaultValue();
+    String validateType = configKey.getValidateType();
+    String validateRange = configKey.getValidateRange();
+    String engineType = configKey.getEngineType();
+    if (StringUtils.isBlank(key)) {
+      return Message.error("key cannot be empty");
+    }
+    if (StringUtils.isBlank(name)) {
+      return Message.error("name cannot be empty");
+    }
+    if (StringUtils.isBlank(description)) {
+      return Message.error("description cannot be empty");
+    }
+    if (StringUtils.isBlank(treeName)) {
+      return Message.error("treeName cannot be empty");
+    }
+    if (StringUtils.isBlank(validateType)) {
+      return Message.error("validateType cannot be empty");
+    }
+    if (!validateType.equals("None") && StringUtils.isBlank(validateRange)) {
+      return Message.error("validateRange cannot be empty");
+    }
+    if (null == boundaryType) {
+      return Message.error("boundaryType cannot be empty");
+    }
+    if (StringUtils.isNotEmpty(defaultValue)
+        && !validatorManager
+            .getOrCreateValidator(validateType)
+            .validate(defaultValue, validateRange)) {
+      String msg =
+          MessageFormat.format(
+              "Parameter configValue verification failed(参数defaultValue校验失败):"
+                  + "key:{0}, ValidateType:{1}, ValidateRange:{2},ConfigValue:{3}",
+              key, validateType, validateRange, defaultValue);
+      throw new ConfigurationException(msg);
+    }
+    if (null == configKey.getId()) {
+      List<ConfigKey> configBykey =
+          configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));
+      if (CollectionUtils.isNotEmpty(configBykey)) {
+        return Message.error("The engine has the same key: " + key);
+      }
+      configKeyService.saveConfigKey(configKey);
+    } else {
+      configKey.setId(configKey.getId());
+      configKeyService.updateConfigKey(configKey);
+    }
+    return Message.ok().data("configKey", configKey);
+  }
+
+  @ApiOperation(value = "getUserkeyvalue", notes = "get key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "key", required = false, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "20"),
+  })
+  @RequestMapping(path = "/userKeyValue", method = RequestMethod.GET)
+  public Message getUserKeyValue(
+      HttpServletRequest req,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
+      throws ConfigurationException {
+    String username = ModuleUserUtils.getOperationUser(req, "getUserKeyValue");
+    if (StringUtils.isBlank(engineType)) {
+      engineType = null;
+    }
+    if (StringUtils.isBlank(key)) {
+      key = null;
+    }
+    if (StringUtils.isBlank(creator)) {
+      creator = null;
+    }
+    if (StringUtils.isBlank(user)) {
+      user = null;
+    }
+
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
+      return Message.error("Only admin can query other user configuration data");
+    }
+
+    PageHelper.startPage(pageNow, pageSize);
+    List<ConfigUserValue> list;
+    try {
+      list = configKeyService.getUserConfigValue(engineType, key, creator, user);
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<ConfigUserValue> pageInfo = new PageInfo<>(list);
+    long total = pageInfo.getTotal();
+    return Message.ok().data("configValueList", list).data("totalPage", total);
   }
 }

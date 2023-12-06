@@ -46,6 +46,15 @@
           :key="item"/>
       </Select>
     </FormItem>
+    <FormItem prop="status" :label="$t('message.linkis.tableColumns.status')" >
+      <Select  v-model="searchBar.status" style="width:100px" clearable>
+        <Option
+          v-for="(item) in statusList"
+          :label="item"
+          :value="item"
+          :key="item"/>
+      </Select>
+    </FormItem>
     <FormItem>
       <Button type="primary" @click="search(false)">
         {{ $t('message.linkis.search') }}
@@ -83,7 +92,8 @@ export default {
         instance: "",
         engineType: "",
         owner: "",
-        shortcut: [today, today]
+        shortcut: [today, today],
+        status: "",
       },
       shortcutOpt: {
         shortcuts: [

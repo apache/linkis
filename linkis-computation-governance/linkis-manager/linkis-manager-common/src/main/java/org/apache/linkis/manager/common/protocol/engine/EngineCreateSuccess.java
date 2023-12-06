@@ -45,4 +45,9 @@ public class EngineCreateSuccess implements EngineAsyncResponse {
   public void setEngineNode(EngineNode engineNode) {
     this.engineNode = engineNode;
   }
+
+  @Override
+  public String toString() {
+    return "EngineCreateSuccess{" + "id='" + id + '\'' + ", engineNode=" + engineNode + '}';
+  }
 }

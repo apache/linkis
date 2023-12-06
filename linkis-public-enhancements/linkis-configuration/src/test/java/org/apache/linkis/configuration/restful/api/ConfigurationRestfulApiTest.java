@@ -57,7 +57,7 @@ public class ConfigurationRestfulApiTest {
     paramsMap.add("engineType", "spark");
     paramsMap.add("version", "3.2.1");
     paramsMap.add("token", "e8724-e");
-    paramsMap.add("keyJson", "{'engineType':'spark','version':'3.2.1'}");
+    paramsMap.add("keyJson", "{'engineType':'spark','version':'3.2.1','boundaryType':'0'}");
     String url = "/configuration/addKeyForEngine";
     sendUrl(url, paramsMap, "get", null);
   }

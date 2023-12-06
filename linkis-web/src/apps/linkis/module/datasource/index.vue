@@ -426,7 +426,7 @@ export default {
           title: this.$t('message.linkis.datasource.action'),
           key: 'action',
           tooltip: true,
-          minWidth: 120,
+          minWidth: 160,
           align: 'center',
           slot: 'action',
         },

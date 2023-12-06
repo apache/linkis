@@ -111,12 +111,13 @@ else
 fi
 
 if [ "$DISCOVERY" == "NACOS" ]; then
+  rm -rf $LINKIS_HOME/conf/application-*
   mv $LINKIS_HOME/conf/nacos/* $LINKIS_HOME/conf
+  echo "Use NACOS mode"
 else
-  mv $LINKIS_HOME/conf/eureka/* $LINKIS_HOME/conf
+  echo "Use EUREKA mode"
 fi
 rm -rf $LINKIS_HOME/conf/nacos
-rm -rf $LINKIS_HOME/conf/eureka
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
 cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf

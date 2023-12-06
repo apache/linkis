@@ -24,6 +24,7 @@ import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
@@ -40,8 +41,19 @@ public class ResultSetReaderFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetReaderFactory.class);
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
-      ResultSet<K, V> resultSet, InputStream inputStream) {
-    return new StorageResultSetReader<>(resultSet, inputStream);
+      ResultSet<K, V> resultSet, InputStream inputStream, FsPath fsPath) {
+    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
+    StorageResultSetReader<K, V> resultSetReader = null;
+    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
+      resultSetReader = new StorageResultSetReader<>(resultSet, inputStream);
+    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
+      try {
+        resultSetReader = new ParquetResultSetReader<>(resultSet, inputStream, fsPath);
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to read parquet", e);
+      }
+    }
+    return resultSetReader;
   }
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
@@ -61,7 +73,7 @@ public class ResultSetReaderFactory {
       Fs fs = FSFactory.getFs(resPath);
       fs.init(null);
       ResultSetReader reader =
-          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath));
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath), resPath);
       if (reader instanceof StorageResultSetReader) {
         ((StorageResultSetReader<?, ?>) reader).setFs(fs);
       }
@@ -96,7 +108,7 @@ public class ResultSetReaderFactory {
         InputStream read = fs.read(resPath);
 
         return ResultSetReaderFactory.<TableMetaData, TableRecord>getResultSetReader(
-            (TableResultSet) resultSet, read);
+            (TableResultSet) resultSet, read, resPath);
       } catch (IOException e) {
         throw new StorageWarnException(
             LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED.getErrorCode(),

@@ -404,6 +404,10 @@ public class FsRestfulApi {
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
+        // 兼容parquet,跳过parquet.crc文件
+        if (children.getPath().endsWith(".parquet.crc")) {
+          continue;
+        }
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
         dirFileTreeChildren.setPath(children.getSchemaPath());

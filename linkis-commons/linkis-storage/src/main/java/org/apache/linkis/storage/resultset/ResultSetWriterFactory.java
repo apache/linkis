@@ -22,6 +22,7 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +37,26 @@ public class ResultSetWriterFactory {
   public static <K extends MetaData, V extends Record>
       org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(
           ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath) {
-    return new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
+    StorageResultSetWriter<K, V> writer = null;
+    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
+      writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
+      writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    }
+    return writer;
   }
 
   public static <K extends MetaData, V extends Record>
       org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(
           ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath, String proxyUser) {
-    StorageResultSetWriter<K, V> writer =
-        new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
+    StorageResultSetWriter<K, V> writer = null;
+    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
+      writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
+      writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    }
     writer.setProxyUser(proxyUser);
     return writer;
   }

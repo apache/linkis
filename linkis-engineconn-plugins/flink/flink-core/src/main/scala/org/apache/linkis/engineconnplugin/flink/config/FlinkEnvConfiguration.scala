@@ -181,5 +181,4 @@ object FlinkEnvConfiguration {
   val FLINK_ENV_JAVA_OPTS =
     CommonVars("flink.env.java.opts", "env.java.opts")
 
-
 }

@@ -27,7 +27,10 @@ import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment
 import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.ExecutionEntry
 import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.FlinkInitFailedException
-import org.apache.linkis.engineconnplugin.flink.config.{FlinkEnvConfiguration, FlinkExecutionTargetType}
+import org.apache.linkis.engineconnplugin.flink.config.{
+  FlinkEnvConfiguration,
+  FlinkExecutionTargetType
+}
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
@@ -35,10 +38,14 @@ import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, FlinkValueFormatUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
+import org.apache.linkis.manager.engineplugin.common.creation.{
+  ExecutorFactory,
+  MultiExecutorEngineConnFactory
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.configuration._
@@ -54,11 +61,12 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
+
 import scala.collection.JavaConverters._
+import scala.io.Source
+
 import com.google.common.collect.{Lists, Sets}
 import org.yaml.snakeyaml.Yaml
-
-import scala.io.Source
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -192,7 +200,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     options.asScala.filter { case (key, _) => key.startsWith(FLINK_CONFIG_PREFIX) }.foreach {
       case (key, value) =>
         var flinkConfigValue = value
-        if (FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key.equals(FLINK_CONFIG_PREFIX + FLINK_ENV_JAVA_OPTS.getValue)) {
+        if (
+            FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key
+              .equals(FLINK_CONFIG_PREFIX + FLINK_ENV_JAVA_OPTS.getValue)
+        ) {
           flinkConfigValue = getExtractJavaOpts(value)
         }
         flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), flinkConfigValue)
@@ -294,7 +305,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     context
   }
 
-  private  def getExtractJavaOpts(envJavaOpts: String): String = {
+  private def getExtractJavaOpts(envJavaOpts: String): String = {
     var defaultJavaOpts = ""
     val yamlFilePath = FLINK_CONF_DIR.getValue
     val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()

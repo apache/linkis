@@ -43,7 +43,7 @@ public class ResultSetReaderFactory {
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
       ResultSet<K, V> resultSet, InputStream inputStream, FsPath fsPath) {
     String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
-    StorageResultSetReader<K, V> resultSetReader = null;
+    ResultSetReader<K, V> resultSetReader = null;
     if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
       resultSetReader = new StorageResultSetReader<>(resultSet, inputStream);
     } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {

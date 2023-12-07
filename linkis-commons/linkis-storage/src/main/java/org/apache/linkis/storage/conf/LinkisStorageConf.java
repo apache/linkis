@@ -41,7 +41,7 @@ public class LinkisStorageConf {
       CommonVars.apply("wds.linkis.resultset.row.max.str", "2m").getValue();
 
   public static final String ENGINE_RESULT_TYPE =
-      CommonVars.apply("wds.linkis.engine.resultSet.type", DOLPHIN, "Result type").getValue();
+      CommonVars.apply("linkis.engine.resultSet.type", DOLPHIN, "Result type").getValue();
 
   public static final long ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR);
 

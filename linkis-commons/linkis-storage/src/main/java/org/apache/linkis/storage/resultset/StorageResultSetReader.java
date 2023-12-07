@@ -43,10 +43,10 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
   private static final Logger logger = LoggerFactory.getLogger(StorageResultSetReader.class);
 
   private final ResultSet<K, V> resultSet;
-  public final InputStream inputStream;
-  public final ResultDeserializer<K, V> deserializer;
-  public K metaData;
-  public Record row;
+  private final InputStream inputStream;
+  private final ResultDeserializer<K, V> deserializer;
+  private K metaData;
+  private Record row;
   private int colCount = 0;
   private int rowCount = 0;
   private Fs fs;

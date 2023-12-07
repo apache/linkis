@@ -22,6 +22,7 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
+import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
 
 import java.io.IOException;
@@ -34,11 +35,10 @@ import org.slf4j.LoggerFactory;
 public class ResultSetWriterFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetWriterFactory.class);
 
-  public static <K extends MetaData, V extends Record>
-      org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(
-          ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath) {
+  public static <K extends MetaData, V extends Record> ResultSetWriter<K, V> getResultSetWriter(
+      ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath) {
     String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
-    StorageResultSetWriter<K, V> writer = null;
+    ResultSetWriter<K, V> writer = null;
     if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
       writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
     } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
@@ -47,25 +47,22 @@ public class ResultSetWriterFactory {
     return writer;
   }
 
-  public static <K extends MetaData, V extends Record>
-      org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(
-          ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath, String proxyUser) {
+  public static <K extends MetaData, V extends Record> ResultSetWriter<K, V> getResultSetWriter(
+      ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath, String proxyUser) {
     String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
-    StorageResultSetWriter<K, V> writer = null;
+    ResultSetWriter<K, V> writer = null;
     if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
       writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
+      StorageResultSetWriter storageResultSetWriter = (StorageResultSetWriter) writer;
+      storageResultSetWriter.setProxyUser(proxyUser);
     } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
       writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
     }
-    writer.setProxyUser(proxyUser);
     return writer;
   }
 
   public static Record[] getRecordByWriter(
-      org.apache.linkis.common.io.resultset.ResultSetWriter<? extends MetaData, ? extends Record>
-          writer,
-      long limit)
-      throws IOException {
+      ResultSetWriter<? extends MetaData, ? extends Record> writer, long limit) throws IOException {
     String res = writer.toString();
     return getRecordByRes(res, limit);
   }

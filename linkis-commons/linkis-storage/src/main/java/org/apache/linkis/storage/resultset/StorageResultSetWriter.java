@@ -50,15 +50,15 @@ public class StorageResultSetWriter<K extends MetaData, V extends Record>
 
   private final ResultSet<K, V> resultSet;
   private final long maxCacheSize;
-  public final FsPath storePath;
+  private final FsPath storePath;
 
   private final ResultSerializer serializer;
-  public boolean moveToWriteRow = false;
+  private boolean moveToWriteRow = false;
   private OutputStream outputStream = null;
   private int rowCount = 0;
   private final List<Byte> buffer = new ArrayList<Byte>();
   private Fs fs = null;
-  public MetaData rMetaData = null;
+  private MetaData rMetaData = null;
   private String proxyUser = StorageUtils.getJvmUser();
   private boolean fileCreated = false;
   private boolean closed = false;

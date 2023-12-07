@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
+import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
@@ -28,6 +29,7 @@ import org.apache.linkis.storage.resultset.table.TableRecord;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.hadoop.ParquetReader;
@@ -42,11 +44,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ParquetResultSetReader<K extends MetaData, V extends Record>
-    extends StorageResultSetReader {
+    extends ResultSetReader<K, V> {
 
   private static final Logger logger = LoggerFactory.getLogger(ParquetResultSetReader.class);
 
   private FsPath fsPath;
+
+  private final ResultSet<K, V> resultSet;
+
+  private final InputStream inputStream;
+
+  private MetaData metaData;
+
+  private Record row;
 
   private ParquetReader<GenericRecord> parquetReader;
 
@@ -55,6 +65,8 @@ public class ParquetResultSetReader<K extends MetaData, V extends Record>
   public ParquetResultSetReader(ResultSet resultSet, InputStream inputStream, FsPath fsPath)
       throws IOException {
     super(resultSet, inputStream);
+    this.resultSet = resultSet;
+    this.inputStream = inputStream;
     this.fsPath = fsPath;
     this.parquetReader =
         AvroParquetReader.<GenericRecord>builder(new Path(fsPath.getPath())).build();
@@ -82,6 +94,21 @@ public class ParquetResultSetReader<K extends MetaData, V extends Record>
       }
     }
     return metaData;
+  }
+
+  @Override
+  public int skip(int recordNum) throws IOException {
+    return 0;
+  }
+
+  @Override
+  public long getPosition() throws IOException {
+    return 0;
+  }
+
+  @Override
+  public long available() throws IOException {
+    return 0;
   }
 
   @Override
@@ -116,7 +143,7 @@ public class ParquetResultSetReader<K extends MetaData, V extends Record>
 
   @Override
   public void close() throws IOException {
-    super.close();
+    IOUtils.closeQuietly(inputStream);
     parquetReader.close();
   }
 }

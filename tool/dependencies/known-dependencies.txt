@@ -701,6 +701,7 @@ zstd-jni-1.4.9-1.jar
 zstd-jni-1.5.0-4.jar
 zjsonpatch-0.3.0.jar
 agrona-1.12.0.jar
+audience-annotations-0.12.0.jar
 audience-annotations-0.13.0.jar
 commons-crypto-1.1.0.jar
 disruptor-3.4.2.jar

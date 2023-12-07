@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
+import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
@@ -41,21 +42,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ParquetResultSetWriter<K extends MetaData, V extends Record>
-    extends StorageResultSetWriter {
+    extends ResultSetWriter<K, V> {
   private static final Logger logger = LoggerFactory.getLogger(ParquetResultSetWriter.class);
 
-  private Schema schema = null;
+  private Schema schema;
+
+  private ParquetWriter<GenericRecord> parquetWriter;
+
+  private boolean moveToWriteRow = false;
+
+  private MetaData metaData = null;
+
+  private final FsPath storePath;
+
+  private final long maxCacheSize;
+
+  private final ResultSet<K, V> resultSet;
 
   public ParquetResultSetWriter(ResultSet resultSet, long maxCacheSize, FsPath storePath) {
     super(resultSet, maxCacheSize, storePath);
+    this.resultSet = resultSet;
+    this.maxCacheSize = maxCacheSize;
+    this.storePath = storePath;
   }
 
   @Override
   public void addMetaData(MetaData metaData) throws IOException {
     if (!moveToWriteRow) {
-      rMetaData = metaData;
+      this.metaData = metaData;
       SchemaBuilder.FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("linkis").fields();
-      TableMetaData tableMetaData = (TableMetaData) rMetaData;
+      TableMetaData tableMetaData = (TableMetaData) this.metaData;
       for (Column column : tableMetaData.columns) {
         fieldAssembler
             .name(column.getColumnName().replaceAll("\\.", "_").replaceAll("[^a-zA-Z0-9_]", ""))
@@ -65,31 +81,55 @@ public class ParquetResultSetWriter<K extends MetaData, V extends Record>
       }
       schema = fieldAssembler.endRecord();
       moveToWriteRow = true;
+      if (parquetWriter == null) {
+        parquetWriter =
+            AvroParquetWriter.<GenericRecord>builder(new Path(storePath.getPath()))
+                .withSchema(schema)
+                .withCompressionCodec(CompressionCodecName.SNAPPY)
+                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
+                .build();
+      }
     }
   }
 
   @Override
   public void addRecord(Record record) {
     if (moveToWriteRow) {
+      TableRecord tableRecord = (TableRecord) record;
       try {
-        TableRecord tableRecord = (TableRecord) record;
         Object[] row = tableRecord.row;
-        try (ParquetWriter<GenericRecord> writer =
-            AvroParquetWriter.<GenericRecord>builder(new Path(storePath.getPath()))
-                .withSchema(schema)
-                .withCompressionCodec(CompressionCodecName.SNAPPY)
-                .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
-                .build()) {
-
-          GenericRecord genericRecord = new GenericData.Record(schema);
-          for (int i = 0; i < row.length; i++) {
-            genericRecord.put(schema.getFields().get(i).name(), row[i]);
-          }
-          writer.write(genericRecord);
+        GenericRecord genericRecord = new GenericData.Record(schema);
+        for (int i = 0; i < row.length; i++) {
+          genericRecord.put(schema.getFields().get(i).name(), row[i]);
         }
-      } catch (Exception e) {
+        parquetWriter.write(genericRecord);
+      } catch (IOException e) {
         logger.warn("addMetaDataAndRecordString failed", e);
       }
     }
   }
+
+  @Override
+  public FsPath toFSPath() {
+    return storePath;
+  }
+
+  @Override
+  public String toString() {
+    return storePath.getSchemaPath();
+  }
+
+  @Override
+  public void addMetaDataAndRecordString(String content) {}
+
+  @Override
+  public void addRecordString(String content) {}
+
+  @Override
+  public void close() throws IOException {
+    parquetWriter.close();
+  }
+
+  @Override
+  public void flush() throws IOException {}
 }

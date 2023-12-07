@@ -19,8 +19,7 @@ package org.apache.linkis.engineconnplugin.flink.config
 
 import org.apache.linkis.common.conf.{CommonVars, TimeType}
 import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
-
-import org.apache.flink.configuration.HighAvailabilityOptions
+import org.apache.linkis.engineconnplugin.flink.constants.FlinkECConstant
 
 object FlinkEnvConfiguration {
 
@@ -142,10 +141,8 @@ object FlinkEnvConfiguration {
     CommonVars("linkis.flink.client.expire.mills", 3600 * 1000)
 
   // default NONE
-  val FLINK_MANAGER_HIGHAVAILABLE_MODE = CommonVars(
-    "linkis.flink.manager.highavailable.mode",
-    HighAvailabilityOptions.HA_MODE.defaultValue()
-  )
+  val FLINK_MANAGER_HIGHAVAILABLE_MODE =
+    CommonVars("linkis.flink.manager.highavailable.mode", FlinkECConstant.HIGH_AVAILABLE_MODE_NONE)
 
   val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
     CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)

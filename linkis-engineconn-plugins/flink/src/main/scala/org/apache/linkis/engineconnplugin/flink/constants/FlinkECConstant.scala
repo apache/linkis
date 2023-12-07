@@ -34,4 +34,6 @@ object FlinkECConstant {
   val SAVEPOINT_MODE_KEY = "mode"
 
   val RESULT_SAVEPOINT_KEY = "writtenSavepoint"
+
+  val HIGH_AVAILABLE_MODE_NONE = "NONE"
 }

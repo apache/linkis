@@ -116,8 +116,8 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
     key.intern() synchronized {
       var authentication = getAuthenticationActionByKey(key)
       if (
-          authentication == null || authentication.getCreateTime > requestTime || (System
-            .currentTimeMillis() - authentication.getCreateTime) < 1000
+          authentication == null || (authentication.getCreateTime < requestTime && (System
+            .currentTimeMillis() - authentication.getCreateTime) > 1000)
       ) {
         authentication = tryLogin(requestAction, serverUrl)
         putSession(key, authentication)

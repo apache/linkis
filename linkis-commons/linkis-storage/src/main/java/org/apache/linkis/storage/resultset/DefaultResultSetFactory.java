@@ -138,9 +138,7 @@ public class DefaultResultSetFactory implements ResultSetFactory {
   public ResultSet<? extends MetaData, ? extends Record> getResultSetByPath(FsPath fsPath, Fs fs) {
     ResultSet resultSet = null;
     try (InputStream inputStream = fs.read(fsPath)) {
-      String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
-      if (engineResultType.equals(LinkisStorageConf.DOLPHIN)
-          || fsPath.getPath().endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)) {
+      if (fsPath.getPath().endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)) {
         String resultSetType = Dolphin.getType(inputStream);
         if (StringUtils.isEmpty(resultSetType)) {
           throw new StorageWarnException(
@@ -149,8 +147,7 @@ public class DefaultResultSetFactory implements ResultSetFactory {
         }
         // Utils.tryQuietly(fs::close);
         resultSet = getResultSetByType(resultSetType);
-      } else if (engineResultType.equals(LinkisStorageConf.PARQUET)
-          || fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)) {
+      } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)) {
         resultSet = getResultSetByType(ResultSetFactory.TABLE_TYPE);
       }
       return resultSet;

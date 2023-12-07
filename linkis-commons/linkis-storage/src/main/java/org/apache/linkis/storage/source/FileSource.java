@@ -73,12 +73,8 @@ public interface FileSource extends Closeable {
       (path, suffix) -> path.endsWith("." + suffix);
 
   static boolean isResultSet(String path) {
-    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
-    String type = fileType[0];
-    if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
-      type = LinkisStorageConf.PARQUET;
-    }
-    return suffixPredicate.apply(path, type);
+    return suffixPredicate.apply(path, fileType[0])
+        || suffixPredicate.apply(path, LinkisStorageConf.PARQUET);
   }
 
   static boolean isResultSet(FsPath fsPath) {

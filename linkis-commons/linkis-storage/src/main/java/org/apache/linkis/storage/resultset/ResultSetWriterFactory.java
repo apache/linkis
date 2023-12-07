@@ -24,6 +24,7 @@ import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
+import org.apache.linkis.storage.resultset.table.TableResultSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,10 +40,10 @@ public class ResultSetWriterFactory {
       ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath) {
     String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
     ResultSetWriter<K, V> writer = null;
-    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
-      writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
-    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
+    if (engineResultType.equals(LinkisStorageConf.PARQUET) && resultSet instanceof TableResultSet) {
       writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else {
+      writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
     }
     return writer;
   }
@@ -51,12 +52,12 @@ public class ResultSetWriterFactory {
       ResultSet<K, V> resultSet, long maxCacheSize, FsPath storePath, String proxyUser) {
     String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
     ResultSetWriter<K, V> writer = null;
-    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
+    if (engineResultType.equals(LinkisStorageConf.PARQUET) && resultSet instanceof TableResultSet) {
+      writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else {
       writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
       StorageResultSetWriter storageResultSetWriter = (StorageResultSetWriter) writer;
       storageResultSetWriter.setProxyUser(proxyUser);
-    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
-      writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
     }
     return writer;
   }

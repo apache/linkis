@@ -25,6 +25,7 @@ import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
+import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
@@ -42,11 +43,10 @@ public class ResultSetReaderFactory {
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
       ResultSet<K, V> resultSet, InputStream inputStream, FsPath fsPath) {
-    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
     ResultSetReader<K, V> resultSetReader = null;
-    if (engineResultType.equals(LinkisStorageConf.DOLPHIN)) {
+    if (fsPath.getPath().endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)) {
       resultSetReader = new StorageResultSetReader<>(resultSet, inputStream);
-    } else if (engineResultType.equals(LinkisStorageConf.PARQUET)) {
+    } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)) {
       try {
         resultSetReader = new ParquetResultSetReader<>(resultSet, inputStream, fsPath);
       } catch (IOException e) {

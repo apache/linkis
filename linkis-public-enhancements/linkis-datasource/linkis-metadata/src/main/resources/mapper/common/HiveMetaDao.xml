@@ -130,7 +130,7 @@
         inner join TBLS ON `PARTITIONS`.TBL_ID = TBLS.TBL_ID
         inner join `DBS` ON TBLS.DB_ID=`DBS`.DB_ID
         where PARTITION_PARAMS.PARAM_KEY = 'totalSize'
-        and  PARTITION_PARAMS.PART_NAME =  #{partitionName,jdbcType=VARCHAR}
+        and  `PARTITIONS`.PART_NAME =  #{partitionName,jdbcType=VARCHAR}
         and  TBLS.TBL_NAME = #{tableName,jdbcType=VARCHAR}
         and `DBS`.NAME =  #{dbName,jdbcType=VARCHAR};
 

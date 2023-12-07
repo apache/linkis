@@ -164,6 +164,14 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     }
     var res: ExecuteResponse = null
 
+    if (Thread.currentThread().isInterrupted) {
+      logger.error("The thread of execution has been interrupted and the task should be terminated")
+      return ErrorExecuteResponse(
+        "The thread of execution has been interrupted and the task should be terminated",
+        null
+      )
+    }
+
     Utils.tryCatch {
       res = executeLine(code, engineExecutionContext)
     } { case e: Exception =>

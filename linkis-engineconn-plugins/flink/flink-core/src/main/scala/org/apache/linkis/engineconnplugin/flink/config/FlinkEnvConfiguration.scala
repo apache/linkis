@@ -174,4 +174,11 @@ object FlinkEnvConfiguration {
   val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
     CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
 
+  val FLINK_CONF_YAML = CommonVars("flink.conf.yaml.dir", "flink-conf.yaml")
+
+  val FLINK_YAML_MERGE_ENABLE = CommonVars("flink.yaml.merge.enable", true)
+
+  val FLINK_ENV_JAVA_OPTS =
+    CommonVars("flink.env.java.opts", "env.java.opts")
+
 }

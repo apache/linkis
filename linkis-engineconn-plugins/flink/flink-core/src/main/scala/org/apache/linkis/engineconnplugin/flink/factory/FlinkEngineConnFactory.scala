@@ -35,7 +35,7 @@ import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
-import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
+import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, FlinkValueFormatUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
@@ -55,7 +55,7 @@ import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 import java.net.URL
 import java.text.MessageFormat
 import java.time.Duration
@@ -63,8 +63,10 @@ import java.util
 import java.util.{Collections, Locale}
 
 import scala.collection.JavaConverters._
+import scala.io.Source
 
 import com.google.common.collect.{Lists, Sets}
+import org.yaml.snakeyaml.Yaml
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -196,7 +198,15 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
     // set extra configs
     options.asScala.filter { case (key, _) => key.startsWith(FLINK_CONFIG_PREFIX) }.foreach {
-      case (key, value) => flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), value)
+      case (key, value) =>
+        var flinkConfigValue = value
+        if (
+            FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key
+              .equals(FLINK_CONFIG_PREFIX + FLINK_ENV_JAVA_OPTS.getValue)
+        ) {
+          flinkConfigValue = getExtractJavaOpts(value)
+        }
+        flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), flinkConfigValue)
     }
     // set kerberos config
     if (FLINK_KERBEROS_ENABLE.getValue(options)) {
@@ -293,6 +303,44 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       }
     }
     context
+  }
+
+  private def getExtractJavaOpts(envJavaOpts: String): String = {
+    var defaultJavaOpts = ""
+    val yamlFilePath = FLINK_CONF_DIR.getValue
+    val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
+    if (new File(yamlFile).exists()) {
+      val source = Source.fromFile(yamlFile)
+      try {
+        val yamlContent = source.mkString
+        val yaml = new Yaml()
+        val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+        if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+          defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
+        }
+      } finally {
+        source.close()
+      }
+    } else {
+      val inputStream = getClass.getResourceAsStream(yamlFile)
+      if (inputStream != null) {
+        val source = Source.fromInputStream(inputStream)
+        try {
+          val yamlContent = source.mkString
+          val yaml = new Yaml()
+          val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+          if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+            defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
+          }
+        } finally {
+          source.close()
+        }
+      } else {
+        throw new FileNotFoundException("YAML file not found in both file system and classpath.")
+      }
+    }
+    val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    merged
   }
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {

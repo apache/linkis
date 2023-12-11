@@ -452,6 +452,7 @@ public class EngineRestfulApi {
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");
       String engineInstance = engineParam.get("engineInstance");
+      logger.info("try to kill engine with engineInstance:{}", engineInstance);
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
       engineStopService.stopEngine(stopEngineRequest, sender);

@@ -333,7 +333,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
                     .map(
                         x -> {
                           try {
-                            return x.asString();
+                            return x.toString();
                           } catch (Exception e) {
                             return "";
                           }

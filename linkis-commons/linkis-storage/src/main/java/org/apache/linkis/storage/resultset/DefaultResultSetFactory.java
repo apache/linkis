@@ -110,7 +110,8 @@ public class DefaultResultSetFactory implements ResultSetFactory {
   @Override
   public boolean isResultSetPath(String path) {
     return path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)
-        || path.endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX);
+        || path.endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)
+        || path.endsWith(LinkisStorageConf.ORC_FILE_SUFFIX);
   }
 
   @Override
@@ -147,7 +148,8 @@ public class DefaultResultSetFactory implements ResultSetFactory {
         }
         // Utils.tryQuietly(fs::close);
         resultSet = getResultSetByType(resultSetType);
-      } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)) {
+      } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)
+          || fsPath.getPath().endsWith(LinkisStorageConf.ORC_FILE_SUFFIX)) {
         resultSet = getResultSetByType(ResultSetFactory.TABLE_TYPE);
       }
       return resultSet;

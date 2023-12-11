@@ -52,6 +52,12 @@ public class ResultSetReaderFactory {
       } catch (IOException e) {
         throw new RuntimeException("Failed to read parquet", e);
       }
+    } else if (fsPath.getPath().endsWith(LinkisStorageConf.ORC_FILE_SUFFIX)) {
+      try {
+        resultSetReader = new OrcResultSetReader<>(resultSet, inputStream, fsPath);
+      } catch (IOException e) {
+        throw new RuntimeException("Failed to read parquet", e);
+      }
     }
     return resultSetReader;
   }

@@ -74,7 +74,8 @@ public interface FileSource extends Closeable {
 
   static boolean isResultSet(String path) {
     return suffixPredicate.apply(path, fileType[0])
-        || suffixPredicate.apply(path, LinkisStorageConf.PARQUET);
+        || suffixPredicate.apply(path, LinkisStorageConf.PARQUET)
+        || suffixPredicate.apply(path, LinkisStorageConf.ORC);
   }
 
   static boolean isResultSet(FsPath fsPath) {

@@ -42,6 +42,9 @@ public class ResultSetWriterFactory {
     ResultSetWriter<K, V> writer = null;
     if (engineResultType.equals(LinkisStorageConf.PARQUET) && resultSet instanceof TableResultSet) {
       writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else if (engineResultType.equals(LinkisStorageConf.ORC)
+        && resultSet instanceof TableResultSet) {
+      writer = new OrcResultSetWriter<>(resultSet, maxCacheSize, storePath);
     } else {
       writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
     }
@@ -54,6 +57,9 @@ public class ResultSetWriterFactory {
     ResultSetWriter<K, V> writer = null;
     if (engineResultType.equals(LinkisStorageConf.PARQUET) && resultSet instanceof TableResultSet) {
       writer = new ParquetResultSetWriter<>(resultSet, maxCacheSize, storePath);
+    } else if (engineResultType.equals(LinkisStorageConf.ORC)
+        && resultSet instanceof TableResultSet) {
+      writer = new OrcResultSetWriter<>(resultSet, maxCacheSize, storePath);
     } else {
       writer = new StorageResultSetWriter<>(resultSet, maxCacheSize, storePath);
       StorageResultSetWriter storageResultSetWriter = (StorageResultSetWriter) writer;

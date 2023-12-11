@@ -55,6 +55,8 @@ public abstract class StorageResultSet<K extends MetaData, V extends Record>
     String fileSuffix = Dolphin.DOLPHIN_FILE_SUFFIX;
     if (engineResultType.equals(LinkisStorageConf.PARQUET) && this instanceof TableResultSet) {
       fileSuffix = LinkisStorageConf.PARQUET_FILE_SUFFIX;
+    } else if (engineResultType.equals(LinkisStorageConf.ORC) && this instanceof TableResultSet) {
+      fileSuffix = LinkisStorageConf.ORC_FILE_SUFFIX;
     }
     final String path =
         parentDir.getPath().endsWith("/")

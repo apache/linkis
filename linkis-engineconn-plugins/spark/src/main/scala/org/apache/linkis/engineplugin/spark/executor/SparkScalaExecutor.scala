@@ -232,30 +232,43 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           // error("incomplete code.")
           IncompleteExecuteResponse(null)
         case Results.Error =>
-          lineOutputStream.flush()
-          val output = lineOutputStream.toString
-          IOUtils.closeQuietly(lineOutputStream)
-          var errorMsg: String = null
-          if (StringUtils.isNotBlank(output)) {
-            errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t =>
-              t.getMessage
+          if (Thread.currentThread().isInterrupted) {
+            logger.error(
+              "The thread of execution has been interrupted and the task should be terminated"
             )
-            logger.error("Execute code error for " + errorMsg)
-            engineExecutionContext.appendStdout("Execute code error for " + errorMsg)
-            if (matchFatalLog(errorMsg)) {
-              logger.error("engine log fatal logs now to set status to shutdown")
-              ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+            Utils.tryQuietly {
+              IOUtils.closeQuietly(lineOutputStream)
             }
-          } else {
-            logger.error("No error message is captured, please see the detailed log")
-          }
-          ErrorExecuteResponse(
-            errorMsg,
-            ExecuteError(
-              EXECUTE_SPARKSCALA_FAILED.getErrorCode,
-              EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+            ErrorExecuteResponse(
+              "The thread of execution has been interrupted and the task should be terminated",
+              null
             )
-          )
+          } else {
+            lineOutputStream.flush()
+            val output = lineOutputStream.toString
+            IOUtils.closeQuietly(lineOutputStream)
+            var errorMsg: String = null
+            if (StringUtils.isNotBlank(output)) {
+              errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t =>
+                t.getMessage
+              )
+              logger.error("Execute code error for " + errorMsg)
+              engineExecutionContext.appendStdout("Execute code error for " + errorMsg)
+              if (matchFatalLog(errorMsg)) {
+                logger.error("engine log fatal logs now to set status to shutdown")
+                ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+              }
+            } else {
+              logger.error("No error message is captured, please see the detailed log")
+            }
+            ErrorExecuteResponse(
+              errorMsg,
+              ExecuteError(
+                EXECUTE_SPARKSCALA_FAILED.getErrorCode,
+                EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+              )
+            )
+          }
       }
     }
     // reset the java stdout

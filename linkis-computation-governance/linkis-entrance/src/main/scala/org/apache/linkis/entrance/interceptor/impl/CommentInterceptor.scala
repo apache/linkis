@@ -69,7 +69,37 @@ trait CommentHelper {
 object SQLCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """\s*--.+\s*""".r.unanchored
   private val comment = "(?ms)('(?:''|[^'])*')|--.*?$|/\\*.*?\\*/|#.*?$|"
+  private val comment_sem = "(?i)(comment)\\s+'([^']*)'"
   private val logger: Logger = LoggerFactory.getLogger(getClass)
+
+  def replaceComment(code: String): String = {
+    try {
+      val pattern = Pattern.compile(comment_sem)
+      val matcher = pattern.matcher(code)
+      val sb = new StringBuffer
+      while (matcher.find()) {
+        val commentKeyword = matcher.group(1)
+        val comment = matcher.group(2)
+
+        /**
+         * Since we are in a Scala string, and each backslash needs to be escaped in the string
+         * itself, we need two additional backslashes. Therefore, we end up with a total of four
+         * backslashes to represent a single literal backslash in the replacement string.
+         */
+        val escapedComment = comment.replaceAll(";", "\\\\\\\\;")
+        matcher.appendReplacement(sb, commentKeyword + " '" + escapedComment + "'")
+      }
+      matcher.appendTail(sb)
+      sb.toString
+    } catch {
+      case e: Exception =>
+        logger.warn("sql comment semicolon replace failed")
+        code
+      case t: Throwable =>
+        logger.warn("sql comment semicolon replace failed")
+        code
+    }
+  }
 
   override def dealComment(code: String): String = {
     try {

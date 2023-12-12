@@ -40,6 +40,8 @@ public class OrcUtils {
         return TypeDescription.createChar().withMaxLength(1024);
       case StringType:
         return TypeDescription.createString();
+      case LongType:
+        return TypeDescription.createLong();
       case VarcharType:
         return TypeDescription.createVarchar().withMaxLength(1024);
       case BooleanType:

@@ -108,6 +108,9 @@
           <FormItem :label="$t('message.linkis.ipListManagement.endTime')" prop="endTime">
             <Input class="input" v-model="modalData.endTime" placeholder="XX:XX"></Input>
           </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.acrossClusterQueue')" prop="crossQueue">
+            <Input class="input" v-model="modalData.crossQueue"></Input>
+          </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.CPUThreshold')" prop="CPUThreshold">
             <Input class="input" v-model="modalData.CPUThreshold"></Input>
           </FormItem>
@@ -276,6 +279,7 @@ export default {
         clusterName: '',
         CPUThreshold: '',
         CPUPercentageThreshold: '',
+        crossQueue: '',
         MemoryThreshold: '',
         MemoryPercentageThreshold: '',
         startTime: '',
@@ -324,6 +328,11 @@ export default {
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        crossQueue: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          // {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 25, message: this.$t('message.linkis.ipListManagement.customLen', {length: '25'})}
         ],
       },
       // tagIsExist: true,
@@ -413,6 +422,7 @@ export default {
         clusterName: '',
         CPUThreshold: '',
         CPUPercentageThreshold: '',
+        crossQueue: '',
         MemoryThreshold: '',
         MemoryPercentageThreshold: '',
         startTime: '',
@@ -455,12 +465,13 @@ export default {
     },
     edit(data) {
       const {
-        id, username, creator, clusterName, parsedRules, isValid
+        id, username, creator, clusterName, parsedRules, isValid,
       } = data
       const { CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold } = parsedRules?.thresholdRule || {};
+      const { crossQueue } = parsedRules?.queueRule || {};
       const { startTime, endTime } = parsedRules?.timeRule || {}
       this.modalData = {
-        id, username, creator, clusterName, CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold, startTime, endTime, isValid
+        id, username, creator, clusterName, crossQueue, CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold, startTime, endTime, isValid
       };
       this.showCreateModal = true;
       this.mode = 'edit';

@@ -476,6 +476,7 @@
         "CPUThreshold": "CPU Threshold(Core)",
         "MemoryThreshold": "Memory Threshold(G)",
         "CPUPercentageThreshold": "CPU Percentage Threshold",
+        "acrossClusterQueue": "Across Cluster Queue",
         "MemoryPercentageThreshold": "Memory Percentage Threshold",
         "timeError": "The time format should be XX:XX, please enter the correct time",
         "thresholdError": "Please enter an integer between 0 and 10000",

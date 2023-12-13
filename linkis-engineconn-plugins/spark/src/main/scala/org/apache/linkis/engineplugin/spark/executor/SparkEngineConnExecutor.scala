@@ -316,7 +316,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
         if (closeThreadEnable) {
           val threadName = thread.getName
-          if (threadName.contains("Linkis-Default-Scheduler-Thread-")) {
+          if (threadName.contains(Utils.DEFAULE_SCHEDULER_THREAD_NAME_PREFIX)) {
             logger.info(s"try to force stop thread:${threadName}")
             // force to stop scala thread
             Utils.tryAndWarn(thread.stop())

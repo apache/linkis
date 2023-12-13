@@ -105,7 +105,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
     setCodeParser(new ScalaCodeParser)
     super.init()
-    logger.info("spark sql executor start")
+    logger.info("spark scala executor start")
   }
 
   def lazyInitLoadILoop(): Unit = {

@@ -102,7 +102,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def init(): Unit = {
     setCodeParser(new PythonCodeParser)
     super.init()
-    logger.info("spark sql executor start")
+    logger.info("spark python executor start")
   }
 
   override def killTask(taskID: String): Unit = {

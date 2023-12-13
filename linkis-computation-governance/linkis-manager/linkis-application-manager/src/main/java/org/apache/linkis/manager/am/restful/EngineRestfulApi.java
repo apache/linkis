@@ -479,8 +479,7 @@ public class EngineRestfulApi {
     // check special token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        logger.warn("Token {} has no permission to asyn kill engines.", token);
-        return Message.error("Token:" + token + " has no permission to asyn kill engines.");
+        return Message.error("Token  has no permission to asyn kill engines.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User {} has no permission to asyn kill engines.", username);

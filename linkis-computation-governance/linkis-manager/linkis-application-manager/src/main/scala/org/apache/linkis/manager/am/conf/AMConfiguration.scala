@@ -25,7 +25,7 @@ object AMConfiguration {
 
   val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
 
-  val ACROSS_CLUSTER_QUEUE_SUFFIX = "queueRuleSuffix"
+  val ACROSS_CLUSTER_QUEUE_NAME = "queueRuleName"
 
   val ACROSS_CLUSTER_TASK = "acrossClusterTask"
 

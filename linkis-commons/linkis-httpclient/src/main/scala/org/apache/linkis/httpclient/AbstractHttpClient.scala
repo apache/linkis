@@ -149,12 +149,12 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         s"invoke ${req.getURI} get status ${response.getStatusLine.getStatusCode} taken: ${costTime}."
       )
       if (response.getStatusLine.getStatusCode == 401) {
-        tryLogin(action, getRequestUrl(action), true)
         val msg = Utils.tryCatch(EntityUtils.toString(response.getEntity)) { t =>
           logger.warn("failed to parse entity", t)
           ""
         }
         IOUtils.closeQuietly(response)
+        tryLogin(action, getRequestUrl(action), true)
         if (attempts.size() <= 1) {
           logger.info("The user is not logged in, default retry once")
           addAttempt()

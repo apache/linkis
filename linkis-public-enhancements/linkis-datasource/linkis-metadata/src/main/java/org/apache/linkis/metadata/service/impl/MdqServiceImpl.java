@@ -151,7 +151,7 @@ public class MdqServiceImpl implements MdqService {
       if (isImport
           && (importType == MdqImportType.Csv.ordinal()
               || importType == MdqImportType.Excel.ordinal())) {
-        String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
+        String destination = mdqTableBO.getImportInfo().getDestination();
         HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
         if (Boolean.valueOf(hashMap.get("importData").toString())) {
           logger.info(

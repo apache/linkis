@@ -451,6 +451,7 @@
               "CPUThreshold": "CPU阈值(核)",
               "MemoryThreshold": "内存阈值(G)",
               "CPUPercentageThreshold": "CPU百分比阈值",
+              "acrossClusterQueue": "跨集群队列",
               "MemoryPercentageThreshold": "内存百分比阈值",
               "view": "查看",
               "errorJson": "请输入格式正确且不为空的JSON",

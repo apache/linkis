@@ -143,19 +143,20 @@
                 </RadioGroup>
               </Row>
             </div>
+            
+            <Row>
+              {{$t('message.common.toolbar.downloadMode')}}
+            </Row>
             <div v-if="isAll">
-              <Row>
-                {{$t('message.common.toolbar.downloadMode')}}
-              </Row>
               <Row>
                 <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all', {count: String(allPath.length)})}}</Checkbox>
               </Row>
-              <div v-if="isExcel">
-                <Row>
-                  <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
-                </Row>
-              </div>
-              
+            </div>
+            
+            <div v-if="isExcel">
+              <Row>
+                <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
+              </Row>
             </div>
             <Row class="confirm">
               <Col span="10">
@@ -396,7 +397,7 @@ export default {
         let separator = encodeURIComponent(separatorItem.key || '');
         url += `&csvSeparator=${separator}`
       }
-      if(this.isAll && this.isExcel) {
+      if(this.isExcel) {
         url += `&autoFormat=${this.autoFormat}`
       }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)

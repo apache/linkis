@@ -102,7 +102,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def init(): Unit = {
     setCodeParser(new PythonCodeParser)
     super.init()
-    logger.info("spark sql executor start")
+    logger.info("spark python executor start")
   }
 
   override def killTask(taskID: String): Unit = {
@@ -126,10 +126,10 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
           logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
           GovernanceUtils.killProcess(String.valueOf(p), s"kill pyspark process,pid: $pid", false)
         })
-        if (pid.isEmpty) {
-          process.destroy()
-          process = null
-        }
+
+        Utils.tryQuietly(process.destroy())
+        process = null
+
       }("process close failed")
     }
     logger.info(s"To delete python executor")

@@ -69,6 +69,7 @@ object SQLSession extends Logging {
         "Spark application sc has already stopped, please restart it."
       )
     }
+
     val startTime = System.currentTimeMillis()
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
 

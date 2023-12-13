@@ -159,7 +159,7 @@ public class ReplEngineConnExecutor extends ConcurrentComputationExecutor {
 
     String message = outputStream.toString();
     System.setOut(oldStream);
-    System.out.println(message);
+    engineExecutorContext.appendStdout(message);
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE);
     try {

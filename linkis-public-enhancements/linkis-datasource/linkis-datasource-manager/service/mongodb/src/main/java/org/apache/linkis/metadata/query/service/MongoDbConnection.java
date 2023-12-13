@@ -177,11 +177,7 @@ public class MongoDbConnection implements Closeable {
   private MongoClient getDBConnection(ConnectMessage connectMessage, String database)
       throws Exception {
 
-    LOG.info(
-        "mongo information is database:{}, username:{}, passwordd:{} ",
-        database,
-        connectMessage.username,
-        connectMessage.password);
+    LOG.info("mongo information is database:{}, username:{}", database, connectMessage.username);
 
     MongoClient client = null;
     try {

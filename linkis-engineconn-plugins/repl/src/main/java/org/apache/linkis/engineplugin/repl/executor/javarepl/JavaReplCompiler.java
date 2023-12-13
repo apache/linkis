@@ -54,7 +54,7 @@ public class JavaReplCompiler {
       Pattern.compile("\\s+implements\\s+([\\w\\.]+)\\s*\\{\n");
 
   private static final Pattern METHODS_PATTERN =
-      Pattern.compile("\n(private|public|protected)\\s+");
+      Pattern.compile("(?<=\\})\\s+(private|public|protected)\\s+");
 
   private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 

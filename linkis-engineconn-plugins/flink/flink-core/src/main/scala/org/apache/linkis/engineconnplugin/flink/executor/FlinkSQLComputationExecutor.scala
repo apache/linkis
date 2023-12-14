@@ -236,6 +236,11 @@ class FlinkSQLComputationExecutor(
     super.close()
   }
 
+  override def tryShutdown(): Boolean = {
+    Utils.tryAndWarn(close())
+    super.tryShutdown()
+  }
+
 }
 
 class FlinkSQLStatusListener(

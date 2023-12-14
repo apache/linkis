@@ -92,6 +92,15 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   /** Returns the status of the flink job. */
   public JobStatus getJobStatus() throws JobExecutionException {
     if (jobId == null) {
+      try {
+        LOG.info("flink getJobStatus jobId is null,sleep three seconds");
+        Thread.sleep(3000);
+      } catch (InterruptedException e) {
+
+      }
+    }
+    LOG.info("flink getJobStatus jobId:{}", jobId);
+    if (jobId == null) {
       throw new JobExecutionException(NO_JOB_SUBMITTED.getErrorDesc());
     }
     return bridgeClientRequest(

@@ -631,7 +631,7 @@ class TaskExecutionServiceImpl
         if (null != task) {
           sendToEntrance(task, ResponseTaskLog(logUpdateEvent.taskId, logUpdateEvent.log))
         } else {
-          logger.error("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
+          logger.warn("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
         }
       } else if (null != lastTask) {
         val executor = executorManager.getReportExecutor
@@ -733,7 +733,7 @@ class TaskExecutionServiceImpl
     if (null != executor) {
       executor.getTaskById(taskId)
     } else {
-      logger.error(s"Executor of taskId : $taskId is not cached.")
+      logger.warn(s"Executor of taskId : $taskId is not cached.")
       null
     }
   }

@@ -104,7 +104,6 @@
                 <exclude>javax.xml.bind:jaxb-api:jar</exclude>
                 <exclude>javax.xml.stream:stax-api:jar</exclude>
                 <exclude>mysql:mysql-connector-java:jar</exclude>
-                <exclude>org.antlr:antlr-runtime:jar</exclude>
                 <exclude>org.antlr:stringtemplate:jar</exclude>
                 <exclude>org.apache.commons:commons-compress:jar</exclude>
                 <exclude>org.apache.commons:commons-math:jar</exclude>

@@ -396,5 +396,44 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <!-- fix different discovery dependencies -->
+    <profile>
+      <id>eureka</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>discovery</name>
+          <value>eureka</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <scope>provided</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>nacos</id>
+      <activation>
+        <property>
+          <name>discovery</name>
+          <value>nacos</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <scope>compile</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
   </profiles>
 </project>

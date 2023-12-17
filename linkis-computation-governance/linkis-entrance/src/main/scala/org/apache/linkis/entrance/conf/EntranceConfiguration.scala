@@ -245,7 +245,7 @@ object EntranceConfiguration {
   val ENABLE_HDFS_JVM_USER =
     CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", true).getValue
 
-  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", true).getValue
+  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", false).getValue
 
   val ENTRANCE_FAILOVER_SCAN_INIT_TIME =
     CommonVars("linkis.entrance.failover.scan.init.time", 3 * 1000).getValue
@@ -269,7 +269,7 @@ object EntranceConfiguration {
   val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
     CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
 
-  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
+  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", false)
 
   val ENTRANCE_GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
 

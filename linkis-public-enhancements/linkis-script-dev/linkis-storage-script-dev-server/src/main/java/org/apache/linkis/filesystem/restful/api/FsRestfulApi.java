@@ -1051,7 +1051,7 @@ public class FsRestfulApi {
     }
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
-    Map<String, Map<String, String>> sheetInfo;
+    Map<String, List<Map<String, String>>> sheetInfo;
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     try (InputStream in = fileSystem.read(fsPath)) {
       if (".xlsx".equalsIgnoreCase(suffix)) {
@@ -1059,7 +1059,7 @@ public class FsRestfulApi {
       } else if (".xls".equalsIgnoreCase(suffix)) {
         sheetInfo = XlsUtils.getSheetsInfo(in, hasHeader);
       } else if (".csv".equalsIgnoreCase(suffix)) {
-        HashMap<String, String> csvMap = new LinkedHashMap<>();
+        List<Map<String, String>> csvMapList = new ArrayList<>();
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
@@ -1074,6 +1074,7 @@ public class FsRestfulApi {
         column = new String[2][colNum];
         if (hasHeader) {
           for (int i = 0; i < colNum; i++) {
+            HashMap<String, String> csvMap = new HashMap<>();
             column[0][i] = line[i];
             if (escapeQuotes) {
               try {
@@ -1084,14 +1085,17 @@ public class FsRestfulApi {
             } else {
               csvMap.put(column[0][i], "string");
             }
+            csvMapList.add(csvMap);
           }
         } else {
           for (int i = 0; i < colNum; i++) {
+            HashMap<String, String> csvMap = new HashMap<>();
             csvMap.put("col_" + (i + 1), "string");
+            csvMapList.add(csvMap);
           }
         }
         sheetInfo = new HashMap<>(1);
-        sheetInfo.put("sheet_csv", csvMap);
+        sheetInfo.put("sheet_csv", csvMapList);
       } else {
         throw WorkspaceExceptionManager.createException(80004, path);
       }

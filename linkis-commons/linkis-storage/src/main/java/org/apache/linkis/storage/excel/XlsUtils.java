@@ -87,7 +87,7 @@ public class XlsUtils {
     return hdfsPath;
   }
 
-  public static Map<String, Map<String, String>> getSheetsInfo(
+  public static Map<String, List<Map<String, String>>> getSheetsInfo(
       InputStream inputStream, Boolean hasHeader) {
     // use xls file
     Workbook workbook = null;
@@ -101,26 +101,28 @@ public class XlsUtils {
       // 使用完最后需要还原
       ZipSecureFile.setMinInflateRatio(0.01);
     }
-    Map<String, Map<String, String>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
+    Map<String, List<Map<String, String>>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
     // foreach Sheet
     for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
       Sheet sheet = workbook.getSheetAt(i);
 
-      Map<String, String> sheetMap = new LinkedHashMap<>();
+      List<Map<String, String>> rowList = new ArrayList<>();
 
       // get first row as column name
       Row headerRow = sheet.getRow(0);
 
       // foreach column
       for (int j = 0; j < headerRow.getPhysicalNumberOfCells(); j++) {
+        Map<String, String> sheetMap = new LinkedHashMap<>();
         Cell cell = headerRow.getCell(j);
         if (hasHeader) {
           sheetMap.put(cell.getStringCellValue(), "string");
         } else {
           sheetMap.put("col_" + (j + 1), "string");
         }
+        rowList.add(sheetMap);
       }
-      res.put(sheet.getSheetName(), sheetMap);
+      res.put(sheet.getSheetName(), rowList);
     }
     return res;
   }

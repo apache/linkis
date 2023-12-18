@@ -145,18 +145,32 @@ public class ExcelStorageReaderTest {
 
   @Test
   public void getXlsSheetInfo() throws Exception {
-    Map<String, Map<String, String>> sheetsInfo =
+    Map<String, List<Map<String, String>>> sheetsInfo =
         XlsUtils.getSheetsInfo(createExcelAndGetInputStream(0), true);
     Assertions.assertTrue(sheetsInfo.containsKey("Sheet2"));
-    Assertions.assertEquals("string", sheetsInfo.get("Sheet2").get("Work1"));
+    List<Map<String, String>> sheet2 = sheetsInfo.get("Sheet2");
+    String work1 = "";
+    for (Map<String, String> sheetMap : sheet2) {
+      if (sheetMap.containsKey("Work1")) {
+        work1 = sheetMap.get("Work1");
+      }
+    }
+    Assertions.assertEquals("string", work1);
   }
 
   @Test
   public void getXlsxSheetInfo() throws Exception {
-    Map<String, Map<String, String>> sheetsInfo =
+    Map<String, List<Map<String, String>>> sheetsInfo =
         XlsxUtils.getAllSheetInfo(createExcelAndGetInputStream(1), null, true);
     Assertions.assertTrue(sheetsInfo.containsKey("Sheet2"));
-    Assertions.assertEquals("string", sheetsInfo.get("Sheet2").get("Work1"));
+    List<Map<String, String>> sheet2 = sheetsInfo.get("Sheet2");
+    String work1 = "";
+    for (Map<String, String> sheetMap : sheet2) {
+      if (sheetMap.containsKey("Work1")) {
+        work1 = sheetMap.get("Work1");
+      }
+    }
+    Assertions.assertEquals("string", work1);
   }
 
   @Test

@@ -79,7 +79,7 @@ public class XlsxUtils {
     }
   }
 
-  public static Map<String, Map<String, String>> getAllSheetInfo(
+  public static Map<String, List<Map<String, String>>> getAllSheetInfo(
       InputStream inputStream, File file, Boolean hasHeader) throws IOException {
     try {
       Workbook wb = null;
@@ -96,30 +96,30 @@ public class XlsxUtils {
                 .rowCacheSize(2)
                 .open(file);
       }
-      Map<String, Map<String, String>> res = new LinkedHashMap<>(wb.getNumberOfSheets());
+      Map<String, List<Map<String, String>>> res = new LinkedHashMap<>(wb.getNumberOfSheets());
       for (Sheet sheet : wb) {
-        Map<String, String> item = new LinkedHashMap<>();
         Iterator<Row> iterator = sheet.iterator();
         Row row = null;
         while (iterator.hasNext() && row == null) {
           row = iterator.next();
         }
-
+        List<Map<String, String>> rowList = new ArrayList<>();
         if (row == null) {
-          res.put(sheet.getSheetName(), new HashMap<>(0));
+          res.put(sheet.getSheetName(), rowList);
           continue;
         }
-
         int cellIdx = 0;
         for (Cell cell : row) {
+          Map<String, String> item = new LinkedHashMap<>();
           if (hasHeader) {
             item.put(cell.getStringCellValue(), "string");
           } else {
             item.put("col_" + (cellIdx + 1), "string");
           }
           cellIdx++;
+          rowList.add(item);
         }
-        res.put(sheet.getSheetName(), item);
+        res.put(sheet.getSheetName(), rowList);
       }
       return res;
     } finally {

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.{ComponentScan, Configuration}
 import javax.annotation.PostConstruct
 
 @Configuration
-@ComponentScan(Array("org.apache.linkis.monitor.scan", "org.apache.linkis.mybatis"))
+@ComponentScan(Array("org.apache.linkis.monitor", "org.apache.linkis.mybatis"))
 class LinkisJobHistoryScanSpringConfiguration {
 
   @Autowired

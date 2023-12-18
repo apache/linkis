@@ -18,10 +18,11 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
-import org.apache.linkis.manager.common.exception.RMWarnException
+import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
@@ -36,68 +37,134 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
 
   val enableRequest = RMUtils.RM_REQUEST_ENABLE.getValue
 
+  def canRequestResource(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): CanCreateECRes = {
+    val canCreateECRes = new CanCreateECRes
+    val emInstanceLabel = labelContainer.getEMInstanceLabel
+    val ecmResource = labelResourceService.getLabelResource(emInstanceLabel)
+    val requestResource = resource.getMinResource
+    if (ecmResource != null) {
+      val labelAvailableResource = ecmResource.getLeftResource
+      canCreateECRes.setEcmResource(RMUtils.serializeResource(labelAvailableResource))
+      if (labelAvailableResource < requestResource) {
+        logger.info(
+          s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]"
+        )
+        val notEnoughMessage = generateECMNotEnoughMessage(
+          requestResource,
+          labelAvailableResource,
+          ecmResource.getMaxResource
+        )
+        canCreateECRes.setCanCreateEC(false)
+        canCreateECRes.setReason(notEnoughMessage._2)
+      }
+    }
+    // get CombinedLabel Resource Usage
+    labelContainer.setCurrentLabel(labelContainer.getCombinedUserCreatorEngineTypeLabel)
+    val labelResource = getCombinedLabelResourceUsage(labelContainer, resource)
+    labelResourceService.setLabelResource(
+      labelContainer.getCurrentLabel,
+      labelResource,
+      labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+    )
+
+    if (labelResource != null) {
+      val labelAvailableResource = labelResource.getLeftResource
+      canCreateECRes.setLabelResource(RMUtils.serializeResource(labelAvailableResource))
+      val labelMaxResource = labelResource.getMaxResource
+      if (labelAvailableResource < requestResource) {
+        logger.info(
+          s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
+            s"label available resource[${labelAvailableResource}]"
+        )
+        val notEnoughMessage =
+          generateNotEnoughMessage(requestResource, labelAvailableResource, labelMaxResource)
+        canCreateECRes.setCanCreateEC(false);
+        canCreateECRes.setReason(notEnoughMessage._2)
+      }
+    }
+    canCreateECRes
+  }
+
+  private def getCombinedLabelResourceUsage(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource
+  ): NodeResource = {
+    // 1. get label resource from db
+    var labelResource = labelResourceService.getLabelResource(labelContainer.getCurrentLabel)
+    // 2. get label configuration resource only CombinedUserCreatorEngineTypeLabel
+    if (labelResource == null) {
+      labelResource = new CommonNodeResource
+      labelResource.setResourceType(resource.getResourceType)
+      labelResource.setUsedResource(Resource.initResource(resource.getResourceType))
+      labelResource.setLockedResource(Resource.initResource(resource.getResourceType))
+      logger.info(s"ResourceInit: ${labelContainer.getCurrentLabel.getStringValue} ")
+    }
+    val configuredResource = UserConfiguration.getUserConfiguredResource(
+      resource.getResourceType,
+      labelContainer.getUserCreatorLabel,
+      labelContainer.getEngineTypeLabel
+    )
+    logger.debug(
+      s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}] "
+    )
+    labelResource.setMaxResource(configuredResource)
+    labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
+    labelResource.setLeftResource(
+      labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource
+    )
+    logger.debug(
+      s"${labelContainer.getCurrentLabel} ecmResource: Max: ${labelResource.getMaxResource}  \t " +
+        s"use:  ${labelResource.getUsedResource}  \t locked: ${labelResource.getLockedResource}"
+    )
+    labelResource
+  }
+
   def canRequest(
       labelContainer: RMLabelContainer,
       resource: NodeResource,
       engineCreateRequest: EngineCreateRequest
   ): Boolean = {
-
+    if (!enableRequest) {
+      logger.info("Resource judgment switch is not turned on, the judgment will be skipped")
+      return true
+    }
+    // check ecm label resource
     labelContainer.getCurrentLabel match {
       case emInstanceLabel: EMInstanceLabel =>
-        return checkEMResource(
-          labelContainer.getUserCreatorLabel.getUser,
-          emInstanceLabel,
-          resource
-        )
+        return checkEMResource(emInstanceLabel, resource)
       case _ =>
     }
-
-    var labelResource = labelResourceService.getLabelResource(labelContainer.getCurrentLabel)
-    val requestResource = resource.getMinResource
-    // for configuration resource
+    // check combined label resource
     if (
         labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
     ) {
-      if (labelResource == null) {
-        labelResource = new CommonNodeResource
-        labelResource.setResourceType(resource.getResourceType)
-        labelResource.setUsedResource(Resource.initResource(resource.getResourceType))
-        labelResource.setLockedResource(Resource.initResource(resource.getResourceType))
-        logger.info(s"ResourceInit: ${labelContainer.getCurrentLabel.getStringValue} ")
-      }
-      val configuredResource = UserConfiguration.getUserConfiguredResource(
-        resource.getResourceType,
-        labelContainer.getUserCreatorLabel,
-        labelContainer.getEngineTypeLabel
-      )
-      logger.debug(
-        s"Get configured resource ${configuredResource} for [${labelContainer.getUserCreatorLabel}] and [${labelContainer.getEngineTypeLabel}] "
-      )
-      labelResource.setMaxResource(configuredResource)
-      labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
-      labelResource.setLeftResource(
-        labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource
-      )
-      labelResourceService.setLabelResource(
-        labelContainer.getCurrentLabel,
-        labelResource,
-        labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
-      )
-      logger.debug(
-        s"${labelContainer.getCurrentLabel} to request [${requestResource}]  \t labelResource: Max: ${labelResource.getMaxResource}  \t " +
-          s"use:  ${labelResource.getUsedResource}  \t locked: ${labelResource.getLockedResource}"
+      throw new RMErrorException(
+        RESOURCE_LATER_ERROR.getErrorCode,
+        RESOURCE_LATER_ERROR.getErrorDesc + labelContainer.getCurrentLabel
       )
     }
+
+    val requestResource = resource.getMinResource
+    // get CombinedLabel Resource Usage
+    val labelResource = getCombinedLabelResourceUsage(labelContainer, resource)
+    labelResourceService.setLabelResource(
+      labelContainer.getCurrentLabel,
+      labelResource,
+      labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+    )
     logger.debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource}]")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
       val labelMaxResource = labelResource.getMaxResource
-      if (labelAvailableResource < requestResource && enableRequest) {
+      if (labelAvailableResource < requestResource) {
         logger.info(
           s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
             s"label available resource[${labelAvailableResource}]"
         )
-        // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
         val notEnoughMessage =
           generateNotEnoughMessage(requestResource, labelAvailableResource, labelMaxResource)
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
@@ -116,21 +183,16 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     }
   }
 
-  private def checkEMResource(
-      user: String,
-      emInstanceLabel: EMInstanceLabel,
-      resource: NodeResource
-  ): Boolean = {
+  private def checkEMResource(emInstanceLabel: EMInstanceLabel, resource: NodeResource): Boolean = {
     val labelResource = labelResourceService.getLabelResource(emInstanceLabel)
     val requestResource = resource.getMinResource
     logger.debug(s"emInstanceLabel resource info ${labelResource}")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
-      if (labelAvailableResource < requestResource && enableRequest) {
+      if (labelAvailableResource < requestResource) {
         logger.info(
           s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]"
         )
-        // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
         val notEnoughMessage = generateECMNotEnoughMessage(
           requestResource,
           labelAvailableResource,

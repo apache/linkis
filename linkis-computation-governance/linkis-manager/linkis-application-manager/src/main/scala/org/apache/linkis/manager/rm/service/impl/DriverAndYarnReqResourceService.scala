@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
@@ -42,6 +43,43 @@ class DriverAndYarnReqResourceService(
   implicit val formats = DefaultFormats + ResourceSerializer
 
   override val resourceType: ResourceType = DriverAndYarn
+
+  override def canRequestResource(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): CanCreateECRes = {
+    val canCreateECRes = super.canRequestResource(labelContainer, resource, engineCreateRequest)
+    if (!canCreateECRes.isCanCreateEC) {
+      return canCreateECRes
+    }
+    val requestedDriverAndYarnResource =
+      resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
+    val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
+    val yarnIdentifier = new YarnResourceIdentifier(requestedYarnResource.queueName)
+    val providedYarnResource =
+      externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier)
+    val (maxCapacity, usedCapacity) =
+      (providedYarnResource.getMaxResource, providedYarnResource.getUsedResource)
+    logger.debug(
+      s"This queue: ${requestedYarnResource.queueName} used resource:$usedCapacity and max resource: $maxCapacity"
+    )
+    val queueLeftResource = maxCapacity - usedCapacity
+    logger.info(
+      s"queue: ${requestedYarnResource.queueName} left $queueLeftResource, this request requires: $requestedYarnResource"
+    )
+    if (queueLeftResource < requestedYarnResource) {
+      logger.info(
+        s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
+      )
+      val notEnoughMessage =
+        generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
+      canCreateECRes.setCanCreateEC(false);
+      canCreateECRes.setReason(notEnoughMessage._2)
+    }
+    canCreateECRes.setYarnResource(RMUtils.serializeResource(queueLeftResource))
+    canCreateECRes
+  }
 
   override def canRequest(
       labelContainer: RMLabelContainer,

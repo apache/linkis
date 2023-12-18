@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.service.engine.EngineStopService
+import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, EngineNode, InfoRMNode}
@@ -904,6 +905,33 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       logger.info(s"Finished to check unlock resource of ${ticketId}")
     }(s"Failed to UnlockTimeoutResourceRunnable $ticketId")
 
+  }
+
+  /**
+   * Can request resource
+   *
+   * @param labels
+   * @param resource
+   * @param engineCreateRequest
+   * @return
+   */
+  override def canRequestResource(
+      labels: util.List[Label[_]],
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): CanCreateECRes = {
+    val labelContainer = labelResourceService.enrichLabels(labels)
+
+    // check resource with lock
+    val requestResourceService = getRequestResourceService(resource.getResourceType)
+    if (
+        labelContainer.getEMInstanceLabel == null || labelContainer.getCombinedUserCreatorEngineTypeLabel == null
+    ) {
+      val canCreateECRes = new CanCreateECRes
+      canCreateECRes.setCanCreateEC(false)
+      canCreateECRes.setReason("EMLabel,userCreator and engineTypeLabel cannot null")
+    }
+    requestResourceService.canRequestResource(labelContainer, resource, engineCreateRequest)
   }
 
 }

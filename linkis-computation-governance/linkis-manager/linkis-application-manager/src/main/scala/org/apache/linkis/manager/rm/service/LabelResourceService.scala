@@ -28,6 +28,12 @@ abstract class LabelResourceService {
 
   def getLabelResource(label: Label[_]): NodeResource
 
+  /**
+   * This method need to add label lock invoke
+   * @param label
+   * @param nodeResource
+   * @param source
+   */
   def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit
 
   /**

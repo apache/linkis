@@ -35,10 +35,7 @@ import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequestImpl,
-  EngineConnCreationDescImpl
-}
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequestImpl, EngineConnCreationDescImpl}
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
@@ -53,15 +50,13 @@ import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
-
 import org.apache.commons.lang3.StringUtils
-
+import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeoutException, TimeUnit}
-
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
@@ -104,21 +99,10 @@ class DefaultEngineCreateService
   @Autowired
   private var engineStopService: EngineStopService = _
 
-  @Receiver
-  @throws[LinkisRetryException]
-  override def createEngine(
-      engineCreateRequest: EngineCreateRequest,
-      sender: Sender
-  ): EngineNode = {
-    val startTime = System.currentTimeMillis
-    val taskId = JobUtils.getJobIdFromStringMap(engineCreateRequest.getProperties)
-    logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
-    val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
-    val timeout =
-      if (engineCreateRequest.getTimeout <= 0) {
-        AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-      } else engineCreateRequest.getTimeout
+  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
+
+  private def buildLabel(engineCreateRequest: EngineCreateRequest): util.List[Label[_]] = {
     // 1. Check if Label is valid
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
       labelBuilderFactory.getLabels(engineCreateRequest.getLabels),
@@ -140,7 +124,10 @@ class DefaultEngineCreateService
         )
       }
     }
+    labelList
+  }
 
+  private def selectECM(engineCreateRequest: EngineCreateRequest, labelList: util.List[Label[_]]): EMNode = {
     val emLabelList = new util.ArrayList[Label[_]](labelList)
     val emInstanceLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     emInstanceLabel.setAlias(ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
@@ -165,11 +152,43 @@ class DefaultEngineCreateService
         s" There are corresponding ECM tenant labels ${engineCreateRequest.getLabels}, but none of them are healthy"
       )
     }
-    val emNode = choseNode.get.asInstanceOf[EMNode]
-    // 4. request resource
-    val (resourceTicketId, resource) =
-      requestResource(engineCreateRequest, labelFilter.choseEngineLabel(labelList), emNode, timeout)
+    choseNode.get.asInstanceOf[EMNode]
+  }
+  @Receiver
+  @throws[LinkisRetryException]
+  override def createEngine(
+      engineCreateRequest: EngineCreateRequest,
+      sender: Sender
+  ): EngineNode = {
+    val startTime = System.currentTimeMillis
+    val taskId = JobUtils.getJobIdFromStringMap(engineCreateRequest.getProperties)
+    logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
 
+    val timeout =
+      if (engineCreateRequest.getTimeout <= 0) {
+        AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+      } else engineCreateRequest.getTimeout
+
+    // 1 build label
+    val labelList = buildLabel(engineCreateRequest)
+
+    // 2 select suite ecm
+    val emNode = selectECM(engineCreateRequest, labelList)
+    // 3. generate Resource
+    val resource = generateResource(engineCreateRequest, labelFilter.choseEngineLabel(labelList), timeout)
+    // 4. request resource
+    val resourceTicketId = resourceManager.requestResource(
+      LabelUtils.distinctLabel(labelList, emNode.getLabels),
+      resource,
+      engineCreateRequest,
+      timeout
+    ) match {
+      case AvailableResource(ticketId) =>
+        ticketId
+      case NotEnoughResource(reason) =>
+        logger.warn(s"not enough resource: $reason")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
+    }
     // 5. build engineConn request
     val engineBuildRequest = EngineConnBuildRequestImpl(
       resourceTicketId,
@@ -267,21 +286,30 @@ class DefaultEngineCreateService
     engineNode
   }
 
+  def canCreateEC(engineCreateRequest: EngineCreateRequest): CanCreateECRes = {
+    // 1 build label
+    val labelList = buildLabel(engineCreateRequest)
+
+    // 2 select suite ecm
+    val emNode = selectECM(engineCreateRequest, labelList)
+    // 3. generate Resource
+    val resource = generateResource(engineCreateRequest, labelFilter.choseEngineLabel(labelList), AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong)
+
+    // 4. check resource
+    resourceManager.canRequestResource(LabelUtils.distinctLabel(labelList, emNode.getLabels), resource, engineCreateRequest)
+
+  }
+
+
   /**
    * Read the management console configuration and the parameters passed in by the user to combine
    * request resources
    * @param engineCreateRequest
    * @param labelList
-   * @param emNode
    * @param timeout
    * @return
    */
-  private def requestResource(
-      engineCreateRequest: EngineCreateRequest,
-      labelList: util.List[Label[_]],
-      emNode: EMNode,
-      timeout: Long
-  ): (String, NodeResource) = {
+  private def generateResource(engineCreateRequest: EngineCreateRequest, labelList: util.List[Label[_]], timeout: Long): NodeResource = {
     if (engineCreateRequest.getProperties == null) {
       engineCreateRequest.setProperties(new util.HashMap[String, String]())
     }
@@ -310,22 +338,9 @@ class DefaultEngineCreateService
       labelList,
       engineCreateRequest.getProperties
     )
-    val resource =
-      engineConnResourceFactoryService.createEngineResource(timeoutEngineResourceRequest)
-
-    resourceManager.requestResource(
-      LabelUtils.distinctLabel(labelList, emNode.getLabels),
-      resource,
-      engineCreateRequest,
-      timeout
-    ) match {
-      case AvailableResource(ticketId) =>
-        (ticketId, resource)
-      case NotEnoughResource(reason) =>
-        logger.warn(s"not enough resource: $reason")
-        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
-    }
+    engineConnResourceFactoryService.createEngineResource(timeoutEngineResourceRequest)
   }
+
 
   private def fromEMGetEngineLabels(emLabels: util.List[Label[_]]): util.List[Label[_]] = {
     emLabels.asScala.filter { label =>

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
@@ -52,6 +53,19 @@ abstract class ResourceManager {
       resource: NodeResource,
       engineCreateRequest: EngineCreateRequest
   ): ResultResource
+
+  /**
+   * Can request resource
+   * @param labels
+   * @param resource
+   * @param engineCreateRequest
+   * @return
+   */
+  def canRequestResource(
+      labels: util.List[Label[_]],
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): CanCreateECRes
 
   /**
    * Request resources and wait for a certain amount of time until the requested resource is met

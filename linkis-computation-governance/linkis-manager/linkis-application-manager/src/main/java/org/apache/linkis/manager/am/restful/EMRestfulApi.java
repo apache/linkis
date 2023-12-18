@@ -19,7 +19,6 @@ package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
@@ -29,40 +28,34 @@ import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.em.ECMOperateService;
 import org.apache.linkis.manager.am.service.em.EMInfoService;
-import org.apache.linkis.manager.am.util.EMUtils;
+import org.apache.linkis.manager.am.service.engine.DefaultEngineCreateService;
 import org.apache.linkis.manager.am.utils.AMUtils;
-import org.apache.linkis.manager.am.vo.ConfigVo;
+import org.apache.linkis.manager.am.vo.CanCreateECRes;
 import org.apache.linkis.manager.am.vo.EMNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLabelRel;
-import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
-import org.apache.linkis.manager.common.entity.resource.NodeResource;
-import org.apache.linkis.manager.common.entity.resource.ResourceType;
-import org.apache.linkis.manager.common.entity.resource.YarnResource;
 import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.common.protocol.OperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
+import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
-import org.apache.linkis.manager.label.LabelManagerUtils;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
-import org.apache.linkis.manager.label.entity.cluster.ClusterLabel;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
-import org.apache.linkis.manager.rm.domain.RMLabelContainer;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
-import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier;
-import org.apache.linkis.manager.rm.utils.RMUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -86,7 +79,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -120,6 +112,8 @@ public class EMRestfulApi {
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
   @Autowired private ExternalResourceService externalResourceService;
+
+  @Autowired private DefaultEngineCreateService defaultEngineCreateService;
 
   private LabelBuilderFactory stdLabelBuilderFactory =
       LabelBuilderFactoryContext.getLabelBuilderFactory();
@@ -552,136 +546,27 @@ public class EMRestfulApi {
     if (StringUtils.isBlank(creator)) {
       return Message.error("parameters:creator can't be null (请求参数【creator】不能为空)");
     }
+    UserCreatorLabel userCreatorLabel =
+        LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(UserCreatorLabel.class);
+    userCreatorLabel.setCreator(creator);
+    userCreatorLabel.setUser(username);
+    EngineTypeLabel engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engineType);
 
-    // 获取用户配置信息
-    List<ConfigVo> configlist = EMUtils.getUserConf(username, creator, engineType);
-    configlist.addAll(EMUtils.getUserConf(username, "全局设置", engineType));
-
-    // 获取租户标签数据
-    if (StringUtils.isBlank(tenant)) {
-      tenant = EMUtils.getTenant(username, creator);
+    Map<String, Object> parms = new HashMap<>();
+    parms.put(userCreatorLabel.getLabelKey(), userCreatorLabel.getStringValue());
+    parms.put(engineTypeLabel.getLabelKey(), engineTypeLabel.getStringValue());
+    if (StringUtils.isNotBlank(tenant)) {
+      parms.put("tenant", tenant);
     }
-    if (StringUtils.isBlank(clusterName)) {
-      clusterName = "default";
-    }
-
-    // 获取用户资源数据
-    String labelValuePattern =
-        MessageFormat.format("%{0}%,%{1}%,%{2}%,%", creator, username, engineType);
-    List<PersistenceLabelRel> userLabels =
-        labelManagerPersistence.getLabelByPattern(
-            labelValuePattern, RMUtils.getCombinedLabel(), 0, 0);
-    List<PersistenceResource> resources =
-        resourceManagerPersistence.getResourceByLabels(userLabels);
-    HashMap<String, HashMap<String, Object>> linkisResources =
-        RMUtils.getLinkisResources(resources, engineType);
-    Map<String, Object> yarnResource = new HashMap<>();
-    boolean checkYarnResult = true;
-    if (engineType.toLowerCase().contains("spark")) {
-      HashMap<String, HashMap<String, Object>> linkisYarnResources =
-          RMUtils.getUserYarnResources(resources);
-      if (StringUtils.isBlank(queueName)) {
-        // 如果没有传队列名称，从用户配置获取
-        queueName = EMUtils.getConfValue(configlist, AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY());
-      }
-      // 获取yarn资源数据
-      ClusterLabel clusterLabel = LabelManagerUtils.labelFactory().createLabel(ClusterLabel.class);
-      clusterLabel.setClusterName(clusterName);
-      RMLabelContainer labelContainer = new RMLabelContainer(Lists.newArrayList(clusterLabel));
-      YarnResourceIdentifier yarnIdentifier = new YarnResourceIdentifier(queueName);
-      NodeResource providedYarnResource =
-          externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
-      YarnResource maxResource = (YarnResource) providedYarnResource.getMaxResource();
-      YarnResource usedResource = (YarnResource) providedYarnResource.getUsedResource();
-
-      yarnResource = RMUtils.dealYarnData(providedYarnResource, linkisYarnResources);
-      // 获取用户配置值于对比yarn真实资源进行对比
-      long confMemory = Long.parseLong(EMUtils.getConfValue(configlist, "spark.executor.memory"));
-      int confInstances =
-          Integer.parseInt(EMUtils.getConfValue(configlist, "spark.executor.instances"));
-      int confCores = Integer.parseInt(EMUtils.getConfValue(configlist, "spark.executor.cores"));
-      long maxMemory = ByteTimeUtils.negativeByteStringAsGb(maxResource.queueMemory() + "b");
-      long usedMemory = ByteTimeUtils.negativeByteStringAsGb(usedResource.queueMemory() + "b");
-      boolean yarnMemoryResult = maxMemory - usedMemory > confMemory * confInstances;
-      boolean yarnCoresResult =
-          maxResource.queueCores() - usedResource.queueCores() > confCores * confInstances;
-      // 用户配置值于对比资源配置yarn进行对比
-      HashMap<String, Object> linkisConfLeftResource =
-          linkisYarnResources.getOrDefault("leftResource", new HashMap<>());
-      long linkisConfLeftMemory =
-          Long.parseLong(
-              EMUtils.removeUnit(
-                  linkisConfLeftResource.getOrDefault("queueMemory", "0").toString()));
-      boolean linkisConfMemoryResult = linkisConfLeftMemory > confMemory * confInstances;
-      boolean linkisConfCoresResult =
-          Integer.parseInt(linkisConfLeftResource.getOrDefault("queueCpu", 0) + "")
-              > confCores * confInstances;
-      checkYarnResult =
-          yarnCoresResult && yarnMemoryResult && linkisConfMemoryResult && linkisConfCoresResult;
-    }
-    // 获取ecm列表数据
-    List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
-    String finalTenant = tenant;
-    List<EMNodeVo> ecmResource =
-        emNodeVos.stream()
-            .filter(
-                emNodeVo -> {
-                  Stream<Label> labelStream = emNodeVo.getLabels().stream();
-                  if (StringUtils.isNotBlank(finalTenant)) {
-                    return labelStream.anyMatch(
-                        label ->
-                            KEY_TENANT.equals(label.getLabelKey())
-                                && label.getStringValue().contains(finalTenant));
-                  } else {
-                    return labelStream.noneMatch(label -> KEY_TENANT.equals(label.getLabelKey()));
-                  }
-                })
-            .filter(emNodeVo -> emNodeVo.getNodeHealthy().equals(NodeHealthy.Healthy))
-            .collect(Collectors.toList());
-    HashMap<String, Object> ecmResourceMap = RMUtils.dealEcmData(ecmResource);
-    // 数据对比（ecm内存资源的比对)，内存剩余资源 > 引擎启动配置，剩余核心>0，剩余实例>0
-    long userConfMemory = 0L;
-    int userConfCores = 0;
-    if (engineType.equals("spark")) {
-      userConfMemory = Long.parseLong(EMUtils.getConfValue(configlist, "spark.executor.memory"));
-      userConfCores = Integer.parseInt(EMUtils.getConfValue(configlist, "spark.driver.cores"));
-    } else {
-      userConfMemory =
-          Long.parseLong(
-              EMUtils.getConfValue(configlist, "wds.linkis.engineconn.java.driver.memory"));
-
-      userConfCores =
-          Integer.parseInt(
-              EMUtils.getConfValue(configlist, "wds.linkis.engineconn.java.driver.cores"));
-    }
-    HashMap<String, Object> linkisLeftResourceMap =
-        linkisResources.getOrDefault("leftResource", new HashMap<>());
-    long linkisLeftMemory =
-        Long.parseLong(
-            EMUtils.removeUnit(linkisLeftResourceMap.getOrDefault("memory", "0").toString()));
-    int linkisLeftCores = (int) linkisLeftResourceMap.getOrDefault("core", 0);
-    boolean ecmCheckResults = false;
-    for (EMNodeVo emNodeVo : ecmResource) {
-      Map ecmLeftResource = emNodeVo.getLeftResource();
-
-      long ecmLeftMemory =
-          ByteTimeUtils.negativeByteStringAsGb(
-              ecmLeftResource.getOrDefault("memory", "0").toString() + "b");
-      int ecmLeftCores = (int) ecmLeftResource.getOrDefault("cores", 0);
-      boolean ecmLeftResult = ecmLeftMemory > userConfMemory;
-      boolean linkisLeft = linkisLeftMemory > userConfMemory;
-      boolean ecmLeftResults = ecmLeftCores > userConfCores;
-      boolean linkisLeftResults = linkisLeftCores > userConfCores;
-      if (ecmLeftResult && linkisLeft && ecmLeftResults && linkisLeftResults) {
-        ecmCheckResults = true;
-      }
-    }
+    EngineCreateRequest engineCreateRequest = new EngineCreateRequest();
+    engineCreateRequest.setUser(username);
+    engineCreateRequest.setLabels(parms);
+    CanCreateECRes canCreateECRes = defaultEngineCreateService.canCreateEC(engineCreateRequest);
     return Message.ok()
         .data("tenant", tenant)
-        .data("userConf", configlist)
-        .data("userResource", linkisResources)
-        .data("ecmResource", ecmResourceMap)
-        .data("yarnResource", yarnResource)
-        .data("checkResult", checkYarnResult && ecmCheckResults);
+        .data("userResource", canCreateECRes.getLabelResource())
+        .data("ecmResource", canCreateECRes.getEcmResource())
+        .data("yarnResource", canCreateECRes.getYarnResource())
+        .data("checkResult", canCreateECRes.isCanCreateEC());
   }
 }

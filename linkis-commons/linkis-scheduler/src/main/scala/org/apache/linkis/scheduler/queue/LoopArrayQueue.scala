@@ -70,6 +70,10 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
   }
 
   override def get(index: Int): Option[SchedulerEvent] = {
+    getOrRemove(index, false)
+  }
+
+  private def getOrRemove(index: Int, removeFlag: Boolean = false): Option[SchedulerEvent] = {
     var event: SchedulerEvent = null
     eventQueue synchronized {
       val _max = max
@@ -82,6 +86,9 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
       }
       val _index = (flag + (index - realSize)) % maxCapacity
       event = eventQueue(_index).asInstanceOf[SchedulerEvent]
+      if (removeFlag) {
+        eventQueue(_index) = null
+      }
     }
     Option(event)
   }
@@ -171,7 +178,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
         readLock.wait(1000)
       }
       if (takeIndex < min) takeIndex = min
-      val t = get(takeIndex)
+      val t = getOrRemove(takeIndex, true)
       takeIndex += 1
       t
     }

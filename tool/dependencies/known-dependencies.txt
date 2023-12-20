@@ -31,6 +31,7 @@ audience-annotations-0.5.0.jar
 avatica-1.8.0.jar
 avatica-metrics-1.8.0.jar
 avro-1.7.7.jar
+avro-1.11.0.jar
 bcpkix-jdk15on-1.64.jar
 bcprov-jdk15on-1.64.jar
 bonecp-0.8.0.RELEASE.jar
@@ -477,7 +478,8 @@ simpleclient_common-0.8.1.jar
 slf4j-api-1.7.30.jar
 slice-0.38.jar
 slider-core-0.90.2-incubating.jar
-snakeyaml-1.33.jar>hadoop-mapreduce-client-core
+snakeyaml-1.26.jar
+snakeyaml-2.0.jar
 snappy-java-1.0.5.jar
 snappy-java-1.1.7.7.jar
 snappy-java-1.1.8.4.jar

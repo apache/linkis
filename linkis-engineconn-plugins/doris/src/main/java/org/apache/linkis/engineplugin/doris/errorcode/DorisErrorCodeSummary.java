@@ -21,15 +21,15 @@ import org.apache.linkis.common.errorcode.ErrorCodeUtils;
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum DorisErrorCodeSummary implements LinkisErrorCode {
-  CHECK_DORIS_PARAMETER_FAILED(23001, "Failed to check the doris parameter(doris参数检查失败)"),
-  DORIS_TEST_CONNECTION_FAILED(23002, "The doris test connection failed(doris测试连接失败)"),
+  CHECK_DORIS_PARAMETER_FAILED(28501, "Failed to check the doris parameter(doris参数检查失败)"),
+  DORIS_TEST_CONNECTION_FAILED(28502, "The doris test connection failed(doris测试连接失败)"),
 
   DORIS_STREAM_LOAD_FILE_PATH_NOT_BLANK(
-      23003, "The doris stream load file path cannot be empty(doris stream load file path不能为空)"),
+      28503, "The doris stream load file path cannot be empty(doris stream load file path不能为空)"),
   DORIS_STREAM_LOAD_FILE_PATH_NOT_FILE(
-      23004, "The doris stream load file path must be a file(doris stream load file path必须是一个文件)"),
+      28504, "The doris stream load file path must be a file(doris stream load file path必须是一个文件)"),
   DORIS_STREAM_LOAD_FILE_PATH_NOT_SUPPORTED_TYPE_FILE(
-      23005,
+      28505,
       "The doris stream load file path This file type is not currently supported(doris stream load file path目前不支持该文件类型)");
 
   private final int errorCode;

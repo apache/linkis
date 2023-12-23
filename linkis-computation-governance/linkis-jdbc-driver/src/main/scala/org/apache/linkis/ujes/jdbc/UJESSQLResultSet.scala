@@ -244,6 +244,8 @@ class UJESSQLResultSet(
         case null => throw new LinkisSQLException(LinkisSQLErrorCode.METADATA_EMPTY)
         case "char" | "varchar" | "nvarchar" | "string" => value
         case "short" => value.toShort
+        case "smallint" => value.toShort
+        case "tinyint" => value.toShort
         case "int" => value.toInt
         case "long" => value.toLong
         case "float" => value.toFloat

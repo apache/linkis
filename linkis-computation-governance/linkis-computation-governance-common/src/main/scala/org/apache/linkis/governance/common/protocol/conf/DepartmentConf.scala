@@ -19,12 +19,8 @@ package org.apache.linkis.governance.common.protocol.conf
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-trait TenantConf extends RequestProtocol
+trait DepartmentConf extends RequestProtocol
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
+case class DepartmentRequest(user: String) extends DepartmentConf
 
-case class TenantResponse(user: String, creator: String, tenant: String)
-
-case class DepartTenantRequest(creator: String, departmentId: String) extends TenantConf
-
-case class DepartTenantResponse(creator: String, departmentId: String, tenant: String)
+case class DepartmentResponse(user: String, departmentId: String, departmentName: String)

@@ -15,16 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.protocol.conf
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.governance.common.protocol.conf.DepartmentRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartmentResponse;
+import org.apache.linkis.rpc.Sender;
 
-trait TenantConf extends RequestProtocol
+public interface DepartmentService {
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
-
-case class TenantResponse(user: String, creator: String, tenant: String)
-
-case class DepartTenantRequest(creator: String, departmentId: String) extends TenantConf
-
-case class DepartTenantResponse(creator: String, departmentId: String, tenant: String)
+  DepartmentResponse getDepartmentByUser(DepartmentRequest request, Sender sender);
+}

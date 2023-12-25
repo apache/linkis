@@ -1029,3 +1029,39 @@ CREATE TABLE `linkis_cg_user_ip_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for linkis_org_user
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_org_user`;
+CREATE TABLE `linkis_org_user` (
+  `cluster_code` varchar(16) COMMENT '集群',
+  `user_type` varchar(64) COMMENT '用户类型',
+  `user_name` varchar(128) COMMENT '授权用户',
+  `org_id` varchar(16) COMMENT '部门ID',
+  `org_name` varchar(64) COMMENT '部门名字',
+  `queue_name` varchar(64) COMMENT '默认资源队列',
+  `db_name` varchar(64) COMMENT '默认操作数据库',
+  `interface_user` varchar(64) COMMENT '接口人',
+  `is_union_analyse` varchar(64) COMMENT '是否联合分析人',
+  `create_time` varchar(64) COMMENT '用户创建时间',
+  `user_itsm_no` varchar(64) COMMENT '用户创建单号',
+  PRIMARY KEY (`user_name`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_bin COMMENT ='用户部门统计INC表';
+
+-- ----------------------------
+-- Table structure for linkis_cg_tenant_department_config
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_cg_tenant_department_config`;
+CREATE TABLE `linkis_cg_tenant_department_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT  COMMENT 'ID',
+  `creator` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '应用',
+  `department` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '部门名称',
+  `department_id` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '部门ID',
+  `tenant_value` varchar(128) COLLATE utf8_bin NOT NULL  COMMENT '部门租户标签',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '更新时间',
+  `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '创建用户',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_creator` (`creator`,`department`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

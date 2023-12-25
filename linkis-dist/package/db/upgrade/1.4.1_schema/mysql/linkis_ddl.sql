@@ -32,3 +32,20 @@ ALTER TABLE linkis_ps_configuration_config_key ADD column template_required tiny
 ALTER TABLE linkis_ps_configuration_config_value modify COLUMN  config_value varchar(500);
 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01006','没有健康可用的ecm节点，可能任务量大,导致节点资源处于不健康状态，尝试kill空闲引擎释放资源','There are corresponding ECM tenant labels',0);
+
+-- ----------------------------
+-- Table structure for linkis_cg_tenant_department_config
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_cg_tenant_department_config`;
+CREATE TABLE `linkis_cg_tenant_department_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT  COMMENT 'ID',
+  `creator` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '应用',
+  `department` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '部门名称',
+  `department_id` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '部门ID',
+  `tenant_value` varchar(128) COLLATE utf8_bin NOT NULL  COMMENT '部门租户标签',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '更新时间',
+  `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '创建用户',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_creator` (`creator`,`department`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

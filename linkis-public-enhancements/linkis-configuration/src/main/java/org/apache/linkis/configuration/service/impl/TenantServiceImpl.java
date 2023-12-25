@@ -17,9 +17,12 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import org.apache.linkis.configuration.entity.DepartmentTenantVo;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.service.TenantConfigService;
 import org.apache.linkis.configuration.service.TenantService;
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantResponse;
 import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
 import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
 import org.apache.linkis.rpc.Sender;
@@ -49,6 +52,23 @@ public class TenantServiceImpl implements TenantService {
     } else {
       return new TenantResponse(
           tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
+    }
+  }
+
+  @Receiver
+  @Override
+  public DepartTenantResponse getDepartTenantData(DepartTenantRequest request, Sender sender) {
+    DepartmentTenantVo tenantVo =
+        tenantConfigService.queryDepartTenant(request.creator(), request.departmentId());
+    if (null == tenantVo) {
+      logger.warn(
+          "DepartTenantCache creator {} department {} data loading failed",
+          request.creator(),
+          request.departmentId());
+      return new DepartTenantResponse(request.creator(), request.departmentId(), "");
+    } else {
+      return new DepartTenantResponse(
+          tenantVo.getCreator(), tenantVo.getDepartmentId(), tenantVo.getTenantValue());
     }
   }
 }

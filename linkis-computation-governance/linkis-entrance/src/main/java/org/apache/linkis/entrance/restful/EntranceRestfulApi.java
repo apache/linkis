@@ -140,8 +140,19 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   public Message submit(HttpServletRequest req, @RequestBody Map<String, Object> json) {
     Message message = null;
     logger.info("Begin to get an execID");
-    json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
+
     json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
+    String executeUser = ModuleUserUtils.getOperationUser(req);
+    String token = ModuleUserUtils.getToken(req);
+    Object tempExecuteUser = json.get(TaskConstant.EXECUTE_USER);
+    // check special admin token
+    if (StringUtils.isNotBlank(token) && tempExecuteUser != null) {
+      if (Configuration.isAdminToken(token)) {
+        logger.warn("ExecuteUser variable will be replaced by system value: {} -> {}", tempExecuteUser, executeUser);
+        executeUser = String.valueOf(tempExecuteUser);
+      }
+    }
+    json.put(TaskConstant.EXECUTE_USER, executeUser);
     HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
     if (map == null) {
       map = new HashMap<>();

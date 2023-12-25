@@ -1129,6 +1129,9 @@ public class FsRestfulApi {
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }
+    if (fileSystem.getLength(fsPath) > FILESYSTEM_FILE_CHECK_SIZE.getValue()) {
+      throw WorkspaceExceptionManager.createException(80033);
+    }
     try (FileSource fileSource =
         FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
       Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];

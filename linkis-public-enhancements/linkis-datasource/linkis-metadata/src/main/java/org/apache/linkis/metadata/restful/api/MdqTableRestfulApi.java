@@ -31,6 +31,8 @@ import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,11 +83,9 @@ public class MdqTableRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
-    MdqTableBaseInfoVO tableBaseInfo;
-    if (mdqService.isExistInMdq(database, tableName, userName)) {
+    MdqTableBaseInfoVO tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
+    if (null == tableBaseInfo && mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
-    } else {
-      tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }
@@ -107,10 +107,10 @@ public class MdqTableRestfulApi {
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
     List<MdqTableFieldsInfoVO> tableFieldsInfo;
-    if (mdqService.isExistInMdq(database, tableName, userName)) {
+    tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
+    if (CollectionUtils.isEmpty(tableFieldsInfo)
+        && mdqService.isExistInMdq(database, tableName, userName)) {
       tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
-    } else {
-      tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }

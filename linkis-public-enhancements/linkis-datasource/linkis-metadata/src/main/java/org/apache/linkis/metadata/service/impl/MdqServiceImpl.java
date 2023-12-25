@@ -110,6 +110,11 @@ public class MdqServiceImpl implements MdqService {
         mdqFieldList.remove(collect.get(1));
       }
     }
+    if (!table.getPartitionTable()) {
+      mdqFieldList.stream()
+          .filter(MdqField::getPartitionField)
+          .forEach(mdqField -> mdqField.setPartitionField(false));
+    }
     mdqDao.insertFields(mdqFieldList);
     if (mdqTableBO.getImportInfo() != null) {
       MdqTableImportInfoBO importInfo = mdqTableBO.getImportInfo();

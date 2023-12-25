@@ -140,7 +140,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     }
     // check combined label resource
     if (
-        labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
+        ! labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
     ) {
       throw new RMErrorException(
         RESOURCE_LATER_ERROR.getErrorCode,

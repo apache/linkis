@@ -76,7 +76,7 @@ public class LabelCommonConfig {
       CommonVars.apply("wds.linkis.nebula.engine.version", "3.0.0");
 
   public static final CommonVars<String> DORIS_ENGINE_VERSION =
-      CommonVars.apply("wds.linkis.doris.engine.version", "1.2.6");
+      CommonVars.apply("linkis.doris.engine.version", "1.2.6");
 
   public static final CommonVars<String> PRESTO_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.presto.engine.version", "0.234");

@@ -6,22 +6,26 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <configuration status="error" monitorInterval="30">
     <appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
-        </Console>
+        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"
+                     filePattern="${env:LOG_DIRS}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
         <Send name="Send" >
             <Filters>
@@ -41,9 +45,9 @@
     </appenders>
 
     <loggers>
-      <root level="INFO">
+        <root level="INFO">
             <appender-ref ref="stderr"/>
-            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
             <appender-ref ref="Send"/>
         </root>
         <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">
@@ -87,5 +91,5 @@
             <appender-ref ref="Send"/>
         </logger>
 
-   </loggers>
+    </loggers>
 </configuration>

@@ -22,7 +22,7 @@ import org.apache.linkis.common.conf.CommonVars;
 public class DorisConfiguration {
 
   public static final CommonVars<Integer> ENGINE_CONCURRENT_LIMIT =
-      CommonVars.apply("linkis.engineconn.concurrent.limit", 100);
+      CommonVars.apply("linkis.engineconn.doris.concurrent.limit", 100);
 
   public static final CommonVars<Integer> ENGINE_DEFAULT_LIMIT =
       CommonVars.apply("linkis.doris.default.limit", 5000);

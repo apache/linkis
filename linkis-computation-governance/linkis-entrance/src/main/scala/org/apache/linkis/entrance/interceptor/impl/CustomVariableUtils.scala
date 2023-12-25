@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils, VariableUtils}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -42,7 +43,11 @@ object CustomVariableUtils extends Logging {
    *   : requestPersistTask
    * @return
    */
-  def replaceCustomVar(jobRequest: JobRequest, runType: String): String = {
+  def replaceCustomVar(
+      jobRequest: JobRequest,
+      runType: String,
+      logAppender: java.lang.StringBuilder
+  ): String = {
     val variables: util.Map[String, String] = new util.HashMap[String, String]()
     val sender =
       Sender.getSender(Configuration.CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME.getValue)
@@ -65,8 +70,36 @@ object CustomVariableUtils extends Logging {
       .getVariableMap(jobRequest.getParams)
       .asInstanceOf[util.HashMap[String, String]]
     variables.putAll(variableMap)
-    if (!variables.containsKey("user")) {
-      variables.put("user", jobRequest.getExecuteUser)
+    variables.put("user", jobRequest.getExecuteUser)
+    // User customization is not supported. If the user has customized it, add a warning log and replace it
+    if (variables.containsKey("submit_user")) {
+      logger.warn(
+        s"submitUser variable will be replaced by system value:" + jobRequest.getSubmitUser + " -> " + variables
+          .get("submit_user")
+      )
+      logAppender.append(
+        LogUtils.generateInfo(
+          "submitUser variable will be replaced by system value:" + jobRequest.getSubmitUser + " -> " + variables
+            .get("submit_user") + "\n"
+        )
+      )
+    } else {
+      variables.put("submit_user", jobRequest.getSubmitUser)
+    }
+
+    if (variables.containsKey("execute_user")) {
+      logger.warn(
+        s"execute_user variable will be replaced by system value:" + jobRequest.getExecuteUser + " -> " + variables
+          .get("execute_user")
+      )
+      logAppender.append(
+        LogUtils.generateInfo(
+          "executeUser variable will be replaced by system value:" + jobRequest.getExecuteUser + " -> " + variables
+            .get("execute_user") + "\n"
+        )
+      )
+    } else {
+      variables.put("execute_user", jobRequest.getExecuteUser)
     }
     VariableUtils.replace(jobRequest.getExecutionCode, runType, variables)
   }

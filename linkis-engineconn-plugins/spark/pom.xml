@@ -418,6 +418,12 @@
       <artifactId>kubernetes-model-core</artifactId>
       <version>${kubernetes-client.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.doris</groupId>
+      <artifactId>spark-doris-connector-3.2_2.12</artifactId>
+      <version>1.2.0</version>
+    </dependency>
   </dependencies>
 
   <build>

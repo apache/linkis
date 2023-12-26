@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<configuration status="error" monitorInterval="30">
+    <appenders>
+        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"
+                     filePattern="${env:LOG_DIRS}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <Send name="Send" >
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
+        </Send>
+
+        <Send name="SendPackage" >
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
+        </Send>
+
+        <Console name="stderr" target="SYSTEM_ERR">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
+        </Console>
+    </appenders>
+
+    <loggers>
+        <root level="INFO">
+            <appender-ref ref="stderr"/>
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Send"/>
+        </root>
+        <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">
+            <appender-ref ref="SendPackage"/>
+        </logger>
+        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
+            <appender-ref ref="stderr"/>
+        </logger>
+        <logger name="com.netflix.discovery" level="warn" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.yarn" level="warn" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.springframework" level="warn" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.linkis.server.security" level="warn" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.hive.ql.exec.mr.ExecDriver" level="fatal" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.hdfs.KeyProviderCache" level="fatal" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.spark_project.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.eclipse.jetty" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.springframework" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+
+        <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+
+    </loggers>
+</configuration>

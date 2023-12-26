@@ -25,6 +25,7 @@ object RunType extends Enumeration {
   val SCALA = Value("scala")
   val PYTHON = Value("python")
   val REPL = Value("repl")
+  val DORIS = Value("doris")
   val JAVA = Value("java")
   val PYSPARK = Value("py")
   val R = Value("r")

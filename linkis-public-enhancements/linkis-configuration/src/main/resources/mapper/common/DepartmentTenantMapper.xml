@@ -29,14 +29,15 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="bussiness_user" property="bussinessUser" jdbcType="VARCHAR"/>
+        <result column="is_valid" property="isValid" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Tenant_Column_List">
-        id,creator,department_id,department,tenant_value,create_time,update_time,bussiness_user
+        id,creator,department_id,department,tenant_value,create_time,update_time,bussiness_user,is_valid
     </sql>
 
     <sql id="Tenant_insert_Column_List">
-       creator,department_id,department,tenant_value,create_time,update_time,bussiness_user
+       creator,department_id,department,tenant_value,create_time,update_time,bussiness_user,is_valid
     </sql>
 
     <insert id="insertTenant" parameterType="org.apache.linkis.configuration.entity.DepartmentTenantVo">
@@ -47,7 +48,8 @@
         #{tenantValue},
         #{createTime},
         #{updateTime},
-        #{bussinessUser}
+        #{bussinessUser},
+        #{isValid}
         )
     </insert>
 
@@ -72,7 +74,8 @@
             <if test="tenantValue != null">tenant_value = #{tenantValue},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="bussinessUser != null">bussiness_user = #{bussinessUser}</if>
+            <if test="bussinessUser != null">bussiness_user = #{bussinessUser},</if>
+            <if test="isValid != null">is_valid = #{isValid}</if>
         </trim>
         WHERE id = #{id}
     </update>

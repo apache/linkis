@@ -48,10 +48,13 @@ public class TenantServiceImpl implements TenantService {
     if (null == tenantVo) {
       logger.warn(
           "TenantCache user {} creator {} data loading failed", request.user(), request.creator());
-      return new TenantResponse(request.user(), request.creator(), "");
+      return new TenantResponse(request.user(), request.creator(), "Y", "");
     } else {
       return new TenantResponse(
-          tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
+          tenantVo.getUser(),
+          tenantVo.getCreator(),
+          tenantVo.getIsValid(),
+          tenantVo.getTenantValue());
     }
   }
 
@@ -68,11 +71,12 @@ public class TenantServiceImpl implements TenantService {
           departTenantRequest.creator(),
           departTenantRequest.departmentId());
       return new DepartTenantResponse(
-          departTenantRequest.creator(), departTenantRequest.departmentId(), "");
+          departTenantRequest.creator(), departTenantRequest.departmentId(), "Y", "");
     } else {
       return new DepartTenantResponse(
           departmentTenantVo.getCreator(),
           departmentTenantVo.getDepartmentId(),
+          departmentTenantVo.getIsValid(),
           departmentTenantVo.getTenantValue());
     }
   }

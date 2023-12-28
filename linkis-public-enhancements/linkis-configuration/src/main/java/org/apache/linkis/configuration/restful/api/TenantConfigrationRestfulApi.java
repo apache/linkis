@@ -329,7 +329,7 @@ public class TenantConfigrationRestfulApi {
       @RequestParam(value = "tenantValue", required = false) String tenantValue,
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
-    String userName = ModuleUserUtils.getOperationUser(req, "execute queryTenantList");
+    String userName = ModuleUserUtils.getOperationUser(req, "execute queryDepartmentTenantList");
     if (!Configuration.isAdmin(userName)) {
       return Message.error("Failed to query-tenant-list,msg: only administrator users to use");
     }

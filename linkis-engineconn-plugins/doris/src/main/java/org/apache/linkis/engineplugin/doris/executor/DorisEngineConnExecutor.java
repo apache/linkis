@@ -190,7 +190,7 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
     }
     logger.info("Doris engine begins to run code:\n {}", realCode);
 
-    checkRequiredParameter(code);
+    checkRequiredParameter(realCode);
 
     String testConnectionUrl = String.format(DORIS_URL_BOOTSTRAP, dorisHost, dorisHttpPort);
 

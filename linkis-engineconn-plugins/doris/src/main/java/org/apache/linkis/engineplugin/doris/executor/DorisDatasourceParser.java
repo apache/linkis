@@ -46,9 +46,7 @@ public class DorisDatasourceParser {
             + datasourceName
             + "] datasource info ......");
     LinkisDataSourceRemoteClient dataSourceClient = new LinkisDataSourceRemoteClient();
-    DataSource dataSource = null;
-
-    dataSource =
+    DataSource dataSource =
         dataSourceClient
             .getInfoPublishedByDataSourceName(
                 GetInfoPublishedByDataSourceNameAction.builder()

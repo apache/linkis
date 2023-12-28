@@ -57,18 +57,23 @@ public class TenantServiceImpl implements TenantService {
 
   @Receiver
   @Override
-  public DepartTenantResponse getDepartTenantData(DepartTenantRequest request, Sender sender) {
-    DepartmentTenantVo tenantVo =
-        tenantConfigService.queryDepartTenant(request.creator(), request.departmentId());
-    if (null == tenantVo) {
+  public DepartTenantResponse getDepartTenantData(
+      DepartTenantRequest departTenantRequest, Sender sender) {
+    DepartmentTenantVo departmentTenantVo =
+        tenantConfigService.queryDepartTenant(
+            departTenantRequest.creator(), departTenantRequest.departmentId());
+    if (null == departmentTenantVo) {
       logger.warn(
-          "DepartTenantCache creator {} department {} data loading failed",
-          request.creator(),
-          request.departmentId());
-      return new DepartTenantResponse(request.creator(), request.departmentId(), "");
+          "DepartTenant data loading failed creator {} department {},departTenant cache will set ''  ",
+          departTenantRequest.creator(),
+          departTenantRequest.departmentId());
+      return new DepartTenantResponse(
+          departTenantRequest.creator(), departTenantRequest.departmentId(), "");
     } else {
       return new DepartTenantResponse(
-          tenantVo.getCreator(), tenantVo.getDepartmentId(), tenantVo.getTenantValue());
+          departmentTenantVo.getCreator(),
+          departmentTenantVo.getDepartmentId(),
+          departmentTenantVo.getTenantValue());
     }
   }
 }

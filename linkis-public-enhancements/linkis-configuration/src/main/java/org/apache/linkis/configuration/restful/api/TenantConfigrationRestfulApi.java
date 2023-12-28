@@ -265,6 +265,13 @@ public class TenantConfigrationRestfulApi {
     }
   }
 
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        paramType = "body",
+        dataType = "DepartmentTenantVo",
+        name = "departmentTenantVo",
+        value = "departmentTenantVo")
+  })
   @ApiOperation(
       value = "save-department-tenant",
       notes = "save department tenant",
@@ -275,8 +282,7 @@ public class TenantConfigrationRestfulApi {
       HttpServletRequest req, @RequestBody DepartmentTenantVo departmentTenantVo) {
     String userName = ModuleUserUtils.getOperationUser(req, "execute saveDepartmentTenant");
     if (!Configuration.isAdmin(userName)) {
-      return Message.error(
-          "Failed to save-department-tenant,msg: only administrators can configure");
+      return Message.error("Failed to save-department-tenant,msg: only administrator users to use");
     }
     if (StringUtils.isBlank(departmentTenantVo.getTenantValue())) {
       return Message.error("tenantValue tag can't be empty");
@@ -325,7 +331,7 @@ public class TenantConfigrationRestfulApi {
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
     String userName = ModuleUserUtils.getOperationUser(req, "execute queryTenantList");
     if (!Configuration.isAdmin(userName)) {
-      return Message.error("Failed to query-tenant-list,msg: only administrators can configure");
+      return Message.error("Failed to query-tenant-list,msg: only administrator users to use");
     }
     if (StringUtils.isBlank(departmentId)) departmentId = null;
     if (StringUtils.isBlank(creator)) creator = null;
@@ -339,11 +345,6 @@ public class TenantConfigrationRestfulApi {
   }
 
   @ApiImplicitParams({
-    @ApiImplicitParam(
-        paramType = "query",
-        dataType = "HttpServletRequest",
-        name = "req",
-        value = ""),
     @ApiImplicitParam(paramType = "query", dataType = "int", name = "id", value = "id")
   })
   @ApiOperation(
@@ -359,7 +360,7 @@ public class TenantConfigrationRestfulApi {
           ModuleUserUtils.getOperationUser(req, "execute deleteDepartmentTenant,id: " + id);
       if (!Configuration.isAdmin(userName)) {
         return Message.error(
-            "Failed to delete-department-tenant,msg: only administrators can configure");
+            "Failed to delete-department-tenant,msg: only administrator users to use");
       }
       tenantConfigService.deleteDepartmentTenant(id);
     } catch (ConfigurationException e) {
@@ -368,6 +369,11 @@ public class TenantConfigrationRestfulApi {
     return Message.ok();
   }
 
+  @ApiOperation(
+      value = "query department",
+      notes = "query department",
+      httpMethod = "GET",
+      response = Message.class)
   @RequestMapping(path = "/query-department", method = RequestMethod.GET)
   public Message queryDepartmentList() {
     return Message.ok().data("department", tenantConfigService.queryDepartmentList());

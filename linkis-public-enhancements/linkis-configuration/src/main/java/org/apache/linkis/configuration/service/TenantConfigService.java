@@ -45,7 +45,7 @@ public interface TenantConfigService {
 
   void deleteDepartmentTenant(Integer id) throws ConfigurationException;
 
-  DepartmentTenantVo queryDepartTenant(String creator, String department);
+  DepartmentTenantVo queryDepartTenant(String creator, String departmentId);
 
   Map<String, String> queryDepartmentList();
 }

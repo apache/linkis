@@ -231,8 +231,8 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public DepartmentTenantVo queryDepartTenant(String creator, String department) {
-    return departmentTenantMapper.queryTenant(creator, department);
+  public DepartmentTenantVo queryDepartTenant(String creator, String departmentId) {
+    return departmentTenantMapper.queryTenant(creator, departmentId);
   }
 
   @Override

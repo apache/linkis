@@ -23,5 +23,5 @@ import org.apache.linkis.rpc.Sender;
 
 public interface DepartmentService {
 
-  DepartmentResponse getDepartmentByUser(DepartmentRequest request, Sender sender);
+  DepartmentResponse getDepartmentByUser(DepartmentRequest departmentRequest, Sender sender);
 }

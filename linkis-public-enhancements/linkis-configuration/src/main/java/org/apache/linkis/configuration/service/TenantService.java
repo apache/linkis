@@ -27,5 +27,5 @@ public interface TenantService {
 
   TenantResponse getTenantData(TenantRequest request, Sender sender);
 
-  DepartTenantResponse getDepartTenantData(DepartTenantRequest request, Sender sender);
+  DepartTenantResponse getDepartTenantData(DepartTenantRequest departTenantRequest, Sender sender);
 }

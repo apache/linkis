@@ -40,13 +40,17 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Receiver
   @Override
-  public DepartmentResponse getDepartmentByUser(DepartmentRequest request, Sender sender) {
-    DepartmentVo department = departmentMapper.getDepartmentByUser(request.user());
-    if (null == department) {
-      logger.warn("Departmentche user {} data loading failed", request.user());
-      return new DepartmentResponse(request.user(), "", "");
+  public DepartmentResponse getDepartmentByUser(
+      DepartmentRequest departmentRequest, Sender sender) {
+    DepartmentVo departmentVo = departmentMapper.getDepartmentByUser(departmentRequest.user());
+    if (null == departmentVo) {
+      logger.warn(
+          "Department data loading failed user {},department cache will set ''  ",
+          departmentRequest.user());
+      return new DepartmentResponse(departmentRequest.user(), "", "");
     } else {
-      return new DepartmentResponse(request.user(), department.getOrgId(), department.getOrgName());
+      return new DepartmentResponse(
+          departmentRequest.user(), departmentVo.getOrgId(), departmentVo.getOrgName());
     }
   }
 }

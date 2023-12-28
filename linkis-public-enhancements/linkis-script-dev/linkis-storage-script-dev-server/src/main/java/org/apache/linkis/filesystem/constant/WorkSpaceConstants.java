@@ -23,4 +23,6 @@ public class WorkSpaceConstants {
   public static final String DEFAULT_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
   public static final String LOCAL_RETURN_TYPE = "Local";
   public static final String BLANK = "BLANK";
+  public static final String PARAMETER_NOT_BLANK = "Parameter {0} cannot be empty （参数不能为空 {0}）";
+  public static final String FILEPATH_ILLEGALITY = "File path illegality : {0} （文件路径错误 : {0}）";
 }

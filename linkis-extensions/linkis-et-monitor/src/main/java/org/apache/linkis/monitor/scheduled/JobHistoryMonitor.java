@@ -38,7 +38,6 @@ import org.apache.linkis.monitor.until.CacheUtils;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.ImsAlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
-import org.apache.linkis.monitor.utils.alert.ims.UserLabelAlertUtils;
 import org.apache.linkis.monitor.utils.log.LogUtils;
 
 import org.springframework.context.annotation.PropertySource;
@@ -122,7 +121,7 @@ public class JobHistoryMonitor {
     // userLabel
     try {
       Map<String, AlertDesc> userLabelAlerts =
-          UserLabelAlertUtils.getAlerts(Constants.USER_LABEL_MONITOR(), "");
+          MonitorAlertUtils.getAlerts(Constants.USER_LABEL_MONITOR(), null);
       if (userLabelAlerts == null || userLabelAlerts.size() == 0) {
         logger.info("[INFO] Loaded 0 alerts userLabel alert-rule from alert properties file.");
       } else {

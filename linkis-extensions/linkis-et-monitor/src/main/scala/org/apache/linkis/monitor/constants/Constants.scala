@@ -38,7 +38,7 @@ object Constants {
 
   val ALERT_PROPS_FILE_PATH = CommonVars.properties.getProperty(
     "linkis.alert.conf.file.path",
-    "linkis-et-monitor-file.properties"
+    "linkis-et-monitor-ims.properties"
   )
 
   val ALERT_IMS_URL = CommonVars.properties.getProperty(

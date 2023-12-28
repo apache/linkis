@@ -23,6 +23,8 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.fs.impl.HDFSFileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
 import org.apache.commons.io.IOUtils
@@ -90,6 +92,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
             fs.init(null)
             FileSystemUtils.createNewFile(storePath, proxyUser, true)
+            fs match {
+              case fileSystem: FileSystem =>
+                fileSystem.setPermission(storePath, "rwx------")
+              case _ =>
+            }
             outputStream = fs.write(storePath, true)
             logger.info(s"Succeed to create a new file:$storePath")
             fileCreated = true

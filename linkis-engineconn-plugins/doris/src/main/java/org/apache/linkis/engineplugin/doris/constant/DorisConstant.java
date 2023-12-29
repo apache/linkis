@@ -56,4 +56,18 @@ public class DorisConstant {
   public static final String TXN_OPERATION = "txn_operation";
 
   public static final Integer HTTP_SUCCEED = 200;
+
+  public static final String DS_JDBC_HOST = "host";
+
+  public static final String DS_JDBC_PORT = "port";
+
+  public static final String DS_JDBC_DB_NAME = "databaseName";
+
+  public static final String DS_JDBC_DB_INSTANCE = "instance";
+
+  public static final String DS_JDBC_USERNAME = "username";
+
+  public static final String DS_JDBC_PASSWORD = "password";
+
+  public static final String DS_JDBC_PASSWORD_HIDE_VALUE = "******";
 }

@@ -39,13 +39,28 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   @Autowired private AcrossClusterRuleMapper ruleMapper;
 
   @Override
-  public void deleteAcrossClusterRule(String creator, String username) throws Exception {
-    ruleMapper.deleteAcrossClusterRule(creator, username);
+  public void deleteAcrossClusterRule(Long id) throws Exception {
+    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(id, null);
+    if (beforeRule == null) {
+      throw new Exception("acrossClusterRule not exit");
+    }
+
+    ruleMapper.deleteAcrossClusterRule(id);
+  }
+
+  @Override
+  public void deleteAcrossClusterRuleByUsername(String username) throws Exception {
+    ruleMapper.deleteAcrossClusterRuleByUsername(username);
+  }
+
+  @Override
+  public void deleteAcrossClusterRuleByCrossQueue(String crossQueue) throws Exception {
+    ruleMapper.deleteAcrossClusterRuleByCrossQueue(crossQueue);
   }
 
   @Override
   public void updateAcrossClusterRule(AcrossClusterRule newRule) throws Exception {
-    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(newRule.getId());
+    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(newRule.getId(), null);
     if (beforeRule == null) {
       throw new Exception("acrossClusterRule not exit");
     }
@@ -91,13 +106,12 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   }
 
   @Override
-  public void validAcrossClusterRule(Long id, String isValid) throws Exception {
-    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(id);
-
+  public void validAcrossClusterRule(Long id, String isValid, String username) throws Exception {
+    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(id, username);
     if (beforeRule == null) {
       throw new Exception("acrossClusterRule not exit");
     }
 
-    ruleMapper.validAcrossClusterRule(isValid, id);
+    ruleMapper.validAcrossClusterRule(isValid, id, username);
   }
 }

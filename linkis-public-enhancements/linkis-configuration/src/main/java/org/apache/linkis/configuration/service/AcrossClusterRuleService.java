@@ -23,7 +23,11 @@ import java.util.Map;
 
 public interface AcrossClusterRuleService {
 
-  void deleteAcrossClusterRule(String creator, String username) throws Exception;
+  void deleteAcrossClusterRule(Long id) throws Exception;
+
+  void deleteAcrossClusterRuleByUsername(String username) throws Exception;
+
+  void deleteAcrossClusterRuleByCrossQueue(String crossQueue) throws Exception;
 
   void updateAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
@@ -33,5 +37,5 @@ public interface AcrossClusterRuleService {
       String creator, String username, String clusterName, Integer pageNow, Integer pageSize)
       throws Exception;
 
-  void validAcrossClusterRule(Long id, String isValid) throws Exception;
+  void validAcrossClusterRule(Long id, String isValid, String username) throws Exception;
 }

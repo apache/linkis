@@ -84,7 +84,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       execTask: CodeLogicalUnitExecTask
   ): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
-    var count = getEngineConnApplyAttempts()
+    var count = getEngineConnApplyAttempts() + 1
     var retryException: LinkisRetryException = null
     while (count >= 1) {
       count = count - 1
@@ -115,8 +115,13 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}"
           )
           retryException = t
+
           // add isCrossClusterRetryException flag
-          engineAskRequest.getProperties.put("isCrossClusterRetryException", "true")
+          if (retryException.getDesc.contains("origin cluster retry")) {
+            engineAskRequest.getProperties.put("originClusterRetry", "true")
+          } else {
+            engineAskRequest.getProperties.put("targetClusterRetry", "true")
+          }
 
         case t: Throwable =>
           val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)

@@ -25,10 +25,13 @@ import java.util.List;
 
 public interface AcrossClusterRuleMapper {
 
-  AcrossClusterRule getAcrossClusterRule(@Param("id") Long id);
+  AcrossClusterRule getAcrossClusterRule(@Param("id") Long id, @Param("username") String username);
 
-  void deleteAcrossClusterRule(
-      @Param("creator") String creator, @Param("username") String username);
+  void deleteAcrossClusterRule(@Param("id") Long id);
+
+  void deleteAcrossClusterRuleByUsername(@Param("username") String username);
+
+  void deleteAcrossClusterRuleByCrossQueue(@Param("crossQueue") String crossQueue);
 
   void updateAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
@@ -39,5 +42,6 @@ public interface AcrossClusterRuleMapper {
       @Param("creator") String creator,
       @Param("clusterName") String clusterName);
 
-  void validAcrossClusterRule(@Param("isValid") String isValid, @Param("id") Long id);
+  void validAcrossClusterRule(
+      @Param("isValid") String isValid, @Param("id") Long id, @Param("username") String username);
 }

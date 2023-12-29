@@ -17,11 +17,12 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
-import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
+import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
@@ -30,9 +31,6 @@ import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
 import org.apache.linkis.manager.rm.utils.{AcrossClusterRulesJudgeUtils, RMUtils}
-
-import org.apache.commons.lang3.StringUtils
-
 import org.json4s.DefaultFormats
 
 class DriverAndYarnReqResourceService(
@@ -119,65 +117,115 @@ class DriverAndYarnReqResourceService(
       val creator = labelContainer.getUserCreatorLabel.getCreator
       val properties = engineCreateRequest.getProperties
       val acrossClusterTask = properties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
-      val CPUThreshold = properties.get(AMConfiguration.ACROSS_CLUSTER_CPU_THRESHOLD)
-      val MemoryThreshold = properties.get(AMConfiguration.ACROSS_CLUSTER_MEMORY_THRESHOLD)
-      val CPUPercentageThreshold =
-        properties.get(AMConfiguration.ACROSS_CLUSTER_CPU_PERCENTAGE_THRESHOLD)
-      val MemoryPercentageThreshold =
-        properties.get(AMConfiguration.ACROSS_CLUSTER_MEMORY_PERCENTAGE_THRESHOLD)
+      val priorityCluster = properties.get(AMConfiguration.PRIORITY_CLUSTER)
 
       if (
           StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
-            .isNotBlank(CPUThreshold) && StringUtils
-            .isNotBlank(MemoryThreshold)
-          && StringUtils
-            .isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)
+            .isNotBlank(priorityCluster) && priorityCluster.equals(
+            AMConfiguration.PRIORITY_CLUSTER_TARGET
+          )
       ) {
+        val targetCPUThreshold = properties.get(AMConfiguration.TARGET_CPU_THRESHOLD)
+        val targetMemoryThreshold = properties.get(AMConfiguration.TARGET_MEMORY_THRESHOLD)
+        val targetCPUPercentageThreshold =
+          properties.get(AMConfiguration.TARGET_CPU_PERCENTAGE_THRESHOLD)
+        val targetMemoryPercentageThreshold =
+          properties.get(AMConfiguration.TARGET_MEMORY_PERCENTAGE_THRESHOLD)
 
-        val clusterYarnResource =
-          externalResourceService.getResource(
-            ResourceType.Yarn,
-            labelContainer,
-            new YarnResourceIdentifier("root")
-          )
-        val (clusterMaxCapacity, clusterUsedCapacity) =
-          (clusterYarnResource.getMaxResource, clusterYarnResource.getUsedResource)
-
-        val clusterCPUPercentageThreshold =
-          AMConfiguration.ACROSS_CLUSTER_TOTAL_CPU_PERCENTAGE_THRESHOLD
-        val clusterMemoryPercentageThreshold =
-          AMConfiguration.ACROSS_CLUSTER_TOTAL_MEMORY_PERCENTAGE_THRESHOLD
-
-        logger.info(
-          s"user: $user, creator: $creator task enter cross cluster resource judgment, " +
-            s"CPUThreshold: $CPUThreshold, MemoryThreshold: $MemoryThreshold," +
-            s"CPUPercentageThreshold: $CPUPercentageThreshold, MemoryPercentageThreshold: $MemoryPercentageThreshold" +
-            s"clusterCPUPercentageThreshold: $clusterCPUPercentageThreshold, clusterMemoryPercentageThreshold: $clusterMemoryPercentageThreshold"
-        )
-
-        try {
-          AcrossClusterRulesJudgeUtils.acrossClusterRuleCheck(
-            queueLeftResource.asInstanceOf[YarnResource],
-            usedCapacity.asInstanceOf[YarnResource],
-            maxCapacity.asInstanceOf[YarnResource],
-            clusterMaxCapacity.asInstanceOf[YarnResource],
-            clusterUsedCapacity.asInstanceOf[YarnResource],
-            CPUThreshold.toInt,
-            MemoryThreshold.toInt,
-            CPUPercentageThreshold.toDouble,
-            MemoryPercentageThreshold.toDouble,
-            clusterCPUPercentageThreshold,
-            clusterMemoryPercentageThreshold
-          )
-        } catch {
-          case ex: Exception =>
-            throw new RMWarnException(
-              RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-              ex.getMessage
+        if (
+            StringUtils
+              .isNotBlank(targetCPUThreshold) && StringUtils.isNotBlank(targetMemoryThreshold)
+            && StringUtils.isNotBlank(targetCPUPercentageThreshold) && StringUtils.isNotBlank(
+              targetMemoryPercentageThreshold
             )
-        }
+        ) {
 
-        logger.info(s"user: $user, creator: $creator task meet the threshold rule")
+          val clusterYarnResource =
+            externalResourceService.getResource(
+              ResourceType.Yarn,
+              labelContainer,
+              new YarnResourceIdentifier("root")
+            )
+          val (clusterMaxCapacity, clusterUsedCapacity) =
+            (clusterYarnResource.getMaxResource, clusterYarnResource.getUsedResource)
+
+          val clusterCPUPercentageThreshold =
+            AMConfiguration.ACROSS_CLUSTER_TOTAL_CPU_PERCENTAGE_THRESHOLD
+          val clusterMemoryPercentageThreshold =
+            AMConfiguration.ACROSS_CLUSTER_TOTAL_MEMORY_PERCENTAGE_THRESHOLD
+
+          logger.info(
+            s"user: $user, creator: $creator, priorityCluster: $priorityCluster, " +
+              s"targetCPUThreshold: $targetCPUThreshold, targetMemoryThreshold: $targetMemoryThreshold," +
+              s"targetCPUPercentageThreshold: $targetCPUPercentageThreshold, targetMemoryPercentageThreshold: $targetMemoryPercentageThreshold" +
+              s"clusterCPUPercentageThreshold: $clusterCPUPercentageThreshold, clusterMemoryPercentageThreshold: $clusterMemoryPercentageThreshold"
+          )
+
+          try {
+            AcrossClusterRulesJudgeUtils.targetClusterRuleCheck(
+              queueLeftResource.asInstanceOf[YarnResource],
+              usedCapacity.asInstanceOf[YarnResource],
+              maxCapacity.asInstanceOf[YarnResource],
+              clusterMaxCapacity.asInstanceOf[YarnResource],
+              clusterUsedCapacity.asInstanceOf[YarnResource],
+              targetCPUThreshold.toInt,
+              targetMemoryThreshold.toInt,
+              targetCPUPercentageThreshold.toDouble,
+              targetMemoryPercentageThreshold.toDouble,
+              clusterCPUPercentageThreshold,
+              clusterMemoryPercentageThreshold
+            )
+          } catch {
+            case ex: Exception =>
+              throw new RMWarnException(
+                RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+                ex.getMessage
+              )
+          }
+          logger.info(s"user: $user, creator: $creator task meet the threshold rule")
+        } else {
+          logger.info(s"user: $user, creator: $creator task skip cross cluster resource judgment")
+        }
+      } else if (
+          StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+            .isNotBlank(priorityCluster) && priorityCluster.equals(
+            AMConfiguration.PRIORITY_CLUSTER_ORIGIN
+          )
+      ) {
+        val originCPUPercentageThreshold =
+          properties.get(AMConfiguration.ORIGIN_CPU_PERCENTAGE_THRESHOLD)
+        val originMemoryPercentageThreshold =
+          properties.get(AMConfiguration.ORIGIN_MEMORY_PERCENTAGE_THRESHOLD)
+
+        if (
+            StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
+              originMemoryPercentageThreshold
+            )
+        ) {
+
+          logger.info(
+            s"user: $user, creator: $creator, priorityCluster: $priorityCluster, " +
+              s"originCPUPercentageThreshold: $originCPUPercentageThreshold, originMemoryPercentageThreshold: $originMemoryPercentageThreshold"
+          )
+
+          try {
+            AcrossClusterRulesJudgeUtils.originClusterRuleCheck(
+              usedCapacity.asInstanceOf[YarnResource],
+              maxCapacity.asInstanceOf[YarnResource],
+              originCPUPercentageThreshold.toDouble,
+              originMemoryPercentageThreshold.toDouble
+            )
+          } catch {
+            case ex: Exception =>
+              throw new RMWarnException(
+                RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+                ex.getMessage
+              )
+          }
+          logger.info(s"user: $user, creator: $creator task meet the threshold rule")
+        } else {
+          logger.info(s"user: $user, creator: $creator task skip cross cluster resource judgment")
+        }
       } else {
         logger.info(s"user: $user, creator: $creator task skip cross cluster resource judgment")
       }

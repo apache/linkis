@@ -50,6 +50,7 @@
             `linkis_ps_configuration_across_cluster_rule` acr
         WHERE
             id = #{id}
+            <if test="username != null">and username = #{username}</if>
     </select>
 
     <select id="queryAcrossClusterRuleList" resultMap="acrossClusterRuleMap">
@@ -93,7 +94,24 @@
         FROM
             `linkis_ps_configuration_across_cluster_rule`
         WHERE
-            creator = #{creator} AND username = #{username}
+            id = #{id}
+    </delete>
+
+    <delete id="deleteAcrossClusterRuleByUsername">
+        DELETE
+        FROM
+            `linkis_ps_configuration_across_cluster_rule`
+        WHERE
+            username = #{username}
+    </delete>
+
+    <delete id="deleteAcrossClusterRuleByCrossQueue">
+        DELETE
+        FROM
+            `linkis_ps_configuration_across_cluster_rule`
+        WHERE
+            rules
+        LIKE CONCAT('%',#{crossQueue},'%')
     </delete>
 
     <update id="updateAcrossClusterRule" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
@@ -124,6 +142,7 @@
             is_valid = #{isValid}
         WHERE
             id = #{id}
+            <if test="username != null">and username = #{username}</if>
     </update>
 
 

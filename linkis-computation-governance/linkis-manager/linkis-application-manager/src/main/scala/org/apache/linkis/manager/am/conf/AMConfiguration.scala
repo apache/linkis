@@ -25,17 +25,27 @@ object AMConfiguration {
 
   val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
 
-  val ACROSS_CLUSTER_QUEUE_NAME = "queueRuleName"
+  val CROSS_QUEUE = "crossQueue"
 
   val ACROSS_CLUSTER_TASK = "acrossClusterTask"
 
-  val ACROSS_CLUSTER_CPU_THRESHOLD = "CPUThreshold"
+  val PRIORITY_CLUSTER = "priorityCluster"
 
-  val ACROSS_CLUSTER_MEMORY_THRESHOLD = "MemoryThreshold"
+  val PRIORITY_CLUSTER_TARGET = "bdp"
 
-  val ACROSS_CLUSTER_CPU_PERCENTAGE_THRESHOLD = "CPUPercentageThreshold"
+  val PRIORITY_CLUSTER_ORIGIN = "bdap"
 
-  val ACROSS_CLUSTER_MEMORY_PERCENTAGE_THRESHOLD = "MemoryPercentageThreshold"
+  val TARGET_CPU_THRESHOLD = "targetCPUThreshold"
+
+  val TARGET_MEMORY_THRESHOLD = "targetMemoryThreshold"
+
+  val TARGET_CPU_PERCENTAGE_THRESHOLD = "targetCPUPercentageThreshold"
+
+  val TARGET_MEMORY_PERCENTAGE_THRESHOLD = "targetMemoryPercentageThreshold"
+
+  val ORIGIN_CPU_PERCENTAGE_THRESHOLD = "originCPUPercentageThreshold"
+
+  val ORIGIN_MEMORY_PERCENTAGE_THRESHOLD = "originMemoryPercentageThreshold"
 
   val ACROSS_CLUSTER_TOTAL_MEMORY_PERCENTAGE_THRESHOLD: Double =
     CommonVars("linkis.yarn.across.cluster.memory.threshold", 0.8).getValue

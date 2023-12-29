@@ -40,12 +40,11 @@ CREATE TABLE linkis_ps_configuration_config_key (
 	is_hidden bool NULL,
 	is_advanced bool NULL,
 	"level" int2 NULL,
-    boundary_type int2 null,
-	"treeName" varchar(20) NULL,
+    "treeName" varchar(20) NULL,
+    boundary_type     int2 NOT NULL DEFAULT 0,
 	en_description varchar(200) NULL,
 	en_name varchar(100) NULL,
 	"en_treeName" varchar(100) NULL,
-    boundary_type     int2 NOT NULL,
     template_required bool NULL,
 	CONSTRAINT linkis_configuration_config_key_pkey PRIMARY KEY (id)
 );
@@ -137,7 +136,7 @@ CREATE TABLE IF NOT EXISTS linkis_ps_configuration_key_limit_for_user (
 
 DROP  TABLE IF EXISTS linkis_ps_configutation_lm_across_cluster_rule;
 CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
-    rule_id INT PRIMARY KEY AUTOINCREMENT,
+    rule_id bigserial NOT NULL,
     cluster_name varchar(32) NOT NULL,
     creator varchar(32) NOT NULL,
     username varchar(32) NOT NULL,

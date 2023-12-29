@@ -52,6 +52,7 @@ public class PluginUtil {
     classMap.put("solr", SolrSource.class);
     classMap.put("kafka", KafkaSource.class);
     classMap.put("starrocks", StarrocksSource.class);
+    classMap.put("doris", DorisSource.class);
     return classMap;
   }
 
@@ -75,6 +76,7 @@ public class PluginUtil {
     classMap.put("solr", SolrSink.class);
     classMap.put("kafka", KafkaSink.class);
     classMap.put("starrocks", StarrocksSink.class);
+    classMap.put("doris", DorisSink.class);
     return classMap;
   }
 

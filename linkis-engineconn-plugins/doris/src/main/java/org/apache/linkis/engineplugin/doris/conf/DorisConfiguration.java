@@ -72,6 +72,12 @@ public class DorisConfiguration {
   public static final CommonVars<String> DORIS_PASSWORD =
       CommonVars.apply("linkis.ec.doris.password", "");
 
+  public static final CommonVars<String> DORIS_DATASOURCE =
+      CommonVars.apply("linkis.ec.doris.datasource", "");
+
+  public static final CommonVars<String> DORIS_DATASOURCE_SYSTEM_QUERY_PARAM =
+      CommonVars.apply("linkis.ec.doris.datasource.systemQueryParam", "");
+
   public static final CommonVars<Boolean> DORIS_RECONNECT_ENABLED =
       CommonVars.apply("linkis.ec.doris.2pc.enabled", false, "two phase commit Whether to enable");
 

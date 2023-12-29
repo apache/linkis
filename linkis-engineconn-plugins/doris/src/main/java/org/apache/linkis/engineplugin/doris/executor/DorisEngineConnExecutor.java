@@ -29,6 +29,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineplugin.doris.conf.DorisConfiguration;
 import org.apache.linkis.engineplugin.doris.conf.DorisEngineConf;
+import org.apache.linkis.engineplugin.doris.constant.DorisConstant;
 import org.apache.linkis.engineplugin.doris.errorcode.DorisErrorCodeSummary;
 import org.apache.linkis.engineplugin.doris.exception.DorisException;
 import org.apache.linkis.engineplugin.doris.exception.DorisParameterException;
@@ -109,12 +110,17 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
 
   private String dorisHost;
   private String dorisDatabase;
+
+  private String datasourceDatabase;
   private String dorisTable;
   private String dorisUsername;
   private String dorisPassword;
 
   private String dorisStreamLoadFilePath;
   private Integer dorisHttpPort;
+
+  private Integer dorisJdbcPort;
+
   private CloseableHttpClient client;
 
   public DorisEngineConnExecutor(int outputPrintLimit, int id) {
@@ -157,8 +163,6 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
           .forEach(entry -> configMap.put(entry.getKey(), String.valueOf(entry.getValue())));
     }
 
-    checkParameter();
-
     this.client =
         HttpClients.custom()
             .setRedirectStrategy(
@@ -174,6 +178,8 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public ExecuteResponse executeLine(EngineExecutionContext engineExecutorContext, String code) {
+    checkParameter(engineExecutorContext);
+
     String realCode;
     if (StringUtils.isBlank(code)) {
       throw new DorisException(
@@ -292,7 +298,6 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
     String dorisColumns = DorisConfiguration.DORIS_COLUMNS.getValue(configMap);
 
     if (StringUtils.isBlank(dorisColumns)) {
-      Integer dorisJdbcPort = DorisConfiguration.DORIS_JDBC_PORT.getValue(configMap);
       List<String> dorisCloumns =
           DorisUtils.getDorisCloumns(
               dorisHost, dorisJdbcPort, dorisUsername, dorisPassword, dorisDatabase, dorisTable);
@@ -385,24 +390,90 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
     return false;
   }
 
-  private void checkParameter() {
-    String dorisHost = DorisConfiguration.DORIS_HOST.getValue(configMap);
-    String dorisUsername = DorisConfiguration.DORIS_USER_NAME.getValue(configMap);
-    Integer dorisHttpPort = DorisConfiguration.DORIS_HTTP_PORT.getValue(configMap);
+  private void checkParameter(EngineExecutionContext engineExecutorContext) {
+    this.dorisHost = DorisConfiguration.DORIS_HOST.getValue(configMap);
+    this.dorisUsername = DorisConfiguration.DORIS_USER_NAME.getValue(configMap);
+    this.dorisHttpPort = DorisConfiguration.DORIS_HTTP_PORT.getValue(configMap);
+    this.dorisPassword = DorisConfiguration.DORIS_PASSWORD.getValue(configMap);
+    this.dorisJdbcPort = DorisConfiguration.DORIS_JDBC_PORT.getValue(configMap);
 
-    if (StringUtils.isBlank(dorisHost)
-        || StringUtils.isBlank(dorisUsername)
-        || dorisHttpPort == null) {
+    String dorisDatasourceName = DorisConfiguration.DORIS_DATASOURCE.getValue(configMap);
+
+    // Data source parameters fail to be obtained, and task running cannot be affected
+    // The datasource  param overwrites the DorisConfiguration param
+    try {
+      if (StringUtils.isNotBlank(dorisDatasourceName)) {
+        String dorisSystemQueryParam =
+            DorisConfiguration.DORIS_DATASOURCE_SYSTEM_QUERY_PARAM.getValue(configMap);
+        String execSqlUser = getExecSqlUser(engineExecutorContext);
+
+        Map<String, String> dataSourceParamMap =
+            DorisDatasourceParser.queryDatasourceInfoByName(
+                dorisDatasourceName, execSqlUser, dorisSystemQueryParam);
+
+        if (MapUtils.isNotEmpty(dataSourceParamMap)) {
+          if (dataSourceParamMap.containsKey(DS_JDBC_HOST)
+              && StringUtils.isNotBlank(dataSourceParamMap.get(DS_JDBC_HOST))) {
+            this.dorisHost = dataSourceParamMap.get(DS_JDBC_HOST);
+          }
+
+          if (dataSourceParamMap.containsKey(DS_JDBC_USERNAME)
+              && StringUtils.isNotBlank(dataSourceParamMap.get(DS_JDBC_USERNAME))) {
+            this.dorisUsername = dataSourceParamMap.get(DS_JDBC_USERNAME);
+          }
+
+          if (dataSourceParamMap.containsKey(DS_JDBC_PASSWORD)) {
+            this.dorisPassword = dataSourceParamMap.get(DS_JDBC_PASSWORD);
+          }
+
+          if (dataSourceParamMap.containsKey(DS_JDBC_PORT)
+              && StringUtils.isNotBlank(dataSourceParamMap.get(DS_JDBC_PORT))) {
+            this.dorisJdbcPort = Integer.valueOf(dataSourceParamMap.get(DS_JDBC_PORT));
+          }
+
+          if (dataSourceParamMap.containsKey(DS_JDBC_DB_NAME)
+              && StringUtils.isNotBlank(dataSourceParamMap.get(DS_JDBC_DB_NAME))) {
+            this.datasourceDatabase = dataSourceParamMap.get(DS_JDBC_DB_NAME);
+          }
+        } else {
+          logger.warn(
+              "Doris dataSource {} param is null, Skip get doris dataSource parameters",
+              dorisDatasourceName);
+        }
+      }
+    } catch (Exception e) {
+      logger.error("get doris dataSource {} param failed", dorisDatasourceName, e);
+    }
+
+    if (StringUtils.isBlank(this.dorisHost)
+        || StringUtils.isBlank(this.dorisUsername)
+        || this.dorisHttpPort == null) {
       logger.error("Doris check param failed.");
       throw new DorisParameterException(
           DorisErrorCodeSummary.CHECK_DORIS_PARAMETER_FAILED.getErrorCode(),
           DorisErrorCodeSummary.CHECK_DORIS_PARAMETER_FAILED.getErrorDesc());
     }
 
-    this.dorisHost = dorisHost;
-    this.dorisUsername = dorisUsername;
-    this.dorisHttpPort = dorisHttpPort;
-    this.dorisPassword = DorisConfiguration.DORIS_PASSWORD.getValue(configMap);
+    logger.info(
+        "Doris parameter dorisHost: {}, dorisUsername: {}, dorisPassword: {}, dorisHttpPort: {}, dorisJdbcPort: {}.",
+        this.dorisHost,
+        this.dorisUsername,
+        DorisConstant.DS_JDBC_PASSWORD_HIDE_VALUE,
+        this.dorisHttpPort,
+        this.dorisJdbcPort);
+  }
+
+  private String getExecSqlUser(EngineExecutionContext engineExecutionContext) {
+    UserCreatorLabel userCreatorLabel =
+        (UserCreatorLabel)
+            Arrays.stream(engineExecutionContext.getLabels())
+                .filter(label -> label instanceof UserCreatorLabel)
+                .findFirst()
+                .orElse(null);
+    if (userCreatorLabel != null) {
+      return userCreatorLabel.getUser();
+    }
+    return null;
   }
 
   private void checkRequiredParameter(String code) {
@@ -417,14 +488,20 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
           DorisErrorCodeSummary.DORIS_CODE_FAILED_TO_CONVERT_JSON.getErrorDesc());
     }
 
-    String dorisStreamLoadFilePath =
+    this.dorisStreamLoadFilePath =
         codeMap.getOrDefault(DorisConfiguration.DORIS_STREAM_LOAD_FILE_PATH.key(), "");
-    String dorisDatabase = codeMap.getOrDefault(DorisConfiguration.DORIS_DATABASE.key(), "");
-    String dorisTable = codeMap.getOrDefault(DorisConfiguration.DORIS_TABLE.key(), "");
+    this.dorisTable = codeMap.getOrDefault(DorisConfiguration.DORIS_TABLE.key(), "");
+    this.dorisDatabase = codeMap.getOrDefault(DorisConfiguration.DORIS_DATABASE.key(), "");
 
-    if (StringUtils.isBlank(dorisStreamLoadFilePath)
-        || StringUtils.isBlank(dorisDatabase)
-        || StringUtils.isBlank(dorisTable)) {
+    String dorisDatasourceName = DorisConfiguration.DORIS_DATASOURCE.getValue(configMap);
+    // The datasource  param overwrites the DorisConfiguration  param
+    if (StringUtils.isNotBlank(dorisDatasourceName) && StringUtils.isNotBlank(datasourceDatabase)) {
+      this.dorisDatabase = datasourceDatabase;
+    }
+
+    if (StringUtils.isBlank(this.dorisStreamLoadFilePath)
+        || StringUtils.isBlank(this.dorisDatabase)
+        || StringUtils.isBlank(this.dorisTable)) {
       logger.error(
           "Check whether `{}`, `{}`, and `{}` are included in code json",
           DorisConfiguration.DORIS_STREAM_LOAD_FILE_PATH.key(),
@@ -435,9 +512,6 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
           DorisErrorCodeSummary.DORIS_REQUIRED_PARAMETER_IS_NOT_BLANK.getErrorDesc());
     }
 
-    this.dorisStreamLoadFilePath = dorisStreamLoadFilePath;
-    this.dorisDatabase = dorisDatabase;
-    this.dorisTable = dorisTable;
     logger.info(
         "Doris parameter dorisStreamLoadFilePath: {}, dorisDatabase: {}, dorisTable: {}.",
         this.dorisStreamLoadFilePath,

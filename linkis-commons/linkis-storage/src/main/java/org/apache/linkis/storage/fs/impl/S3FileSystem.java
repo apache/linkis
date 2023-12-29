@@ -24,6 +24,7 @@ import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,10 +39,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,19 +163,29 @@ public class S3FileSystem extends FileSystem {
   @Override
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     try {
+      List<FsPath> rtn = new ArrayList();
       if (!StringUtils.isEmpty(path.getPath())) {
-        ListObjectsV2Result listObjectsV2Result = s3Client.listObjectsV2(bucket, path.getPath());
-        List<S3ObjectSummary> s3ObjectSummaries = listObjectsV2Result.getObjectSummaries();
-        if (s3ObjectSummaries != null) {
-          List<FsPath> rtn = new ArrayList();
-          String message = "";
-          for (S3ObjectSummary summary : s3ObjectSummaries) {
+        ListObjectsV2Request request = new ListObjectsV2Request();
+        request.withBucketName(bucket).withPrefix(buildPrefix(path.getPath())).withDelimiter("/");
+        ListObjectsV2Result result = s3Client.listObjectsV2(request);
+        List<S3ObjectSummary> fileSummaries = result.getObjectSummaries();
+        List<String> dirNames = result.getCommonPrefixes();
+        String message = "";
+        if (fileSummaries != null) {
+          for (S3ObjectSummary summary : fileSummaries) {
             if (isDir(summary, path.getPath()) || isInitFile(summary)) continue;
             FsPath newPath = new FsPath(buildPath(summary.getKey()));
             rtn.add(fillStorageFile(newPath, summary));
           }
-          return new FsPathListWithError(rtn, message);
         }
+        if (CollectionUtils.isNotEmpty(dirNames)) {
+          for (String dir : dirNames) {
+            FsPath dirPath = new FsPath(buildPath(dir));
+            dirPath.setIsdir(true);
+            rtn.add(dirPath);
+          }
+        }
+        return new FsPathListWithError(rtn, message);
       }
     } catch (AmazonS3Exception e) {
       throw new IOException("You have not permission to access path " + path.getPath());
@@ -189,8 +197,9 @@ public class S3FileSystem extends FileSystem {
   @Override
   public boolean exists(FsPath dest) throws IOException {
     try {
-      int size = s3Client.listObjectsV2(bucket, dest.getPath()).getObjectSummaries().size();
-      return size > 0;
+      ListObjectsV2Request request = new ListObjectsV2Request();
+      request.withBucketName(bucket).withPrefix(buildPrefix(dest.getPath())).withDelimiter("/");
+      return !s3Client.listObjectsV2(request).getObjectSummaries().isEmpty();
     } catch (AmazonS3Exception e) {
       return false;
     }
@@ -343,6 +352,18 @@ public class S3FileSystem extends FileSystem {
       return StorageUtils.S3_SCHEMA + path;
     }
     return StorageUtils.S3_SCHEMA + "/" + path;
+  }
+
+  public String buildPrefix(String path) {
+    String res = path;
+    if (path == null || "".equals(path)) return "";
+    if (path.startsWith("/")) {
+      res = path.replaceFirst("/", "");
+    }
+    if (!path.endsWith("/")) {
+      res = res + "/";
+    }
+    return res;
   }
 }
 

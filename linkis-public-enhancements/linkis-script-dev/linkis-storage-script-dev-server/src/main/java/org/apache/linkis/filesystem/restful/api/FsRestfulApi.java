@@ -1195,41 +1195,37 @@ public class FsRestfulApi {
     if (StringUtils.isEmpty(filePermission)) {
       return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, filePermission));
     }
-    if (!filePath.startsWith("file://") || !filePath.startsWith("hdfs://")) {
+    if (!filePath.startsWith("file://") && !filePath.startsWith("hdfs://")) {
       filePath = "file://" + filePath;
     }
     if (!checkIsUsersDirectory(filePath, userName, false)) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     } else {
-      List<String> pathList = new ArrayList<>();
+      FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
+      Stack<FsPath> dirsToChmod = new Stack<>();
+      dirsToChmod.push(new FsPath(filePath));
       if (isRecursion) {
-        traverseFolder(new FsPath(filePath).toFile(), pathList);
-      } else {
-        pathList.add(filePath);
+        traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
       }
-      for (String path : pathList) {
-        FsPath fsPath = new FsPath(path);
-        FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
-        fileSystem.setPermission(fsPath, filePermission);
+      while (!dirsToChmod.empty()) {
+        fileSystem.setPermission(dirsToChmod.pop(), filePermission);
       }
       return Message.ok();
     }
   }
 
-  private static List<String> traverseFolder(File folder, List<String> pathList) {
-    File[] files = folder.listFiles();
-    pathList.add(folder.getAbsolutePath());
-    if (files != null) {
-      for (File file : files) {
-        if (file.isDirectory()) {
-          // If it is a folder, recursively traverse
-          traverseFolder(file, pathList);
-        } else {
-          // If it is a file, save the output file address
-          pathList.add(file.getAbsolutePath());
-        }
+  private static void traverseFolder(
+      FsPath fsPath, FileSystem fileSystem, Stack<FsPath> dirsToChmod) throws IOException {
+    List<FsPath> list = fileSystem.list(fsPath);
+    if (list == null) {
+      return;
+    }
+    for (FsPath path : list) {
+      if (path.isdir()) {
+        traverseFolder(path, fileSystem, dirsToChmod);
+      } else {
+        dirsToChmod.push(path);
       }
     }
-    return pathList;
   }
 }

@@ -126,8 +126,8 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
 
   override def destroyConsumer(groupName: String): Unit =
     consumerGroupMap.get(groupName).foreach { tmpConsumer =>
-      Utils.tryAndWarn(tmpConsumer.shutdown())
-      Utils.tryAndWarn(consumerGroupMap.remove(groupName))
+      tmpConsumer.shutdown()
+      consumerGroupMap.remove(groupName)
       consumerListener.foreach(_.onConsumerDestroyed(tmpConsumer))
       logger.warn(s"Consumer of group ($groupName) in $schedulerName is destroyed.")
     }

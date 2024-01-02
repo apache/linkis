@@ -279,7 +279,8 @@ public class TenantConfigrationRestfulApi {
       response = Message.class)
   @RequestMapping(path = "/save-department-tenant", method = RequestMethod.POST)
   public Message saveDepartmentTenant(
-      HttpServletRequest req, @RequestBody DepartmentTenantVo departmentTenantVo) {
+      HttpServletRequest req, @RequestBody DepartmentTenantVo departmentTenantVo)
+      throws ConfigurationException {
     String userName = ModuleUserUtils.getOperationUser(req, "execute saveDepartmentTenant");
     if (!Configuration.isAdmin(userName)) {
       return Message.error("Failed to save-department-tenant,msg: only administrator users to use");

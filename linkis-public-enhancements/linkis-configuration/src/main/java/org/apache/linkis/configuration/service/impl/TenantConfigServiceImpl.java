@@ -30,6 +30,7 @@ import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -185,7 +186,11 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public void saveDepartmentTenant(DepartmentTenantVo departmentTenantVo) {
+  public void saveDepartmentTenant(DepartmentTenantVo departmentTenantVo)
+      throws ConfigurationException {
+    TenantVo tenantVo = new TenantVo();
+    BeanUtils.copyProperties(departmentTenantVo, tenantVo);
+    dataProcessing(tenantVo);
     departmentTenantVo.setUpdateTime(new Date());
     if (StringUtils.isBlank(departmentTenantVo.getId())) {
       departmentTenantVo.setCreateTime(new Date());

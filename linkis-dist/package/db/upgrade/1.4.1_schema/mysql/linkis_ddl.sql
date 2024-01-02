@@ -51,3 +51,22 @@ CREATE TABLE `linkis_cg_tenant_department_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 ALTER TABLE linkis_cg_tenant_label_config ADD column is_valid varchar(50) DEFAULT 'Y' COMMENT '是否有效'
+
+-- ----------------------------
+-- Table structure for linkis_org_user
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_org_user`;
+CREATE TABLE `linkis_org_user` (
+  `cluster_code` varchar(16) COMMENT '集群',
+  `user_type` varchar(64) COMMENT '用户类型',
+  `user_name` varchar(128) COMMENT '授权用户',
+  `org_id` varchar(16) COMMENT '部门ID',
+  `org_name` varchar(64) COMMENT '部门名字',
+  `queue_name` varchar(64) COMMENT '默认资源队列',
+  `db_name` varchar(64) COMMENT '默认操作数据库',
+  `interface_user` varchar(64) COMMENT '接口人',
+  `is_union_analyse` varchar(64) COMMENT '是否联合分析人',
+  `create_time` varchar(64) COMMENT '用户创建时间',
+  `user_itsm_no` varchar(64) COMMENT '用户创建单号',
+  PRIMARY KEY (`user_name`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_bin COMMENT ='用户部门统计INC表';

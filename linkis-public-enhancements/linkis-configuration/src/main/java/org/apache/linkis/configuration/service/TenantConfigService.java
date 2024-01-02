@@ -38,7 +38,7 @@ public interface TenantConfigService {
 
   TenantVo queryTenant(String user, String creator);
 
-  void saveDepartmentTenant(DepartmentTenantVo departmentTenantVo);
+  void saveDepartmentTenant(DepartmentTenantVo departmentTenantVo) throws ConfigurationException;
 
   Map<String, Object> queryDepartmentTenant(
       String departmentId, String creator, String tenantValue, Integer pageNow, Integer pageSize);

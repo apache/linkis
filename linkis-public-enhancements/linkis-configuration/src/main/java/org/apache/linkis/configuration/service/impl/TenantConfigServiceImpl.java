@@ -132,6 +132,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
+    // If tenant is set to invalid, skip ecm check
+    if (tenantVo.getIsValid().equals("N")) {
+      return;
+    }
     AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
     // Obtain the tenant information of the ECM list
     Map<String, Object> ecmListResult = null;

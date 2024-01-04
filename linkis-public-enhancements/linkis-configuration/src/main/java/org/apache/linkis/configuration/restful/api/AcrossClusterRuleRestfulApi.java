@@ -106,7 +106,10 @@ public class AcrossClusterRuleRestfulApi {
         ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
 
     if (!Configuration.isAdmin(operationUser)) {
-      username = operationUser;
+      if (!operationUser.equals(username)) {
+        return Message.error(
+                "Failed to query acrossClusterRule,msg: only administrators can configure");
+      }
     }
 
     if (StringUtils.isBlank(username)) username = null;

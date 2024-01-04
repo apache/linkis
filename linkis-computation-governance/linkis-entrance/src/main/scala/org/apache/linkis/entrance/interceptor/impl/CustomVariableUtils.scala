@@ -73,34 +73,23 @@ object CustomVariableUtils extends Logging {
     variables.put("user", jobRequest.getExecuteUser)
     // User customization is not supported. If the user has customized it, add a warning log and replace it
     if (variables.containsKey("submit_user")) {
-      logger.warn(
-        s"submitUser variable will be replaced by system value:" + jobRequest.getSubmitUser + " -> " + variables
-          .get("submit_user")
-      )
       logAppender.append(
         LogUtils.generateInfo(
           "submitUser variable will be replaced by system value:" + jobRequest.getSubmitUser + " -> " + variables
             .get("submit_user") + "\n"
         )
       )
-    } else {
-      variables.put("submit_user", jobRequest.getSubmitUser)
     }
-
     if (variables.containsKey("execute_user")) {
-      logger.warn(
-        s"execute_user variable will be replaced by system value:" + jobRequest.getExecuteUser + " -> " + variables
-          .get("execute_user")
-      )
       logAppender.append(
         LogUtils.generateInfo(
           "executeUser variable will be replaced by system value:" + jobRequest.getExecuteUser + " -> " + variables
             .get("execute_user") + "\n"
         )
       )
-    } else {
-      variables.put("execute_user", jobRequest.getExecuteUser)
     }
+    variables.put("execute_user", jobRequest.getExecuteUser)
+    variables.put("submit_user", jobRequest.getSubmitUser)
     VariableUtils.replace(jobRequest.getExecutionCode, runType, variables)
   }
 

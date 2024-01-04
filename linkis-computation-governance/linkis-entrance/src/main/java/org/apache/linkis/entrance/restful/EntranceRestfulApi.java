@@ -148,7 +148,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     // check special admin token
     if (StringUtils.isNotBlank(token) && tempExecuteUser != null) {
       if (Configuration.isAdminToken(token)) {
-        logger.warn("ExecuteUser variable will be replaced by system value: {} -> {}", tempExecuteUser, executeUser);
+        logger.warn(
+            "ExecuteUser variable will be replaced by system value: {} -> {}",
+            tempExecuteUser,
+            executeUser);
         executeUser = String.valueOf(tempExecuteUser);
       }
     }

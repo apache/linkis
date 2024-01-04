@@ -246,7 +246,6 @@ public class HDFSFileSystem extends FileSystem {
       return fs.append(new Path(path));
     } else {
       OutputStream out = fs.create(new Path(path), true);
-      this.setPermission(dest, this.getDefaultFilePerm());
       return out;
     }
   }

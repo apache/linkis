@@ -467,6 +467,7 @@ public class HDFSFileSystem extends FileSystem {
 
   @Override
   public long getLength(FsPath dest) throws IOException {
-    return 0;
+    FileStatus fileStatus = fs.getFileStatus(new Path(checkHDFSPath(dest.getPath())));
+    return fileStatus.getLen();
   }
 }

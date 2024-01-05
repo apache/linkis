@@ -106,9 +106,10 @@ public class AcrossClusterRuleRestfulApi {
         ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
 
     if (!Configuration.isAdmin(operationUser)) {
-      if (!operationUser.equals(username)) {
-        return Message.error(
-                "Failed to query acrossClusterRule,msg: only administrators can configure");
+      if (StringUtils.isNotBlank(username) && !operationUser.equals(username)) {
+        username = "noexist";
+      } else {
+        username = operationUser;
       }
     }
 
@@ -117,7 +118,6 @@ public class AcrossClusterRuleRestfulApi {
     if (StringUtils.isBlank(clusterName)) clusterName = null;
     if (null == pageNow) pageNow = 1;
     if (null == pageSize) pageSize = 20;
-
     Map<String, Object> resultMap = null;
     try {
       resultMap =

@@ -17,12 +17,11 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
-import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
@@ -31,6 +30,9 @@ import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
 import org.apache.linkis.manager.rm.utils.{AcrossClusterRulesJudgeUtils, RMUtils}
+
+import org.apache.commons.lang3.StringUtils
+
 import org.json4s.DefaultFormats
 
 class DriverAndYarnReqResourceService(

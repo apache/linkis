@@ -1201,17 +1201,35 @@ public class FsRestfulApi {
     if (!checkIsUsersDirectory(filePath, userName, false)) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     } else {
-      FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
-      Stack<FsPath> dirsToChmod = new Stack<>();
-      dirsToChmod.push(new FsPath(filePath));
-      if (isRecursion) {
-        traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
+      if (checkFilePermissions(filePermission)) {
+        FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
+        Stack<FsPath> dirsToChmod = new Stack<>();
+        dirsToChmod.push(new FsPath(filePath));
+        if (isRecursion) {
+          traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
+        }
+        while (!dirsToChmod.empty()) {
+          fileSystem.setPermission(dirsToChmod.pop(), filePermission);
+        }
+        return Message.ok();
+      } else {
+        return Message.error(MessageFormat.format(FILE_PERMISSION_ERROR, filePermission));
       }
-      while (!dirsToChmod.empty()) {
-        fileSystem.setPermission(dirsToChmod.pop(), filePermission);
-      }
-      return Message.ok();
     }
+  }
+
+  private static boolean checkFilePermissions(String filePermission) {
+    boolean result = false;
+    if (org.apache.commons.lang3.StringUtils.isNumeric(filePermission)) {
+      char[] ps = filePermission.toCharArray();
+      int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
+      int groupPermissions = Integer.parseInt(String.valueOf(ps[1]));
+      int othersPermissions = Integer.parseInt(String.valueOf(ps[2]));
+      if (ownerPermissions >= 4 && groupPermissions >= 4 && othersPermissions >= 4) {
+        result = true;
+      }
+    }
+    return result;
   }
 
   private static void traverseFolder(
@@ -1223,9 +1241,8 @@ public class FsRestfulApi {
     for (FsPath path : list) {
       if (path.isdir()) {
         traverseFolder(path, fileSystem, dirsToChmod);
-      } else {
-        dirsToChmod.push(path);
       }
+      dirsToChmod.push(path);
     }
   }
 }

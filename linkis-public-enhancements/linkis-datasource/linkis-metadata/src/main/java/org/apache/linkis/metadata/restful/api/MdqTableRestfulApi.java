@@ -83,9 +83,11 @@ public class MdqTableRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
-    MdqTableBaseInfoVO tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
-    if (null == tableBaseInfo && mdqService.isExistInMdq(database, tableName, userName)) {
+    MdqTableBaseInfoVO tableBaseInfo;
+    if (mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
+    } else {
+      tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }

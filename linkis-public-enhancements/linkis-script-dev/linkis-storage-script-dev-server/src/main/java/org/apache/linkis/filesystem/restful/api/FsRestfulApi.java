@@ -1223,9 +1223,7 @@ public class FsRestfulApi {
     if (org.apache.commons.lang3.StringUtils.isNumeric(filePermission)) {
       char[] ps = filePermission.toCharArray();
       int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
-      int groupPermissions = Integer.parseInt(String.valueOf(ps[1]));
-      int othersPermissions = Integer.parseInt(String.valueOf(ps[2]));
-      if (ownerPermissions >= 4 && groupPermissions >= 4 && othersPermissions >= 4) {
+      if (ownerPermissions >= 4) {
         result = true;
       }
     }

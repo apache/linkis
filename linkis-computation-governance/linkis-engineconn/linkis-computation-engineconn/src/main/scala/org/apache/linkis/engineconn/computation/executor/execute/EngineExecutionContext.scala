@@ -188,12 +188,13 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     logger.info(log)
   } else {
     var taskLog = log
+    val limitLength = ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue
     if (
         ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_ENABLED.getValue &&
-        log.length > ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue
+        log.length > limitLength
     ) {
-      taskLog =
-        s"${log.substring(0, ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue)}..."
+      taskLog = s"${log.substring(0, limitLength)}..."
+      logger.info("The log is too long and will be intercepted,log limit length : {}", limitLength)
     }
     val listenerBus = getEngineSyncListenerBus
     getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))

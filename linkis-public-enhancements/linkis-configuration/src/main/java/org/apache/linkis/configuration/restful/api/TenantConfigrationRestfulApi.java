@@ -286,19 +286,20 @@ public class TenantConfigrationRestfulApi {
       return Message.error("Failed to save-department-tenant,msg: only administrator users to use");
     }
     if (StringUtils.isBlank(departmentTenantVo.getTenantValue())) {
-      return Message.error("tenantValue tag can't be empty");
+      return Message.error("tenant can not be empty");
     }
     if (StringUtils.isBlank(departmentTenantVo.getCreator())) {
-      return Message.error("creator can't be empty");
+      return Message.error("creator can not be empty");
     }
     if (StringUtils.isBlank(departmentTenantVo.getDepartmentId())) {
-      return Message.error("departmentId tag can't be empty");
+      return Message.error("departmentId can not be empty");
     }
+    // Query whether the data exists before executing the update
     if (StringUtils.isBlank(departmentTenantVo.getId())) {
       DepartmentTenantVo departTenant =
           tenantConfigService.queryDepartTenant(
               departmentTenantVo.getCreator(), departmentTenantVo.getDepartmentId());
-      if (departTenant != null) {
+      if (null != departTenant) {
         return Message.error("department creator is exist");
       }
     }
@@ -364,17 +365,16 @@ public class TenantConfigrationRestfulApi {
   @RequestMapping(path = "/delete-department-tenant", method = RequestMethod.GET)
   public Message deleteDepartmentTenant(
       HttpServletRequest req, @RequestParam(value = "id") Integer id) {
-    try {
-      String userName =
-          ModuleUserUtils.getOperationUser(req, "execute deleteDepartmentTenant,id: " + id);
-      if (!Configuration.isAdmin(userName)) {
-        return Message.error(
-            "Failed to delete-department-tenant,msg: only administrator users to use");
-      }
-      tenantConfigService.deleteDepartmentTenant(id);
-    } catch (ConfigurationException e) {
-      return Message.error("Failed to delete-department-tenant ,msg:" + e.getMessage());
+    String userName =
+        ModuleUserUtils.getOperationUser(req, "execute deleteDepartmentTenant,id: " + id);
+    if (!Configuration.isAdmin(userName)) {
+      return Message.error(
+          "Failed to delete-department-tenant,msg: only administrator users to use");
     }
+    if (StringUtils.isBlank(id.toString())) {
+      return Message.error("id can not be empty");
+    }
+    tenantConfigService.deleteDepartmentTenant(id);
     return Message.ok();
   }
 
@@ -385,6 +385,6 @@ public class TenantConfigrationRestfulApi {
       response = Message.class)
   @RequestMapping(path = "/query-department", method = RequestMethod.GET)
   public Message queryDepartmentList() {
-    return Message.ok().data("department", tenantConfigService.queryDepartmentList());
+    return Message.ok().data("departmentList", tenantConfigService.queryDepartmentList());
   }
 }

@@ -76,7 +76,7 @@ public class WorkspaceExceptionManager {
               "The file size exceeds 30M and page viewing is currently not supported. Please download to view or view in a shared directory(文件大小超过30M，暂不支持页面查看。请下载查看或在共享目录中查看)");
           put(
               "80033",
-              "The log file exceeds 30MB and is too large and cannot be opened (日志文件超过30M，文件太大暂不支持打开查看)");
+              "The log file exceeds 30MB and is too large and cannot be opened, path : {0} (日志文件超过30M，文件太大暂不支持打开查看，文件地址：{0})");
         }
       };
 

@@ -39,7 +39,7 @@
                 <RegexFilter regex="Group.*is deprecated. Use.*instead" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <RegexFilter regex="Failed to get files with ID; using regular API.*" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <RegexFilter regex="The url to track the job.*" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+                <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Send>

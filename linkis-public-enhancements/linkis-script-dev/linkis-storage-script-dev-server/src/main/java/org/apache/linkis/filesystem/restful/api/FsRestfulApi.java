@@ -20,6 +20,7 @@ package org.apache.linkis.filesystem.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
+import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
@@ -599,7 +600,7 @@ public class FsRestfulApi {
           fileSource.addParams("nullValue", nullValue);
         }
         fileSource = fileSource.page(page, pageSize);
-      } else if (fileSystem.getLength(fsPath) > FILESYSTEM_FILE_CHECK_SIZE.getValue()) {
+      } else if (fileSystem.getLength(fsPath) > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
@@ -1130,8 +1131,8 @@ public class FsRestfulApi {
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }
-    if (fileSystem.getLength(fsPath) > FILESYSTEM_FILE_CHECK_SIZE.getValue()) {
-      throw WorkspaceExceptionManager.createException(80033);
+    if (fileSystem.getLength(fsPath) > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+      throw WorkspaceExceptionManager.createException(80033, path);
     }
     try (FileSource fileSource =
         FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
@@ -1201,6 +1202,7 @@ public class FsRestfulApi {
     if (!checkIsUsersDirectory(filePath, userName, false)) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     } else {
+      // Prohibit users from modifying their own unreadable content
       if (checkFilePermissions(filePermission)) {
         FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
         Stack<FsPath> dirsToChmod = new Stack<>();
@@ -1218,6 +1220,10 @@ public class FsRestfulApi {
     }
   }
 
+  /***
+   * @param filePermission: 700,744
+   * Prohibit users from modifying their own unreadable content
+   */
   private static boolean checkFilePermissions(String filePermission) {
     boolean result = false;
     if (org.apache.commons.lang3.StringUtils.isNumeric(filePermission)) {

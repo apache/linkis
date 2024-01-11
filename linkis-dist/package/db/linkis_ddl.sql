@@ -1009,7 +1009,7 @@ CREATE TABLE `linkis_cg_tenant_label_config` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
-  `isValid` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT 'Y',
+  `is_valid` varchar(1) COLLATE utf8_bin NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
@@ -1057,13 +1057,13 @@ DROP TABLE IF EXISTS `linkis_cg_tenant_department_config`;
 CREATE TABLE `linkis_cg_tenant_department_config` (
   `id` int(20) NOT NULL AUTO_INCREMENT  COMMENT 'ID',
   `creator` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '应用',
-  `department` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '部门名称',
-  `department_id` varchar(128) COLLATE utf8_bin NOT NULL COMMENT '部门ID',
+  `department` varchar(64) COLLATE utf8_bin NOT NULL  COMMENT '部门名称',
+  `department_id` varchar(16) COLLATE utf8_bin NOT NULL COMMENT '部门ID',
   `tenant_value` varchar(128) COLLATE utf8_bin NOT NULL  COMMENT '部门租户标签',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP  COMMENT '更新时间',
-  `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '创建用户',
-  `is_valid` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT 'Y' COMMENT '是否有效',
+  `create_by` varchar(50) COLLATE utf8_bin NOT NULL  COMMENT '创建用户',
+  `is_valid` varchar(1) COLLATE utf8_bin NOT NULL DEFAULT 'Y' COMMENT '是否有效',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_creator` (`creator`,`department`)
+  UNIQUE KEY `uniq_creator_department` (`creator`,`department`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

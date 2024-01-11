@@ -21,10 +21,11 @@ import org.apache.linkis.configuration.dao.DepartmentMapper;
 import org.apache.linkis.configuration.dao.DepartmentTenantMapper;
 import org.apache.linkis.configuration.dao.UserTenantMapper;
 import org.apache.linkis.configuration.entity.DepartmentTenantVo;
+import org.apache.linkis.configuration.entity.DepartmentVo;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
-import org.apache.linkis.configuration.util.HttpsUtil;
+import org.apache.linkis.configuration.util.ClientUtil;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
 import org.apache.commons.collections.MapUtils;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -133,19 +135,19 @@ public class TenantConfigServiceImpl implements TenantConfigService {
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
     // If tenant is set to invalid, skip ecm check
-    if (tenantVo.getIsValid().equals("N")) {
+    if (("N").equals(tenantVo.getIsValid())) {
       return;
     }
     AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
     // Obtain the tenant information of the ECM list
-    Map<String, Object> ecmListResult = null;
+    Map<String, Object> ecmList = null;
     try {
-      ecmListResult = HttpsUtil.sendHttp(null, null);
-      logger.info("Request ecm list  response  {}:", ecmListResult);
+      ecmList = ClientUtil.getEcmList();
+      logger.info("Request ecm list  response  {}:", ecmList);
     } catch (IOException e) {
-      logger.warn("failed to get ecmResource data");
+      logger.warn("failed to get ecmResource data", e);
     }
-    Map<String, List<Map<String, Object>>> data = MapUtils.getMap(ecmListResult, "data");
+    Map<String, List<Map<String, Object>>> data = MapUtils.getMap(ecmList, "data");
     List<Map<String, Object>> emNodeVoList = data.get("EMs");
     // Compare ECM list tenant labels for task
     emNodeVoList.forEach(
@@ -164,7 +166,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     // Compare the value of ecm tenant
     if (!tenantResult.get())
       throw new ConfigurationException("The ECM with the corresponding label was not found");
-    if (!tenantVo.getCreator().equals("*")) {
+    if (!("*").equals(tenantVo.getCreator())) {
       // The beginning of tenantValue needs to contain creator
       String creator = tenantVo.getCreator();
       String[] tenantArray = tenantVo.getTenantValue().split("_");
@@ -231,11 +233,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     return result;
   }
 
-  public void deleteDepartmentTenant(Integer id) throws ConfigurationException {
-    logger.info("deleteDepartmentTenant : id:{}", id);
-    if (StringUtils.isBlank(id.toString())) {
-      throw new ConfigurationException("id can't be empty ");
-    }
+  public void deleteDepartmentTenant(Integer id) {
     departmentTenantMapper.deleteTenant(id);
   }
 
@@ -245,7 +243,14 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public Map<String, String> queryDepartmentList() {
-    return departmentMapper.queryDepartmentList();
+  public List<DepartmentVo> queryDepartmentList() {
+    return new ArrayList<>(
+        departmentMapper.queryDepartmentList().stream()
+            .collect(
+                Collectors.toMap(
+                    DepartmentVo::getOrgId,
+                    department -> department,
+                    (existing, replacement) -> existing))
+            .values());
   }
 }

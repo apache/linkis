@@ -45,8 +45,8 @@ public class DepartmentTenantVo {
   @ApiModelProperty("updateTime")
   private Date updateTime;
 
-  @ApiModelProperty("bussinessUser")
-  private String bussinessUser;
+  @ApiModelProperty("createBy")
+  private String createBy;
 
   @ApiModelProperty("isValid")
   private String isValid;
@@ -99,12 +99,12 @@ public class DepartmentTenantVo {
     this.updateTime = updateTime;
   }
 
-  public String getBussinessUser() {
-    return bussinessUser;
+  public String getCreateBy() {
+    return createBy;
   }
 
-  public void setBussinessUser(String bussinessUser) {
-    this.bussinessUser = bussinessUser;
+  public void setCreateBy(String createBy) {
+    this.createBy = createBy;
   }
 
   public String getDepartment() {
@@ -146,7 +146,7 @@ public class DepartmentTenantVo {
         + ", updateTime="
         + updateTime
         + ", bussinessUser='"
-        + bussinessUser
+        + createBy
         + ", isValid="
         + isValid
         + '\''

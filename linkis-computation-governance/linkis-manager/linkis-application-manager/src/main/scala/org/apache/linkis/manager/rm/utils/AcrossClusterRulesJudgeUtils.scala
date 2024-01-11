@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.utils
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.resource.YarnResource
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.rm.exception.RMErrorCode
@@ -112,7 +113,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
       ) {
         throw new RMWarnException(
           RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-          "origin cluster retry"
+          AMConstant.ORIGIN_CLUSTER_RETRY_DES
         )
       }
     }

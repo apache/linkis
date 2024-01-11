@@ -71,13 +71,13 @@ public class AcrossClusterRuleRestfulApi {
     String isValid = (String) json.get("isValid");
 
     if (StringUtils.isBlank(isValid)) {
-      return Message.error("Failed to valid acrossClusterRule: Illegal Input Param");
+      return Message.error("Failed to valid acrossClusterRule, Illegal Input Param: isValid");
     }
 
     try {
       acrossClusterRuleService.validAcrossClusterRule(id, isValid, username);
     } catch (Exception e) {
-      log.info("valid acrossClusterRule failed：" + e.getMessage());
+      log.info("valid acrossClusterRule failed: ", e);
       return Message.error("valid acrossClusterRule failed");
     }
 
@@ -124,7 +124,7 @@ public class AcrossClusterRuleRestfulApi {
           acrossClusterRuleService.queryAcrossClusterRuleList(
               creator, username, clusterName, pageNow, pageSize);
     } catch (Exception e) {
-      log.info("query acrossClusterRule List failed：" + e.getMessage());
+      log.info("query acrossClusterRule List failed: ", e);
       return Message.error("query acrossClusterRule List failed");
     }
 
@@ -154,7 +154,7 @@ public class AcrossClusterRuleRestfulApi {
     try {
       acrossClusterRuleService.deleteAcrossClusterRule(id.longValue());
     } catch (Exception e) {
-      log.info("delete acrossClusterRule failed：" + e.getMessage());
+      log.info("delete acrossClusterRule failed: ", e);
       return Message.error("delete acrossClusterRule failed");
     }
 
@@ -180,14 +180,14 @@ public class AcrossClusterRuleRestfulApi {
     }
 
     if (StringUtils.isBlank(username)) {
-      return Message.error("Failed to delete acrossClusterRule: Illegal Input Param");
+      return Message.error("Failed to delete acrossClusterRule, Illegal Input Param: username");
     }
 
     try {
       acrossClusterRuleService.deleteAcrossClusterRuleByUsername(username);
     } catch (Exception e) {
-      log.info("delete acrossClusterRule failed：" + e.getMessage());
-      return Message.error("delete acrossClusterRule failed");
+      log.info("delete acrossClusterRule failed：", e);
+      return Message.error("delete acrossClusterRule failed, username is: " + username);
     }
 
     return Message.ok();
@@ -213,15 +213,15 @@ public class AcrossClusterRuleRestfulApi {
     }
 
     if (StringUtils.isBlank(crossQueue)) {
-      return Message.error("Failed to delete acrossClusterRule: Illegal Input Param");
+      return Message.error("Failed to delete acrossClusterRule, Illegal Input Param: " + crossQueue);
     }
 
     try {
       acrossClusterRuleService.deleteAcrossClusterRuleByCrossQueue(
           CommonUtils.concatQueue(crossQueue));
     } catch (Exception e) {
-      log.info("delete acrossClusterRule failed：" + e.getMessage());
-      return Message.error("delete acrossClusterRule failed");
+      log.info("delete acrossClusterRule failed：", e);
+      return Message.error("delete acrossClusterRule failed, crossQueue is: " + crossQueue);
     }
 
     return Message.ok();
@@ -307,7 +307,7 @@ public class AcrossClusterRuleRestfulApi {
         || StringUtils.isBlank(targetMemoryPercentageThreshold)
         || StringUtils.isBlank(originCPUPercentageThreshold)
         || StringUtils.isBlank(originMemoryPercentageThreshold)) {
-      return Message.error("Failed to add acrossClusterRule: Illegal Input Param");
+      return Message.error("Failed to add acrossClusterRule, Illegal Input Param");
     }
 
     try {
@@ -333,7 +333,7 @@ public class AcrossClusterRuleRestfulApi {
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.updateAcrossClusterRule(acrossClusterRule);
     } catch (Exception e) {
-      log.info("update acrossClusterRule failed：" + e.getMessage());
+      log.info("update acrossClusterRule failed：", e);
       return Message.error("update acrossClusterRule failed, rule already exits");
     }
     return Message.ok();
@@ -415,7 +415,7 @@ public class AcrossClusterRuleRestfulApi {
         || StringUtils.isBlank(targetMemoryPercentageThreshold)
         || StringUtils.isBlank(originCPUPercentageThreshold)
         || StringUtils.isBlank(originMemoryPercentageThreshold)) {
-      return Message.error("Failed to add acrossClusterRule: Illegal Input Param");
+      return Message.error("Failed to add acrossClusterRule, Illegal Input Param");
     }
 
     try {
@@ -441,7 +441,7 @@ public class AcrossClusterRuleRestfulApi {
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.insertAcrossClusterRule(acrossClusterRule);
     } catch (Exception e) {
-      log.info("add acrossClusterRule failed：" + e.getMessage());
+      log.info("add acrossClusterRule failed：", e);
       return Message.error("add acrossClusterRule failed, rule already exits");
     }
 

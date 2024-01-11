@@ -127,6 +127,8 @@ class DriverAndYarnReqResourceService(
             AMConfiguration.PRIORITY_CLUSTER_TARGET
           )
       ) {
+
+        // cross cluster task and bdp priority
         val targetCPUThreshold = properties.get(AMConfiguration.TARGET_CPU_THRESHOLD)
         val targetMemoryThreshold = properties.get(AMConfiguration.TARGET_MEMORY_THRESHOLD)
         val targetCPUPercentageThreshold =
@@ -142,6 +144,7 @@ class DriverAndYarnReqResourceService(
             )
         ) {
 
+          // judge total cluster resources
           val clusterYarnResource =
             externalResourceService.getResource(
               ResourceType.Yarn,
@@ -163,6 +166,7 @@ class DriverAndYarnReqResourceService(
               s"clusterCPUPercentageThreshold: $clusterCPUPercentageThreshold, clusterMemoryPercentageThreshold: $clusterMemoryPercentageThreshold"
           )
 
+          // judge bdp cluster queue resources
           try {
             AcrossClusterRulesJudgeUtils.targetClusterRuleCheck(
               queueLeftResource.asInstanceOf[YarnResource],
@@ -194,6 +198,8 @@ class DriverAndYarnReqResourceService(
             AMConfiguration.PRIORITY_CLUSTER_ORIGIN
           )
       ) {
+
+        // cross cluster task and bdap priority
         val originCPUPercentageThreshold =
           properties.get(AMConfiguration.ORIGIN_CPU_PERCENTAGE_THRESHOLD)
         val originMemoryPercentageThreshold =
@@ -210,6 +216,7 @@ class DriverAndYarnReqResourceService(
               s"originCPUPercentageThreshold: $originCPUPercentageThreshold, originMemoryPercentageThreshold: $originMemoryPercentageThreshold"
           )
 
+          // judge bdap cluster queue resources
           try {
             AcrossClusterRulesJudgeUtils.originClusterRuleCheck(
               usedCapacity.asInstanceOf[YarnResource],

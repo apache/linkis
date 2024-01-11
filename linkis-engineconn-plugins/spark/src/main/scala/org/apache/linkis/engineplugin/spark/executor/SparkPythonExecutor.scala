@@ -113,7 +113,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   override def close: Unit = {
-    logger.info("python executor ready to close")
+
+    logger.info(s"To remove pyspark executor")
+    Utils.tryAndError(
+      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
+    )
+    logger.info(s"Finished remove pyspark executor")
+
+    logger.info("To kill pyspark process")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
@@ -129,15 +136,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
         Utils.tryQuietly(process.destroy())
         process = null
-
+        logger.info("Finished kill pyspark process")
       }("process close failed")
     }
-    logger.info(s"To delete python executor")
-    Utils.tryAndError(
-      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
-    )
-    logger.info(s"Finished to kill python")
-    logger.info("python executor Finished to close")
+
+    logger.info("python executor finished to close")
   }
 
   override def getKind: Kind = PySpark()

@@ -230,9 +230,9 @@ class UDF(object):
 udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized(os.getpid())
 
-def java_watchdog_thread(sleep=10):
+def java_watchdog_thread():
     while True :
-        time.sleep(sleep)
+        time.sleep(10)
         try:
             intp.getKind()
         except Exception as e:

@@ -173,6 +173,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
   ): Unit = {
+    Utils.tryAndWarn {
+      ComputationExecutorHook.getComputationExecutorHooks.foreach { hook =>
+        hook.afterExecutorExecute(engineConnTask, executeResponse)
+      }
+    }
     val executorNumber = getSucceedNum + getFailedNum
     if (
         MAX_TASK_EXECUTE_NUM > 0 && runningTasks

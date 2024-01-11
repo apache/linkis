@@ -457,7 +457,6 @@ class HiveEngineConnExecutor(
           )
           val applicationId =
             applicationStringName + splitter + yarnJob.getID.getJtIdentifier + splitter + yarnJob.getID.getId
-          engineExecutorContext.appendStdout(s"Hive job yarn applicationId : $applicationId")
           resourceMap.put(applicationId, yarnResource)
         }
       }

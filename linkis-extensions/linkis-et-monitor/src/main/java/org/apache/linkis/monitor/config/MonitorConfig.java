@@ -54,7 +54,7 @@ public class MonitorConfig {
       CommonVars.apply("linkis.monitor.scheduled.pool.cores.num", 10);
 
   public static final CommonVars<Integer> SHELL_TIMEOUT =
-      CommonVars.apply("linkis.monitor.shell.time.out.minute", 30);
+      CommonVars.apply("linkis.monitor.shell.time.out.minute", 60);
 
   public static final CommonVars<Integer> USER_MODE_INTERFACE_TIMEOUT =
       CommonVars.apply("linkis.monitor.user.mode.time.out", 30 * 1000);

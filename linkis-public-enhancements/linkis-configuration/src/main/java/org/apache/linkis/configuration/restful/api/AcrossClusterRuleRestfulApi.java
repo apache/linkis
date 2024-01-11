@@ -106,7 +106,11 @@ public class AcrossClusterRuleRestfulApi {
         ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
 
     if (!Configuration.isAdmin(operationUser)) {
-      username = operationUser;
+      if (StringUtils.isNotBlank(username) && !operationUser.equals(username)) {
+        username = "noexist";
+      } else {
+        username = operationUser;
+      }
     }
 
     if (StringUtils.isBlank(username)) username = null;
@@ -114,7 +118,6 @@ public class AcrossClusterRuleRestfulApi {
     if (StringUtils.isBlank(clusterName)) clusterName = null;
     if (null == pageNow) pageNow = 1;
     if (null == pageSize) pageSize = 20;
-
     Map<String, Object> resultMap = null;
     try {
       resultMap =

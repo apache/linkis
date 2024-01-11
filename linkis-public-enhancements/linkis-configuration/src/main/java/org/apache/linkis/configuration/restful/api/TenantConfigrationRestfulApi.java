@@ -294,6 +294,14 @@ public class TenantConfigrationRestfulApi {
     if (StringUtils.isBlank(departmentTenantVo.getDepartmentId())) {
       return Message.error("departmentId tag can't be empty");
     }
+    if (StringUtils.isBlank(departmentTenantVo.getId())) {
+      DepartmentTenantVo departTenant =
+          tenantConfigService.queryDepartTenant(
+              departmentTenantVo.getCreator(), departmentTenantVo.getDepartmentId());
+      if (departTenant != null) {
+        return Message.error("department creator is exist");
+      }
+    }
     tenantConfigService.saveDepartmentTenant(departmentTenantVo);
     return Message.ok();
   }

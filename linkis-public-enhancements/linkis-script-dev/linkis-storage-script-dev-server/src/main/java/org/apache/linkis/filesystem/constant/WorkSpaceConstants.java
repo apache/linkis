@@ -25,4 +25,6 @@ public class WorkSpaceConstants {
   public static final String BLANK = "BLANK";
   public static final String PARAMETER_NOT_BLANK = "Parameter {0} cannot be empty （参数不能为空 {0}）";
   public static final String FILEPATH_ILLEGALITY = "File path illegality : {0} （文件路径错误 : {0}）";
+  public static final String FILE_PERMISSION_ERROR =
+      "File permissions prohibit modification of unreadable files: {0}  （文件权限禁止修改不可读: {0}）";
 }

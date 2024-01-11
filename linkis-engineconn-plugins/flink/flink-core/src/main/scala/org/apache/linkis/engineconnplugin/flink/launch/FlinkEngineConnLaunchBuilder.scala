@@ -37,11 +37,14 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConsta
   addPathToClassPath,
   CLASS_PATH_SEPARATOR
 }
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineConnMode, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.util
 
 import scala.collection.JavaConverters._
+
+import com.google.common.collect.Lists
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -135,5 +138,18 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   }
 
   override protected def ifAddHiveConfigPath: Boolean = true
+
+  override protected def getEngineConnManagerHooks(implicit
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): java.util.List[String] = if (isOnceMode) {
+    super.getEngineConnManagerHooks(engineConnBuildRequest)
+  } else {
+    Lists.newArrayList("JarUDFLoadECMHook")
+  }
+
+  def isOnceMode: Boolean = {
+    val engineConnMode = LabelUtil.getEngineConnMode(engineConnBuildRequest.labels)
+    EngineConnMode.toEngineConnMode(engineConnMode) == EngineConnMode.Once
+  }
 
 }

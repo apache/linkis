@@ -80,7 +80,7 @@ class FlinkSQLComputationExecutor(
     with FlinkExecutor {
 
   private var operation: JobOperation = _
-  private var clusterDescriptor: AbstractSessionClusterDescriptorAdapter = _
+  var clusterDescriptor: AbstractSessionClusterDescriptorAdapter = _
 
   override def init(): Unit = {
     setCodeParser(new SQLCodeParser)

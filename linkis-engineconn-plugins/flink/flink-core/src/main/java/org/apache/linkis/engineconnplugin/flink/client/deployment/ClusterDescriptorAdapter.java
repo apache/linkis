@@ -51,7 +51,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   public static final long CLIENT_REQUEST_TIMEOUT =
       FlinkEnvConfiguration.FLINK_CLIENT_REQUEST_TIMEOUT().getValue().toLong();
 
-  protected final ExecutionContext executionContext;
+  public final ExecutionContext executionContext;
   // jobId is not null only after job is submitted
   private JobID jobId;
   protected ApplicationId clusterID;

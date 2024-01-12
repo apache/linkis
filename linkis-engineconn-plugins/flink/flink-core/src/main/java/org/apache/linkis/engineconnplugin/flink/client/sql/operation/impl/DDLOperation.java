@@ -59,6 +59,9 @@ public class DDLOperation implements NonJobOperation {
       case CREATE_TABLE:
         actionMsg = "create a table";
         break;
+      case CREATE_FUNCTION:
+        actionMsg = "create a function";
+        break;
       case CREATE_DATABASE:
         actionMsg = "create a database";
         break;

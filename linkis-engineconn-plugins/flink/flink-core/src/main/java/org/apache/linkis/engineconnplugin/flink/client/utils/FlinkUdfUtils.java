@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.utils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -27,6 +28,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -57,6 +59,11 @@ public class FlinkUdfUtils {
       confData.setAccessible(true);
       Map<String, Object> map = (Map<String, Object>) confData.get(conf);
       List<String> jarList = new ArrayList<>();
+      List<String> oldList =
+          conf.getOptional(PipelineOptions.CLASSPATHS).orElseGet(Collections::emptyList);
+      if (CollectionUtils.isNotEmpty(oldList)) {
+        jarList.addAll(oldList);
+      }
       jarList.add(path);
       map.put(PipelineOptions.CLASSPATHS.key(), jarList);
     } catch (Exception e) {

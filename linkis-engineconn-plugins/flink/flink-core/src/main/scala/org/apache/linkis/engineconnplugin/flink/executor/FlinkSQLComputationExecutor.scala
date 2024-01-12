@@ -39,7 +39,6 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.InsertOperation
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
-import org.apache.linkis.engineconnplugin.flink.client.utils.FlinkUdfUtils
 import org.apache.linkis.engineconnplugin.flink.config.{
   FlinkEnvConfiguration,
   FlinkExecutionTargetType
@@ -51,7 +50,6 @@ import org.apache.linkis.engineconnplugin.flink.listener.{
 }
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType.RowsType
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
@@ -59,14 +57,11 @@ import org.apache.linkis.scheduler.executer.{
   SuccessExecuteResponse
 }
 import org.apache.linkis.storage.resultset.ResultSetFactory
-import org.apache.linkis.udf.UDFClient
 
 import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
-import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.JobStatus._
 import org.apache.flink.configuration.DeploymentOptions
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions
-import org.apache.flink.table.api.TableResult
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
 import org.apache.flink.yarn.configuration.YarnConfigOptions
 import org.apache.hadoop.yarn.util.ConverterUtils
@@ -130,9 +125,6 @@ class FlinkSQLComputationExecutor(
       engineExecutionContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    // The load flink udf failure does not affect task execution
-    Utils.tryAndWarn(loadFlinkUdf(engineExecutionContext))
-
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     val callSQL =
       if (!callOpt.isPresent)
@@ -199,91 +191,6 @@ class FlinkSQLComputationExecutor(
               }
         }
         new SuccessExecuteResponse
-    }
-  }
-
-  private def getExecSqlUser(engineExecutionContext: EngineExecutionContext): String = {
-    val userCreatorLabel = engineExecutionContext.getLabels
-      .find(_.isInstanceOf[UserCreatorLabel])
-      .get
-      .asInstanceOf[UserCreatorLabel]
-    userCreatorLabel.getUser
-  }
-
-  private def loadFlinkUdf(engineExecutionContext: EngineExecutionContext) = {
-    logger.info("Flink start load udf")
-
-    val execSqlUser = getExecSqlUser(engineExecutionContext)
-    val udfAllLoad: String =
-      engineExecutionContext.getProperties.getOrDefault("linkis.user.udf.all.load", "true").toString
-    val udfIdStr: String =
-      engineExecutionContext.getProperties.getOrDefault("linkis.user.udf.custom.ids", "").toString
-    val udfIds = udfIdStr.split(",").filter(StringUtils.isNotBlank).map(s => s.toLong)
-
-    logger.info(s"start loading UDFs, user: $execSqlUser, load all: $udfAllLoad, udfIds: ${udfIds
-      .mkString("Array(", ", ", ")")}")
-
-    val udfInfos =
-      if (udfAllLoad.toBoolean) UDFClient.getJarUdf(execSqlUser)
-      else UDFClient.getJarUdfByIds(execSqlUser, udfIds)
-
-    if (udfInfos.nonEmpty) {
-      import scala.util.control.Breaks._
-      udfInfos.foreach { udfInfo =>
-        val path: String = udfInfo.getPath
-        val registerFormat: String = udfInfo.getRegisterFormat
-
-        breakable {
-          if (StringUtils.isBlank(path) && StringUtils.isBlank(registerFormat)) {
-            logger.warn("flink udf udfInfo path or RegisterFormat cannot is empty")
-            break()
-          }
-          logger.info(
-            s"udfName:${udfInfo.getUdfName}, bml_resource_id:${udfInfo.getBmlResourceId}, bml_id:${udfInfo.getId}\n"
-          )
-
-          val udfClassName: String = FlinkUdfUtils.extractUdfClass(registerFormat)
-          if (StringUtils.isBlank(udfClassName)) {
-            logger.warn("flink udf extract Udf Class cannot is empty")
-            break()
-          }
-
-          FlinkUdfUtils.loadJar(path)
-
-          if (!FlinkUdfUtils.isFlinkUdf(ClassLoader.getSystemClassLoader(), udfClassName)) {
-            logger.warn(
-              "There is no extends UserDefinedFunction, skip loading flink udf: {} ",
-              path
-            )
-            break()
-          }
-
-          val context = clusterDescriptor.executionContext
-          val flinkUdfSql: String =
-            FlinkUdfUtils.generateFlinkUdfSql(udfInfo.getUdfName, udfClassName)
-
-          FlinkUdfUtils.addFlinkPipelineClasspaths(context.getStreamExecutionEnvironment, path)
-          val tableEnv = context.getTableEnvironment
-          logger.info("Flink execute udf sql:{}", flinkUdfSql)
-          val tableResult: TableResult = tableEnv.executeSql(flinkUdfSql)
-
-          var loadUdfLog =
-            s"udfName:${udfInfo.getUdfName}, udfJar:${path}, udfClass:${udfClassName}, Flink load udf %s ."
-          if (
-              tableResult.getResultKind != null && tableResult.getResultKind
-                .name()
-                .equalsIgnoreCase("SUCCESS")
-          ) {
-            loadUdfLog = String.format(loadUdfLog, "success")
-            logger.info(loadUdfLog)
-          } else {
-            loadUdfLog = String.format(loadUdfLog, "failed")
-            logger.error(loadUdfLog)
-          }
-          engineExecutionContext.appendStdout(loadUdfLog)
-        }
-      }
-
     }
   }
 

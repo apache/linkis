@@ -271,6 +271,9 @@ public class HBaseShellSession implements ShellSession {
       if (StringUtils.isBlank(res) && o != null) {
         res = o.toString();
       }
+      if (res.contains("ERROR: ") && res.contains("For usage try 'help")) {
+        return Result.failed(getStackTrace(new Throwable(new Exception(res))), new Exception(res));
+      }
       return Result.ok(res);
     } catch (Exception e) {
       return Result.failed(getStackTrace(e), e);

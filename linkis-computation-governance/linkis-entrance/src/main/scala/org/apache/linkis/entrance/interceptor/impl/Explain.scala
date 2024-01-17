@@ -121,7 +121,8 @@ object SQLExplain extends Explain {
       logAppender: java.lang.StringBuilder
   ): Unit = {
     val fixedCode: ArrayBuffer[String] = new ArrayBuffer[String]()
-    val tempCode = SQLCommentHelper.dealComment(executionCode)
+    val tempCode1 = SQLCommentHelper.dealComment(executionCode)
+    val tempCode = SQLCommentHelper.replaceComment(tempCode1)
     val isNoLimitAllowed = Utils.tryCatch {
       IDE_ALLOW_NO_LIMIT_REGEX.findFirstIn(executionCode).isDefined
     } { case e: Exception =>

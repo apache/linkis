@@ -36,4 +36,61 @@ object FlinkValueFormatUtil {
     case _ => null
   }
 
+  def mergeAndDeduplicate(defaultJavaOpts: String, envJavaOpts: String): String = {
+    val patternX = """-XX:([^\s]+)=([^\s]+)""".r
+    val keyValueMapX = patternX
+      .findAllMatchIn(envJavaOpts)
+      .map { matchResult =>
+        val key = matchResult.group(1)
+        val value = matchResult.group(2)
+        (key, value)
+      }
+      .toMap
+
+    val patternD = """-D([^\s]+)=([^\s]+)""".r
+    val keyValueMapD = patternD
+      .findAllMatchIn(envJavaOpts)
+      .map { matchResult =>
+        val key = matchResult.group(1)
+        val value = matchResult.group(2)
+        (key, value)
+      }
+      .toMap
+    val xloggcPattern = """-Xloggc:[^\s]+""".r
+    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(defaultJavaOpts).getOrElse("").toString
+    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(envJavaOpts).getOrElse("").toString
+    var escapedXloggcValue = ""
+    var replaceStr1 = ""
+    var replaceStr2 = ""
+    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
+      escapedXloggcValue = xloggcValueStr2.replace("\\<", "<").replace("\\>", ">")
+      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = envJavaOpts.replace(xloggcValueStr2, "")
+    }
+    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
+      escapedXloggcValue = xloggcValueStr1.replace("\\<", "<").replace("\\>", ">")
+      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = envJavaOpts
+    }
+    if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
+      replaceStr1 = defaultJavaOpts
+      replaceStr2 = envJavaOpts
+    }
+    val MergedStringX = keyValueMapX.foldLeft(replaceStr1) { (result, entry) =>
+      val (key, value) = entry
+      val oldValue = s"$key=[^\\s]+"
+      val newValue = key + "=" + value
+      result.replaceAll(oldValue, newValue)
+    }
+
+    val MergedStringD = keyValueMapD.foldLeft(MergedStringX) { (result, entry) =>
+      val (key, value) = entry
+      val oldValue = s"$key=[^\\s]+"
+      val newValue = key + "=" + value
+      result.replaceAll(oldValue, newValue)
+    }
+    val javaOpts = (MergedStringD.split("\\s+") ++ replaceStr2.split("\\s+")).distinct.mkString(" ")
+    javaOpts
+  }
+
 }

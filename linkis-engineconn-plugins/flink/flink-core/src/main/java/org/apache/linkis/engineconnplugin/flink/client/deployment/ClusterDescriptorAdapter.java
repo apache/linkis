@@ -51,7 +51,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   public static final long CLIENT_REQUEST_TIMEOUT =
       FlinkEnvConfiguration.FLINK_CLIENT_REQUEST_TIMEOUT().getValue().toLong();
 
-  protected final ExecutionContext executionContext;
+  public final ExecutionContext executionContext;
   // jobId is not null only after job is submitted
   private JobID jobId;
   protected ApplicationId clusterID;
@@ -91,6 +91,15 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
 
   /** Returns the status of the flink job. */
   public JobStatus getJobStatus() throws JobExecutionException {
+    if (jobId == null) {
+      try {
+        LOG.info("flink getJobStatus jobId is null,sleep three seconds");
+        Thread.sleep(3000);
+      } catch (InterruptedException e) {
+
+      }
+    }
+    LOG.info("flink getJobStatus jobId:{}", jobId);
     if (jobId == null) {
       throw new JobExecutionException(NO_JOB_SUBMITTED.getErrorDesc());
     }

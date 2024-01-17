@@ -596,6 +596,7 @@ snappy-java-1.1.4.jar
 snappy-java-1.1.7.7.jar
 snappy-java-1.1.8.2.jar
 snappy-java-1.1.8.4.jar
+spark-doris-connector-3.2_2.12-1.2.0.jar
 spark-redis_2.12-2.6.0.jar
 spring-aop-5.2.23.RELEASE.jar
 spring-beans-5.2.23.RELEASE.jar

@@ -74,11 +74,10 @@ public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
     assert extraParams != null;
     LOG.info("oracle connection params:{}", params.toString());
     LOG.info(
-        "oracle connection host:{},port:{},username:{},password:{},database:{}",
+        "oracle connection host:{},port:{},username:{},database:{}",
         host,
         port,
         username,
-        password,
         database);
     return new MetadataConnection<>(
         new SqlConnection(host, port, username, password, database, serviceName, extraParams));

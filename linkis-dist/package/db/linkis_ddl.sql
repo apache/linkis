@@ -46,6 +46,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`(
     `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
     `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
     `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
+    `template_required` tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must',
     PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -64,7 +65,7 @@ DROP TABLE IF EXISTS `linkis_ps_configuration_config_value`;
 CREATE TABLE `linkis_ps_configuration_config_value`(
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `config_key_id` bigint(20),
-  `config_value` varchar(200),
+  `config_value` varchar(500),
   `config_label_id`int(20),
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -85,7 +86,25 @@ CREATE TABLE `linkis_ps_configuration_category` (
   UNIQUE INDEX `uniq_label_id` (`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-
+DROP  TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
+CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_template_config_key` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `template_name` VARCHAR(200) NOT NULL COMMENT 'Configuration template name redundant storage',
+    `template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid template id recorded by the third party',
+    `key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT 'configuration value',
+    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'upper limit value',
+    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Lower limit value (reserved)',
+    `validate_range` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Verification regularity (reserved)',
+    `is_valid` VARCHAR(2) DEFAULT 'Y' COMMENT 'Is it valid? Reserved Y/N',
+    `create_by` VARCHAR(50) NOT NULL COMMENT 'Creator',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Update by',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_tid_kid` (`template_uuid`, `key_id`),
+    UNIQUE INDEX `uniq_tname_kid` (`template_uuid`, `key_id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP  TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
 CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_limit_for_user` (

@@ -24,13 +24,27 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, USER}
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.engineplugin.common.launch.process.{
+  Environment,
+  JavaProcessEngineConnLaunchBuilder
+}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{
+  variable,
+  PWD,
+  USER
+}
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{
+  addPathToClassPath,
+  CLASS_PATH_SEPARATOR
+}
+import org.apache.linkis.manager.label.entity.engine.{EngineConnMode, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.util
 
 import scala.collection.JavaConverters._
+
+import com.google.common.collect.Lists
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -82,6 +96,19 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     bmlResources
   }
 
+  override def getEnvironment(implicit
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): util.Map[String, String] = {
+    val environment = new util.HashMap[String, String]
+    addPathToClassPath(environment, variable(PWD))
+    val linkisEnvironment = super.getEnvironment
+    val linkisClassPath = linkisEnvironment.get(Environment.CLASSPATH.toString)
+    val v = environment.get(Environment.CLASSPATH.toString) + CLASS_PATH_SEPARATOR + linkisClassPath
+    environment.put(Environment.CLASSPATH.toString, v)
+    logger.info(environment.asScala.map(e => s"${e._1}->${e._2}").mkString(","))
+    environment
+  }
+
   private def contentToBmlResource(userName: String, content: String): BmlResource = {
     val contentMap = JsonUtils.jackson.readValue(content, classOf[util.Map[String, Object]])
     contentToBmlResource(userName, contentMap)
@@ -111,5 +138,18 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   }
 
   override protected def ifAddHiveConfigPath: Boolean = true
+
+  override protected def getEngineConnManagerHooks(implicit
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): java.util.List[String] = if (isOnceMode) {
+    super.getEngineConnManagerHooks(engineConnBuildRequest)
+  } else {
+    Lists.newArrayList("JarUDFLoadECMHook")
+  }
+
+  def isOnceMode: Boolean = {
+    val engineConnMode = LabelUtil.getEngineConnMode(engineConnBuildRequest.labels)
+    EngineConnMode.toEngineConnMode(engineConnMode) == EngineConnMode.Once
+  }
 
 }

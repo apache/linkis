@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.5.0-SNAPSHOT</revision>
+    <revision>1.5.0</revision>
 
     <zookeeper.version>3.5.9</zookeeper.version>
     <curator.version>4.2.0</curator.version>
@@ -132,6 +132,7 @@
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
     <nebula.version>3.0.0</nebula.version>
+    <doris.version>1.2.6</doris.version>
     <repl.version>1</repl.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>

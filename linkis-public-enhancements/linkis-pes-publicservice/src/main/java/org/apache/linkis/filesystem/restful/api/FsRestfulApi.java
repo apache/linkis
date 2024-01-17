@@ -404,7 +404,7 @@ public class FsRestfulApi {
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
-        // 兼容parquet和orc,跳过.crc文件
+        // parquet and orc compatible, skipping.crc files
         if (children.getPath().endsWith(".crc")) {
           continue;
         }

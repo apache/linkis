@@ -17,16 +17,25 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.FlinkKubernetesOperatorConfig;
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 
+import org.apache.flink.api.common.JobID;
+import org.apache.flink.api.common.JobStatus;
+
+import java.io.Closeable;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class FlinkShims {
+public abstract class FlinkShims implements Closeable {
 
   private static FlinkShims flinkShims;
 
   protected String flinkVersion;
+
+  private JobID jobId;
+
+  private JobStatus jobStatus;
 
   public FlinkShims(String flinkVersion) {
     this.flinkVersion = flinkVersion;
@@ -78,4 +87,20 @@ public abstract class FlinkShims {
 
   public abstract CompletableFuture<String> stopWithSavepoint(
       Object clusterClient, Object jobId, boolean advanceToEndOfEventTime, String savepoint);
+
+  public abstract void deployKubernetesOperator(
+      String[] programArguments, String applicationClassName, FlinkKubernetesOperatorConfig config);
+
+  public JobID getJobId() {
+    return jobId;
+  }
+
+  public JobStatus getJobStatus() {
+    return jobStatus;
+  }
+
+  public void startFlinkKubernetesOperatorWatcher() {}
+
+  @Override
+  public void close() {}
 }

@@ -27,6 +27,8 @@ import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
+import org.apache.linkis.storage.exception.StorageErrorCode;
+import org.apache.linkis.storage.exception.StorageReadException;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
@@ -50,13 +52,19 @@ public class ResultSetReaderFactory {
       try {
         resultSetReader = new ParquetResultSetReader<>(resultSet, inputStream, fsPath);
       } catch (IOException e) {
-        throw new RuntimeException("Failed to read parquet", e);
+        throw new StorageReadException(
+            StorageErrorCode.READ_PARQUET_FAILED.getCode(),
+            StorageErrorCode.READ_PARQUET_FAILED.getMessage(),
+            e);
       }
     } else if (fsPath.getPath().endsWith(LinkisStorageConf.ORC_FILE_SUFFIX)) {
       try {
         resultSetReader = new OrcResultSetReader<>(resultSet, inputStream, fsPath);
       } catch (IOException e) {
-        throw new RuntimeException("Failed to read parquet", e);
+        throw new StorageReadException(
+            StorageErrorCode.READ_ORC_FAILED.getCode(),
+            StorageErrorCode.READ_ORC_FAILED.getMessage(),
+            e);
       }
     }
     return resultSetReader;

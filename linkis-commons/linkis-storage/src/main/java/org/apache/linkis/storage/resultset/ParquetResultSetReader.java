@@ -98,17 +98,17 @@ public class ParquetResultSetReader<K extends MetaData, V extends Record>
 
   @Override
   public int skip(int recordNum) throws IOException {
-    return 0;
+    throw new UnsupportedOperationException("Storeage Unsupported type: skip");
   }
 
   @Override
   public long getPosition() throws IOException {
-    return 0;
+    throw new UnsupportedOperationException("Storeage Unsupported type: getPosition");
   }
 
   @Override
   public long available() throws IOException {
-    return 0;
+    throw new UnsupportedOperationException("Storeage Unsupported type: available");
   }
 
   @Override

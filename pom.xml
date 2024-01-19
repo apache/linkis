@@ -121,8 +121,6 @@
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
-    <storage.parquet.scope>provided</storage.parquet.scope>
-    <storage.orc.scope>provided</storage.orc.scope>
 
     <flink.version>1.16.2</flink.version>
     <libfb303.version>0.9.3</libfb303.version>
@@ -1946,20 +1944,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <!-- storage  -->
-    <profile>
-      <id>storage-parquet</id>
-      <properties>
-        <storage.parquet.scope>compile</storage.parquet.scope>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>storage-orc</id>
-      <properties>
-        <storage.orc.scope>compile</storage.orc.scope>
-      </properties>
     </profile>
   </profiles>
 </project>

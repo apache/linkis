@@ -104,13 +104,11 @@
       <groupId>org.apache.parquet</groupId>
       <artifactId>parquet-avro</artifactId>
       <version>${parquet-avro.version}</version>
-      <scope>${storage.parquet.scope}</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
       <version>${hadoop.version}</version>
-      <scope>${storage.parquet.scope}</scope>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -136,7 +134,6 @@
       <artifactId>orc-core</artifactId>
       <version>${orc-core.version}</version>
       <classifier>nohive</classifier>
-      <scope>${storage.orc.scope}</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hive</groupId>

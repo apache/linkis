@@ -101,7 +101,16 @@ public class OrcResultSetReader<K extends MetaData, V extends Record>
 
   @Override
   public int skip(int recordNum) throws IOException {
-    throw new UnsupportedOperationException("Storeage Unsupported type: skip");
+    if (recordNum < 0) return -1;
+
+    for (int i = recordNum; i > 0; i--) {
+      try {
+        hasNext();
+      } catch (Throwable t) {
+        return recordNum - i;
+      }
+    }
+    return recordNum;
   }
 
   @Override

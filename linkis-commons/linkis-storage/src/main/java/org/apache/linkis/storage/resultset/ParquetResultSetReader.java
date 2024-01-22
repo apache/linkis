@@ -98,7 +98,16 @@ public class ParquetResultSetReader<K extends MetaData, V extends Record>
 
   @Override
   public int skip(int recordNum) throws IOException {
-    throw new UnsupportedOperationException("Storeage Unsupported type: skip");
+    if (recordNum < 0) return -1;
+
+    for (int i = recordNum; i > 0; i--) {
+      try {
+        this.record = parquetReader.read();
+      } catch (Throwable t) {
+        return recordNum - i;
+      }
+    }
+    return recordNum;
   }
 
   @Override

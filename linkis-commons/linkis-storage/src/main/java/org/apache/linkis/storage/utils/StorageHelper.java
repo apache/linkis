@@ -80,7 +80,8 @@ public class StorageHelper {
           resultSetFactory.getResultSetByType(ResultSetFactory.TABLE_TYPE);
       Fs fs = FSFactory.getFs(resPath);
       fs.init(null);
-      resultSetReader = ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath));
+      resultSetReader =
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath), resPath);
       TableMetaData metaData = (TableMetaData) resultSetReader.getMetaData();
       Arrays.stream(metaData.getColumns()).forEach(column -> logger.info(column.toString()));
       int num = 0;
@@ -116,7 +117,7 @@ public class StorageHelper {
       fs.init(null);
 
       ResultSetReader reader =
-          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath));
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath), resPath);
       MetaData rmetaData = reader.getMetaData();
       Arrays.stream(((TableMetaData) rmetaData).getColumns())
           .forEach(column -> logger.info(column.toString()));

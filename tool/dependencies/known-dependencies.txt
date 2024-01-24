@@ -34,6 +34,8 @@ automaton-1.11-8.jar
 avatica-1.11.0.jar
 avro-1.7.7.jar
 avro-1.8.2.jar
+avro-1.10.1.jar
+avro-1.10.2.jar
 aws-java-sdk-core-1.11.792.jar
 aws-java-sdk-kms-1.11.792.jar
 aws-java-sdk-s3-1.11.792.jar
@@ -118,6 +120,7 @@ expiringmap-0.5.6.jar
 failsafe-2.4.0.jar
 failureaccess-1.0.1.jar
 fastutil-6.5.6.jar
+fastutil-7.0.13.jar
 feign-core-10.12.jar
 feign-form-3.8.0.jar
 feign-form-spring-3.8.0.jar
@@ -506,6 +509,7 @@ opentracing-api-0.33.0.jar
 opentracing-noop-0.33.0.jar
 opentracing-util-0.33.0.jar
 orc-core-1.5.8.jar
+orc-core-1.5.8-nohive.jar
 orc-shims-1.5.8.jar
 org.jacoco.agent-0.8.5-runtime.jar
 osgi-resource-locator-1.0.1.jar
@@ -514,6 +518,19 @@ pagehelper-5.3.1.jar
 paranamer-2.3.jar
 paranamer-2.8.jar
 parquet-hadoop-bundle-1.10.0.jar
+parquet-avro-1.10.0.jar
+parquet-column-1.10.0.jar
+parquet-column-1.12.2.jar
+parquet-common-1.10.0.jar
+parquet-common-1.12.2.jar
+parquet-encoding-1.10.0.jar
+parquet-encoding-1.12.2.jar
+parquet-format-2.4.0.jar
+parquet-format-structures-1.12.2.jar
+parquet-hadoop-1.10.0.jar
+parquet-hadoop-1.12.2.jar
+parquet-jackson-1.10.0.jar
+parquet-jackson-1.12.2.jar
 poi-5.2.3.jar
 poi-ooxml-5.2.3.jar
 poi-ooxml-lite-5.2.3.jar
@@ -578,6 +595,7 @@ snakeyaml-1.33.jar
 snappy-java-1.1.4.jar
 snappy-java-1.1.7.7.jar
 snappy-java-1.1.8.2.jar
+snappy-java-1.1.8.4.jar
 spark-doris-connector-3.2_2.12-1.2.0.jar
 spark-redis_2.12-2.6.0.jar
 spring-aop-5.2.23.RELEASE.jar
@@ -683,8 +701,11 @@ zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar
 zstd-jni-1.4.5-6.jar
+zstd-jni-1.4.9-1.jar
+zstd-jni-1.5.0-4.jar
 zjsonpatch-0.3.0.jar
 agrona-1.12.0.jar
+audience-annotations-0.12.0.jar
 audience-annotations-0.13.0.jar
 commons-crypto-1.1.0.jar
 disruptor-3.4.2.jar

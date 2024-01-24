@@ -17,15 +17,19 @@
 
 package org.apache.linkis.storage.resultset;
 
-import org.apache.linkis.common.io.*;
-import org.apache.linkis.common.io.resultset.*;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.common.io.MetaData;
+import org.apache.linkis.common.io.Record;
+import org.apache.linkis.common.io.resultset.ResultSerializer;
+import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
-import org.apache.linkis.common.utils.*;
-import org.apache.linkis.storage.*;
-import org.apache.linkis.storage.conf.*;
-import org.apache.linkis.storage.domain.*;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
+import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.exception.StorageErrorException;
-import org.apache.linkis.storage.utils.*;
+import org.apache.linkis.storage.utils.FileSystemUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream;

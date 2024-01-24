@@ -21,7 +21,9 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.domain.Dolphin;
+import org.apache.linkis.storage.resultset.table.TableResultSet;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 
 import org.slf4j.Logger;
@@ -49,10 +51,17 @@ public abstract class StorageResultSet<K extends MetaData, V extends Record>
 
   @Override
   public FsPath getResultSetPath(FsPath parentDir, String fileName) {
+    String engineResultType = LinkisStorageConf.ENGINE_RESULT_TYPE;
+    String fileSuffix = Dolphin.DOLPHIN_FILE_SUFFIX;
+    if (engineResultType.equals(LinkisStorageConf.PARQUET) && this instanceof TableResultSet) {
+      fileSuffix = LinkisStorageConf.PARQUET_FILE_SUFFIX;
+    } else if (engineResultType.equals(LinkisStorageConf.ORC) && this instanceof TableResultSet) {
+      fileSuffix = LinkisStorageConf.ORC_FILE_SUFFIX;
+    }
     final String path =
         parentDir.getPath().endsWith("/")
-            ? parentDir.getUriString() + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
-            : parentDir.getUriString() + "/" + fileName + Dolphin.DOLPHIN_FILE_SUFFIX;
+            ? parentDir.getUriString() + fileName + fileSuffix
+            : parentDir.getUriString() + "/" + fileName + fileSuffix;
     logger.info("Get result set path: {}", path);
     return new FsPath(path);
   }

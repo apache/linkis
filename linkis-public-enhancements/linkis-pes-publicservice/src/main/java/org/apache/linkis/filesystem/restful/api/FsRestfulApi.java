@@ -404,6 +404,10 @@ public class FsRestfulApi {
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
+        // parquet and orc compatible, skipping.crc files
+        if (children.getPath().endsWith(".crc")) {
+          continue;
+        }
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
         dirFileTreeChildren.setPath(children.getSchemaPath());

@@ -23,6 +23,7 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
 import org.apache.linkis.storage.exception.StorageWarnException;
@@ -108,7 +109,9 @@ public class DefaultResultSetFactory implements ResultSetFactory {
 
   @Override
   public boolean isResultSetPath(String path) {
-    return path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX);
+    return path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)
+        || path.endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)
+        || path.endsWith(LinkisStorageConf.ORC_FILE_SUFFIX);
   }
 
   @Override
@@ -134,15 +137,22 @@ public class DefaultResultSetFactory implements ResultSetFactory {
 
   @Override
   public ResultSet<? extends MetaData, ? extends Record> getResultSetByPath(FsPath fsPath, Fs fs) {
+    ResultSet resultSet = null;
     try (InputStream inputStream = fs.read(fsPath)) {
-      String resultSetType = Dolphin.getType(inputStream);
-      if (StringUtils.isEmpty(resultSetType)) {
-        throw new StorageWarnException(
-            THE_FILE_IS_EMPTY.getErrorCode(),
-            MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc(), fsPath.getPath()));
+      if (fsPath.getPath().endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)) {
+        String resultSetType = Dolphin.getType(inputStream);
+        if (StringUtils.isEmpty(resultSetType)) {
+          throw new StorageWarnException(
+              THE_FILE_IS_EMPTY.getErrorCode(),
+              MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc(), fsPath.getPath()));
+        }
+        // Utils.tryQuietly(fs::close);
+        resultSet = getResultSetByType(resultSetType);
+      } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)
+          || fsPath.getPath().endsWith(LinkisStorageConf.ORC_FILE_SUFFIX)) {
+        resultSet = getResultSetByType(ResultSetFactory.TABLE_TYPE);
       }
-      // Utils.tryQuietly(fs::close);
-      return getResultSetByType(resultSetType);
+      return resultSet;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

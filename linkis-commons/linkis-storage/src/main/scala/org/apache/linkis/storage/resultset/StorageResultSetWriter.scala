@@ -92,12 +92,13 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
             fs.init(null)
             FileSystemUtils.createNewFile(storePath, proxyUser, true)
+
+            outputStream = fs.write(storePath, true)
             fs match {
               case fileSystem: FileSystem =>
                 fileSystem.setPermission(storePath, "rwx------")
               case _ =>
             }
-            outputStream = fs.write(storePath, true)
             logger.info(s"Succeed to create a new file:$storePath")
             fileCreated = true
           }

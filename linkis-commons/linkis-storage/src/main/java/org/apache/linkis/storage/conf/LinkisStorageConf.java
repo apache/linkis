@@ -25,6 +25,16 @@ import org.apache.commons.lang3.StringUtils;
 public class LinkisStorageConf {
   private static final Object CONF_LOCK = new Object();
 
+  public static final String DOLPHIN = "dolphin";
+
+  public static final String PARQUET = "parquet";
+
+  public static final String PARQUET_FILE_SUFFIX = ".parquet";
+
+  public static final String ORC = "orc";
+
+  public static final String ORC_FILE_SUFFIX = ".orc";
+
   public static final String HDFS_FILE_SYSTEM_REST_ERRS =
       CommonVars.apply(
               "wds.linkis.hdfs.rest.errs",
@@ -34,12 +44,19 @@ public class LinkisStorageConf {
   public static final String ROW_BYTE_MAX_LEN_STR =
       CommonVars.apply("wds.linkis.resultset.row.max.str", "2m").getValue();
 
+  public static final String ENGINE_RESULT_TYPE =
+      CommonVars.apply("linkis.engine.resultSet.type", DOLPHIN, "Result type").getValue();
+
   public static final long ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR);
 
   public static final String FILE_TYPE =
       CommonVars.apply(
               "wds.linkis.storage.file.type",
-              "dolphin,sql,scala,py,hql,python,out,log,text,txt,sh,jdbc,ngql,psql,fql,tsql")
+              "dolphin,sql,scala,py,hql,python,out,log,text,txt,sh,jdbc,ngql,psql,fql,tsql"
+                  + ","
+                  + PARQUET
+                  + ","
+                  + ORC)
           .getValue();
 
   private static volatile String[] fileTypeArr = null;

@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+source ~/.bash_profile
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
 source ${workDir}/deploy-config/db.sh
-
+source ~/.bash_profile
 say() {
     printf 'check command fail \n %s\n' "$1"
 }
@@ -169,12 +169,6 @@ echo "check hdfs"
 need_cmd hdfs
 echo "check shell"
 need_cmd $SHELL
-echo "check spark-submit"
-need_cmd spark-submit
-echo "check spark-shell"
-need_cmd spark-shell
-echo "check spark-sql"
-need_cmd spark-sql
 echo "check hadoop"
 need_cmd hadoop
 
@@ -187,6 +181,12 @@ checkPythonAndJava
 checkMysql
 
 if [ "$ENABLE_SPARK" == "true" ]; then
+  echo "check spark-submit"
+  need_cmd spark-submit
+  echo "check spark-shell"
+  need_cmd spark-shell
+  echo "check spark-sql"
+  need_cmd spark-sql
   checkSpark
 fi
 
@@ -203,8 +203,10 @@ echo -e "\n<-----End to check service status---->"
 # --- check Service Port
 echo -e "\n3. <-----Start to check service Port---->"
 
-SERVER_PORT=$EUREKA_PORT
-check_service_port
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  SERVER_PORT=$EUREKA_PORT
+  check_service_port
+fi
 
 SERVER_PORT=$GATEWAY_PORT
 check_service_port
@@ -227,4 +229,4 @@ if [ "$portIsOccupy" = true ];then
   exit 1
 fi
 
-echo "\n <-----End to check service Port---->"
+echo -e "\n<-----End to check service Port---->"

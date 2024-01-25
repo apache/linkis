@@ -73,7 +73,9 @@ public interface FileSource extends Closeable {
       (path, suffix) -> path.endsWith("." + suffix);
 
   static boolean isResultSet(String path) {
-    return suffixPredicate.apply(path, fileType[0]);
+    return suffixPredicate.apply(path, LinkisStorageConf.DOLPHIN)
+        || suffixPredicate.apply(path, LinkisStorageConf.PARQUET)
+        || suffixPredicate.apply(path, LinkisStorageConf.ORC);
   }
 
   static boolean isResultSet(FsPath fsPath) {
@@ -137,7 +139,8 @@ public interface FileSource extends Closeable {
   static FileSplit createResultSetFileSplit(FsPath fsPath, InputStream is) {
     logger.info("try create result set file split with path:{}", fsPath.getPath());
     ResultSet resultset = ResultSetFactory.getInstance().getResultSetByPath(fsPath);
-    ResultSetReader resultsetReader = ResultSetReaderFactory.getResultSetReader(resultset, is);
+    ResultSetReader resultsetReader =
+        ResultSetReaderFactory.getResultSetReader(resultset, is, fsPath);
     return new FileSplit(resultsetReader, resultset.resultSetType());
   }
 
@@ -145,7 +148,8 @@ public interface FileSource extends Closeable {
     ResultSet resultset = ResultSetFactory.getInstance().getResultSetByPath(fsPath, fs);
     ResultSetReader resultsetReader = null;
     try {
-      resultsetReader = ResultSetReaderFactory.getResultSetReader(resultset, fs.read(fsPath));
+      resultsetReader =
+          ResultSetReaderFactory.getResultSetReader(resultset, fs.read(fsPath), fsPath);
     } catch (IOException e) {
       logger.warn("FileSource createResultSetFileSplit failed", e);
     }

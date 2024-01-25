@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.5.0-SNAPSHOT</revision>
+    <revision>1.5.0</revision>
 
     <zookeeper.version>3.5.9</zookeeper.version>
     <curator.version>4.2.0</curator.version>
@@ -121,6 +121,9 @@
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
+    <storage.parquet.scope>provided</storage.parquet.scope>
+    <storage.orc.scope>provided</storage.orc.scope>
+
     <flink.version>1.16.2</flink.version>
     <libfb303.version>0.9.3</libfb303.version>
     <minlog.version>1.3.0</minlog.version>
@@ -132,6 +135,7 @@
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
     <nebula.version>3.0.0</nebula.version>
+    <doris.version>1.2.6</doris.version>
     <repl.version>1</repl.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>
@@ -152,6 +156,9 @@
     <snakeyaml.version>1.33</snakeyaml.version>
 
     <protobuf.version>3.16.3</protobuf.version>
+
+    <parquet-avro.version>1.10.0</parquet-avro.version>
+    <orc-core.version>1.5.8</orc-core.version>
 
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
@@ -212,6 +219,12 @@
     <h2.version>2.2.220</h2.version>
 
     <!-- spring -->
+    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
+    <spring-security.version>5.7.5</spring-security.version>
+    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
+    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
     <spring-framework.version>5.3.27</spring-framework.version>
     <spring-security.version>5.7.8</spring-security.version>
     <spring.boot.version>2.7.11</spring.boot.version>
@@ -1355,6 +1368,11 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        <version>${spring.cloud.nacos.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1933,6 +1951,20 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <!-- storage  -->
+    <profile>
+      <id>storage-parquet</id>
+      <properties>
+        <storage.parquet.scope>compile</storage.parquet.scope>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>storage-orc</id>
+      <properties>
+        <storage.orc.scope>compile</storage.orc.scope>
+      </properties>
     </profile>
   </profiles>
 </project>

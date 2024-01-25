@@ -119,14 +119,11 @@ public class UserConfiguration {
       UserCreatorLabel userCreatorLabel,
       EngineTypeLabel engineTypeLabel) {
     try {
+      Map<UserCreatorLabel, EngineTypeLabel> labelTuple =
+          new HashMap<UserCreatorLabel, EngineTypeLabel>();
+      labelTuple.put(userCreatorLabel, engineTypeLabel);
       Resource userCreatorAvailableResource =
-          generateResource(
-              resourceType,
-              engineMapCache.getCacheMap(
-                  buildRequestLabel(
-                      userCreatorLabel.getUser(),
-                      userCreatorLabel.getCreator(),
-                      engineTypeLabel.getEngineType())));
+          generateResource(resourceType, engineMapCache.getCacheMap(labelTuple));
       logger.info(
           userCreatorLabel.getUser()
               + "on creator "

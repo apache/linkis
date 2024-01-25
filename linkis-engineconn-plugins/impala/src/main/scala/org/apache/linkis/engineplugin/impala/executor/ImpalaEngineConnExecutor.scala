@@ -17,43 +17,72 @@
 
 package org.apache.linkis.engineplugin.impala.executor
 
-import org.apache.commons.collections.MapUtils
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.common.password.{CommandPasswordCallback, StaticPasswordCallback}
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.common.password.{
+  CommandPasswordCallback,
+  StaticPasswordCallback
+}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineplugin.impala.client.{
+  ExecutionListener,
+  ImpalaClient,
+  ImpalaResultSet
+}
 import org.apache.linkis.engineplugin.impala.client.ImpalaResultSet.Row
-import org.apache.linkis.engineplugin.impala.client.exception.{ImpalaEngineException, ImpalaErrorCodeSummary}
+import org.apache.linkis.engineplugin.impala.client.exception.{
+  ImpalaEngineException,
+  ImpalaErrorCodeSummary
+}
 import org.apache.linkis.engineplugin.impala.client.protocol.{ExecProgress, ExecStatus}
-import org.apache.linkis.engineplugin.impala.client.thrift.{ImpalaThriftClient, ImpalaThriftSessionFactory}
-import org.apache.linkis.engineplugin.impala.client.{ExecutionListener, ImpalaClient, ImpalaResultSet}
+import org.apache.linkis.engineplugin.impala.client.thrift.{
+  ImpalaThriftClient,
+  ImpalaThriftSessionFactory
+}
 import org.apache.linkis.engineplugin.impala.conf.ImpalaConfiguration._
 import org.apache.linkis.engineplugin.impala.conf.ImpalaEngineConfig
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  CompletedExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.Column
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
+import org.apache.commons.collections.MapUtils
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.util.CollectionUtils
+
+import javax.net.SocketFactory
+import javax.net.ssl._
+import javax.security.auth.callback.{Callback, CallbackHandler, NameCallback, PasswordCallback}
 
 import java.io.FileInputStream
 import java.security.KeyStore
 import java.util
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Consumer
-import javax.net.SocketFactory
-import javax.net.ssl._
-import javax.security.auth.callback.{Callback, CallbackHandler, NameCallback, PasswordCallback}
+
 import scala.collection.JavaConverters._
 
 class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)

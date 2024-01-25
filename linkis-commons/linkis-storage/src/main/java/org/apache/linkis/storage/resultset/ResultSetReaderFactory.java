@@ -24,7 +24,11 @@ import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
+import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
+import org.apache.linkis.storage.exception.StorageErrorCode;
+import org.apache.linkis.storage.exception.StorageReadException;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
@@ -40,8 +44,30 @@ public class ResultSetReaderFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetReaderFactory.class);
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
-      ResultSet<K, V> resultSet, InputStream inputStream) {
-    return new StorageResultSetReader<>(resultSet, inputStream);
+      ResultSet<K, V> resultSet, InputStream inputStream, FsPath fsPath) {
+    ResultSetReader<K, V> resultSetReader = null;
+    if (fsPath.getPath().endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)) {
+      resultSetReader = new StorageResultSetReader<>(resultSet, inputStream);
+    } else if (fsPath.getPath().endsWith(LinkisStorageConf.PARQUET_FILE_SUFFIX)) {
+      try {
+        resultSetReader = new ParquetResultSetReader<>(resultSet, inputStream, fsPath);
+      } catch (IOException e) {
+        throw new StorageReadException(
+            StorageErrorCode.READ_PARQUET_FAILED.getCode(),
+            StorageErrorCode.READ_PARQUET_FAILED.getMessage(),
+            e);
+      }
+    } else if (fsPath.getPath().endsWith(LinkisStorageConf.ORC_FILE_SUFFIX)) {
+      try {
+        resultSetReader = new OrcResultSetReader<>(resultSet, inputStream, fsPath);
+      } catch (IOException e) {
+        throw new StorageReadException(
+            StorageErrorCode.READ_ORC_FAILED.getCode(),
+            StorageErrorCode.READ_ORC_FAILED.getMessage(),
+            e);
+      }
+    }
+    return resultSetReader;
   }
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
@@ -49,7 +75,7 @@ public class ResultSetReaderFactory {
     return new StorageResultSetReader<>(resultSet, value);
   }
 
-  public static ResultSetReader getResultSetReader(String res) {
+  public static ResultSetReader getResultSetReader(String res) throws IOException {
     ResultSetFactory rsFactory = ResultSetFactory.getInstance();
     if (rsFactory.isResultSet(res)) {
       ResultSet<? extends MetaData, ? extends Record> resultSet = rsFactory.getResultSet(res);
@@ -58,21 +84,12 @@ public class ResultSetReaderFactory {
       FsPath resPath = new FsPath(res);
       ResultSet<? extends MetaData, ? extends Record> resultSet =
           rsFactory.getResultSetByPath(resPath);
-      try {
-        FSFactory.getFs(resPath).init(null);
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs init failed", e);
-      }
-      ResultSetReader reader = null;
-      try {
-        reader =
-            ResultSetReaderFactory.getResultSetReader(
-                resultSet, FSFactory.getFs(resPath).read(resPath));
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs read failed", e);
-      }
+      Fs fs = FSFactory.getFs(resPath);
+      fs.init(null);
+      ResultSetReader reader =
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath), resPath);
       if (reader instanceof StorageResultSetReader) {
-        ((StorageResultSetReader<?, ?>) reader).setFs(FSFactory.getFs(resPath));
+        ((StorageResultSetReader<?, ?>) reader).setFs(fs);
       }
       return (StorageResultSetReader<?, ?>) reader;
     }
@@ -105,7 +122,7 @@ public class ResultSetReaderFactory {
         InputStream read = fs.read(resPath);
 
         return ResultSetReaderFactory.<TableMetaData, TableRecord>getResultSetReader(
-            (TableResultSet) resultSet, read);
+            (TableResultSet) resultSet, read, resPath);
       } catch (IOException e) {
         throw new StorageWarnException(
             LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED.getErrorCode(),

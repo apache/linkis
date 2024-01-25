@@ -220,10 +220,32 @@ object EntranceConfiguration {
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
+  val TEMPLATE_CONF_SWITCH =
+    CommonVars("linkis.entrance.template.conf.interceptor.switch", false)
+
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", false)
 
-  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", true).getValue
+  val ENTRANCE_CREATOR_JOB_LIMIT: CommonVars[Int] =
+    CommonVars[Int](
+      "linkis.entrance.creator.job.concurrency.limit",
+      10000,
+      "Creator task concurrency limit parameters"
+    )
+
+  val ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE =
+    CommonVars("linkis.entrance.creator.job.concurrency.limit.conf.cache.time", 30L)
+
+  val ENTRANCE_TASK_TIMEOUT =
+    CommonVars("linkis.entrance.task.timeout", new TimeType("48h"))
+
+  val ENTRANCE_TASK_TIMEOUT_SCAN =
+    CommonVars("linkis.entrance.task.timeout.scan", new TimeType("12h"))
+
+  val ENABLE_HDFS_JVM_USER =
+    CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", true).getValue
+
+  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", false).getValue
 
   val ENTRANCE_FAILOVER_SCAN_INIT_TIME =
     CommonVars("linkis.entrance.failover.scan.init.time", 3 * 1000).getValue
@@ -247,7 +269,7 @@ object EntranceConfiguration {
   val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
     CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
 
-  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
+  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", false)
 
   val ENTRANCE_GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
 

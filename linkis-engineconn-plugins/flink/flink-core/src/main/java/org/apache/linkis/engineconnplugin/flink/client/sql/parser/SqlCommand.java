@@ -46,6 +46,8 @@ public enum SqlCommand {
 
   CREATE_DATABASE,
 
+  CREATE_FUNCTION,
+
   ALTER_DATABASE,
 
   DROP_DATABASE,

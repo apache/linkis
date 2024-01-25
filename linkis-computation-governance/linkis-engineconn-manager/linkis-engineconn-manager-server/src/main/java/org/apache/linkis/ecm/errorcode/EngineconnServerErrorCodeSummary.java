@@ -33,7 +33,15 @@ public enum EngineconnServerErrorCodeSummary implements LinkisErrorCode {
       11110,
       "the parameters of engineConnInstance and ticketId are both not exists.(engineConnInstance 和ticketId 的参数都不存在.)"),
   LOG_IS_NOT_EXISTS(11110, "Log directory {0} does not exists.(日志目录 {0} 不存在.)"),
-  FAILED_TO_DOWNLOAD(911115, "failed to downLoad(下载失败)");
+  FAILED_TO_DOWNLOAD(911115, "failed to downLoad(下载失败)"),
+  FILE_IS_OVERSIZE(911116, "Download file has exceeded 100MB(下载文件已超过100M)"),
+  PARAMETER_NOT_NULL(911117, "Parameter {0} cannot be empty (参数 {0} 不能为空)"),
+  LOGTYPE_ERROR(
+      911118,
+      "logType only supports stdout, stderr, gc, yarnApp(logType仅支持stdout,stderr,gc,yarnApp)"),
+  NOT_PERMISSION(
+      911119, "You {0} have no permission to download Log in ECM {1}(用户 {0} 无权限下载  ECM {1} 日志)"),
+  ;
 
   /** (errorCode)错误码 */
   private final int errorCode;

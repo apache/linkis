@@ -52,4 +52,17 @@ public class EngineConnStatusCallback implements RequestProtocol {
   public String getInitErrorMsg() {
     return initErrorMsg;
   }
+
+  @Override
+  public String toString() {
+    return "EngineConnStatusCallback{"
+        + "serviceInstance="
+        + serviceInstance
+        + ", ticketId='"
+        + ticketId
+        + '\''
+        + ", status="
+        + status
+        + '}';
+  }
 }

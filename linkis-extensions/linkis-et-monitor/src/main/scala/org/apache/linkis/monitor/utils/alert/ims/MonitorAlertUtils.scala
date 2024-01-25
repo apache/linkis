@@ -122,7 +122,7 @@ object MonitorAlertUtils extends Logging {
         val alertTitle = "集群[" + Constants.LINKIS_CLUSTER_NAME + "]" + repaceParams
           .getOrDefault("title", data.alertTitle)
         val alertLevel =
-          if (StringUtils.isNotBlank(data.alertLevel)&&StringUtils.isNumeric(data.alertLevel)) {
+          if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
             ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
           } else {
             ImsAlertLevel.withName(

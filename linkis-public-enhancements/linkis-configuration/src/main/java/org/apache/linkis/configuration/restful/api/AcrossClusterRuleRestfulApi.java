@@ -213,7 +213,8 @@ public class AcrossClusterRuleRestfulApi {
     }
 
     if (StringUtils.isBlank(crossQueue)) {
-      return Message.error("Failed to delete acrossClusterRule, Illegal Input Param: " + crossQueue);
+      return Message.error(
+          "Failed to delete acrossClusterRule, Illegal Input Param: " + crossQueue);
     }
 
     try {

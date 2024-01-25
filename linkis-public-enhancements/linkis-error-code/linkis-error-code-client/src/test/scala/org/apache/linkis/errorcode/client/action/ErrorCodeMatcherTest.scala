@@ -19,10 +19,11 @@ package org.apache.linkis.errorcode.client.action
 
 import org.apache.linkis.errorcode.client.utils.ErrorCodeMatcher
 import org.apache.linkis.errorcode.common.LinkisErrorCode
-import org.junit.jupiter.api
-import org.junit.jupiter.api.{Assertions, DisplayName}
 
 import java.util
+
+import org.junit.jupiter.api
+import org.junit.jupiter.api.{Assertions, DisplayName}
 
 class ErrorCodeMatcherTest {
 
@@ -37,6 +38,5 @@ class ErrorCodeMatcherTest {
       Assertions.assertEquals("机器内存不足，请联系管理员扩容", errorDesc)
     }
   }
+
 }
-
-

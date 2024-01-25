@@ -43,7 +43,7 @@ object AccessibleExecutorConfiguration {
     CommonVars("wds.linkis.engineconn.lock.free.interval", new TimeType("3m"))
 
   val ENGINECONN_ENABLED_LOCK_IDLE_TIME_OUT =
-    CommonVars("linkis.engineconn.enabled.lock.timeout.release", false)
+    CommonVars("linkis.engineconn.enabled.lock.timeout.release", true)
 
   val ENGINECONN_SUPPORT_PARALLELISM =
     CommonVars("wds.linkis.engineconn.support.parallelism", false)

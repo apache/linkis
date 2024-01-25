@@ -219,17 +219,12 @@
     <h2.version>2.2.220</h2.version>
 
     <!-- spring -->
-    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
-    <spring-security.version>5.7.5</spring-security.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
-    <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
-    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
     <spring-framework.version>5.3.27</spring-framework.version>
     <spring-security.version>5.7.8</spring-security.version>
     <spring.boot.version>2.7.11</spring.boot.version>
     <spring-netflix.version>3.1.7</spring-netflix.version>
     <spring-cloud.version>2021.0.8</spring-cloud.version>
+    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

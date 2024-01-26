@@ -48,16 +48,6 @@ class GatewaySpringConfiguration {
     TokenAuthentication.setTokenService(tokenService)
   }
 
-  //  @Bean(Array("defaultGatewayParser"))
-  //  @ConditionalOnMissingBean
-  //  @Autowired(required = false)
-  //  def createGatewayParser(gatewayParsers: Array[GatewayParser]): DefaultGatewayParser =
-  //    new DefaultGatewayParser(gatewayParsers)
-  //
-  //  @Bean(Array("defaultGatewayRouter"))
-  //  @ConditionalOnMissingBean
-  //  def createGatewayRouter(): DefaultGatewayParser = new DefaultGatewayRouter
-
   @Bean(Array("userRestful"))
   @ConditionalOnMissingBean
   @Autowired(required = false)

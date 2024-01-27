@@ -25,14 +25,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.netflix.discovery.DiscoveryClient;
-import com.netflix.discovery.TimedSupervisorTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class EurekaClientCacheManualRefresher {
   private final AtomicBoolean isRefreshing = new AtomicBoolean(false);
   private final ExecutorService refreshExecutor = Executors.newSingleThreadExecutor();
   private final String cacheRefreshTaskField = "cacheRefreshTask";
-  private TimedSupervisorTask cacheRefreshTask;
+  private Object cacheRefreshTask;
 
   private long lastRefreshMillis = 0;
   private final Duration refreshIntervalDuration = Duration.ofSeconds(3);
@@ -75,14 +74,15 @@ public class EurekaClientCacheManualRefresher {
                 return;
               }
 
+              String discoveryClientClassName = "com.netflix.discovery.DiscoveryClient";
               if (null == cacheRefreshTask) {
+                Class<?> discoveryClientClass = Class.forName(discoveryClientClassName);
                 Field field =
-                    ReflectionUtils.findField(DiscoveryClient.class, cacheRefreshTaskField);
+                    ReflectionUtils.findField(discoveryClientClass, cacheRefreshTaskField);
                 if (null != field) {
                   ReflectionUtils.makeAccessible(field);
-                  DiscoveryClient discoveryClient = beanFactory.getBean(DiscoveryClient.class);
-                  cacheRefreshTask =
-                      (TimedSupervisorTask) ReflectionUtils.getField(field, discoveryClient);
+                  Object discoveryClient = beanFactory.getBean(discoveryClientClass);
+                  cacheRefreshTask = ReflectionUtils.getField(field, discoveryClient);
                 }
               }
 
@@ -90,12 +90,16 @@ public class EurekaClientCacheManualRefresher {
                 logger.error(
                     "Field ({}) not found in class '{}'",
                     cacheRefreshTaskField,
-                    DiscoveryClient.class.getSimpleName());
+                    discoveryClientClassName);
                 return;
               }
 
               lastRefreshMillis = System.currentTimeMillis();
-              cacheRefreshTask.run();
+              Class<?> timedSupervisorTaskClass =
+                  Class.forName("com.netflix.discovery.TimedSupervisorTask");
+              Method method = timedSupervisorTaskClass.getDeclaredMethod("run");
+              method.setAccessible(true);
+              method.invoke(cacheRefreshTask);
               logger.info(
                   "Manually refresh eureka client cache completed(DiscoveryClient.cacheRefreshTask#run())");
             } catch (Exception e) {

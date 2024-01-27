@@ -47,7 +47,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import org.springframework.beans.factory.annotation.Autowired;

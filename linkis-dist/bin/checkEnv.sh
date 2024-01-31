@@ -164,13 +164,9 @@ echo "check sed"
 need_cmd sed
 echo "check lsof"
 need_cmd lsof
-
-echo "check hdfs"
-need_cmd hdfs
 echo "check shell"
 need_cmd $SHELL
-echo "check hadoop"
-need_cmd hadoop
+
 
 echo -e "\n<-----end to check used cmd---->"
 
@@ -191,6 +187,10 @@ if [ "$ENABLE_SPARK" == "true" ]; then
 fi
 
 if [ "$ENABLE_HDFS" == "true" ]; then
+  echo "check hadoop cmd"
+  need_cmd hadoop
+  echo "check hdfs cmd"
+  need_cmd hdfs
   checkHdfs
 fi
 

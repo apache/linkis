@@ -43,4 +43,24 @@ object JobUtils {
     null
   }
 
+  def getJobSourceTagsFromStringMap(map: util.Map[String, String]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_SOURCE_TAGS)) {
+      val value = map.get(JobRequestConstants.JOB_SOURCE_TAGS)
+      if (null != value) {
+        return value
+      }
+    }
+    null
+  }
+
+  def getJobSourceTagsFromObjectMap(map: util.Map[String, Object]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_SOURCE_TAGS)) {
+      val value = map.get(JobRequestConstants.JOB_SOURCE_TAGS)
+      if (null != value) {
+        return value.toString
+      }
+    }
+    null
+  }
+
 }

@@ -144,9 +144,16 @@ class HiveEngineConnExecutor(
     val realCode = code.trim()
     LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+
     if (StringUtils.isNotBlank(jobId)) {
-      LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
-      hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
+      val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutorContext.getProperties)
+      val tags = if (StringUtils.isAsciiPrintable(jobTags)) {
+        s"LINKIS_$jobId,$jobTags"
+      } else {
+        s"LINKIS_$jobId"
+      }
+      LOG.info(s"set mapreduce.job.tags=$tags")
+      hiveConf.set("mapreduce.job.tags", tags)
     }
 
     if (realCode.trim.length > 500) {

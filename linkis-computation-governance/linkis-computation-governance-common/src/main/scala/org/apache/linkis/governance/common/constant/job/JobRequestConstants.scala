@@ -34,4 +34,6 @@ object JobRequestConstants {
 
   val JOB_DETAIL_LIST = "jobDetailList"
 
+  val JOB_SOURCE_TAGS = "job.source.tags"
+
 }

@@ -57,6 +57,9 @@ public interface HiveMetaDao {
 
   List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
+  Map<String, Object> getTableInfoByTableNameAndDbName(
+      @Param("tableName") String tableName, @Param("dbName") String dbName);
+
   /**
    * get the table partition's size
    *

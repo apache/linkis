@@ -26,9 +26,12 @@ import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.metadata.utils.MdqConstants;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +75,18 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       return null;
     }
     String userName = queryParam.getUserName();
+    String dbName = queryParam.getDbName();
     if (adminUser.equals(userName)) {
+      String tableName = queryParam.getTableName();
+      // if tableName is not empty；query by tablename
+      if (StringUtils.isNotEmpty(tableName) && StringUtils.isNotEmpty(dbName)) {
+        log.info("admin {} to get all table with tableName:{} ", userName, tableName);
+        Map<String, Object> map = hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
+        List<Map<String, Object>> result = new ArrayList<>();
+        result.add(map);
+        return result;
+      }
+
       log.info("admin {} to get all tables ", userName);
       return hiveMetaDao.getTablesByDbName(queryParam);
     }

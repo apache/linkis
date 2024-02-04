@@ -118,11 +118,22 @@
     </select>
 
     <select id="getTablesByDbName" resultType="map"  parameterType="map">
-        select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
+        select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME,
+                t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from TBLS t2 inner join DBS t3 on t2.DB_ID = t3.DB_ID
         where t3.NAME = #{dbName,jdbcType=VARCHAR}
         order by t2.TBL_NAME;
     </select>
+
+
+    <select id="getTableInfoByTableNameAndDbName" resultType="map">
+        select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME,
+               t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
+        from TBLS t2
+        where t2.TBL_NAME=#{tableName,jdbcType=VARCHAR}
+        and t2.DB_ID=(select DB_ID from DBS t3 where t3.NAME = #{dbName,jdbcType=VARCHAR})
+    </select>
+
 
     <select id="getPartitionSize" resultType="java.lang.Long"  parameterType="map">
         select PARTITION_PARAMS.PARAM_VALUE from PARTITION_PARAMS

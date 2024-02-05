@@ -80,10 +80,13 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       String tableName = queryParam.getTableName();
       // if tableName is not empty；query by tablename
       if (StringUtils.isNotEmpty(tableName) && StringUtils.isNotEmpty(dbName)) {
-        log.info("admin {} to get all table with tableName:{} ", userName, tableName);
-        Map<String, Object> map = hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
+        log.info("admin {} to get table with tableName:{} ", userName, tableName);
+        Map<String, Object> queryRes =
+            hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
         List<Map<String, Object>> result = new ArrayList<>();
-        result.add(map);
+        if (queryRes != null) {
+          result.add(queryRes);
+        }
         return result;
       }
 

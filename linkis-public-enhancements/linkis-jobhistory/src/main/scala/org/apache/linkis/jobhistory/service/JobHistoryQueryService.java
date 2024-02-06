@@ -53,4 +53,6 @@ public interface JobHistoryQueryService {
     void changeObserveInfoById(JobHistory jobHistory);
 
     void clearUndoneTasksByEntranceInstance(EntranceInstanceConfRequest request, Sender sender);
+
+    List<JobHistory> taskDurationTopN(Date sDate, Date eDate , String username,String engineType);
 }

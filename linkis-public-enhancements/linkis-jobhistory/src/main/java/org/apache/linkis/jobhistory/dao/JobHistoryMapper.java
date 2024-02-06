@@ -130,4 +130,10 @@ public interface JobHistoryMapper {
       @Param("statusList") List<String> statusList,
       @Param("startTimestamp") Long startTimestamp,
       @Param("limit") Integer limit);
+
+  List<JobHistory> taskDurationTopN(
+          @Param("startDate") Date startDate,
+          @Param("endDate") Date endDate,
+          @Param("umUser") String username,
+          @Param("engineType") String engineType);
 }

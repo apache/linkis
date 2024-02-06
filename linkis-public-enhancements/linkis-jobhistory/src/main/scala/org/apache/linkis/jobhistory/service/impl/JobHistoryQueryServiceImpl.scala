@@ -486,4 +486,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
   }
 
+  override def taskDurationTopN(sDate: Date, eDate: Date, username: String, engineType: String): util.List[JobHistory] = {
+    jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
+  }
 }

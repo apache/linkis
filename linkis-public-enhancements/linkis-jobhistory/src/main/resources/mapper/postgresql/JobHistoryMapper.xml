@@ -251,4 +251,14 @@
         <if test="limit != null and limit > 0">LIMIT #{limit}</if>
 
     </select>
+
+    <select id="taskDurationTopN" useCache="true" resultMap="jobHistoryMap" >
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+        </where>
+        ORDER BY EXTRACT(EPOCH FROM AGE(cast(updated_time as timestamp), cast(created_time as timestamp))) / 3600 desc
+    </select>
 </mapper>

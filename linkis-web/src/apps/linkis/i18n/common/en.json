@@ -199,7 +199,8 @@
             "EngineConnList": "Engine Conn List",
             "opsTool": "OPS Tool",
             "userConfig": "User Configuration",
-            "configManagement": "Configuration Management"
+            "configManagement": "Configuration Management",
+            "statisticsDashboard": "Statistics Dashboard"
           }
         }
       },

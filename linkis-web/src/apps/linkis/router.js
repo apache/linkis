@@ -319,6 +319,26 @@ export default [
         publicPage: true,
       },
     },
+    {
+      name: 'statisticsDashboard',
+      path: 'statisticsDashboard',
+      component: () =>
+        import('./module/statisticsDashboard/index.vue'),
+      meta: {
+        title: 'statisticsDashboard',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'statisticsDashboardDetail',
+      path: 'statisticsDashboardDetail',
+      component: () =>
+        import('./module/statisticsDashboard/statisticsDashboard.vue'),
+      meta: {
+        title: 'statisticsDashboardHistory',
+        publicPage: true,
+      },
+    },
     ],
   },
 ]

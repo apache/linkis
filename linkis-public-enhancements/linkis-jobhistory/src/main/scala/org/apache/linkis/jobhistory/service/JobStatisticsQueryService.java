@@ -24,7 +24,7 @@ import java.util.Date;
 
 public interface JobStatisticsQueryService {
 
-    JobStatistics taskExecutionStatistics(Date startDate, Date endDate);
+    JobStatistics taskExecutionStatistics(Date startDate, Date endDate, String username,String engineType);
 
-    JobStatistics engineExecutionStatistics(Date startDate, Date endDate);
+    JobStatistics engineExecutionStatistics(Date startDate, Date endDate, String username,String engineType);
 }

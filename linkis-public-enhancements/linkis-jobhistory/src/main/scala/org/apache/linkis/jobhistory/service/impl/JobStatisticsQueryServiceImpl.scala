@@ -33,16 +33,26 @@ class JobStatisticsQueryServiceImpl extends JobStatisticsQueryService with Loggi
   @Autowired
   private var jobStatisticsMapper: JobStatisticsMapper = _
 
-  override def taskExecutionStatistics(sDate: Date, eDate: Date): JobStatistics = {
+  override def taskExecutionStatistics(
+                                        sDate: Date,
+                                        eDate: Date,
+                                        username: String,
+                                        engineType: String
+                                      ): JobStatistics = {
     val count = {
-      jobStatisticsMapper.taskExecutionStatistics(sDate, eDate)
+      jobStatisticsMapper.taskExecutionStatistics(sDate, eDate, username, engineType)
     }
     count
   }
 
-  override def engineExecutionStatistics(sDate: Date, eDate: Date): JobStatistics = {
+  override def engineExecutionStatistics(
+                                          sDate: Date,
+                                          eDate: Date,
+                                          username: String,
+                                          engineType: String
+                                        ): JobStatistics = {
     val count = {
-      jobStatisticsMapper.engineExecutionStatistics(sDate, eDate)
+      jobStatisticsMapper.engineExecutionStatistics(sDate, eDate, username, engineType)
     }
     count
   }

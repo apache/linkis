@@ -20,12 +20,13 @@ package org.apache.linkis.jobhistory.restful.api;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.entity.JobStatistics;
 import org.apache.linkis.jobhistory.service.JobStatisticsQueryService;
+import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.lang3.time.DateUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,56 +42,128 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Api(tags = "query api")
+@Api(tags = "jobstatistics api")
 @RestController
 @RequestMapping(path = "/jobhistory/jobstatistics")
 public class StatisticsRestfulApi {
 
-  private Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired private JobStatisticsQueryService jobStatisticsQueryService;
+    @Autowired private JobStatisticsQueryService jobStatisticsQueryService;
 
-  @ApiOperation(value = "count", notes = "count", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
-    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
-  })
-  /** Method list should not contain subjob, which may cause performance problems. */
-  @RequestMapping(path = "/count", method = RequestMethod.GET)
-  public Message count(
-      HttpServletRequest req,
-      @RequestParam(value = "startDate", required = false) Long startDate,
-      @RequestParam(value = "endDate", required = false) Long endDate)
-      throws QueryException {
-    if (endDate == null) {
-      endDate = System.currentTimeMillis();
-    }
-    if (startDate == null) {
-      startDate = 0L;
-    }
-    Date sDate = new Date(startDate);
-    Date eDate = new Date(endDate);
-    if (startDate == 0L) {
-      sDate = DateUtils.addDays(eDate, -1);
-    }
-    if (sDate.getTime() == eDate.getTime()) {
-      Calendar instance = Calendar.getInstance();
-      instance.setTimeInMillis(endDate);
-      instance.add(Calendar.DAY_OF_MONTH, 1);
-      eDate = new Date(instance.getTime().getTime());
-    }
-    JobStatistics jobStatistics = jobStatisticsQueryService.taskExecutionStatistics(sDate, eDate);
-    JobStatistics engineStatistics =
-        jobStatisticsQueryService.engineExecutionStatistics(sDate, eDate);
+    @ApiOperation(value = "taskCount", notes = "taskCount", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", dataType = "long"),
+            @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+            @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    })
+    @RequestMapping(path = "/taskCount", method = RequestMethod.GET)
+    public Message taskCount(
+            HttpServletRequest req,
+            @RequestParam(value = "startDate", required = false) Long startDate,
+            @RequestParam(value = "endDate", required = false) Long endDate,
+            @RequestParam(value = "executeApplicationName", required = false)
+            String executeApplicationName,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws IOException, QueryException {
+        if (endDate == null) {
+            endDate = System.currentTimeMillis();
+        }
+        if (startDate == null) {
+            startDate = 0L;
+        }
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime());
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (!StringUtils.isEmpty(executeApplicationName)) {
+            if (!QueryUtils.checkNameValid(executeApplicationName)) {
+                return Message.error("Invalid applicationName : " + executeApplicationName);
+            }
+        } else {
+            executeApplicationName = null;
+        }
+        JobStatistics jobStatistics =
+                jobStatisticsQueryService.taskExecutionStatistics(
+                        sDate, eDate, creator, executeApplicationName);
 
-    return Message.ok()
-        .data("sumCount", jobStatistics.getSumCount())
-        .data("succeedCount", jobStatistics.getSucceedCount())
-        .data("failedCount", jobStatistics.getFailedCount())
-        .data("cancelledCount", jobStatistics.getCancelledCount())
-        .data("countEngine", engineStatistics.getSumCount())
-        .data("countEngineSucceed", engineStatistics.getSucceedCount())
-        .data("countEngineFailed", engineStatistics.getFailedCount())
-        .data("countEngineShutting", engineStatistics.getCancelledCount());
-  }
+        return Message.ok()
+                .data("sumCount", jobStatistics.getSumCount())
+                .data("succeedCount", jobStatistics.getSucceedCount())
+                .data("failedCount", jobStatistics.getFailedCount())
+                .data("cancelledCount", jobStatistics.getCancelledCount());
+    }
+
+    @ApiOperation(value = "engineCount", notes = "engineCount", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "startDate", dataType = "long"),
+            @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+            @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    })
+    @RequestMapping(path = "/engineCount", method = RequestMethod.GET)
+    public Message engineCount(
+            HttpServletRequest req,
+            @RequestParam(value = "startDate", required = false) Long startDate,
+            @RequestParam(value = "endDate", required = false) Long endDate,
+            @RequestParam(value = "executeApplicationName", required = false)
+            String executeApplicationName,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws IOException, QueryException {
+        if (endDate == null) {
+            endDate = System.currentTimeMillis();
+        }
+        if (startDate == null) {
+            startDate = 0L;
+        }
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime());
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (!StringUtils.isEmpty(executeApplicationName)) {
+            if (!QueryUtils.checkNameValid(executeApplicationName)) {
+                return Message.error("Invalid applicationName : " + executeApplicationName);
+            }
+        } else {
+            executeApplicationName = null;
+        }
+        JobStatistics jobStatistics =
+                jobStatisticsQueryService.engineExecutionStatistics(
+                        sDate, eDate, creator, executeApplicationName);
+
+        return Message.ok()
+                .data("countEngine", jobStatistics.getSumCount())
+                .data("countEngineSucceed", jobStatistics.getSucceedCount())
+                .data("countEngineFailed", jobStatistics.getFailedCount())
+                .data("countEngineShutting", jobStatistics.getCancelledCount());
+    }
 }

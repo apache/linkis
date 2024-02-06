@@ -26,8 +26,14 @@ import java.util.Date;
 public interface JobStatisticsMapper {
 
   JobStatistics taskExecutionStatistics(
-      @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+          @Param("startDate") Date startDate,
+          @Param("endDate") Date endDate,
+          @Param("umUser") String username,
+          @Param("engineType") String engineType);
 
   JobStatistics engineExecutionStatistics(
-      @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+          @Param("startDate") Date startDate,
+          @Param("endDate") Date endDate,
+          @Param("umUser") String username,
+          @Param("engineType") String engineType);
 }

@@ -424,7 +424,7 @@ public class QueryRestfulApi {
           @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
   })
   @RequestMapping(path = "/listDurationTop", method = RequestMethod.GET)
-  public Message listTop(
+  public Message listDurationTop(
           HttpServletRequest req,
           @RequestParam(value = "startDate", required = false) Long startDate,
           @RequestParam(value = "endDate", required = false) Long endDate,

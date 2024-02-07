@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.orchestrator.ecm
+package org.apache.linkis.entrance.ecm
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.ecm.entity.{DefaultMark, LoadBalanceMark, Mark, MarkReq, Policy}
+import org.apache.linkis.entrance.execute.CodeLogicalUnitSimpleExecTask
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.entrance.{BindEngineLabel, LoadBalanceLabel}
-import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
-import org.apache.linkis.orchestrator.ecm.entity._
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
 import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 import org.apache.linkis.server.BDPJettyServerHelper
@@ -156,7 +156,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
 
   override def getAvailableEngineConnExecutor(
       mark: Mark,
-      execTask: CodeLogicalUnitExecTask
+      execTask: CodeLogicalUnitSimpleExecTask
   ): EngineConnExecutor = {
     if (null != mark && getMarkCache().containsKey(mark)) {
       tryReuseEngineConnExecutor(mark) match {

@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.execute
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.entrance.orchestrator.EntranceOrchestrationFactory
@@ -37,14 +38,9 @@ import org.apache.linkis.orchestrator.computation.operation.progress.{
   ProgressProcessor
 }
 import org.apache.linkis.orchestrator.core.{OrchestrationFuture, OrchestrationResponse}
-import org.apache.linkis.orchestrator.domain.JobReq
-import org.apache.linkis.orchestrator.execution.{
-  ArrayResultSetTaskResponse,
-  FailedTaskResponse,
-  ResultSetTaskResponse,
-  SucceedTaskResponse
-}
+import org.apache.linkis.orchestrator.execution._
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
+import org.apache.linkis.orchestrator.plans.ast.QueryParamsImpl
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer._
@@ -189,27 +185,12 @@ class DefaultEntranceExecutor(id: Long)
     LoggerUtils.removeJobIdMDC()
   }
 
-  def requestToComputationJobReq(entranceExecuteRequest: EntranceExecuteRequest): JobReq = {
-    val jobReqBuilder = ComputationJobReq.newBuilder()
-    jobReqBuilder.setId(entranceExecuteRequest.jobId())
-    jobReqBuilder.setSubmitUser(entranceExecuteRequest.submitUser())
-    jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    val codeTypeLabel: Label[_] = LabelUtil.getCodeTypeLabel(entranceExecuteRequest.getLabels)
-    if (null == codeTypeLabel) {
-      throw new EntranceErrorException(
-        EntranceErrorCode.EXECUTE_REQUEST_INVALID.getErrCode,
-        s"code Type Label is needed"
-      )
+  override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
+    if (EntranceConfiguration.LINKIS_ENTRANCE_SKIP_ORCHESTRATOR.getValue) {
+      callSimpleExecute(request)
+    } else {
+      callOrchestrationExecute(request)
     }
-    val codes = new util.ArrayList[String]()
-    codes.add(entranceExecuteRequest.code())
-    val codeLogicalUnit =
-      new CodeLogicalUnit(codes, codeTypeLabel.asInstanceOf[CodeLanguageLabel])
-    jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
-    jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
-    jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(entranceExecuteRequest.properties())
-    jobReqBuilder.build()
   }
 
   override def close(): Unit = {
@@ -261,8 +242,7 @@ class DefaultEntranceExecutor(id: Long)
     true
   }
 
-  override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
-
+  def callOrchestrationExecute(request: ExecuteRequest) = {
     val entranceExecuteRequest: EntranceExecuteRequest = request match {
       case request: EntranceExecuteRequest =>
         request
@@ -274,6 +254,7 @@ class DefaultEntranceExecutor(id: Long)
     }
     // 1. create JobReq
     val compJobReq = requestToComputationJobReq(entranceExecuteRequest)
+
     Utils.tryCatch[ExecuteResponse] {
       // 2. orchestrate compJobReq get Orchestration
       val orchestration =
@@ -331,6 +312,110 @@ class DefaultEntranceExecutor(id: Long)
             LogUtils.generateERROR(ExceptionUtils.getStackTrace(t))
           )
         )
+        ErrorExecuteResponse(msg, t)
+      } else {
+        val msg =
+          s"JobRequest (${entranceExecuteRequest.jobId()}) submit failed, reason, ${ExceptionUtils.getMessage(t)}"
+        val failedResponse =
+          new DefaultFailedTaskResponse(msg, EntranceErrorCode.SUBMIT_JOB_ERROR.getErrCode, t)
+        doOnFailed(entranceExecuteRequest, null, failedResponse)
+        null
+      }
+    }
+  }
+
+  def requestToComputationJobReq(
+      entranceExecuteRequest: EntranceExecuteRequest
+  ): ComputationJobReq = {
+    val jobReqBuilder = ComputationJobReq.newBuilder()
+    jobReqBuilder.setId(entranceExecuteRequest.jobId())
+    jobReqBuilder.setSubmitUser(entranceExecuteRequest.submitUser())
+    jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
+    val codeTypeLabel: Label[_] = LabelUtil.getCodeTypeLabel(entranceExecuteRequest.getLabels)
+    if (null == codeTypeLabel) {
+      throw new EntranceErrorException(
+        EntranceErrorCode.EXECUTE_REQUEST_INVALID.getErrCode,
+        s"code Type Label is needed"
+      )
+    }
+    val codes = new util.ArrayList[String]()
+    codes.add(entranceExecuteRequest.code())
+    val codeLogicalUnit =
+      new CodeLogicalUnit(codes, codeTypeLabel.asInstanceOf[CodeLanguageLabel])
+    jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
+    jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
+    jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
+    jobReqBuilder.setParams(entranceExecuteRequest.properties())
+    jobReqBuilder.build().asInstanceOf[ComputationJobReq]
+  }
+
+  def callSimpleExecute(request: ExecuteRequest): ExecuteResponse = {
+    val entranceExecuteRequest: EntranceExecuteRequest = request match {
+      case request: EntranceExecuteRequest =>
+        request
+      case _ =>
+        throw new EntranceErrorException(
+          EntranceErrorCode.EXECUTE_REQUEST_INVALID.getErrCode,
+          s"Invalid entranceExecuteRequest : ${BDPJettyServerHelper.gson.toJson(request)}"
+        )
+    }
+    // 1. create JobReq
+    val compJobReq = requestToComputationJobReq(entranceExecuteRequest)
+    logger.info(
+      s"CallSimpleExecute requestToComputationJobReq finished ${BDPJettyServerHelper.gson.toJson(compJobReq)}"
+    )
+
+    Utils.tryCatch[ExecuteResponse] {
+      val queryParamsImpl = new QueryParamsImpl(compJobReq.getParams)
+      val task = new CodeLogicalUnitSimpleExecTask(
+        compJobReq.getExecuteUser,
+        compJobReq.getLabels,
+        queryParamsImpl
+      )
+      task.setCodeLogicalUnit(compJobReq.getCodeLogicalUnit)
+      val result: ExecuteResponse =
+        try {
+          task.execute() match {
+            case succeed: AsyncTaskResponse =>
+              logger.info(s"CallSimpleExecute Succeed to execute ExecTask(${task.getIDInfo})")
+              SuccessExecuteResponse()
+
+            case failedTaskResponse: DefaultFailedTaskResponse =>
+              logger.info(s"CallSimpleExecute Failed to execute ExecTask(${task.getIDInfo})")
+              ErrorExecuteResponse(failedTaskResponse.getErrorMsg, failedTaskResponse.getCause)
+
+            case retry: RetryTaskResponse =>
+              logger.warn(s"CallSimpleExecute ExecTask(${task.getIDInfo}) need to retry")
+              ErrorExecuteResponse(s"ExecTask(${task.getIDInfo}) need to retry", null)
+          }
+        } catch {
+          case e: Exception =>
+            logger.error(s"CallSimpleExecute Failed to execute task ${task.getIDInfo}", e)
+            ErrorExecuteResponse(s"CallSimpleExecute Failed to execute task ${task.getIDInfo}", e)
+        }
+
+      if (entranceExecuteRequest.getJob.getJobRequest.getMetrics == null) {
+        logger.warn("Job Metrics has not been initialized")
+      } else {
+        if (
+            !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
+              TaskConstant.JOB_TO_ORCHESTRATOR
+            )
+        ) {
+          entranceExecuteRequest.getJob.getJobRequest.getMetrics
+            .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
+        }
+      }
+
+      logger.info(s"DefaultEntranceExecutor callExecute success ${entranceExecuteRequest
+        .jobId()} and orchestrator task id ${compJobReq.getId} result class${result.getClass}")
+
+      result
+    } { t: Throwable =>
+      logger.info("CallSimpleExecute failed", t)
+      if (getEngineExecuteAsyncReturn.isEmpty) {
+        val msg =
+          s"JobRequest (${entranceExecuteRequest.jobId()}) submit failed, reason, ${ExceptionUtils.getMessage(t)}"
         ErrorExecuteResponse(msg, t)
       } else {
         val msg =

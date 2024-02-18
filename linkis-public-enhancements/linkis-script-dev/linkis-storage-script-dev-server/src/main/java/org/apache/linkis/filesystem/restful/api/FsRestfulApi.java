@@ -579,6 +579,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
+    Long startTime = System.currentTimeMillis();
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
@@ -606,6 +607,8 @@ public class FsRestfulApi {
         throw WorkspaceExceptionManager.createException(80032);
       }
       Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+      LOGGER.info(
+          "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
       IOUtils.closeQuietly(fileSource);
       message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
       message.data("type", fileSource.getFileSplits()[0].type());

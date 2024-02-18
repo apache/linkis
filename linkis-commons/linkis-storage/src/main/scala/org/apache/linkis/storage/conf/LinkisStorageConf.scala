@@ -61,4 +61,8 @@ object LinkisStorageConf {
   }
 
   val LINKIS_RESULT_ENABLE_NULL = CommonVars("linkis.resultset.enable.null.replace", false).getValue
+
+  val LINKIS_RESULT_COLUMN_SIZE =
+    CommonVars("linkis.resultset.column.size.max", Int.MaxValue).getValue
+
 }

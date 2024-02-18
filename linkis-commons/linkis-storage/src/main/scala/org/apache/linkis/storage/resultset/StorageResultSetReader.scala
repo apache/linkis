@@ -20,12 +20,14 @@ package org.apache.linkis.storage.resultset
 import org.apache.linkis.common.io.{Fs, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.exception.{
   StorageErrorCode,
   StorageErrorException,
   StorageWarnException
 }
+import org.apache.linkis.storage.resultset.table.TableMetaData
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{ByteArrayInputStream, InputStream, IOException}
@@ -41,12 +43,9 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
   private val deserializer = resultSet.createResultSetDeserializer
   private var metaData: K = _
   private var row: Record = _
-  private var colCount = 0
   private var rowCount = 0
 
   private var fs: Fs = _
-
-  private val READ_CACHE = 1024
 
   def this(resultSet: ResultSet[K, V], value: String) = {
     this(resultSet, new ByteArrayInputStream(value.getBytes(Dolphin.CHAR_SET)))
@@ -142,6 +141,16 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
   @scala.throws[IOException]
   override def hasNext: Boolean = {
     if (metaData == null) getMetaData
+    metaData match {
+      case tableMetaData: TableMetaData =>
+        if (tableMetaData.columns.size > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE) {
+          logger.warn(
+            s"result set columns size ${tableMetaData.columns.size} > ${LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE}"
+          )
+          return false
+        }
+      case _ =>
+    }
     val line = readLine()
     if (line == null) return false
     row = deserializer.createRecord(line)

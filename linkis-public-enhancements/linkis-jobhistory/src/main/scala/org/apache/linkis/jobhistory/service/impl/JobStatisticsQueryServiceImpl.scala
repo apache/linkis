@@ -17,11 +17,12 @@
 
 package org.apache.linkis.jobhistory.service.impl
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.jobhistory.dao.JobStatisticsMapper
 import org.apache.linkis.jobhistory.entity.JobStatistics
 import org.apache.linkis.jobhistory.service.JobStatisticsQueryService
-
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -37,24 +38,80 @@ class JobStatisticsQueryServiceImpl extends JobStatisticsQueryService with Loggi
                                         sDate: Date,
                                         eDate: Date,
                                         username: String,
+                                        creator: String,
                                         engineType: String
                                       ): JobStatistics = {
-    val count = {
-      jobStatisticsMapper.taskExecutionStatistics(sDate, eDate, username, engineType)
+    val result = if (StringUtils.isBlank(creator)) {
+      jobStatisticsMapper.taskExecutionStatistics(
+        username,
+        sDate,
+        eDate,
+        engineType
+      )
+    } else if (StringUtils.isBlank(username)) {
+      val fakeLabel = new UserCreatorLabel
+      jobStatisticsMapper.taskExecutionStatisticsWithCreatorOnly(
+        username,
+        fakeLabel.getLabelKey,
+        creator,
+        sDate,
+        eDate,
+        engineType
+      )
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
+        logger.info("input user or creator is not correct", t)
+        throw t
+      }
+      jobStatisticsMapper.taskExecutionStatisticsWithUserCreator(
+        username,
+        fakeLabel.getLabelKey,
+        userCreator,
+        sDate,
+        eDate,
+        engineType
+      )
     }
-    count
+    result
   }
 
   override def engineExecutionStatistics(
                                           sDate: Date,
                                           eDate: Date,
                                           username: String,
+                                          creator: String,
                                           engineType: String
                                         ): JobStatistics = {
-    val count = {
-      jobStatisticsMapper.engineExecutionStatistics(sDate, eDate, username, engineType)
+    val result = if (StringUtils.isBlank(username) || StringUtils.isBlank(creator)) {
+      jobStatisticsMapper.engineExecutionStatistics(
+        username,
+        creator,
+        sDate,
+        eDate,
+        engineType
+      )
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
+        logger.info("input user or creator is not correct", t)
+        throw t
+      }
+      jobStatisticsMapper.engineExecutionStatisticsWithUserCreator(
+        username,
+        userCreator,
+        sDate,
+        eDate,
+        engineType
+      )
     }
-    count
+    result
   }
 
 }

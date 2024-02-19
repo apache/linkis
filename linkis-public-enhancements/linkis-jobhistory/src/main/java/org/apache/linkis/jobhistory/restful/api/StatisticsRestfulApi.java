@@ -49,7 +49,8 @@ public class StatisticsRestfulApi {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired private JobStatisticsQueryService jobStatisticsQueryService;
+    @Autowired
+    private JobStatisticsQueryService jobStatisticsQueryService;
 
     @ApiOperation(value = "taskCount", notes = "taskCount", response = Message.class)
     @ApiImplicitParams({
@@ -57,6 +58,7 @@ public class StatisticsRestfulApi {
             @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
             @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
             @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+            @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxyUser"),
     })
     @RequestMapping(path = "/taskCount", method = RequestMethod.GET)
     public Message taskCount(
@@ -65,7 +67,8 @@ public class StatisticsRestfulApi {
             @RequestParam(value = "endDate", required = false) Long endDate,
             @RequestParam(value = "executeApplicationName", required = false)
             String executeApplicationName,
-            @RequestParam(value = "creator", required = false) String creator)
+            @RequestParam(value = "creator", required = false) String creator,
+            @RequestParam(value = "proxyUser", required = false) String proxyUser)
             throws IOException, QueryException {
         if (endDate == null) {
             endDate = System.currentTimeMillis();
@@ -83,6 +86,13 @@ public class StatisticsRestfulApi {
             instance.setTimeInMillis(endDate);
             instance.add(Calendar.DAY_OF_MONTH, 1);
             eDate = new Date(instance.getTime().getTime());
+        }
+        if (StringUtils.isEmpty(proxyUser)) {
+            proxyUser = null;
+        } else {
+            if (!QueryUtils.checkNameValid(proxyUser)) {
+                return Message.error("Invalid proxyUser : " + proxyUser);
+            }
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
@@ -100,7 +110,7 @@ public class StatisticsRestfulApi {
         }
         JobStatistics jobStatistics =
                 jobStatisticsQueryService.taskExecutionStatistics(
-                        sDate, eDate, creator, executeApplicationName);
+                        sDate, eDate, proxyUser, creator, executeApplicationName);
 
         return Message.ok()
                 .data("sumCount", jobStatistics.getSumCount())
@@ -115,6 +125,7 @@ public class StatisticsRestfulApi {
             @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
             @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
             @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+            @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxyUser"),
     })
     @RequestMapping(path = "/engineCount", method = RequestMethod.GET)
     public Message engineCount(
@@ -123,7 +134,8 @@ public class StatisticsRestfulApi {
             @RequestParam(value = "endDate", required = false) Long endDate,
             @RequestParam(value = "executeApplicationName", required = false)
             String executeApplicationName,
-            @RequestParam(value = "creator", required = false) String creator)
+            @RequestParam(value = "creator", required = false) String creator,
+            @RequestParam(value = "proxyUser", required = false) String proxyUser)
             throws IOException, QueryException {
         if (endDate == null) {
             endDate = System.currentTimeMillis();
@@ -142,6 +154,13 @@ public class StatisticsRestfulApi {
             instance.add(Calendar.DAY_OF_MONTH, 1);
             eDate = new Date(instance.getTime().getTime());
         }
+        if (StringUtils.isEmpty(proxyUser)) {
+            proxyUser = null;
+        } else {
+            if (!QueryUtils.checkNameValid(proxyUser)) {
+                return Message.error("Invalid proxyUser : " + proxyUser);
+            }
+        }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
         } else {
@@ -158,7 +177,7 @@ public class StatisticsRestfulApi {
         }
         JobStatistics jobStatistics =
                 jobStatisticsQueryService.engineExecutionStatistics(
-                        sDate, eDate, creator, executeApplicationName);
+                        sDate, eDate, proxyUser, creator, executeApplicationName);
 
         return Message.ok()
                 .data("countEngine", jobStatistics.getSumCount())

@@ -47,6 +47,14 @@
           style="width: 120px"
         />
       </FormItem>
+      <FormItem prop="proxyUser" :label="$t('message.linkis.userName')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.proxyUser"
+          :placeholder="$t('message.linkis.searchName')"
+          style="width: 120px"
+        />
+      </FormItem>
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
         <Select v-model="searchBar.engine" style="width: 120px">
           <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
@@ -137,6 +145,7 @@ export default {
       },
       searchBar: {
         creator: '',
+        proxyUser: '',
         engine: 'all',
         status: '',
         shortcut: [today, today],
@@ -324,6 +333,7 @@ export default {
         : this.searchBar.shortcut[1]
       const params = {
         creator: this.searchBar.creator,
+        proxyUser: this.searchBar.proxyUser,
         executeApplicationName: this.searchBar.engine,
         startDate: startDate && startDate.getTime(),
         endDate: endDate && endDate.getTime(),
@@ -727,6 +737,7 @@ export default {
       const today = new Date(new Date().toLocaleDateString())
       this.searchBar = {
         creator: '',
+        proxyUser: '',
         engine: 'all',
         shortcut: [today, today],
       }

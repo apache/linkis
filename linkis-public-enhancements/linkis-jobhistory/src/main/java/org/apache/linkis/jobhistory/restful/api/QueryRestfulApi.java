@@ -420,6 +420,7 @@ public class QueryRestfulApi {
           @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
           @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
           @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+          @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxyUser"),
           @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
           @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
   })
@@ -431,6 +432,7 @@ public class QueryRestfulApi {
           @RequestParam(value = "executeApplicationName", required = false)
           String executeApplicationName,
           @RequestParam(value = "creator", required = false) String creator,
+          @RequestParam(value = "proxyUser", required = false) String proxyUser,
           @RequestParam(value = "pageNow", required = false) Integer pageNow,
           @RequestParam(value = "pageSize", required = false) Integer pageSize)
           throws QueryException {
@@ -439,6 +441,13 @@ public class QueryRestfulApi {
     }
     if (StringUtils.isEmpty(pageSize)) {
       pageSize = 20;
+    }
+    if (StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
     }
     if (StringUtils.isEmpty(creator)) {
       creator = null;
@@ -474,7 +483,7 @@ public class QueryRestfulApi {
     PageHelper.startPage(pageNow, pageSize);
     try {
       queryTasks =
-              jobHistoryQueryService.taskDurationTopN(sDate, eDate, creator, executeApplicationName);
+              jobHistoryQueryService.taskDurationTopN(sDate, eDate, proxyUser, creator, executeApplicationName);
     } finally {
       PageHelper.clearPage();
     }

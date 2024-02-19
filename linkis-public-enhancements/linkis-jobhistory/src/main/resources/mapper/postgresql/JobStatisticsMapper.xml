@@ -21,14 +21,6 @@
 
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobStatisticsMapper">
 
-    <resultMap id="jobStatisticsMap" type="org.apache.linkis.jobhistory.entity.JobStatistics" autoMapping="false" >
-        <id property="id" column="id" />
-        <result property = "sumCount" column = "sumcount" />
-        <result property = "succeedCount" column = "succeedcount" />
-        <result property = "failedCount" column = "failedcount" />
-        <result property = "cancelledCount" column = "cancelledcount" />
-    </resultMap>
-
     <select id="taskExecutionStatisticsWithCreatorOnly" useCache="true" resultMap="jobStatisticsMap">
         SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Succeed' then 1 END) succeedcount,
         COUNT(case WHEN status ='Failed' then 1 END) failedcount,

@@ -639,12 +639,6 @@ export default {
           width: 80,
         },
         {
-          title: this.$t('message.linkis.tableColumns.jobName'),
-          key: 'jobName',
-          align: 'center',
-          width: 150,
-        },
-        {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',

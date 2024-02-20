@@ -284,7 +284,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
             </if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and labels like CONCAT('%"', #{userCreatorKey}::text, '":"%-', #{creator}::text, '%')
+                and  STRPOS(labels, CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue})) > 0
             </if>
         </where>
         ORDER BY EXTRACT(EPOCH FROM AGE(cast(updated_time as timestamp), cast(created_time as timestamp))) desc

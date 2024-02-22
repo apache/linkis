@@ -47,142 +47,149 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(path = "/jobhistory/jobstatistics")
 public class StatisticsRestfulApi {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+  private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private JobStatisticsQueryService jobStatisticsQueryService;
+  @Autowired private JobStatisticsQueryService jobStatisticsQueryService;
 
-    @ApiOperation(value = "taskCount", notes = "taskCount", response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", dataType = "long"),
-            @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
-            @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
-            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-            @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxyUser"),
-    })
-    @RequestMapping(path = "/taskCount", method = RequestMethod.GET)
-    public Message taskCount(
-            HttpServletRequest req,
-            @RequestParam(value = "startDate", required = false) Long startDate,
-            @RequestParam(value = "endDate", required = false) Long endDate,
-            @RequestParam(value = "executeApplicationName", required = false)
-            String executeApplicationName,
-            @RequestParam(value = "creator", required = false) String creator,
-            @RequestParam(value = "proxyUser", required = false) String proxyUser)
-            throws IOException, QueryException {
-        if (endDate == null) {
-            endDate = System.currentTimeMillis();
-        }
-        if (startDate == null) {
-            startDate = 0L;
-        }
-        Date sDate = new Date(startDate);
-        Date eDate = new Date(endDate);
-        if (startDate == 0L) {
-            sDate = DateUtils.addDays(eDate, -1);
-        }
-        if (sDate.getTime() == eDate.getTime()) {
-            Calendar instance = Calendar.getInstance();
-            instance.setTimeInMillis(endDate);
-            instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = new Date(instance.getTime().getTime());
-        }
-        if (StringUtils.isEmpty(proxyUser)) {
-            proxyUser = null;
-        } else {
-            if (!QueryUtils.checkNameValid(proxyUser)) {
-                return Message.error("Invalid proxyUser : " + proxyUser);
-            }
-        }
-        if (StringUtils.isEmpty(creator)) {
-            creator = null;
-        } else {
-            if (!QueryUtils.checkNameValid(creator)) {
-                return Message.error("Invalid creator : " + creator);
-            }
-        }
-        if (!StringUtils.isEmpty(executeApplicationName)) {
-            if (!QueryUtils.checkNameValid(executeApplicationName)) {
-                return Message.error("Invalid applicationName : " + executeApplicationName);
-            }
-        } else {
-            executeApplicationName = null;
-        }
-        JobStatistics jobStatistics =
-                jobStatisticsQueryService.taskExecutionStatistics(
-                        sDate, eDate, proxyUser, creator, executeApplicationName);
-
-        return Message.ok()
-                .data("sumCount", jobStatistics.getSumCount())
-                .data("succeedCount", jobStatistics.getSucceedCount())
-                .data("failedCount", jobStatistics.getFailedCount())
-                .data("cancelledCount", jobStatistics.getCancelledCount());
+  @ApiOperation(value = "taskCount", notes = "taskCount", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "startDate", dataType = "long"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "proxyUser",
+        required = false,
+        dataType = "String",
+        value = "proxyUser"),
+  })
+  @RequestMapping(path = "/taskCount", method = RequestMethod.GET)
+  public Message taskCount(
+      HttpServletRequest req,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser)
+      throws IOException, QueryException {
+    if (endDate == null) {
+      endDate = System.currentTimeMillis();
     }
-
-    @ApiOperation(value = "engineCount", notes = "engineCount", response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", dataType = "long"),
-            @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
-            @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
-            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-            @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxyUser"),
-    })
-    @RequestMapping(path = "/engineCount", method = RequestMethod.GET)
-    public Message engineCount(
-            HttpServletRequest req,
-            @RequestParam(value = "startDate", required = false) Long startDate,
-            @RequestParam(value = "endDate", required = false) Long endDate,
-            @RequestParam(value = "executeApplicationName", required = false)
-            String executeApplicationName,
-            @RequestParam(value = "creator", required = false) String creator,
-            @RequestParam(value = "proxyUser", required = false) String proxyUser)
-            throws IOException, QueryException {
-        if (endDate == null) {
-            endDate = System.currentTimeMillis();
-        }
-        if (startDate == null) {
-            startDate = 0L;
-        }
-        Date sDate = new Date(startDate);
-        Date eDate = new Date(endDate);
-        if (startDate == 0L) {
-            sDate = DateUtils.addDays(eDate, -1);
-        }
-        if (sDate.getTime() == eDate.getTime()) {
-            Calendar instance = Calendar.getInstance();
-            instance.setTimeInMillis(endDate);
-            instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = new Date(instance.getTime().getTime());
-        }
-        if (StringUtils.isEmpty(proxyUser)) {
-            proxyUser = null;
-        } else {
-            if (!QueryUtils.checkNameValid(proxyUser)) {
-                return Message.error("Invalid proxyUser : " + proxyUser);
-            }
-        }
-        if (StringUtils.isEmpty(creator)) {
-            creator = null;
-        } else {
-            if (!QueryUtils.checkNameValid(creator)) {
-                return Message.error("Invalid creator : " + creator);
-            }
-        }
-        if (!StringUtils.isEmpty(executeApplicationName)) {
-            if (!QueryUtils.checkNameValid(executeApplicationName)) {
-                return Message.error("Invalid applicationName : " + executeApplicationName);
-            }
-        } else {
-            executeApplicationName = null;
-        }
-        JobStatistics jobStatistics =
-                jobStatisticsQueryService.engineExecutionStatistics(
-                        sDate, eDate, proxyUser, creator, executeApplicationName);
-
-        return Message.ok()
-                .data("countEngine", jobStatistics.getSumCount())
-                .data("countEngineSucceed", jobStatistics.getSucceedCount())
-                .data("countEngineFailed", jobStatistics.getFailedCount())
-                .data("countEngineShutting", jobStatistics.getCancelledCount());
+    if (startDate == null) {
+      startDate = 0L;
     }
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (startDate == 0L) {
+      sDate = DateUtils.addDays(eDate, -1);
+    }
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar instance = Calendar.getInstance();
+      instance.setTimeInMillis(endDate);
+      instance.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(instance.getTime().getTime());
+    }
+    if (StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
+    }
+    if (StringUtils.isEmpty(creator)) {
+      creator = null;
+    } else {
+      if (!QueryUtils.checkNameValid(creator)) {
+        return Message.error("Invalid creator : " + creator);
+      }
+    }
+    if (!StringUtils.isEmpty(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        return Message.error("Invalid applicationName : " + executeApplicationName);
+      }
+    } else {
+      executeApplicationName = null;
+    }
+    JobStatistics jobStatistics =
+        jobStatisticsQueryService.taskExecutionStatistics(
+            sDate, eDate, proxyUser, creator, executeApplicationName);
+
+    return Message.ok()
+        .data("sumCount", jobStatistics.getSumCount())
+        .data("succeedCount", jobStatistics.getSucceedCount())
+        .data("failedCount", jobStatistics.getFailedCount())
+        .data("cancelledCount", jobStatistics.getCancelledCount());
+  }
+
+  @ApiOperation(value = "engineCount", notes = "engineCount", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "startDate", dataType = "long"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "proxyUser",
+        required = false,
+        dataType = "String",
+        value = "proxyUser"),
+  })
+  @RequestMapping(path = "/engineCount", method = RequestMethod.GET)
+  public Message engineCount(
+      HttpServletRequest req,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser)
+      throws IOException, QueryException {
+    if (endDate == null) {
+      endDate = System.currentTimeMillis();
+    }
+    if (startDate == null) {
+      startDate = 0L;
+    }
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (startDate == 0L) {
+      sDate = DateUtils.addDays(eDate, -1);
+    }
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar instance = Calendar.getInstance();
+      instance.setTimeInMillis(endDate);
+      instance.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(instance.getTime().getTime());
+    }
+    if (StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
+    }
+    if (StringUtils.isEmpty(creator)) {
+      creator = null;
+    } else {
+      if (!QueryUtils.checkNameValid(creator)) {
+        return Message.error("Invalid creator : " + creator);
+      }
+    }
+    if (!StringUtils.isEmpty(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        return Message.error("Invalid applicationName : " + executeApplicationName);
+      }
+    } else {
+      executeApplicationName = null;
+    }
+    JobStatistics jobStatistics =
+        jobStatisticsQueryService.engineExecutionStatistics(
+            sDate, eDate, proxyUser, creator, executeApplicationName);
+
+    return Message.ok()
+        .data("countEngine", jobStatistics.getSumCount())
+        .data("countEngineSucceed", jobStatistics.getSucceedCount())
+        .data("countEngineFailed", jobStatistics.getFailedCount())
+        .data("countEngineShutting", jobStatistics.getCancelledCount());
+  }
 }

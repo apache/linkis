@@ -26,38 +26,38 @@ import java.util.Date;
 public interface JobStatisticsMapper {
 
   JobStatistics taskExecutionStatistics(
-          @Param("umUser") String username,
-          @Param("startDate") Date startDate,
-          @Param("endDate") Date endDate,
-          @Param("engineType") String engineType);
+      @Param("umUser") String username,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 
   JobStatistics taskExecutionStatisticsWithUserCreator(
-          @Param("umUser") String username,
-          @Param("userCreatorKey") String userCreatorKey,
-          @Param("userCreatorValue") String userCreator,
-          @Param("startDate") Date startDate,
-          @Param("endDate") Date endDate,
-          @Param("engineType") String engineType);
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("userCreatorValue") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 
   JobStatistics taskExecutionStatisticsWithCreatorOnly(
-          @Param("umUser") String username,
-          @Param("userCreatorKey") String userCreatorKey,
-          @Param("creator") String userCreator,
-          @Param("startDate") Date startDate,
-          @Param("endDate") Date endDate,
-          @Param("engineType") String engineType);
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("creator") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 
   JobStatistics engineExecutionStatisticsWithUserCreator(
-          @Param("umUser") String username,
-          @Param("userCreatorValue") String userCreator,
-          @Param("startDate") Date startDate,
-          @Param("endDate") Date endDate,
-          @Param("engineType") String engineType);
+      @Param("umUser") String username,
+      @Param("userCreatorValue") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 
   JobStatistics engineExecutionStatistics(
-          @Param("umUser") String username,
-          @Param("creator") String userCreator,
-          @Param("startDate") Date startDate,
-          @Param("endDate") Date endDate,
-          @Param("engineType") String engineType);
+      @Param("umUser") String username,
+      @Param("creator") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 }

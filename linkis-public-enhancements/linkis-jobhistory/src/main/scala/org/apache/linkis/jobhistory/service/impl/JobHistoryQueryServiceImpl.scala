@@ -486,14 +486,15 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
   }
 
-  override def taskDurationTopN(sDate: Date, eDate: Date, username: String, creator: String, engineType: String): util.List[JobHistory] = {
+  override def taskDurationTopN(
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): util.List[JobHistory] = {
     val result = if (StringUtils.isBlank(creator)) {
-      jobHistoryMapper.taskDurationTopN(
-        sDate,
-        eDate,
-        username,
-        engineType
-      )
+      jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
       jobHistoryMapper.taskDurationTopNWithCreatorOnly(
@@ -524,4 +525,5 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
     result
   }
+
 }

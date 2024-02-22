@@ -17,12 +17,14 @@
 
 package org.apache.linkis.jobhistory.service.impl
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.jobhistory.dao.JobStatisticsMapper
 import org.apache.linkis.jobhistory.entity.JobStatistics
 import org.apache.linkis.jobhistory.service.JobStatisticsQueryService
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -35,19 +37,14 @@ class JobStatisticsQueryServiceImpl extends JobStatisticsQueryService with Loggi
   private var jobStatisticsMapper: JobStatisticsMapper = _
 
   override def taskExecutionStatistics(
-                                        sDate: Date,
-                                        eDate: Date,
-                                        username: String,
-                                        creator: String,
-                                        engineType: String
-                                      ): JobStatistics = {
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): JobStatistics = {
     val result = if (StringUtils.isBlank(creator)) {
-      jobStatisticsMapper.taskExecutionStatistics(
-        username,
-        sDate,
-        eDate,
-        engineType
-      )
+      jobStatisticsMapper.taskExecutionStatistics(username, sDate, eDate, engineType)
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
       jobStatisticsMapper.taskExecutionStatisticsWithCreatorOnly(
@@ -80,20 +77,14 @@ class JobStatisticsQueryServiceImpl extends JobStatisticsQueryService with Loggi
   }
 
   override def engineExecutionStatistics(
-                                          sDate: Date,
-                                          eDate: Date,
-                                          username: String,
-                                          creator: String,
-                                          engineType: String
-                                        ): JobStatistics = {
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): JobStatistics = {
     val result = if (StringUtils.isBlank(username) || StringUtils.isBlank(creator)) {
-      jobStatisticsMapper.engineExecutionStatistics(
-        username,
-        creator,
-        sDate,
-        eDate,
-        engineType
-      )
+      jobStatisticsMapper.engineExecutionStatistics(username, creator, sDate, eDate, engineType)
     } else {
       val fakeLabel = new UserCreatorLabel
       fakeLabel.setUser(username)

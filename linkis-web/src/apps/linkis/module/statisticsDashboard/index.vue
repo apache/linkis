@@ -35,7 +35,7 @@
           placement="bottom-start"
           format="yyyy-MM-dd"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 160px"
+          style="width: 175px"
           :editable="false"
         />
       </FormItem>
@@ -64,12 +64,12 @@
         <Button
           type="primary"
           @click="search"
-          style="margin-right: 10px;"
+          style="margin-right: 10px; margin-top: 32px;"
         >{{ $t('message.linkis.search') }}</Button>
         <Button
           type="warning"
           @click="reset"
-          style="margin-right: 10px;"
+          style="margin-right: 10px; margin-top: 32px;"
         >{{ $t('message.linkis.clearSearch') }}</Button>
       </FormItem>
     </Form>

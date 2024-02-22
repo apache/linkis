@@ -147,7 +147,6 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
       .ok("get baseinfo success(获取成功)！")
       .data("resultSetExportEnable", GatewayConfiguration.IS_DOWNLOAD.getValue)
       .data("linkisClusterName", GatewayConfiguration.LINKIS_CLUSTER_NAME.getValue)
-      .data("engineLogOnlyAdmin", GatewayConfiguration.ENGINE_LOG_ONLY_ADMIN.getValue)
 
   }
 

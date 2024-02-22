@@ -126,7 +126,7 @@ import mixin from '@/common/service/mixin'
 import api from '@/common/service/api'
 var echarts = require('echarts')
 export default {
-  name: 'GlobalHistory',
+  name: 'StatisticsDashboard',
   components: {
     historyTable: table.historyTable,
   },

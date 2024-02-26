@@ -600,6 +600,9 @@ public class FsRestfulApi {
         if (!StringUtils.isEmpty(nullValue)) {
           fileSource.addParams("nullValue", nullValue);
         }
+        if (pageSize > FILESYSTEM_RESULTSET_ROW_LIMIT.getValue()) {
+          throw WorkspaceExceptionManager.createException(80034);
+        }
         fileSource = fileSource.page(page, pageSize);
       } else if (fileSystem.getLength(fsPath)
           > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {

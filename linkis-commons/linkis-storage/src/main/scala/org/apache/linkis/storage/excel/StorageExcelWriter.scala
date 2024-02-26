@@ -62,7 +62,7 @@ class StorageExcelWriter(
     val headerFont = workBook.createFont
     headerFont.setBold(true)
     headerFont.setFontHeightInPoints(14.toShort)
-    headerFont.setColor(IndexedColors.RED.getIndex)
+    headerFont.setColor(IndexedColors.BLACK.getIndex)
     val headerCellStyle = workBook.createCellStyle
     headerCellStyle.setFont(headerFont)
     headerCellStyle

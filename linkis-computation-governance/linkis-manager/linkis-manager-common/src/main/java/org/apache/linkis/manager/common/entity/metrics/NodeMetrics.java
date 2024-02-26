@@ -36,4 +36,6 @@ public interface NodeMetrics {
   void setHealthy(String healthy);
 
   Date getUpdateTime();
+
+  String getDescription();
 }

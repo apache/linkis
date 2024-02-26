@@ -96,6 +96,7 @@ class DefaultMetricsConverter extends MetricsConverter with Logging {
     amNode.setNodeHealthyInfo(parseHealthyInfo(metrics))
     amNode.setNodeOverLoadInfo(parseOverLoadInfo(metrics))
     amNode.setUpdateTime(metrics.getUpdateTime)
+    amNode.setNodeDescription(metrics.getDescription)
     amNode
   }
 

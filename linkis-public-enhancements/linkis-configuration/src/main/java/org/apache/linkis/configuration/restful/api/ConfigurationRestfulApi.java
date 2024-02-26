@@ -174,7 +174,7 @@ public class ConfigurationRestfulApi {
     ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
     // Adding * represents returning all configuration information
     if ("*".equals(engineType)) {
-      engineType = null;
+      engineType = "";
     }
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
     List<Map<String, Object>> filterResult = new ArrayList<>();
@@ -498,7 +498,8 @@ public class ConfigurationRestfulApi {
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version"),
     @ApiImplicitParam(name = "creator", required = true, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "configKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "configValue", required = true, dataType = "String")
+    @ApiImplicitParam(name = "configValue", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "configKeyId", required = false, dataType = "String")
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
@@ -512,6 +513,7 @@ public class ConfigurationRestfulApi {
     String creator = ((String) json.getOrDefault("creator", "*")).trim();
     String configKey = ((String) json.get("configKey")).trim();
     String value = ((String) json.get("configValue")).trim();
+    String configKeyId = ((String) json.getOrDefault("configKeyId", "")).trim();
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
       return Message.error("Only admin can modify other user configuration data");
@@ -532,7 +534,9 @@ public class ConfigurationRestfulApi {
     ConfigKeyValue configKeyValue = new ConfigKeyValue();
     configKeyValue.setKey(configKey);
     configKeyValue.setConfigValue(value);
-
+    if (StringUtils.isNotBlank(configKeyId)) {
+      configKeyValue.setId(Long.valueOf(configKeyId));
+    }
     try {
       configurationService.paramCheck(configKeyValue);
     } catch (Exception e) {

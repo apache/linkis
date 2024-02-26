@@ -34,4 +34,8 @@ public interface AMNode extends Node {
   NodeHealthyInfo getNodeHealthyInfo();
 
   void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo);
+
+  void setNodeDescription(String description);
+
+  String getNodeDescription();
 }

@@ -69,3 +69,5 @@ CREATE TABLE `linkis_cg_tenant_department_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 ALTER TABLE linkis_cg_tenant_label_config ADD COLUMN is_valid varchar(1) CHARSET utf8mb4 COLLATE utf8mb4_bin DEFAULT 'Y' COMMENT '是否有效';
+
+ALTER TABLE linkis_cg_manager_service_instance_metrics ADD COLUMN description varchar(128) CHARSET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';

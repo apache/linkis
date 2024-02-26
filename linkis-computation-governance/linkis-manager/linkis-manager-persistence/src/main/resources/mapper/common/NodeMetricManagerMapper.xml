@@ -31,6 +31,7 @@
          <id column="healthy_status" property="healthy"/>
          <id column="update_time" property="updateTime"/>
          <id column="create_time" property="createTime"/>
+         <id column="description" property="description"/>
    </resultMap>
 
 
@@ -64,6 +65,7 @@
         <if test='nodeMetrics.heartBeatMsg != null'>  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
         <if test='nodeMetrics.healthy != null'>  healthy_status=#{nodeMetrics.healthy}, </if>
         <if test='nodeMetrics.updateTime != null'>  update_time=#{nodeMetrics.updateTime},</if>
+        <if test='nodeMetrics.description != null'>  description=#{nodeMetrics.description},</if>
         </trim> where instance = #{instance}
     </update>
 

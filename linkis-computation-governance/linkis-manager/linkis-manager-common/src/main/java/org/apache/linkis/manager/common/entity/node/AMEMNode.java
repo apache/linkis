@@ -57,6 +57,8 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
 
   private Date updateTime;
 
+  private String nodeDescription;
+
   @Override
   public Date getUpdateTime() {
     return updateTime;
@@ -200,6 +202,15 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   @Override
   public void setTicketId(String ticketId) {
     this.ticketId = ticketId;
+  }
+
+  public String getNodeDescription() {
+    return nodeDescription;
+  }
+
+  @Override
+  public void setNodeDescription(String nodeDescription) {
+    this.nodeDescription = nodeDescription;
   }
 
   @Override

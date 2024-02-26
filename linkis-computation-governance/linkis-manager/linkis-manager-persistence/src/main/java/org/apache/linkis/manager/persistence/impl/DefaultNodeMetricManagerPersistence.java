@@ -196,4 +196,11 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     }
     return persistenceNodeMetricsList;
   }
+
+  @Override
+  public void updateNodeMetricDescription(String description, String instance) {
+    PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
+    persistenceNodeMetrics.setDescription(description);
+    nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
+  }
 }

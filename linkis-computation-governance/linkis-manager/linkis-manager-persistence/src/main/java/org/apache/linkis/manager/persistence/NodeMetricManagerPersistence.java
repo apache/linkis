@@ -68,4 +68,6 @@ public interface NodeMetricManagerPersistence {
   void deleteNodeMetrics(Node node) throws PersistenceErrorException;
 
   List<NodeMetrics> getAllNodeMetrics() throws PersistenceErrorException;
+
+  void updateNodeMetricDescription(String description, String instance);
 }

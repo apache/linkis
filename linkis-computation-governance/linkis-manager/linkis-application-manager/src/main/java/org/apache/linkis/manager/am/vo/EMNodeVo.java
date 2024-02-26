@@ -71,6 +71,8 @@ public class EMNodeVo {
 
   private Date startTime;
 
+  private String description;
+
   public List<Label> getLabels() {
     return labels;
   }
@@ -245,5 +247,13 @@ public class EMNodeVo {
 
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

@@ -851,6 +851,7 @@ CREATE TABLE `linkis_cg_manager_service_instance_metrics` (
   `healthy_status` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `description` varchar(128) COLLATE utf8_bin NOT NULL DEFAULT '',
   PRIMARY KEY (`instance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

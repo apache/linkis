@@ -54,6 +54,7 @@ import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
 import org.apache.linkis.server.Message;
@@ -114,6 +115,8 @@ public class EMRestfulApi {
   @Autowired private ExternalResourceService externalResourceService;
 
   @Autowired private DefaultEngineCreateService defaultEngineCreateService;
+
+  @Autowired private NodeMetricManagerPersistence nodeMetricManagerPersistence;
 
   private LabelBuilderFactory stdLabelBuilderFactory =
       LabelBuilderFactoryContext.getLabelBuilderFactory();
@@ -251,6 +254,7 @@ public class EMRestfulApi {
     @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:9102"),
     @ApiImplicitParam(name = "labels", dataType = "List", value = "Labels"),
     @ApiImplicitParam(name = "labelKey", dataType = "String", example = "emInstance"),
+    @ApiImplicitParam(name = "description", dataType = "String", example = ""),
     @ApiImplicitParam(
         name = "stringValue",
         dataType = "String",
@@ -308,6 +312,10 @@ public class EMRestfulApi {
       }
       nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
       logger.info("success to update label of instance: " + serviceInstance.getInstance());
+    }
+    JsonNode description = jsonNode.get("description");
+    if (null != description && StringUtils.isNotBlank(description.asText())) {
+      nodeMetricManagerPersistence.updateNodeMetricDescription(description.asText(), instance);
     }
     return Message.ok("success");
   }

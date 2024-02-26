@@ -111,5 +111,8 @@
         <logger name="org.apache.hadoop.hdfs.server.namenode.ha.RequestHedgingProxyProvider" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
+        <logger name="com.netflix.discovery.TimedSupervisorTask" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
    </loggers>
 </configuration>

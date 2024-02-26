@@ -77,5 +77,8 @@
         <logger name="org.apache.linkis.manager.engineplugin.shell.executor.YarnAppIdExtractor" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
+        <logger name="com.netflix.discovery.TimedSupervisorTask" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
     </loggers>
 </configuration>

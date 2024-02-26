@@ -106,4 +106,7 @@ public interface JobHistoryMapper {
 
   void updateJobHistoryCancelById(
       @Param("idList") List<Long> idList, @Param("errorDesc") String errorDesc);
+
+  List<JobHistory> selectJobHistoryByTaskidList(
+      @Param("idList") List<String> idList, @Param("umUser") String username);
 }

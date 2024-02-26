@@ -462,4 +462,11 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
   }
 
+  override def searchByTasks(
+      taskidList: util.List[String],
+      username: String
+  ): util.List[JobHistory] = {
+    jobHistoryMapper.selectJobHistoryByTaskidList(taskidList, username)
+  }
+
 }

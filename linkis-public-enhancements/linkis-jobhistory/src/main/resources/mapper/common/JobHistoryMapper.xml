@@ -227,4 +227,13 @@
             #{id}
         </foreach>
     </update>
+    <select id="selectJobHistoryByTaskidList" useCache="true" resultMap="jobHistoryMap">
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        <if test="umUser != null">and submit_user = #{umUser}</if>
+        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+    </select>
 </mapper>

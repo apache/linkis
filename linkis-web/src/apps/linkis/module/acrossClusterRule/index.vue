@@ -59,7 +59,7 @@
         <Button type="warning" class="button" @click="clearSearch">{{
           $t('message.linkis.ipListManagement.clear')
         }}</Button>
-        <Button type="success" class="button" @click="createRules">{{
+        <Button v-if="isLogAdmin" type="success" class="button" @click="createRules">{{
           $t('message.linkis.ipListManagement.create')
         }}</Button>
       </Col>
@@ -111,17 +111,32 @@
           <FormItem :label="$t('message.linkis.ipListManagement.acrossClusterQueue')" prop="crossQueue">
             <Input class="input" v-model="modalData.crossQueue"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.CPUThreshold')" prop="CPUThreshold">
+          <FormItem :label="$t('message.linkis.ipListManagement.priorityCluster')" prop="priorityCluster">
+            <Input class="input" v-model="modalData.priorityCluster"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetCPUThreshold')" prop="targetCPUThreshold">
+            <Input class="input" v-model="modalData.targetCPUThreshold"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetMemoryThreshold')" prop="targetMemoryThreshold">
+            <Input class="input" v-model="modalData.targetMemoryThreshold"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetCPUPercentageThreshold')" prop="targetCPUPercentageThreshold">
+            <Input class="input" v-model="modalData.targetCPUPercentageThreshold"  placeholder="0~1"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetMemoryPercentageThreshold')" prop="targetMemoryPercentageThreshold">
+            <Input class="input" v-model="modalData.targetMemoryPercentageThreshold"  placeholder="0~1"></Input>
+          </FormItem>
+          <!-- <FormItem :label="$t('message.linkis.ipListManagement.CPUThreshold')" prop="CPUThreshold">
             <Input class="input" v-model="modalData.CPUThreshold"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.MemoryThreshold')" prop="MemoryThreshold">
             <Input class="input" v-model="modalData.MemoryThreshold"></Input>
+          </FormItem> -->
+          <FormItem :label="$t('message.linkis.ipListManagement.originCPUPercentageThreshold')" prop="originCPUPercentageThreshold">
+            <Input class="input" v-model="modalData.originCPUPercentageThreshold"  placeholder="0~1"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.CPUPercentageThreshold')" prop="CPUPercentageThreshold">
-            <Input class="input" v-model="modalData.CPUPercentageThreshold"  placeholder="0~1"></Input>
-          </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.MemoryPercentageThreshold')" prop="MemoryPercentageThreshold">
-            <Input class="input" v-model="modalData.MemoryPercentageThreshold"  placeholder="0~1"></Input>
+          <FormItem :label="$t('message.linkis.ipListManagement.originMemoryPercentageThreshold')" prop="originMemoryPercentageThreshold">
+            <Input class="input" v-model="modalData.originMemoryPercentageThreshold"  placeholder="0~1"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.isValid')" prop="isValid">
             <RadioGroup v-model="modalData.isValid">
@@ -154,6 +169,7 @@ export default {
   name: 'acrossClusterRule',
   data() {
     return {
+      isLogAdmin: false,
       modalTitle: '',
       loading: false,
       queryData: {
@@ -182,19 +198,31 @@ export default {
         {
           title: this.$t('message.linkis.ipListManagement.userCreator'),
           key: 'userCreator',
-          width: 550,
+          width: 450,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.ipListManagement.isValid'),
           key: 'isValid',
-          width: 200,
+          width: 150,
           tooltip: true,
           align: 'center',
           render: (h, params) => {
             return h('div', [
               h('span', params.row.isValid === 'Y' ? this.$t('message.linkis.ipListManagement.yes') : this.$t('message.linkis.ipListManagement.no'))
+            ]);
+          }
+        },
+        {
+          title: this.$t('message.linkis.ipListManagement.priorityCluster'),
+          key: 'parsedRules',
+          width: 150,
+          tooltip: true,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('span', params.row?.parsedRules?.priorityClusterRule?.priorityCluster || '--')
             ]);
           }
         },
@@ -226,6 +254,21 @@ export default {
           width: 200,
           align: 'center',
           render: (h, params) => {
+            if(!this.isLogAdmin) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: params.row.isValid === 'N' ? 'success' : 'warning',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.enable(params.row)
+                    }
+                  }
+                }, params.row.isValid === 'N' ? this.$t('message.linkis.ipListManagement.enable') : this.$t('message.linkis.ipListManagement.disable')),
+              ]);
+            }
             return h('div', [
               h('Button', {
                 props: {
@@ -277,11 +320,14 @@ export default {
         username: '',
         creator: '',
         clusterName: '',
-        CPUThreshold: '',
-        CPUPercentageThreshold: '',
         crossQueue: '',
-        MemoryThreshold: '',
-        MemoryPercentageThreshold: '',
+        priorityCluster: '',
+        targetCPUThreshold: '',
+        targetMemoryThreshold: '',
+        targetCPUPercentageThreshold: '',
+        targetMemoryPercentageThreshold: '',
+        originCPUPercentageThreshold: '',
+        originMemoryPercentageThreshold: '',
         startTime: '',
         endTime: '',
         isValid: 'Y'
@@ -289,19 +335,22 @@ export default {
       modalDataRule: {
         username: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
-        parsedRules: [
-          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur', type: 'object'},
-          {validator: this.ruleJsonValidator, trigger: 'blur'}
-        ],
+        // parsedRules: [
+        //   {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur', type: 'object'},
+        //   {validator: this.ruleJsonValidator, trigger: 'blur'}
+        // ],
         clusterName: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
         startTime: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
@@ -311,20 +360,30 @@ export default {
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {pattern: /^([01]\d|2[0-3]):[0-5]\d$/, message: this.$t('message.linkis.ipListManagement.timeError'), type: 'string'}
         ],
-        MemoryThreshold: [
+        targetMemoryThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.thresholdValidator, trigger: 'blur'},
         ],
-        CPUThreshold: [
+        targetCPUThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.thresholdValidator, trigger: 'blur'},
         ],
-        MemoryPercentageThreshold: [
+        targetMemoryPercentageThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
         ],
-        CPUPercentageThreshold: [
+        targetCPUPercentageThreshold: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        originMemoryPercentageThreshold: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        originCPUPercentageThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
@@ -333,6 +392,11 @@ export default {
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           // {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 25, message: this.$t('message.linkis.ipListManagement.customLen', {length: '25'})}
+        ],
+        priorityCluster: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
       },
       // tagIsExist: true,
@@ -378,6 +442,7 @@ export default {
         this.datalist = res.acrossClusterRuleList.map((item) => {
           item.userCreator = item.username + "-" + item.creator;
           item.parsedRules = JSON.parse(item.rules)
+
           // item.createTime = new Date(item.createTime).toLocaleString();
           return item;
         })
@@ -420,11 +485,14 @@ export default {
         username: '',
         creator: '',
         clusterName: '',
-        CPUThreshold: '',
-        CPUPercentageThreshold: '',
         crossQueue: '',
-        MemoryThreshold: '',
-        MemoryPercentageThreshold: '',
+        priorityCluster: '',
+        targetCPUThreshold: '',
+        targetMemoryThreshold: '',
+        targetCPUPercentageThreshold: '',
+        targetMemoryPercentageThreshold: '',
+        originCPUPercentageThreshold: '',
+        originMemoryPercentageThreshold: '',
         startTime: '',
         endTime: '',
         isValid: 'Y'
@@ -467,11 +535,13 @@ export default {
       const {
         id, username, creator, clusterName, parsedRules, isValid,
       } = data
-      const { CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold } = parsedRules?.thresholdRule || {};
+      const { targetCPUPercentageThreshold, targetMemoryPercentageThreshold, targetMemoryThreshold, targetCPUThreshold } = parsedRules?.targetClusterRule || {};
+      const { originCPUPercentageThreshold, originMemoryPercentageThreshold } = parsedRules?.originClusterRule || {};
       const { crossQueue } = parsedRules?.queueRule || {};
+      const { priorityCluster } = parsedRules?.priorityClusterRule || {};
       const { startTime, endTime } = parsedRules?.timeRule || {}
       this.modalData = {
-        id, username, creator, clusterName, crossQueue, CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold, startTime, endTime, isValid
+        id, username, creator, clusterName, crossQueue, targetCPUPercentageThreshold, targetMemoryPercentageThreshold, targetMemoryThreshold, targetCPUThreshold, originCPUPercentageThreshold, originMemoryPercentageThreshold, startTime, endTime, isValid, priorityCluster
       };
       this.showCreateModal = true;
       this.mode = 'edit';
@@ -520,8 +590,8 @@ export default {
     },
     async confirmDelete(data) {
       try {
-        const { username, creator } = data
-        await api.fetch('/configuration/acrossClusterRule/delete', { username, creator }, 'delete');
+        const { id } = data
+        await api.fetch('/configuration/acrossClusterRule/delete', { id }, 'delete');
         this.$Message.success(this.$t('message.linkis.ipListManagement.deleteSuccess'));
       } catch(err) {
         return;
@@ -561,6 +631,7 @@ export default {
     }
   },
   created() {
+    this.isLogAdmin = storage.get('isLogAdmin') || '';
     this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';
     this.init();
   }

@@ -23,13 +23,17 @@
       fix/>
     <Row class="search-bar">
       <Col span="6" class="search-item">
-        <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.userName')}}</span>
-        <Input
-          v-model="queryData.user"
+        <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.tenantTagManagement.department')">{{$t('message.linkis.tenantTagManagement.department')}}</span>
+        <Select
+          v-model="queryData.departmentId"
+          style="width: calc(100% - 66px);"
           class="input"
-          :placeholder="$t('message.linkis.tenantTagManagement.inputUser')"
-          @on-enter="search"
-        ></Input>
+          :placeholder="$t('message.linkis.tenantTagManagement.selectDepartment')"
+          filterable
+          clearable
+        >
+          <Option v-for="item in departments" :value="item.value" :key="item.value" :label="item.label"/>
+        </Select>
       </Col>
       <Col span="6" class="search-item">
         <span :title="$t('message.linkis.tenantTagManagement.appName')" :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.appName')}}</span>
@@ -87,21 +91,28 @@
       class="modal"
       @on-cancel="cancel">
       <div class="form">
-        <Form ref="createTenantForm" :model="modalData" label-position="left" :label-width="70" :rules="modalDataRule">
-          <FormItem :label="$t('message.linkis.tenantTagManagement.userName')" prop="user">
-            <Input class="input" v-model="modalData.user" @on-change="handleChange" style="width: 319px"></Input>
+        <Form ref="createTenantForm" :model="modalData" label-position="left" :label-width="85" :rules="modalDataRule">
+          <FormItem :label="$t('message.linkis.tenantTagManagement.department')" prop="department">
+            <Select
+              v-model="modalData.departmentId"
+              style="width: 319px"
+              class="input"
+              :placeholder="$t('message.linkis.tenantTagManagement.selectDepartment')"
+              @on-change="handleChange"
+              filterable
+              clearable
+            >
+              <Option v-for="item in departments" :value="item.value" :key="item.value" :label="item.label"/>
+            </Select>
           </FormItem>
           <FormItem :label="$t('message.linkis.tenantTagManagement.appName')" prop="creator">
-            <Input class="input" v-model="modalData.creator" @on-change="handleChange" style="width: 319px"></Input>
+            <Input class="input" v-model="modalData.creator" style="width: 319px"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.tenantTagManagement.tenantTag')" prop="tenantValue">
             <Input class="input" v-model="modalData.tenantValue" style="width: 319px"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.tenantTagManagement.createUser')" prop="bussinessUser">
-            <Input class="input" v-model="modalData.bussinessUser" style="width: 319px"></Input>
-          </FormItem>
-          <FormItem :label="$t('message.linkis.tenantTagManagement.desc')" prop="desc">
-            <Input class="input" v-model="modalData.desc" style="width: 319px"></Input>
+          <FormItem :label="$t('message.linkis.tenantTagManagement.createUser')" prop="createBy">
+            <Input class="input" v-model="modalData.createBy" style="width: 319px"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.isValid')" prop="isValid">
             <RadioGroup v-model="modalData.isValid">
@@ -110,15 +121,10 @@
             </RadioGroup>
           </FormItem>
         </Form>
-        <div style="margin-top: 60px">
-          <span style="width: 60px">{{ $t('message.linkis.tenantTagManagement.yourTagMapping') }}</span>
-          <Input class="input" v-model="mapping" style="width: 220px; margin-left: 10px" disabled></Input>
-          <Button v-if="mode !== 'edit'" type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
-        </div>
       </div>
       <div slot="footer">
         <Button @click="cancel">{{$t('message.linkis.tenantTagManagement.Cancel')}}</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.common.ok')}}</Button>
+        <Button type="primary"  @click="addTenantTag" :loading="isRequesting">{{$t('message.common.ok')}}</Button>
       </div>
     </Modal>
   </div>
@@ -133,12 +139,12 @@ export default {
     return {
       loading: false,
       queryData: {
-        user: '',
+        department: '',
         creator: '',
         tenantValue: '',
       },
       confirmQuery: {
-        user: '',
+        department: '',
         creator: '',
         tenantValue: '',
       },
@@ -151,19 +157,27 @@ export default {
           align: 'center',
         },
         {
-          title: this.$t('message.linkis.tenantTagManagement.userCreator'),
-          key: 'userCreator',
-          width: 250,
+          title: this.$t('message.linkis.tenantTagManagement.department'),
+          key: 'department',
+          width: 180,
+          tooltip: true,
+          align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.tenantTagManagement.appName'),
+          key: 'creator',
+          width: 170,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.tenantTagManagement.tenantTag'),
           key: 'tenantValue',
-          width: 350,
+          width: 250,
           tooltip: true,
           align: 'center',
         },
+        
         {
           title: this.$t('message.linkis.ipListManagement.isValid'),
           key: 'isValid',
@@ -178,7 +192,7 @@ export default {
         },
         {
           title: this.$t('message.linkis.tenantTagManagement.createUser'),
-          key: 'bussinessUser',
+          key: 'createBy',
           width: 350,
           tooltip: true,
           align: 'center',
@@ -190,6 +204,7 @@ export default {
           tooltip: true,
           align: 'center',
         },
+        
         {
           title: this.$t('message.linkis.tenantTagManagement.action'),
           key: 'action',
@@ -243,18 +258,17 @@ export default {
       datalist: [],
       tableLoading: false,
       showCreateModal: false,
+      departments: [],
       modalData: {
-        user: '',
+        department: '',
         creator: '',
         tenantValue: '',
-        bussinessUser: '',
-        desc: '',
+        createBy: '',
         isValid: 'Y',
       },
       modalDataRule: {
-        user: [
+        department: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_\*]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
@@ -264,16 +278,11 @@ export default {
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
           {pattern: /^[0-9a-zA-Z_\*\-]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'}
         ],
-        bussinessUser: [
+        createBy: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
           {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError1'), type: 'string'}
         ],
-        desc: [
-          {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {type: 'string', max: 100, message: this.$t('message.linkis.tenantTagManagement.maxLen')}
-        ]
       },
-      tagIsExist: true,
       mode: 'create',
       // 缓存，用于校验
       editData: {},
@@ -284,11 +293,6 @@ export default {
       },
       userName: '',
       isRequesting: false
-    }
-  },
-  computed: {
-    mapping () {
-      return (this.modalData.user || 'user') + '-' + (this.modalData.creator || 'creator') + '  -->  ' + (this.modalData.tenantValue || 'tenant')
     }
   },
   methods: {
@@ -305,10 +309,9 @@ export default {
 
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
-        await api.fetch("/configuration/tenant-mapping/query-tenant-list", params, "get")
+        await api.fetch("/configuration/tenant-mapping/query-department-tenant", params, "get")
           .then((res) => {
             this.datalist = res.tenantList.map((item) => {
-              item.userCreator = item.user + "-" + item.creator;
               item.createTime = new Date(item.createTime).toLocaleString();
               return item;
             });
@@ -320,53 +323,31 @@ export default {
       }
 
     },
-    enable(data) {
-      this.$Modal.confirm({
-        title: this.$t('message.linkis.ipListManagement.confirmDel'),
-        content: data.isValid === 'N' ? this.$t('message.linkis.ipListManagement.confirmEnable', {name: `${data.id}`}) : this.$t('message.linkis.ipListManagement.confirmDisable', {name: `${data.id}`}),
-        onOk: async () => {
-          await this.confirmEnable(data);
-          await this.getTableData();
-        },
-      })
+    async getDepartments() {
+      try {
+        const res = await api.fetch('/configuration/tenant-mapping/query-department', {}, 'get');
+        this.departments = res.departmentList.map((item) => ({
+          label: item.orgName,
+          value: item.orgId
+        }))
+      } catch (err) {
+        window.console.warn(err);
+      }
     },
     async init() {
       this.loading = true;
+      await this.getDepartments();
       await this.getTableData();
       this.loading = false;
     },
-    async confirmEnable(data) {
-      const status = data.isValid;
-      const tempData = cloneDeep(data);
-      delete tempData._index;
-      delete tempData._rowKey;
-      delete tempData.updateTime;
-      delete tempData.createTime;
-      delete tempData.userCreator;
-
-      tempData.isValid = tempData.isValid === 'Y' ? 'N' : 'Y';
-      try {
-        await api.fetch('/configuration/tenant-mapping/update-tenant', tempData, 'post');
-        if(status === 'N') {
-          this.$Message.success(this.$t('message.linkis.ipListManagement.enableSuccessfully'));
-        } else {
-          this.$Message.success(this.$t('message.linkis.ipListManagement.disableSuccessfully'));
-        }
-          
-      } catch (err) {
-        return;
-      }
-        
-      
-    },
     async clearSearch() {
       this.queryData = {
-        user: '',
+        departmentId: '',
         creator: '',
         tenantValue: '',
       };
       this.confirmQuery = {
-        user: '',
+        departmentId: '',
         creator: ''
       }
       this.page.pageNow = 1;
@@ -375,63 +356,29 @@ export default {
     async createTenant () {
       this.showCreateModal = true;
       this.mode = 'create';
-      this.modalData.bussinessUser = this.userName;
-    },
-    async checkUserTag() {
-      if(this.isRequesting) return;
-      this.$refs.createTenantForm.validate(async (valid) => {
-        if(valid) {
-          const { user, creator, id } = this.modalData;
-          if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
-            this.tagIsExist = false;
-            return;
-          }
-          try {
-            this.isRequesting = true;
-            const checkBody = {user, creator};
-            if(this.mode === 'edit') {
-              checkBody.id = id;
-            }
-            await api.fetch("/configuration/tenant-mapping/check-user-creator", checkBody, "get").then((res) => {
-              if (res.exist) {
-                this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
-              }
-              this.tagIsExist = res.exist;
-            })
-            this.isRequesting = false
-          } catch (err) {
-            this.isRequesting = false
-          }
-        }
-        else {
-          this.$Message.error(this.$t('message.linkis.error.validate'));
-        }
-      })
+      this.modalData.createBy = this.userName;
     },
     cancel() {
       this.showCreateModal = false;
-      this.tagIsExist = true;
       this.modalData = {
-        user: '',
+        departmentId: '',
+        department: '',
         creator: '',
-        tenantValue: '',
-        bussinessUser: '',
-        desc: '',
         isValid: 'Y',
+        createBy: '',
       };
       this.editData = {
-        user: '',
+        departmentId: '',
+        department: '',
         creator: '',
-        tenantValue: '',
-        bussinessUser: '',
-        desc: '',
         isValid: 'Y',
+        createBy: '',
       };
       this.$refs.createTenantForm.resetFields();
     },
     addTenantTag() {
       if(this.isRequesting) return;
-      const target = this.mode === 'edit' ? '/configuration/tenant-mapping/update-tenant' : '/configuration/tenant-mapping/create-tenant'
+      const target = '/configuration/tenant-mapping/save-department-tenant';
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
           this.clearSearch();
@@ -458,16 +405,15 @@ export default {
     },
     edit(data) {
       const {
-        id, user, creator, tenantValue, bussinessUser, desc, isValid
+        id, departmentId, department, creator, tenantValue, createBy, isValid
       } = data
       this.modalData = {
-        id, user, creator, tenantValue, bussinessUser, desc, isValid
+        id, departmentId, department, creator, tenantValue, createBy, isValid
       };
       this.editData = {
-        id, user, creator, tenantValue, bussinessUser, desc, isValid
+        id, departmentId, department, creator, tenantValue, createBy, isValid
       };
       this.showCreateModal = true;
-      this.tagIsExist = false;
       this.mode = 'edit';
     },
     delete(data) {
@@ -480,16 +426,17 @@ export default {
         },
       })
     },
+    handleChange(val) {
+      if(this.departments.find(item => item.value === val)?.label) {
+        this.modalData.department = this.departments.find(item => item.value === val).label;
+      }
+      
+    },
     async confirmDelete(data) {
       try {
-        await api.fetch('configuration/tenant-mapping/delete-tenant', {id: data.id}, 'get');
+        await api.fetch('configuration/tenant-mapping/delete-department-tenant', {id: data.id}, 'get');
       } catch(err) {
         return;
-      }
-    },
-    async handleChange() {
-      if(this.mode !== 'edit') {
-        this.tagIsExist = true;
       }
     },
     async changePage(val) {
@@ -497,11 +444,44 @@ export default {
       await this.getTableData();
     },
     async search() {
-      const { user, creator, tenantValue } = this.queryData;
-      this.confirmQuery = { user, creator, tenantValue };
+      const { departmentId, creator, tenantValue } = this.queryData;
+      this.confirmQuery = { departmentId, creator, tenantValue };
       this.page.pageNow = 1;
       await this.getTableData()
-    }
+    },
+    async confirmEnable(data) {
+      const status = data.isValid;
+      const tempData = cloneDeep(data);
+      delete tempData._index;
+      delete tempData._rowKey;
+      delete tempData.updateTime;
+      delete tempData.createTime;
+      delete tempData.userCreator;
+      tempData.isValid = tempData.isValid === 'Y' ? 'N' : 'Y';
+      try {
+        await api.fetch('/configuration/tenant-mapping/save-department-tenant', tempData, 'post');
+        if(status === 'N') {
+          this.$Message.success(this.$t('message.linkis.ipListManagement.enableSuccessfully'));
+        } else {
+          this.$Message.success(this.$t('message.linkis.ipListManagement.disableSuccessfully'));
+        }
+          
+      } catch (err) {
+        return;
+      }
+        
+      
+    },
+    enable(data) {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.ipListManagement.confirmDel'),
+        content: data.isValid === 'N' ? this.$t('message.linkis.ipListManagement.confirmEnable', {name: `${data.id}`}) : this.$t('message.linkis.ipListManagement.confirmDisable', {name: `${data.id}`}),
+        onOk: async () => {
+          await this.confirmEnable(data);
+          await this.getTableData();
+        },
+      })
+    },
   },
   created() {
     this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';

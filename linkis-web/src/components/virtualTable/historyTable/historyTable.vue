@@ -53,7 +53,7 @@
             :style="{'text-align': th.align}"
             class="we-table-row-cell"
             :aria-label="td[th.key]"
-            :class="[!th.ellipsis ? '' : 'hint--bottom hint--rounded']">
+            :class="[!th.ellipsis ? '' : 'hint--right hint--rounded']">
             <div
               class="we-table-row-label"
               :style="{'width': th.width ? th.width + 'px' : getComputedWidth(th)}"

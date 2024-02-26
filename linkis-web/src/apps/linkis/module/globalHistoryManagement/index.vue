@@ -92,7 +92,7 @@
         <Button
           class="search-btn"
           type="primary"
-          @click="search"
+          @click="search(false)"
           style="margin-right: 10px;"
         >{{ $t('message.linkis.search') }}</Button>
         <Button
@@ -105,7 +105,7 @@
         <Button
           class="search-btn"
           type="primary"
-          @click="switchAdmin"
+          @click="switchAdmin(false)"
           v-show="isLogAdmin || isHistoryAdmin"
           style="margin-right: 10px;"
         >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
@@ -346,9 +346,9 @@ export default {
         this.pageSetting = lastPage
       }
       if (isAdminModel) {
-        this.switchAdmin()
+        this.switchAdmin(true)
       } else {
-        this.search()
+        this.search(true)
       }
       storage.remove('last-pageSetting-status')
     },
@@ -462,16 +462,25 @@ export default {
         .then(rst => {
           this.isLoading = false
           this.list = this.getList(rst.tasks)
-          this.pageSetting.current = page
-          this.pageSetting.total = rst.totalPage
+          // this.pageSetting.current = page
+          const maxPage = Math.ceil(rst.totalPage / 50);
+          if(maxPage < page) {
+            this.pageSetting.current = maxPage;
+          } else {
+            this.pageSetting.current = page;
+          }
+          this.pageSetting.total = rst.totalPage;
         })
         .catch(() => {
           this.isLoading = false
           this.list = []
         })
     },
-    search() {
+    search(isInit = false) {
       this.isLoading = true
+      if(!isInit) {
+        this.pageSetting.current = 1;
+      }
       const params = this.getParams()
       this.column = this.getColumns()
       api
@@ -646,14 +655,14 @@ export default {
         shortcut: ''
       }
     },
-    switchAdmin() {
+    switchAdmin(isInit = false) {
       if (!this.isLoading) {
         if (this.isAdminModel) {
           this.searchBar.id = null
           this.searchBar.proxyUser = ''
         }
         this.isAdminModel = !this.isAdminModel
-        this.search()
+        this.search(isInit)
       }
     },
     linkTo(params) {
@@ -715,7 +724,7 @@ export default {
 
           Promise.all(p).then(()=> {
             this.$Message.success(this.$t('message.linkis.udf.success'));
-            this.search()
+            this.search(false)
           })
         }
       })

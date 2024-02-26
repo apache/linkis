@@ -119,19 +119,30 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   private val runtimeParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
 
   private[jdbc] def getEngineType: EngineTypeLabel = {
-    val engineType: EngineTypeLabel =
-      EngineTypeLabelCreator.createEngineTypeLabel(EngineType.TRINO.toString)
+
+    var engineType = EngineType.TRINO.toString
+    var engineVersion = ""
     if (props.containsKey(PARAMS)) {
       val params = props.getProperty(PARAMS)
       if (params != null & params.length() > 0) {
         params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
-          case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) =>
-            return EngineTypeLabelCreator.createEngineTypeLabel(v)
+          case Array(k, v) =>
+            if (k.equals(UJESSQLDriver.ENGINE_TYPE)) {
+              engineType = v
+            } else if (k.equals(UJESSQLDriver.ENGINE_VERSION)) {
+              engineVersion = v
+          }
+
           case _ =>
         }
       }
     }
-    engineType
+    if(StringUtils.isNotBlank(engineVersion)) {
+      EngineTypeLabelCreator.registerVersion(engineType, engineVersion)
+    }
+
+    EngineTypeLabelCreator.createEngineTypeLabel(engineType)
+
   }
 
   private[jdbc] def throwWhenClosed[T](op: => T): T =

@@ -42,6 +42,7 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
   static String DB_NAME = "DBNAME";
   static String PARAMS = "PARAMS";
   static String ENGINE_TYPE = "EngineType";
+  static String ENGINE_VERSION = "EngineVersion";
 
   static String USER = "user";
   static String TOKEN_KEY = "key";

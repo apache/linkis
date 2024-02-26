@@ -224,7 +224,7 @@
     <spring.boot.version>2.7.11</spring.boot.version>
     <spring-netflix.version>3.1.7</spring-netflix.version>
     <spring-cloud.version>2021.0.8</spring-cloud.version>
-    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
+    <spring.cloud.nacos.version>2021.0.5.0</spring.cloud.nacos.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -77,7 +77,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
         }
       }
       if (null == concurrentExecutor) {
-        LOG.warn("shell executor can not is null");
+        LOG.warn("Executor can not is null");
         return;
       }
       isAvailable = true;

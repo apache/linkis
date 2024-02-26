@@ -169,6 +169,12 @@ class TaskExecutionServiceImpl
     }
   }
 
+  /**
+   * submit to async thread return submit response
+   * @param requestTask
+   * @param sender
+   * @return
+   */
   @Receiver
   override def execute(requestTask: RequestTask, sender: Sender): ExecuteResponse =
     Utils.tryFinally {
@@ -342,23 +348,25 @@ class TaskExecutionServiceImpl
       task: CommonEngineConnTask,
       executor: ConcurrentComputationExecutor
   ): ExecuteResponse = {
-    if (null == concurrentTaskQueue) CONCURRENT_TASK_LOCKER.synchronized {
-      if (null == concurrentTaskQueue) {
-        concurrentTaskQueue = new LinkedBlockingDeque[EngineConnTask]()
+    lastTask = task
+    val concurrentJob = new Runnable {
+      override def run(): Unit = {
+        Utils.tryCatch {
+          logger.info(s"Start to run task ${task.getTaskId}")
+          executeTask(task, executor)
+        } { case t: Throwable =>
+          logger.warn(s"Execute task ${task.getTaskId} failed  :", t)
+        }
       }
     }
-    concurrentTaskQueue.put(task)
-    if (null == consumerThread) CONCURRENT_TASK_LOCKER.synchronized {
-      if (null == consumerThread) {
-        consumerThread = new Thread(createConsumerRunnable(executor))
-        consumerThread.setDaemon(true)
-        consumerThread.setName("ConcurrentTaskQueueFifoConsumerThread")
-        consumerThread.start()
-      }
+    Utils.tryCatch(cachedThreadPool.submit(concurrentJob)) { case e: Exception =>
+      logger.warn(s"Failed to submit task ${task.getTaskId}", e)
+      null
     }
     SubmitResponse(task.getTaskId)
   }
 
+  @deprecated
   private def createConsumerRunnable(executor: ComputationExecutor): Thread = {
     val consumerRunnable = new Runnable {
       override def run(): Unit = {
@@ -403,8 +411,8 @@ class TaskExecutionServiceImpl
       val jobId = JobUtils.getJobIdFromMap(task.getProperties)
       LoggerUtils.setJobIdMDC(jobId)
       executor.execute(task)
-      clearCache(task.getTaskId)
     } {
+      clearCache(task.getTaskId)
       LoggerUtils.removeJobIdMDC()
     }
 

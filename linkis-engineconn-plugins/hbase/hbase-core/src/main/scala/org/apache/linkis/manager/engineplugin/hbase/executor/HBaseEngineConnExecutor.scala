@@ -20,6 +20,7 @@ package org.apache.linkis.manager.engineplugin.hbase.executor
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConstant
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -194,7 +195,17 @@ class HBaseEngineConnExecutor(val id: Int) extends ConcurrentComputationExecutor
     resource
   }
 
-  override def getConcurrentLimit: Int = HBaseConfiguration.HBASE_CONCURRENT_LIMIT.getValue
+  override def getConcurrentLimit: Int = {
+    var maxTaskNum = ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue - 5
+    if (maxTaskNum <= 0) {
+      logger.error(
+        s"max task num  cannot ${maxTaskNum} < 0, should set linkis.engineconn.concurrent.thread.num > 6"
+      )
+      maxTaskNum = 1
+    }
+    logger.info(s"max task num $maxTaskNum")
+    maxTaskNum
+  }
 
   override def killAll(): Unit = {
     logger.info("Killing all query task.")

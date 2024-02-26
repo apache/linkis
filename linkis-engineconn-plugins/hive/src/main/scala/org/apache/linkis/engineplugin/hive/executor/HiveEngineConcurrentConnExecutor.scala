@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -479,7 +480,17 @@ class HiveEngineConcurrentConnExecutor(
     super.killTask(taskID)
   }
 
-  override def getConcurrentLimit: Int = HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_LIMIT
+  override def getConcurrentLimit: Int = {
+    var maxTaskNum = ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue - 5
+    if (maxTaskNum <= 0) {
+      logger.error(
+        s"max task num  cannot ${maxTaskNum} < 0, should set linkis.engineconn.concurrent.thread.num > 6"
+      )
+      maxTaskNum = 1
+    }
+    logger.info(s"max task num $maxTaskNum")
+    maxTaskNum
+  }
 
   override def killAll(): Unit = {
     val iterator = driverCache.entrySet().iterator()

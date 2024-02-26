@@ -20,8 +20,11 @@ package org.apache.linkis.manager.engineplugin.shell.factory
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
+import org.apache.linkis.engineconn.common.exception.EngineConnException
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
+import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.engineplugin.shell.conf.ShellEngineConnConf
 import org.apache.linkis.manager.engineplugin.shell.executor.{
   ShellEngineConnConcurrentExecutor,
@@ -39,10 +42,15 @@ class ShellEngineConnFactory extends ComputationSingleExecutorEngineConnFactory 
       engineConn: EngineConn
   ): LabelExecutor = {
     if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
-      new ShellEngineConnConcurrentExecutor(
-        id,
-        ShellEngineConnConf.SHELL_ENGINECONN_CONCURRENT_LIMIT
-      )
+      var maxTaskNum = ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue - 5
+      if (maxTaskNum <= 0) {
+        logger.error(
+          s"max task num  cannot ${maxTaskNum} < 0, should set linkis.engineconn.concurrent.thread.num > 6"
+        )
+        maxTaskNum = 1
+      }
+      logger.info(s"max task num $maxTaskNum")
+      new ShellEngineConnConcurrentExecutor(id, maxTaskNum)
     } else {
       new ShellEngineConnExecutor(id)
     }

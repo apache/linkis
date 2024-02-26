@@ -39,7 +39,7 @@ class FileSplit(
 
   var start: Int = 0
 
-  var end: Int = -1
+  var end: Int = 0
 
   var count: Int = 0
 
@@ -48,6 +48,8 @@ class FileSplit(
   var shuffler: Record => Record = r => r
 
   var pageTrigger: Boolean = false
+
+  var pageSize = 0
 
   var params: util.Map[String, String] = new util.HashMap[String, String]
 
@@ -123,7 +125,7 @@ class FileSplit(
   }
 
   def collect(): Pair[Object, util.ArrayList[Array[String]]] = {
-    val record = new util.ArrayList[Array[String]]
+    val record = new util.ArrayList[Array[String]](end - start + 1)
     val metaData = `while`(collectMetaData, r => record.add(collectRecord(r)))
     new Pair(metaData, record)
   }

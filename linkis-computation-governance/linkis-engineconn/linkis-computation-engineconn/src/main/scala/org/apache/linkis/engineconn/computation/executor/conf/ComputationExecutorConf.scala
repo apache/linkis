@@ -60,7 +60,7 @@ object ComputationExecutorConf {
     ).getValue
 
   val ENGINE_CONCURRENT_THREAD_NUM = CommonVars(
-    "wds.linkis.engineconn.concurrent.thread.num",
+    "linkis.engineconn.concurrent.thread.num",
     20,
     "Maximum thread pool of the concurrent EC"
   )

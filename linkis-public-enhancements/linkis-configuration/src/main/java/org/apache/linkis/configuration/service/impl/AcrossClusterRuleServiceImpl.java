@@ -17,11 +17,18 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import com.google.gson.Gson;
 import org.apache.linkis.configuration.dao.AcrossClusterRuleMapper;
 import org.apache.linkis.configuration.entity.AcrossClusterRule;
 import org.apache.linkis.configuration.service.AcrossClusterRuleService;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
+import org.apache.linkis.governance.common.protocol.conf.AcrossClusterRequest;
+import org.apache.linkis.governance.common.protocol.conf.AcrossClusterResponse;
+import org.apache.linkis.manager.common.entity.persistence.AcrossClusterRuleDto;
+import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.rpc.message.annotation.Receiver;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -114,4 +121,28 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
 
     ruleMapper.validAcrossClusterRule(isValid, id, username);
   }
+
+  @Receiver
+  @Override
+  public AcrossClusterResponse getAcrossClusterRuleByUsername(AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception {
+    String username = acrossClusterRequest.username();
+    AcrossClusterRuleDto acrossClusterRuleDto = ruleMapper.queryAcrossClusterRuleByUserName(username);
+    if (acrossClusterRuleDto == null) {
+      return null;
+    }
+    String clusterName = acrossClusterRuleDto.getClusterName();
+    Map<String, Map<String, String>> rulesMap = new HashMap<>();
+    try {
+      Gson gson = BDPJettyServerHelper.gson();
+      rulesMap = gson.fromJson(acrossClusterRuleDto.getRules(), rulesMap.getClass());
+      Map<String, String> queueRule = rulesMap.get("queueRule");
+      String crossQueueName = queueRule.get("crossQueue");
+      logger.info("{} configure across cluster name is {}, queue name is {}", username, acrossClusterRuleDto.getClusterName(), crossQueueName);
+      return new AcrossClusterResponse(clusterName, crossQueueName);
+    } catch (Exception e) {
+      logger.warn("Failed to parse rulesMap from rules");
+    }
+    return null;
+  }
+
 }

@@ -146,4 +146,14 @@
     </update>
 
 
+    <select id="queryAcrossClusterRuleByUserName" resultMap="acrossClusterRuleMap">
+        SELECT
+        acr.id, acr.cluster_name, acr.creator,
+        acr.username, acr.create_time, acr.create_by,
+        acr.update_time, acr.update_by, acr.rules
+        FROM
+        `linkis_ps_configuration_across_cluster_rule` acr
+        WHERE
+        username = #{username} limit 1
+    </select>
 </mapper>

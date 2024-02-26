@@ -574,6 +574,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_task` (
   `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Starting time',
   `end_time` datetime DEFAULT NULL COMMENT 'End Time',
   `last_update_time` datetime NOT NULL COMMENT 'Last update time',
+   unique key `uniq_rid_version` (`resource_id`, `version`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -801,7 +802,8 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
     PRIMARY KEY (`id`),
     KEY `idx_ticket_id` (`ticket_id`),
-    UNIQUE KEY `uniq_tid_lv` (`ticket_id`,`label_value`)
+    UNIQUE KEY `uniq_tid_lv` (`ticket_id`,`label_value`),
+    UNIQUE KEY `uniq_sinstance_status_cuser_ctime` (`service_instance`, `status`, `create_user`, `create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;

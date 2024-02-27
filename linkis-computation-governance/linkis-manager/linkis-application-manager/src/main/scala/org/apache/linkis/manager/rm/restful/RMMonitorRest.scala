@@ -469,7 +469,7 @@ class RMMonitorRest extends Logging {
       logger.info("response object is null")
     } else {
       if (responseObject.isInstanceOf[AcrossClusterResponse]) {
-        val response: AcrossClusterResponse = isInstanceOf.asInstanceOf[AcrossClusterResponse]
+        val response: AcrossClusterResponse = responseObject.asInstanceOf[AcrossClusterResponse]
         logger.info(s"across cluster info: cluster name: ${response.clusterName}, queue: ${response.queueName}")
         val acrossClusterInfo = new mutable.HashMap[String, Any]()
         acrossClusterInfo.put("clustername", response.clusterName)

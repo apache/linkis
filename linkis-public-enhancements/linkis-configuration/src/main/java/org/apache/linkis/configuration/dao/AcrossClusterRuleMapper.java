@@ -20,6 +20,7 @@ package org.apache.linkis.configuration.dao;
 import org.apache.linkis.configuration.entity.AcrossClusterRule;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.linkis.manager.common.entity.persistence.AcrossClusterRuleDto;
 
 import java.util.List;
 
@@ -29,11 +30,17 @@ public interface AcrossClusterRuleMapper {
 
   void deleteAcrossClusterRule(@Param("id") Long id);
 
+  void deleteAcrossClusterRuleByBatch(@Param("ids") List<Long> ids);
+
   void deleteAcrossClusterRuleByUsername(@Param("username") String username);
 
   void deleteAcrossClusterRuleByCrossQueue(@Param("crossQueue") String crossQueue);
 
   void updateAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
+
+  void updateAcrossClusterRuleByBatch(
+      @Param("ids") List<Long> ids,
+      @Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
   void insertAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
@@ -44,4 +51,14 @@ public interface AcrossClusterRuleMapper {
 
   void validAcrossClusterRule(
       @Param("isValid") String isValid, @Param("id") Long id, @Param("username") String username);
+
+  /**
+   *  Query across cluster resource rule by username.
+   * @param username
+   * @return
+   */
+  AcrossClusterRuleDto queryAcrossClusterRuleByUserName(@Param("username") String username);
+
+  void validAcrossClusterRuleByBatch(
+      @Param("ids") List<Long> ids, @Param("isValid") String isValid);
 }

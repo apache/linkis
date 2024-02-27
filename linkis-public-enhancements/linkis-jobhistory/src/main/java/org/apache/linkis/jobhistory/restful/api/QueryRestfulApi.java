@@ -32,16 +32,20 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -146,10 +150,10 @@ public class QueryRestfulApi {
     if (StringUtils.isEmpty(status)) {
       status = null;
     }
-    if (StringUtils.isEmpty(pageNow)) {
+    if (null == pageNow) {
       pageNow = 1;
     }
-    if (StringUtils.isEmpty(pageSize)) {
+    if (null == pageSize) {
       pageSize = 20;
     }
     if (endDate == null) {
@@ -273,10 +277,10 @@ public class QueryRestfulApi {
     if (StringUtils.isEmpty(status)) {
       status = "Running,Inited,Scheduled";
     }
-    if (StringUtils.isEmpty(pageNow)) {
+    if (null == pageNow) {
       pageNow = 1;
     }
-    if (StringUtils.isEmpty(pageSize)) {
+    if (null == pageSize) {
       pageSize = 20;
     }
     if (endDate == null) {
@@ -411,5 +415,33 @@ public class QueryRestfulApi {
             username, creator, sDate, eDate, engineType, queryCacheManager.getUndoneTaskMinId());
 
     return Message.ok().data(JobRequestConstants.TOTAL_PAGE(), total);
+  }
+
+  @ApiOperation(value = "list-taskids", notes = "list by task id list", response = Message.class)
+  @RequestMapping(path = "/list-taskids", method = RequestMethod.GET)
+  public Message listTaskIds(
+      HttpServletRequest req, @RequestParam(value = "taskID", required = false) String taskids) {
+    String username = SecurityFilter.getLoginUsername(req);
+    if (StringUtils.isBlank(taskids)) {
+      return Message.error("Invalid taskID cannot be empty");
+    }
+    Matcher matcher = Pattern.compile("^[0-9,]*$").matcher(taskids);
+    if (!matcher.matches()) {
+      return Message.error("TaskID contains illegal characters");
+    }
+    List<String> taskidList =
+        Arrays.stream(taskids.split(",")).distinct().collect(Collectors.toList());
+    if (!CollectionUtils.isEmpty(taskidList)
+        && taskidList.size() > JobhistoryConfiguration.JOB_HISTORY_QUERY_LIMIT().getValue()) {
+      return Message.error("TaskID size cannot exceed 30");
+    }
+    List<JobHistory> jobHistories = jobHistoryQueryService.searchByTasks(taskidList, username);
+    List<QueryTaskVO> vos = new ArrayList<>();
+    for (JobHistory jobHistory : jobHistories) {
+      QueryUtils.exchangeExecutionCode(jobHistory);
+      QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+      vos.add(taskVO);
+    }
+    return Message.ok().data(JobRequestConstants.JOB_HISTORY_LIST(), vos);
   }
 }

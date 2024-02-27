@@ -19,7 +19,7 @@ package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.vo.CanCreateECRes
-import org.apache.linkis.manager.common.constant.RMConstant
+import org.apache.linkis.manager.common.constant.{AMConstant, RMConstant}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.exception.RMWarnException
@@ -109,6 +109,16 @@ class DriverAndYarnReqResourceService(
       logger.info(
         s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
       )
+
+      val acrossClusterTask =
+        engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
+      if (acrossClusterTask.toBoolean) {
+        throw new RMWarnException(
+          RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+          AMConstant.ORIGIN_CLUSTER_RETRY_DES
+        )
+      }
+
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)

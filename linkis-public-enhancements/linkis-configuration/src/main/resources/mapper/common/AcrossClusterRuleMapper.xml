@@ -97,6 +97,17 @@
             id = #{id}
     </delete>
 
+    <delete id="deleteAcrossClusterRuleByBatch">
+        DELETE
+        FROM
+            `linkis_ps_configuration_across_cluster_rule`
+        WHERE
+            id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <delete id="deleteAcrossClusterRuleByUsername">
         DELETE
         FROM
@@ -135,6 +146,28 @@
             id = #{acrossClusterRule.id}
     </update>
 
+    <update id="updateAcrossClusterRuleByBatch" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
+        UPDATE
+            `linkis_ps_configuration_across_cluster_rule`
+        SET
+            cluster_name = #{acrossClusterRule.clusterName}, creator = #{acrossClusterRule.creator},
+        <choose>
+            <when test="acrossClusterRule.updateTime != null">
+                update_time=#{acrossClusterRule.updateTime}
+            </when>
+            <otherwise>
+                update_time = now()
+            </otherwise>
+        </choose>,
+            update_By=#{acrossClusterRule.updateBy}, rules=#{acrossClusterRule.rules},
+            is_valid=#{acrossClusterRule.isValid}
+        WHERE
+            id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
     <update id="validAcrossClusterRule">
         UPDATE
             `linkis_ps_configuration_across_cluster_rule`
@@ -145,5 +178,26 @@
             <if test="username != null">and username = #{username}</if>
     </update>
 
+    <update id="validAcrossClusterRuleByBatch">
+        UPDATE
+            `linkis_ps_configuration_across_cluster_rule`
+        SET
+            is_valid = #{isValid}
+        WHERE
+            id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+                #{id}
+        </foreach>
+    </update>
 
+    <select id="queryAcrossClusterRuleByUserName" resultMap="acrossClusterRuleMap">
+        SELECT
+        acr.id, acr.cluster_name, acr.creator,
+        acr.username, acr.create_time, acr.create_by,
+        acr.update_time, acr.update_by, acr.rules
+        FROM
+        `linkis_ps_configuration_across_cluster_rule` acr
+        WHERE
+        username = #{username} limit 1
+    </select>
 </mapper>

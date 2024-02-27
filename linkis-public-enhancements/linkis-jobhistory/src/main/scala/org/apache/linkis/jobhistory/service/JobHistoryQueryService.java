@@ -51,4 +51,6 @@ public interface JobHistoryQueryService {
     void changeObserveInfoById(JobHistory jobHistory);
 
     void clearUndoneTasksByEntranceInstance(EntranceInstanceConfRequest request, Sender sender);
+
+    List<JobHistory> searchByTasks(List<String> taskidList, String username);
 }

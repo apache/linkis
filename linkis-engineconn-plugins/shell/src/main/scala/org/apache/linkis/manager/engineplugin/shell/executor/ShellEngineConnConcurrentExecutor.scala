@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.ExecutionContextExecutorService
 
-class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
+class ShellEngineConnConcurrentExecutor(id: Int)
     extends ConcurrentComputationExecutor
     with Logging {
 
@@ -367,10 +367,6 @@ class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
       Utils.tryAndWarn(killTask(shellECTaskInfo.taskId))
     }
     shellECTaskInfoCache.clear()
-  }
-
-  override def getConcurrentLimit: Int = {
-    maxRunningNumber
   }
 
 }

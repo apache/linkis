@@ -201,9 +201,6 @@ class ElasticSearchEngineConnExecutor(
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + s"_$id"
 
-  override def getConcurrentLimit: Int =
-    ElasticSearchConfiguration.ENGINE_CONCURRENT_LIMIT.getValue
-
   override def killTask(taskId: String): Unit = {
     Utils.tryAndWarn {
       val elasticSearchExecutor = elasticSearchExecutorCache.getIfPresent(taskId)

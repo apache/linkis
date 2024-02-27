@@ -372,18 +372,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   override def getId: String = Sender.getThisServiceInstance.getInstance + s"_$id"
 
-  override def getConcurrentLimit: Int = {
-    var maxTaskNum = ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue - 5
-    if (maxTaskNum <= 0) {
-      logger.error(
-        s"max task num  cannot ${maxTaskNum} < 0, should set linkis.engineconn.concurrent.thread.num > 6"
-      )
-      maxTaskNum = 1
-    }
-    logger.info(s"max task num $maxTaskNum")
-    maxTaskNum
-  }
-
   override def killAll(): Unit = {
     logger.info("Killing all query task.")
     connectionManager.initTaskStatementMap()

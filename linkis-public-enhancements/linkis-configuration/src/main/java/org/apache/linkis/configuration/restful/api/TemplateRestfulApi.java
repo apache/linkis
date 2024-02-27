@@ -54,8 +54,7 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(path = "/configuration/template")
 public class TemplateRestfulApi {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(TemplateRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(TemplateRestfulApi.class);
 
   @Autowired private TemplateConfigKeyService templateConfigKeyService;
 

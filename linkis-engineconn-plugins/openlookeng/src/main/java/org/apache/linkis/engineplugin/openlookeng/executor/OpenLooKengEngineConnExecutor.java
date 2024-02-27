@@ -193,11 +193,6 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
   }
 
   @Override
-  public int getConcurrentLimit() {
-    return OpenLooKengConfiguration.OPENLOOKENG_CONCURRENT_LIMIT.getValue();
-  }
-
-  @Override
   public void killAll() {}
 
   @Override

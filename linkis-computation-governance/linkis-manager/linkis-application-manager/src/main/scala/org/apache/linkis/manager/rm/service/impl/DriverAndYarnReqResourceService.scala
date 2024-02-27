@@ -78,9 +78,14 @@ class DriverAndYarnReqResourceService(
         engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
       val priorityCluster = engineCreateRequest.getProperties.get(AMConfiguration.PRIORITY_CLUSTER)
       // bdp resource no need enter
-      if (StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
-        .isNotBlank(priorityCluster) && priorityCluster.equals(
-        AMConfiguration.PRIORITY_CLUSTER_ORIGIN)) {
+      if (
+          StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+            .isNotBlank(priorityCluster) && priorityCluster.equals(
+            AMConfiguration.PRIORITY_CLUSTER_ORIGIN
+          )
+      ) {
+
+        logger.info("queue real resource not enough, and judge origin queue threshold")
 
         val originCPUPercentageThreshold =
           engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_CPU_PERCENTAGE_THRESHOLD)
@@ -88,7 +93,9 @@ class DriverAndYarnReqResourceService(
           engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_MEMORY_PERCENTAGE_THRESHOLD)
 
         if (
-          StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(originMemoryPercentageThreshold)
+            StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
+              originMemoryPercentageThreshold
+            )
         ) {
           try {
             AcrossClusterRulesJudgeUtils.originClusterRuleCheck(

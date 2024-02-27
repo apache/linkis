@@ -360,8 +360,8 @@ class TaskExecutionServiceImpl
       }
     }
     Utils.tryCatch(cachedThreadPool.submit(concurrentJob)) { case e: Exception =>
-      logger.warn(s"Failed to submit task ${task.getTaskId}", e)
-      null
+      logger.error(s"Failed to submit task ${task.getTaskId}", e)
+      throw e
     }
     SubmitResponse(task.getTaskId)
   }

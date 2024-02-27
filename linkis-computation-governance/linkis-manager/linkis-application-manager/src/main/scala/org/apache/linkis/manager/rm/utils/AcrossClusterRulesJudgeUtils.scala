@@ -48,7 +48,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
         .asInstanceOf[Double] / clusterMaxCapacity.queueMemory.asInstanceOf[Double]
 
       if (
-          clusterUsedCPUPercentage > clusterCPUPercentageThreshold || clusterUsedMemoryPercentage > clusterMemoryPercentageThreshold
+          clusterUsedCPUPercentage >= clusterCPUPercentageThreshold || clusterUsedMemoryPercentage >= clusterMemoryPercentageThreshold
       ) {
         throw new RMWarnException(
           RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
@@ -71,7 +71,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
         )
 
         if (
-            usedCPUPercentage > CPUPercentageThreshold || usedMemoryPercentage > MemoryPercentageThreshold
+            usedCPUPercentage >= CPUPercentageThreshold || usedMemoryPercentage >= MemoryPercentageThreshold
         ) {
           throw new RMWarnException(
             RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
@@ -109,7 +109,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
       )
 
       if (
-          usedCPUPercentage > CPUPercentageThreshold || usedMemoryPercentage > MemoryPercentageThreshold
+          usedCPUPercentage >= CPUPercentageThreshold || usedMemoryPercentage >= MemoryPercentageThreshold
       ) {
         throw new RMWarnException(
           RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,

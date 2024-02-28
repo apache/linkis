@@ -134,7 +134,7 @@ abstract class JavaProcessEngineConnLaunchBuilder
       taskClassPathFiles
         .split(",")
         .filter(StringUtils.isNotBlank(_))
-        .foreach(file => addPathToClassPath(environment, buildPath(Seq(new File(file).getName))))
+        .foreach(file => addPathToClassPath(environment, buildPath(Seq(file))))
     }
     getExtraClassPathFile.filter(StringUtils.isNotBlank(_)).foreach { file: String =>
       addPathToClassPath(environment, buildPath(Seq(new File(file).getName)))

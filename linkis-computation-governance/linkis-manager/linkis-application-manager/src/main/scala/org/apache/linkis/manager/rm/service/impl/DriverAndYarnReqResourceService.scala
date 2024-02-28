@@ -73,11 +73,52 @@ class DriverAndYarnReqResourceService(
         s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
       )
 
+      val notEnoughMessage =
+        generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
+      canCreateECRes.setCanCreateEC(false);
+      canCreateECRes.setReason(notEnoughMessage._2)
+    }
+    canCreateECRes.setYarnResource(RMUtils.serializeResource(queueLeftResource))
+    canCreateECRes
+  }
+
+  override def canRequest(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): Boolean = {
+    if (!super.canRequest(labelContainer, resource, engineCreateRequest)) {
+      return false
+    }
+
+    val requestedDriverAndYarnResource =
+      resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
+    val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
+    val yarnIdentifier = new YarnResourceIdentifier(requestedYarnResource.queueName)
+    val providedYarnResource =
+      externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier)
+    val (maxCapacity, usedCapacity) =
+      (providedYarnResource.getMaxResource, providedYarnResource.getUsedResource)
+    logger.debug(
+      s"This queue: ${requestedYarnResource.queueName} used resource:$usedCapacity and max resource: $maxCapacity"
+    )
+    val queueLeftResource = maxCapacity - usedCapacity
+    logger.info(
+      s"queue: ${requestedYarnResource.queueName} left $queueLeftResource, this request requires: $requestedYarnResource"
+    )
+    if (queueLeftResource < requestedYarnResource) {
+      logger.info(
+        s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
+      )
+
       // bdap resource not enough, judge bdap queue resource threshold
       val acrossClusterTask =
         engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
       val priorityCluster = engineCreateRequest.getProperties.get(AMConfiguration.PRIORITY_CLUSTER)
       // bdp resource no need enter
+
+      logger.info(s"acrossClusterTask: $acrossClusterTask and priorityCluster: $priorityCluster")
+
       if (
           StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
             .isNotBlank(priorityCluster) && priorityCluster.equals(
@@ -116,44 +157,8 @@ class DriverAndYarnReqResourceService(
 
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
-      canCreateECRes.setCanCreateEC(false);
-      canCreateECRes.setReason(notEnoughMessage._2)
-    }
-    canCreateECRes.setYarnResource(RMUtils.serializeResource(queueLeftResource))
-    canCreateECRes
-  }
-
-  override def canRequest(
-      labelContainer: RMLabelContainer,
-      resource: NodeResource,
-      engineCreateRequest: EngineCreateRequest
-  ): Boolean = {
-    if (!super.canRequest(labelContainer, resource, engineCreateRequest)) {
-      return false
-    }
-
-    val requestedDriverAndYarnResource =
-      resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
-    val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
-    val yarnIdentifier = new YarnResourceIdentifier(requestedYarnResource.queueName)
-    val providedYarnResource =
-      externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier)
-    val (maxCapacity, usedCapacity) =
-      (providedYarnResource.getMaxResource, providedYarnResource.getUsedResource)
-    logger.debug(
-      s"This queue: ${requestedYarnResource.queueName} used resource:$usedCapacity and max resource: $maxCapacity"
-    )
-    val queueLeftResource = maxCapacity - usedCapacity
-    logger.info(
-      s"queue: ${requestedYarnResource.queueName} left $queueLeftResource, this request requires: $requestedYarnResource"
-    )
-    if (queueLeftResource < requestedYarnResource) {
-      logger.info(
-        s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
-      )
-      val notEnoughMessage =
-        generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
+
     }
 
     if (engineCreateRequest.getProperties != null) {

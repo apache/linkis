@@ -17,27 +17,24 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import org.apache.linkis.configuration.dao.AcrossClusterRuleMapper;
 import org.apache.linkis.configuration.entity.AcrossClusterRule;
 import org.apache.linkis.configuration.service.AcrossClusterRuleService;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
-
 import org.apache.linkis.governance.common.protocol.conf.AcrossClusterRequest;
 import org.apache.linkis.governance.common.protocol.conf.AcrossClusterResponse;
-import org.apache.linkis.manager.common.entity.persistence.AcrossClusterRuleDto;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.server.BDPJettyServerHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.configuration.conf.AcrossClusterRuleKeys.KEY_CROSS_QUEUE;
 import static org.apache.linkis.configuration.conf.AcrossClusterRuleKeys.KEY_QUEUE_RULE;
@@ -148,18 +145,18 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   @Override
   public AcrossClusterResponse getAcrossClusterRuleByUsername(AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception {
     String username = acrossClusterRequest.username();
-    AcrossClusterRuleDto acrossClusterRuleDto = ruleMapper.queryAcrossClusterRuleByUserName(username);
-    if (acrossClusterRuleDto == null) {
+    AcrossClusterRule acrossClusterRule = ruleMapper.queryAcrossClusterRuleByUserName(username);
+    if (acrossClusterRule == null) {
       return null;
     }
-    String clusterName = acrossClusterRuleDto.getClusterName();
+    String clusterName = acrossClusterRule.getClusterName();
     Map<String, Map<String, String>> rulesMap = new HashMap<>();
     try {
       Gson gson = BDPJettyServerHelper.gson();
-      rulesMap = gson.fromJson(acrossClusterRuleDto.getRules(), rulesMap.getClass());
+      rulesMap = gson.fromJson(acrossClusterRule.getRules(), rulesMap.getClass());
       Map<String, String> queueRule = rulesMap.get(KEY_QUEUE_RULE);
       String crossQueueName = queueRule.get(KEY_CROSS_QUEUE);
-      logger.info("{} configure across cluster name is {}, queue name is {}", username, acrossClusterRuleDto.getClusterName(), crossQueueName);
+      logger.info("{} configure across cluster name is {}, queue name is {}", username, acrossClusterRule.getClusterName(), crossQueueName);
       return new AcrossClusterResponse(clusterName, crossQueueName);
     } catch (Exception e) {
       logger.warn("Failed to parse rulesMap from rules");

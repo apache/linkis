@@ -71,6 +71,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-computation-governance-common</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>com.github.oshi</groupId>
       <artifactId>oshi-core</artifactId>
       <version>6.2.1</version>

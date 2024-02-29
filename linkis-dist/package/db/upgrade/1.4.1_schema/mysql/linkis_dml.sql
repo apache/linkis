@@ -129,3 +129,5 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01006','没有健康可用的ecm节点，可能任务量大,导致节点资源处于不健康状态，尝试kill空闲引擎释放资源','There are corresponding ECM tenant labels',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01007','文件编码格式异常,请联系管理人员处理','UnicodeEncodeError.*characters',0);
 UPDATE linkis_ps_error_code SET error_regex = "KeyError: (.*)" WHERE  error_code =  "43017";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务实际运行内存超过了设置的内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory增加内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code =  "13002";

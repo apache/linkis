@@ -24,11 +24,9 @@ import org.apache.linkis.ecm.core.errorcode.LinkisECMErrorCodeSummary._
 import org.apache.linkis.ecm.core.exception.ECMCoreException
 import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.utils.{
   EngineConnArgumentsBuilder,
-  EngineConnArgumentsParser,
-  JobUtils
+  EngineConnArgumentsParser
 }
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.{
@@ -109,17 +107,6 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case ENGINECONN_ENVKEYS =>
         environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS)
       case _ =>
-    }
-    val jobTags = JobUtils.getJobSourceTagsFromStringMap(request.creationDesc.properties)
-    if (StringUtils.isAsciiPrintable(jobTags)) {
-      environment.put(
-        ECConstants.HIVE_OPTS,
-        s"${ECConstants.HIVE_OPTS} --hiveconf mapreduce.job.tags=$jobTags"
-      )
-      environment.put(
-        ECConstants.SPARK_SUBMIT_OPTS,
-        s"${ECConstants.SPARK_SUBMIT_OPTS} -Dspark.yarn.tags=$jobTags"
-      )
     }
   }
 

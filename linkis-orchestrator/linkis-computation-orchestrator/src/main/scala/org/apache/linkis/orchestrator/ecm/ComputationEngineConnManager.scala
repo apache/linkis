@@ -160,6 +160,11 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
     }
 
     response match {
+      case engineCreateError: EngineCreateError =>
+        throw new ECMPluginErrorException(
+          ECMPluginConf.ECM_CREATE_ENGINE_ERROR_CODE,
+          " Failed  to create engine error msg:  " + engineCreateError.exception
+        )
       case engineNode: EngineNode =>
         logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
         (engineNode, true)

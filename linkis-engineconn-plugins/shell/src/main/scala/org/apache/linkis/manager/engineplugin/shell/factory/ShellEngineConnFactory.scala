@@ -50,7 +50,8 @@ class ShellEngineConnFactory extends ComputationSingleExecutorEngineConnFactory 
         maxTaskNum = 1
       }
       logger.info(s"max task num $maxTaskNum")
-      new ShellEngineConnConcurrentExecutor(id)
+      new ShellEngineConnConcurrentExecutor(id, maxTaskNum)
+
     } else {
       new ShellEngineConnExecutor(id)
     }

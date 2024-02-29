@@ -30,7 +30,7 @@
             <CellGroup v-for="(item, index2) in sideNavList.children" :key="index2"
               @on-click="handleCellClick">
               <Cell
-                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10')&&(item.key !== '1-12'):true"
+                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true"
                 :key="index2" :class="{ crrentItem: crrentItem === item.key }" :title="item.name"
                 :name="item.key">
                 <div>
@@ -51,7 +51,7 @@
                       v-for="(item3, index3) in getChildMap(item.key).children"
                       :key="index3" @on-click="clickToRoute">
                       <div
-                        v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-1'">
+                        v-if="isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7'].includes(item3.key)">
                         <Cell :key="index3" :class="{ crrentItem: crrentItem === item3.key }"
                           :title="item3.name" :name="item3.key" />
                       </div>
@@ -65,7 +65,7 @@
         <div class="content-body-side-right">
           <div class="content-body-side-right-title">
             <Breadcrumb
-              v-if="$route.name !== 'resource' && $route.name !== 'resourceEngineConnList'">
+              v-if="!['resource', 'resourceEngineConnList', 'microService', 'eurekaService'].includes($route.name)">
               <BreadcrumbItem :to="skipPath">
                 <Icon v-if="skipPath" type="ios-arrow-back" size="16" color="#338cf0"></Icon>
                 {{ breadcrumbSecondName }}
@@ -87,6 +87,16 @@
               <Tab-pane name="resource"
                 :label="$t('message.linkis.sideNavList.function.children.resource')"
                 href="/resource">
+              </Tab-pane>
+            </Tabs>
+            <Tabs v-if="$route.name === 'microService' || $route.name === 'eurekaService'"
+              value="microService" @on-click="clickResourceTab" class="resource-tab">
+              <Tab-pane name="microService"
+                :label="$t('message.linkis.sideNavList.function.children.microserviceManage')"
+                href="/microService"></Tab-pane>
+              <Tab-pane name="eurekaService"
+                :label="$t('message.linkis.sideNavList.function.children.eurekaService')"
+                href="/eurekaService">
               </Tab-pane>
             </Tabs>
           </div>
@@ -261,6 +271,13 @@ export default {
               'message.linkis.sideNavList.function.children.tenantTagManagement'
             ),
             path: '/console/tenantTagManagement',
+          },
+          {
+            key: '1-10-9',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.departmentTagManagement'
+            ),
+            path: '/console/departmentTagManagement',
           },
           {
             key: '1-10-6',

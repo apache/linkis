@@ -75,9 +75,14 @@
       <FormItem>
         <Button
           type="primary"
-          @click="confirmSearch"
+          @click="keywordSearch"
           style="margin-right: 10px;"
-        >{{ $t('message.linkis.search') }}</Button>
+        >{{ $t('message.linkis.codeQuery.keyword') }}</Button>
+        <Button
+          type="primary"
+          @click="fullSearch"
+          style="margin-right: 10px;"
+        >{{ $t('message.linkis.codeQuery.fullMatch') }}</Button>
         <Button
           type="warning"
           @click="reset"
@@ -135,6 +140,7 @@ export default {
       tableLoading: false,
       isLogAdmin: false,
       isAdminModel: false,
+      fullMatch: true,
       shortcutOpt: {
         shortcuts: [
           {
@@ -295,6 +301,15 @@ export default {
       this.page.pageNow = 1
       this.search()
     },
+    
+    keywordSearch() {
+      this.fullMatch = false;
+      this.confirmSearch();
+    },
+    fullSearch() {
+      this.fullMatch = true;
+      this.confirmSearch();
+    },
     switchAdmin() {
       if (!this.tableLoading) {
         this.isAdminModel = !this.isAdminModel
@@ -341,7 +356,8 @@ export default {
           pageSize,
           status,
           engineType,
-          creator
+          creator,
+          fullMatch: this.fullMatch
         }
         if (!shortcut[0]) {
           delete params.startDate

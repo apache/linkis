@@ -476,7 +476,7 @@ class RMMonitorRest extends Logging {
           val acrossClusterInfo = new mutable.HashMap[String, Any]()
           acrossClusterInfo.put("clustername", response.clusterName)
           val acrossQueues = new mutable.LinkedHashSet[String]()
-          queues.add(response.queueName)
+          acrossQueues.add(response.queueName)
           acrossClusterInfo.put("queues", acrossQueues)
           clusters.append(acrossClusterInfo)
         } else {

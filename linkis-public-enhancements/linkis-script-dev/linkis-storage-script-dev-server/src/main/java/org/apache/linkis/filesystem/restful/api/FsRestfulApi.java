@@ -31,6 +31,7 @@ import org.apache.linkis.filesystem.service.FsService;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.utils.UserGroupUtils;
 import org.apache.linkis.filesystem.validator.PathValidator$;
+import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.csv.CSVFsWriter;
@@ -324,6 +325,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "upload " + path);
+    LoggerUtils.setJobIdMDC("uploadThread_" + userName);
+    LOGGER.info("userName {} start to upload File {}", userName, path);
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
@@ -339,6 +342,9 @@ public class FsRestfulApi {
         IOUtils.copy(is, outputStream);
       }
     }
+    LOGGER.info("userName {} Finished to upload File {}", userName, path);
+    LoggerUtils.removeJobIdMDC();
+
     return Message.ok();
   }
 
@@ -440,6 +446,8 @@ public class FsRestfulApi {
       String charset = json.get("charset");
       String path = json.get("path");
       String userName = ModuleUserUtils.getOperationUser(req, "download " + path);
+      LoggerUtils.setJobIdMDC("downloadThread_" + userName);
+      LOGGER.info("userName {} start to download File {}", userName, path);
       if (StringUtils.isEmpty(path)) {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
@@ -467,6 +475,7 @@ public class FsRestfulApi {
       while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
         outputStream.write(buffer, 0, bytesRead);
       }
+      LOGGER.info("userName {} Finished to download File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("download failed", e);
       response.reset();
@@ -476,6 +485,8 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
+
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -545,6 +556,8 @@ public class FsRestfulApi {
       }
       return message;
     } finally {
+      LoggerUtils.removeJobIdMDC();
+
       IOUtils.closeQuietly(fileSource);
     }
   }
@@ -578,7 +591,10 @@ public class FsRestfulApi {
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
+
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
+    LoggerUtils.setJobIdMDC("openFileThread_" + userName);
+    LOGGER.info("userName {} start to open File {}", userName, path);
     Long startTime = System.currentTimeMillis();
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
@@ -618,6 +634,8 @@ public class FsRestfulApi {
       message.data("totalLine", fileSource.getTotalLine());
       return message.data("page", page).data("totalPage", 0);
     } finally {
+      LoggerUtils.removeJobIdMDC();
+
       IOUtils.closeQuietly(fileSource);
     }
   }
@@ -641,6 +659,8 @@ public class FsRestfulApi {
       throws IOException, WorkSpaceException {
     String path = (String) json.get("path");
     String userName = ModuleUserUtils.getOperationUser(req, "saveScript " + path);
+    LoggerUtils.setJobIdMDC("saveScriptThread_" + userName);
+    LOGGER.info("userName {} start to saveScript File {}", userName, path);
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
@@ -673,6 +693,9 @@ public class FsRestfulApi {
         }
         scriptFsWriter.addRecord(new ScriptRecord(split[i]));
       }
+      LOGGER.info("userName {} Finished to saveScript File {}", userName, path);
+      LoggerUtils.removeJobIdMDC();
+
       return Message.ok();
     }
   }
@@ -747,6 +770,8 @@ public class FsRestfulApi {
         charset);
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
+      LoggerUtils.setJobIdMDC("resultsetToExcelThread_" + userName);
+      LOGGER.info("userName {} start to resultsetToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
@@ -806,6 +831,7 @@ public class FsRestfulApi {
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
+      LOGGER.info("userName {} Finished to resultsetToExcel File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("output failed", e);
       response.reset();
@@ -815,6 +841,7 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -860,6 +887,8 @@ public class FsRestfulApi {
     FileSource fileSource = null;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetsToExcel " + path);
+      LoggerUtils.setJobIdMDC("resultsetsToExcelThread_" + userName);
+      LOGGER.info("userName {} start to resultsetsToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (StringUtils.isEmpty(path)) {
@@ -907,6 +936,7 @@ public class FsRestfulApi {
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
+      LOGGER.info("userName {} Finished to resultsetsToExcel File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("output failed", e);
       response.reset();
@@ -916,6 +946,7 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -964,6 +995,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "formate " + path);
+    LoggerUtils.setJobIdMDC("formateThread_" + userName);
+    LOGGER.info("userName {} start to formate File {}", userName, path);
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
@@ -1011,6 +1044,8 @@ public class FsRestfulApi {
         }
         res.put("columnName", column[0]);
         res.put("columnType", column[1]);
+        LOGGER.info("userName {} Finished to formate File {}", userName, path);
+        LoggerUtils.removeJobIdMDC();
       }
       return Message.ok().data("formate", res);
     }
@@ -1055,6 +1090,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "getSheetInfo " + path);
+    LoggerUtils.setJobIdMDC("getSheetInfoThread_" + userName);
+    LOGGER.info("userName {} start to getSheetInfo File {}", userName, path);
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
@@ -1105,7 +1142,10 @@ public class FsRestfulApi {
         }
         sheetInfo = new HashMap<>(1);
         sheetInfo.put("sheet_csv", csvMapList);
+        LOGGER.info("userName {} Finished to getSheetInfo File {}", userName, path);
+        LoggerUtils.removeJobIdMDC();
       } else {
+        LoggerUtils.removeJobIdMDC();
         throw WorkspaceExceptionManager.createException(80004, path);
       }
       return Message.ok().data("sheetInfo", sheetInfo);
@@ -1127,6 +1167,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
+    LoggerUtils.setJobIdMDC("openLogThread_" + userName);
+    LOGGER.info("userName {} start to openLog File {}", userName, path);
     if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
@@ -1155,6 +1197,8 @@ public class FsRestfulApi {
           .map(f -> f[0])
           .forEach(
               s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
+      LOGGER.info("userName {} Finished to openLog File {}", userName, path);
+      LoggerUtils.removeJobIdMDC();
       return Message.ok()
           .data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
     }

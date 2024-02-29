@@ -110,15 +110,49 @@ class DriverAndYarnReqResourceService(
         s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
       )
 
+      // resource not enough, judge if is cross cluster task and origin cluster priority first
       val acrossClusterTask =
         engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
-      if (acrossClusterTask.toBoolean) {
-        throw new RMWarnException(
-          RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-          AMConstant.ORIGIN_CLUSTER_RETRY_DES
+      val priorityCluster = engineCreateRequest.getProperties.get(AMConfiguration.PRIORITY_CLUSTER)
+      if (
+        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+          .isNotBlank(priorityCluster) && priorityCluster.equals(
+          AMConfiguration.PRIORITY_CLUSTER_ORIGIN
         )
+      ) {
+
+        // get origin cluster resource threshold
+        val originCPUPercentageThreshold =
+          engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_CPU_PERCENTAGE_THRESHOLD)
+        val originMemoryPercentageThreshold =
+          engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_MEMORY_PERCENTAGE_THRESHOLD)
+
+        if (
+          StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
+            originMemoryPercentageThreshold
+          )
+        ) {
+
+          // judge origin cluster resource in origin threshold
+          try {
+            AcrossClusterRulesJudgeUtils.originClusterRuleCheck(
+              usedCapacity.asInstanceOf[YarnResource],
+              maxCapacity.asInstanceOf[YarnResource],
+              originCPUPercentageThreshold.toDouble,
+              originMemoryPercentageThreshold.toDouble
+            )
+          } catch {
+            // if origin cluster resource gt threshold, throw origin retry exception and change to target cluster next retry;
+            case ex: Exception =>
+              throw new RMWarnException(
+                RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+                ex.getMessage
+              )
+          }
+        }
       }
 
+      // if origin cluster resource lt threshold, need to throw resource not enough exception in origin cluster
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)

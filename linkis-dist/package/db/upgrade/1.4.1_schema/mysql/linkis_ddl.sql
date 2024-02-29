@@ -70,6 +70,6 @@ CREATE TABLE `linkis_cg_tenant_department_config` (
 
 ALTER TABLE linkis_cg_tenant_label_config ADD COLUMN is_valid varchar(1) CHARSET utf8mb4 COLLATE utf8mb4_bin DEFAULT 'Y' COMMENT '是否有效';
 
-ALTER TABLE linkis_cg_manager_service_instance_metrics ADD COLUMN description varchar(128) CHARSET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';
+ALTER TABLE linkis_cg_manager_service_instance_metrics ADD COLUMN description varchar(256) CHARSET utf8mb4 COLLATE utf8mb4_bin DEFAULT '';
 ALTER TABLE linkis_ps_bml_resources_task ADD CONSTRAINT  uniq_rid_version UNIQUE (`resource_id`, `version`);
 ALTER TABLE linkis_cg_ec_resource_info_record ADD UNIQUE INDEX uniq_sinstance_status_cuser_ctime (`service_instance`, `status`, `create_user`, `create_time`);

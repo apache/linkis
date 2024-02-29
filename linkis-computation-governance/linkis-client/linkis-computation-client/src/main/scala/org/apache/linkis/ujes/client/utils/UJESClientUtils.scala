@@ -17,7 +17,14 @@
 
 package org.apache.linkis.ujes.client.utils
 
+import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 import org.apache.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
+import org.apache.linkis.ujes.client.response.ResultSetResult
+
+import java.util
+import java.util.Locale
+import com.google.gson.Gson
+import org.json4s.jackson.Json
 
 object UJESClientUtils {
 
@@ -46,6 +53,51 @@ object UJESClientUtils {
     case "python" => EngineType.PYTHON.PY
     case "tsql" => EngineType.TRINO.TSQL
     case _ => EngineType.SPARK.SQL
+  }
+
+  def toMataType(setResult: ResultSetResult): ResultSetResult = {
+    val metaData = setResult.getMetadata.asInstanceOf[util.List[util.Map[String, String]]]
+    val fileContent = setResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[Any]]]
+    for (metaDataColnum <- 1 to metaData.size()) {
+      val col = metaData.get(metaDataColnum - 1)
+      if (!col.get("dataType").equals("string")) {
+        for (cursor <- 1 to fileContent.size()) {
+          val colDataList = fileContent.get(cursor - 1)
+          var colData = colDataList.get(metaDataColnum - 1)
+          colData = evaluate(col.get("dataType"), colData.toString)
+          colDataList.set(metaDataColnum - 1, colData)
+        }
+      }
+    }
+    setResult
+  }
+  private def evaluate(dataType: String, value: String): Any = {
+    if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
+      dataType.toLowerCase(Locale.getDefault) match {
+        case "string" | "char" | "varchar" | "nvarchar" => value
+        case _ => null
+      }
+    } else {
+      dataType.toLowerCase(Locale.getDefault) match {
+        case null => throw new UJESClientBuilderException("data is empty")
+        case "char" | "varchar" | "nvarchar" | "string" => value
+        case "short" => value.toShort
+        case "int" => value.toInt
+        case "long" => value.toLong
+        case "float" => value.toFloat
+        case "double" => value.toDouble
+        case "boolean" => value.toBoolean
+        case "byte" => value.toByte
+        case "timestamp" => value
+        case "date" => value
+        case "bigint" => value.toLong
+        case "decimal" => value.toDouble
+        case "array" => new Gson().fromJson(value, classOf[util.ArrayList[Object]])
+        case "map" => new Gson().fromJson(value, classOf[util.HashMap[Object, Object]])
+        case "struct" => new Gson().fromJson(value, classOf[Json])
+        case _ => value
+      }
+    }
   }
 
 }

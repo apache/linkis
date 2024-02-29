@@ -414,6 +414,18 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     AliasOutputExecuteResponse(method.id.toString, StorageUtils.serializerStringToResult(res))
   }
 
+  override def getConcurrentLimit(): Int = {
+    var maxTaskNum = ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue - 5
+    if (maxTaskNum <= 0) {
+      logger.error(
+        s"max task num  cannot ${maxTaskNum} < 0, should set linkis.engineconn.concurrent.thread.num > 6"
+      )
+      maxTaskNum = 1
+    }
+    logger.info(s"max task num $maxTaskNum")
+    maxTaskNum
+  }
+
   override def killTask(taskID: String): Unit = {
     logger.warn(s"Kill job : ${taskID}")
     super.killTask(taskID)

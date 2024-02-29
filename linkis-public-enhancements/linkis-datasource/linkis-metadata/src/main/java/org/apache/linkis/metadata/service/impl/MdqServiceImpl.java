@@ -215,10 +215,10 @@ public class MdqServiceImpl implements MdqService {
             .parallelStream()
             .filter(f -> queryParam.getTableName().equals(f.get("NAME")))
             .findFirst();
-    Map<String, Object> talbe =
+    Map<String, Object> table =
         tableOptional.orElseThrow(() -> new IllegalArgumentException("table不存在"));
     MdqTableBaseInfoVO mdqTableBaseInfoVO =
-        DomainCoversionUtils.mapToMdqTableBaseInfoVO(talbe, queryParam.getDbName());
+        DomainCoversionUtils.mapToMdqTableBaseInfoVO(table, queryParam.getDbName());
     String tableComment =
         hiveMetaDao.getTableComment(queryParam.getDbName(), queryParam.getTableName());
     mdqTableBaseInfoVO.getBase().setComment(tableComment);

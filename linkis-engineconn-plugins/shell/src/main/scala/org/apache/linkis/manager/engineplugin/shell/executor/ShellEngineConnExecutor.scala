@@ -178,7 +178,6 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutionContext.getProperties)
       if (StringUtils.isAsciiPrintable(jobTags)) {
         env.put(ECConstants.HIVE_OPTS, s" --hiveconf mapreduce.job.tags=$jobTags")
-        env.put(ECConstants.SPARK_SUBMIT_OPTS, s" -Dspark.yarn.tags=$jobTags")
       }
 
       processBuilder.redirectErrorStream(false)

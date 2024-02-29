@@ -19,7 +19,7 @@ package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.vo.CanCreateECRes
-import org.apache.linkis.manager.common.constant.RMConstant
+import org.apache.linkis.manager.common.constant.{AMConstant, RMConstant}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.exception.RMWarnException
@@ -36,19 +36,19 @@ import org.apache.commons.lang3.StringUtils
 import org.json4s.DefaultFormats
 
 class DriverAndYarnReqResourceService(
-                                       labelResourceService: LabelResourceService,
-                                       externalResourceService: ExternalResourceService
-                                     ) extends RequestResourceService(labelResourceService) {
+    labelResourceService: LabelResourceService,
+    externalResourceService: ExternalResourceService
+) extends RequestResourceService(labelResourceService) {
 
   implicit val formats = DefaultFormats + ResourceSerializer
 
   override val resourceType: ResourceType = DriverAndYarn
 
   override def canRequestResource(
-                                   labelContainer: RMLabelContainer,
-                                   resource: NodeResource,
-                                   engineCreateRequest: EngineCreateRequest
-                                 ): CanCreateECRes = {
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): CanCreateECRes = {
     val canCreateECRes = super.canRequestResource(labelContainer, resource, engineCreateRequest)
     if (!canCreateECRes.isCanCreateEC) {
       return canCreateECRes
@@ -72,7 +72,6 @@ class DriverAndYarnReqResourceService(
       logger.info(
         s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
       )
-
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       canCreateECRes.setCanCreateEC(false);
@@ -83,10 +82,10 @@ class DriverAndYarnReqResourceService(
   }
 
   override def canRequest(
-                           labelContainer: RMLabelContainer,
-                           resource: NodeResource,
-                           engineCreateRequest: EngineCreateRequest
-                         ): Boolean = {
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): Boolean = {
     if (!super.canRequest(labelContainer, resource, engineCreateRequest)) {
       return false
     }
@@ -111,54 +110,18 @@ class DriverAndYarnReqResourceService(
         s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource"
       )
 
-      // bdap resource not enough, judge bdap queue resource threshold
       val acrossClusterTask =
         engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
-      val priorityCluster = engineCreateRequest.getProperties.get(AMConfiguration.PRIORITY_CLUSTER)
-      // bdp resource no need enter
-
-      logger.info(s"acrossClusterTask: $acrossClusterTask and priorityCluster: $priorityCluster")
-
-      if (
-        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
-          .isNotBlank(priorityCluster) && priorityCluster.equals(
-          AMConfiguration.PRIORITY_CLUSTER_ORIGIN
+      if (acrossClusterTask.toBoolean) {
+        throw new RMWarnException(
+          RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+          AMConstant.ORIGIN_CLUSTER_RETRY_DES
         )
-      ) {
-
-        logger.info("queue real resource not enough, and judge origin queue threshold")
-
-        val originCPUPercentageThreshold =
-          engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_CPU_PERCENTAGE_THRESHOLD)
-        val originMemoryPercentageThreshold =
-          engineCreateRequest.getProperties.get(AMConfiguration.ORIGIN_MEMORY_PERCENTAGE_THRESHOLD)
-
-        if (
-          StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
-            originMemoryPercentageThreshold
-          )
-        ) {
-          try {
-            AcrossClusterRulesJudgeUtils.originClusterRuleCheck(
-              usedCapacity.asInstanceOf[YarnResource],
-              maxCapacity.asInstanceOf[YarnResource],
-              originCPUPercentageThreshold.toDouble,
-              originMemoryPercentageThreshold.toDouble
-            )
-          } catch {
-            case ex: Exception =>
-              throw new RMWarnException(
-                RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-                ex.getMessage
-              )
-          }
-        }
       }
 
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
-
     }
 
     if (engineCreateRequest.getProperties != null) {
@@ -169,10 +132,10 @@ class DriverAndYarnReqResourceService(
       val priorityCluster = properties.get(AMConfiguration.PRIORITY_CLUSTER)
 
       if (
-        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
-          .isNotBlank(priorityCluster) && priorityCluster.equals(
-          AMConfiguration.PRIORITY_CLUSTER_TARGET
-        )
+          StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+            .isNotBlank(priorityCluster) && priorityCluster.equals(
+            AMConfiguration.PRIORITY_CLUSTER_TARGET
+          )
       ) {
 
         // cross cluster task and bdp priority
@@ -184,11 +147,11 @@ class DriverAndYarnReqResourceService(
           properties.get(AMConfiguration.TARGET_MEMORY_PERCENTAGE_THRESHOLD)
 
         if (
-          StringUtils
-            .isNotBlank(targetCPUThreshold) && StringUtils.isNotBlank(targetMemoryThreshold)
+            StringUtils
+              .isNotBlank(targetCPUThreshold) && StringUtils.isNotBlank(targetMemoryThreshold)
             && StringUtils.isNotBlank(targetCPUPercentageThreshold) && StringUtils.isNotBlank(
-            targetMemoryPercentageThreshold
-          )
+              targetMemoryPercentageThreshold
+            )
         ) {
 
           // judge total cluster resources
@@ -240,10 +203,10 @@ class DriverAndYarnReqResourceService(
           logger.info(s"user: $user, creator: $creator task skip cross cluster resource judgment")
         }
       } else if (
-        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
-          .isNotBlank(priorityCluster) && priorityCluster.equals(
-          AMConfiguration.PRIORITY_CLUSTER_ORIGIN
-        )
+          StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+            .isNotBlank(priorityCluster) && priorityCluster.equals(
+            AMConfiguration.PRIORITY_CLUSTER_ORIGIN
+          )
       ) {
 
         // cross cluster task and bdap priority
@@ -253,9 +216,9 @@ class DriverAndYarnReqResourceService(
           properties.get(AMConfiguration.ORIGIN_MEMORY_PERCENTAGE_THRESHOLD)
 
         if (
-          StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
-            originMemoryPercentageThreshold
-          )
+            StringUtils.isNotBlank(originCPUPercentageThreshold) && StringUtils.isNotBlank(
+              originMemoryPercentageThreshold
+            )
         ) {
 
           logger.info(
@@ -291,10 +254,10 @@ class DriverAndYarnReqResourceService(
   }
 
   def generateQueueNotEnoughMessage(
-                                     requestResource: Resource,
-                                     availableResource: Resource,
-                                     maxResource: Resource
-                                   ): (Int, String) = {
+      requestResource: Resource,
+      availableResource: Resource,
+      maxResource: Resource
+  ): (Int, String) = {
     requestResource match {
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]

@@ -479,6 +479,7 @@ class RMMonitorRest extends Logging {
     queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration))
     queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue)
     clusterInfo.put("queues", queues)
+    clusters.append(clusterInfo)
 
     if (ManagerMonitorConf.ACROSS_QUEUES_RESOURCE_SHOW_SWITCH_ON.getValue) {
       val sender: Sender = Sender
@@ -503,8 +504,6 @@ class RMMonitorRest extends Logging {
         }
       }
     }
-
-    clusters.append(clusterInfo)
     appendMessageData(message, "queues", clusters)
   }
 

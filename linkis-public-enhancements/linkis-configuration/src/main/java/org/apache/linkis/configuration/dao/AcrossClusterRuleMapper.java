@@ -17,8 +17,9 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.configuration.entity.AcrossClusterRule;
+
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -51,7 +52,8 @@ public interface AcrossClusterRuleMapper {
       @Param("isValid") String isValid, @Param("id") Long id, @Param("username") String username);
 
   /**
-   *  Query across cluster resource rule by username.
+   * Query across cluster resource rule by username.
+   *
    * @param username
    * @return
    */

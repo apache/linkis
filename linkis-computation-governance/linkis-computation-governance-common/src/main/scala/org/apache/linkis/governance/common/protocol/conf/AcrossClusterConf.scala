@@ -24,4 +24,3 @@ trait AcrossClusterConf extends RequestProtocol
 case class AcrossClusterRequest(username: String) extends AcrossClusterConf
 
 case class AcrossClusterResponse(clusterName: String, queueName: String)
-

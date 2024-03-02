@@ -68,7 +68,8 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
   }
 
   override protected def readLog(deal: String => Unit, fromLine: Int, size: Int): Int = {
-    if (!sharedCache.cachedLogs.nonEmpty) return super.readLog(deal, fromLine, size)
+    if (sharedCache.cachedLogs == null || !sharedCache.cachedLogs.nonEmpty)
+      return super.readLog(deal, fromLine, size)
     val min = sharedCache.cachedLogs.min
     val max = sharedCache.cachedLogs.max
     if (fromLine > max) return 0

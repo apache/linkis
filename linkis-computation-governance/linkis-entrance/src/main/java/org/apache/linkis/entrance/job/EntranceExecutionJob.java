@@ -286,4 +286,13 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
       logger.warn("Close logWriter and logReader failed. {}", e.getMessage(), e);
     }
   }
+
+  @Override
+  public void clear() {
+    super.clear();
+    this.setParams(null);
+    JobRequest jobRequest = this.getJobRequest();
+    jobRequest.setExecutionCode(null);
+    jobRequest.setMetrics(null);
+  }
 }

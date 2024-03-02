@@ -131,13 +131,13 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
               engineType = v
             } else if (k.equals(UJESSQLDriver.ENGINE_VERSION)) {
               engineVersion = v
-          }
+            }
 
           case _ =>
         }
       }
     }
-    if(StringUtils.isNotBlank(engineVersion)) {
+    if (StringUtils.isNotBlank(engineVersion)) {
       EngineTypeLabelCreator.registerVersion(engineType, engineVersion)
     }
 

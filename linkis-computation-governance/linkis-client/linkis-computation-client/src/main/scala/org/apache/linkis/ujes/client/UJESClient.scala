@@ -146,6 +146,7 @@ abstract class UJESClient extends Closeable {
     val setResult = executeUJESJob(resultSetAction).asInstanceOf[ResultSetResult]
     UJESClientUtils.toMataType(setResult)
   }
+
 }
 
 object UJESClient {

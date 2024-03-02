@@ -33,6 +33,9 @@ class CacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user:
   def getCache: Option[Cache] = Some(sharedCache)
 
   private def cache(msg: String): Unit = {
+    if (sharedCache.cachedLogs == null) {
+      return
+    }
     this synchronized {
       val removed = sharedCache.cachedLogs.add(msg)
       val currentTime = new Date(System.currentTimeMillis())
@@ -65,10 +68,12 @@ class CacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user:
 
   override def flush(): Unit = {
     val sb = new StringBuilder
-    sharedCache.cachedLogs.toList
-      .filter(StringUtils.isNotEmpty)
-      .foreach(sb.append(_).append("\n"))
-    sharedCache.cachedLogs.clear()
+    if (sharedCache.cachedLogs != null) {
+      sharedCache.cachedLogs.toList
+        .filter(StringUtils.isNotEmpty)
+        .foreach(sb.append(_).append("\n"))
+      sharedCache.cachedLogs.clear()
+    }
     super.write(sb.toString())
     super.flush()
   }

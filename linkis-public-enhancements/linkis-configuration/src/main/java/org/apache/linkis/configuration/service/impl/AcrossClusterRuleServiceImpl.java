@@ -17,9 +17,6 @@
 
 package org.apache.linkis.configuration.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.google.gson.Gson;
 import org.apache.linkis.configuration.dao.AcrossClusterRuleMapper;
 import org.apache.linkis.configuration.entity.AcrossClusterRule;
 import org.apache.linkis.configuration.service.AcrossClusterRuleService;
@@ -29,12 +26,17 @@ import org.apache.linkis.governance.common.protocol.conf.AcrossClusterResponse;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.server.BDPJettyServerHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.configuration.conf.AcrossClusterRuleKeys.KEY_CROSS_QUEUE;
 import static org.apache.linkis.configuration.conf.AcrossClusterRuleKeys.KEY_QUEUE_RULE;
@@ -143,7 +145,8 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
 
   @Receiver
   @Override
-  public AcrossClusterResponse getAcrossClusterRuleByUsername(AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception {
+  public AcrossClusterResponse getAcrossClusterRuleByUsername(
+      AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception {
     String username = acrossClusterRequest.username();
     AcrossClusterRule acrossClusterRule = ruleMapper.queryAcrossClusterRuleByUserName(username);
     if (acrossClusterRule == null) {
@@ -156,12 +159,15 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
       rulesMap = gson.fromJson(acrossClusterRule.getRules(), rulesMap.getClass());
       Map<String, String> queueRule = rulesMap.get(KEY_QUEUE_RULE);
       String crossQueueName = queueRule.get(KEY_CROSS_QUEUE);
-      logger.info("{} configure across cluster name is {}, queue name is {}", username, acrossClusterRule.getClusterName(), crossQueueName);
+      logger.info(
+          "{} configure across cluster name is {}, queue name is {}",
+          username,
+          acrossClusterRule.getClusterName(),
+          crossQueueName);
       return new AcrossClusterResponse(clusterName, crossQueueName);
     } catch (Exception e) {
       logger.warn("Failed to parse rulesMap from rules");
     }
     return null;
   }
-
 }

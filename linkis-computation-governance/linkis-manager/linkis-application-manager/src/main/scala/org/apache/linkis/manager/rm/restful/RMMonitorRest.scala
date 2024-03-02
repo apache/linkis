@@ -17,15 +17,12 @@
 
 package org.apache.linkis.manager.rm.restful
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.github.pagehelper.page.PageMethod
-import com.google.common.collect.Lists
-import io.swagger.annotations.{Api, ApiOperation}
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.governance.common.protocol.conf.{AcrossClusterRequest, AcrossClusterResponse}
+import org.apache.linkis.governance.common.protocol.conf.{
+  AcrossClusterRequest,
+  AcrossClusterResponse
+}
 import org.apache.linkis.manager.am.conf.ManagerMonitorConf
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -37,31 +34,51 @@ import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
-import org.apache.linkis.manager.label.entity.engine.{EngineInstanceLabel, EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineInstanceLabel,
+  EngineTypeLabel,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.label.service.NodeLabelService
-import org.apache.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence, ResourceManagerPersistence}
+import org.apache.linkis.manager.persistence.{
+  LabelManagerPersistence,
+  NodeManagerPersistence,
+  NodeMetricManagerPersistence,
+  ResourceManagerPersistence
+}
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.{YarnAppInfo, YarnResourceIdentifier}
 import org.apache.linkis.manager.rm.restful.vo.{UserCreatorEngineType, UserResourceVo}
-import org.apache.linkis.manager.rm.service.impl.UserResourceService
 import org.apache.linkis.manager.rm.service.{LabelResourceService, ResourceManager}
+import org.apache.linkis.manager.rm.service.impl.UserResourceService
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.server.{toScalaBuffer, BDPJettyServerHelper, Message}
 import org.apache.linkis.server.security.SecurityFilter
 import org.apache.linkis.server.utils.ModuleUserUtils
-import org.apache.linkis.server.{BDPJettyServerHelper, Message, toScalaBuffer}
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
+
+import javax.servlet.http.HttpServletRequest
 
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
 import java.util.{Comparator, List, TimeZone}
-import javax.servlet.http.HttpServletRequest
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.github.pagehelper.page.PageMethod
+import com.google.common.collect.Lists
+import io.swagger.annotations.{Api, ApiOperation}
 
 @RestController
 @Api(tags = Array("resource management"))
@@ -472,7 +489,9 @@ class RMMonitorRest extends Logging {
       } else {
         if (responseObject.isInstanceOf[AcrossClusterResponse]) {
           val response: AcrossClusterResponse = responseObject.asInstanceOf[AcrossClusterResponse]
-          logger.info(s"across cluster info: cluster name: ${response.clusterName}, queue: ${response.queueName}")
+          logger.info(
+            s"across cluster info: cluster name: ${response.clusterName}, queue: ${response.queueName}"
+          )
           val acrossClusterInfo = new mutable.HashMap[String, Any]()
           acrossClusterInfo.put("clustername", response.clusterName)
           val acrossQueues = new mutable.LinkedHashSet[String]()

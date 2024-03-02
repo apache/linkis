@@ -23,6 +23,7 @@ import org.apache.linkis.ujes.client.response.ResultSetResult
 
 import java.util
 import java.util.Locale
+
 import com.google.gson.Gson
 import org.json4s.jackson.Json
 
@@ -71,6 +72,7 @@ object UJESClientUtils {
     }
     setResult
   }
+
   private def evaluate(dataType: String, value: String): Any = {
     if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
       dataType.toLowerCase(Locale.getDefault) match {

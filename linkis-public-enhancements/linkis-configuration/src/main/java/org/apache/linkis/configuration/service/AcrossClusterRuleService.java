@@ -50,5 +50,6 @@ public interface AcrossClusterRuleService {
 
   void validAcrossClusterRuleByBatch(List<Long> ids, String isValid) throws Exception;
 
-  AcrossClusterResponse getAcrossClusterRuleByUsername(AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception;
+  AcrossClusterResponse getAcrossClusterRuleByUsername(
+      AcrossClusterRequest acrossClusterRequest, Sender sender) throws Exception;
 }

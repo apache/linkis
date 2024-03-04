@@ -21,7 +21,6 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
@@ -31,8 +30,8 @@ import org.apache.hadoop.security.UserGroupInformation
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
-
 import scala.collection.JavaConverters._
 
 object HDFSUtils extends Logging {
@@ -41,6 +40,8 @@ object HDFSUtils extends Logging {
     new ConcurrentHashMap[String, HDFSFileSystemContainer]()
 
   private val LOCKER_SUFFIX = "_HDFS"
+
+  private val count = new AtomicLong
 
   /**
    * For FS opened with public tenants, we should not perform close action, but should close only
@@ -175,7 +176,8 @@ object HDFSUtils extends Logging {
   }
 
   def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem = {
-    logger.info(s"user ${userName} to create Fs")
+    val createCount = count.getAndIncrement()
+    logger.info(s"user ${userName} to create Fs, create time ${createCount}")
     getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
         def run: FileSystem = FileSystem.newInstance(conf)

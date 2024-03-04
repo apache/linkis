@@ -210,9 +210,6 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     case _ =>
       jobDaemon.foreach(_.kill())
       jobListener.foreach(_.onJobCompleted(this))
-//      if(getJobInfo != null) logListener.foreach(_.onLogUpdate(this, getJobInfo.getMetric))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is completed.")))
-    // TODO job end event
   }
 
   protected def transitionCompleted(executeCompleted: CompletedExecuteResponse): Unit = {
@@ -351,6 +348,16 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   override def toString: String = if (StringUtils.isNotBlank(getName)) getName else getId
+
+  /**
+   * clear job memory
+   */
+  def clear(): Unit = {
+    logger.info(s" clear job base info $getId")
+    this.executor = null
+    this.jobDaemon = null
+  }
+
 }
 
 /**

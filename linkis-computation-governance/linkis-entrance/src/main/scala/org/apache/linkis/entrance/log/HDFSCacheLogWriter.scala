@@ -100,6 +100,9 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
   def getCache: Option[Cache] = Some(sharedCache)
 
   private def cache(msg: String): Unit = {
+    if (sharedCache.cachedLogs == null) {
+      return
+    }
     WRITE_LOCKER synchronized {
       val removed = sharedCache.cachedLogs.add(msg)
       val currentTime = new Date(System.currentTimeMillis())
@@ -144,10 +147,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   override def flush(): Unit = {
     val sb = new StringBuilder
-    sharedCache.cachedLogs.toList
-      .filter(_ != null)
-      .foreach(sb.append(_).append("\n"))
-    sharedCache.cachedLogs.clear()
+    if (sharedCache.cachedLogs != null) {
+      sharedCache.cachedLogs.toList
+        .filter(_ != null)
+        .foreach(sb.append(_).append("\n"))
+      sharedCache.cachedLogs.clear()
+    }
     writeToFile(sb.toString())
   }
 
@@ -157,6 +162,7 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
       fileSystem.close()
       fileSystem = null
     }(s"$toString Error encounters when closing fileSystem")
+    sharedCache.clearCachedLogs()
   }
 
   override def toString: String = logPath

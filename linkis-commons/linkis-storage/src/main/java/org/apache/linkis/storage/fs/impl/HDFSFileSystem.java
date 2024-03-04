@@ -177,26 +177,31 @@ public class HDFSFileSystem extends FileSystem {
     if (MapUtils.isNotEmpty(properties)
         && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
       user = StorageConfiguration.PROXY_USER().getValue(properties);
+      properties.remove(StorageConfiguration.PROXY_USER().key());
     }
 
     if (user == null) {
       throw new IOException("User cannot be empty(用户不能为空)");
     }
 
-    conf = HDFSUtils.getConfigurationByLabel(user, label);
-
+    /** if properties is null do not to create conf */
     if (MapUtils.isNotEmpty(properties)) {
-      for (String key : properties.keySet()) {
-        String v = properties.get(key);
-        if (StringUtils.isNotEmpty(v)) {
-          conf.set(key, v);
+      conf = HDFSUtils.getConfigurationByLabel(user, label);
+      if (MapUtils.isNotEmpty(properties)) {
+        for (String key : properties.keySet()) {
+          String v = properties.get(key);
+          if (StringUtils.isNotEmpty(v)) {
+            conf.set(key, v);
+          }
         }
       }
     }
-    if (StorageConfiguration.FS_CACHE_DISABLE().getValue()) {
-      conf.set("fs.hdfs.impl.disable.cache", "true");
+    if (null != conf) {
+      fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+    } else {
+      fs = HDFSUtils.getHDFSUserFileSystem(user);
     }
-    fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+
     if (fs == null) {
       throw new IOException("init HDFS FileSystem failed!");
     }
@@ -308,7 +313,7 @@ public class HDFSFileSystem extends FileSystem {
       if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
           || (rootCauseMessage != null
               && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
-        logger.info("Failed to execute exists, retry", e);
+        logger.info("Failed to execute exists for user {}, retry", user, e);
         resetRootHdfs();
         return fs.exists(new Path(checkHDFSPath(dest.getPath())));
       } else {
@@ -326,8 +331,12 @@ public class HDFSFileSystem extends FileSystem {
           } else {
             HDFSUtils.closeHDFSFIleSystem(fs, user);
           }
-          logger.warn(user + "FS reset close.");
-          fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+          logger.warn("{} FS reset close.", user);
+          if (null != conf) {
+            fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+          } else {
+            fs = HDFSUtils.getHDFSUserFileSystem(user);
+          }
         }
       }
     }

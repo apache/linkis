@@ -31,19 +31,24 @@ import org.apache.hadoop.security.UserGroupInformation
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.collection.JavaConverters._
 
 object HDFSUtils extends Logging {
 
   private val fileSystemCache: java.util.Map[String, HDFSFileSystemContainer] =
-    new java.util.HashMap[String, HDFSFileSystemContainer]()
+    new ConcurrentHashMap[String, HDFSFileSystemContainer]()
 
   private val LOCKER_SUFFIX = "_HDFS"
 
-  if (HadoopConf.HDFS_ENABLE_CACHE) {
-    logger.info("HDFS Cache enabled ")
+  /**
+   * For FS opened with public tenants, we should not perform close action, but should close only
+   * when hdfsfilesystem encounters closed problem
+   * 对于使用公共租户开启的FS，我们不应该去执行close动作，应该由hdfsfilesystem遇到closed问题时才进行关闭
+   */
+  if (HadoopConf.HDFS_ENABLE_CACHE && HadoopConf.HDFS_ENABLE_CACHE_CLOSE) {
+    logger.info("HDFS Cache clear enabled ")
     Utils.defaultScheduler.scheduleAtFixedRate(
       new Runnable {
         override def run(): Unit = Utils.tryAndWarn {
@@ -118,38 +123,64 @@ object HDFSUtils extends Logging {
   def getHDFSRootUserFileSystem(conf: org.apache.hadoop.conf.Configuration): FileSystem =
     getHDFSUserFileSystem(HADOOP_ROOT_USER.getValue, conf)
 
-  def getHDFSUserFileSystem(userName: String): FileSystem =
-    getHDFSUserFileSystem(userName, getConfiguration(userName))
+  /**
+   * If the cache switch is turned on, fs will be obtained from the cache first
+   * @param userName
+   * @return
+   */
+  def getHDFSUserFileSystem(userName: String): FileSystem = {
+    if (HadoopConf.HDFS_ENABLE_CACHE) {
+      val locker = userName + LOCKER_SUFFIX
+      locker.intern().synchronized {
+        if (fileSystemCache.containsKey(userName)) {
+          val hdfsFileSystemContainer = fileSystemCache.get(userName)
+          hdfsFileSystemContainer.addAccessCount()
+          hdfsFileSystemContainer.updateLastAccessTime
+          hdfsFileSystemContainer.getFileSystem
+        } else {
+          getHDFSUserFileSystem(userName, getConfiguration(userName))
+        }
+      }
+    } else {
+      getHDFSUserFileSystem(userName, getConfiguration(userName))
+    }
+  }
 
   def getHDFSUserFileSystem(
       userName: String,
       conf: org.apache.hadoop.conf.Configuration
-  ): FileSystem = if (HadoopConf.HDFS_ENABLE_CACHE) {
-    val locker = userName + LOCKER_SUFFIX
-    locker.intern().synchronized {
-      val hdfsFileSystemContainer = if (fileSystemCache.containsKey(userName)) {
-        fileSystemCache.get(userName)
-      } else {
-        val newHDFSFileSystemContainer =
-          new HDFSFileSystemContainer(createFileSystem(userName, conf), userName)
-        fileSystemCache.put(userName, newHDFSFileSystemContainer)
-        newHDFSFileSystemContainer
-      }
-      hdfsFileSystemContainer.addAccessCount()
-      hdfsFileSystemContainer.updateLastAccessTime
-      hdfsFileSystemContainer.getFileSystem
+  ): FileSystem = {
+
+    if (HadoopConf.FS_CACHE_DISABLE.getValue && null != conf) {
+      conf.set("fs.hdfs.impl.disable.cache", "true")
     }
-  } else {
-    createFileSystem(userName, conf)
+    if (HadoopConf.HDFS_ENABLE_CACHE) {
+      val locker = userName + LOCKER_SUFFIX
+      locker.intern().synchronized {
+        val hdfsFileSystemContainer = if (fileSystemCache.containsKey(userName)) {
+          fileSystemCache.get(userName)
+        } else {
+          val newHDFSFileSystemContainer =
+            new HDFSFileSystemContainer(createFileSystem(userName, conf), userName)
+          fileSystemCache.put(userName, newHDFSFileSystemContainer)
+          newHDFSFileSystemContainer
+        }
+        hdfsFileSystemContainer.addAccessCount()
+        hdfsFileSystemContainer.updateLastAccessTime
+        hdfsFileSystemContainer.getFileSystem
+      }
+    } else {
+      createFileSystem(userName, conf)
+    }
   }
 
-  def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem =
+  def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem = {
+    logger.info(s"user ${userName} to create Fs")
     getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
-        // scalastyle:off FileSystemGet
-        def run: FileSystem = FileSystem.get(conf)
-        // scalastyle:on FileSystemGet
+        def run: FileSystem = FileSystem.newInstance(conf)
       })
+  }
 
   def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit =
     if (null != fileSystem && StringUtils.isNotBlank(userName)) {
@@ -158,21 +189,22 @@ object HDFSUtils extends Logging {
 
   def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String, isForce: Boolean): Unit =
     if (null != fileSystem && StringUtils.isNotBlank(userName)) {
-      if (HadoopConf.HDFS_ENABLE_CACHE) {
+      val locker = userName + LOCKER_SUFFIX
+      if (HadoopConf.HDFS_ENABLE_CACHE) locker.intern().synchronized {
         val hdfsFileSystemContainer = fileSystemCache.get(userName)
         if (null != hdfsFileSystemContainer) {
-          val locker = userName + LOCKER_SUFFIX
           if (isForce) {
-            locker synchronized fileSystemCache.remove(hdfsFileSystemContainer.getUser)
+            fileSystemCache.remove(hdfsFileSystemContainer.getUser)
             IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
             logger.info(
               s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer"
             )
           } else {
-            locker synchronized hdfsFileSystemContainer.minusAccessCount()
+            hdfsFileSystemContainer.minusAccessCount()
           }
         }
-      } else {
+      }
+      else {
         IOUtils.closeQuietly(fileSystem)
       }
     }

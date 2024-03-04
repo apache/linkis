@@ -600,7 +600,8 @@ public class FsRestfulApi {
           fileSource.addParams("nullValue", nullValue);
         }
         fileSource = fileSource.page(page, pageSize);
-      } else if (fileSystem.getLength(fsPath) > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+      } else if (fileSystem.getLength(fsPath)
+          > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
@@ -1131,7 +1132,8 @@ public class FsRestfulApi {
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }
-    if (fileSystem.getLength(fsPath) > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+    if (fileSystem.getLength(fsPath)
+        > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
       throw WorkspaceExceptionManager.createException(80033, path);
     }
     try (FileSource fileSource =
@@ -1220,9 +1222,10 @@ public class FsRestfulApi {
     }
   }
 
-  /***
-   * @param filePermission: 700,744
-   * Prohibit users from modifying their own unreadable content
+  /**
+   * *
+   *
+   * @param filePermission: 700,744 Prohibit users from modifying their own unreadable content
    */
   private static boolean checkFilePermissions(String filePermission) {
     boolean result = false;

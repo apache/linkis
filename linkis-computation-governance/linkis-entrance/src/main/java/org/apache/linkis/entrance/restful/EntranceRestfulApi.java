@@ -322,7 +322,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         JobRequest jobRequest = ((EntranceJob) job.get()).getJobRequest();
         Map<String, Object> metrics = jobRequest.getMetrics();
         Map<String, Object> metricsVo = new HashMap<>();
-        if (metrics.containsKey(TaskConstant.JOB_YARNRESOURCE)) {
+        if (null != metrics && metrics.containsKey(TaskConstant.JOB_YARNRESOURCE)) {
           HashMap<String, ResourceWithStatus> resourceMap =
               (HashMap<String, ResourceWithStatus>) metrics.get(TaskConstant.JOB_YARNRESOURCE);
           ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);

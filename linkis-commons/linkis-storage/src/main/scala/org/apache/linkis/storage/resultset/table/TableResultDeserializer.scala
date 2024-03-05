@@ -87,8 +87,8 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
           LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorCode,
           MessageFormat.format(
             LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorDesc,
-            res.length,
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH
+            res.length.asInstanceOf[Object],
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH.asInstanceOf[Object]
           )
         )
       }

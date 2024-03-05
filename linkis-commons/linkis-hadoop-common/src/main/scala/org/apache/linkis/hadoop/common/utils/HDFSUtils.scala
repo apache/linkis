@@ -21,6 +21,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
@@ -30,8 +31,9 @@ import org.apache.hadoop.security.UserGroupInformation
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
-import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+import java.util.concurrent.atomic.AtomicLong
+
 import scala.collection.JavaConverters._
 
 object HDFSUtils extends Logging {

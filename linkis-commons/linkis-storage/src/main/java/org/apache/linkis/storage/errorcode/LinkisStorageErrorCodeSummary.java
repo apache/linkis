@@ -41,6 +41,8 @@ public enum LinkisStorageErrorCodeSummary implements LinkisErrorCode {
   RESULT_COL_LENGTH(52003, "Col value length {0} exceed limit {1}"),
 
   RESULT_ROW_LENGTH(520034, "Row value length {0} exceed limit {1}"),
+
+  RESULT_COL_SIZE(520035, "Col size length {0} exceed limit {1}"),
   INVALID_CUSTOM_PARAMETER(65000, "Invalid custom parameter(不合法的自定义参数)");
 
   /** 错误码 */

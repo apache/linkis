@@ -639,12 +639,15 @@ public class FsRestfulApi {
         message.data(
             "zh_msg",
             MessageFormat.format(
-                "结果集存在字段值字符数超过{0}，如需查看请使用结果集导出功能", LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
+                "结果集存在字段值字符数超过{0}或者列数超过{1}，如需查看请使用结果集导出功能",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
         message.data(
             "en_msg",
             MessageFormat.format(
-                "There is a field value with more than {0} characters in the result set. If you want to view it, please use the result set export function.",
-                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
+                "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
         return message;
       }
     } finally {

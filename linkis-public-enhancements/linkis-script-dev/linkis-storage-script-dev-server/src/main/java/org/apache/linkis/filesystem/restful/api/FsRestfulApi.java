@@ -616,39 +616,39 @@ public class FsRestfulApi {
         if (!StringUtils.isEmpty(nullValue)) {
           fileSource.addParams("nullValue", nullValue);
         }
-        try {
-          fileSource = fileSource.page(page, pageSize);
-        } catch (ColLengthExceedException e) {
-          LOGGER.info("Failed to open file {}", path, e);
-          message.data("type", fileSource.getFileSplits()[0].type());
-          message.data("display_prohibited", true);
-          message.data(
-              "zh_msg",
-              MessageFormat.format(
-                  "结果集存在字段值字符数超过{0}，如需查看请使用结果集导出功能", LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
-          message.data(
-              "en_msg",
-              MessageFormat.format(
-                  "There is a field value with more than {0} characters in the result set. If you want to view it, please use the result set export function.",
-                  LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
-          return message;
-        }
+        fileSource = fileSource.page(page, pageSize);
       } else if (fileSystem.getLength(fsPath)
           > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
-      Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
-      LOGGER.info(
-          "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
-      IOUtils.closeQuietly(fileSource);
-      message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
-      message.data("type", fileSource.getFileSplits()[0].type());
-      message.data("totalLine", fileSource.getTotalLine());
-      return message.data("page", page).data("totalPage", 0);
+
+      try {
+        Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+        LOGGER.info(
+            "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
+        IOUtils.closeQuietly(fileSource);
+        message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("totalLine", fileSource.getTotalLine());
+        return message.data("page", page).data("totalPage", 0);
+      } catch (ColLengthExceedException e) {
+        LOGGER.info("Failed to open file {}", path, e);
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("display_prohibited", true);
+        message.data(
+            "zh_msg",
+            MessageFormat.format(
+                "结果集存在字段值字符数超过{0}，如需查看请使用结果集导出功能", LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
+        message.data(
+            "en_msg",
+            MessageFormat.format(
+                "There is a field value with more than {0} characters in the result set. If you want to view it, please use the result set export function.",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
+        return message;
+      }
     } finally {
       LoggerUtils.removeJobIdMDC();
-
       IOUtils.closeQuietly(fileSource);
     }
   }

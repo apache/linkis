@@ -68,4 +68,10 @@ object LinkisStorageConf {
   val LINKIS_RESULT_COL_LENGTH =
     CommonVars("linkis.resultset.col.length.max", Int.MaxValue).getValue
 
+  val LINKIS__READ_RESULT_ROW_MAX_LEN_STR =
+    CommonVars("linkis.resultset.read.row.max.str", "10m").getValue
+
+  val LINKIS_READ_ROW_BYTE_MAX_LEN =
+    ByteTimeUtils.byteStringAsBytes(LINKIS__READ_RESULT_ROW_MAX_LEN_STR)
+
 }

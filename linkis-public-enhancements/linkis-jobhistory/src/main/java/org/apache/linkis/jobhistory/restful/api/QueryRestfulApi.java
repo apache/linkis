@@ -422,6 +422,9 @@ public class QueryRestfulApi {
   public Message listTaskIds(
       HttpServletRequest req, @RequestParam(value = "taskID", required = false) String taskids) {
     String username = SecurityFilter.getLoginUsername(req);
+    if (Configuration.isAdmin(username) || Configuration.isJobHistoryAdmin(username)) {
+      username = null;
+    }
     if (StringUtils.isBlank(taskids)) {
       return Message.error("Invalid taskID cannot be empty");
     }

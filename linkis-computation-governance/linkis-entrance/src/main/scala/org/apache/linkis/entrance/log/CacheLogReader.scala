@@ -72,18 +72,34 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
       return super.readLog(deal, fromLine, size)
     val min = sharedCache.cachedLogs.min
     val max = sharedCache.cachedLogs.max
-    if (fromLine > max) return 0
-    val from = fromLine
-    val to = if (fromLine >= min) {
-      if (size >= 0 && max >= fromLine + size) fromLine + size else max + 1
-    } else {
-      // If you are getting it from a file, you don't need to read the cached data again. In this case, you can guarantee that the log will not be missing.
-      val read = super.readLog(deal, fromLine, size)
-      return read
-    }
 
-    (from until to) map sharedCache.cachedLogs.get foreach deal
-    to - fromLine
+    val fakeClearEleNums = sharedCache.cachedLogs.fakeClearEleNums
+
+    if (fromLine > max) return 0
+
+    var from = fromLine
+    val end =
+      if (size >= 0 && max >= fromLine + size) {
+        fromLine + size
+      } else {
+        max + 1
+      }
+
+    var readNums = 0
+    // The log may have been refreshed to the log file regularly and cannot be determined based on min.
+    if (fromLine < fakeClearEleNums) {
+      // If you are getting it from a file, you don't need to read the cached data again. In this case, you can guarantee that the log will not be missing.
+      readNums = super.readLog(deal, fromLine, size)
+      if ((fromLine + size) < min) {
+        return readNums
+      } else {
+        from = from + readNums
+      }
+    } else {}
+
+    (from until end) map sharedCache.cachedLogs.get foreach deal
+    end - from + readNums
+
   }
 
   @throws[IOException]

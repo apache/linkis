@@ -141,12 +141,6 @@ abstract class UJESClient extends Closeable {
   def deleteJobObserve(jobDeleteObserveAction: JobDeleteObserveAction): JobDeleteObserveResult = {
     executeUJESJob(jobDeleteObserveAction).asInstanceOf[JobDeleteObserveResult]
   }
-
-  def resultSetFormat(resultSetAction: ResultSetAction): ResultSetResult = {
-    val setResult = executeUJESJob(resultSetAction).asInstanceOf[ResultSetResult]
-    UJESClientUtils.toMataType(setResult)
-  }
-
 }
 
 object UJESClient {

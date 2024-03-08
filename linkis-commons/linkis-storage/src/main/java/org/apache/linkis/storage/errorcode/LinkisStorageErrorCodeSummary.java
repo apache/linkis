@@ -37,6 +37,12 @@ public enum LinkisStorageErrorCodeSummary implements LinkisErrorCode {
       52004,
       "You must register IOMethodInterceptorCreator before you can use proxy mode.(必须先注册IOMethodInterceptorCreator，才能使用代理模式)"),
   UNSUPPORTED_OPEN_FILE_TYPE(54001, "Unsupported open file type(不支持打开的文件类型)"),
+
+  RESULT_COL_LENGTH(52003, "Col value length {0} exceed limit {1}"),
+
+  RESULT_ROW_LENGTH(520034, "Row value length {0} exceed limit {1}"),
+
+  RESULT_COL_SIZE(520035, "Col size length {0} exceed limit {1}"),
   INVALID_CUSTOM_PARAMETER(65000, "Invalid custom parameter(不合法的自定义参数)");
 
   /** 错误码 */

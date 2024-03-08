@@ -34,9 +34,11 @@ import org.apache.linkis.filesystem.validator.PathValidator$;
 import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.csv.CSVFsWriter;
 import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.excel.*;
+import org.apache.linkis.storage.exception.ColLengthExceedException;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
@@ -556,8 +558,6 @@ public class FsRestfulApi {
       }
       return message;
     } finally {
-      LoggerUtils.removeJobIdMDC();
-
       IOUtils.closeQuietly(fileSource);
     }
   }
@@ -625,17 +625,36 @@ public class FsRestfulApi {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
-      Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
-      LOGGER.info(
-          "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
-      IOUtils.closeQuietly(fileSource);
-      message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
-      message.data("type", fileSource.getFileSplits()[0].type());
-      message.data("totalLine", fileSource.getTotalLine());
-      return message.data("page", page).data("totalPage", 0);
+
+      try {
+        Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+        LOGGER.info(
+            "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
+        IOUtils.closeQuietly(fileSource);
+        message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("totalLine", fileSource.getTotalLine());
+        return message.data("page", page).data("totalPage", 0);
+      } catch (ColLengthExceedException e) {
+        LOGGER.info("Failed to open file {}", path, e);
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("display_prohibited", true);
+        message.data(
+            "zh_msg",
+            MessageFormat.format(
+                "结果集存在字段值字符数超过{0}或者列数超过{1}，如需查看请使用结果集导出功能",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
+        message.data(
+            "en_msg",
+            MessageFormat.format(
+                "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
+        return message;
+      }
     } finally {
       LoggerUtils.removeJobIdMDC();
-
       IOUtils.closeQuietly(fileSource);
     }
   }

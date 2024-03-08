@@ -22,7 +22,9 @@ import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary
 import org.apache.linkis.storage.exception.{
+  ColLengthExceedException,
   StorageErrorCode,
   StorageErrorException,
   StorageWarnException
@@ -31,6 +33,7 @@ import org.apache.linkis.storage.resultset.table.TableMetaData
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{ByteArrayInputStream, InputStream, IOException}
+import java.text.MessageFormat
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -74,6 +77,17 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
     catch {
       case _: StorageWarnException => logger.info(s"Read finished(读取完毕)"); return null
       case t: Throwable => throw t
+    }
+
+    if (rowLen > LinkisStorageConf.LINKIS_READ_ROW_BYTE_MAX_LEN) {
+      throw new ColLengthExceedException(
+        LinkisStorageErrorCodeSummary.RESULT_ROW_LENGTH.getErrorCode,
+        MessageFormat.format(
+          LinkisStorageErrorCodeSummary.RESULT_ROW_LENGTH.getErrorDesc,
+          rowLen.asInstanceOf[Object],
+          LinkisStorageConf.LINKIS_READ_ROW_BYTE_MAX_LEN.asInstanceOf[Object]
+        )
+      )
     }
 
     var bytes: Array[Byte] = null
@@ -144,10 +158,14 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
     metaData match {
       case tableMetaData: TableMetaData =>
         if (tableMetaData.columns.size > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE) {
-          logger.warn(
-            s"result set columns size ${tableMetaData.columns.size} > ${LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE}"
+          throw new ColLengthExceedException(
+            LinkisStorageErrorCodeSummary.RESULT_COL_SIZE.getErrorCode,
+            MessageFormat.format(
+              LinkisStorageErrorCodeSummary.RESULT_COL_SIZE.getErrorDesc,
+              tableMetaData.columns.size.asInstanceOf[Object],
+              LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE.asInstanceOf[Object]
+            )
           )
-          return false
         }
       case _ =>
     }

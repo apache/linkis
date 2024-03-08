@@ -18,9 +18,13 @@
 package org.apache.linkis.storage.resultset.table
 
 import org.apache.linkis.common.io.resultset.ResultDeserializer
+import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.{Column, DataType, Dolphin}
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.PARSING_METADATA_FAILED
-import org.apache.linkis.storage.exception.StorageErrorException
+import org.apache.linkis.storage.exception.{ColLengthExceedException, StorageErrorException}
+
+import java.text.MessageFormat
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -78,6 +82,16 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
     val data = colArray.indices.map { i =>
       val len = colArray(i).toInt
       val res = Dolphin.getString(bytes, index, len)
+      if (res.length > LinkisStorageConf.LINKIS_RESULT_COL_LENGTH) {
+        throw new ColLengthExceedException(
+          LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorCode,
+          MessageFormat.format(
+            LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorDesc,
+            res.length.asInstanceOf[Object],
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH.asInstanceOf[Object]
+          )
+        )
+      }
       index += len
       if (i >= metaData.columns.length) res
       else {

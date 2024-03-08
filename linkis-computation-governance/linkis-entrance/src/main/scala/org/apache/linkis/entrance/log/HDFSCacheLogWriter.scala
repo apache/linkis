@@ -99,37 +99,36 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   def getCache: Option[Cache] = Some(sharedCache)
 
+
   private def cache(msg: String): Unit = {
     if (sharedCache.cachedLogs == null) {
       return
     }
     WRITE_LOCKER synchronized {
-      val removed = sharedCache.cachedLogs.add(msg)
+      val isNextOneEmpty = sharedCache.cachedLogs.isNextOneEmpty
       val currentTime = new Date(System.currentTimeMillis())
-      if (removed != null || currentTime.after(pushTime)) {
+      if (isNextOneEmpty == false || currentTime.after(pushTime)) {
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
-        if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
-        // need append latest msg before fake clear
-        sb.append(msg).append("\n")
         sharedCache.cachedLogs.fakeClear()
+        logger.info(s"write to file with:\n${sb.toString()}");
         writeToFile(sb.toString())
         pushTime.setTime(
           currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue
         )
       }
+      sharedCache.cachedLogs.add(msg)
     }
   }
 
   private def writeToFile(msg: String): Unit = WRITE_LOCKER synchronized {
-    val log =
-      if (!firstWrite) "\n" + msg
-      else {
-        logger.info(s"$toString write first one line log")
-        firstWrite = false
-        msg
-      }
+    val log = msg
+    if (firstWrite) {
+      logger.info(s"$toString write first one line log")
+      firstWrite = false
+      msg
+    }
     Utils.tryAndWarnMsg {
       getOutputStream.write(log.getBytes(charset))
     }(s"$toString error when write query log to outputStream.")

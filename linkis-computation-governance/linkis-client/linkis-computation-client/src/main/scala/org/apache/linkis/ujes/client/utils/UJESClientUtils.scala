@@ -56,24 +56,7 @@ object UJESClientUtils {
     case _ => EngineType.SPARK.SQL
   }
 
-  def toMataType(setResult: ResultSetResult): ResultSetResult = {
-    val metaData = setResult.getMetadata.asInstanceOf[util.List[util.Map[String, String]]]
-    val fileContent = setResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[Any]]]
-    for (metaDataColnum <- 1 to metaData.size()) {
-      val col = metaData.get(metaDataColnum - 1)
-      if (!col.get("dataType").equals("string")) {
-        for (cursor <- 1 to fileContent.size()) {
-          val colDataList = fileContent.get(cursor - 1)
-          var colData = colDataList.get(metaDataColnum - 1)
-          colData = evaluate(col.get("dataType"), colData.toString)
-          colDataList.set(metaDataColnum - 1, colData)
-        }
-      }
-    }
-    setResult
-  }
-
-  private def evaluate(dataType: String, value: String): Any = {
+  def evaluate(dataType: String, value: String): Any = {
     if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
       dataType.toLowerCase(Locale.getDefault) match {
         case "string" | "char" | "varchar" | "nvarchar" => value

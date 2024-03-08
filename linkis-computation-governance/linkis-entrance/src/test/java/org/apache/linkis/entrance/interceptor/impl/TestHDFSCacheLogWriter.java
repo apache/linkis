@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.interceptor.impl;
 
 import org.apache.linkis.entrance.log.Cache;
+import org.apache.linkis.entrance.log.CacheLogReader;
 import org.apache.linkis.entrance.log.HDFSCacheLogWriter;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,13 +41,17 @@ class TestHDFSCacheLogWriter {
 
     Cache cache = new Cache(5);
     String fileName = UUID.randomUUID().toString().replace("-", "") + "-test.log";
-    String logPath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
+    String username = System.getProperty("user.name");
+    String parentPath = System.getProperty("java.io.tmpdir") + File.separator + username;
+    String logPath = parentPath + File.separator + fileName;
     System.out.println(logPath);
     String chartSet = "utf-8";
-    String username = System.getProperty("user.name");
 
-    File file = new File(logPath);
-    file.createNewFile();
+    File file = new File(parentPath);
+    file.mkdirs();
+
+    File logfile = new File(logPath);
+    logfile.createNewFile();
 
     HDFSCacheLogWriter logWriter =
         new HDFSCacheLogWriter(
@@ -55,21 +60,81 @@ class TestHDFSCacheLogWriter {
 
     String[] msgArr =
         new String[] {
-          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-          "17", "18"
+          "1", "2", "3", "4", "5", "6",
+          "7", "8", "9", "10", "11", "12",
+          "13", "14", "15", "16", "17", "18",
+          "19", "20", "21", "22"
         };
 
     List<String> msgList = new ArrayList<String>(Arrays.asList(msgArr));
     String msg = String.join("\n", msgList);
 
     logWriter.write(msg);
+
+    CacheLogReader logReader = new CacheLogReader(logPath, chartSet, cache, username);
+    String[] logs = new String[4];
+    int fromLine = 1;
+    int size = 1000;
+    int retFromLine = logReader.readArray(logs, fromLine, size);
+    Assertions.assertEquals(msgArr.length, retFromLine);
+    logWriter.flush();
+    List<String> list = FileUtil.readFile(logPath);
+    String res = String.join("\n", list);
+    Assertions.assertEquals(res, msg);
+  }
+
+  @Test
+  void write2() throws IOException, InterruptedException {
+
+    Cache cache = new Cache(30);
+    String fileName = UUID.randomUUID().toString().replace("-", "") + "-test.log";
+    String username = System.getProperty("user.name");
+    String parentPath = System.getProperty("java.io.tmpdir") + File.separator + username;
+    String logPath = parentPath + File.separator + fileName;
+    System.out.println(logPath);
+    String chartSet = "utf-8";
+
+    File file = new File(parentPath);
+    file.mkdirs();
+
+    File logfile = new File(logPath);
+    logfile.createNewFile();
+
+    HDFSCacheLogWriter logWriter =
+        new HDFSCacheLogWriter(
+            // "D:\\DataSphere\\linkis\\docs\\test.log",
+            logPath, chartSet, cache, username);
+
+    String[] msgArr =
+        new String[] {
+            "1", "2", "3", "4", "5", "6",
+            "7", "8", "9", "10", "11", "12",
+            "13", "14", "15", "16", "17", "18",
+            "19", "20", "21", "22"
+        };
+
+    List<String> msgList = new ArrayList<String>(Arrays.asList(msgArr));
+    String msg = String.join("\n", msgList);
+
+    logWriter.write(msg);
+
+    Thread.sleep(4*1000);
+
+    logWriter.write(msg);
+
+    CacheLogReader logReader = new CacheLogReader(logPath, chartSet, cache, username);
+    String[] logs = new String[4];
+    int fromLine = 1;
+    int size = 1000;
+    int retFromLine = logReader.readArray(logs, fromLine, size);
+    Assertions.assertEquals(msgArr.length*2, retFromLine);
+    Assertions.assertEquals(msg+"\n"+msg, logs[3]);
+
+
     logWriter.flush();
 
     List<String> list = FileUtil.readFile(logPath);
     String res = String.join("\n", list);
-
-    res = res.replace("\n\n", "\n");
-    res = StringUtils.strip(res, " \n");
-    Assertions.assertEquals(res, msg);
+    Assertions.assertEquals(msg+"\n"+msg, res);
   }
 }

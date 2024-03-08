@@ -209,7 +209,7 @@ object TemplateConfUtils extends Logging {
             logger.info("try to get template conf list with template uid:{} ", templateUuid)
             logAppender.append(
               LogUtils
-                .generateInfo(s"Try to get template conf data with template uid:$templateUuid\nn")
+                .generateInfo(s"Try to get template conf data with template uid:$templateUuid\n")
             )
             templateConflist = templateCache.get(templateUuid)
             if (templateConflist == null || templateConflist.size() == 0) {

@@ -38,7 +38,7 @@ class ResultSetResult extends DWSResult with UserAction {
      metadata.asInstanceOf[util.List[util.Map[String, String]]]
   }
 
-  def getFileContentList: util.List[util.ArrayList[Any]] = {
+  def getRowList: util.List[util.ArrayList[Any]] = {
     val metaData = metadata.asInstanceOf[util.List[util.Map[String, String]]]
     val fileContentList = fileContent.asInstanceOf[util.List[util.ArrayList[Any]]]
     for (metaDataColnum <- 1 to metaData.size()) {

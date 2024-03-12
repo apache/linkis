@@ -28,6 +28,8 @@ public interface HiveMetaDao {
 
   String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
+  Map<String, Object> getStorageInfo(MetadataQueryParam queryParam);
+
   /**
    * get user's roles by username
    *

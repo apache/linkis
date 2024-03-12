@@ -19,6 +19,8 @@ package org.apache.linkis.metadata.service;
 
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 public interface DataSourceService {
@@ -40,4 +42,6 @@ public interface DataSourceService {
   JsonNode getPartitions(MetadataQueryParam queryParam);
 
   boolean partitionExists(MetadataQueryParam queryParam);
+
+  Map<String, Object> getStorageInfo(MetadataQueryParam queryParam);
 }

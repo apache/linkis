@@ -41,6 +41,14 @@
           and `DBS`.NAME = #{dbName,jdbcType=VARCHAR};
     </select>
 
+    <select id="getStorageInfo" resultType="map" parameterType="map">
+        select SDS.INPUT_FORMAT as inputFormat, SDS.OUTPUT_FORMAT as outputFormat FROM SDS
+        inner join TBLS ON SDS.SD_ID = TBLS.SD_ID
+        inner join `DBS` ON TBLS.DB_ID=`DBS`.DB_ID
+        where  TBLS.TBL_NAME = #{tableName,jdbcType=VARCHAR}
+          and `DBS`.NAME = #{dbName,jdbcType=VARCHAR};
+    </select>
+
     <select id="getRolesByUser" resultType="java.lang.String" parameterType="map">
         SELECT ROLE_NAME
         FROM ROLES r INNER JOIN ROLE_MAP rm

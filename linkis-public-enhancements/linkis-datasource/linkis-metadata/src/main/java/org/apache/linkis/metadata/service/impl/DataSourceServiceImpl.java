@@ -270,6 +270,11 @@ public class DataSourceServiceImpl implements DataSourceService {
     return res;
   }
 
+  @Override
+  public Map<String, Object> getStorageInfo(MetadataQueryParam queryParam) {
+    return hiveMetaDao.getStorageInfo(queryParam);
+  }
+
   private FileStatus getFileStatus(String location) throws IOException {
     try {
       return getRootHdfs().getFileStatus(new Path(location));

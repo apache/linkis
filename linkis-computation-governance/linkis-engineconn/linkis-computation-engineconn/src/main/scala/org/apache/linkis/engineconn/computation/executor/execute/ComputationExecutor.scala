@@ -29,6 +29,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteException
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
@@ -206,7 +207,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           hookedCode =
             hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
         })
-      }(e => logger.info("failed to do with hook", e))
+      } { e =>
+        logger.info("failed to do with hook", e)
+        if (e isInstanceOf HookExecuteException) {
+          failedTasks.increase()
+          return ErrorExecuteResponse("hook execute failed task will be failed", e)
+        }
+      }
       if (hookedCode.length > 100) {
         logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
       } else {

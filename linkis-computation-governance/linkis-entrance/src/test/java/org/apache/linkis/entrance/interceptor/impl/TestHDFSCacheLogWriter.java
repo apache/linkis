@@ -21,8 +21,6 @@ import org.apache.linkis.entrance.log.Cache;
 import org.apache.linkis.entrance.log.CacheLogReader;
 import org.apache.linkis.entrance.log.HDFSCacheLogWriter;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,10 +105,10 @@ class TestHDFSCacheLogWriter {
 
     String[] msgArr =
         new String[] {
-            "1", "2", "3", "4", "5", "6",
-            "7", "8", "9", "10", "11", "12",
-            "13", "14", "15", "16", "17", "18",
-            "19", "20", "21", "22"
+          "1", "2", "3", "4", "5", "6",
+          "7", "8", "9", "10", "11", "12",
+          "13", "14", "15", "16", "17", "18",
+          "19", "20", "21", "22"
         };
 
     List<String> msgList = new ArrayList<String>(Arrays.asList(msgArr));
@@ -118,7 +116,7 @@ class TestHDFSCacheLogWriter {
 
     logWriter.write(msg);
 
-    Thread.sleep(4*1000);
+    Thread.sleep(4 * 1000);
 
     logWriter.write(msg);
 
@@ -127,14 +125,13 @@ class TestHDFSCacheLogWriter {
     int fromLine = 1;
     int size = 1000;
     int retFromLine = logReader.readArray(logs, fromLine, size);
-    Assertions.assertEquals(msgArr.length*2, retFromLine);
-    Assertions.assertEquals(msg+"\n"+msg, logs[3]);
-
+    Assertions.assertEquals(msgArr.length * 2, retFromLine);
+    Assertions.assertEquals(msg + "\n" + msg, logs[3]);
 
     logWriter.flush();
 
     List<String> list = FileUtil.readFile(logPath);
     String res = String.join("\n", list);
-    Assertions.assertEquals(msg+"\n"+msg, res);
+    Assertions.assertEquals(msg + "\n" + msg, res);
   }
 }

@@ -209,9 +209,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         })
       } { e =>
         logger.info("failed to do with hook", e)
-        if (e isInstanceOf HookExecuteException) {
-          failedTasks.increase()
-          return ErrorExecuteResponse("hook execute failed task will be failed", e)
+        e match {
+          case hookExecuteException: HookExecuteException =>
+            failedTasks.increase()
+            return ErrorExecuteResponse("hook execute failed task will be failed", e)
+          case _ =>
         }
       }
       if (hookedCode.length > 100) {

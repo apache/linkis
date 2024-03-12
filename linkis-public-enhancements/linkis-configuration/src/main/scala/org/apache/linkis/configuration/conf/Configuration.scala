@@ -48,4 +48,5 @@ object Configuration {
 
   val USE_USER_DEFAULE_VALUE =
     CommonVars.apply("wds.linkis.configuration.use.user.default.value", true).getValue
+
 }

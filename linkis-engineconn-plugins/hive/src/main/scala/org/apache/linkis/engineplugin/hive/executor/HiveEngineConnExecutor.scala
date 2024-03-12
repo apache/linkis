@@ -578,9 +578,6 @@ class HiveEngineConnExecutor(
         HadoopJobExecHelper.killRunningJobs()
         Utils.tryQuietly(HiveInterruptUtils.interrupt())
         Utils.tryAndWarn(driver.close())
-        if (null != thread) {
-          Utils.tryAndWarn(thread.interrupt())
-        }
       case "tez" =>
         Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
         driver.close()

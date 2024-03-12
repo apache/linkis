@@ -23,7 +23,10 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
 }
-import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
+import org.apache.linkis.engineconn.computation.executor.utlis.{
+  ComputationEngineConstant,
+  ProgressUtils
+}
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
@@ -311,16 +314,8 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       sc.cancelAllJobs
       if (null != thread) {
         val threadName = thread.getName
-        if (threadName.contains(Utils.DEFAULE_SCHEDULER_THREAD_NAME_PREFIX)) {
-          logger.info(s"try to interrupt thread:${threadName}")
-          Utils.tryAndWarn(thread.interrupt())
-          logger.info(s"thread isInterrupted:${thread.isInterrupted}")
-        } else {
-          logger.info(s"skip to force stop thread:${threadName}")
-        }
-
         if (closeThreadEnable) {
-          if (threadName.contains(Utils.DEFAULE_SCHEDULER_THREAD_NAME_PREFIX)) {
+          if (threadName.contains(ComputationEngineConstant.TASK_EXECUTION_THREAD)) {
             logger.info(s"try to force stop thread:${threadName}")
             // force to stop scala thread
             Utils.tryAndWarn(thread.stop())

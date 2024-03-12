@@ -92,21 +92,18 @@ class LoopArray[T](maxCapacity: Int) {
   def fakeClearEleNums: Int = clearEleNums
 
   private def filledSize = {
-    if (tail == front && tail == 0)
-    {
+    if (tail == front && tail == 0) {
       0
-    }
-    else if (tail > front) {
+    } else if (tail > front) {
       tail - front
     } else {
-        tail + maxCapacity - front
-      }
+      tail + maxCapacity - front
     }
-
+  }
 
   def size: Int = filledSize
 
-  def isFull: Boolean = filledSize == maxCapacity -1
+  def isFull: Boolean = filledSize == maxCapacity - 1
 
   // If it is not empty, it means that the loop queue is full this round.
   // 不为空 说明本轮 循环队列满了

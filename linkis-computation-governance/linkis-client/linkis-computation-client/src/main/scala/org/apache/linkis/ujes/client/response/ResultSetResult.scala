@@ -23,6 +23,7 @@ import org.apache.linkis.ujes.client.request.UserAction
 import org.apache.linkis.ujes.client.utils.UJESClientUtils.evaluate
 
 import java.util
+
 import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/openFile")
@@ -35,7 +36,7 @@ class ResultSetResult extends DWSResult with UserAction {
   private var fileContentList: util.List[util.ArrayList[_]] = _
 
   def getMetadataList: util.List[util.Map[String, String]] = {
-     metadata.asInstanceOf[util.List[util.Map[String, String]]]
+    metadata.asInstanceOf[util.List[util.Map[String, String]]]
   }
 
   def getRowList: util.List[util.ArrayList[Any]] = {

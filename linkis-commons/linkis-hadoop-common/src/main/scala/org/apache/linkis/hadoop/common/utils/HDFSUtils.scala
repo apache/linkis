@@ -196,7 +196,9 @@ object HDFSUtils extends Logging {
       val locker = userName + LOCKER_SUFFIX
       if (HadoopConf.HDFS_ENABLE_CACHE) locker.intern().synchronized {
         val hdfsFileSystemContainer = fileSystemCache.get(userName)
-        if (null != hdfsFileSystemContainer && fileSystem == hdfsFileSystemContainer.getFileSystem) {
+        if (
+            null != hdfsFileSystemContainer && fileSystem == hdfsFileSystemContainer.getFileSystem
+        ) {
           if (isForce) {
             fileSystemCache.remove(hdfsFileSystemContainer.getUser)
             IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)

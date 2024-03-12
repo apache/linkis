@@ -99,7 +99,6 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   def getCache: Option[Cache] = Some(sharedCache)
 
-
   private def cache(msg: String): Unit = {
     if (sharedCache.cachedLogs == null) {
       return

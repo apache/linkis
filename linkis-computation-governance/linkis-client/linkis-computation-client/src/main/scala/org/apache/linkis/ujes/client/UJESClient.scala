@@ -141,6 +141,7 @@ abstract class UJESClient extends Closeable {
   def deleteJobObserve(jobDeleteObserveAction: JobDeleteObserveAction): JobDeleteObserveResult = {
     executeUJESJob(jobDeleteObserveAction).asInstanceOf[JobDeleteObserveResult]
   }
+
 }
 
 object UJESClient {

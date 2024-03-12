@@ -126,9 +126,6 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
 
   override def killTask(taskId: String): Unit = {
     logger.info(s"hive begins to kill job with id : ${taskId}")
-    if (null != thread) {
-      Utils.tryAndWarn(thread.interrupt())
-    }
     super.killTask(taskId)
   }
 

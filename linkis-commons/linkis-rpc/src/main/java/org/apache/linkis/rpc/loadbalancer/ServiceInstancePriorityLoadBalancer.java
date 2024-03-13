@@ -17,7 +17,7 @@
 
 package org.apache.linkis.rpc.loadbalancer;
 
-import org.apache.linkis.rpc.conf.EurekaClientCacheManualRefresher;
+import org.apache.linkis.rpc.conf.CacheManualRefresher;
 import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
 import org.apache.linkis.rpc.exception.NoInstanceExistsException;
@@ -49,7 +49,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
 
   private static final Log log = LogFactory.getLog(ServiceInstancePriorityLoadBalancer.class);
 
-  @Autowired private EurekaClientCacheManualRefresher eurekaClientCacheManualRefresher;
+  @Autowired private CacheManualRefresher cacheManualRefresher;
 
   private final String serviceId;
 
@@ -112,7 +112,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
         && StringUtils.isNoneBlank(clientIp)
         && isRPC(linkisLoadBalancerType)
         && System.currentTimeMillis() < endTtime) {
-      eurekaClientCacheManualRefresher.refresh();
+      cacheManualRefresher.refresh();
       List<ServiceInstance> instances =
           SpringCloudFeignConfigurationCache$.MODULE$.discoveryClient().getInstances(serviceId);
       serviceInstanceResponse = getInstanceResponse(instances, clientIp);

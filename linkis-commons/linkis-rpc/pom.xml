@@ -49,7 +49,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-loadbalancer</artifactId>
-      <version>${spring-netflix.version}</version>
+      <version>${spring-cloud-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>

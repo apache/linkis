@@ -53,3 +53,6 @@ management:
 
 logging:
   config: classpath:log4j2.xml
+
+#The default value is eureka, Optional value: eureka,nacos
+discovery: eureka

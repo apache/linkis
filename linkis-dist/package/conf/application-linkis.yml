@@ -64,3 +64,6 @@ spring:
 knife4j:
   enable: true
   production: true
+
+#The default value is eureka, Optional value: eureka,nacos
+discovery: eureka

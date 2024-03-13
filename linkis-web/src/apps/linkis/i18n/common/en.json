@@ -90,6 +90,9 @@
       "tenant": "Tenant",
       "inputTenant": "Please Input Tenant",
       "globalSettings": "GlobalSettings",
+      "taskOverTimeTop": "TaskDuration-TOP",
+      "taskTotalNum": "TaskTotalNum",
+      "engineTotalNum":"engineTotalNum",
       "resultSet": {
         "prefixText": "Because your result set is large, for a better experience, ",
         "linkText": "View result set",
@@ -107,7 +110,7 @@
       "resourceManagement": {
         "resourceUsage": "Resource usage",
         "applicationList": "Applications"
-    },
+      },
       "time": {
         "second": "Second",
         "minute": "Minute",
@@ -199,7 +202,8 @@
             "EngineConnList": "Engine Conn List",
             "opsTool": "OPS Tool",
             "userConfig": "User Configuration",
-            "configManagement": "Configuration Management"
+            "configManagement": "Configuration Management",
+            "statisticsDashboard": "Statistics Dashboard"
           }
         }
       },

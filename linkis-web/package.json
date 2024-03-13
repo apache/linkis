@@ -51,7 +51,8 @@
         "vue-router": "3.4.8",
         "vuedraggable": "2.24.3",
         "vuescroll": "4.16.1",
-        "worker-loader": "3.0.8"
+        "worker-loader": "3.0.8",
+        "echarts": "^5.1.1"
     },
     "devDependencies": {
         "@intlify/vue-i18n-loader": "1.0.0",

@@ -64,7 +64,7 @@
     </insert>
 
 
-  <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+    <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         SELECT * FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
@@ -170,11 +170,11 @@
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
         SELECT
-        bdt.status
+            bdt.status
         FROM
-        linkis_ps_job_history_group_history bdt
+            linkis_ps_job_history_group_history bdt
         WHERE
-        id = #{jobId} FOR UPDATE
+            id = #{jobId} FOR UPDATE
     </select>
 
     <select id="countUndoneTaskNoCreator" useCache="true" resultType="java.lang.Integer" >
@@ -232,24 +232,62 @@
     <select id="selectFailoverJobHistory" resultMap="jobHistoryMap" >
         SELECT a.* FROM linkis_ps_job_history_group_history a
         WHERE (
-            a.instances = ''
-            OR a.instances IS NULL
-            OR a.instances NOT IN <foreach collection="instancesMap.keys" open="(" separator="," close=")" item="key">#{key}</foreach>
-            OR EXISTS (
-                SELECT 1 FROM
-                (
-                    <foreach collection="instancesMap.entrySet()" separator="union all" index="key" item="val">
-                        SELECT #{key} AS instances, #{val} AS registryTime
-                    </foreach>
-                ) b
-                WHERE a.instances = b.instances AND a.created_time <![CDATA[<]]> FROM_UNIXTIME(b.registryTime/1000)
-            )
+        a.instances = ''
+        OR a.instances IS NULL
+        OR a.instances NOT IN <foreach collection="instancesMap.keys" open="(" separator="," close=")" item="key">#{key}</foreach>
+        OR EXISTS (
+        SELECT 1 FROM
+        (
+        <foreach collection="instancesMap.entrySet()" separator="union all" index="key" item="val">
+            SELECT #{key} AS instances, #{val} AS registryTime
+        </foreach>
+        ) b
+        WHERE a.instances = b.instances AND a.created_time <![CDATA[<]]> FROM_UNIXTIME(b.registryTime/1000)
+        )
         )
         AND
         status IN <foreach collection="statusList" open="(" separator="," close=")" item="status">#{status}</foreach>
         <if test="startTimestamp != null and startTimestamp > 0">AND a.created_time >= FROM_UNIXTIME(#{startTimestamp}/1000)</if>
         <if test="limit != null and limit > 0">LIMIT #{limit}</if>
 
+    </select>
+
+    <select id="taskDurationTopN" useCache="true" resultMap="jobHistoryMap" >
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+        </where>
+        ORDER BY FROM_UNIXTIME(TIMEDIFF(cast(updated_time as datetime), cast(created_time as datetime))) desc
+    </select>
+
+    <select id="taskDurationTopNWithCreatorOnly" useCache="true" resultMap="jobHistoryMap" >
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="userCreatorKey != null and creator != null">
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
+            </if>
+        </where>
+        ORDER BY FROM_UNIXTIME(TIMEDIFF(cast(updated_time as datetime), cast(created_time as datetime))) desc
+    </select>
+
+    <select id="taskDurationTopNWithUserCreator" useCache="true" resultMap="jobHistoryMap" >
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="userCreatorKey != null and userCreatorValue != null">
+                and LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
+            </if>
+        </where>
+        ORDER BY FROM_UNIXTIME(TIMEDIFF(cast(updated_time as datetime), cast(created_time as datetime))) desc
     </select>
 
 </mapper>

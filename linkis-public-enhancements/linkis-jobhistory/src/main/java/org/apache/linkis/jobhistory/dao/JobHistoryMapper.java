@@ -130,4 +130,26 @@ public interface JobHistoryMapper {
       @Param("statusList") List<String> statusList,
       @Param("startTimestamp") Long startTimestamp,
       @Param("limit") Integer limit);
+
+  List<JobHistory> taskDurationTopN(
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("umUser") String username,
+      @Param("engineType") String engineType);
+
+  List<JobHistory> taskDurationTopNWithUserCreator(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("userCreatorValue") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
+
+  List<JobHistory> taskDurationTopNWithCreatorOnly(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("creator") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 }

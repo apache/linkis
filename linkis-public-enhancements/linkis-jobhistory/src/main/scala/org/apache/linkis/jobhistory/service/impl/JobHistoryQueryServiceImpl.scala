@@ -486,4 +486,44 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
   }
 
+  override def taskDurationTopN(
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): util.List[JobHistory] = {
+    val result = if (StringUtils.isBlank(creator)) {
+      jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
+    } else if (StringUtils.isBlank(username)) {
+      val fakeLabel = new UserCreatorLabel
+      jobHistoryMapper.taskDurationTopNWithCreatorOnly(
+        username,
+        fakeLabel.getLabelKey,
+        creator,
+        sDate,
+        eDate,
+        engineType
+      )
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
+        logger.info("input user or creator is not correct", t)
+        throw t
+      }
+      jobHistoryMapper.taskDurationTopNWithUserCreator(
+        username,
+        fakeLabel.getLabelKey,
+        userCreator,
+        sDate,
+        eDate,
+        engineType
+      )
+    }
+    result
+  }
+
 }

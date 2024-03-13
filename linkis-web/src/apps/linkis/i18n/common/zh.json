@@ -90,6 +90,9 @@
           "tenant": "租户标签",
           "inputTenant": "请输入租户标签",
           "globalSettings": "全局设置",
+          "taskOverTimeTop": "任务耗时-TOP",
+          "taskTotalNum": "任务总数",
+          "engineTotalNum":"引擎总数",
           "resultSet": {
             "prefixText": "因为您的结果集较大，为了更好的体验，",
             "linkText": "点击查看结果集",
@@ -199,7 +202,8 @@
                       "EngineConnList": "引擎列表",
                       "opsTool": "运维工具",
                       "userConfig": "用户配置",
-                      "configManagement": "配置项管理"
+                      "configManagement": "配置项管理",
+                      "statisticsDashboard": "统计看板"
                   }
               }
           },

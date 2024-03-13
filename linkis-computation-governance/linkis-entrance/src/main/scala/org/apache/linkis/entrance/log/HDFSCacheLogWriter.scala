@@ -111,7 +111,6 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
         val sb = new StringBuilder
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
         sharedCache.cachedLogs.fakeClear()
-        logger.info(s"write to file with:\n${sb.toString()}");
         writeToFile(sb.toString())
         pushTime.setTime(
           currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue

@@ -399,15 +399,20 @@ public class TaskServiceImpl implements TaskService {
    * @return 下一个版本号
    */
   private String getResourceLastVersion(String resourceId) {
-    String lastVersion = taskDao.getNewestVersion(resourceId);
-    if (StringUtils.isBlank(lastVersion)) {
+  // String lastVersion = taskDao.getNewestVersion(resourceId);
+    String lastVersion = "";
+    if (StringUtils.isNotBlank(lastVersion)) {
       lastVersion = versionDao.getNewestVersion(resourceId);
     }
     return lastVersion;
   }
 
   private String generateNewVersion(String version) {
-    int next = Integer.parseInt(version.substring(1, version.length())) + 1;
-    return Constant.VERSION_PREFIX + String.format(Constant.VERSION_FORMAT, next);
+    String newVersion = "";
+    if (StringUtils.isNotBlank(version)) {
+      int next = Integer.parseInt(version.substring(1, version.length())) + 1;
+      newVersion = Constant.VERSION_PREFIX + String.format(Constant.VERSION_FORMAT, next);
+    }
+    return newVersion;
   }
 }

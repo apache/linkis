@@ -38,5 +38,6 @@ object JobhistoryConfiguration {
   val DIRTY_DATA_UNFINISHED_JOB_STATUS =
     "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
 
-  val JOB_HISTORY_QUERY_LIMIT = CommonVars[Integer]("linkis.jobhistory.query.task.limit", 30)
+  val
+  JOB_HISTORY_QUERY_LIMIT = CommonVars[Integer]("linkis.jobhistory.query.task.batch.limit", 30)
 }

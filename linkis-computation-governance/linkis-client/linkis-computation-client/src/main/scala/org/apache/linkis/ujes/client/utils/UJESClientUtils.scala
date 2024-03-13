@@ -23,9 +23,7 @@ import org.apache.linkis.ujes.client.response.ResultSetResult
 
 import java.util
 import java.util.Locale
-
-import com.google.gson.Gson
-import org.json4s.jackson.Json
+import com.google.gson.{Gson, JsonObject}
 
 object UJESClientUtils {
 
@@ -79,7 +77,7 @@ object UJESClientUtils {
         case "decimal" => value.toDouble
         case "array" => new Gson().fromJson(value, classOf[util.ArrayList[Object]])
         case "map" => new Gson().fromJson(value, classOf[util.HashMap[Object, Object]])
-        case "struct" => new Gson().fromJson(value, classOf[Json])
+        case "struct" => new Gson().fromJson(value, classOf[JsonObject])
         case _ => value
       }
     }

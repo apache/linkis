@@ -187,6 +187,13 @@ export default {
             ),
             showSubMenu: true,
           },
+          {
+            key: '1-13',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.statisticsDashboard'
+            ),
+            path: '/console/statisticsDashboard',
+          },
         ],
       },
       datasourceNavList: {

@@ -17,22 +17,22 @@
 
 package org.apache.linkis.rpc.conf;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
-@ConditionalOnProperty(name = "discovery", havingValue = "nacos")
+@ConditionalOnClass(name = "com.alibaba.cloud.nacos.registry.NacosServiceRegistryAutoConfiguration")
 public class NacosClientCacheManualRefresher implements CacheManualRefresher {
   private static final Logger logger =
       LoggerFactory.getLogger(NacosClientCacheManualRefresher.class);
 
   public void refresh() {
     try {
-      logger.warn("Failed to obtain nacos metadata. Wait 3 seconds");
-      Thread.sleep(3000L);
+      logger.warn("Failed to obtain nacos metadata. Wait 100 milliseconds");
+      Thread.sleep(100L);
     } catch (InterruptedException e) {
 
     }

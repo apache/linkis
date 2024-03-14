@@ -17,9 +17,6 @@
 
 package org.apache.linkis.rpc.conf;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public interface CacheManualRefresher {
   void refresh();
 }

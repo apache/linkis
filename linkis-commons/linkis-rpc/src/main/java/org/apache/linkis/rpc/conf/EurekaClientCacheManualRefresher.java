@@ -21,7 +21,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
-@ConditionalOnProperty(name = "discovery", havingValue = "eureka")
+@ConditionalOnClass(name = "org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration")
 public class EurekaClientCacheManualRefresher implements CacheManualRefresher {
   private static final Logger logger =
       LoggerFactory.getLogger(EurekaClientCacheManualRefresher.class);

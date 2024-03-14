@@ -270,6 +270,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     return res;
   }
 
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
   public Map<String, Object> getStorageInfo(MetadataQueryParam queryParam) {
     return hiveMetaDao.getStorageInfo(queryParam);

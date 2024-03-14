@@ -65,7 +65,7 @@ public class WorkSpaceConfiguration {
       CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 
   public static final CommonVars<Integer> FILESYSTEM_RESULTSET_ROW_LIMIT =
-      CommonVars$.MODULE$.apply("linkis.filesystem.resultset.row.limit", 5000);
+      CommonVars$.MODULE$.apply("linkis.filesystem.resultset.row.limit", 100000);
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(
           FILESYSTEM_FS_THREAD_NUM.getValue(),

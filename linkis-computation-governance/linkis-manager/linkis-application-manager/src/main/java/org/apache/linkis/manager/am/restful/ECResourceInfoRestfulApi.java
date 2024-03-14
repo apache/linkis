@@ -194,6 +194,7 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
     @ApiImplicitParam(name = "queueName", dataType = "String", value = "queueName"),
     @ApiImplicitParam(name = "ecInstances", dataType = "Array", value = "ecInstances"),
+    @ApiImplicitParam(name = "crossCluster", dataType = "String", value = "crossCluster"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
   public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
@@ -215,6 +216,7 @@ public class ECResourceInfoRestfulApi {
     JsonNode statussParam = jsonNode.get("statuss");
     JsonNode queueNameParam = jsonNode.get("queueName");
     JsonNode ecInstancesParam = jsonNode.get("ecInstances");
+    JsonNode crossClusterParam = jsonNode.get("crossCluster");
 
     //    if (creatorsParam == null || creatorsParam.isNull() || creatorsParam.size() == 0) {
     //      return Message.error("creators is null in the parameters of the
@@ -278,6 +280,16 @@ public class ECResourceInfoRestfulApi {
         return Message.error("parameters:instanceName parsing failed(请求参数【ecInstances】解析失败)");
       }
     }
+    Boolean isCrossCluster = null;
+    if (crossClusterParam != null && !crossClusterParam.isNull()) {
+      try {
+        isCrossCluster =
+            JsonUtils.jackson()
+                .readValue(crossClusterParam.toString(), new TypeReference<Boolean>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:crossCluster parsing failed(请求参数【crossCluster】解析失败)");
+      }
+    }
     logger.info(
         "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}], queueName:{}, instanceNameList:{}",
         String.join(",", creatorUserList),
@@ -288,7 +300,12 @@ public class ECResourceInfoRestfulApi {
 
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(
-            creatorUserList, engineTypeList, statusStrList, queueName, ecInstancesList);
+            creatorUserList,
+            engineTypeList,
+            statusStrList,
+            queueName,
+            ecInstancesList,
+            isCrossCluster);
 
     return Message.ok().data("ecList", list);
   }

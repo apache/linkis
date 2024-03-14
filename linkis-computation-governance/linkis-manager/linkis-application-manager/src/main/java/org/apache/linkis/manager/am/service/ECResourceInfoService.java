@@ -47,6 +47,7 @@ public interface ECResourceInfoService {
    * @param statusStrList engineconn status string list
    * @param queueName
    * @param ecInstancesList
+   * @param isCrossCluster
    * @return
    */
   List<Map<String, Object>> getECResourceInfoList(
@@ -54,5 +55,6 @@ public interface ECResourceInfoService {
       List<String> engineTypeList,
       List<String> statusStrList,
       String queueName,
-      List<String> ecInstancesList);
+      List<String> ecInstancesList,
+      Boolean isCrossCluster);
 }

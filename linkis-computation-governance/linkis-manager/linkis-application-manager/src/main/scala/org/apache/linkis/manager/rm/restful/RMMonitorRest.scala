@@ -23,7 +23,7 @@ import org.apache.linkis.governance.common.protocol.conf.{
   AcrossClusterRequest,
   AcrossClusterResponse
 }
-import org.apache.linkis.manager.am.conf.ManagerMonitorConf
+import org.apache.linkis.manager.am.conf.{AMConfiguration, ManagerMonitorConf}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
@@ -327,8 +327,16 @@ class RMMonitorRest extends Logging {
     ModuleUserUtils.getOperationUser(request, "getQueueResource")
     val message = Message.ok("")
     val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
+    var clustername = param.get("clustername").asInstanceOf[String]
+    val crossCluster = java.lang.Boolean.parseBoolean(
+      param.getOrDefault("crossCluster", "false").asInstanceOf[String]
+    )
+    // For DSS increases cross cluster resource queries,when crossCluster is true clustername will become bdp
+    if (crossCluster) {
+      clustername = AMConfiguration.PRIORITY_CLUSTER_TARGET
+    }
     val clusterLabel = labelFactory.createLabel(classOf[ClusterLabel])
-    clusterLabel.setClusterName(param.get("clustername").asInstanceOf[String])
+    clusterLabel.setClusterName(clustername)
     clusterLabel.setClusterType(param.get("clustertype").asInstanceOf[String])
     val labelContainer = new RMLabelContainer(Lists.newArrayList(clusterLabel))
     val providedYarnResource =

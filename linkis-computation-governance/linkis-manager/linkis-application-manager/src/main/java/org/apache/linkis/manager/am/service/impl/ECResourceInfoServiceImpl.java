@@ -19,7 +19,10 @@ package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.manager.am.restful.EMRestfulApi;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
+import org.apache.linkis.manager.am.service.em.EMInfoService;
 import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
+import org.apache.linkis.manager.am.utils.AMUtils;
+import org.apache.linkis.manager.am.vo.EMNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
@@ -64,6 +67,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
   @Autowired private NodeLabelService nodeLabelService;
+
+  @Autowired private EMInfoService emInfoService;
 
   @Override
   public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
@@ -113,7 +118,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
       List<String> engineTypeList,
       List<String> statusStrList,
       String queueName,
-      List<String> ecInstancesList) {
+      List<String> ecInstancesList,
+      Boolean isCrossCluster) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -200,7 +206,26 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
             }
           }
         });
-
+    if (null != isCrossCluster) {
+      List<Map<String, Object>> resultListByCluster = new ArrayList<>();
+      List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
+      Map<String, EMNodeVo> clusterMap =
+          emNodeVos.stream()
+              .filter(
+                  s -> s.getLabels().stream().anyMatch(d -> d.getLabelKey().equals("yarnCluster")))
+              .collect((Collectors.toMap(EMNodeVo::getInstance, item -> item)));
+      for (Map<String, Object> stringObjectMap : resultList) {
+        if (isCrossCluster
+            && clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+          resultListByCluster.add(stringObjectMap);
+        } else if (!isCrossCluster
+            && !clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+          resultListByCluster.add(stringObjectMap);
+        }
+      }
+      resultList.clear();
+      resultList.addAll(resultListByCluster);
+    }
     return resultList;
   }
 }

@@ -27,6 +27,7 @@ import org.apache.linkis.gateway.security.LinkisPreFilter;
 import org.apache.linkis.gateway.security.LinkisPreFilter$;
 import org.apache.linkis.gateway.security.SecurityFilter;
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
+import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.server.Message;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteDefinition;
-import org.springframework.cloud.gateway.support.DefaultServerRequest;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.codec.AbstractDataBufferDecoder;
@@ -47,6 +47,8 @@ import org.springframework.http.server.reactive.AbstractServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.reactive.function.server.HandlerStrategies;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.nio.charset.StandardCharsets;
@@ -79,11 +81,12 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
   }
 
   private String getRequestBody(ServerWebExchange exchange) {
-    //        StringBuilder requestBody = new StringBuilder();
-    DefaultServerRequest serverRequest = new DefaultServerRequest(exchange);
+    ServerRequest defaultServerRequest =
+        ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
+
     String requestBody = null;
     try {
-      requestBody = serverRequest.bodyToMono(String.class).toFuture().get();
+      requestBody = defaultServerRequest.bodyToMono(String.class).toFuture().get();
     } catch (Exception e) {
       GatewayWarnException exception =
           new GatewayWarnException(
@@ -116,7 +119,8 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     return gatewayContext;
   }
 
-  private Route getRealRoute(Route route, ServiceInstance serviceInstance) {
+  private Route getRealRoute(
+      Route route, ServiceInstance serviceInstance, ServerWebExchange exchange) {
     String routeUri = route.getUri().toString();
     String scheme = route.getUri().getScheme();
     if (routeUri.startsWith(SpringCloudGatewayConfiguration.ROUTE_URI_FOR_WEB_SOCKET_HEADER())) {
@@ -128,7 +132,10 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     }
     String uri = scheme + serviceInstance.getApplicationName();
     if (StringUtils.isNotBlank(serviceInstance.getInstance())) {
-      uri = scheme + SpringCloudGatewayConfiguration.mergeServiceInstance(serviceInstance);
+      exchange
+          .getRequest()
+          .mutate()
+          .header(RpcConstant.FIXED_INSTANCE, serviceInstance.getInstance());
     }
     return Route.async()
         .id(route.getId())
@@ -194,7 +201,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     }
     Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
     if (serviceInstance != null) {
-      Route realRoute = getRealRoute(route, serviceInstance);
+      Route realRoute = getRealRoute(route, serviceInstance, exchange);
       exchange.getAttributes().put(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR, realRoute);
     } else {
       RouteDefinition realRd = null;
@@ -246,7 +253,8 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
     BaseGatewayContext gatewayContext = getBaseGatewayContext(exchange, route);
     if (!gatewayContext.isWebSocketRequest() && parser.shouldContainRequestBody(gatewayContext)) {
-      DefaultServerRequest defaultServerRequest = new DefaultServerRequest(exchange);
+      ServerRequest defaultServerRequest =
+          ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
       defaultServerRequest.messageReaders().stream()
           .filter(reader -> reader instanceof DecoderHttpMessageReader)
           .filter(

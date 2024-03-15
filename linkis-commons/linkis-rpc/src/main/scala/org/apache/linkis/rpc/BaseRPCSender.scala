@@ -22,27 +22,28 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.Protocol
+import org.apache.linkis.rpc.conf.DynamicFeignClient
 import org.apache.linkis.rpc.conf.RPCConfiguration.{
   BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX,
   BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX,
   BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY
 }
+import org.apache.linkis.rpc.constant.RpcConstant
 import org.apache.linkis.rpc.interceptor._
 import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.Message
-import org.apache.linkis.server.conf.ServerConfiguration
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
 
-import feign.{Feign, Retryer}
-import feign.slf4j.Slf4jLogger
-
 private[rpc] class BaseRPCSender extends Sender with Logging {
   private var name: String = _
   private var rpc: RPCReceiveRemote = _
+  private var dynamicFeignClient: DynamicFeignClient[RPCReceiveRemote] = _
 
   protected def getRPCInterceptors: Array[RPCInterceptor] = Array.empty
 
@@ -67,18 +68,21 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     rpc
   }
 
+  private def getDynamicFeignClient: DynamicFeignClient[RPCReceiveRemote] = {
+    if (dynamicFeignClient == null) this synchronized {
+      if (dynamicFeignClient == null) dynamicFeignClient = new DynamicFeignClient()
+    }
+    dynamicFeignClient
+  }
+
   private[rpc] def getApplicationName = name
 
-  protected def doBuilder(builder: Feign.Builder): Unit =
-    builder.retryer(Retryer.NEVER_RETRY)
+  def getSenderInstance(): String = {
+    null
+  }
 
   protected def newRPC: RPCReceiveRemote = {
-    val builder = Feign.builder.logger(new Slf4jLogger()).logLevel(feign.Logger.Level.FULL)
-    doBuilder(builder)
-    var url = if (name.startsWith("http://")) name else "http://" + name
-    if (url.endsWith("/")) url = url.substring(0, url.length - 1)
-    url += ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue
-    builder.target(classOf[RPCReceiveRemote], url)
+    getDynamicFeignClient.getFeignClient(classOf[RPCReceiveRemote], name)
   }
 
   private def execute(message: Any)(op: => Any): Any = message match {
@@ -90,6 +94,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   override def ask(message: Any): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     val response = getRPC.receiveAndReply(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
@@ -98,6 +105,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
   override def ask(message: Any, timeout: Duration): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     msg.data("duration", timeout.toMillis)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     val response = getRPC.receiveAndReplyInMills(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
@@ -105,6 +115,9 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   private def sendIt(message: Any, op: Message => Message): Unit = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
+    if (StringUtils.isNotBlank(getSenderInstance())) {
+      BaseRPCSender.addFixedInstanceInfo(msg.getData, getSenderInstance())
+    }
     BaseRPCSender.addInstanceInfo(msg.getData)
     RPCConsumer.getRPCConsumer.toObject(op(msg)) match {
       case w: WarnException => logger.warn("RPC requests an alarm!(RPC请求出现告警！)", w)
@@ -173,6 +186,18 @@ private[rpc] object BaseRPCSender extends Logging {
     val name = map.get("name").toString
     val instance = map.get("instance").toString
     ServiceInstance(name, instance)
+  }
+
+  def addFixedInstanceInfo(map: util.Map[String, Object], fixedInstance: String): Unit = {
+    map.put(RpcConstant.FIXED_INSTANCE, fixedInstance)
+  }
+
+  def getFixedInstanceInfo(message: Message): String = {
+    if (null != message && null != message.getData) {
+      message.getData.getOrDefault(RpcConstant.FIXED_INSTANCE, null).asInstanceOf[String]
+    } else {
+      null
+    }
   }
 
 }

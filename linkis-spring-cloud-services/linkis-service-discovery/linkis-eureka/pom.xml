@@ -36,6 +36,28 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-module</artifactId>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.xiaoymin</groupId>
+          <artifactId>knife4j-spring-boot-starter</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-schema</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-spring-web</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-spring-webflux</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-spring-webmvc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

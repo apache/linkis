@@ -32,20 +32,19 @@ import org.apache.linkis.server.conf.ServerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import org.springframework.cloud.client
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.gateway.config.{GatewayAutoConfiguration, GatewayProperties}
 import org.springframework.cloud.gateway.filter._
 import org.springframework.cloud.gateway.route.{Route, RouteLocator}
-import org.springframework.cloud.gateway.route.builder.{PredicateSpec, RouteLocatorBuilder}
-import org.springframework.cloud.netflix.ribbon._
+import org.springframework.cloud.gateway.route.builder.{
+  Buildable,
+  PredicateSpec,
+  RouteLocatorBuilder
+}
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import org.springframework.web.reactive.socket.server.WebSocketService
 
-import scala.collection.JavaConverters._
-
-import com.netflix.loadbalancer.Server
 import org.slf4j.{Logger, LoggerFactory}
 
 @Configuration
@@ -89,9 +88,9 @@ class SpringCloudGatewayConfiguration {
     .routes()
     .route(
       "api",
-      new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
+      new java.util.function.Function[PredicateSpec, Buildable[Route]] {
 
-        override def apply(t: PredicateSpec): Route.AsyncBuilder = t
+        override def apply(t: PredicateSpec): Buildable[Route] = t
           .path(API_URL_PREFIX + "**")
           .uri(ROUTE_URI_FOR_HTTP_HEADER + Sender.getThisServiceInstance.getApplicationName)
 
@@ -99,9 +98,9 @@ class SpringCloudGatewayConfiguration {
     )
     .route(
       "dws",
-      new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
+      new java.util.function.Function[PredicateSpec, Buildable[Route]] {
 
-        override def apply(t: PredicateSpec): Route.AsyncBuilder = t
+        override def apply(t: PredicateSpec): Buildable[Route] = t
           .path(PROXY_URL_PREFIX + "**")
           .uri(ROUTE_URI_FOR_HTTP_HEADER + Sender.getThisServiceInstance.getApplicationName)
 
@@ -109,9 +108,9 @@ class SpringCloudGatewayConfiguration {
     )
     .route(
       "ws_http",
-      new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
+      new java.util.function.Function[PredicateSpec, Buildable[Route]] {
 
-        override def apply(t: PredicateSpec): Route.AsyncBuilder = t
+        override def apply(t: PredicateSpec): Buildable[Route] = t
           .path(SpringCloudGatewayConfiguration.WEBSOCKET_URI + "info/**")
           .uri(ROUTE_URI_FOR_HTTP_HEADER + Sender.getThisServiceInstance.getApplicationName)
 
@@ -119,64 +118,15 @@ class SpringCloudGatewayConfiguration {
     )
     .route(
       "ws",
-      new java.util.function.Function[PredicateSpec, Route.AsyncBuilder] {
+      new java.util.function.Function[PredicateSpec, Buildable[Route]] {
 
-        override def apply(t: PredicateSpec): Route.AsyncBuilder = t
+        override def apply(t: PredicateSpec): Buildable[Route] = t
           .path(SpringCloudGatewayConfiguration.WEBSOCKET_URI + "**")
           .uri(ROUTE_URI_FOR_WEB_SOCKET_HEADER + Sender.getThisServiceInstance.getApplicationName)
 
       }
     )
     .build()
-
-  @Bean
-  def createLoadBalancerClient(springClientFactory: SpringClientFactory): RibbonLoadBalancerClient =
-    new RibbonLoadBalancerClient(springClientFactory) {
-
-      override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
-        val serviceInstance = getServiceInstance(serviceId)
-        logger.info("redirect to " + serviceInstance)
-        val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-        lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
-      } else super.getServer(serviceId)
-
-      def isSecure(server: Server, serviceId: String) = {
-        val config = springClientFactory.getClientConfig(serviceId)
-        val serverIntrospector = serverIntrospectorFun(serviceId)
-        RibbonUtils.isSecure(config, serverIntrospector, server)
-      }
-
-      def serverIntrospectorFun(serviceId: String) = {
-        var serverIntrospector =
-          springClientFactory.getInstance(serviceId, classOf[ServerIntrospector])
-        if (serverIntrospector == null) serverIntrospector = new DefaultServerIntrospector
-        serverIntrospector
-      }
-
-      override def choose(serviceId: String, hint: Any): client.ServiceInstance =
-        if (isMergeModuleInstance(serviceId)) {
-          val serviceInstance = getServiceInstance(serviceId)
-          logger.info("redirect to " + serviceInstance)
-          val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-          val serverOption =
-            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance)
-          if (serverOption.isDefined) {
-            val server = serverOption.get
-            new RibbonLoadBalancerClient.RibbonServer(
-              serviceId,
-              server,
-              isSecure(server, serviceId),
-              serverIntrospectorFun(serviceId).getMetadata(server)
-            )
-          } else {
-            logger.warn(
-              "RibbonLoadBalancer not have Server, execute default super choose method" + serviceInstance
-            )
-            super.choose(serviceInstance.getApplicationName, hint)
-          }
-        } else super.choose(serviceId, hint)
-
-    }
 
   @Bean
   @ConditionalOnProperty(name = Array("spring.cloud.gateway.url.enabled"), matchIfMissing = true)

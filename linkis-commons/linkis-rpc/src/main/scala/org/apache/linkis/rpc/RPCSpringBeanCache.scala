@@ -19,7 +19,7 @@ package org.apache.linkis.rpc
 
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCLoadBalancer, RPCServerLoader}
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCServerLoader}
 import org.apache.linkis.rpc.interceptor.common.BroadcastSenderBuilder
 
 import java.util
@@ -30,10 +30,10 @@ private[rpc] object RPCSpringBeanCache extends Logging {
   import DataWorkCloudApplication.getApplicationContext
   private var beanNameToReceivers: util.Map[String, Receiver] = _
   private var rpcInterceptors: Array[RPCInterceptor] = _
-  private var rpcLoadBalancers: Array[RPCLoadBalancer] = _
   private var rpcServerLoader: RPCServerLoader = _
   private var senderBuilders: Array[BroadcastSenderBuilder] = _
   private var rpcReceiveRestful: RPCReceiveRestful = _
+  private var rpcReceiveRemote: RPCReceiveRemote = _
 
   def registerReceiver(receiverName: String, receiver: Receiver): Unit = {
     if (beanNameToReceivers == null) {
@@ -64,6 +64,13 @@ private[rpc] object RPCSpringBeanCache extends Logging {
     rpcReceiveRestful
   }
 
+  def getRPCReceiveRemote: RPCReceiveRemote = {
+    if (rpcReceiveRemote == null) {
+      rpcReceiveRemote = getApplicationContext.getBean(classOf[RPCReceiveRemote])
+    }
+    rpcReceiveRemote
+  }
+
   private[rpc] def getReceivers: util.Map[String, Receiver] = {
     if (beanNameToReceivers == null) {
       beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
@@ -81,18 +88,6 @@ private[rpc] object RPCSpringBeanCache extends Logging {
         .sortBy(_.order)
     }
     rpcInterceptors
-  }
-
-  private[rpc] def getRPCLoadBalancers: Array[RPCLoadBalancer] = {
-    if (rpcLoadBalancers == null) {
-      rpcLoadBalancers = getApplicationContext
-        .getBeansOfType(classOf[RPCLoadBalancer])
-        .asScala
-        .map(_._2)
-        .toArray
-        .sortBy(_.order)
-    }
-    rpcLoadBalancers
   }
 
   private[rpc] def getRPCServerLoader: RPCServerLoader = {

@@ -15,20 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.message.utils;
+package org.apache.linkis.rpc.conf;
 
-import feign.Request;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.stereotype.Component;
 
-public class LoadBalancerOptionsUtilsTest {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-  @Test
-  @DisplayName("getDefaultOptionsTest")
-  public void getDefaultOptionsTest() throws NoSuchFieldException, IllegalAccessException {
+@Component
+@ConditionalOnClass(name = "com.alibaba.cloud.nacos.registry.NacosServiceRegistryAutoConfiguration")
+public class NacosClientCacheManualRefresher implements CacheManualRefresher {
+  private static final Logger logger =
+      LoggerFactory.getLogger(NacosClientCacheManualRefresher.class);
 
-    Request.Options defaultOptions = LoadBalancerOptionsUtils.getDefaultOptions();
-    Assertions.assertNotNull(defaultOptions);
+  public void refresh() {
+    try {
+      logger.warn("Failed to obtain nacos metadata. Wait 100 milliseconds");
+      Thread.sleep(100L);
+    } catch (InterruptedException e) {
+
+    }
   }
 }

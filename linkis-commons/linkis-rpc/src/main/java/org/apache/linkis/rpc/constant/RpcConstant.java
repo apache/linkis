@@ -15,21 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.interceptor
+package org.apache.linkis.rpc.constant;
 
-import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.protocol.Protocol
+public class RpcConstant {
 
-import com.netflix.loadbalancer.ILoadBalancer
+  public static final String LINKIS_LOAD_BALANCER_TYPE = "LinkisLoadBalancerType";
 
-trait RPCLoadBalancer {
+  public static final String LINKIS_LOAD_BALANCER_TYPE_RPC = "RPC";
 
-  val order: Int
-
-  def choose(
-      protocol: Protocol,
-      originService: ServiceInstance,
-      lb: ILoadBalancer
-  ): Option[ServiceInstance]
-
+  public static final String FIXED_INSTANCE = "client-ip";
 }

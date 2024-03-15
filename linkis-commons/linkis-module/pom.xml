@@ -262,6 +262,10 @@
       <artifactId>jedis</artifactId>
       <version>${jedis.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-openfeign-core</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

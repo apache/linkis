@@ -13,6 +13,17 @@
 # limitations under the License.
 #
 spring:
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
+  main:
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    servlet:
+      path: /api/rest_j/v1
   application:
     name: linkis-cg-engineconn
   servlet:

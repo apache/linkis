@@ -16,6 +16,15 @@
 server:
   port: 9010
 spring:
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
+  main:
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   application:
     name: linkis-ps-cs
 
@@ -33,3 +42,7 @@ management:
     web:
       exposure:
         include: refresh,info
+
+knife4j:
+  enable: false
+  production: false

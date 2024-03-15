@@ -41,6 +41,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -66,6 +67,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 @SpringBootApplication(scanBasePackages = {"org.apache.linkis", "com.webank.wedatasphere"})
 @EnableDiscoveryClient
 @RefreshScope
+@EnableFeignClients
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
   private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
 

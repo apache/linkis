@@ -23,13 +23,22 @@ import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, Req
 
 private[rpc] trait RPCReceiveRemote {
 
-  @RequestMapping(value = Array("/rpc/receive"), method = Array(RequestMethod.POST))
+  @RequestMapping(
+    value = Array("${spring.mvc.servlet.path}/rpc/receive"),
+    method = Array(RequestMethod.POST)
+  )
   def receive(@RequestBody message: Message): Message
 
-  @RequestMapping(value = Array("/rpc/receiveAndReply"), method = Array(RequestMethod.POST))
+  @RequestMapping(
+    value = Array("${spring.mvc.servlet.path}/rpc/receiveAndReply"),
+    method = Array(RequestMethod.POST)
+  )
   def receiveAndReply(@RequestBody message: Message): Message
 
-  @RequestMapping(value = Array("/rpc/replyInMills"), method = Array(RequestMethod.POST))
+  @RequestMapping(
+    value = Array("${spring.mvc.servlet.path}/rpc/replyInMills"),
+    method = Array(RequestMethod.POST)
+  )
   def receiveAndReplyInMills(@RequestBody message: Message): Message
 
 }

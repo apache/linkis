@@ -40,7 +40,16 @@
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-commons</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-loadbalancer</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-loadbalancer</artifactId>
+      <version>${spring-cloud-common.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>

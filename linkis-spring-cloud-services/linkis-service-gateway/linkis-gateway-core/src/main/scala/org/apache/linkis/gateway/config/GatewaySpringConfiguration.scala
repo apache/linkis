@@ -41,26 +41,12 @@ import java.util.stream.Collectors
 class GatewaySpringConfiguration {
 
   @Autowired
-  private var userRestful: UserRestful = _
-
-  @Autowired
   private var tokenService: TokenService = _
 
   @PostConstruct
   def init(): Unit = {
-    SecurityFilter.setUserRestful(userRestful)
     TokenAuthentication.setTokenService(tokenService)
   }
-
-//  @Bean(Array("defaultGatewayParser"))
-//  @ConditionalOnMissingBean
-//  @Autowired(required = false)
-//  def createGatewayParser(gatewayParsers: Array[GatewayParser]): DefaultGatewayParser =
-//    new DefaultGatewayParser(gatewayParsers)
-//
-//  @Bean(Array("defaultGatewayRouter"))
-//  @ConditionalOnMissingBean
-//  def createGatewayRouter(): DefaultGatewayParser = new DefaultGatewayRouter
 
   @Bean(Array("userRestful"))
   @ConditionalOnMissingBean
@@ -68,6 +54,7 @@ class GatewaySpringConfiguration {
   def createUserRestful(securityHooks: Array[SecurityHook]): UserRestful = {
     val userRestful = new LDAPUserRestful
     if (securityHooks != null) userRestful.setSecurityHooks(securityHooks)
+    SecurityFilter.setUserRestful(userRestful)
     userRestful
   }
 

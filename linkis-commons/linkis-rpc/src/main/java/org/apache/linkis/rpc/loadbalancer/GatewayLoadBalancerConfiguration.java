@@ -15,28 +15,6 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.interceptor.common
+package org.apache.linkis.rpc.loadbalancer;
 
-import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.protocol.{InstanceProtocol, Protocol}
-import org.apache.linkis.rpc.interceptor.RPCLoadBalancer
-
-import org.springframework.stereotype.Component
-
-import com.netflix.loadbalancer.ILoadBalancer
-
-@Component
-class InstanceRPCLoadBalancer extends RPCLoadBalancer {
-  override val order: Int = 10
-
-  override def choose(
-      protocol: Protocol,
-      originService: ServiceInstance,
-      lb: ILoadBalancer
-  ): Option[ServiceInstance] = protocol match {
-    case instance: InstanceProtocol =>
-      instance.choseInstance.map(ServiceInstance(originService.getApplicationName, _))
-    case _ => None
-  }
-
-}
+public class GatewayLoadBalancerConfiguration {}

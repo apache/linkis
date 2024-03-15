@@ -167,8 +167,8 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpmime.version>${httpclient.version}</httpmime.version>
 
-    <knife4j.version>2.0.9</knife4j.version>
-    <springfox.version>2.10.5</springfox.version>
+    <knife4j.version>3.0.3</knife4j.version>
+    <springfox.version>3.0.0</springfox.version>
     <poi.version>5.2.3</poi.version>
     <reflections.version>0.9.12</reflections.version>
 
@@ -219,12 +219,13 @@
     <h2.version>2.2.220</h2.version>
 
     <!-- spring -->
-    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
-    <spring-security.version>5.7.5</spring-security.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
-    <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
-    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
-    <spring.cloud.nacos.version>2.2.9.RELEASE</spring.cloud.nacos.version>
+    <spring-framework.version>5.3.27</spring-framework.version>
+    <spring-security.version>5.7.8</spring-security.version>
+    <spring.boot.version>2.7.11</spring.boot.version>
+    <spring-netflix.version>3.1.7</spring-netflix.version>
+    <spring-cloud.version>2021.0.8</spring-cloud.version>
+    <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>
+    <spring-cloud-common.version>3.1.7</spring-cloud-common.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1366,7 +1367,7 @@
       <dependency>
         <groupId>com.alibaba.cloud</groupId>
         <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        <version>${spring.cloud.nacos.version}</version>
+        <version>${spring-cloud-alibaba.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

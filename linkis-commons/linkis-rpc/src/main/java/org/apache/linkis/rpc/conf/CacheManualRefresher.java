@@ -15,30 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.message.utils;
+package org.apache.linkis.rpc.conf;
 
-import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
-
-import java.lang.reflect.Field;
-
-import feign.Request.Options;
-
-public class LoadBalancerOptionsUtils {
-
-  private static Options DEFAULT_OPTIONS = null;
-
-  private static Object locker = new Object();
-
-  public static Options getDefaultOptions() throws NoSuchFieldException, IllegalAccessException {
-    if (null == DEFAULT_OPTIONS) {
-      synchronized (locker) {
-        Class<?> clazz = LoadBalancerFeignClient.class;
-        Field optionField = clazz.getDeclaredField("DEFAULT_OPTIONS");
-        optionField.setAccessible(true);
-        Object o = optionField.get(clazz);
-        DEFAULT_OPTIONS = (Options) o;
-      }
-    }
-    return DEFAULT_OPTIONS;
-  }
+public interface CacheManualRefresher {
+  void refresh();
 }

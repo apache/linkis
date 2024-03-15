@@ -26,7 +26,7 @@ import org.apache.linkis.engineplugin.impala.client.protocol.ExecStatus;
 import org.apache.linkis.engineplugin.impala.client.protocol.ExecSummary;
 import org.apache.linkis.engineplugin.impala.client.util.ThriftUtil;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hive.service.rpc.thrift.TExecuteStatementReq;
 import org.apache.hive.service.rpc.thrift.TExecuteStatementResp;
 import org.apache.hive.service.rpc.thrift.TOperationHandle;

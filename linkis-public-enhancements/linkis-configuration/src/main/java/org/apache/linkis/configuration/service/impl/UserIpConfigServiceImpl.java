@@ -24,7 +24,7 @@ import org.apache.linkis.configuration.service.UserIpConfigService;
 import org.apache.linkis.configuration.util.CommonUtils;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

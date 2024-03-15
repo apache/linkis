@@ -49,8 +49,6 @@ class FileSplit(
 
   var pageTrigger: Boolean = false
 
-  var pageSize = 0
-
   var params: util.Map[String, String] = new util.HashMap[String, String]
 
   def page(page: Int, pageSize: Int): Unit = {

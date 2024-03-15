@@ -31,8 +31,10 @@ import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
 import org.apache.linkis.manager.label.entity.engine.{
   EngineInstanceLabel,
@@ -40,6 +42,7 @@ import org.apache.linkis.manager.label.entity.engine.{
   UserCreatorLabel
 }
 import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.manager.persistence.{
   LabelManagerPersistence,
   NodeManagerPersistence,
@@ -241,6 +244,45 @@ class RMMonitorRest extends Logging {
       userResources.add(RMUtils.toUserResourceVo(userResource))
     })
     Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
+  }
+
+  @ApiOperation(value = "get-user-resource", notes = "get all user resource")
+  @RequestMapping(path = Array("get-user-resource"), method = Array(RequestMethod.GET))
+  def getUserResourceByLabel(
+      request: HttpServletRequest,
+      @RequestParam(value = "username") username: String,
+      @RequestParam(value = "creator") creator: String,
+      @RequestParam(value = "engineType") engineType: String
+  ): Message = {
+
+    val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
+    userCreatorLabel.setUser(username)
+    userCreatorLabel.setCreator(creator)
+    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engineType)
+    val combinedLabel =
+      combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel))
+    // 1. build label
+    val label = LabelManagerUtils.convertPersistenceLabel(combinedLabel)
+    // 2. The resource label of all users, including the associated resourceId
+    val userLabels = new util.ArrayList[Label[_]]()
+    userLabels.add(label)
+    // 3. All user resources, including resourceId
+    val resources = resourceManagerPersistence.getResourceByLabels(userLabels)
+    val userResources = new util.ArrayList[UserResourceVo]()
+    // 4. Store users and resources in Vo
+    resources.asScala.foreach(resource => {
+      val userResource = ResourceUtils.fromPersistenceResourceAndUser(resource)
+      val userCreatorEngineType =
+        gson.fromJson(label.getStringValue, classOf[UserCreatorEngineType])
+      if (userCreatorEngineType != null) {
+        userResource.setUsername(userCreatorEngineType.getUser)
+        userResource.setCreator(userCreatorEngineType.getCreator)
+        userResource.setEngineType(userCreatorEngineType.getEngineType)
+        userResource.setVersion(userCreatorEngineType.getVersion)
+      }
+      userResources.add(RMUtils.toUserResourceVo(userResource))
+    })
+    Message.ok().data("resources", userResources)
   }
 
   @ApiOperation(value = "getUserResource", notes = "get user resource")

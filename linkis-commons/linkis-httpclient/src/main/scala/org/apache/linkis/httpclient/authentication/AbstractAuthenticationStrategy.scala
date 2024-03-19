@@ -54,6 +54,9 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy wit
     getKeyByUserAndURL(user, serverUrl)
   }
 
+  protected def getAuthenticationActionByKey(key: String): Authentication =
+    userNameToAuthentications.get(key)
+
   def setClientConfig(clientConfig: ClientConfig): Unit = this.clientConfig = clientConfig
 
   def getClientConfig: ClientConfig = clientConfig
@@ -61,16 +64,14 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy wit
   def login(requestAction: Action, serverUrl: String): Authentication = {
     val key = getKey(requestAction, serverUrl)
     if (key == null) return null
-    if (
-        userNameToAuthentications
-          .containsKey(key) && !isTimeout(userNameToAuthentications.get(key))
-    ) {
-      val authenticationAction = userNameToAuthentications.get(key)
+    val oldAuth = getAuthenticationActionByKey(key)
+    if (null != oldAuth && !isTimeout(oldAuth)) {
+      val authenticationAction = oldAuth
       authenticationAction.updateLastAccessTime()
       authenticationAction
     } else {
       key.intern() synchronized {
-        var authentication = userNameToAuthentications.get(key)
+        var authentication = getAuthenticationActionByKey(key)
         if (authentication == null || isTimeout(authentication)) {
           authentication = tryLogin(requestAction, serverUrl)
           putSession(key, authentication)

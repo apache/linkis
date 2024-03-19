@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.sql.DataSource;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.vendor.MySqlValidConnectionChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,11 @@ public class DataSourceUtils {
         MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED.getValue();
     int removeAbandonedTimeout =
         MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT.getValue();
+
+    boolean jdbcKeepAlive = MybatisConfiguration.MYBATIS_DATASOURCE_KEEPALIVE_ENABLED.getValue();
+
+    boolean jdbcUsePingMethod = MybatisConfiguration.MYBATIS_DATASOURCE_USE_PING_ENABLED.getValue();
+
     DruidDataSource datasource = new DruidDataSource();
     logger.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
@@ -87,6 +93,16 @@ public class DataSourceUtils {
     datasource.setTestWhileIdle(testWhileIdle);
     datasource.setTestOnBorrow(testOnBorrow);
     datasource.setTestOnReturn(testOnReturn);
+
+    datasource.setKeepAlive(jdbcKeepAlive);
+
+    if (!jdbcUsePingMethod) {
+      // use test sql for keepalive
+      MySqlValidConnectionChecker checker = new MySqlValidConnectionChecker();
+      checker.setUsePingMethod(false);
+      datasource.setValidConnectionChecker(checker);
+    }
+
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);

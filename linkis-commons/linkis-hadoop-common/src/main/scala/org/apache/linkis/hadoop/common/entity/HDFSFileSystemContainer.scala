@@ -48,8 +48,7 @@ class HDFSFileSystemContainer(fs: FileSystem, user: String, label: String) {
   def canRemove(): Boolean = {
     val currentTime = System.currentTimeMillis()
     val idleTime = currentTime - this.lastAccessTime
-    idleTime > HadoopConf.HDFS_ENABLE_CACHE_MAX_TIME || (System
-      .currentTimeMillis() - this.lastAccessTime > HadoopConf.HDFS_ENABLE_CACHE_IDLE_TIME) && count <= 0
+    idleTime > HadoopConf.HDFS_ENABLE_CACHE_MAX_TIME || ((idleTime > HadoopConf.HDFS_ENABLE_CACHE_IDLE_TIME) && count <= 0)
   }
 
 }

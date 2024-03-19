@@ -40,6 +40,10 @@ class MessageReceiver extends Receiver with Logging {
     logger.info("From caller {} get sync message", RPCUtils.getServiceInstanceFromSender(sender))
     message match {
       case requestProtocol: RequestProtocol =>
+        logger.info(
+          "With message requestProtocol class name:{}",
+          requestProtocol.getClass.getSimpleName
+        )
         val methodExecuteWrapper =
           receiverMethodSearcher.getMethodExecuteWrappers(requestProtocol)
         messageExecutor.execute(requestProtocol, methodExecuteWrapper, sender)

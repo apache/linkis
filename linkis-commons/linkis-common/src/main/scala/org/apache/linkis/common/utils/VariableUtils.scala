@@ -265,6 +265,10 @@ object VariableUtils extends Logging {
     nameAndType("run_today_h_std") = HourType(
       new CustomHourType(nameAndType(RUN_TODAY_H).asInstanceOf[HourType].getValue, true)
     )
+    // calculate run_last_mon base on run_today
+    val run_roday_mon = new CustomMonType(getMonthDay(false, run_today.getDate), false)
+    nameAndType("run_last_mon_now") = MonType(new CustomMonType(run_roday_mon - 1, false, false))
+    nameAndType("run_last_mon_now_std") = MonType(new CustomMonType(run_roday_mon - 1, true, false))
   }
 
   /**

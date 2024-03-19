@@ -42,6 +42,10 @@ class VariableUtilsTest {
                 |'${run_half_year_begin-1}' as run_half_year_begin_sub1,
                 |'${run_half_year_begin_std}' as run_half_year_begin_std,
                 |'${run_half_year_end}' as run_half_year_end,
+                |'${run_last_mon_now}' as run_last_mon_now,
+                |'${run_last_mon_now_std}' as run_last_mon_now_std,
+                |'${submit_user}' as submit_user,
+                |'${execute_user}' as execute_user,
                 |'${run_today_h+12}' as run_today_h_add1""".stripMargin
     val run_date = new CustomDateType(run_date_str, false)
     val dateType = DateType(run_date)
@@ -59,9 +63,15 @@ class VariableUtilsTest {
                     |'20190701' as run_half_year_begin_sub1,
                     |'2020-01-01' as run_half_year_begin_std,
                     |'20200630' as run_half_year_end,
+                    |'202001' as run_last_mon_now,
+                    |'2020-01' as run_last_mon_now_std,
+                    |'hadoop' as submit_user,
+                    |'hadoop' as execute_user,
                     |'${hourTypeRes}' as run_today_h_add1""".stripMargin
     val varMap = new util.HashMap[String, String]()
     varMap.put("run_date", run_date_str)
+    varMap.put("execute_user", "hadoop")
+    varMap.put("submit_user", "hadoop")
     assertEquals(VariableUtils.replace(sql, "sql", varMap), resSql)
   }
 

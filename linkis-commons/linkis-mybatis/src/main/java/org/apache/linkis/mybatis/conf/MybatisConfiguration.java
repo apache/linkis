@@ -63,6 +63,11 @@ public class MybatisConfiguration {
       CommonVars.apply("wds.linkis.server.mybatis.datasource.poolPreparedStatements", Boolean.TRUE);
   public static final CommonVars<Boolean> MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED =
       CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.enabled", Boolean.TRUE);
+  public static final CommonVars<Boolean> MYBATIS_DATASOURCE_KEEPALIVE_ENABLED =
+      CommonVars.apply("linkis.server.mybatis.keepalive.enabled", Boolean.TRUE);
+  public static final CommonVars<Boolean> MYBATIS_DATASOURCE_USE_PING_ENABLED =
+      CommonVars.apply("linkis.server.mybatis.use.ping.enabled", Boolean.TRUE);
+
   public static final CommonVars<Integer> MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.timeout", 300);
   public static final CommonVars<String> BDP_SERVER_MYBATIS_PAGEHELPER_DIALECT =

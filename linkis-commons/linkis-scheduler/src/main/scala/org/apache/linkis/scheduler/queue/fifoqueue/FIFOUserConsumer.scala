@@ -232,6 +232,8 @@ class FIFOUserConsumer(
         case _ =>
       }
     }
+    // clear cache
+    queue.clearAll()
 
     this.runningJobs.foreach { job =>
       if (job != null && !job.isCompleted) {

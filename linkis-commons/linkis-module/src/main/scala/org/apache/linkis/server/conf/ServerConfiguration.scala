@@ -38,7 +38,7 @@ object ServerConfiguration extends Logging {
   val BDP_SERVER_SPRING_APPLICATION_LISTENERS =
     CommonVars("wds.linkis.server.spring.application.listeners", "")
 
-  val BDP_SERVER_VERSION: String = CommonVars("wds.linkis.server.version", "").getValue
+  val BDP_SERVER_VERSION: String = CommonVars("wds.linkis.server.version", "v1").getValue
 
   if (StringUtils.isBlank(BDP_SERVER_VERSION)) {
     throw new BDPInitServerException(

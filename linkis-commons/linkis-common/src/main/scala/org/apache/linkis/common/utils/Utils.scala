@@ -43,6 +43,8 @@ import org.slf4j.Logger
 
 object Utils extends Logging {
 
+  val DEFAULE_SCHEDULER_THREAD_NAME_PREFIX = "Linkis-Default-Scheduler-Thread-"
+
   def tryQuietly[T](tryOp: => T): T = tryQuietly(tryOp, _ => ())
 
   def tryCatch[T](tryOp: => T)(catchOp: Throwable => T): T = {
@@ -199,7 +201,7 @@ object Utils extends Logging {
 
   val defaultScheduler: ScheduledThreadPoolExecutor = {
     val scheduler =
-      new ScheduledThreadPoolExecutor(20, threadFactory("Linkis-Default-Scheduler-Thread-", true))
+      new ScheduledThreadPoolExecutor(20, threadFactory(DEFAULE_SCHEDULER_THREAD_NAME_PREFIX, true))
     scheduler.setMaximumPoolSize(20)
     scheduler.setKeepAliveTime(5, TimeUnit.MINUTES)
     scheduler

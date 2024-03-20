@@ -112,7 +112,7 @@ function checkSpark(){
   fi
 
 # --- 3. check server status
- spark-submit --class org.apache.spark.examples.SparkPi --master local ${SPARK_HOME}/examples/jars/spark-examples_*.jar 10 > /dev/null 2>&1
+ spark-submit --class org.apache.spark.examples.SparkPi --master local ${SPARK_HOME}/examples/jars/spark-examples_*.jar 10 > /dev/null 2>&1 
  isSuccess "execute cmd: spark-submit --class org.apache.spark.examples.SparkPi "
 
 }

@@ -44,12 +44,13 @@
             class="datepicker"
             :options="shortcutOpt"
             v-model="searchBar.shortcut"
-            type="daterange"
+            type="datetimerange"
             placement="bottom-start"
-            format="yyyy-MM-dd"
+            format="yyyy-MM-dd HH:mm"
             :placeholder="$t('message.linkis.formItems.date.placeholder')"
-            style="width: 160px"
+            style="width: 250px"
             :editable="false"
+            @on-change="onDatePickerChange"
           />
         </div>
         <div class="searchbar-item">
@@ -135,11 +136,14 @@
         :total="pageSetting.total"
         :page-size="pageSetting.pageSize"
         :current="pageSetting.current"
+        :page-size-opts="pageSetting.sizeOpts"
         size="small"
         show-total
         show-elevator
+        show-sizer
         :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         @on-change="changePage"
+        @on-page-size-change="changePageSize"
       />
     </div>
   </div>
@@ -166,7 +170,8 @@ export default {
       pageSetting: {
         total: 0,
         pageSize: 50,
-        current: 1
+        current: 1,
+        sizeOpts: [25, 50, 100]
       },
       searchBar: {
         id: null,
@@ -174,7 +179,7 @@ export default {
         creator: '',
         engine: 'all',
         status: '',
-        shortcut: [today, today]
+        shortcut: [new Date(today.setHours(0, 0, 0, 0)), new Date(today.setHours(23, 59, 59, 0))],
       },
       inputType: 'number',
       shortcutOpt: {
@@ -279,18 +284,25 @@ export default {
       isLogAdmin: false,
       isHistoryAdmin: false,
       isAdminModel: false,
-      moduleHeight: 300
+      moduleHeight: 300,
+      lastChooseDate: ['', ''],
+      curDateTime: ['', '']
     }
   },
   async created() {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
-      this.isLogAdmin = res.admin
-      this.isHistoryAdmin = res.historyAdmin
-    })
-    await api.fetch('/configuration/engineType', 'get').then(res => {
-      this.getEngineTypes = ['all', ...res.engineType]
-    })
+    try {
+      await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
+        this.isLogAdmin = res.admin
+        this.isHistoryAdmin = res.historyAdmin
+      })
+      await api.fetch('/configuration/engineType', 'get').then(res => {
+        this.getEngineTypes = ['all', ...res.engineType]
+      })
+    } catch(err) {
+      window.console.warn(err);
+    }
+
   },
   mounted() {
     this.init()
@@ -338,18 +350,20 @@ export default {
           lastSearch.shortcut = [new Date(lastSearch.shortcut[0]), new Date(lastSearch.shortcut[1])]
         } else {
           const today = new Date(new Date().toLocaleDateString())
-          lastSearch.shortcut = [today, today]
+          lastSearch.shortcut = [new Date(today.setHours(0, 0, 0, 0)), new Date(today.setHours(23, 59, 59, 0))]
         }
         this.searchBar = lastSearch
       }
-      if (lastPage) {
-        this.pageSetting = lastPage
-      }
-      if (isAdminModel) {
-        this.switchAdmin(true)
-      } else {
-        this.search(true)
-      }
+      this.$nextTick(()=> {
+        if (lastPage) {
+          this.pageSetting = lastPage
+        }
+        if (isAdminModel) {
+          this.switchAdmin(true)
+        } else {
+          this.search(true)
+        }
+      })
       storage.remove('last-pageSetting-status')
     },
     convertTimes(runningTime) {
@@ -409,8 +423,8 @@ export default {
     },
 
     getParams(page) {
-      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0)) : this.searchBar.shortcut[0]
-      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0)): this.searchBar.shortcut[1]
+      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setSeconds(0)) : this.searchBar.shortcut[0]
+      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setSeconds(59)): this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
         creator: this.searchBar.creator,
@@ -463,7 +477,7 @@ export default {
           this.isLoading = false
           this.list = this.getList(rst.tasks)
           // this.pageSetting.current = page
-          const maxPage = Math.ceil(rst.totalPage / 50);
+          const maxPage = Math.ceil(rst.totalPage / this.pageSetting.pageSize);
           if(maxPage < page) {
             this.pageSetting.current = maxPage;
           } else {
@@ -475,6 +489,12 @@ export default {
           this.isLoading = false
           this.list = []
         })
+    },
+    // page size change(页容量变化)
+    changePageSize(pageSize) {
+      this.pageSetting.pageSize = pageSize
+      if(this.pageSetting.current === 1) this.search()
+      this.pageSetting.current = 1
     },
     search(isInit = false) {
       this.isLoading = true
@@ -728,7 +748,36 @@ export default {
           })
         }
       })
-    }
+    },
+    // 改造日期选择器选择日期时默认时间段为00:00-23:59
+    onDatePickerChange(date) {
+      // 兼容重复修改时间段00:00-00:00的情况
+      const isLastChooseDefault = (this.lastChooseDate[0].slice(-5) === '00:00'&& this.lastChooseDate[1].slice(-5) === '00:00')
+        && (date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00')
+        && (this.lastChooseDate[0].slice(0, 10) === date[0].slice(0, 10) && this.lastChooseDate[1].slice(0, 10) === date[1].slice(0, 10))
+
+      // 是否手动改动日期为00:00-00:00，条件：更改过日期 && （ 上次时间为00:00-(xx:xx) || (上次时间为（xx:xx)-00:00)）
+      const isChooseDefault = (date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00')
+          &&
+          (
+            (this.lastChooseDate[0].slice(-5) === '00:00'
+              && ((this.lastChooseDate[1].slice(-5, -3) === '00' && this.lastChooseDate[1].slice(-2) !== '00') || (this.lastChooseDate[1].slice(-5, -3) !== '00' && this.lastChooseDate[1].slice(-2) === '00')))
+            || (this.lastChooseDate[1].slice(-5) === '00:00'
+              && ((this.lastChooseDate[0].slice(-5, -3) === '00' && this.lastChooseDate[0].slice(-2) !== '00') || (this.lastChooseDate[0].slice(-5, -3) !== '00' && this.lastChooseDate[0].slice(-2) === '00'))))
+
+      if(isLastChooseDefault || isChooseDefault) {
+        this.lastChooseDate = JSON.parse(JSON.stringify(date))
+        return
+      }
+      // 修改日期默认为00:00-23:59
+      if(date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00') {
+        this.searchBar.shortcut = [new Date(new Date(date[0]).setHours(0, 0, 0, 0)), new Date(new Date(date[1]).setHours(23, 59, 59, 0))]
+        this.curDateTime =  JSON.parse(JSON.stringify([date[0].split(' ')[0]+' 00:00',  date[1].split(' ')[0] + ' 23:59']))
+      } else {
+        this.curDateTime =  JSON.parse(JSON.stringify(date))
+      }
+      this.lastChooseDate = JSON.parse(JSON.stringify(this.curDateTime))
+    },
   }
 }
 </script>

@@ -23,9 +23,11 @@
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
       <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
     </Tabs>
+    <Button v-if="tabName === 'log'" class="foldButton" type="primary" @click="fold">{{foldFlag ? $t('message.linkis.unfold') : $t('message.linkis.fold')}}</Button>
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
-    <log v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" />
+    <log ref="logRef" v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" />
     <result
       v-if="tabName === 'result'"
       class="result-class"
@@ -51,6 +53,8 @@ import mixin from '@/common/service/mixin'
 import util from '@/common/util'
 import ViewLog from '@/apps/linkis/module/resourceManagement/log.vue'
 import { isUndefined } from 'lodash'
+import storage from '@/common/helper/storage';
+
 export default {
   name: 'viewHistory',
   components: {
@@ -62,6 +66,7 @@ export default {
   props: {},
   data() {
     return {
+      foldFlag: true,
       hasResultData: false,
       isLoading: true,
       tabName: 'log',
@@ -107,10 +112,13 @@ export default {
   async mounted() {
     let taskID = this.$route.query.taskID
     let engineInstance = this.$route.query.engineInstance
+    const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
+    // 仅管理员可以查看引擎日志
+    const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin')))
 
-    if(engineInstance) {
+    if(engineInstance && isAdminShowEngineLog) {
       let url = '/linkisManager/ecinfo/ecrHistoryList?';
-      const endDate = new Date(); 
+      const endDate = new Date();
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 3);
       url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
@@ -118,11 +126,11 @@ export default {
       const param = res.engineList[0]
       this.param = param;
       this.hasEngine = !!param;
-         
+
     }
-    this.initHistory(taskID);
+    await this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
-    this.scriptViewState.bottomContentHeight = node.clientHeight - 85
+    this.scriptViewState.bottomContentHeight = node.clientHeight - 85;
   },
   computed: {
     isHistoryDetail() {
@@ -130,6 +138,9 @@ export default {
     }
   },
   methods: {
+    handleTabClick() {
+      this.foldFlag = true;
+    },
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
     onClickTabs(name) {
       this.tabName = name
@@ -157,6 +168,12 @@ export default {
           })
         }
 
+      } else {
+        this.$nextTick(() => {
+          this.$refs.logRef.fold();
+          this.foldFlag = true;
+        })
+        
       }
     },
     changeResultSet(data, cb) {
@@ -183,7 +200,21 @@ export default {
           )
           .then(ret => {
             let result = {}
-            if (ret.metadata && ret.metadata.length >= 500) {
+            if (ret.display_prohibited) {
+              result = {
+                headRows: [],
+                bodyRows: [],
+                // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
+                total: ret.totalLine ? ret.totalLine : 0,
+                // (If the content is null, it will display no data)如果内容为null,就显示暂无数据
+                type: ret.type,
+                path: resultPath,
+                current: 1,
+                size: 20,
+                hugeData: true,
+                tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
+              }
+            } else if (ret.metadata && ret.metadata.length >= 500 || ret.display_prohibited) {
               result = {
                 headRows: [],
                 bodyRows: [],
@@ -227,6 +258,14 @@ export default {
         }
         cb()
       }
+    },
+    fold() {
+      if(this.foldFlag) {
+        this.$refs.logRef.unfold()
+      } else {
+        this.$refs.logRef.fold()
+      }
+      this.foldFlag = !this.foldFlag;
     },
     // Format the array into json form.(将数组格式化成json形式。)
     openAnalysisTab(type) {
@@ -374,6 +413,10 @@ export default {
           this.logs = log
           this.fromLine = log['all'].split('\n').length
         }
+        this.$nextTick(() => {
+          this.$refs.logRef.fold();
+          this.foldFlag = true;
+        })
         this.isLoading = false
       } catch (errorMsg) {
         window.console.error(errorMsg)
@@ -412,7 +455,17 @@ export default {
               )
               .then(ret => {
                 let tmpResult = {}
-                if (ret.metadata && ret.metadata.length >= 500) {
+                if (ret.display_prohibited) {
+                  tmpResult = {
+                    headRows: [],
+                    bodyRows: [],
+                    total: ret.totalLine,
+                    type: ret.type,
+                    path: currentResultPath,
+                    hugeData: true,
+                    tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
+                  };
+                } else if (ret.metadata && ret.metadata.length >= 500) {
                   tmpResult = {
                     headRows: [],
                     bodyRows: [],
@@ -471,7 +524,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.foldButton {
+  position: absolute;
+  top: 0;
+  right:83px;
+}
 
 .backButton {
   position: absolute;

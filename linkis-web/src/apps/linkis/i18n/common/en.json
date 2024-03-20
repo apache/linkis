@@ -51,6 +51,7 @@
       "instanceNum": "Instance Number",
       "keyTip": "The key cannot be empty",
       "instanceName": "Instance Name",
+      "remark": "Remark",
       "serviceName": "Service Name",
       "IP": "IP",
       "hostname": "Hostname",
@@ -233,7 +234,8 @@
         "deleteCurrentbml": "Delete",
         "versionList": "Version List",
         "rollback": "Roll Back ",
-        "action": "Operation"
+        "action": "Operation",
+        "globalConfig": "global config"
       },
       "modal": {
         "modalTitle": "Prompt message ",
@@ -531,7 +533,21 @@
         "confirmDisable": "Confirm whether to disable the [{name}] option?",
         "enableSuccessfully": "Enable Successfully",
         "disableSuccessfully": "Disable Successfully",
-        "templateRequired": "Required"
+        "templateRequired": "Required",
+        "batchOperate": "Batch",
+        "batchDelete": "Batch Delete",
+        "batchEnable": "Batch Enable",
+        "batchDisable": "Batch Disable",
+        "batchModify": "Batch Modify",
+        "adjustConf": "Adjust Configuration",
+        "confirmBatchModify": "Confirm bulk modifications to these rules",
+        "confirmBatchDelete": "Confirm bulk deleteion of these rules",
+        "confirmBatchEnable": "Confirm bulk enabling of these rules",
+        "confirmBatchDisable": "Confirm bulk disabling of these rules",
+        "confirmModifyBtn": "Confirm Modify",
+        "confirmDeleteBtn": "Confirm Delete",
+        "confirmEnableBtn": "Confirm Enable",
+        "confirmDisableBtn": "Confirm Disable"
       },
       "codeQuery": {
         "executionCode": "Execution Code",
@@ -738,7 +754,10 @@
         "configVKey": "Configuration",
         "configValue": "Configuration Value",
         "configValuePro": "Please Input Configuration Value",
-        "versionInputPro": "Please Input Engine Version"
+        "versionInputPro": "Please Input Engine Version",
+        "isForceVerify": "Whether to perform strong verification",
+        "yes": "yes",
+        "no": "no"
       }
     }
   }

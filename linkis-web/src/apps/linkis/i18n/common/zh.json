@@ -25,7 +25,7 @@
           "errorDescription": "错误描述",
           "notLog": "未获取到日志！",
           "unfold": "展开",
-          "fold": "收起",
+          "fold": "折叠",
           "addVariable": "新增变量",
           "defaultValue": "默认值",
           "noDefaultValue": "无默认值",
@@ -52,6 +52,7 @@
           "resources": "资源",
           "instanceNum": "实例数",
           "instanceName": "实例名称",
+          "remark": "备注信息",
           "serviceName": "服务名称",
           "IP": "IP",
           "hostname": "主机名",
@@ -505,7 +506,21 @@
               "confirmDisable": "确认是否停用[{name}]该规则?",
               "enableSuccessfully": "启用成功",
               "disableSuccessfully": "停用成功",
-              "templateRequired": "是否必填"
+              "templateRequired": "是否必填",
+              "batchOperate": "批量操作",
+              "batchDelete": "批量删除",
+              "batchEnable": "批量启用",
+              "batchDisable": "批量停用",
+              "batchModify": "批量修改",
+              "adjustConf": "调整配置",
+              "confirmBatchModify": "是否确认批量修改规则",
+              "confirmBatchDelete": "是否确认批量删除规则",
+              "confirmBatchEnable": "是否确认批量启用规则",
+              "confirmBatchDisable": "是否确认批量停用规则",
+              "confirmModifyBtn": "确认修改",
+              "confirmDeleteBtn": "确认删除",
+              "confirmEnableBtn": "确认启用",
+              "confirmDisableBtn": "确认停用"
           },
           "basedataManagement": {
             "add": "新增",
@@ -677,7 +692,8 @@
           "deleteCurrentbml": "删除",
           "versionList": "版本列表",
           "rollback": "回滚",
-          "action": "操作"
+          "action": "操作",
+          "globalConfig": "全局配置"
         },
         "codeQuery": {
           "executionCode": "执行代码",
@@ -707,7 +723,10 @@
           "configVKey": "配置项",
           "configValue": "配置值",
           "configValuePro": "请输入配置值",
-          "versionInputPro": "请输入引擎版本"
+          "versionInputPro": "请输入引擎版本",
+          "isForceVerify": "是否强校验",
+          "yes": "是",
+          "no": "否"
         }
     }
   }

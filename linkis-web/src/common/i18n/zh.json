@@ -19,7 +19,7 @@
       "path": "请选择路径",
       "resultList": "结果集",
       "process": "执行耗时：",
-      "ok": "确认", 
+      "ok": "确认",
       "cancel": "取消",
       "delete": "删除",
       "failedNotice": "验证项未通过，请检查后再试！",

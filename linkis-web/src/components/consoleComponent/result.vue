@@ -97,7 +97,8 @@
           ref="watermask"></we-water-mask>
       </template>
       <div v-if="result.hugeData" :style="{height: resultHeight+'px', padding: '15px'}">
-        {{ $t('message.linkis.resultSet.prefixText') }}<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">{{ $t('message.linkis.resultSet.linkText') }}</a>
+        <p v-if="result.tipMsg">{{ result.tipMsg }}</p>
+        <p v-else>{{ $t('message.linkis.resultSet.prefixText') }}<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">{{ $t('message.linkis.resultSet.linkText') }}</a></p>
       </div>
     </div>
     <div v-else-if="['visual', 'dataWrangler'].includes(visualShow)  && resultType === '2'">

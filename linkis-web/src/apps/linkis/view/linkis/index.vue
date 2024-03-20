@@ -362,7 +362,7 @@ export default {
       return this.$route.meta.noLayout
     },
   },
-  created() {
+  async created() {
     // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach((element) => {
       if (element.path === this.$route.path) {
@@ -376,14 +376,16 @@ export default {
       this.crrentItem = '1-11'
     }
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin
       storage.set('isLogAdmin', res.admin, 'session')
     })
+    this.isLogAdmin = storage.get('isLogAdmin', 'session');
     // Whether the result set can be downloaded
-    api.fetch('/user/baseinfo', 'get').then((res) => {
+    await api.fetch('/user/baseinfo', 'get').then((res) => {
       storage.set('resultSetExportEnable', res.resultSetExportEnable ? true : false,'session')
       storage.set('clusterInfo', res.linkisClusterName || '')
+      storage.set('engineLogOnlyAdminEnable', res.engineLogOnlyAdminEnable || false)
     })
   },
   methods: {
@@ -444,6 +446,26 @@ export default {
           activedCellParent = this.basedataNavList
           this.sideNavList.children[8].showSubMenu = false
           break
+        case '1-10-7':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false
+          break
+        case '1-10-4':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false
+          break
+        case '1-10-3':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false
+          break
+        case '1-10-2':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false
+          break
+        case '1-10-1':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false
+          break
         default:
           activedCellParent = this.sideNavList
           break
@@ -483,7 +505,7 @@ export default {
       this.$router.push(`/console/${value}`)
     },
   },
-  beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter(to, from, next) {
     if (to.name === 'FAQ' && from.name === 'Home') {
       next((vm) => {
         vm.breadcrumbFirstName = this.$t(
@@ -500,24 +522,36 @@ export default {
       !from.name
     ) {
       const lastActiveConsole = storage.get('lastActiveConsole')
-
       // If it is historical details, refresh directly(如果为历史详情则直接刷新)
       if (['viewHistory', 'viewHistoryDetail', 'codeDetail'].includes(to.name)) return next()
+      try {
+        let isLogAdmin = false;
+        await api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+          isLogAdmin = res.admin
+          storage.set('isLogAdmin', res.admin, 'session')
+          storage.set('isLogHistoryAdmin', res.historyAdmin, 'session')
+        })
 
-      next((vm) => {
-        if (lastActiveConsole) {
-          if (
-            lastActiveConsole.key === '1-9-1' ||
-            lastActiveConsole.key === '1-9-2'
-          ) {
-            vm.clickToRoute(lastActiveConsole.key)
+        next((vm) => {
+          const noAccess = !isLogAdmin && !['1-1', '1-2', '1-3', '1-4', '1-8-1', '1-9-1', '1-9-2', '1-10-7', '1-11'].includes(lastActiveConsole?.key)
+          if (lastActiveConsole && !noAccess ) {
+            if (
+              lastActiveConsole?.key === '1-9-1' ||
+              lastActiveConsole?.key === '1-9-2'
+            ) {
+              vm.clickToRoute(lastActiveConsole?.key)
+            } else {
+              vm.handleCellClick(lastActiveConsole?.key)
+            }
           } else {
-            vm.handleCellClick(lastActiveConsole.key)
+            vm.handleCellClick('1-1')
           }
-        } else {
-          vm.handleCellClick('1-1')
-        }
-      })
+        })
+      } catch(err) {
+        window.console.warn(err);
+      }
+
+
     }
     next()
   },

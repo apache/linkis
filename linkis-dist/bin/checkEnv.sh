@@ -65,14 +65,25 @@ function checkHive(){
 # --- 2. check version & Parameters
     checkversion "$(whereis hive)" "3.1" hive
 
-    if [ -z "${HIVE_META_URL}" ] || [ -z "${HIVE_META_USER}" ] || [ -z "${MYSQL_PASSWORD}" ] ;then
-      echo "Parameter [HIVE_META_URL/HIVE_META_USER/MYSQL_PASSWORD] are Invalid,Pls check"
+    hiveServer2Host=`hive -e "set hive.server2.thrift.bind.host;" | grep 'hive.server2.thrift.bind.host' | awk -F '=' '{print $2}' | sed 's/^[[:space:]]*//; s/[[:space:]]*|[[:space:]]*$//'`
+    hiveServer2Port=`hive -e "set hive.server2.thrift.port;" | grep 'hive.server2.thrift.port' | awk -F '=' '{print $2}' | sed 's/^[[:space:]]*//; s/[[:space:]]*|[[:space:]]*$//'`
+    hiveServer2ClientUser=`hive -e "set hive.server2.thrift.client.user;" | grep 'hive.server2.thrift.client.user' | awk -F '=' '{print $2}' | sed 's/^[[:space:]]*//; s/[[:space:]]*|[[:space:]]*$//'`
+    hiveServer2ClientPassword=`hive -e "set hive.server2.thrift.client.password;" | grep 'hive.server2.thrift.client.password' | awk -F '=' '{print $2}' | sed 's/^[[:space:]]*//; s/[[:space:]]*|[[:space:]]*$//'`
+
+    if [ -z "${hiveServer2Host}" ] || [ -z "${hiveServer2Port}" ] || [ -z "${hiveServer2ClientUser}" ] || [ -z "${hiveServer2ClientPassword}" ] ;then
+      echo "Parameter [hiveServer2Host/hiveServer2Port/hiveServer2ClientUser/hiveServer2ClientPassword] are Invalid,Pls check"
       exit 2
     fi
 
 # --- 3. check server status
-    beeline -u${HIVE_META_URL} -n${HIVE_META_USER} -p${MYSQL_PASSWORD} > /dev/null 2>&1
-    isSuccess "execute cmd: beeline -u${HIVE_META_URL} "
+    hiveServer2Url="jdbc:hive2://"${hiveServer2Host}":"${hiveServer2Port}
+    beeline -u ${hiveServer2Url} -n ${hiveServer2ClientUser} -p ${hiveServer2ClientPassword} -e "show databases"
+    if [ $? -eq 0 ]; then
+      isSuccess "execute cmd: beeline -u${hiveServer2Url} -n${hiveServer2ClientUser} -p${hiveServer2ClientPassword} "
+    else
+      echo "beeline login fail, please check execute cmd: beeline -u${hiveServer2Url} -n${hiveServer2ClientUser} -p${hiveServer2ClientPassword} "
+      exit 1
+    fi
 
 }
 

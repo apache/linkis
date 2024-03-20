@@ -81,7 +81,7 @@ function checkHive(){
     if [ $? -eq 0 ]; then
       isSuccess "execute cmd: beeline -u${hiveServer2Url} -n${hiveServer2ClientUser} -p${hiveServer2ClientPassword} "
     else
-      echo "beeline login fail, please check execute cmd: beeline -u${hiveServer2Url} -n${hiveServer2ClientUser} -p${hiveServer2ClientPassword} "
+      echo "beeline login failed, please check execute cmd: beeline -u${hiveServer2Url} -n${hiveServer2ClientUser} -p${hiveServer2ClientPassword} "
       exit 1
     fi
 

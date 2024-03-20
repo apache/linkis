@@ -73,13 +73,14 @@ public class JobHistoryMonitor {
 
   @Scheduled(cron = "${linkis.monitor.jobHistory.finished.cron}")
   public void jobHistoryFinishedScan() {
+    logger.info("Start scan jobHistoryFinishedScan");
     long intervalMs = 20 * 60 * 1000;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;
     long realIntervals = Math.min(endTime - startTime, maxIntervalMs);
     AnomalyScanner scanner = new DefaultScanner();
-    boolean shouldStart = false;
+    boolean shouldStart = true;
     long id;
     if (null == CacheUtils.cacheBuilder.getIfPresent("jobHistoryId")) {
       long maxId = MapperFactory.getJobHistoryMapper().selectMaxId();
@@ -88,9 +89,11 @@ public class JobHistoryMonitor {
         beginId = maxId - backtrackNum;
       }
       id = MapperFactory.getJobHistoryMapper().selectIdByHalfDay(beginId);
+      logger.info("JobHistoryId is null, scan from the minimum ID:" + id);
       CacheUtils.cacheBuilder.put("jobHistoryId", id);
     } else {
       id = CacheUtils.cacheBuilder.getIfPresent("jobHistoryId");
+      logger.info("Get JobHistoryId from cache ID:" + id);
     }
     List<DataFetcher> fetchers = generateFetchersfortime(startTime, endTime, id, "updated_time");
     if (fetchers.isEmpty()) {
@@ -101,14 +104,11 @@ public class JobHistoryMonitor {
     try {
       Map<String, AlertDesc> errorCodeAlerts =
           MonitorAlertUtils.getAlerts(Constants.SCAN_PREFIX_ERRORCODE(), null);
-
       if (errorCodeAlerts == null || errorCodeAlerts.size() == 0) {
-        logger.info("[INFO] Loaded 0 errorcode alert from alert-rule properties file.");
-      } else {
         logger.info(
-            "[INFO] Loaded {} errorcode alert from alert-rules properties file.",
-            errorCodeAlerts.size());
-        shouldStart = true;
+            "JobHistoryErrCodeRule Alert error,Please check the linkis-et-monitor-ims.properties file");
+      } else {
+        logger.info("JobHistoryErrCodeRule Alert load {} success", errorCodeAlerts.size());
         addIntervalToImsAlerts(errorCodeAlerts, realIntervals);
         JobHistoryErrCodeRule jobHistoryErrCodeRule =
             new JobHistoryErrCodeRule(
@@ -116,62 +116,55 @@ public class JobHistoryMonitor {
         scanner.addScanRule(jobHistoryErrCodeRule);
       }
     } catch (Exception e) {
-      logger.warn("Jobhistory Monitor ErrorCode Faily: " + e.getMessage());
+      logger.warn("JobHistoryErrCodeRule Scan Error msg: " + e.getMessage());
     }
     // userLabel
     try {
       Map<String, AlertDesc> userLabelAlerts =
           MonitorAlertUtils.getAlerts(Constants.USER_LABEL_MONITOR(), null);
       if (userLabelAlerts == null || userLabelAlerts.size() == 0) {
-        logger.info("[INFO] Loaded 0 alerts userLabel alert-rule from alert properties file.");
-      } else {
         logger.info(
-            "[INFO] Loaded {} alerts userLabel alert-rules from alert properties file.",
-            userLabelAlerts.size());
-        shouldStart = true;
+            "JobHistoryLabelsRule Alert error,Please check the linkis-et-monitor-ims.properties file");
+      } else {
+        logger.info("JobHistoryLabelsRule Alert load {} success", userLabelAlerts.size());
         JobHistoryLabelsRule jobHistoryLabelsRule =
             new JobHistoryLabelsRule(new JobHistoryLabelsAlertSender());
         scanner.addScanRule(jobHistoryLabelsRule);
       }
     } catch (Exception e) {
-      logger.warn("Jobhistory Monitor UserLabel Faily: " + e.getMessage());
+      logger.warn("JobHistoryLabelsRule Scan Error msg: " + e.getMessage());
     }
     // jobResultRunTime
     try {
       Map<String, AlertDesc> jobResultAlerts =
           MonitorAlertUtils.getAlerts((Constants.SCAN_PREFIX_ERRORCODE()), null);
       if (jobResultAlerts == null || jobResultAlerts.size() == 0) {
-        logger.info("[INFO] Loaded 0 jobResult alert from alert-rule properties file.");
-      } else {
         logger.info(
-            "[INFO] Loaded {} alerts jobResult alert-rules from alert properties file.",
-            jobResultAlerts.size());
-        shouldStart = true;
+            "JobHistoryRunTimeRule Alert error,Please check the linkis-et-monitor-ims.properties file");
+      } else {
+        logger.info("JobHistoryRunTimeRule Alert load {} success", jobResultAlerts.size());
         JobHistoryRunTimeRule jobHistoryRunTimeRule =
             new JobHistoryRunTimeRule(new JobHistoryRunTimeAlertSender());
         scanner.addScanRule(jobHistoryRunTimeRule);
       }
     } catch (Exception e) {
-      logger.warn("Jobhistory Monitor JobResultRunTime Faily: " + e.getMessage());
+      logger.warn("JobHistoryRunTimeRule Scan Error msg: " + e.getMessage());
     }
     // jobResultRunTimeForDSS
     try {
       Map<String, AlertDesc> dssJobResultAlerts =
           MonitorAlertUtils.getAlerts((Constants.SCAN_PREFIX_ERRORCODE()), null);
       if (dssJobResultAlerts == null || dssJobResultAlerts.size() == 0) {
-        logger.info("[INFO] Loaded 0 jobResult alert from alert-rule properties file.");
-      } else {
         logger.info(
-            "[INFO] Loaded {} alerts jobResult alert-rules from alert properties file.",
-            dssJobResultAlerts.size());
-        shouldStart = true;
-
+            "CommonJobRunTimeRule Alert error,Please check the linkis-et-monitor-ims.properties file");
+      } else {
+        logger.info("CommonJobRunTimeRule Alert load {} success", dssJobResultAlerts.size());
         CommonJobRunTimeRule commonJobRunTimeRule =
             new CommonJobRunTimeRule(new CommonRunTimeAlertSender());
         scanner.addScanRule(commonJobRunTimeRule);
       }
     } catch (Exception e) {
-      logger.warn("Jobhistory JobResultRunTimeForDSS ErrorCode Faily: " + e.getMessage());
+      logger.warn("CommonJobRunTimeRule Scan Error msg: " + e.getMessage());
     }
     run(scanner, fetchers, shouldStart);
   }

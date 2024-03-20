@@ -18,6 +18,7 @@
 package org.apache.linkis.monitor.jobhistory.labels
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
@@ -55,52 +56,55 @@ class JobHistoryLabelsRule(hitObserver: Observer)
       return false
     }
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
-    for (sd <- data.asScala) {
-      if (sd != null && sd.getData() != null) {
-        for (d <- sd.getData().asScala) {
-          if (d.isInstanceOf[JobHistory]) {
-            logger.info(" start jobhistory user label rule data : {}", d)
-            val jobHistory = d.asInstanceOf[JobHistory]
-            val labels = jobHistory.getLabels
-            val labelsMap: util.Map[String, String] =
-              BDPJettyServerHelper.gson.fromJson(labels, classOf[java.util.Map[String, String]])
-            val userCreator = labelsMap.get("userCreator");
-            val tenant = labelsMap.get("tenant");
-            if (StringUtils.isNotBlank(userCreator)) {
-              val configMap = BDPJettyServerHelper.gson.fromJson(
-                Constants.USER_LABEL_TENANT.getValue,
-                classOf[java.util.Map[String, String]]
-              )
-              val listIterator = configMap.keySet.iterator
-              while ({
-                listIterator.hasNext
-              }) {
-                val next = listIterator.next
-                if (userCreator.contains(next)) {
-                  val value = configMap.get(next)
-                  if (!value.equals(tenant)) {
-                    alertData.add(d.asInstanceOf[JobHistory])
+    for (dataList <- data.asScala) {
+      if (dataList != null && dataList.getData() != null) {
+        logger.info("JobHistoryLabelsRule Begin scan")
+        for (historyList <- dataList.getData().asScala) {
+          historyList match {
+            case jobHistory: JobHistory =>
+              logger.info("JobHistoryLabelsRule JobHistory data : {}", jobHistory.getId)
+              val labels = jobHistory.getLabels
+              val labelsMap: util.Map[String, String] =
+                BDPJettyServerHelper.gson.fromJson(labels, classOf[util.Map[String, String]])
+              val userCreator = labelsMap.get("userCreator");
+              val tenant = labelsMap.get("tenant");
+              if (StringUtils.isNotBlank(userCreator)) {
+                val configMap = BDPJettyServerHelper.gson.fromJson(
+                  Constants.USER_LABEL_TENANT.getValue,
+                  classOf[util.Map[String, String]]
+                )
+                val listIterator = configMap.keySet.iterator
+                while ({
+                  listIterator.hasNext
+                }) {
+                  val next = listIterator.next
+                  if (userCreator.contains(next)) {
+                    val value = configMap.get(next)
+                    if (!value.equals(tenant)) {
+                      alertData.add(jobHistory)
+                    }
+                  }
+                }
+                if (configMap.values().contains(tenant)) {
+                  val bimap: HashBiMap[String, String] = HashBiMap.create(configMap)
+                  val key = bimap.inverse().get(tenant)
+                  if (!key.contains(userCreator)) {
+                    alertData.add(jobHistory)
                   }
                 }
               }
-              if (configMap.values().contains(tenant)) {
-                val bimap: HashBiMap[String, String] = HashBiMap.create(configMap)
-                val key = bimap.inverse().get(tenant)
-                if (!key.contains(userCreator)) {
-                  alertData.add(d.asInstanceOf[JobHistory])
-                }
-              }
-            }
-            scanRuleList.put("jobHistoryId", jobHistory.getId)
-          } else {
-            logger.warn("Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName)
+              scanRuleList.put("jobHistoryId", jobHistory.getId)
+            case _ =>
+              logger.warn(
+                "Ignored wrong input data Type : " + historyList + ", " + historyList.getClass.getCanonicalName
+              )
           }
         }
       } else {
         logger.warn("Ignored null scanned data")
       }
     }
-    logger.info("hit " + alertData.size() + " data in one iteration")
+    logger.info("JobHistoryLabelsRule hit " + alertData.size() + " data will be alter")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
       true

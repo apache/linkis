@@ -218,4 +218,66 @@ public class JobHistory {
   public void setObserveInfo(String observeInfo) {
     this.observeInfo = observeInfo;
   }
+
+  @Override
+  public String toString() {
+    return "JobHistory{"
+        + "id="
+        + id
+        + ", jobReqId='"
+        + jobReqId
+        + '\''
+        + ", submitUser='"
+        + submitUser
+        + '\''
+        + ", executeUser='"
+        + executeUser
+        + '\''
+        + ", source='"
+        + source
+        + '\''
+        + ", labels='"
+        + labels
+        + '\''
+        + ", params='"
+        + params
+        + '\''
+        + ", progress='"
+        + progress
+        + '\''
+        + ", status='"
+        + status
+        + '\''
+        + ", logPath='"
+        + logPath
+        + '\''
+        + ", errorCode="
+        + errorCode
+        + ", errorDesc='"
+        + errorDesc
+        + '\''
+        + ", createdTime="
+        + createdTime
+        + ", updatedTime="
+        + updatedTime
+        + ", updateTimeMills='"
+        + updateTimeMills
+        + '\''
+        + ", instances='"
+        + instances
+        + '\''
+        + ", metrics='"
+        + metrics
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
+        + ", executionCode='"
+        + executionCode
+        + '\''
+        + ", observeInfo='"
+        + observeInfo
+        + '\''
+        + '}';
+  }
 }

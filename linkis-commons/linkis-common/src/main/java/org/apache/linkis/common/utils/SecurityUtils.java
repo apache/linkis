@@ -320,4 +320,40 @@ public abstract class SecurityUtils {
     return key.toLowerCase().contains(param.toLowerCase())
         || value.toLowerCase().contains(param.toLowerCase());
   }
+
+  /**
+   * allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false
+   *
+   * @return
+   */
+  public static Properties getMysqlSecurityParams() {
+    Properties properties = new Properties();
+    properties.setProperty("allowLoadLocalInfile", "false");
+    properties.setProperty("autoDeserialize", "false");
+    properties.setProperty("allowLocalInfile", "false");
+    properties.setProperty("allowUrlInLocalInfile", "false");
+    return properties;
+  }
+
+  /**
+   * Check if the path has a relative path
+   *
+   * @param path
+   * @return
+   */
+  public static boolean containsRelativePath(String path) {
+    if (path.startsWith("./")
+        || path.contains("/./")
+        || path.startsWith("../")
+        || path.contains("/../")) {
+      return true;
+    }
+    if (path.startsWith(".\\")
+        || path.contains("\\.\\")
+        || path.startsWith("..\\")
+        || path.contains("\\..\\")) {
+      return true;
+    }
+    return false;
+  }
 }

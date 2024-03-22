@@ -109,7 +109,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
             : null;
 
     while (null == serviceInstanceResponse
-        && StringUtils.isNoneBlank(clientIp)
+        && StringUtils.isNotBlank(clientIp)
         && isRPC(linkisLoadBalancerType)
         && System.currentTimeMillis() < endTtime) {
       cacheManualRefresher.refresh();
@@ -120,9 +120,15 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
         try {
           Thread.sleep(5000L);
         } catch (InterruptedException e) {
-          throw new RuntimeException(e);
+
         }
       }
+    }
+
+    if (null == serviceInstanceResponse && StringUtils.isNotBlank(clientIp)) {
+      throw new NoInstanceExistsException(
+              LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
+              MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
     }
 
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {

@@ -2,7 +2,7 @@ HdrHistogram-2.1.12.jar
 HdrHistogram-2.1.9.jar
 LatencyUtils-2.0.3.jar
 ST4-4.0.4.jar
-SparseBitSet-1.2.jar
+SparseBitSet-1.3.jar
 accessors-smart-2.3.1.jar
 accessors-smart-2.4.9.jar
 aircompressor-0.10.jar
@@ -111,7 +111,7 @@ configuration-0.191.jar
 curator-client-4.2.0.jar
 curator-framework-4.2.0.jar
 curator-recipes-4.2.0.jar
-curvesapi-1.07.jar
+curvesapi-1.08.jar
 datanucleus-api-jdo-4.2.4.jar
 datanucleus-core-4.1.17.jar
 datanucleus-rdbms-4.1.19.jar
@@ -845,7 +845,7 @@ woodstox-core-6.4.0.jar
 xercesImpl-2.9.1.jar
 xml-apis-1.4.01.jar
 xml-apis-ext-1.3.04.jar
-xmlbeans-5.1.1.jar
+xmlbeans-5.2.0.jar
 xmlenc-0.52.jar
 xstream-1.4.20.jar
 xz-1.5.jar

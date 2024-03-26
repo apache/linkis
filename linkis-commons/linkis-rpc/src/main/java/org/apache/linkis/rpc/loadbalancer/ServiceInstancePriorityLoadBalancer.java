@@ -127,8 +127,8 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
 
     if (null == serviceInstanceResponse && StringUtils.isNotBlank(clientIp)) {
       throw new NoInstanceExistsException(
-              LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
-              MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
+          LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
+          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
     }
 
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {

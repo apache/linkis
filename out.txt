@@ -1,0 +1,1562 @@
+commit d767a3c5aa7acf0ffe8d88657236083284661d1b
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Dec 16 22:40:03 2023 +0800
+
+    Update entrance ha default switch offf
+
+commit 4b44517a5461afd916280d33d28fbf351560adae
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Dec 16 22:39:15 2023 +0800
+
+    Fix datasource module build
+
+commit 6b1e8fb61244473c8ad09bf97a35081b0ddeef85
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Dec 16 22:37:52 2023 +0800
+
+    Fix user conf resuource are not being applied close #5040
+
+commit 14e118afc987d73d15160cd9d17501acff1aceda
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Thu Dec 14 11:41:34 2023 +0800
+
+    Fix flink sql kill yarn application and getJobStatus fail (#5041)
+    
+    * Fix flink getJobStatus bug
+    
+    * Fix flink sql kill yarn application and getJobStatus fail
+
+commit f81179420049a3c6903717743c9949a1f2696bf8
+Merge: 7766933ea 08cbcfca1
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Dec 13 14:28:48 2023 +0800
+
+    Merge pull request #5037 from WeDataSphere/master-remove-log
+    
+    [Bug] Remove unnecessary log print
+
+commit 7766933eacc255de0084abae6cd9954809fe414b
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Dec 13 12:11:50 2023 +0800
+
+    Fix repl get task result bug (#5036)
+    
+    * Fix repl get task result bug
+    
+    * Fix repl get task result bug
+
+commit 08cbcfca140afebae10e1582ee87721578719ded
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Dec 13 11:46:11 2023 +0800
+
+    remove unnecessary log print
+
+commit d4dc8afb8710a857e8b0dccef462ab43a4bb0691
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Mon Dec 11 18:19:11 2023 +0800
+
+    Fix nebula query bug (#5029)
+
+commit 87c40ecbf61f7be875bdaf9f2033c95a4309c117
+Author: LiuGuoHua <129264181+sjgllgh@users.noreply.github.com>
+Date:   Mon Dec 11 17:12:49 2023 +0800
+
+    sql field comment semicolon with escape (#4967)
+    
+    * sql field comment semicolon with escape
+    
+    * add junit test
+    
+    * 1.format source code
+     2.add code comment
+
+commit f26cf2a0c2261e2b694ef22a8d54fb1b40722861
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Fri Dec 8 23:27:03 2023 +0800
+
+    Bump org.apache.avro:avro in /linkis-engineconn-plugins/sqoop (#5026)
+    
+    Bumps org.apache.avro:avro from 1.11.0 to 1.11.3.
+    
+    ---
+    updated-dependencies:
+    - dependency-name: org.apache.avro:avro
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+commit d16f6a3bef86dfaa621e0d94ce56d3052512da0b
+Author: yangwenzea <45863771+yangwenzea@users.noreply.github.com>
+Date:   Fri Dec 8 23:26:17 2023 +0800
+
+    [Feature][1.5.0] Load user-defined log4j.properties (#5023)
+    
+    * flink-log4j
+    
+    * code format
+
+commit 2f9f9bbf0ab01f89a793d79f0672024b401a229d
+Author: yangwenzea <45863771+yangwenzea@users.noreply.github.com>
+Date:   Fri Dec 8 23:25:58 2023 +0800
+
+    flink load default configuration (#5025)
+    
+    * flink load default configuration
+    
+    * fix gc log bug
+    
+    * code format
+
+commit 2097920a3590289ee296dba0639dc40aa5c589f1
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Thu Dec 7 12:06:23 2023 +0800
+
+    Bump vite from 4.4.9 to 4.4.12 in /linkis-web-next (#5021)
+    
+    Bumps [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite) from 4.4.9 to 4.4.12.
+    - [Release notes](https://github.com/vitejs/vite/releases)
+    - [Changelog](https://github.com/vitejs/vite/blob/v4.4.12/packages/vite/CHANGELOG.md)
+    - [Commits](https://github.com/vitejs/vite/commits/v4.4.12/packages/vite)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: vite
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+commit b689f88e0ca8360d9f1feab91570f156a44b10cd
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Dec 6 10:03:48 2023 +0800
+
+    [Bug] Fixed the problem that local Debug could not read the application yml configuration (#5020)
+    
+    * add template_required column to linkis_ps_configuration_config_key close #5018
+    
+    * Fix Local Debug cannot read application ymal
+
+commit 4c175983b06388a18de669b0e1cb14dc832f9f70
+Author: Yonghao Mei <73584269+mayinrain@users.noreply.github.com>
+Date:   Mon Dec 4 15:10:29 2023 +0800
+
+    upd env conf file version (#5009)
+
+commit 33f915914aff5485a892dc9e476fe6cf84a1f5d7
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Thu Nov 30 17:51:16 2023 +0800
+
+    Fix datasource build assembly bug
+
+commit 484afad581da4d5340625abe2590cf4f26e25d3a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Thu Nov 30 17:36:31 2023 +0800
+
+    add close issue step
+
+commit 9fd12658028fa23178a0775ba8ac8c16ee17c9ad
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Thu Nov 30 17:31:24 2023 +0800
+
+    Fix datasource build assembly bug
+
+commit 59fb3ad644222282dbc23354db89097b50d01680
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Thu Nov 30 14:54:49 2023 +0800
+
+    add source bash profile step
+
+commit d27a520d31f563e59d3658d68025c637eba9cd96
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 29 20:55:57 2023 +0800
+
+    optimize code override toString method
+
+commit 7704ed1b7079b80549e3282884deac505b9fb791
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 29 20:54:59 2023 +0800
+
+    Optimize JDBC connection support cache by task id
+
+commit 60aa1c9a8479a1c1c25a4996945c20f7eff66900
+Author: Zhen Wang <wangzhen@apache.org>
+Date:   Fri Dec 1 14:51:53 2023 +0800
+
+    Support nacos discovery (#5008)
+
+commit ba773ff00d009e915a3556a505892dc843e49da5
+Author: yijut2 <52221089+yijut2@users.noreply.github.com>
+Date:   Thu Nov 30 04:07:50 2023 -0600
+
+    Update ExceptionManagerTest.java (#5005)
+    
+    fix flaky test
+
+commit 2347ae84768cf35247129f72bdaf484d359a5525
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Nov 29 22:24:56 2023 +0800
+
+    Fix flink-1.16 ClassNotFoundException bug (#5001)
+    
+    * Fix flink-1.16 ClassNotFoundException bug
+    
+    * Fix flink-1.16 ClassNotFoundException bug
+
+commit 03540ea9f7473d3581726c551aa9353677462017
+Merge: ce0bf4353 a1bf43f74
+Author: Casion <casionone@gmail.com>
+Date:   Wed Nov 29 17:21:27 2023 +0800
+
+    Merge pull request #4996 from WeDataSphere/master-ec-conf
+    
+    [Bug][1.5.0] Spark scala task error should print task log
+
+commit a1bf43f746918abd54655766fabb07f41dc1a37a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 29 15:48:25 2023 +0800
+
+    Compatible ES6 and ES7 close #4998
+
+commit 332e11edcafcf93330b448ac8d31f1647d4e876d
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 29 14:18:18 2023 +0800
+
+    Fix issue #4997 add step source bash_profile
+
+commit ce0bf4353f055ecbf34dc689fd6b9eda35307f7d
+Author: aiceflower <kinsanities@sina.com>
+Date:   Wed Nov 29 14:12:27 2023 +0800
+
+    fix db2 connect issue (#4995)
+    
+    * fix db2 connect issue
+    
+    * code format
+
+commit fc3b23fe4f4b8ba46d966986a122e636057c4007
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Tue Nov 28 22:50:50 2023 +0800
+
+    add accexx control for gateway (#4992)
+
+commit 3a9763e5ea91c0bc768ea4fc25896f61218b153a
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Tue Nov 28 22:42:05 2023 +0800
+
+    Modify flink engine version (#4993)
+
+commit ca101ae73542f0744d5fdace1f249fafa491ac4e
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Nov 28 22:40:19 2023 +0800
+
+    Spark task error should print task log
+
+commit d9240c07d5129703300ebdb62e7cd525ba110e34
+Author: Yonghao Mei <73584269+mayinrain@users.noreply.github.com>
+Date:   Tue Nov 28 17:58:00 2023 +0800
+
+    fix web router (#4991)
+    
+    * chore: add new pages to linkis-web and fix bugs of web
+    
+    * upd: update version
+    
+    * web router fix
+
+commit a533c2fec7e3fd5e6dd774b6aafbb097153d11de
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Tue Nov 28 16:12:24 2023 +0800
+
+    linkis engineconn plugins pom add nebula module (#4969)
+
+commit 9e35c2b867a856d8157b4eb03b896bb5af2e49a3
+Merge: b704a2aff e95b08534
+Author: Casion <casionone@gmail.com>
+Date:   Tue Nov 28 14:11:27 2023 +0800
+
+    Merge pull request #4990 from WeDataSphere/master-manager-ec
+    
+    [Feature][ECM] Support download ec log file
+
+commit e95b08534c8d9f2e9a77e42791dd6cb087274df7
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Nov 28 11:48:25 2023 +0800
+
+    move java test class to java dir
+
+commit 79cad71559221d7a19fc2fb1631564deb67c7755
+Merge: 2c3e5459f b704a2aff
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Nov 27 22:23:24 2023 +0800
+
+    Merge remote-tracking branch 'upstream/master' into master-manager-ec
+
+commit b704a2aff66651ca6840c3dbedb0e252cd581a7b
+Merge: a8fb845f8 9ed39efc2
+Author: Casion <casionone@gmail.com>
+Date:   Mon Nov 27 21:43:14 2023 +0800
+
+    Merge pull request #4982 from WeDataSphere/master-1.5.0
+    
+    Feature][EC] EC index rich, add last unlock time and add ec exit log push
+
+commit 2c3e5459f4444b9017eebf8eb05e178c51f19028
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Nov 27 21:19:38 2023 +0800
+
+    add ecm rest full can to download ec log file
+
+commit a8fb845f8ac3436d2918b66bff67531fb2bced80
+Author: Zhen Wang <wangzhen@apache.org>
+Date:   Mon Nov 27 15:47:15 2023 +0800
+
+    Check spark commands only when ENABLE_SPARK is true and fix the last print (#4984)
+
+commit 9ed39efc2b7561899cd57740977f222352cc42a3
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sun Nov 26 23:31:25 2023 +0800
+
+    add creator task running number limit
+
+commit 39081ed78949496ea91c92442bbf219188c7dde5
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Nov 27 12:12:34 2023 +0800
+
+    Fix build issue
+
+commit dfb7faf8ecf7e6d427a3bf7f310fdb432421f710
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sun Nov 26 23:31:25 2023 +0800
+
+    add creator task running number limit
+
+commit fe4f1f64b111d6add27288dc34f237df4c70afe1
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 23:44:51 2023 +0800
+
+    add get all undone task method
+
+commit 5c204b2448eceb16418c17f9a90f561210cac725
+Merge: 7f1807af8 d7512fa9e
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 23:06:40 2023 +0800
+
+    Merge remote-tracking branch 'upstream/master' into master-1.5.0
+    
+    # Conflicts:
+    #       linkis-computation-governance/linkis-entrance/src/main/java/org/apache/linkis/entrance/server/DefaultEntranceServer.java
+    #       linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/EntranceServer.scala
+    #       linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/conf/EntranceConfiguration.scala
+    #       linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/scheduler/EntranceGroupFactory.scala
+
+commit 7f1807af8ae55e2fde28ddfa0307d28e5325644b
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:31:47 2023 +0800
+
+    Fix the occasional loss of logs
+
+commit 5616acc651b2924315707b5f95563c7ea0a867f4
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:30:25 2023 +0800
+
+    add task timeout scan
+
+commit 95855182e8fb7199eb87790a05e692fdc51c1546
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:29:18 2023 +0800
+
+    error code match log mark to error log
+
+commit a3cf805c82b8d438f577f5031689623368123135
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:28:27 2023 +0800
+
+    task log print optimize
+
+commit bb7b0101443e808125270fa38e329bbe83b4c071
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:26:40 2023 +0800
+
+    add entrance metric and consumer can be killed and add task timeout scan
+
+commit 39aa193bb732bbf7757932b65aefbf9176b6cf64
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:20:28 2023 +0800
+
+    add template conf feature
+
+commit 5aee060cc3d977290167b1fa03d4fdba9225b4c9
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 25 22:19:27 2023 +0800
+
+    optimize task log write user to jvm user
+
+commit 7c9d17a71975956914fd5f6379fa2598103e87cd
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 20:57:29 2023 +0800
+
+    fix build issue
+
+commit 15e0a8f2e9a06438896b275f6363bcc4d06bcfae
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 17:28:10 2023 +0800
+
+    code optimize
+
+commit 774b2bfaeb60777d57f95c787f64eefd888133c0
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 17:27:37 2023 +0800
+
+    EC exits unexpectedly and actively kills the task
+
+commit 032a0eb7834a50463b9c11bf578ff7f939d57f13
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 17:23:18 2023 +0800
+
+    ec metrics add last unlock time
+
+commit 6558fb2b2e648015ef8dbb6913ff5051e5b82a5e
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 17:16:28 2023 +0800
+
+    update cs resource file download filename to tmp name Prevent duplicate file names
+
+commit 172f811dc33082c8aed9a847bedf544616f214f1
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Nov 24 17:15:13 2023 +0800
+
+    update default ec idle time to 10 min
+
+commit d7512fa9e3e6b704d85b206285449038dc8258e4
+Merge: 87661dd01 bd15f865b
+Author: Casion <casionone@gmail.com>
+Date:   Thu Nov 23 22:34:01 2023 +0800
+
+    Merge pull request #4905 from WeDataSphere/master-1.1.15-merge
+    
+    [Feature][Extensions] Add Monitor Server
+
+commit 87661dd01b9fa324b43eaee217c871fecdbdf7e5
+Author: Yonghao Mei <73584269+mayinrain@users.noreply.github.com>
+Date:   Thu Nov 23 22:13:14 2023 +0800
+
+    update linkis-web for 1.5.0 (#4979)
+    
+    * chore: add new pages to linkis-web and fix bugs of web
+    
+    * upd: update version
+
+commit 1afc61295f093834035e41c9eab9dd415cd2c956
+Author: weixiao <leojie1314@gmail.com>
+Date:   Wed Nov 22 00:51:09 2023 -0600
+
+    Optimize HBase engine dependencies and move java exception class from scala package to java package. (#4976)
+    
+    Co-authored-by: Longping Jie <jielongping@qiyi.com>
+
+commit 0453b072de83104cddf9098f559607abf0264a9a
+Merge: b6af5f0c3 9f4a9c881
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sun Nov 19 21:51:03 2023 +0800
+
+    [Feature] Entrance support ha and failover task
+    
+    [Feature] Entrance support ha and failover task
+
+commit b6af5f0c3eac21ba73d4a0bb08c16a6fe6b460eb
+Author: ZHANG HUA JIN <utopiannet@gmail.com>
+Date:   Sun Nov 19 21:42:23 2023 +0800
+
+    [WIP]fix issues #4972 #4973 (#4972)
+
+commit 9f4a9c881d17ccf8d125155803eb79e7f1299349
+Author: guoshupei <15764973965@163.com>
+Date:   Sun Nov 19 15:48:22 2023 +0800
+
+    bugfix `refresh maxAllowRunningJobs`
+
+commit 5a5e5b37b12b00bf24b12c929c16517d6c75b155
+Author: guoshupei <15764973965@163.com>
+Date:   Sun Nov 19 13:38:06 2023 +0800
+
+    bugfix NPE
+
+commit 21df2de8a86339fd46d25e526262e6df1b1f393c
+Author: guoshupei <15764973965@163.com>
+Date:   Sun Nov 19 12:33:53 2023 +0800
+
+    bugfix `head of empty list` again
+
+commit 2b47014684a0f8b2491fa5b90410e10537fcfaa6
+Merge: 5a4f7575b 99e4197dd
+Author: luxl@chinatelecom.cn <lindaluo83@126.com>
+Date:   Tue Nov 14 08:53:15 2023 +0800
+
+    Merge pull request #4965 from apache/dependabot/npm_and_yarn/linkis-web/axios-1.6.0
+    
+    Bump axios from 0.21.4 to 1.6.0 in /linkis-web
+
+commit 5a4f7575b7dbc109a8792ffa077cc4f843c71615
+Merge: 149f45e82 2fb4f4d4d
+Author: luxl@chinatelecom.cn <lindaluo83@126.com>
+Date:   Tue Nov 14 08:52:35 2023 +0800
+
+    Merge pull request #4964 from apache/dependabot/npm_and_yarn/linkis-web-next/axios-1.6.0
+    
+    Bump axios from 1.5.0 to 1.6.0 in /linkis-web-next
+
+commit 99e4197dd88e34d2165ad7bf4f704d5f9ecfc4e5
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sun Nov 12 14:10:11 2023 +0000
+
+    Bump axios from 0.21.4 to 1.6.0 in /linkis-web
+    
+    Bumps [axios](https://github.com/axios/axios) from 0.21.4 to 1.6.0.
+    - [Release notes](https://github.com/axios/axios/releases)
+    - [Changelog](https://github.com/axios/axios/blob/v1.x/CHANGELOG.md)
+    - [Commits](https://github.com/axios/axios/compare/v0.21.4...v1.6.0)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: axios
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 149f45e82070b38c75f689a54fdea6499cc95cd1
+Merge: 51704268a 234c38eda
+Author: Casion <casionone@gmail.com>
+Date:   Sun Nov 12 22:07:42 2023 +0800
+
+    Merge pull request #4954 from WeDataSphere/master-pes
+    
+    [Feature]New user configuration function added to the management console #4948
+
+commit 2fb4f4d4dec8b012b29d4a008c81fa53bc139a6d
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Nov 11 15:55:20 2023 +0000
+
+    Bump axios from 1.5.0 to 1.6.0 in /linkis-web-next
+    
+    Bumps [axios](https://github.com/axios/axios) from 1.5.0 to 1.6.0.
+    - [Release notes](https://github.com/axios/axios/releases)
+    - [Changelog](https://github.com/axios/axios/blob/v1.x/CHANGELOG.md)
+    - [Commits](https://github.com/axios/axios/compare/v1.5.0...v1.6.0)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: axios
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 234c38edabf903db95118b4bb7efc9cd970479fe
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Nov 11 00:07:21 2023 +0800
+
+    Fix integration test bug
+
+commit fe9c0b2e07ced62db2de59c84055f9e098999934
+Author: guoshupei <15764973965@163.com>
+Date:   Thu Nov 9 17:49:27 2023 +0800
+
+    rollback bugfix `head of empty list`
+
+commit c97eacbec5b29cdaad65f9f4e1799cf0fd5142bf
+Author: guoshupei <15764973965@163.com>
+Date:   Wed Nov 8 21:39:45 2023 +0800
+
+    bugfix `head of empty list`
+
+commit f8936ce0c06f978ec24b14c8e8f76aebe32450db
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 8 17:59:05 2023 +0800
+
+    Fix integration test bug
+
+commit 8da0f80e35a493d02b10d5b1f66f4f9d5d02adec
+Author: guoshupei <15764973965@163.com>
+Date:   Wed Nov 8 16:50:38 2023 +0800
+
+    add config
+
+commit 51704268ab6403baaef0ae3c9d8da9128d168a8b
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Wed Nov 8 16:13:11 2023 +0800
+
+    feat: optimize process of closing spark job on k8s (#4957)
+
+commit 7b9957986128d3dc7dd9da01e963cb3b244f8cf3
+Author: 人生有如两个橘子 <15764973965@163.com>
+Date:   Wed Nov 8 16:12:52 2023 +0800
+
+    add import `org.apache.spark.sql.api.python.*` (#4961)
+
+commit 08795ecd3b7d3c96638a04b14ea20a54a9ab45e9
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Nov 8 16:09:45 2023 +0800
+
+    Fix integration test bug
+
+commit 8225429e8c76721b115dfe5add3298e42659f6a4
+Merge: 2a66bf618 5ac74affe
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Nov 7 22:27:40 2023 +0800
+
+    Merge remote-tracking branch 'upstream/master' into master-pes
+
+commit 5ac74affea6916400890b53f09dbf6f7e49cf5fc
+Author: Casion <casionone@gmail.com>
+Date:   Tue Nov 7 21:24:10 2023 +0800
+
+    update action (#4962)
+
+commit b39a08ede15c6da2b9c8b1a15b234899c9c12f45
+Merge: 4f2565abb 686fbca00
+Author: luxl@chinatelecom.cn <lindaluo83@126.com>
+Date:   Mon Nov 6 18:27:30 2023 +0800
+
+    Merge pull request #4955 from apache/dependabot/npm_and_yarn/linkis-web-next/postcss-8.4.31
+    
+    Bump postcss from 8.4.29 to 8.4.31 in /linkis-web-next
+
+commit bd15f865b27e52ef746b73ce800e079c76972cb8
+Merge: d9935d4b4 4f2565abb
+Author: v-kkhuang <62878639+v-kkhuang@users.noreply.github.com>
+Date:   Mon Nov 6 15:38:44 2023 +0800
+
+    Merge branch 'apache:master' into master-1.1.15-merge
+
+commit 43531aa275c2c085b5e2f58b867659d85596b6e9
+Author: guoshupei <15764973965@163.com>
+Date:   Thu Nov 2 16:23:33 2023 +0800
+
+    Remove `linkis.entrance.auto.clean.dirty.data.enable` configuration
+
+commit eb26d59bd76ab317c52d38b3944e17e6d8882b09
+Author: guoshupei <15764973965@163.com>
+Date:   Mon Oct 30 16:03:23 2023 +0800
+
+    Remove redundant configuration
+
+commit 3db8b4afceb0fc10cc713914e5da0a2d1b17892b
+Author: guoshupei <15764973965@163.com>
+Date:   Fri Oct 27 17:59:18 2023 +0800
+
+    Keyword uppercase
+
+commit 7a473e5e655c407f7878545e0d7e23118fcdd099
+Merge: c2f9d824c 4f2565abb
+Author: guoshupei <15764973965@163.com>
+Date:   Fri Oct 27 17:15:53 2023 +0800
+
+    Merge branch 'master' of https://github.com/apache/linkis into dev-1.3.3-feature-ha-4181
+    
+     Conflicts:
+    	linkis-commons/linkis-protocol/src/main/java/org/apache/linkis/protocol/constants/TaskConstant.java
+    	linkis-commons/linkis-scheduler/src/main/scala/org/apache/linkis/scheduler/queue/fifoqueue/FIFOUserConsumer.scala
+
+commit 686fbca00396184b3f3f521fe35bc74515217cdc
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Fri Oct 27 07:40:05 2023 +0000
+
+    Bump postcss from 8.4.29 to 8.4.31 in /linkis-web-next
+    
+    Bumps [postcss](https://github.com/postcss/postcss) from 8.4.29 to 8.4.31.
+    - [Release notes](https://github.com/postcss/postcss/releases)
+    - [Changelog](https://github.com/postcss/postcss/blob/main/CHANGELOG.md)
+    - [Commits](https://github.com/postcss/postcss/compare/8.4.29...8.4.31)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: postcss
+      dependency-type: indirect
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 4f2565abbe98bb24b4db3b5b0ae6356c455a7b20
+Author: CoderSerio <2779066456@qq.com>
+Date:   Mon Oct 16 14:24:39 2023 +0800
+
+    refactor of linkis-web
+
+commit a66ec807e63633a984acf93d813186579ea4ac04
+Author: aiceflower <kinsanities@sina.com>
+Date:   Fri Oct 27 14:25:35 2023 +0800
+
+    fix mysql error (#4951)
+
+commit 2a66bf6189a1febfb73f7294efd09e9d1cda763a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Oct 27 11:53:17 2023 +0800
+
+    add instancio-junit module
+
+commit 293356eb96e9342d73760f8d261f17c9272ffa57
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Thu Oct 26 12:09:35 2023 +0800
+
+    Fix build error
+
+commit c2f9d824c5c00774ec3be8710324b81e6e77f9c0
+Author: guoshupei <15764973965@163.com>
+Date:   Thu Oct 26 17:51:02 2023 +0800
+
+    Optimized code
+
+commit d61915d2be0d259d3b211d783d4a1b7225962d3e
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 25 21:54:52 2023 +0800
+
+    add template conf and cross cluster ddl
+
+commit f838aa129a24d0c93bc364be9aa3f039240334e9
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 25 21:54:23 2023 +0800
+
+    add template conf feature
+
+commit 95566692d97188ee2cc2adf915cd80f70e6ed1be
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 21:07:14 2023 +0800
+
+    Add cross-cluster rule configuration
+
+commit b91ec0fc571bf27e75503e876f2b9d87a325326f
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:48:06 2023 +0800
+
+    [Feature]New configuration management function added to the management console #4842
+    [Feature]New user configuration function added to the management console #4841
+
+commit 8c59c621f2d4b75f2296e13ea64420bee795cf46
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:22:21 2023 +0800
+
+    fix csv file with utf-8 with bom chart[&#xFEFF]
+
+commit 46589aed39f0dc9b183352b69a07264f3eab10ee
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:20:59 2023 +0800
+
+    Basic data management adds UDF tree management
+
+commit 1e70b84da9b6810819d5944fa31e00bfabbb3c82
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:12:23 2023 +0800
+
+    add clear map method
+
+commit bdc7a5c55629b85f73df0e27ca27ebe058ee23a2
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:11:32 2023 +0800
+
+    Distributed lock optimization adds lock holding attributes to prevent repeated lock acquisition and unlocking errors.
+
+commit 49bd9a21a97adc8bdb7af9a75b40c0d0cbd56461
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:09:27 2023 +0800
+
+    add new create file method support set owner
+
+commit 22497f7e5afa3d3c9b726067822b323ee907694e
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:08:38 2023 +0800
+
+    UDF info add desc info return
+
+commit f1f944d6c955679c109e612531872fd863e46611
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:00:33 2023 +0800
+
+    code optimize
+
+commit 2b6bb263482458d6c5e4708a99ea2fe5e7066819
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Thu Oct 26 14:48:09 2023 +0800
+
+    Add repl ec to execute Java and scala code (#4937)
+    
+    * Add repl ec to execute Java and scala code
+
+commit e795525dca4d5c308c829925f23ce89d594fe676
+Author: chengrui1 <33925582+chengrui1@users.noreply.github.com>
+Date:   Thu Oct 26 14:24:55 2023 +0800
+
+    Update SqlConnection.java (#4942)
+    
+    When you use service_name to connect to oracle, should pass in serviceName instead of database
+
+commit ab84ee33c86703bcf59a818799eb4b0597265183
+Author: zhaowenkai111 <1038365989@qq.com>
+Date:   Mon Oct 9 21:25:30 2023 +0800
+
+    update JDBC check hint
+
+commit 5b9a6886bb9278b223ae2b2a15dbde5dda19c3da
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 18:57:23 2023 +0800
+
+    1, update db.sh: add db information for addtional engines;
+    2,update linkis-env.sh, add MySQL and Openlookeng JDBC PATH defination.
+
+commit e5c24e547f55d727d581842219ab26034653db9f
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 18:54:53 2023 +0800
+
+    update checkAdd.sh :
+    1, use english desc. to raplace chinese desc.
+
+commit e3eee85fd864680acc77006aa780ec27d4d0280e
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 08:26:04 2023 +0800
+
+    update checkAdd.sh :
+    1, use english desc. to raplace chinese desc.
+
+commit 510e17f8d7dc619c5b3515ee56210b48704f687b
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 05:22:28 2023 +0800
+
+    update checkAdd.sh :
+    1, format comments for ---1,---2,---3
+    2, Indicate parameter define files
+
+commit 8106857a5c62c62adfdd4188a89dedfbb9baf1af
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 04:30:01 2023 +0800
+
+    update checkAdd.sh :
+    1, format comments for ---1,---2,---3
+    2, Indicate parameter define files
+
+commit ff97a923975622fc5e34d700b2af652d9c20c851
+Author: peter.peng <153836542@qq.com>
+Date:   Thu Sep 28 04:30:01 2023 +0800
+
+    rollback script install.sh，delete additonal engines checking call for checkadd.sh
+
+commit b735734bc802d74a49cfbd90c2ed7811a7cd6840
+Author: peter.peng <153836542@qq.com>
+Date:   Tue Sep 26 14:05:25 2023 +0800
+
+    add service check for Impala/Trino/Seatunnel
+
+commit 5c5259599676c8c34c5009b66d21ae5771c21e98
+Author: peter.peng <153836542@qq.com>
+Date:   Tue Sep 26 14:01:31 2023 +0800
+
+    add service check for HDFS/Hive/Spark
+
+commit c3efe2660dd161f9e32399d4d3a93c7a8abd912a
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Fri Sep 22 00:04:23 2023 +0800
+
+    Update checkEnv.sh
+    
+    add hadoop command check
+
+commit 5ab29e2b8e5080322d61202bbabe626a11a65a69
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Sat Sep 16 12:34:32 2023 +0800
+
+    Update checkEnv.sh for SHELL、spark-sql、 HDFS command
+
+commit 9177f0d929b626bb7b9d42dec7821135bb0bd84a
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Sat Sep 16 12:32:41 2023 +0800
+
+    add shell script "checkAdd.sh" for checking optional engines
+    
+    Engine supporting list as bellow:
+    
+    JDBC Flink openLooKeng Pipeline Presto Sqoop Elasticsearch
+
+commit 042f0cfa14039762455b6548480d8123580e5360
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Sat Sep 16 12:29:49 2023 +0800
+
+    add shell script " checkAdd.sh" for optional engines check
+
+commit 85e582d74485cb043937e4a7bca93cc36bcbc7b2
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Tue Aug 29 10:42:07 2023 +0800
+
+    Update install.sh - check addtional engines
+
+commit 7d0c88bca43ee1bf84407d01a7a52b1e7fe22819
+Author: 赵文恺 <129573858+zhaowenkai111@users.noreply.github.com>
+Date:   Tue Aug 29 09:39:42 2023 +0800
+
+    Create checkAdd.sh for non-default engines check
+
+commit 3b2b1d2a58618d84beaf59ca81d3dfd32119b9c3
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 20:00:11 2023 +0800
+
+    The information returned by a running task should not contain error information
+
+commit b21ad6efe5ba72b7fa1b30981c2f3c476a52133c
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 19:49:01 2023 +0800
+
+    [Feature][mg-eureka] List eureka service instance close #4884
+
+commit b8b82389a9c547c2d81a537e5dea31a56dcc5bb5
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 19:45:28 2023 +0800
+
+    Linkis base info support to return linkis cluster info
+
+commit 5aee61ca496a813a52f43be64a0a75b183092e22
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 19:44:36 2023 +0800
+
+    cs service supports active and standby configuration logic
+
+commit e1111ab54e33414140e9a5d98737e0506bd68cca
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 19:41:35 2023 +0800
+
+    linkis-cli add version info to source map
+
+commit 6affc4b2cfd2fcfd39a4e45164f34206499dde68
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 24 11:57:05 2023 +0800
+
+    The value configured by Linkis is trimmed.
+
+commit ec9d7f5378d7aa117740733208860029e4f25637
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Mon Oct 23 14:16:55 2023 +0800
+
+    Jdbc driver is compatible with multiple versions (#4930)
+    
+    * Jdbc driver is compatible with multiple versions
+    
+    * code formatting
+    
+    * Update reference method
+
+commit 95f229a3a06de69c7b6383f35b684fea13811d82
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 17:38:16 2023 +0800
+
+    Data source service forwarding optimization
+
+commit 8cf5f66e9ce70dbf39f5491e860ba4b3cb8c69da
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 17:37:57 2023 +0800
+
+    Gateway server log optimize, add token log and add error log to response
+
+commit 033b2a80db5d882177745244f5bb6a237bb4a9b7
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 21:12:09 2023 +0800
+
+    Spark supports printing parameters to task logs
+
+commit 247616a38541d82503bbc7e14fec2cfe429e206b
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 21:11:34 2023 +0800
+
+    Python supports killing subprocesses
+
+commit 922df460d9f0e9e973f28d79ccb0d8f729388a06
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 21:11:10 2023 +0800
+
+    Supports spark.conf parameters to configure multiple parameters
+
+commit f02ee0c330f2cf9a0540f58c65b1f14c96724916
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 21:09:50 2023 +0800
+
+    Result set optimization
+    1. Double supports NAN
+    2. String supports \n \t characters
+
+commit 9e9ab021943149a314cb71606e177945375fb49b
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 21:08:29 2023 +0800
+
+    code optimize
+
+commit 91d086185c112aeeeaa8a21e79c6fdf228e791d7
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 20:41:36 2023 +0800
+
+    add init fs retry
+
+commit 521d30ccd25f611226f498324dec07591a44ed2a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 20:34:51 2023 +0800
+
+    optimize hive task progress
+
+commit 8c1b15d81eeff5cf488a8d1fd4fc400b80b924f5
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Oct 10 20:34:15 2023 +0800
+
+    Added logs for the ask engine stage
+
+commit 39a8c10d4a3d28f1a1d69323580572b183722d32
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Oct 14 23:18:50 2023 +0800
+
+    Bump postcss from 8.4.21 to 8.4.31 in /linkis-web (#4928)
+    
+    Bumps [postcss](https://github.com/postcss/postcss) from 8.4.21 to 8.4.31.
+    - [Release notes](https://github.com/postcss/postcss/releases)
+    - [Changelog](https://github.com/postcss/postcss/blob/main/CHANGELOG.md)
+    - [Commits](https://github.com/postcss/postcss/compare/8.4.21...8.4.31)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: postcss
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+    Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+commit ca87f434c524f9b5d947ef44ecec99da44cabe73
+Author: GuoPhilipse <46367746+GuoPhilipse@users.noreply.github.com>
+Date:   Wed Oct 11 10:20:31 2023 +0800
+
+    [Bug] use gson to replace jackson (#4936)
+    
+    * use gson to replace jackson
+    
+    * fix checkstyle
+
+commit d9935d4b44aef5aa658b033bb9d1732295864eb5
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Oct 9 20:56:25 2023 +0800
+
+    delete duplicate conf
+
+commit 9f1dd091197d8e1c08459e0446ccfcf8bf5e25c1
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sat Oct 7 10:38:13 2023 +0800
+
+    Fix build error
+
+commit b63f34c5b2fa88db1880cd32eaab3615704b7de3
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 4 23:49:50 2023 +0800
+
+    Fix build error
+
+commit 88d9e1be7391c790b7bb0fee70b25494df88caae
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 4 23:38:44 2023 +0800
+
+    support null
+
+commit c625de68e300eaedc535987ab1158716f664d11a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 4 23:38:30 2023 +0800
+
+    optimize jdbc-driver module
+
+commit efc85b3801ff6b34d317873b420a7ff6ca9d8138
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Wed Oct 4 23:37:18 2023 +0800
+
+    add version info to linkis-cli
+
+commit dc8a7ad3c32c032ddbba0dacd48e9f5cdaaff6e0
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Sun Oct 1 23:55:08 2023 +0800
+
+    optimize storage module
+
+commit 01ae62a563f838aaa7d58977814da7472d3364d9
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 22 14:56:19 2023 +0800
+
+    add ps datasource server conf
+
+commit 50254ac558e1ab26321a67411b6baee402dece57
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 22 14:55:54 2023 +0800
+
+    optimize consumer code logic
+
+commit d245994970df12e07b8d5c8592aab6628e4a28df
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 22 14:55:15 2023 +0800
+
+    add debug switch params  to task
+
+commit 2b6d80240a065c67085d36ae915cec5b5bfeaae1
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 22 14:54:24 2023 +0800
+
+    add default retry for 401
+
+commit fcd6c7c0b554b855fcbad68a0113f422a1982e8a
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 22 12:09:28 2023 +0800
+
+    1. add result set sot utils class
+    2. optimize variable operation logic
+
+commit 16183c973c59380cbb05250f773692bfd02f1dcb
+Author: GuoPhilipse <46367746+GuoPhilipse@users.noreply.github.com>
+Date:   Sun Oct 1 23:00:58 2023 +0800
+
+    [Feature][linkis-public-enhancements] Mer pes publicservice (#4854)
+    
+    * merge pes service
+    
+    * remove instance label
+
+commit 17fabc9a22c7730f320a49d3614a5b47f0863b86
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Sun Oct 1 22:44:37 2023 +0800
+
+    Fix linkis cli npe error (#4919)
+    
+    * #4907  Incorrect adjustment of log printing resource parameters
+    
+    * #4918 fix bug:linkis cli npe error
+
+commit 2efef01187ec7bc82403bd1ab163b22b6d237cdd
+Author: weixiao <leojie1314@gmail.com>
+Date:   Tue Sep 26 21:15:51 2023 +0800
+
+    [Feature] Add hbase engine to linkis (#4891)
+    
+    * [Feature] Add hbase engine to linkis
+    
+    * Add the function of kill task and add TEXT ResultSet
+    
+    ---------
+    
+    Co-authored-by: Longping Jie <jielongping@qiyi.com>
+
+commit c0cebe40fb13850794fa5caffde99ca9c68e8905
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Mon Sep 25 19:36:17 2023 +0800
+
+    [BUG] Fix em sort error (#4915)
+    
+    * fix em sort error
+    
+    * Adjust the sorting when there are null values.
+
+commit 118435f084fce3b1796cb1c73078a2c84653b3b5
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Mon Sep 25 17:21:56 2023 +0800
+
+    Modify spark-k8s-operator.md rest submit task parameters (#4912)
+
+commit 02a740362d7182098adae91ec4fc9904e04912e3
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Mon Sep 25 17:21:17 2023 +0800
+
+    Adjust the sortByResourceRate sorting from large to small. (#4914)
+
+commit 89a653d75359b912bffade16426b0ab4b850d01a
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Thu Sep 21 21:45:40 2023 +0800
+
+    feat: support submit pyspark once job on k8s and add clusterlabel to combinedlabel (#4906)
+    
+    * feat: support submit pyspark once job on k8s
+    
+    * feat: modify variable name
+    
+    * feat: add method to build k8s client from kubeConfig
+    
+    * feat: add Spark UI port configuration for spark on k8s once job
+    
+    * feat: rename userCreatorEngineTypeLabel
+    
+    * feat: merge podIP and port into url
+    
+    * fix: replace 'empty' with 'blank'
+
+commit 486892036e48c8e04a45e8e4ae27f486c2884c0e
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Wed Sep 20 20:34:09 2023 +0800
+
+    #4907  Incorrect adjustment of log printing resource parameters (#4908)
+
+commit d6a86a1dbcf25669379a4c562740c8310485f50b
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Sep 20 20:33:18 2023 +0800
+
+     Modify spark.md (#4875)
+    
+    * linkis-cli add the engingeConnRuntimeModeOP
+
+commit 4ecb22e373d7407226acc7ac7c63d698f11b394f
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Sep 20 20:32:46 2023 +0800
+
+    [Feature] Add nebula engine to linkis (#4903)
+    
+    * Add nebula engine to linkis
+    
+    * Reuse nebula session
+    
+    * Code optimization and remove wds prefix
+
+commit 8f149e1800a57be2d18fb8e0592191bc3aa8ba69
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Mon Sep 18 15:09:04 2023 +0800
+
+    Spark once task supports engingeConnRuntimeMode label (#4896)
+    
+    * Spark once task supports engingeConnRuntimeMode label
+    
+    * isYarnClusterMode extracts to LabelUtil
+    
+    * Modify SparkEngineConnFactory
+
+commit 80b2be58b4f5680a1b4a94803e4dc58c81b59bca
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Sep 12 12:10:25 2023 +0800
+
+    code optimize
+
+commit 703eb501e781a509ad5ec615eaa462598bbe82d1
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Sep 11 22:30:05 2023 +0800
+
+    code optimize
+
+commit 5e52f909e4c06aedb4c5e9ab7fa2c8bae7f23884
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 8 18:57:48 2023 +0800
+
+    add bml
+
+commit 5ca67262ad93ab09c3338393155f3f5fa8717078
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Fri Sep 8 14:38:54 2023 +0800
+
+    feat: support spark submit jar on k8s (#4867)
+    
+    * feat: support spark submit jar on k8s
+    
+    * feat: add spark cores setting priority
+    
+    * feat: use UUID to generate driverPodName
+    
+    * feat: optimize code of executor creation
+
+commit 8dfcf86ec42fd9f9ab1aed96adb7c0b16c60a11d
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Fri Sep 8 14:37:01 2023 +0800
+
+    #4900 Fix linkismanager allocation ECM error logic, adjust resource allocation logic from large to small (#4901)
+    
+    Co-authored-by: weipengfei <weipengfei@psbc.com>
+
+commit 8181efc1cf0807d6bca18df973e4db53580c4949
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Sep 6 10:27:31 2023 +0800
+
+    HttpBmlClient delete useless code (#4898)
+
+commit e88d5b5b70bd90384d5a3d60ba0d0090cafa7a2d
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Tue Sep 5 21:25:42 2023 +0800
+
+    code optimize
+
+commit 42435c50c9282a1b5e47ecd934f0abadc08fc734
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Mon Sep 4 19:19:07 2023 +0800
+
+    bak
+
+commit a3e135ea1cace9b635dadaae03342984c5a28960
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Mon Sep 4 16:24:39 2023 +0800
+
+    fix spark k8s bug (#4895)
+
+commit 4169e703c427842d5e932b9375423d74017465ad
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Fri Sep 1 19:09:53 2023 +0800
+
+    Spark k8s operator task Added status acquisition (#4889)
+    
+    * Spark k8s operator task Added status acquisition
+    
+    * spark The obtaining status of the k8s operator task is changed to k8s list-watch
+    
+    * spark The obtaining status of the k8s operator task is changed to k8s list-watch
+
+commit b5453a2672db5799e3f40653e28ff27f76963a7b
+Author: peacewong <wpeace1212@gmail.com>
+Date:   Fri Sep 1 19:07:34 2023 +0800
+
+    Fix linkis cli async exeute throw npe (#4870)
+    
+    * Fix linkis cli async exeute throw npe close #4869
+    
+    * Optimize Code
+
+commit 5a58d73d480f167506ea3bb5c0c6a1546e55e1e2
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Thu Aug 24 17:02:03 2023 +0800
+
+    Fix spark yarn cluster mode bug (#4872)
+    
+    * fix spark yarn cluster mode bug
+    
+    * fix spark yarn cluster mode bug
+
+commit 5fa73f2576cc159dfd394c7b6bdc3ad57f777380
+Author: guoshupei <15764973965@163.com>
+Date:   Tue Aug 22 21:57:10 2023 +0800
+
+    add mybatis config
+
+commit bdc3e0eb72ce543db841bb937bb5d96fcbd7a005
+Author: guoshupei <15764973965@163.com>
+Date:   Tue Aug 22 16:08:52 2023 +0800
+
+    add comment
+
+commit faa8d15315a802553c6a261770e3cd7fa8d23640
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Thu Aug 17 11:14:08 2023 +0800
+
+    fix: correct the length check of cluster label (#4865)
+
+commit a94c87653f6ee4c0303876fb1349dbd24e0d614a
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Mon Aug 14 19:11:01 2023 +0800
+
+    spark support yarn cluster (#4850)
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * LinkisManagerApplication Remove useless code
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+    
+    * spark support yarn cluster
+
+commit abbcb733953d6a79faa8d8493b9ca52afa95f75e
+Author: zhangwejun <33748538+zhangwejun@users.noreply.github.com>
+Date:   Mon Aug 14 18:12:05 2023 +0800
+
+    Fix Chinese garbled code issue when HTTP post input parameter is param (#4860)
+    
+    * upgrade the version to 1.4.0
+    
+    * upgrade the version to 1.4.0
+    
+    * Fix Chinese garbled code issue when HTTP post input parameter is param
+    
+    * upgrade the version to 1.5.0-SNAPSHOT
+    
+    * upgrade the version to 1.5.0-SNAPSHOT
+    
+    ---------
+    
+    Co-authored-by: Casion <casionone@gmail.com>
+    Co-authored-by: peacewong <wpeace1212@gmail.com>
+
+commit 3d681fb8a74142417c510687527438deb2e31577
+Author: guoshupei <15764973965@163.com>
+Date:   Mon Aug 14 15:05:45 2023 +0800
+
+    merge master
+
+commit 4571c4c9e777ce26a028187f2e371864a4aa6f79
+Merge: caeeab9fc 1dd22bc4a
+Author: guoshupei <15764973965@163.com>
+Date:   Mon Aug 14 11:36:13 2023 +0800
+
+    Merge branch 'master' of https://github.com/apache/linkis into dev-1.3.3-feature-ha-4181
+    
+     Conflicts:
+    	linkis-computation-governance/linkis-engineconn/linkis-computation-engineconn/src/main/scala/org/apache/linkis/engineconn/computation/executor/service/TaskExecutionServiceImpl.scala
+    	linkis-computation-governance/linkis-entrance/src/main/java/org/apache/linkis/entrance/restful/EntranceRestfulApi.java
+    	linkis-computation-governance/linkis-entrance/src/main/java/org/apache/linkis/entrance/server/DefaultEntranceServer.java
+    	linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/EntranceServer.scala
+    	linkis-dist/package/conf/linkis-cg-entrance.properties
+    	linkis-dist/package/conf/linkis-mg-gateway.properties
+
+commit caeeab9fc13489adad51a06cf86bd0733a761e05
+Author: guoshupei <15764973965@163.com>
+Date:   Mon Aug 14 11:23:30 2023 +0800
+
+    sql optimize and bug fix
+
+commit 1dd22bc4a65d4cc7a9245745d6df06f0c41dc165
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Fri Aug 11 11:29:21 2023 +0800
+
+    LinkisManagerApplication Remove useless code (#4856)
+
+commit 64cdd4d1fa0a6f22c76a7c7ec8d9c4902438e486
+Author: 人生有如两个橘子 <15764973965@163.com>
+Date:   Wed Aug 9 21:58:07 2023 +0800
+
+    [Feature] Enhanced FileSource to support more parameters feature (#4838)
+    
+    * Enhanced FileSource to support more parameters feature
+    
+    * Delete param of `limitTotalLine` and it can be replaced by method of `fileInfo`
+    
+    * Remove redundant references
+
+commit f08773d93e4d297d8909054a2c4c04eba8dad149
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Tue Aug 8 20:43:18 2023 +0800
+
+    Flink upgrade 1.16.2 and compatible with multiple versions (#4753)
+    
+    * Flink upgrade 1.16.2
+    
+    * Flink is compatible with multiple versions
+    
+    * Compatible with flink1.16.2 modifications
+    
+    * Compatible with flink1.12.2 modifications
+    
+    * Compatible with flink1.12.2 modifications
+    
+    * Modify the flink version
+    
+    * Compatible with flink1.12.2 modifications
+    
+    * Remove useless code
+    
+    * Modified flink-shims-1.16.2 pom
+    
+    * Modified known-dependencies.txt
+    
+    * add license
+    
+    * Resolving code conflicts
+    
+    * Resolving code conflicts
+    
+    * Resolving code conflicts
+    
+    * Resolving code conflicts
+    
+    * Resolving code conflicts
+    
+    * spark support yarn cluster
+    
+    * Modify flink pom
+
+commit dacd2c8fb5c53169bfc2ab3c0e9c80727d9a5f6e
+Author: GuoPhilipse <46367746+GuoPhilipse@users.noreply.github.com>
+Date:   Mon Aug 7 19:24:11 2023 +0800
+
+    [Feature][linkis-public-enhancements] Merge pes client and common (#4853)
+    
+    * merge pes client and common
+    
+    * fix cs common
+    
+    * optimize import
+    
+    * optimize import
+    
+    * rename module linkis-rpc-client to be linkis-pes-rpc-client
+
+commit 958c4940a9e56f367683bc2ba0284c7402d63e6d
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Sat Aug 5 23:31:25 2023 +0800
+
+    feat: "spark-submit jar on k8s" related label and resource expansion (#4784)
+    
+    * feat: add k8sCluster label recognition
+    
+    * feat: add kubernetes resource related basic classes
+    
+    * feat: add kubernetes resource related classes
+    
+    * fix: supplement third dependency
+    
+    * feat: k8s resource support different namespace
+    
+    * fix: fix some basic problems
+    
+    * feat: extend the length of column label_key of linkis_cg_manager_label to 50
+    
+    * fix: format code according to scala style
+    
+    * feat: KubernetesResourceRequester supports multiple providers
+    
+    * fix: fix wrong variable use
+    
+    * feat: adjust constants
+    
+    * feat: adjust constants
+    
+    * fix: format code according to scala style
+
+commit bbcb5189370aea2355adac851c3785bc2e9d5a2b
+Author: zlucelia <66543456+Zhao-LX2000@users.noreply.github.com>
+Date:   Sat Aug 5 23:30:20 2023 +0800
+
+    feat: YarnResourceRequester supports multiple providers (#4852)
+    
+    * feat: YarnResourceRequester supports multiple providers
+    
+    * fix: format code according to scala style
+
+commit 5e50196f2be161c420ee6b20a4d38719c7d9935e
+Author: GuoPhilipse <46367746+GuoPhilipse@users.noreply.github.com>
+Date:   Fri Aug 4 16:17:16 2023 +0800
+
+    merge datasource module (#4847)
+
+commit 5fa1697b0e84f55aac752a869b44480953e55e37
+Author: ChengJie1053 <18033291053@163.com>
+Date:   Wed Aug 2 20:12:10 2023 +0800
+
+    Modify spark-k8s-operator.md (#4837)
+
+commit 9f8559b048422c6961807010a58bfe5189792ed9
+Author: 人生有如两个橘子 <15764973965@163.com>
+Date:   Wed Aug 2 10:28:25 2023 +0800
+
+    [optimize] return to the custom error info (#4835)
+    
+    * [optimize] return to the custom error info
+    
+    * format
+
+commit ead682223d02af3aec0f6d0c18ede0753e1359f0
+Author: sjgllgh <129264181+sjgllgh@users.noreply.github.com>
+Date:   Fri Jul 28 14:24:04 2023 +0800
+
+    fix pg bug (#4833)

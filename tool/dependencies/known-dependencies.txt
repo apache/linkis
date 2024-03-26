@@ -85,7 +85,7 @@ commons-collections-3.2.2.jar
 commons-collections4-4.4.jar
 commons-compiler-3.1.4.jar
 commons-compiler-3.1.9.jar
-commons-compress-1.21.jar
+commons-compress-1.26.1.jar
 commons-configuration-1.10.jar
 commons-configuration2-2.1.1.jar
 commons-daemon-1.0.13.jar
@@ -132,7 +132,7 @@ eureka-client-1.10.17.jar
 eureka-core-1.10.14.jar
 eureka-core-1.10.17.jar
 evictor-1.0.0.jar
-excel-streaming-reader-4.0.5.jar
+excel-streaming-reader-4.3.0.jar
 expiringmap-0.5.6.jar
 failsafe-2.4.0.jar
 failureaccess-1.0.1.jar
@@ -606,10 +606,10 @@ parquet-hadoop-1.10.0.jar
 parquet-hadoop-1.12.2.jar
 parquet-jackson-1.10.0.jar
 parquet-jackson-1.12.2.jar
-poi-5.2.3.jar
-poi-ooxml-5.2.3.jar
-poi-ooxml-lite-5.2.3.jar
-poi-shared-strings-2.5.6.jar
+poi-5.2.5.jar
+poi-ooxml-5.2.5.jar
+poi-ooxml-lite-5.2.5.jar
+poi-shared-strings-2.8.0.jar
 presto-client-0.234.jar
 presto-client-1.5.0.jar
 presto-resource-group-managers-0.234.jar

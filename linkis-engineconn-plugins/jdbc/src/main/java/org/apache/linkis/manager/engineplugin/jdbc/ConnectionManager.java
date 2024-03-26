@@ -192,6 +192,7 @@ public class ConnectionManager {
     datasource.setUrl(dbUrl);
     datasource.setUsername(username);
     datasource.setPassword(password);
+    datasource.setConnectProperties(SecurityUtils.getMysqlSecurityParams());
     datasource.setDriverClassName(driverClassName);
     datasource.setInitialSize(initialSize);
     datasource.setMinIdle(minIdle);

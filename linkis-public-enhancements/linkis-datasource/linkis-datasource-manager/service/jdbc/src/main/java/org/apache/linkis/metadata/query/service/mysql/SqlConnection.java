@@ -158,7 +158,10 @@ public class SqlConnection extends AbstractSqlConnection {
       url += "?" + extraParamString;
     }
     LOG.info("jdbc connection url: {}", url);
-    return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
+    Properties properties = SecurityUtils.getMysqlSecurityParams();
+    properties.setProperty("user", connectMessage.username);
+    properties.setProperty("password", connectMessage.password);
+    return DriverManager.getConnection(url, properties);
   }
 
   public String getSqlConnectUrl() {

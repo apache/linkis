@@ -99,8 +99,12 @@ public class DatasourceTypeKeyRestfulApi {
       httpMethod = "DELETE")
   @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
   public Message remove(HttpServletRequest request, @PathVariable("id") Long id) {
-    ModuleUserUtils.getOperationUser(
-        request, "Remove a Datasource Type Key Record,id:" + id.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Remove a Datasource Type Key Record,id:" + id.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = datasourceTypeKeyService.removeById(id);
     return Message.ok("").data("result", result);
   }

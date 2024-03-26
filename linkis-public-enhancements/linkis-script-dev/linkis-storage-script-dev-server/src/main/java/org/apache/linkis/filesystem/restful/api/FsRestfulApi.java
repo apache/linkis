@@ -614,10 +614,15 @@ public class FsRestfulApi {
       }
       if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
         if (!StringUtils.isEmpty(nullValue)) {
+          if ("dataServiceFlag".equals(nullValue)) {
+            LOGGER.info("set dataServiceFlag for thread: {}", Thread.currentThread().getName());
+            LinkisStorageConf.dataServiceFlag().set(true);
+          }
           fileSource.addParams("nullValue", nullValue);
         }
         if (pageSize > FILESYSTEM_RESULTSET_ROW_LIMIT.getValue()) {
-          throw WorkspaceExceptionManager.createException(80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
+          throw WorkspaceExceptionManager.createException(
+              80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
         fileSource = fileSource.page(page, pageSize);
       } else if (fileSystem.getLength(fsPath)
@@ -654,6 +659,11 @@ public class FsRestfulApi {
         return message;
       }
     } finally {
+      // 移除标识
+      if ("dataServiceFlag".equals(nullValue)) {
+        LinkisStorageConf.dataServiceFlag().remove();
+        LOGGER.info("remove dataServiceFlag for thread: {}", Thread.currentThread().getName());
+      }
       LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);
     }

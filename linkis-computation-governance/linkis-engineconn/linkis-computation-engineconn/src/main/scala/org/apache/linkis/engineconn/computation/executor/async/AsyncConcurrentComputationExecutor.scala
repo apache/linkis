@@ -259,4 +259,14 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     getRunningTask > 0
   }
 
+  override def transition(toStatus: NodeStatus): Unit = {
+    if (getRunningTask >= getConcurrentLimit && NodeStatus.Unlock == toStatus) {
+      logger.info(
+        s"running task($getRunningTask) > concurrent limit:$getConcurrentLimit, can not to mark EC to Unlock"
+      )
+      return
+    }
+    super.transition(toStatus)
+  }
+
 }

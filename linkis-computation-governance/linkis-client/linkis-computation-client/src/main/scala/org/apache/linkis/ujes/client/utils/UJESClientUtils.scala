@@ -23,6 +23,7 @@ import org.apache.linkis.ujes.client.response.ResultSetResult
 
 import java.util
 import java.util.Locale
+
 import com.google.gson.{Gson, JsonObject}
 
 object UJESClientUtils {

@@ -131,3 +131,4 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 UPDATE linkis_ps_error_code SET error_regex = "KeyError: (.*)" WHERE  error_code =  "43017";
 
 UPDATE linkis_ps_error_code SET error_desc = "任务实际运行内存超过了设置的内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory增加内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code =  "13002";
+update  linkis_ps_configuration_config_key   set validate_range ='[\",\",\"\\\\t\",\"\\\\;\",\"\\\\|\"]',description ="取值范围：，或\t或;或|" WHERE `key`= "pipeline.field.split";

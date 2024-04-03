@@ -23,7 +23,7 @@ import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
 import org.apache.linkis.jobhistory.transitional.TaskStatus
-import org.apache.linkis.jobhistory.util.QueryUtils
+import org.apache.linkis.jobhistory.util.{Constants, QueryUtils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -31,6 +31,7 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.BeanUtils
@@ -39,6 +40,7 @@ import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
 
+import scala.collection.JavaConversions.asScalaSet
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 import com.fasterxml.jackson.core.JsonProcessingException
@@ -316,6 +318,21 @@ object TaskConversions extends Logging {
       }
     }
     taskVO.setObserveInfo(job.getObserveInfo)
+    taskVO.setYarnAddress("")
+    if (StringUtils.isNotBlank(JobhistoryConfiguration.JOB_HISTORY_YARN_URL.getValue)) {
+      val metricsMap = BDPJettyServerHelper.gson.fromJson(job.getMetrics, classOf[util.Map[_, _]])
+      if (metricsMap.containsKey(TaskConstant.JOB_YARNRESOURCE)) {
+        val mapKeySet = MapUtils.getMap(metricsMap, TaskConstant.JOB_YARNRESOURCE).keySet
+        mapKeySet.foreach { key =>
+          if (key.toString.contains("application")) {
+            taskVO.setYarnAddress(
+              JobhistoryConfiguration.JOB_HISTORY_YARN_URL.getValue
+                .concat(Constants.YARN_APPLICATION + key.toString)
+            )
+          }
+        }
+      }
+    }
     taskVO
   }
 

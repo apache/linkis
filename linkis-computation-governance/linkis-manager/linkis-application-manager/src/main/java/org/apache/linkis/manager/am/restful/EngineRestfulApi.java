@@ -36,6 +36,7 @@ import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.constant.AMConstant;
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
 import org.apache.linkis.manager.common.entity.node.EMNode;
@@ -605,7 +606,8 @@ public class EngineRestfulApi {
     @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:12295"),
     @ApiImplicitParam(name = "labels", dataType = "List", required = false, value = "labels"),
     @ApiImplicitParam(name = "labelKey", dataType = "String", example = "engineInstance"),
-    @ApiImplicitParam(name = "stringValue", dataType = "String", example = "linkis-cg:12295")
+    @ApiImplicitParam(name = "stringValue", dataType = "String", example = "linkis-cg:12295"),
+    @ApiImplicitParam(name = "nodeHealthy", dataType = "String", example = "UnHealthy")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
@@ -617,6 +619,7 @@ public class EngineRestfulApi {
           210003, "Only admin can modify engineConn information(只有管理员才能修改引擎信息).");
     }
     ServiceInstance serviceInstance = getServiceInstance(jsonNode);
+
     JsonNode labels = jsonNode.get("labels");
     Set<String> labelKeySet = new HashSet<>();
     if (labels != null) {
@@ -640,7 +643,46 @@ public class EngineRestfulApi {
       nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
       logger.info("success to update label of instance: " + serviceInstance.getInstance());
     }
+
+    // 修改引擎健康状态，只支持 Healthy和 UnHealthy
+    String healthyKey = "Healthy";
+    String unHealthyKey = "UnHealthy";
+    if (healthyKey.equals(jsonNode.get("nodeHealthy").asText())) {
+      engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.Healthy);
+    } else if (unHealthyKey.equals(jsonNode.get("nodeHealthy").asText())) {
+      engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.UnHealthy);
+    }
     return Message.ok("success to update engine information(更新引擎信息成功)");
+  }
+
+  @ApiOperation(
+          value = "batchSetEngineToUnHealthy",
+          notes = "batch set engine to unHealthy",
+          response = Message.class)
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "instances", dataType = "String", example = "[{\"instance\":\"bdplinkis1001:38701\",\"engineType\":\"spark\",\"applicationName\":\"linkis-cg-engineconn\"}]")
+  })
+  @ApiOperationSupport(ignoreParameters = {"jsonNode"})
+  @RequestMapping(path = "/batchSetEngineToUnHealthy", method = RequestMethod.PUT)
+  public Message batchSetEngineToUnHealthy(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+          throws AMErrorException {
+    String username = ModuleUserUtils.getOperationUser(req, "batchSetEngineToUnHealthy");
+    if (Configuration.isNotAdmin(username)) {
+      throw new AMErrorException(
+              210003, "Only admin can modify engineConn healthy info(只有管理员才能修改引擎健康信息).");
+    }
+
+    JsonNode instances = jsonNode.get("instances");
+    if (instances != null) {
+      Iterator<JsonNode> iterator = instances.iterator();
+      while (iterator.hasNext()) {
+        JsonNode instanceNode = iterator.next();
+        ServiceInstance serviceInstance = getServiceInstance(instanceNode);
+        engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.UnHealthy);
+      }
+    }
+    logger.info("success to batch update engine status to UnHealthy.");
+    return Message.ok("success to update engine information(批量更新引擎健康信息成功)");
   }
 
   @ApiOperation(

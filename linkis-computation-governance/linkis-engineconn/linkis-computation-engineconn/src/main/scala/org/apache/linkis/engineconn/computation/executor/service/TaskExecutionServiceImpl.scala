@@ -59,6 +59,7 @@ import org.apache.linkis.governance.common.exception.engineconn.{
 }
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
+import org.apache.linkis.hadoop.common.utils.KerberosUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
@@ -138,6 +139,9 @@ class TaskExecutionServiceImpl
   def init(): Unit = {
     LogHelper.setLogListener(this)
     syncListenerBus.addListener(this)
+    if (ComputationExecutorConf.ENGINE_KERBEROS_AUTO_REFRESH_ENABLED) {
+      KerberosUtils.startKerberosRefreshThread()
+    }
   }
 
   private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = {

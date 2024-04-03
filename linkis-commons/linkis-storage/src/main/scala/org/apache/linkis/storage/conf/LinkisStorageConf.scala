@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils
 object LinkisStorageConf {
   private val CONF_LOCK = new Object()
 
-  val dataServiceFlag: ThreadLocal[Boolean] = new ThreadLocal[Boolean]
+  val enableLimitThreadLocal: ThreadLocal[String] = new ThreadLocal[String]
 
   val HDFS_FILE_SYSTEM_REST_ERRS: String =
     CommonVars

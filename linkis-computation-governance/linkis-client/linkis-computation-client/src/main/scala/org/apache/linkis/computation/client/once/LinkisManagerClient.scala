@@ -24,7 +24,8 @@ import org.apache.linkis.computation.client.once.action.{
   EngineConnOperateAction,
   GetEngineConnAction,
   KillEngineConnAction,
-  LinkisManagerAction
+  LinkisManagerAction,
+  ListEngineConnAction
 }
 import org.apache.linkis.computation.client.once.result.{
   AskEngineConnResult,
@@ -32,7 +33,8 @@ import org.apache.linkis.computation.client.once.result.{
   EngineConnOperateResult,
   GetEngineConnResult,
   KillEngineConnResult,
-  LinkisManagerResult
+  LinkisManagerResult,
+  ListEngineConnResult
 }
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.Action
@@ -49,6 +51,8 @@ trait LinkisManagerClient extends Closeable {
   def getEngineConn(getEngineConnAction: GetEngineConnAction): GetEngineConnResult
 
   def killEngineConn(killEngineConnAction: KillEngineConnAction): KillEngineConnResult
+
+  def listEngineConn(listEngineConnAction: ListEngineConnAction): ListEngineConnResult
 
   def executeEngineConnOperation(
       engineConnOperateAction: EngineConnOperateAction
@@ -103,5 +107,9 @@ class LinkisManagerClientImpl(ujesClient: UJESClient) extends LinkisManagerClien
 
   override def askEngineConn(askEngineConnAction: AskEngineConnAction): AskEngineConnResult =
     execute(askEngineConnAction)
+
+  override def listEngineConn(listEngineConnAction: ListEngineConnAction): ListEngineConnResult = {
+    execute(listEngineConnAction)
+  }
 
 }

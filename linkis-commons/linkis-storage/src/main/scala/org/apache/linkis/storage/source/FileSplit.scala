@@ -39,7 +39,7 @@ class FileSplit(
 
   var start: Int = 0
 
-  var end: Int = 0
+  var end: Int = -1
 
   var count: Int = 0
 
@@ -123,7 +123,7 @@ class FileSplit(
   }
 
   def collect(): Pair[Object, util.ArrayList[Array[String]]] = {
-    val record = new util.ArrayList[Array[String]](end - start + 1)
+    val record = new util.ArrayList[Array[String]]
     val metaData = `while`(collectMetaData, r => record.add(collectRecord(r)))
     new Pair(metaData, record)
   }

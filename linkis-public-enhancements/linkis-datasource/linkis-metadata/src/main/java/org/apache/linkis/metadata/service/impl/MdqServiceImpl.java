@@ -18,7 +18,6 @@
 package org.apache.linkis.metadata.service.impl;
 
 import org.apache.linkis.common.utils.ByteTimeUtils;
-import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
@@ -415,11 +414,6 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private void resetRootHdfs() {
-    if (HadoopConf.HDFS_ENABLE_CACHE()) {
-      HDFSUtils.closeHDFSFIleSystem(
-          HDFSUtils.getHDFSRootUserFileSystem(), HadoopConf.HADOOP_ROOT_USER().getValue(), true);
-      return;
-    }
     if (rootHdfs != null) {
       synchronized (this) {
         if (rootHdfs != null) {
@@ -432,11 +426,6 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private FileSystem getRootHdfs() {
-
-    if (HadoopConf.HDFS_ENABLE_CACHE()) {
-      return HDFSUtils.getHDFSRootUserFileSystem();
-    }
-
     if (rootHdfs == null) {
       synchronized (this) {
         if (rootHdfs == null) {

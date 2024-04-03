@@ -155,20 +155,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
   @scala.throws[IOException]
   override def hasNext: Boolean = {
     if (metaData == null) getMetaData
-    metaData match {
-      case tableMetaData: TableMetaData =>
-        if (tableMetaData.columns.size > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE) {
-          throw new ColLengthExceedException(
-            LinkisStorageErrorCodeSummary.RESULT_COL_SIZE.getErrorCode,
-            MessageFormat.format(
-              LinkisStorageErrorCodeSummary.RESULT_COL_SIZE.getErrorDesc,
-              tableMetaData.columns.size.asInstanceOf[Object],
-              LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE.asInstanceOf[Object]
-            )
-          )
-        }
-      case _ =>
-    }
+
     val line = readLine()
     if (line == null) return false
     row = deserializer.createRecord(line)

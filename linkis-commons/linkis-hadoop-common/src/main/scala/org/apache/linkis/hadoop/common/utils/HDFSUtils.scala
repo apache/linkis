@@ -218,7 +218,7 @@ object HDFSUtils extends Logging {
     }
 
   def getUserGroupInformation(userName: String): UserGroupInformation = {
-    if (KERBEROS_ENABLE.getValue) {
+    if (KERBEROS_ENABLE) {
       if (!KEYTAB_PROXYUSER_ENABLED.getValue) {
         val path = new File(KEYTAB_FILE.getValue, userName + ".keytab").getPath
         val user = getKerberosUser(userName)

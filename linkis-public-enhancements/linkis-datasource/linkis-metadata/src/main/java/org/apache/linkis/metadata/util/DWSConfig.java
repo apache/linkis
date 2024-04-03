@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.util;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 
 public class DWSConfig {
 
@@ -45,8 +46,5 @@ public class DWSConfig {
       CommonVars.apply("wds.linkis.metadata.hive.db.admin", "hadoop");
 
   public static final String HDFS_FILE_SYSTEM_REST_ERRS =
-      CommonVars.apply(
-              "wds.linkis.hdfs.rest.errs",
-              ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
-          .getValue();
+      LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS();
 }

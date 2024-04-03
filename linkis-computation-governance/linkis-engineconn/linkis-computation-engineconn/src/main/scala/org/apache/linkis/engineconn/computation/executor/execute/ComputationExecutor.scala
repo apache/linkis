@@ -208,12 +208,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
             hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
         })
       } { e =>
-        logger.info("failed to do with hook", e)
         e match {
           case hookExecuteException: HookExecuteException =>
             failedTasks.increase()
+            logger.error("failed to do with hook", e)
             return ErrorExecuteResponse("hook execute failed task will be failed", e)
-          case _ =>
+          case _ => logger.info("failed to do with hook", e)
         }
       }
       if (hookedCode.length > 100) {

@@ -23,7 +23,7 @@ object HadoopConf {
 
   val HADOOP_ROOT_USER = CommonVars("wds.linkis.hadoop.root.user", "hadoop")
 
-  val KERBEROS_ENABLE = CommonVars("wds.linkis.keytab.enable", false)
+  val KERBEROS_ENABLE = CommonVars("wds.linkis.keytab.enable", false).getValue
 
   val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
 

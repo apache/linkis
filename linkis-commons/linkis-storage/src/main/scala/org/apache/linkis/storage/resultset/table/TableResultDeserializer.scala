@@ -18,17 +18,20 @@
 package org.apache.linkis.storage.resultset.table
 
 import org.apache.linkis.common.io.resultset.ResultDeserializer
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.{Column, DataType, Dolphin}
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.PARSING_METADATA_FAILED
 import org.apache.linkis.storage.exception.{ColLengthExceedException, StorageErrorException}
 
+import org.apache.commons.lang3.StringUtils
+
 import java.text.MessageFormat
 
 import scala.collection.mutable.ArrayBuffer
 
-class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRecord] {
+class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRecord] with Logging {
 
   var metaData: TableMetaData = _
 
@@ -79,14 +82,22 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
         colString.substring(0, colString.length - 1).split(Dolphin.COL_SPLIT)
       } else colString.split(Dolphin.COL_SPLIT)
     var index = Dolphin.INT_LEN + colByteLen
-    val data = colArray.indices.map { i =>
+    var enableLimit: Boolean = false
+    if (StringUtils.isNotBlank(LinkisStorageConf.enableLimitThreadLocal.get())) {
+      enableLimit = true
+    }
+    val columnSize =
+      if (enableLimit && metaData.columns.size > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE) {
+        LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE
+      } else {
+        colArray.size
+      }
+    val rowArray = new Array[Any](columnSize)
+
+    for (i <- 0 until columnSize) {
       val len = colArray(i).toInt
       val res = Dolphin.getString(bytes, index, len)
-      var dataFlag: Boolean = false
-      if (LinkisStorageConf.dataServiceFlag.get() != null) {
-        dataFlag = LinkisStorageConf.dataServiceFlag.get()
-      }
-      if (res.length > LinkisStorageConf.LINKIS_RESULT_COL_LENGTH && !dataFlag) {
+      if (res.length > LinkisStorageConf.LINKIS_RESULT_COL_LENGTH && enableLimit) {
         throw new ColLengthExceedException(
           LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorCode,
           MessageFormat.format(
@@ -97,12 +108,12 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
         )
       }
       index += len
-      if (i >= metaData.columns.length) res
+      if (i >= metaData.columns.length) rowArray(i) = res
       else {
-        toValue(metaData.columns(i).dataType, res)
+        rowArray(i) = toValue(metaData.columns(i).dataType, res)
       }
-    }.toArray
-    new TableRecord(data)
+    }
+    new TableRecord(rowArray)
   }
 
 }

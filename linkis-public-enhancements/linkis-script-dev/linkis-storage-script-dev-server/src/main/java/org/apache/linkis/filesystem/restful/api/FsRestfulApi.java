@@ -47,11 +47,11 @@ import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -562,6 +562,22 @@ public class FsRestfulApi {
     }
   }
 
+  /**
+   * Opens a file method. This method opens a file based on user requests and returns metadata and
+   * content of the file.
+   *
+   * @param req The HttpServletRequest object used to retrieve request information.
+   * @param path The file path, an optional parameter indicating the path of the file to be opened.
+   * @param page The requested page number, with a default value of 1.
+   * @param pageSize The number of rows per page, defaulting to 5000.
+   * @param nullValue A string representing a null value, defaulting to an empty string. If
+   *     specified, replaces null values with this string in query results.
+   * @param enableLimit A string indicating whether query limitations should be enabled, with a
+   *     default value of an empty string. If enabled, sets query limitations.
+   * @return A Message object containing file metadata, content, and related messages.
+   * @throws IOException Thrown if there's an I/O error.
+   * @throws WorkSpaceException Thrown if the file fails to open.
+   */
   @ApiOperation(value = "openFile", notes = "open file", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
@@ -584,7 +600,7 @@ public class FsRestfulApi {
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
       @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
-      @RequestParam(value = "charset", defaultValue = "utf-8") String charset)
+      @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -614,16 +630,17 @@ public class FsRestfulApi {
       }
       if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
         if (!StringUtils.isEmpty(nullValue)) {
-          if ("dataServiceFlag".equals(nullValue)) {
-            LOGGER.info("set dataServiceFlag for thread: {}", Thread.currentThread().getName());
-            LinkisStorageConf.dataServiceFlag().set(true);
-          }
           fileSource.addParams("nullValue", nullValue);
         }
         if (pageSize > FILESYSTEM_RESULTSET_ROW_LIMIT.getValue()) {
           throw WorkspaceExceptionManager.createException(
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
+        if (StringUtils.isNotBlank(enableLimit)) {
+          LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
+          LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
+        }
+
         fileSource = fileSource.page(page, pageSize);
       } else if (fileSystem.getLength(fsPath)
           > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
@@ -636,7 +653,19 @@ public class FsRestfulApi {
         LOGGER.info(
             "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
         IOUtils.closeQuietly(fileSource);
-        message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
+        Object metaMap = result.getFirst();
+        try {
+          if (metaMap instanceof Map) {
+            Map stringStringMap = (Map) metaMap;
+            if (stringStringMap.size() > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()) {
+              message.data("column_limit_display", true);
+            }
+          }
+        } catch (Exception e) {
+          LOGGER.info("Failed to set flag", e);
+        }
+
+        message.data("metadata", metaMap).data("fileContent", result.getSecond());
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
         return message.data("page", page).data("totalPage", 0);
@@ -647,9 +676,8 @@ public class FsRestfulApi {
         message.data(
             "zh_msg",
             MessageFormat.format(
-                "结果集存在字段值字符数超过{0}或者列数超过{1}，如需查看请使用结果集导出功能",
-                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
-                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
+                "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或使用字符串截取函数（substring、substr）截取相关字符即可前端展示数据内容",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
         message.data(
             "en_msg",
             MessageFormat.format(
@@ -660,9 +688,8 @@ public class FsRestfulApi {
       }
     } finally {
       // 移除标识
-      if ("dataServiceFlag".equals(nullValue)) {
-        LinkisStorageConf.dataServiceFlag().remove();
-        LOGGER.info("remove dataServiceFlag for thread: {}", Thread.currentThread().getName());
+      if (StringUtils.isNotBlank(enableLimit)) {
+        LinkisStorageConf.enableLimitThreadLocal().remove();
       }
       LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);

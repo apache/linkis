@@ -130,4 +130,7 @@ object ComputationExecutorConf {
   val ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH =
     CommonVars("linkis.ec.send.log.entrance.limit.length", 2000)
 
+  val ENGINE_KERBEROS_AUTO_REFRESH_ENABLED =
+    CommonVars("linkis.ec.kerberos.auto.refresh.enabled", false).getValue
+
 }

@@ -15,23 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.exception;
+package org.apache.linkis.computation.client.once.result
 
-import org.apache.linkis.common.exception.ExceptionLevel;
-import org.apache.linkis.common.exception.LinkisRuntimeException;
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-public class HookExecuteException extends LinkisRuntimeException {
+import java.util
 
-  public HookExecuteException(int errCode, String desc) {
-    super(errCode, desc);
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/listUserEngines")
+class ListEngineConnResult extends LinkisManagerResult {
+
+  private var engines: util.List[util.Map[String, AnyRef]] = _
+
+  def setEngines(engines: util.List[util.Map[String, AnyRef]]): Unit = {
+    this.engines = engines
   }
 
-  public HookExecuteException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+  def getEngines: util.List[util.Map[String, AnyRef]] = engines
 
-  @Override
-  public ExceptionLevel getLevel() {
-    return ExceptionLevel.ERROR;
-  }
 }

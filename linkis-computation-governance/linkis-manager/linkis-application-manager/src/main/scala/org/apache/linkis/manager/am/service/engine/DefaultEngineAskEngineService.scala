@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.am.service.engine
 
+import feign.RetryableException
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
@@ -146,6 +148,10 @@ class DefaultEngineAskEngineService
         )
         // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
         engineAskRequest.getLabels.remove("engineInstance")
+        // 添加引擎启动驱动任务id标签
+        val labels: util.Map[String, AnyRef] = engineAskRequest.getLabels
+        labels.put(LabelKeyConstant.DRIVER_TASK_KEY, taskId)
+
         val engineCreateRequest = new EngineCreateRequest
         engineCreateRequest.setLabels(engineAskRequest.getLabels)
         engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)

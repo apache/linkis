@@ -94,6 +94,11 @@ public class NodeHeartbeatMsg extends AbstractRetryableProtocol implements Heart
 
   @Override
   public String toString() {
-    return "NodeHeartbeatMsg{" + "status=" + status + ", serviceInstance=" + serviceInstance + '}';
+    String msg = "NodeHeartbeatMsg{" + "status=" + status;
+    if (healthyInfo != null && healthyInfo.getNodeHealthy() != null){
+      msg += ", healthyInfoStatus=" + healthyInfo.getNodeHealthy();
+    }
+    msg += ", serviceInstance=" + serviceInstance + '}';
+    return msg;
   }
 }

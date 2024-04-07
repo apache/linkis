@@ -647,29 +647,34 @@ public class EngineRestfulApi {
     // 修改引擎健康状态，只支持 Healthy和 UnHealthy
     String healthyKey = "Healthy";
     String unHealthyKey = "UnHealthy";
-    if (healthyKey.equals(jsonNode.get("nodeHealthy").asText())) {
+    JsonNode nodeHealthy = jsonNode.get("nodeHealthy");
+    if (nodeHealthy != null && healthyKey.equals(nodeHealthy.asText())) {
       engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.Healthy);
-    } else if (unHealthyKey.equals(jsonNode.get("nodeHealthy").asText())) {
+    } else if (nodeHealthy != null && unHealthyKey.equals(nodeHealthy.asText())) {
       engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.UnHealthy);
     }
     return Message.ok("success to update engine information(更新引擎信息成功)");
   }
 
   @ApiOperation(
-          value = "batchSetEngineToUnHealthy",
-          notes = "batch set engine to unHealthy",
-          response = Message.class)
+      value = "batchSetEngineToUnHealthy",
+      notes = "batch set engine to unHealthy",
+      response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "instances", dataType = "String", example = "[{\"instance\":\"bdplinkis1001:38701\",\"engineType\":\"spark\",\"applicationName\":\"linkis-cg-engineconn\"}]")
+    @ApiImplicitParam(
+        name = "instances",
+        dataType = "String",
+        example =
+            "[{\"instance\":\"bdplinkis1001:38701\",\"engineType\":\"spark\",\"applicationName\":\"linkis-cg-engineconn\"}]")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
-  @RequestMapping(path = "/batchSetEngineToUnHealthy", method = RequestMethod.PUT)
+  @RequestMapping(path = "/batchSetEngineToUnHealthy", method = RequestMethod.POST)
   public Message batchSetEngineToUnHealthy(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-          throws AMErrorException {
+      throws AMErrorException {
     String username = ModuleUserUtils.getOperationUser(req, "batchSetEngineToUnHealthy");
     if (Configuration.isNotAdmin(username)) {
       throw new AMErrorException(
-              210003, "Only admin can modify engineConn healthy info(只有管理员才能修改引擎健康信息).");
+          210003, "Only admin can modify engineConn healthy info(只有管理员才能修改引擎健康信息).");
     }
 
     JsonNode instances = jsonNode.get("instances");

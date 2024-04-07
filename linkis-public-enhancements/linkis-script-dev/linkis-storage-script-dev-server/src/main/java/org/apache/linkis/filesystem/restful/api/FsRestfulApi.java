@@ -656,18 +656,24 @@ public class FsRestfulApi {
             "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
         IOUtils.closeQuietly(fileSource);
         Object metaMap = result.getFirst();
+        Map[] newMap = null;
         try {
-          if (metaMap instanceof Map) {
-            Map stringStringMap = (Map) metaMap;
-            if (stringStringMap.size() > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()) {
+          if (metaMap instanceof Map[]) {
+            Map[] realMap = (Map[]) metaMap;
+            int realSize = realMap.length;
+            if (realSize > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()) {
               message.data("column_limit_display", true);
+              newMap = new Map[LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()];
+              for (int i = 0; i < LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE(); i++) {
+                newMap[i] = realMap[i];
+              }
             }
           }
         } catch (Exception e) {
           LOGGER.info("Failed to set flag", e);
         }
 
-        message.data("metadata", metaMap).data("fileContent", result.getSecond());
+        message.data("metadata", newMap == null ? metaMap : newMap).data("fileContent", result.getSecond());
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
         return message.data("page", page).data("totalPage", 0);

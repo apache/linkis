@@ -43,6 +43,9 @@ public class WorkspaceUtil {
           + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
           + "\\.\\d{3}\\s*ERROR(.*)";
   public static String allReg = "(.*?)";
+  public static String hiveLogReg =
+      "The url to track the job: http://.*?/proxy/(application_[0-9]+_[0-9]+)/";
+  public static String sparkLogReg = "INFO yarn application id: (application_[0-9]+_[0-9]+)";
 
   public static List<LogLevel.Type> logReg = new ArrayList<>();
 

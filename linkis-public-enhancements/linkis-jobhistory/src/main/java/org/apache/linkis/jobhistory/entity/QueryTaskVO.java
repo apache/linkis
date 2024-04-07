@@ -60,8 +60,6 @@ public class QueryTaskVO {
 
   private String observeInfo;
 
-  private String yarnAddress;
-
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
   }
@@ -294,13 +292,5 @@ public class QueryTaskVO {
 
   public void setExecuteUser(String executeUser) {
     this.executeUser = executeUser;
-  }
-
-  public String getYarnAddress() {
-    return yarnAddress;
-  }
-
-  public void setYarnAddress(String yarnAddress) {
-    this.yarnAddress = yarnAddress;
   }
 }

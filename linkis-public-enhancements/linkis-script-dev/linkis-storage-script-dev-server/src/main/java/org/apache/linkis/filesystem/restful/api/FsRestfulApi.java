@@ -65,6 +65,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -1250,7 +1252,23 @@ public class FsRestfulApi {
       ArrayList<String[]> snd = collect.getSecond();
       LogLevel start = new LogLevel(LogLevel.Type.ALL);
       snd.stream()
-          .map(f -> f[0])
+          .map(
+              f -> {
+                String logline = f[0];
+                String yarnUrl = JOB_YARN_TASK_URL.getValue();
+                if (StringUtils.isNotBlank(yarnUrl)) {
+                  Matcher sparkMatcher =
+                      Pattern.compile(WorkspaceUtil.sparkLogReg).matcher(logline);
+                  Matcher hiveMatcher = Pattern.compile(WorkspaceUtil.hiveLogReg).matcher(logline);
+                  if (sparkMatcher.find()) {
+                    logline =
+                        sparkMatcher.replaceAll(YARN_LOG_URL + yarnUrl + sparkMatcher.group(1));
+                  } else if (hiveMatcher.find()) {
+                    logline = hiveMatcher.replaceAll(YARN_LOG_URL + yarnUrl + hiveMatcher.group(1));
+                  }
+                }
+                return logline;
+              })
           .forEach(
               s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
       LOGGER.info("userName {} Finished to openLog File {}", userName, path);
@@ -1335,7 +1353,7 @@ public class FsRestfulApi {
    */
   private static boolean checkFilePermissions(String filePermission) {
     boolean result = false;
-    if (org.apache.commons.lang3.StringUtils.isNumeric(filePermission)) {
+    if (StringUtils.isNumeric(filePermission)) {
       char[] ps = filePermission.toCharArray();
       int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
       if (ownerPermissions >= 4) {

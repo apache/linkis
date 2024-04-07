@@ -19,5 +19,4 @@ package org.apache.linkis.jobhistory.util;
 
 public class Constants {
   public static final String APPLICATION_NAME = "linkis-ps-publicservice";
-  public static final String YARN_APPLICATION = "/cluster/app/";
 }

@@ -29,13 +29,16 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 }
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
 import org.apache.linkis.engineconn.executor.listener.{
   EngineConnSyncListenerBus,
   ExecutorListenerBusContext
 }
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.listener.JobListener
@@ -207,6 +210,7 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         s"Executor is busy but still got new task ! Running task num : ${getRunningTask}"
       )
     }
+    runningTasks.increase()
     if (getRunningTask >= getConcurrentLimit) synchronized {
       if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
         logger.info(
@@ -215,13 +219,25 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         transition(NodeStatus.Busy)
       }
     }
-    runningTasks.increase()
   }
 
   override def onJobCompleted(job: Job): Unit = {
+
     runningTasks.decrease()
     job match {
       case asyncEngineConnJob: AsyncEngineConnJob =>
+        val jobId = JobUtils.getJobIdFromMap(asyncEngineConnJob.getEngineConnTask.getProperties)
+        LoggerUtils.setJobIdMDC(jobId)
+
+        if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
+          if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
+            logger.info(
+              s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
+            )
+            transition(NodeStatus.Unlock)
+          }
+        }
+
         job.getState match {
           case Succeed =>
             succeedTasks.increase()
@@ -241,18 +257,21 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         }
         removeJob(asyncEngineConnJob.getEngineConnTask.getTaskId)
         clearTaskCache(asyncEngineConnJob.getEngineConnTask.getTaskId)
-
+        // execute once should try to shutdown
+        if (
+            asyncEngineConnJob.getEngineConnTask.getLables.exists(_.isInstanceOf[ExecuteOnceLabel])
+        ) {
+          if (!hasTaskRunning()) {
+            logger.warn(
+              s"engineConnTask(${asyncEngineConnJob.getEngineConnTask.getTaskId}) is execute once, now to mark engine to Finished"
+            )
+            ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+          }
+        }
+        LoggerUtils.setJobIdMDC(jobId)
       case _ =>
     }
 
-    if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
-      if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
-        logger.info(
-          s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
-        )
-        transition(NodeStatus.Unlock)
-      }
-    }
   }
 
   override def hasTaskRunning(): Boolean = {

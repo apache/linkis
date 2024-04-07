@@ -19,8 +19,10 @@ package org.apache.linkis.engineconn.computation.executor.execute
 
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000)
@@ -63,7 +65,17 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
   override def afterExecute(
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
-  ): Unit = {}
+  ): Unit = {
+    // execute once should try to shutdown
+    if (engineConnTask.getLables.exists(_.isInstanceOf[ExecuteOnceLabel])) {
+      if (!hasTaskRunning()) {
+        logger.warn(
+          s"engineConnTask(${engineConnTask.getTaskId}) is execute once, now to mark engine to Finished"
+        )
+        ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+      }
+    }
+  }
 
   override def hasTaskRunning(): Boolean = {
     getRunningTask > 0

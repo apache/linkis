@@ -17,11 +17,14 @@
 
 package org.apache.linkis.engineconn.computation.executor.execute
 
+import org.apache.linkis.DataWorkCloudApplication.getApplicationContext
+import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 
@@ -74,6 +77,11 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
         )
         ExecutorManager.getInstance.getReportExecutor.tryShutdown()
       }
+    }
+    // unhealthy node should try to shutdown
+    if (!hasTaskRunning() && currentEngineIsUnHealthy) {
+      logger.info("no task running and ECNode is unHealthy, now to mark engine to Finished.")
+      ExecutorManager.getInstance.getReportExecutor.tryShutdown()
     }
   }
 

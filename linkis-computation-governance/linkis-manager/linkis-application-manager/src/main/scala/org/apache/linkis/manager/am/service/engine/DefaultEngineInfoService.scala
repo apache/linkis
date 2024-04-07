@@ -157,4 +157,5 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
       logger.info(s"success to update healthy metric for instance: ${instance},${healthy}")
     }(s"error to update healthy metric for instance: ${instance},${healthy}")
   }
+
 }

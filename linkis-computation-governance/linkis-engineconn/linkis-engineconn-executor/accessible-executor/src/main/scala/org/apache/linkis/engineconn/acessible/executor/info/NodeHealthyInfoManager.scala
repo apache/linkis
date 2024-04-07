@@ -31,6 +31,8 @@ trait NodeHealthyInfoManager {
 
   def setNodeHealthy(healthy: NodeHealthy): Unit
 
+  def getNodeHealthy(): NodeHealthy
+
   def setByManager(setByManager: Boolean): Unit
 
 }
@@ -45,6 +47,7 @@ class DefaultNodeHealthyInfoManager extends NodeHealthyInfoManager with Logging 
   override def getNodeHealthyInfo(): NodeHealthyInfo = {
     val nodeHealthyInfo = new NodeHealthyInfo
     nodeHealthyInfo.setMsg("")
+
     /** 如果是manager主动设置的，则以manager设置的为准 */
     val newHealthy: NodeHealthy = if (this.setByManager) {
       this.healthy
@@ -53,7 +56,7 @@ class DefaultNodeHealthyInfoManager extends NodeHealthyInfoManager with Logging 
         ExecutorManager.getInstance.getReportExecutor.asInstanceOf[AccessibleExecutor].getStatus
       )
     }
-
+    logger.info("current node healthy status is {}", newHealthy)
     nodeHealthyInfo.setNodeHealthy(newHealthy)
     nodeHealthyInfo
   }
@@ -66,4 +69,5 @@ class DefaultNodeHealthyInfoManager extends NodeHealthyInfoManager with Logging 
     this.setByManager = setByManager
   }
 
+  override def getNodeHealthy(): NodeHealthy = this.healthy
 }

@@ -19,7 +19,6 @@ package org.apache.linkis.manager.label.entity.engine;
 
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.EngineNodeLabel;
-import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 

@@ -17,4 +17,16 @@
 
 package org.apache.linkis.engineconn.acessible.executor.utils
 
-object AccessibleExecutorUtils {}
+import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
+import org.apache.linkis.DataWorkCloudApplication.getApplicationContext
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy
+
+object AccessibleExecutorUtils {
+
+  val manager: DefaultNodeHealthyInfoManager = getApplicationContext.getBean(classOf[DefaultNodeHealthyInfoManager])
+
+  /** 当前引擎是否不健康 不健康返回 true */
+  def currentEngineIsUnHealthy(): Boolean = {
+    manager != null && manager.getNodeHealthy() == NodeHealthy.UnHealthy
+  }
+}

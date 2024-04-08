@@ -17,9 +17,19 @@ spring:
   application:
     name: linkis-mg-eureka
   profiles: eureka
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 server:
   port: 20303
+
+springfox:
+  documentation:
+    enabled: false
+    auto-startup: false
+    swagger-ui:
+      enabled: false
 
 eureka:
   instance:

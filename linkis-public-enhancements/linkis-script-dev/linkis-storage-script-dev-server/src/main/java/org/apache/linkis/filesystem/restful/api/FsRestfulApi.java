@@ -671,7 +671,9 @@ public class FsRestfulApi {
           LOGGER.info("Failed to set flag", e);
         }
 
-        message.data("metadata", newMap == null ? metaMap : newMap).data("fileContent", result.getSecond());
+        message
+            .data("metadata", newMap == null ? metaMap : newMap)
+            .data("fileContent", result.getSecond());
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
         return message.data("page", page).data("totalPage", 0);

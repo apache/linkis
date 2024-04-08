@@ -22,14 +22,22 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskResponseErrorEvent
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
-import org.apache.linkis.engineconn.executor.listener.{EngineConnSyncListenerBus, ExecutorListenerBusContext}
+import org.apache.linkis.engineconn.executor.listener.{
+  EngineConnSyncListenerBus,
+  ExecutorListenerBusContext
+}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
@@ -39,14 +47,14 @@ import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.listener.JobListener
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+
 import DataWorkCloudApplication.getApplicationContext
-import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils
-import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 
 abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000)
     extends ComputationExecutor(outputPrintLimit)

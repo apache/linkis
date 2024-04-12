@@ -57,7 +57,7 @@ public class DynamicFeignClient<T> {
 
   public T getFeignClient(final Class<T> type, String serviceName, final String serviceUrl) {
     String k = serviceName;
-    if (StringUtils.isNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotBlank(serviceUrl)) {
       k = serviceUrl;
     }
     return CACHE_BEAN.computeIfAbsent(
@@ -65,7 +65,7 @@ public class DynamicFeignClient<T> {
         (t) -> {
           FeignClientBuilder.Builder<T> builder =
               this.feignClientBuilder.forType(type, serviceName);
-          if (StringUtils.isNotEmpty(serviceUrl)) {
+          if (StringUtils.isNotBlank(serviceUrl)) {
             builder.url(serviceUrl);
           }
           return builder.build();
@@ -78,7 +78,7 @@ public class DynamicFeignClient<T> {
       final String serviceName,
       final String serviceUrl) {
     String k = serviceName;
-    if (StringUtils.isNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotBlank(serviceUrl)) {
       k = serviceUrl;
     }
     return CACHE_BEAN.computeIfAbsent(
@@ -88,7 +88,7 @@ public class DynamicFeignClient<T> {
           feignClientFactoryBean.setFallbackFactory(fallbackFactory);
           FeignClientBuilder.Builder<T> builder =
               this.feignClientBuilder.forType(type, feignClientFactoryBean, serviceName);
-          if (StringUtils.isNotEmpty(serviceUrl)) {
+          if (StringUtils.isNotBlank(serviceUrl)) {
             builder.url(serviceUrl);
           }
           return builder.build();
@@ -101,7 +101,7 @@ public class DynamicFeignClient<T> {
       final String serviceName,
       final String serviceUrl) {
     String k = serviceName;
-    if (StringUtils.isNotEmpty(serviceUrl)) {
+    if (StringUtils.isNotBlank(serviceUrl)) {
       k = serviceUrl;
     }
     return CACHE_BEAN.computeIfAbsent(
@@ -109,7 +109,7 @@ public class DynamicFeignClient<T> {
         (t) -> {
           FeignClientBuilder.Builder<T> builder =
               this.feignClientBuilder.forType(type, clientFactoryBean, serviceName);
-          if (StringUtils.isNotEmpty(serviceUrl)) {
+          if (StringUtils.isNotBlank(serviceUrl)) {
             builder.url(serviceUrl);
           }
           return builder.build();

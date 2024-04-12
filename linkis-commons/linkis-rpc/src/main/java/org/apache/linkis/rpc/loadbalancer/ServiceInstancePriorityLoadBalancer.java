@@ -18,6 +18,7 @@
 package org.apache.linkis.rpc.loadbalancer;
 
 import org.apache.linkis.rpc.conf.CacheManualRefresher;
+import org.apache.linkis.rpc.conf.RPCConfiguration;
 import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
 import org.apache.linkis.rpc.exception.NoInstanceExistsException;
@@ -55,6 +56,8 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
 
   final AtomicInteger position;
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
+
+  private final Long maxWaitTime = RPCConfiguration.RPC_SERVICE_REFRESH_MAX_WAIT_TIME().getValue().toLong();
 
   public ServiceInstancePriorityLoadBalancer(
       ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
@@ -96,7 +99,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
       String clientIp) {
     Response<ServiceInstance> serviceInstanceResponse =
         getInstanceResponse(serviceInstances, clientIp);
-    Long endTtime = System.currentTimeMillis() + 2 * 60 * 1000;
+    Long endTime = System.currentTimeMillis() + maxWaitTime;
 
     List<String> linkisLoadBalancerTypeList =
         ((RequestDataContext) request.getContext())
@@ -111,7 +114,7 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     while (null == serviceInstanceResponse
         && StringUtils.isNotBlank(clientIp)
         && isRPC(linkisLoadBalancerType)
-        && System.currentTimeMillis() < endTtime) {
+        && System.currentTimeMillis() < endTime) {
       cacheManualRefresher.refresh();
       List<ServiceInstance> instances =
           SpringCloudFeignConfigurationCache$.MODULE$.discoveryClient().getInstances(serviceId);
@@ -127,8 +130,8 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
 
     if (null == serviceInstanceResponse && StringUtils.isNotBlank(clientIp)) {
       throw new NoInstanceExistsException(
-          LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
-          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
+          LinkisRpcErrorCodeSummary.INSTANCE_NOT_FOUND_ERROR.getErrorCode(),
+          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_NOT_FOUND_ERROR.getErrorDesc(), clientIp));
     }
 
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {

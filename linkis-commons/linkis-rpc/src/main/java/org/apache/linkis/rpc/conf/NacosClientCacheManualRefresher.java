@@ -30,11 +30,6 @@ public class NacosClientCacheManualRefresher implements CacheManualRefresher {
       LoggerFactory.getLogger(NacosClientCacheManualRefresher.class);
 
   public void refresh() {
-    try {
-      logger.warn("Failed to obtain nacos metadata. Wait 100 milliseconds");
-      Thread.sleep(100L);
-    } catch (InterruptedException e) {
 
-    }
   }
 }

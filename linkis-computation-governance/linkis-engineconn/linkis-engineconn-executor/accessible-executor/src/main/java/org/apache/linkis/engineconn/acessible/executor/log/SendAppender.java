@@ -18,9 +18,14 @@
 package org.apache.linkis.engineconn.acessible.executor.log;
 
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration;
+import org.apache.linkis.engineconn.common.conf.EngineConnConf;
+import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
+import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListenerBus;
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext;
+import org.apache.linkis.manager.label.entity.Label;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -33,6 +38,9 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +86,7 @@ public class SendAppender extends AbstractAppender {
       return;
     }
     String logStr = new String(getLayout().toByteArray(event));
+    logStr = matchLog(logStr);
     if (event.getLevel().intLevel() == Level.INFO.intLevel()) {
       boolean flag = false;
       for (String ignoreLog : IGNORE_WORD_ARR) {
@@ -114,5 +123,29 @@ public class SendAppender extends AbstractAppender {
       layout = PatternLayout.createDefaultLayout();
     }
     return new SendAppender(name, filter, layout, ignoreExceptions);
+  }
+
+  public String matchLog(String logLine) {
+    List<Label<?>> labels = EngineConnObject.getEngineCreationContext().getLabels();
+    String yarnUrl = "";
+    if (labels.stream().anyMatch(d -> d.getLabelKey().equals("yarnCluster"))) {
+      yarnUrl = EngineConnConf.JOB_YARN_CLUSTER_TASK_URL().getValue();
+    } else {
+      yarnUrl = EngineConnConf.JOB_YARN_TASK_URL().getValue();
+    }
+    if (StringUtils.isNotBlank(yarnUrl)) {
+      Matcher sparkMatcher = Pattern.compile(EngineConnConstant.sparkLogReg()).matcher(logLine);
+      Matcher hiveMatcher = Pattern.compile(EngineConnConstant.hiveLogReg()).matcher(logLine);
+      if (sparkMatcher.find()) {
+        logLine =
+            sparkMatcher.replaceAll(
+                EngineConnConstant.YARN_LOG_URL() + yarnUrl + sparkMatcher.group(1));
+      } else if (hiveMatcher.find()) {
+        logLine =
+            hiveMatcher.replaceAll(
+                EngineConnConstant.YARN_LOG_URL() + yarnUrl + hiveMatcher.group(1));
+      }
+    }
+    return logLine;
   }
 }

@@ -73,7 +73,4 @@ public class WorkSpaceConfiguration {
           0L,
           TimeUnit.MILLISECONDS,
           new LinkedBlockingQueue<Runnable>(FILESYSTEM_FS_THREAD_CACHE.getValue()));
-
-  public static final CommonVars<String> JOB_YARN_TASK_URL =
-      CommonVars$.MODULE$.apply("linkis.job.task.yarn.url", "");
 }

@@ -1262,7 +1262,7 @@ public class FsRestfulApi {
       ArrayList<String[]> snd = collect.getSecond();
       LogLevel start = new LogLevel(LogLevel.Type.ALL);
       snd.stream()
-          .map(WorkspaceUtil::logCollectMatch)
+          .map(f -> f[0])
           .forEach(
               s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
       LOGGER.info("userName {} Finished to openLog File {}", userName, path);

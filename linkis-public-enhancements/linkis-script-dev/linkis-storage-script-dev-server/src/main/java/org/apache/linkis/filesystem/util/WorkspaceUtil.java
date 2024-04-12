@@ -21,18 +21,12 @@ import org.apache.linkis.filesystem.entity.LogLevel;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.JOB_YARN_TASK_URL;
-import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.YARN_LOG_URL;
 
 public class WorkspaceUtil {
 
@@ -49,9 +43,6 @@ public class WorkspaceUtil {
           + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
           + "\\.\\d{3}\\s*ERROR(.*)";
   public static String allReg = "(.*?)";
-  public static String hiveLogReg =
-      "The url to track the job: http://.*?/proxy/(application_[0-9]+_[0-9]+)/";
-  public static String sparkLogReg = "INFO yarn application id: (application_[0-9]+_[0-9]+)";
 
   public static List<LogLevel.Type> logReg = new ArrayList<>();
 
@@ -107,20 +98,5 @@ public class WorkspaceUtil {
     if (!specialPattern.matcher(fileName).find()) {
       WorkspaceExceptionManager.createException(80028);
     }
-  }
-
-  public static String logCollectMatch(String[] loglineArray) {
-    String logLine = loglineArray[0];
-    String yarnUrl = JOB_YARN_TASK_URL.getValue();
-    if (StringUtils.isNotBlank(yarnUrl)) {
-      Matcher sparkMatcher = Pattern.compile(sparkLogReg).matcher(logLine);
-      Matcher hiveMatcher = Pattern.compile(hiveLogReg).matcher(logLine);
-      if (sparkMatcher.find()) {
-        logLine = sparkMatcher.replaceAll(YARN_LOG_URL + yarnUrl + sparkMatcher.group(1));
-      } else if (hiveMatcher.find()) {
-        logLine = hiveMatcher.replaceAll(YARN_LOG_URL + yarnUrl + hiveMatcher.group(1));
-      }
-    }
-    return logLine;
   }
 }

@@ -27,5 +27,4 @@ public class WorkSpaceConstants {
   public static final String FILEPATH_ILLEGALITY = "File path illegality : {0} （文件路径错误 : {0}）";
   public static final String FILE_PERMISSION_ERROR =
       "File permissions prohibit modification of unreadable files: {0}  （文件权限禁止修改不可读: {0}）";
-  public static final String YARN_LOG_URL = "INFO yarn application url:";
 }

@@ -37,7 +37,6 @@ import scala.Tuple2;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
-@Component
 public class FeignRequestInterceptor implements RequestInterceptor {
 
   @Override
@@ -55,8 +54,6 @@ public class FeignRequestInterceptor implements RequestInterceptor {
               requestTemplate.body(),
               org.apache.linkis.common.conf.Configuration.BDP_ENCODING().getValue());
       Message message = BDPJettyServerHelper.gson().fromJson(body, Message.class);
-      headers.put(
-          RpcConstant.FIXED_INSTANCE, Arrays.asList(BaseRPCSender.getFixedInstanceInfo(message)));
       requestTemplate.headers(headers);
     } catch (UnsupportedEncodingException e) {
     }

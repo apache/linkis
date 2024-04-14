@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.client.loadbalancer.LoadBalancedRetryFactory
-import org.springframework.cloud.netflix.ribbon.SpringClientFactory
 import org.springframework.cloud.openfeign.FeignClientsConfiguration
 import org.springframework.context.annotation.{Configuration, Import}
 
@@ -47,16 +46,12 @@ class SpringCloudFeignConfigurationCache(
   @Autowired
   private var discoveryClient: DiscoveryClient = _
 
-  @Autowired
-  private var clientFactory: SpringClientFactory = _
-
   @Autowired(required = false)
   private var loadBalancedRetryFactory: LoadBalancedRetryFactory = _
 
   @PostConstruct
   def storeFeignConfiguration(): Unit = {
     SpringCloudFeignConfigurationCache.client = client
-    SpringCloudFeignConfigurationCache.clientFactory = clientFactory
     SpringCloudFeignConfigurationCache.loadBalancedRetryFactory = loadBalancedRetryFactory
     SpringCloudFeignConfigurationCache.contract = contract
     SpringCloudFeignConfigurationCache.decoder = decoder
@@ -71,7 +66,6 @@ private[linkis] object SpringCloudFeignConfigurationCache {
   private[SpringCloudFeignConfigurationCache] var decoder: Decoder = _
   private[SpringCloudFeignConfigurationCache] var contract: Contract = _
   private[SpringCloudFeignConfigurationCache] var client: Client = _
-  private[SpringCloudFeignConfigurationCache] var clientFactory: SpringClientFactory = _
 
   private[SpringCloudFeignConfigurationCache] var loadBalancedRetryFactory
       : LoadBalancedRetryFactory = _
@@ -92,7 +86,6 @@ private[linkis] object SpringCloudFeignConfigurationCache {
     client
   }
 
-  private[rpc] def getClientFactory = clientFactory
   private[rpc] def getLoadBalancedRetryFactory = loadBalancedRetryFactory
 
   private[linkis] def getDiscoveryClient = {

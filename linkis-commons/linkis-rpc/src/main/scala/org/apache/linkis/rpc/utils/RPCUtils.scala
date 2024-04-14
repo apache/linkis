@@ -25,13 +25,14 @@ import org.apache.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringM
 
 import org.apache.commons.lang3.StringUtils
 
+import org.springframework.cloud.client.loadbalancer.RetryableStatusCodeException
+
 import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
 import java.util.Locale
 
 import scala.collection.JavaConverters._
 
-import com.netflix.client.ClientException
 import feign.RetryableException
 
 object RPCUtils {
@@ -53,11 +54,10 @@ object RPCUtils {
       }
     case t: RuntimeException =>
       t.getCause match {
-        case client: ClientException =>
-          StringUtils.isNotBlank(client.getErrorMessage) &&
-            client.getErrorMessage.contains(
-              "Load balancer does not have available server for client"
-            )
+        //        case client: ClientException =>
+        case client: RetryableStatusCodeException =>
+          StringUtils.isNotBlank(client.getMessage) &&
+            client.getMessage.contains("Load balancer does not have available server for client")
         case _ => false
       }
     case _ => false

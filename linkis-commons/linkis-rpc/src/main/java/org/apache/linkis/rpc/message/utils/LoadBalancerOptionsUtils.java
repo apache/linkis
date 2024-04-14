@@ -17,8 +17,6 @@
 
 package org.apache.linkis.rpc.message.utils;
 
-import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
-
 import java.lang.reflect.Field;
 
 import feign.Request.Options;
@@ -32,7 +30,7 @@ public class LoadBalancerOptionsUtils {
   public static Options getDefaultOptions() throws NoSuchFieldException, IllegalAccessException {
     if (null == DEFAULT_OPTIONS) {
       synchronized (locker) {
-        Class<?> clazz = LoadBalancerFeignClient.class;
+        Class<?> clazz = null;
         Field optionField = clazz.getDeclaredField("DEFAULT_OPTIONS");
         optionField.setAccessible(true);
         Object o = optionField.get(clazz);

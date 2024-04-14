@@ -51,7 +51,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 @Configuration
 @AutoConfigureAfter(Array(classOf[GatewaySpringConfiguration], classOf[GatewayAutoConfiguration]))
-@LoadBalancerClients(Array(classOf[LinkisLoadBalancerClientConfiguration]))
+@LoadBalancerClients(defaultConfiguration = Array(classOf[LinkisLoadBalancerClientConfiguration]))
 class SpringCloudGatewayConfiguration {
   import SpringCloudGatewayConfiguration._
 

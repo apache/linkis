@@ -27,7 +27,5 @@ object EngineConnConstant {
 
   var hiveLogReg = "The url to track the job: http://.*?/proxy/(application_[0-9]+_[0-9]+)/"
 
-  var sparkLogReg = "INFO yarn application id: (application_[0-9]+_[0-9]+)"
-
   val YARN_LOG_URL = "INFO yarn application url:"
 }

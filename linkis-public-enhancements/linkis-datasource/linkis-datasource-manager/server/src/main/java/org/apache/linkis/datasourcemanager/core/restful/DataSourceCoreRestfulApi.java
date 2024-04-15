@@ -34,6 +34,7 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateExcept
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -68,7 +69,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -771,7 +771,7 @@ public class DataSourceCoreRestfulApi {
           String userName =
               ModuleUserUtils.getOperationUser(request, "queryDataSourceByIds ids:" + idsJson);
 
-          List ids = new ObjectMapper().readValue(idsJson, List.class);
+          List ids = BDPJettyServerHelper.jacksonJson().readValue(idsJson, List.class);
           List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids);
           return Message.ok()
               .data("queryList", dataSourceList)

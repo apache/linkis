@@ -17,11 +17,13 @@
 
 package org.apache.linkis.rpc.sender
 
-import feign._
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
+import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
+
+import org.apache.commons.lang3.StringUtils
+
+import feign._
 
 private[rpc] class SpringMVCRPCSender private[rpc] (
     private[rpc] val serviceInstance: ServiceInstance
@@ -38,7 +40,7 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
   override protected def doBuilder(builder: Feign.Builder): Unit = {
     if (serviceInstance != null && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       builder.requestInterceptor(new RequestInterceptor() {
-        def apply(template: RequestTemplate ): Unit = {
+        def apply(template: RequestTemplate): Unit = {
           // Fixed instance
           template.target(s"http://${serviceInstance.getInstance}")
         }

@@ -57,7 +57,8 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
   final AtomicInteger position;
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
-  private final Long maxWaitTime = RPCConfiguration.RPC_SERVICE_REFRESH_MAX_WAIT_TIME().getValue().toLong();
+  private final Long maxWaitTime =
+      RPCConfiguration.RPC_SERVICE_REFRESH_MAX_WAIT_TIME().getValue().toLong();
 
   public ServiceInstancePriorityLoadBalancer(
       ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
@@ -131,7 +132,8 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     if (null == serviceInstanceResponse && StringUtils.isNotBlank(clientIp)) {
       throw new NoInstanceExistsException(
           LinkisRpcErrorCodeSummary.INSTANCE_NOT_FOUND_ERROR.getErrorCode(),
-          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_NOT_FOUND_ERROR.getErrorDesc(), clientIp));
+          MessageFormat.format(
+              LinkisRpcErrorCodeSummary.INSTANCE_NOT_FOUND_ERROR.getErrorDesc(), clientIp));
     }
 
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {

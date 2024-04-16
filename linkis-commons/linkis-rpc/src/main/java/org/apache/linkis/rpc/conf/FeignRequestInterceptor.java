@@ -17,14 +17,11 @@
 
 package org.apache.linkis.rpc.conf;
 
-import org.apache.linkis.rpc.BaseRPCSender;
 import org.apache.linkis.rpc.constant.RpcConstant;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SSOUtils$;
 import org.apache.linkis.server.security.SecurityFilter$;
-
-import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;

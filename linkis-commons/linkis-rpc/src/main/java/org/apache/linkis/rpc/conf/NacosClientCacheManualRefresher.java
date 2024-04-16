@@ -29,7 +29,5 @@ public class NacosClientCacheManualRefresher implements CacheManualRefresher {
   private static final Logger logger =
       LoggerFactory.getLogger(NacosClientCacheManualRefresher.class);
 
-  public void refresh() {
-
-  }
+  public void refresh() {}
 }

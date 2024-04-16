@@ -23,6 +23,7 @@
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
       <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
     </Tabs>
+    <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
     <Button v-if="tabName === 'log'" class="foldButton" type="primary" @click="fold">{{foldFlag ? $t('message.linkis.unfold') : $t('message.linkis.fold')}}</Button>
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
 
@@ -103,7 +104,8 @@ export default {
       isAdminModel: false,
       jobhistoryTask: null,
       hasEngine: false,
-      param: {}
+      param: {},
+      yarnAddress: '',
     }
   },
   created() {
@@ -194,6 +196,7 @@ export default {
             url,
             {
               path: resultPath,
+              enableLimit: true,
               pageSize
             },
             'get'
@@ -214,19 +217,19 @@ export default {
                 hugeData: true,
                 tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
               }
-            } else if (ret.metadata && ret.metadata.length >= 500 || ret.display_prohibited) {
+            } else if(ret.column_limit_display) {
               result = {
-                headRows: [],
-                bodyRows: [],
+                headRows: ret.metadata,
+                bodyRows: ret.fileContent,
                 // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
                 total: ret.totalLine ? ret.totalLine : 0,
-                // (If the content is null, it will display no data)如果内容为null,就显示暂无数据
+                // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
                 type: ret.fileContent ? ret.type : 0,
                 path: resultPath,
                 current: 1,
                 size: 20,
-                hugeData: true
-              }
+                tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg,
+              };
             } else {
               result = {
                 headRows: ret.metadata,
@@ -370,6 +373,7 @@ export default {
         const option = jobhistory.task
         this.jobhistoryTask = option
         this.script.runType = option.runType
+        this.yarnAddress = option.yarnAddress
         if (!jobhistory.task.logPath) {
           const errCode = jobhistory.task.errCode
             ? `\n${this.$t('message.linkis.errorCode')}：${
@@ -449,6 +453,7 @@ export default {
                 {
                   path: currentResultPath,
                   page: 1,
+                  enableLimit: true,
                   pageSize: 5000
                 },
                 'get'
@@ -465,15 +470,19 @@ export default {
                     hugeData: true,
                     tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
                   };
-                } else if (ret.metadata && ret.metadata.length >= 500) {
+                } else if(ret.column_limit_display) {
                   tmpResult = {
-                    headRows: [],
-                    bodyRows: [],
+                    headRows: ret.metadata,
+                    bodyRows: ret.fileContent,
+                    // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
                     total: ret.totalLine,
+                    // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
                     type: ret.type,
                     path: currentResultPath,
-                    hugeData: true
-                  }
+                    current: 1,
+                    size: 20,
+                    tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg,
+                  };
                 } else {
                   tmpResult = {
                     headRows: ret.metadata,
@@ -519,7 +528,11 @@ export default {
         return this.$Message.warning(this.$t('message.linkis.logLoading'))
       }
       this.$router.go(-1)
-    }
+    },
+    // quick jump to yarn log page(快速跳转至yarn日志页面)
+    // jump() {
+    //   window.open(this.yarnAddress, '_blank')
+    // }
   }
 }
 </script>
@@ -529,6 +542,11 @@ export default {
   top: 0;
   right:83px;
 }
+// .jumpButton {
+//   position: absolute;
+//   top: 0;
+//   right:146px;
+// }
 
 .backButton {
   position: absolute;

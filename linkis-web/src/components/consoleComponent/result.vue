@@ -136,7 +136,8 @@
         :list="script.resultList"
         @change="changeSet">
       </result-set-list>
-      <div class="page-hint">
+      <div v-if="!result.hugeData" class="page-hint">
+        <p v-if="result.tipMsg" :title="result.tipMsg" style="margin-right: 20px;max-width: calc(100% - 250px);overflow: hidden;text-overflow: ellipsis;">{{ result.tipMsg }}</p>
         <Page
           :transfer="true"
           v-if="resultType === '2'"

@@ -416,7 +416,7 @@ export default {
         crossQueue: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           // {validator: this.percentageThresholdValidator, trigger: 'blur'},
-          {type: 'string', max: 25, message: this.$t('message.linkis.ipListManagement.customLen', {length: '25'})}
+          {type: 'string', max: 50, message: this.$t('message.linkis.ipListManagement.customLen', {length: '50'})}
         ],
         priorityCluster: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},

@@ -18,8 +18,10 @@
 package org.apache.linkis.rpc.sender
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
 import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
+import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 
@@ -27,7 +29,8 @@ import feign._
 
 private[rpc] class SpringMVCRPCSender private[rpc] (
     private[rpc] val serviceInstance: ServiceInstance
-) extends BaseRPCSender(serviceInstance.getApplicationName) {
+) extends BaseRPCSender(serviceInstance.getApplicationName)
+    with Logging {
 
   import SpringCloudFeignConfigurationCache._
 
@@ -41,17 +44,28 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
     if (serviceInstance != null && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       builder.requestInterceptor(new RequestInterceptor() {
         def apply(template: RequestTemplate): Unit = {
-          // Fixed instance
-          template.target(s"http://${serviceInstance.getInstance}")
+          template.target(
+            s"http://${serviceInstance.getInstance}${ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue}"
+          )
         }
       })
     }
     super.doBuilder(builder)
-    builder
-      .contract(getContract)
-      .encoder(getEncoder)
-      .decoder(getDecoder)
-      .requestInterceptor(getRPCTicketIdRequestInterceptor)
+    if (StringUtils.isBlank(serviceInstance.getInstance)) {
+      builder
+        .contract(getContract)
+        .encoder(getEncoder)
+        .decoder(getDecoder)
+        .client(getClient)
+        .requestInterceptor(getRPCTicketIdRequestInterceptor)
+    } else {
+      builder
+        .contract(getContract)
+        .encoder(getEncoder)
+        .decoder(getDecoder)
+        .requestInterceptor(getRPCTicketIdRequestInterceptor)
+    }
+
   }
 
   /**

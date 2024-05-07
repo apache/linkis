@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.interceptor.exception.{LabelCheckException, Pa
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{PartitionCheckConfRequest, PartitionCheckConfResponse}
 import org.apache.linkis.governance.common.utils.LoggerUtils
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
 /**
@@ -38,6 +39,11 @@ class PartitionTypeCheckInterceptor extends EntranceInterceptor with Logging{
     jobRequest match {
       case jobRequest: JobRequest =>
         if (VALIDATOR_PARTITION_CHECK_ENABLE.getValue) {
+          val creator: String = LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator
+          //只处理ide引擎
+          if (creator == null || !creator.toLowerCase().contains("ide")) {
+            return jobRequest
+          }
           Utils.tryAndWarn{
             val sender: Sender = Sender.getSender(EntranceConfiguration.VALIDATOR_APPLICATION_NAME.getValue)
             val request = new PartitionCheckConfRequest(jobRequest.getExecutionCode)

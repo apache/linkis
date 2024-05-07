@@ -20,8 +20,6 @@ package org.apache.linkis.engineconn.acessible.executor.log;
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
-import org.apache.linkis.engineconn.common.creation.EngineCreationContext;
-import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListenerBus;
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext;
 
@@ -130,8 +128,8 @@ public class SendAppender extends AbstractAppender {
       Matcher hiveMatcher = Pattern.compile(EngineConnConstant.hiveLogReg()).matcher(logLine);
       if (hiveMatcher.find()) {
         logLine =
-                hiveMatcher.replaceAll(
-                        EngineConnConstant.YARN_LOG_URL() + yarnUrl + hiveMatcher.group(1));
+            hiveMatcher.replaceAll(
+                EngineConnConstant.YARN_LOG_URL() + yarnUrl + hiveMatcher.group(1));
       }
     }
     return logLine;

@@ -93,8 +93,9 @@
             <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
             <if test="startId != null">and job.id >= #{startId}</if>
-            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -124,8 +125,9 @@
                 and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), job.labels) > 0
             </if>
             <if test="startId != null">and job.id >= #{startId}</if>
-            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -145,8 +147,9 @@
                 and job.labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
             <if test="startId != null">and job.id >= #{startId}</if>
-            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>

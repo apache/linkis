@@ -152,7 +152,8 @@ public class QueryRestfulApi {
       @RequestParam(value = "proxyUser", required = false) String proxyUser,
       @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
       @RequestParam(value = "isDeptView", required = false) Boolean isDeptView,
-      @RequestParam(value = "instance", required = false) String instance)
+      @RequestParam(value = "instance", required = false) String instance,
+      @RequestParam(value = "engineInstance", required = false) String engineInstance)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
     if (StringUtils.isEmpty(status)) {
@@ -216,6 +217,14 @@ public class QueryRestfulApi {
     } else if (!QueryUtils.checkInstanceNameValid(instance)) {
       return Message.error("Invalid instances : " + instance);
     }
+    if (StringUtils.isEmpty(engineInstance)) {
+      engineInstance = null;
+    } else {
+      if (!QueryUtils.checkInstanceNameValid(engineInstance)) {
+        return Message.error("Invalid instances : " + engineInstance);
+      }
+    }
+
     List<JobHistory> queryTasks = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
@@ -230,7 +239,8 @@ public class QueryRestfulApi {
               executeApplicationName,
               null,
               instance,
-              departmentId);
+              departmentId,
+              engineInstance);
     } finally {
       PageHelper.clearPage();
     }
@@ -341,6 +351,7 @@ public class QueryRestfulApi {
               eDate,
               engineType,
               queryCacheManager.getUndoneTaskMinId(),
+              null,
               null,
               null);
     } finally {

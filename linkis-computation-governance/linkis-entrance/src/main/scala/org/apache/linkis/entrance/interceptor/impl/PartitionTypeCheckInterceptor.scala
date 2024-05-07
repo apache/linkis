@@ -40,7 +40,7 @@ class PartitionTypeCheckInterceptor extends EntranceInterceptor with Logging{
       case jobRequest: JobRequest =>
         if (VALIDATOR_PARTITION_CHECK_ENABLE.getValue) {
           val creator: String = LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator
-          //只处理ide引擎
+          // 只处理ide引擎
           if (creator == null || !creator.toLowerCase().contains("ide")) {
             return jobRequest
           }

@@ -43,6 +43,7 @@ public class JobHistoryClear {
     List<String> cmdlist = new ArrayList<>();
     cmdlist.add("sh");
     cmdlist.add(MonitorConfig.shellPath + "clear_history_task.sh");
+    cmdlist.add(MonitorConfig.JOBHISTORY_CLEAR_DAY.getValue());
     logger.info("clear_history_task  shell command {}", cmdlist);
     String exec = ThreadUtils.run(cmdlist, "clear_history_task.sh");
     logger.info("shell log  {}", exec);

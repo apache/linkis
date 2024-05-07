@@ -69,4 +69,7 @@ public class MonitorConfig {
           "linkis.monitor.jobhistory.task.timeout.desc",
           "[Linkis任务信息]您好，您在Linkis/DSS提交的任务(任务ID:{0})，已经运行超过{1}h，"
               + "请关注是否任务正常，如果不正常您可以到Linkis/DSS管理台进行任务的kill，集群信息为BDAP({2})。详细解决方案见Q47：{3} ");
+
+  public static final CommonVars<String> JOBHISTORY_CLEAR_DAY =
+      CommonVars.apply("linkis.monitor.jobhistory.clear.day", "90");
 }

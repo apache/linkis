@@ -39,6 +39,7 @@ import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
@@ -165,10 +166,31 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         labelFilter.choseEngineLabel(labels),
         AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
       )
+      val prop: String = BDPJettyServerHelper.gson.toJson(engineReuseRequest.getProperties)
+      val lab: String = BDPJettyServerHelper.gson.toJson(labels)
+      if (resource == null) {
+        logger.info(s"resource is null properties: $prop, labels: $lab")
+      } else {
+        logger.info(
+          s"need used resource: ${resource.getUsedResource.toJson}, max resource: ${resource.getMaxResource.toJson}, locked resource: ${resource.getLockedResource.toJson}"
+        )
+      }
+
       // 过滤掉资源不满足的引擎
-      engineScoreList = engineScoreList.filter(engine =>
-        engine.getNodeResource.getUsedResource >= resource.getUsedResource
-      )
+      engineScoreList = engineScoreList.filter(engine => {
+        logger.info(
+          "engine: {} , used resource: {}, max resource: {}, locked resource: {} ",
+          engine.getServiceInstance,
+          engine.getNodeResource.getUsedResource.toJson,
+          engine.getNodeResource.getMaxResource.toJson,
+          engine.getNodeResource.getLockedResource.toJson
+        )
+        if (resource != null) {
+          engine.getNodeResource.getUsedResource >= resource.getUsedResource
+        } else {
+          true
+        }
+      })
       if (engineScoreList.isEmpty) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,

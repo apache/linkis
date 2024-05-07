@@ -237,12 +237,14 @@ object TemplateConfUtils extends Logging {
             // to remove metedata start param
             TaskUtils.clearStartupMap(params)
 
-            val onceLabel =
-              LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
-                classOf[ExecuteOnceLabel]
-              )
-            logger.info("Add once label for task id:{}", requestPersistTask.getId.toString)
-            requestPersistTask.getLabels.add(onceLabel)
+            if (EntranceConfiguration.TEMPLATE_CONF_ADD_ONCE_LABEL_ENABLE.getValue) {
+              val onceLabel =
+                LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                  classOf[ExecuteOnceLabel]
+                )
+              logger.info("Add once label for task id:{}", requestPersistTask.getId.toString)
+              requestPersistTask.getLabels.add(onceLabel)
+            }
           }
         }
 

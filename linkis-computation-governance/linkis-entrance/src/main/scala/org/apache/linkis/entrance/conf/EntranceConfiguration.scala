@@ -223,8 +223,11 @@ object EntranceConfiguration {
   val TEMPLATE_CONF_SWITCH =
     CommonVars("wds.linkis.entrance.template.conf.interceptor.switch", true)
 
-  val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
-    CommonVars("linkis.entrance.auto.clean.dirty.data.enable", true)
+  val TEMPLATE_CONF_ADD_ONCE_LABEL_ENABLE =
+    CommonVars("wds.linkis.entrance.template.add.once.label.enable", false)
+
+  val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR: CommonVars[Boolean] =
+    CommonVars[Boolean]("linkis.entrance.auto.clean.dirty.data.enable", true)
 
   val ENTRANCE_CREATOR_JOB_LIMIT: CommonVars[Int] =
     CommonVars[Int](

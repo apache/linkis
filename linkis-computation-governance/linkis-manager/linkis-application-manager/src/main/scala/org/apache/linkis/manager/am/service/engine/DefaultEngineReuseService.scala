@@ -27,6 +27,7 @@ import org.apache.linkis.manager.am.selector.NodeSelector
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.entity.resource.LoadInstanceResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -35,6 +36,7 @@ import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -66,6 +68,12 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
   @Autowired
   private var engineStopService: EngineStopService = _
+
+  @Autowired
+  private var engineCreateService: DefaultEngineCreateService = _
+
+  @Autowired
+  private var labelFilter: LabelFilter = _
 
   /**
    *   1. Obtain the EC corresponding to all labels 2. Judging reuse exclusion tags and fixed engine
@@ -143,6 +151,31 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
     var engineScoreList =
       getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
+
+    // 获取需要的资源
+    if (AMConfiguration.EC_REUSE_WITH_RESOURCE_RULE_ENABLE) {
+      val labels: util.List[Label[_]] =
+        engineCreateService.buildLabel(engineReuseRequest.getLabels, engineReuseRequest.getUser)
+      if (engineReuseRequest.getProperties == null) {
+        engineReuseRequest.setProperties(new util.HashMap[String, String]())
+      }
+      val resource = engineCreateService.generateResource(
+        engineReuseRequest.getProperties,
+        engineReuseRequest.getUser,
+        labelFilter.choseEngineLabel(labels),
+        AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+      )
+      // 过滤掉资源不满足的引擎
+      engineScoreList = engineScoreList.filter(engine =>
+        engine.getNodeResource.getUsedResource >= resource.getUsedResource
+      )
+      if (engineScoreList.isEmpty) {
+        throw new LinkisRetryException(
+          AMConstant.ENGINE_ERROR_CODE,
+          s"No engine can be reused, cause all engine resources are not sufficient."
+        )
+      }
+    }
 
     var engine: EngineNode = null
     var count = 1

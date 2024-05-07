@@ -17,11 +17,6 @@
 
 package org.apache.linkis.governance.common.constant.job
 
-/**
- * @date
- *   2021/3/17
- * @description
- */
 object JobRequestConstants {
 
   val JOB_ID = "jobId"
@@ -35,5 +30,7 @@ object JobRequestConstants {
   val JOB_DETAIL_LIST = "jobDetailList"
 
   val JOB_SOURCE_TAGS = "job.source.tags"
+
+  val LINKIS_JDBC_DEFAULT_DB = "linkis.jdbc.default.db"
 
 }

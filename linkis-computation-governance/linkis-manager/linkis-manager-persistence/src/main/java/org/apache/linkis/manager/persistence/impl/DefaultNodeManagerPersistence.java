@@ -116,8 +116,11 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       nodeManagerMapper.updateNodeLabelRelation(
           serviceInstance.getInstance(), node.getServiceInstance().getInstance());
     } catch (DuplicateKeyException e) {
-      throw new LinkisRetryException(
-          41003, "engine instance name is exist, request of created engine will be retry");
+      LinkisRetryException linkisRetryException =
+          new LinkisRetryException(
+              NODE_INFO_DUPLICATE.getErrorCode(), NODE_INFO_DUPLICATE.getErrorMessage());
+      linkisRetryException.initCause(linkisRetryException);
+      throw linkisRetryException;
     } catch (Exception e) {
       NodeInstanceNotFoundException nodeInstanceNotFoundException =
           new NodeInstanceNotFoundException(

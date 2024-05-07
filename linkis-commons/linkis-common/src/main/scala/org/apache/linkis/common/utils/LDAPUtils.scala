@@ -19,6 +19,7 @@ package org.apache.linkis.common.utils
 
 import org.apache.linkis.common.conf.CommonVars
 
+import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
 
 import javax.naming.Context
@@ -58,13 +59,15 @@ object LDAPUtils extends Logging {
   def login(userID: String, password: String): Unit = {
 
     val saltPwd = storeUser.getIfPresent(userID)
-    if (
-        StringUtils.isNotBlank(saltPwd) && saltPwd == new String(
-          RSAUtils.encrypt(password.getBytes(StandardCharsets.UTF_8))
-        )
-    ) {
-      logger.info(s"user $userID login success for storeUser")
-      return
+    if (StringUtils.isNotBlank(saltPwd)) {
+      Utils.tryAndWarn {
+        if (
+            saltPwd.equalsIgnoreCase(Hex.encodeHexString(password.getBytes(StandardCharsets.UTF_8)))
+        ) {
+          logger.info(s"user $userID login success for storeUser")
+          return
+        }
+      }
     }
 
     val env = new Hashtable[String, String]()
@@ -81,7 +84,9 @@ object LDAPUtils extends Logging {
     env.put(Context.SECURITY_CREDENTIALS, bindPassword)
 
     new InitialLdapContext(env, null)
-    storeUser.put(userID, new String(RSAUtils.encrypt(password.getBytes(StandardCharsets.UTF_8))))
+    Utils.tryAndWarn {
+      storeUser.put(userID, Hex.encodeHexString(password.getBytes(StandardCharsets.UTF_8)))
+    }
     logger.info(s"user $userID login success.")
 
   }

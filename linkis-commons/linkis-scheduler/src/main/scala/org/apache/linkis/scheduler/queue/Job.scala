@@ -300,6 +300,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   override def run(): Unit = {
+    Thread.currentThread().setName(s"Job_${toString}_Thread")
     if (!isScheduled || interrupt) return
     startTime = System.currentTimeMillis
     Utils.tryAndWarn(transition(Running))

@@ -41,6 +41,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
   EngineConnCreationDescImpl
 }
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
+import org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
@@ -252,9 +253,16 @@ class DefaultEngineCreateService
     // 7.Update persistent information: including inserting engine/metrics
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)
-      val stopEngineRequest =
-        new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
-      engineStopService.asyncStopEngine(stopEngineRequest)
+      t match {
+        case linkisRetryException: LinkisRetryException =>
+          logger.warn(
+            s"node $oldServiceInstance update failed,caused by retry Exception, do not to stop ec"
+          )
+        case _ =>
+          val stopEngineRequest =
+            new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+          engineStopService.asyncStopEngine(stopEngineRequest)
+      }
       val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
       if (null == failedEcNode) {
         logger.info(s" engineConn does not exist in db: $oldServiceInstance ")

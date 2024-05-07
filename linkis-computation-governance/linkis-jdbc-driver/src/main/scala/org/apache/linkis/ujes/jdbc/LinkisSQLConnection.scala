@@ -18,6 +18,7 @@
 package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
@@ -86,9 +87,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     tableauFlag
   }
 
-  private[jdbc] val dbName =
-    if (StringUtils.isNotBlank(props.getProperty(DB_NAME))) props.getProperty(DB_NAME)
-    else "default"
+  private[jdbc] val dbName = props.getProperty(DB_NAME)
 
   private val runningSQLStatements = new util.LinkedList[Statement]
 
@@ -153,10 +152,6 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
 
     val statement = op
     runningSQLStatements.add(statement)
-    if (!inited) {
-      inited = true
-      Utils.tryAndWarn(statement.execute(s"USE $dbName"))
-    }
     statement
   }
 
@@ -471,6 +466,10 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     if (fixedSessionEnabled) {
       labelMap.put(LabelKeyConstant.FIXED_EC_KEY, connectionId)
       logger.info("Fixed session is enable session id is {}", connectionId)
+    }
+
+    if (StringUtils.isNotBlank(dbName)) {
+      runtimeParams.put(JobRequestConstants.LINKIS_JDBC_DEFAULT_DB, dbName)
     }
 
     val jobSubmitAction = JobSubmitAction.builder

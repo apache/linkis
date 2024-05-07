@@ -264,7 +264,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       eDate: Date,
       engineType: String,
       startJobId: lang.Long,
-      instance: String
+      instance: String,
+      departmentId: String
   ): util.List[JobHistory] = {
 
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
@@ -277,7 +278,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId
       )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
@@ -291,7 +293,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -312,7 +315,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId
       )
     }
     result
@@ -334,7 +338,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null), {
+      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
@@ -448,7 +452,17 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     val eDate = new Date(System.currentTimeMillis)
     val sDate = DateUtils.addDays(eDate, -1)
     val jobHistoryList =
-      jobHistoryMapper.search(null, null, statusList, sDate, eDate, null, null, request.instance)
+      jobHistoryMapper.search(
+        null,
+        null,
+        statusList,
+        sDate,
+        eDate,
+        null,
+        null,
+        request.instance,
+        null
+      )
     val idlist = jobHistoryList.asScala.map(_.getId).asJava
     logger.info("Tasks id will be canceled ids :{}", idlist)
     // Modify task status

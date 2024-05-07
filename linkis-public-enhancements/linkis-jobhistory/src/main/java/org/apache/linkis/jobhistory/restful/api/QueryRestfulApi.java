@@ -20,6 +20,8 @@ package org.apache.linkis.jobhistory.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
+import org.apache.linkis.governance.common.protocol.conf.DepartmentRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartmentResponse;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
@@ -28,6 +30,7 @@ import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.transitional.TaskStatus;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
+import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -62,6 +65,9 @@ import org.slf4j.LoggerFactory;
 public class QueryRestfulApi {
 
   private Logger log = LoggerFactory.getLogger(this.getClass());
+  private Sender sender =
+      Sender.getSender(
+          Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());;
 
   @Autowired private JobHistoryQueryService jobHistoryQueryService;
 
@@ -77,6 +83,7 @@ public class QueryRestfulApi {
     return Message.ok()
         .data("admin", Configuration.isAdmin(username))
         .data("historyAdmin", Configuration.isJobHistoryAdmin(username))
+        .data("deptAdmin", Configuration.isDepartmentAdmin(username))
         .data("errorMsgTip", Configuration.ERROR_MSG_TIP().getValue());
   }
 
@@ -144,6 +151,7 @@ public class QueryRestfulApi {
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "proxyUser", required = false) String proxyUser,
       @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
+      @RequestParam(value = "isDeptView", required = false) Boolean isDeptView,
       @RequestParam(value = "instance", required = false) String instance)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
@@ -156,18 +164,16 @@ public class QueryRestfulApi {
     if (null == pageSize) {
       pageSize = 20;
     }
-    if (endDate == null) {
+    if (null == endDate) {
       endDate = System.currentTimeMillis();
     }
-    if (startDate == null) {
+    if (null == startDate) {
       startDate = 0L;
     }
     if (StringUtils.isEmpty(creator)) {
       creator = null;
-    } else {
-      if (!QueryUtils.checkNameValid(creator)) {
-        return Message.error("Invalid creator : " + creator);
-      }
+    } else if (!QueryUtils.checkNameValid(creator)) {
+      return Message.error("Invalid creator : " + creator);
     }
     if (!StringUtils.isEmpty(executeApplicationName)) {
       if (!QueryUtils.checkNameValid(executeApplicationName)) {
@@ -187,21 +193,28 @@ public class QueryRestfulApi {
     if (isAdminView == null) {
       isAdminView = false;
     }
-    if (Configuration.isJobHistoryAdmin(username)) {
-      if (isAdminView) {
-        if (proxyUser != null) {
-          username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;
-        } else {
+    String departmentId = null;
+    if (Configuration.isJobHistoryAdmin(username) & isAdminView) {
+      if (proxyUser != null) {
+        username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;
+      } else {
+        username = null;
+      }
+    } else if (null != isDeptView && isDeptView) {
+      //
+      Object responseObject = sender.ask(new DepartmentRequest(username));
+      if (responseObject instanceof DepartmentResponse) {
+        DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
+        if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
+          departmentId = departmentResponse.departmentId();
           username = null;
         }
       }
     }
     if (StringUtils.isEmpty(instance)) {
       instance = null;
-    } else {
-      if (!QueryUtils.checkInstanceNameValid(instance)) {
-        return Message.error("Invalid instances : " + instance);
-      }
+    } else if (!QueryUtils.checkInstanceNameValid(instance)) {
+      return Message.error("Invalid instances : " + instance);
     }
     List<JobHistory> queryTasks = null;
     PageHelper.startPage(pageNow, pageSize);
@@ -216,7 +229,8 @@ public class QueryRestfulApi {
               eDate,
               executeApplicationName,
               null,
-              instance);
+              instance,
+              departmentId);
     } finally {
       PageHelper.clearPage();
     }
@@ -327,6 +341,7 @@ public class QueryRestfulApi {
               eDate,
               engineType,
               queryCacheManager.getUndoneTaskMinId(),
+              null,
               null);
     } finally {
       PageHelper.clearPage();

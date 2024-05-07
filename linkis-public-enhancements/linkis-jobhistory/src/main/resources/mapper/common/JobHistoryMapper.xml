@@ -82,17 +82,21 @@
 
 
     <select id="search" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <select id="searchWithIdOrderAsc" useCache="true" resultMap="jobHistoryMap" >
@@ -106,37 +110,45 @@
     </select>
 
     <select id="searchWithUserCreator" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), job.labels) > 0
             </if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <select id="searchWithCreatorOnly" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
+                and job.labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and job.instances = #{instances}</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <!-- // todo check -->

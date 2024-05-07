@@ -40,7 +40,7 @@ public interface JobHistoryQueryService {
 
     JobHistory getJobHistoryByIdAndName(Long jobID, String userName);
 
-    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance);
+    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance, String departmentId);
 
     Integer countUndoneTasks(String username, String creator, Date sDate, Date eDate, String engineType, Long startJobId);
 

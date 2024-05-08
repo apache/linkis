@@ -20,13 +20,15 @@ package org.apache.linkis.monitor.scheduled;
 import org.apache.linkis.monitor.config.MonitorConfig;
 import org.apache.linkis.monitor.until.ThreadUtils;
 import org.apache.linkis.monitor.utils.log.LogUtils;
-import org.slf4j.Logger;
+
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
 
 /** * Task: Upload audit logs from Linkis to HDFS and delete them */
 @Component

@@ -18,6 +18,8 @@
 package org.apache.linkis.engineconn.computation.executor.upstream
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
+import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatServiceHolder
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.computation.executor.upstream.access.{
   ConnectionInfoAccess,
@@ -29,6 +31,8 @@ import org.apache.linkis.engineconn.computation.executor.upstream.handler.{
 }
 import org.apache.linkis.engineconn.computation.executor.upstream.wrapper.ConnectionInfoWrapper
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorCode
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory
 
@@ -112,6 +116,23 @@ abstract class SingleThreadUpstreamConnectionMonitor(
       "requesting connection info: " + util.Arrays
         .toString(Collections.list(wrapperMap.keys).toArray())
     )
+    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
+      val executor = ExecutorManager.getInstance.getReportExecutor
+      executor match {
+        case concurrentExecutor: ConcurrentExecutor =>
+          if (toBeRequested.size() > concurrentExecutor.getConcurrentLimit) {
+            logger.warn(
+              s"Executor running task has exceed the limit ${toBeRequested.size()}, executor id ${concurrentExecutor.getId}"
+            )
+            ExecutorHeartbeatServiceHolder
+              .getDefaultHeartbeatService()
+              .setSelfUnhealthy(
+                s"running task has exceed the limit: ${concurrentExecutor.getConcurrentLimit}"
+              )
+          }
+        case _ =>
+      }
+    }
     val infoAccessRequest = generateInfoAccessRequest(toBeRequested)
     val connectionInfoList = infoAccess.getUpstreamInfo(infoAccessRequest)
     logger.info(

@@ -70,4 +70,10 @@ object AccessibleExecutorConfiguration {
     "Heartbeat status report repeated ignore, default 3ms,Negative numbers do not take effect"
   ).getValue
 
+  val ENGINECONN_AUTO_EXIT =
+    CommonVars("linkis.engineconn.support.auto.exit", false).getValue
+
+  val ENGINECONN_AUTO_EXIT_DAYS =
+    CommonVars("linkis.engineconn.auto.exit.days", 7).getValue
+
 }

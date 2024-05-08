@@ -57,7 +57,7 @@ class ECTaskEntranceMonitor
 
   def unregister(taskID: String): Unit = {
     if (!wrapperMap.containsKey(taskID)) {
-      logger.error("attempted to unregister non-existing EngineConnTask!! task-id: " + taskID)
+      logger.warn("attempted to unregister non-existing EngineConnTask!! task-id: " + taskID)
     }
     wrapperMap.remove(taskID)
   }

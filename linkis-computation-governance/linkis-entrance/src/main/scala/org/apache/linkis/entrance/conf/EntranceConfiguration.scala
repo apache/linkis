@@ -39,7 +39,7 @@ object EntranceConfiguration {
     CommonVars("linkis.validator.application.name", "linkis-et-validator")
 
   val VALIDATOR_PARTITION_CHECK_ENABLE =
-    CommonVars("linkis.validator.partition.check.enable", false)
+    CommonVars("linkis.validator.partition.check.enable", true)
 
   /**
    * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path

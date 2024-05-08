@@ -35,12 +35,6 @@ object EntranceConfiguration {
   val JOBHISTORY_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
 
-  val VALIDATOR_APPLICATION_NAME =
-    CommonVars("linkis.validator.application.name", "linkis-et-validator")
-
-  val VALIDATOR_PARTITION_CHECK_ENABLE =
-    CommonVars("linkis.validator.partition.check.enable", true)
-
   /**
    * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
    * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀

@@ -172,23 +172,26 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         logger.info(s"resource is null properties: $prop, labels: $lab")
       } else {
         logger.info(
-          s"need used resource: ${resource.getUsedResource.toJson}, max resource: ${resource.getMaxResource.toJson}, locked resource: ${resource.getLockedResource.toJson}"
+          s"need used resource: ${resource.getUsedResource.toJson}, " +
+            s"max resource: ${resource.getMaxResource.toJson}, " +
+            s"locked resource: ${resource.getLockedResource.toJson}"
         )
       }
 
       // 过滤掉资源不满足的引擎
       engineScoreList = engineScoreList.filter(engine => {
         logger.info(
-          "engine: {} , used resource: {}, max resource: {}, locked resource: {} ",
-          engine.getServiceInstance,
-          engine.getNodeResource.getUsedResource.toJson,
-          engine.getNodeResource.getMaxResource.toJson,
-          engine.getNodeResource.getLockedResource.toJson
+          s"engine: ${engine.getServiceInstance} , " +
+            s"used resource: ${engine.getNodeResource.getUsedResource.toJson}, " +
+            s"max resource: ${engine.getNodeResource.getMaxResource.toJson}, " +
+            s"locked resource: ${engine.getNodeResource.getLockedResource.toJson}"
         )
         if (resource != null) {
-          engine.getNodeResource.getUsedResource >= resource.getUsedResource
+          // 引擎资源只有满足需要的资源才复用
+          engine.getNodeResource.getUsedResource >= resource.getMaxResource
         } else {
-          true
+          // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
+          engine.getNodeResource.getLockedResource >= resource.getMaxResource
         }
       })
       if (engineScoreList.isEmpty) {

@@ -197,18 +197,21 @@ public class QueryRestfulApi {
     }
     String departmentId = null;
     if (Configuration.isJobHistoryAdmin(username) & isAdminView) {
-      if (proxyUser != null) {
-        username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;
+      if (StringUtils.isNotBlank(proxyUser)) {
+        username = proxyUser;
       } else {
         username = null;
       }
     } else if (null != isDeptView && isDeptView) {
-      //
       Object responseObject = sender.ask(new DepartmentRequest(username));
       if (responseObject instanceof DepartmentResponse) {
         DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
         if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
           departmentId = departmentResponse.departmentId();
+        }
+        if (StringUtils.isNotBlank(proxyUser)) {
+          username = proxyUser;
+        } else {
           username = null;
         }
       }

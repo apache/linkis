@@ -107,7 +107,17 @@ public class JobHistoryQueryServiceTest {
   public void searchTest() {
     List<JobHistory> histories =
         jobRequestQueryService.search(
-            1L, "hadoop", "hadoop", "Succeed", new Date(), new Date(), "spark", 1L, null, null,null);
+            1L,
+            "hadoop",
+            "hadoop",
+            "Succeed",
+            new Date(),
+            new Date(),
+            "spark",
+            1L,
+            null,
+            null,
+            null);
     Assertions.assertTrue(histories.size() == 0);
   }
 

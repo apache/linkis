@@ -22,9 +22,15 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.conf.EntranceConfiguration.VALIDATOR_PARTITION_CHECK_ENABLE
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
-import org.apache.linkis.entrance.interceptor.exception.{LabelCheckException, PartitionCheckException}
+import org.apache.linkis.entrance.interceptor.exception.{
+  LabelCheckException,
+  PartitionCheckException
+}
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.conf.{PartitionCheckConfRequest, PartitionCheckConfResponse}
+import org.apache.linkis.governance.common.protocol.conf.{
+  PartitionCheckConfRequest,
+  PartitionCheckConfResponse
+}
 import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
@@ -32,7 +38,7 @@ import org.apache.linkis.rpc.Sender
 /**
  * Description: For partition type check(用于分区类型校验)
  */
-class PartitionTypeCheckInterceptor extends EntranceInterceptor with Logging{
+class PartitionTypeCheckInterceptor extends EntranceInterceptor with Logging {
 
   @throws[ErrorException]
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
@@ -44,12 +50,17 @@ class PartitionTypeCheckInterceptor extends EntranceInterceptor with Logging{
           if (creator == null || !creator.toLowerCase().contains("ide")) {
             return jobRequest
           }
-          Utils.tryAndWarn{
-            val sender: Sender = Sender.getSender(EntranceConfiguration.VALIDATOR_APPLICATION_NAME.getValue)
+          Utils.tryAndWarn {
+            val sender: Sender =
+              Sender.getSender(EntranceConfiguration.VALIDATOR_APPLICATION_NAME.getValue)
             val request = new PartitionCheckConfRequest(jobRequest.getExecutionCode)
-            val response: PartitionCheckConfResponse = sender.ask(request).asInstanceOf[PartitionCheckConfResponse]
+            val response: PartitionCheckConfResponse =
+              sender.ask(request).asInstanceOf[PartitionCheckConfResponse]
             if (!response.isCheckStatus) {
-              throw PartitionCheckException(50082, "partition column type checkfailed!(分区字段类型校验失败！): " + response.getDesc)
+              throw PartitionCheckException(
+                50082,
+                "partition column type checkfailed!(分区字段类型校验失败！): " + response.getDesc
+              )
             }
           }
         }

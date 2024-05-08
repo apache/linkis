@@ -661,7 +661,7 @@ public class FsRestfulApi {
             int realSize = realMap.length;
             if (realSize > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()) {
               message.data("column_limit_display", true);
-              message.data("zh_msg", "因为您的结果集较大，如需查看完整结果集，请使用结果集导出功能。");
+              message.data("zh_msg", "全量结果集超过500列，如需查看完整结果集，请使用结果集导出功能");
               message.data(
                   "en_msg",
                   "Because your result set is large, to view the full result set, use the Result set Export feature.");

@@ -95,7 +95,8 @@ public class QueryRestfulApi {
   public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
     String username = SecurityFilter.getLoginUsername(req);
     if (Configuration.isJobHistoryAdmin(username)
-        || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
+        || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()
+        || Configuration.isDepartmentAdmin(username)) {
       username = null;
     }
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);

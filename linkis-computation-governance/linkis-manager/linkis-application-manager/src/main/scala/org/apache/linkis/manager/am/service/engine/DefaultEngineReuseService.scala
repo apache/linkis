@@ -170,22 +170,10 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       val lab: String = BDPJettyServerHelper.gson.toJson(labels)
       if (resource == null) {
         logger.info(s"resource is null properties: $prop, labels: $lab")
-      } else {
-        logger.info(
-          s"need used resource: ${resource.getUsedResource.toJson}, " +
-            s"max resource: ${resource.getMaxResource.toJson}, " +
-            s"locked resource: ${resource.getLockedResource.toJson}"
-        )
       }
 
       // 过滤掉资源不满足的引擎
       engineScoreList = engineScoreList.filter(engine => {
-        logger.info(
-          s"engine: ${engine.getServiceInstance} , " +
-            s"used resource: ${engine.getNodeResource.getUsedResource.toJson}, " +
-            s"max resource: ${engine.getNodeResource.getMaxResource.toJson}, " +
-            s"locked resource: ${engine.getNodeResource.getLockedResource.toJson}"
-        )
         if (resource != null) {
           // 引擎资源只有满足需要的资源才复用
           engine.getNodeResource.getUsedResource >= resource.getMaxResource

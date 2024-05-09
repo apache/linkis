@@ -17,6 +17,8 @@
 
 package org.apache.linkis.gateway.springcloud.http;
 
+import org.apache.linkis.rpc.constant.RpcConstant;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,7 +58,7 @@ public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalance
         ((RequestDataContext) request.getContext())
             .getClientRequest()
             .getHeaders()
-            .get("client-ip");
+            .get(RpcConstant.FIXED_INSTANCE);
     String clientIp = CollectionUtils.isNotEmpty(clientIpList) ? clientIpList.get(0) : null;
     ServiceInstanceListSupplier supplier =
         serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);

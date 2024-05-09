@@ -21,7 +21,7 @@ public class AbstractRetryableProtocol implements RetryableProtocol {
 
   @Override
   public long maxPeriod() {
-    return 3000L;
+    return 30000L;
   }
 
   @Override
@@ -31,11 +31,11 @@ public class AbstractRetryableProtocol implements RetryableProtocol {
 
   @Override
   public int retryNum() {
-    return 2;
+    return 5;
   }
 
   @Override
   public long period() {
-    return 1000L;
+    return 10000L;
   }
 }

@@ -18,6 +18,7 @@
 package org.apache.linkis.governance.common.protocol.task
 
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
@@ -91,7 +92,7 @@ trait TaskState extends RequestProtocol {}
 
 case class RequestTaskPause(execId: String) extends TaskState
 case class RequestTaskResume(execId: String) extends TaskState
-case class RequestTaskKill(execId: String) extends TaskState
+case class RequestTaskKill(execId: String) extends TaskState with RetryableProtocol
 
 /**
  * The status of requesting job execution, mainly used for:<br>

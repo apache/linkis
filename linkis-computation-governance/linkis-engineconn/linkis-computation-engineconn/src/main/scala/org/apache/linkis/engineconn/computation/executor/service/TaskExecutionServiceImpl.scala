@@ -154,8 +154,7 @@ class TaskExecutionServiceImpl
         sender = Sender.getSender(task.getCallbackServiceInstance())
         sender.send(msg)
       } else {
-        // todo
-        logger.debug("SendtoEntrance error, cannot find entrance instance.")
+        logger.warn("SendtoEntrance error, cannot find entrance instance.")
       }
     } { t =>
       val errorMsg = s"SendToEntrance error. $msg" + t.getCause

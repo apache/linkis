@@ -40,6 +40,11 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
   override protected def createRPCInterceptorChain() =
     new ServiceInstanceRPCInterceptorChain(0, getRPCInterceptors, serviceInstance)
 
+  /**
+   * If it's a random call, you don't need to set target specify instance,need to specify target and
+   * do not set client setting
+   * @param builder
+   */
   override protected def doBuilder(builder: Feign.Builder): Unit = {
     if (serviceInstance != null && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       builder.requestInterceptor(new RequestInterceptor() {

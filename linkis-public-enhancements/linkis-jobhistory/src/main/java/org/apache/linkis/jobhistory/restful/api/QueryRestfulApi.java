@@ -208,11 +208,11 @@ public class QueryRestfulApi {
         DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
         if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
           departmentId = departmentResponse.departmentId();
-        }
-        if (StringUtils.isNotBlank(proxyUser)) {
-          username = proxyUser;
-        } else {
-          username = null;
+          if (StringUtils.isNotBlank(proxyUser)) {
+            username = proxyUser;
+          } else {
+            username = null;
+          }
         }
       }
     }

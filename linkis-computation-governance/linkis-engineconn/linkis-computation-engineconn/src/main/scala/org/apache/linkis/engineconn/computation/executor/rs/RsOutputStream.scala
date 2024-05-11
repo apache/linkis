@@ -19,12 +19,12 @@ package org.apache.linkis.engineconn.computation.executor.rs
 
 import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSetWriter
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.storage.LineRecord
 
 import java.io.OutputStream
-
 import scala.collection.mutable.ArrayBuffer
 
 class RsOutputStream extends OutputStream with Logging {
@@ -45,6 +45,9 @@ class RsOutputStream extends OutputStream with Logging {
   }
 
   def reset(engineExecutionContext: EngineExecutionContext): Unit = {
+    if (ComputationExecutorConf.CLOSE_RS_OUTPUT_WHEN_RESET_BY_DEFAULT_ENABLED) {
+      Utils.tryQuietly(close())
+    }
     writer = engineExecutionContext.createDefaultResultSetWriter()
     writer.addMetaData(null)
   }

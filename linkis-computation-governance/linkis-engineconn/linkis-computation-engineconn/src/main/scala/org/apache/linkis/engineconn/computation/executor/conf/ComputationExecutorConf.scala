@@ -133,4 +133,7 @@ object ComputationExecutorConf {
   val ENGINE_KERBEROS_AUTO_REFRESH_ENABLED =
     CommonVars("linkis.ec.kerberos.auto.refresh.enabled", false).getValue
 
+  val CLOSE_RS_OUTPUT_WHEN_RESET_BY_DEFAULT_ENABLED =
+    CommonVars("linkis.ec.rs.close.when.reset.enabled", true).getValue
+
 }

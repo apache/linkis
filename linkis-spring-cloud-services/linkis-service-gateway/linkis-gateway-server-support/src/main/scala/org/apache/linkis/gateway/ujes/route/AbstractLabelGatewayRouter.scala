@@ -18,7 +18,7 @@
 package org.apache.linkis.gateway.ujes.route
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 import org.apache.linkis.gateway.exception.GatewayErrorException
@@ -29,14 +29,18 @@ import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 
+import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
 
 import javax.annotation.Resource
 
 import java.text.MessageFormat
 import java.util
+import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
+
+import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Logging {
 
@@ -49,6 +53,25 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
    * @return
    */
   override def order(): Int = Int.MaxValue
+
+  private val nameServiceInstance: LoadingCache[String, util.List[ServiceInstance]] = CacheBuilder
+    .newBuilder()
+    .maximumSize(1000)
+    .expireAfterWrite(1, TimeUnit.MINUTES)
+    .build(new CacheLoader[String, util.List[ServiceInstance]]() {
+
+      override def load(name: String): util.List[ServiceInstance] = {
+        val instances = Utils.tryAndWarn {
+          insLabelService.getInstancesByNames(name)
+        }
+        if (null == instances) {
+          new util.ArrayList[ServiceInstance]()
+        } else {
+          instances
+        }
+      }
+
+    })
 
   override def route(gatewayContext: GatewayContext): ServiceInstance = {
     val serviceInstance: ServiceInstance = gatewayContext.getGatewayRoute.getServiceInstance
@@ -103,8 +126,10 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     val instances = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(applicationName)
     val allInstances = new util.ArrayList[ServiceInstance]()
     if (null != instances && instances.nonEmpty) allInstances.addAll(instances.toList.asJava)
-    val labelInstances = insLabelService.getInstancesByNames(applicationName)
-    allInstances.removeAll(labelInstances)
+    val labelInstances = nameServiceInstance(applicationName)
+    if (CollectionUtils.isNotEmpty(labelInstances)) {
+      CollectionUtils.removeAll(allInstances, labelInstances)
+    }
     allInstances
   }
 

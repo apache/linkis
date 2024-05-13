@@ -157,7 +157,7 @@ public class QueryRestfulApi {
       @RequestParam(value = "engineInstance", required = false) String engineInstance)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
-    if (StringUtils.isEmpty(status)) {
+    if (StringUtils.isBlank(status)) {
       status = null;
     }
     if (null == pageNow) {
@@ -172,12 +172,12 @@ public class QueryRestfulApi {
     if (null == startDate) {
       startDate = 0L;
     }
-    if (StringUtils.isEmpty(creator)) {
+    if (StringUtils.isBlank(creator)) {
       creator = null;
     } else if (!QueryUtils.checkNameValid(creator)) {
       return Message.error("Invalid creator : " + creator);
     }
-    if (!StringUtils.isEmpty(executeApplicationName)) {
+    if (StringUtils.isNotBlank(executeApplicationName)) {
       if (!QueryUtils.checkNameValid(executeApplicationName)) {
         return Message.error("Invalid applicationName : " + executeApplicationName);
       }
@@ -216,12 +216,12 @@ public class QueryRestfulApi {
         }
       }
     }
-    if (StringUtils.isEmpty(instance)) {
+    if (StringUtils.isBlank(instance)) {
       instance = null;
     } else if (!QueryUtils.checkInstanceNameValid(instance)) {
       return Message.error("Invalid instances : " + instance);
     }
-    if (StringUtils.isEmpty(engineInstance)) {
+    if (StringUtils.isBlank(engineInstance)) {
       engineInstance = null;
     } else {
       if (!QueryUtils.checkInstanceNameValid(engineInstance)) {
@@ -302,7 +302,7 @@ public class QueryRestfulApi {
       @RequestParam(value = "creator", required = false) String creator)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
-    if (StringUtils.isEmpty(status)) {
+    if (StringUtils.isBlank(status)) {
       status = "Running,Inited,Scheduled";
     }
     if (null == pageNow) {
@@ -317,14 +317,14 @@ public class QueryRestfulApi {
     if (startDate == null) {
       startDate = 0L;
     }
-    if (StringUtils.isEmpty(creator)) {
+    if (StringUtils.isBlank(creator)) {
       creator = null;
     } else {
       if (!QueryUtils.checkNameValid(creator)) {
         return Message.error("Invalid creator : " + creator);
       }
     }
-    if (StringUtils.isEmpty(engineType)) {
+    if (StringUtils.isBlank(engineType)) {
       engineType = null;
     } else {
       if (!QueryUtils.checkNameValid(engineType)) {
@@ -419,12 +419,12 @@ public class QueryRestfulApi {
     if (startDate == null) {
       startDate = 0L;
     }
-    if (StringUtils.isEmpty(creator)) {
+    if (StringUtils.isBlank(creator)) {
       creator = null;
     } else if (!QueryUtils.checkNameValid(creator)) {
       return Message.error("Invalid creator : " + creator);
     }
-    if (StringUtils.isEmpty(engineType)) {
+    if (StringUtils.isBlank(engineType)) {
       engineType = null;
     } else if (!QueryUtils.checkNameValid(engineType)) {
       return Message.error("Invalid engienType: " + engineType);

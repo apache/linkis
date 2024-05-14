@@ -30,8 +30,7 @@ case class ResponseTaskProgress(
     execId: String,
     progress: Float,
     progressInfo: Array[JobProgressInfo]
-) extends RetryableProtocol
-    with RequestProtocol
+) extends RequestProtocol
 
 case class ResponseEngineLock(lock: String)
 
@@ -67,9 +66,7 @@ case class ResponseEngineStatus(
     engineInfo: ResponseEngineInfo
 )
 
-case class ResponseTaskLog(execId: String, log: String)
-    extends RetryableProtocol
-    with RequestProtocol
+case class ResponseTaskLog(execId: String, log: String) extends RequestProtocol
 
 case class ResponseTaskError(execId: String, errorMsg: String)
     extends RetryableProtocol

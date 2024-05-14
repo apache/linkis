@@ -42,25 +42,15 @@ import feign.RetryableException
 class RetryableRPCInterceptor extends RPCInterceptor {
   override val order: Int = 20
 
-//  private val commonRetryHandler = new RPCRetryHandler
-//  commonRetryHandler.setRetryInfo(new RetryableProtocol{})
-//
-//  private def isCommonRetryHandler(retry: RetryableProtocol): Boolean = retry.maxPeriod == commonRetryHandler.getRetryMaxPeriod &&
-//    retry.period == commonRetryHandler.getRetryPeriod && retry.retryNum == commonRetryHandler.getRetryNum &&
-//    (retry.retryExceptions.isEmpty || commonRetryHandler.getRetryExceptions.containsSlice(retry.retryExceptions))
-
   override def intercept(
       interceptorExchange: RPCInterceptorExchange,
       chain: RPCInterceptorChain
   ): Any = interceptorExchange.getProtocol match {
     case retry: RetryableProtocol =>
       val retryName = retry.getClass.getSimpleName
-//      if(isCommonRetryHandler(retry)) commonRetryHandler.retry(chain.handle(interceptorExchange), retryName)
-//      else {
       val retryHandler = new RPCRetryHandler
       retryHandler.setRetryInfo(retry, chain)
       retryHandler.retry(chain.handle(interceptorExchange), retryName)
-//      }
     case _ => chain.handle(interceptorExchange)
   }
 

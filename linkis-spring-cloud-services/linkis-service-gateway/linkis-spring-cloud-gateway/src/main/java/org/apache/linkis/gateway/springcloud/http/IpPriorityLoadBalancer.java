@@ -15,21 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.loadbalancer;
+package org.apache.linkis.gateway.springcloud.http;
 
-import org.apache.linkis.rpc.conf.CacheManualRefresher;
 import org.apache.linkis.rpc.constant.RpcConstant;
-import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary;
-import org.apache.linkis.rpc.exception.NoInstanceExistsException;
-import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache$;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.*;
 import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
@@ -37,38 +30,26 @@ import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBal
 import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstanceLoadBalancer {
+public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
-  private static final Log log = LogFactory.getLog(ServiceInstancePriorityLoadBalancer.class);
-
-  @Autowired private CacheManualRefresher cacheManualRefresher;
+  private static final Logger logger = LoggerFactory.getLogger(IpPriorityLoadBalancer.class);
 
   private final String serviceId;
-
-  final AtomicInteger position;
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
-  public ServiceInstancePriorityLoadBalancer(
-      ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
-      String serviceId) {
-    this(serviceInstanceListSupplierProvider, serviceId, (new Random()).nextInt(1000));
-  }
-
-  public ServiceInstancePriorityLoadBalancer(
-      ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
+  public IpPriorityLoadBalancer(
       String serviceId,
-      int seedPosition) {
+      ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider) {
     this.serviceId = serviceId;
     this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
-    this.position = new AtomicInteger(seedPosition);
   }
 
   @Override
@@ -84,47 +65,15 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     return supplier
         .get(request)
         .next()
-        .map(
-            serviceInstances ->
-                processInstanceResponse(request, supplier, serviceInstances, clientIp));
+        .map(serviceInstances -> processInstanceResponse(supplier, serviceInstances, clientIp));
   }
 
   private Response<ServiceInstance> processInstanceResponse(
-      Request request,
       ServiceInstanceListSupplier supplier,
       List<ServiceInstance> serviceInstances,
       String clientIp) {
     Response<ServiceInstance> serviceInstanceResponse =
         getInstanceResponse(serviceInstances, clientIp);
-    Long endTtime = System.currentTimeMillis() + 2 * 60 * 1000;
-
-    List<String> linkisLoadBalancerTypeList =
-        ((RequestDataContext) request.getContext())
-            .getClientRequest()
-            .getHeaders()
-            .get(RpcConstant.LINKIS_LOAD_BALANCER_TYPE);
-    String linkisLoadBalancerType =
-        CollectionUtils.isNotEmpty(linkisLoadBalancerTypeList)
-            ? linkisLoadBalancerTypeList.get(0)
-            : null;
-
-    while (null == serviceInstanceResponse
-        && StringUtils.isNoneBlank(clientIp)
-        && isRPC(linkisLoadBalancerType)
-        && System.currentTimeMillis() < endTtime) {
-      cacheManualRefresher.refresh();
-      List<ServiceInstance> instances =
-          SpringCloudFeignConfigurationCache$.MODULE$.discoveryClient().getInstances(serviceId);
-      serviceInstanceResponse = getInstanceResponse(instances, clientIp);
-      if (null == serviceInstanceResponse) {
-        try {
-          Thread.sleep(5000L);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    }
-
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
       ((SelectedInstanceCallback) supplier)
           .selectedServiceInstance(serviceInstanceResponse.getServer());
@@ -132,40 +81,29 @@ public class ServiceInstancePriorityLoadBalancer implements ReactorServiceInstan
     return serviceInstanceResponse;
   }
 
-  private boolean isRPC(String linkisLoadBalancerType) {
-    return StringUtils.isNotBlank(linkisLoadBalancerType)
-        && linkisLoadBalancerType.equalsIgnoreCase(RpcConstant.LINKIS_LOAD_BALANCER_TYPE_RPC);
-  }
-
   private Response<ServiceInstance> getInstanceResponse(
       List<ServiceInstance> instances, String clientIp) {
     if (instances.isEmpty()) {
-      log.warn("No servers available for service: " + serviceId);
-      return null;
+      logger.warn("No servers available for service: " + serviceId);
+      return new EmptyResponse();
     }
-    int pos = this.position.incrementAndGet() & Integer.MAX_VALUE;
-
-    if (StringUtils.isBlank(clientIp)) {
-      return new DefaultResponse(instances.get(pos % instances.size()));
+    if (StringUtils.isEmpty(clientIp)) {
+      return new DefaultResponse(
+          instances.get(ThreadLocalRandom.current().nextInt(instances.size())));
     }
     String[] ipAndPort = clientIp.split(":");
     if (ipAndPort.length != 2) {
-      throw new NoInstanceExistsException(
-          LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorCode(),
-          MessageFormat.format(LinkisRpcErrorCodeSummary.INSTANCE_ERROR.getErrorDesc(), clientIp));
+      return new DefaultResponse(
+          instances.get(ThreadLocalRandom.current().nextInt(instances.size())));
     }
     ServiceInstance chooseInstance = null;
     for (ServiceInstance instance : instances) {
       if (Objects.equals(ipAndPort[0], instance.getHost())
           && Objects.equals(ipAndPort[1], String.valueOf(instance.getPort()))) {
-        chooseInstance = instance;
-        break;
+        return new DefaultResponse(instance);
       }
     }
-    if (null == chooseInstance) {
-      return null;
-    } else {
-      return new DefaultResponse(chooseInstance);
-    }
+    return new DefaultResponse(
+        instances.get(ThreadLocalRandom.current().nextInt(instances.size())));
   }
 }

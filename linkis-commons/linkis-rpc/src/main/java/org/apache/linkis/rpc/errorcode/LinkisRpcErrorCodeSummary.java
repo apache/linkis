@@ -32,6 +32,8 @@ public enum LinkisRpcErrorCodeSummary implements LinkisErrorCode {
       10051, "The instance:{0} of application {1} does not exist(应用程序:{0} 的实例:{1} 不存在)."),
 
   INSTANCE_ERROR(10052, "The instance:{0} is error should ip:port."),
+
+  INSTANCE_NOT_FOUND_ERROR(10053, "The instance:{0} is not found."),
   RPC_INIT_ERROR(10054, "Asyn RPC Consumer Thread has stopped!(Asyn RPC Consumer 线程已停止！)");
 
   /** 错误码 */

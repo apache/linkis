@@ -22,7 +22,7 @@ import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
 
-trait EngineResourceRequest extends RequestProtocol {
+trait EngineResourceRequest {
   val user: String
   val labels: util.List[Label[_]]
   val properties: util.Map[String, String]

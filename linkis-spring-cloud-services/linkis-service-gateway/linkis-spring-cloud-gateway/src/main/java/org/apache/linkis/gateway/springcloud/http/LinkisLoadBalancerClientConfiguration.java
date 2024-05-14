@@ -15,25 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.loadbalancer;
+package org.apache.linkis.gateway.springcloud.http;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-@Configuration
-@LoadBalancerClients(defaultConfiguration = {LinkisLoadBalancerClientConfiguration.class})
 public class LinkisLoadBalancerClientConfiguration {
   @Bean
   public ReactorLoadBalancer<ServiceInstance> customLoadBalancer(
       Environment environment, LoadBalancerClientFactory loadBalancerClientFactory) {
     String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
-    return new ServiceInstancePriorityLoadBalancer(
-        loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class), name);
+    return new IpPriorityLoadBalancer(
+        name, loadBalancerClientFactory.getLazyProvider(name, ServiceInstanceListSupplier.class));
   }
 }

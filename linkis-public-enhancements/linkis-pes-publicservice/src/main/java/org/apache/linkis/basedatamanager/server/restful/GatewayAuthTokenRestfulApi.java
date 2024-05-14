@@ -55,9 +55,17 @@ public class GatewayAuthTokenRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.GET)
   public Message list(
       HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
-    ModuleUserUtils.getOperationUser(
-        request, "Query list data of Gateway Auth Token,search name:" + searchName);
+
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Query list data of Gateway Auth Token,search name:" + searchName);
+
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+
     PageInfo pageList = gatewayAuthTokenService.getListByPage(searchName, currentPage, pageSize);
+
     return Message.ok("").data("list", pageList);
   }
 
@@ -65,8 +73,14 @@ public class GatewayAuthTokenRestfulApi {
   @ApiOperation(value = "get", notes = "Get a Gateway Auth Token Record by id", httpMethod = "GET")
   @RequestMapping(path = "/{id}", method = RequestMethod.GET)
   public Message get(HttpServletRequest request, @PathVariable("id") Long id) {
-    ModuleUserUtils.getOperationUser(
-        request, "Get a Gateway Auth Token Record,id:" + id.toString());
+
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Get a Gateway Auth Token Record,id:" + id.toString());
+
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     GatewayAuthTokenEntity gatewayAuthToken = gatewayAuthTokenService.getById(id);
     return Message.ok("").data("item", gatewayAuthToken);
   }

@@ -21,6 +21,7 @@ import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey;
 import org.apache.linkis.basedatamanager.server.request.ConfigurationTemplateSaveRequest;
 import org.apache.linkis.basedatamanager.server.response.EngineLabelResponse;
 import org.apache.linkis.basedatamanager.server.service.ConfigurationTemplateService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -49,7 +50,11 @@ public class ConfigurationTemplateRestfulApi {
   @RequestMapping(path = "/save", method = RequestMethod.POST)
   public Message add(
       HttpServletRequest httpRequest, @RequestBody ConfigurationTemplateSaveRequest request) {
-    ModuleUserUtils.getOperationUser(httpRequest, "save a configuration template");
+    String username =
+        ModuleUserUtils.getOperationUser(httpRequest, "save a configuration template");
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     if (Objects.isNull(request)
         || StringUtils.isEmpty(request.getEngineLabelId())
         || StringUtils.isEmpty(request.getKey())
@@ -67,8 +72,12 @@ public class ConfigurationTemplateRestfulApi {
   @ApiOperation(value = "delete", notes = "delete a configuration template", httpMethod = "DELETE")
   @RequestMapping(path = "/{keyId}", method = RequestMethod.DELETE)
   public Message delete(HttpServletRequest httpRequest, @PathVariable("keyId") Long keyId) {
-    ModuleUserUtils.getOperationUser(
-        httpRequest, "delete a configuration template, keyId: " + keyId);
+    String username =
+        ModuleUserUtils.getOperationUser(
+            httpRequest, "delete a configuration template, keyId: " + keyId);
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     Boolean flag = configurationTemplateService.deleteConfigurationTemplate(keyId);
     return Message.ok("").data("success: ", flag);
   }

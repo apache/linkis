@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.protocol.callback
+package org.apache.linkis.protocol
 
-import org.apache.linkis.protocol.message.RequestProtocol
-
-case class YarnAPPIdCallbackProtocol(nodeId: String, applicationId: String) extends RequestProtocol
-
-case class YarnInfoCallbackProtocol(nodeId: String, uri: String) extends RequestProtocol
+case class UserWithCreator(user: String, creator: String)

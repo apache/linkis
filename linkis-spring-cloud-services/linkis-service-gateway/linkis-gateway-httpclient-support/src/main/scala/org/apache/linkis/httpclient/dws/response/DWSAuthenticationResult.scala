@@ -52,6 +52,8 @@ class DWSAuthenticationResult(response: HttpResponse, serverUrl: String)
   override def getAuthentication: Authentication = if (getStatus == 0) new HttpAuthentication {
     private var lastAccessTime: Long = System.currentTimeMillis
 
+    private val createTime: Long = System.currentTimeMillis()
+
     override def authToCookies: Array[Cookie] = Array.empty
 
     override def authToHeaders: util.Map[String, String] = new util.HashMap[String, String]()
@@ -61,6 +63,9 @@ class DWSAuthenticationResult(response: HttpResponse, serverUrl: String)
     override def getLastAccessTime: Long = lastAccessTime
 
     override def updateLastAccessTime(): Unit = lastAccessTime = System.currentTimeMillis
+
+    override def getCreateTime: Long = createTime
+
   }
   else {
     throw new HttpMessageParseException(

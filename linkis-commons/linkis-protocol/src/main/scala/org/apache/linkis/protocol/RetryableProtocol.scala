@@ -18,8 +18,8 @@
 package org.apache.linkis.protocol
 
 trait RetryableProtocol extends Protocol {
-  def retryNum: Int = 2
-  def period: Long = 1000L
-  def maxPeriod: Long = 3000L
+  def retryNum: Int = 5
+  def period: Long = 10000L
+  def maxPeriod: Long = 30000L
   def retryExceptions: Array[Class[_ <: Throwable]] = Array.empty[Class[_ <: Throwable]]
 }

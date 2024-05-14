@@ -21,6 +21,7 @@ import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlResourceVersionsResponse;
 import org.apache.linkis.bml.protocol.Version;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.common.utils.ZipUtils;
 import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao;
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
@@ -28,6 +29,8 @@ import org.apache.linkis.engineplugin.server.localize.DefaultEngineConnBmlResour
 import org.apache.linkis.engineplugin.server.restful.EnginePluginRestful;
 import org.apache.linkis.engineplugin.server.service.EnginePluginAdminService;
 import org.apache.linkis.engineplugin.vo.EnginePluginBMLVo;
+import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.List;
 
 import com.github.pagehelper.PageHelper;
@@ -79,6 +83,11 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
   @Override
   public void deleteEnginePluginBML(String ecType, String version, String username) {
     List<EngineConnBmlResource> allEngineConnBmlResource = null;
+    if (ecType != null && SecurityUtils.containsRelativePath(ecType)) {
+      throw new AMErrorException(
+          AMErrorCode.EC_PLUGIN_ERROR.getErrorCode(),
+          MessageFormat.format(AMErrorCode.EC_PLUGIN_ERROR.getErrorDesc(), ecType));
+    }
     try {
       allEngineConnBmlResource =
           engineConnBmlResourceDao.getAllEngineConnBmlResource(ecType, version);
@@ -88,7 +97,9 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
             engineConnBmlResourceDao.delete(engineConnBmlResource);
           });
       String engineConnsHome = defaultEngineConnBmlResourceGenerator.getEngineConnsHome();
+
       File file = new File(engineConnsHome + "/" + ecType);
+
       if (file.exists()) {
         deleteDir(file);
         log.info("file {} delete success", ecType);

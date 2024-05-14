@@ -35,11 +35,12 @@ import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -159,25 +160,33 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       if (engineReuseRequest.getProperties == null) {
         engineReuseRequest.setProperties(new util.HashMap[String, String]())
       }
-      val resource = engineCreateService.generateResource(
-        engineReuseRequest.getProperties,
-        engineReuseRequest.getUser,
-        labelFilter.choseEngineLabel(labels),
-        AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-      )
 
-      // 过滤掉资源不满足的引擎
-      engineScoreList = engineScoreList
-        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
-        .filter(engine => {
-          if (engine.getNodeResource.getUsedResource != null) {
-            // 引擎资源只有满足需要的资源才复用
-            engine.getNodeResource.getUsedResource >= resource.getMaxResource
-          } else {
-            // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
-            engine.getNodeResource.getLockedResource >= resource.getMaxResource
-          }
-        })
+      val engineType: String = LabelUtil.getEngineType(labels)
+      if (
+          StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
+            .contains(engineType.toLowerCase())
+      ) {
+        val resource = engineCreateService.generateResource(
+          engineReuseRequest.getProperties,
+          engineReuseRequest.getUser,
+          labelFilter.choseEngineLabel(labels),
+          AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+        )
+
+        // 过滤掉资源不满足的引擎
+        engineScoreList = engineScoreList
+          .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
+          .filter(engine => {
+            if (engine.getNodeResource.getUsedResource != null) {
+              // 引擎资源只有满足需要的资源才复用
+              engine.getNodeResource.getUsedResource >= resource.getMaxResource
+            } else {
+              // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
+              engine.getNodeResource.getLockedResource >= resource.getMaxResource
+            }
+          })
+      }
+
       if (engineScoreList.isEmpty) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,

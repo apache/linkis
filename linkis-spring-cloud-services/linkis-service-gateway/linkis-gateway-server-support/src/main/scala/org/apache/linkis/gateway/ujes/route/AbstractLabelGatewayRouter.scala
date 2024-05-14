@@ -128,7 +128,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     if (null != instances && instances.nonEmpty) allInstances.addAll(instances.toList.asJava)
     val labelInstances = nameServiceInstance(applicationName)
     if (CollectionUtils.isNotEmpty(labelInstances)) {
-      CollectionUtils.removeAll(allInstances, labelInstances)
+      allInstances.removeAll(labelInstances)
     }
     allInstances
   }

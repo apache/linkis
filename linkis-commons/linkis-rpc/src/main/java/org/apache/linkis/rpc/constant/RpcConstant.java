@@ -19,9 +19,5 @@ package org.apache.linkis.rpc.constant;
 
 public class RpcConstant {
 
-  public static final String LINKIS_LOAD_BALANCER_TYPE = "LinkisLoadBalancerType";
-
-  public static final String LINKIS_LOAD_BALANCER_TYPE_RPC = "RPC";
-
   public static final String FIXED_INSTANCE = "client-ip";
 }

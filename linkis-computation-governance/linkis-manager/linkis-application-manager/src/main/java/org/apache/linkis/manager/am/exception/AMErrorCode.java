@@ -32,7 +32,8 @@ public enum AMErrorCode implements LinkisErrorCode {
 
   ASK_ENGINE_ERROR_RETRY(210005, "Ask engine error, retry(请求引擎失败，重试)"),
 
-  EC_OPERATE_ERROR(210006, "Failed to execute operation(引擎操作失败)");
+  EC_OPERATE_ERROR(210006, "Failed to execute operation(引擎操作失败)"),
+  EC_PLUGIN_ERROR(210007, "ECType {0} contains RelativePath");
 
   private final int errorCode;
 

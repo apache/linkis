@@ -95,6 +95,8 @@ object FlinkEnvConfiguration {
   val LINKIS_FLINK_LOG4J_CHECK_ENABLE = CommonVars("linkis.flink.log4j.check.enable", true)
   val LINKIS_FLINK_LOG4J_CHECK_KEYWORDS = CommonVars("linkis.flink.log4j.check.keywords", "")
   val FLINK_APPLICATION_ARGS = CommonVars("flink.app.args", "")
+
+  val FLINK_APPLICATION_SEPARATE = CommonVars("flink.app.args.separate", " ")
   val FLINK_APPLICATION_MAIN_CLASS = CommonVars("flink.app.main.class", "")
   val FLINK_APPLICATION_MAIN_CLASS_JAR = CommonVars("flink.app.main.class.jar", "")
   val FLINK_APPLICATION_CLASSPATH = CommonVars("flink.app.user.class.path", "")

@@ -57,8 +57,13 @@ class FlinkJarOnceExecutor(
       options: Map[String, String]
   ): Unit = {
     val args = FLINK_APPLICATION_ARGS.getValue(options)
-    val programArguments =
-      if (StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
+    val programArguments = {
+      if (StringUtils.isNotEmpty(args)) {
+        val delimiter =
+          Option(FLINK_APPLICATION_SEPARATE.getValue(options)).filter(_.nonEmpty).getOrElse(" ")
+        args.split(delimiter)
+      } else Array.empty[String]
+    }
     val mainClass = FLINK_APPLICATION_MAIN_CLASS.getValue(options)
     logger.info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
     if (LINKIS_FLINK_LOG4J_CHECK_ENABLE.getHotValue()) {

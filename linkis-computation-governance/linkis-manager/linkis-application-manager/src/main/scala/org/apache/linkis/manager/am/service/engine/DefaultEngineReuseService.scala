@@ -32,10 +32,10 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, Eng
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.{EngineType, ReuseExclusionLabel}
+import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
+import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
@@ -168,24 +168,15 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
       // 过滤掉资源不满足的引擎
       engineScoreList = engineScoreList
+        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
         .filter(engine => {
-          var res = false
-          val engineType: String = LabelUtil.getEngineType(engine.getLabels)
-          // 只对配置的引擎进行资源判断，其它使用原有复用逻辑
-          if (!AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS.contains(engineType)) {
-            res = true
+          if (engine.getNodeResource.getUsedResource != null) {
+            // 引擎资源只有满足需要的资源才复用
+            engine.getNodeResource.getUsedResource >= resource.getMaxResource
           } else {
-            if (engine.getNodeStatus == NodeStatus.Unlock) {
-              if (engine.getNodeResource.getUsedResource != null) {
-                // 引擎资源只有满足需要的资源才复用
-                res = engine.getNodeResource.getUsedResource >= resource.getMaxResource
-              } else {
-                // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
-                res = engine.getNodeResource.getLockedResource >= resource.getMaxResource
-              }
-            }
+            // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
+            engine.getNodeResource.getLockedResource >= resource.getMaxResource
           }
-          res
         })
       if (engineScoreList.isEmpty) {
         throw new LinkisRetryException(

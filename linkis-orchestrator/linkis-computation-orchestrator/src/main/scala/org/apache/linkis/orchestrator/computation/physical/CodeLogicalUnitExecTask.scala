@@ -226,6 +226,10 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     id
   }
 
+  def setId(id: String): Unit = {
+    this.id = id
+  }
+
   override def getPhysicalContext: PhysicalContext = physicalContext
 
   def getCodeLogicalUnit: CodeLogicalUnit = this.codeLogicalUnit

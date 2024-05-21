@@ -20,14 +20,13 @@ package org.apache.linkis.storage.domain;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.FAILED_TO_READ_INTEGER;
 
@@ -58,6 +57,9 @@ public class Dolphin {
 
   public static final String NULL = "NULL";
   public static final byte[] NULL_BYTES = "NULL".getBytes(Charset.forName("utf-8"));
+
+  public static final String LINKIS_NULL = "LINKIS_NULL";
+  public static final byte[] LINKIS_NULL_BYTES = LINKIS_NULL.getBytes(Charset.forName("utf-8"));
 
   public static final int INT_LEN = 10;
 

@@ -15,23 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.execute.impl
+package org.apache.linkis.entrance.execute.simple
+import org.apache.linkis.orchestrator.listener.OrchestratorListenerBusContext
 
-import org.apache.linkis.entrance.execute._
-import org.apache.linkis.orchestrator.ecm.EngineConnManager
-import org.apache.linkis.scheduler.listener.ExecutorListener
-import org.apache.linkis.scheduler.queue.GroupFactory
+object SimpleExecuteBusContext {
 
-class EntranceExecutorManagerImpl(groupFactory: GroupFactory)
-    extends EntranceExecutorManager(groupFactory) {
+  private lazy val orchestratorListenerBusContext = OrchestratorListenerBusContext.createBusContext
 
-  override def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor] = Array(
-    JobExecuteRequestInterceptor,
-    LabelExecuteRequestInterceptor,
-    ReconnectExecuteRequestInterceptor,
-    StorePathExecuteRequestInterceptor,
-    RuntimePropertiesExecuteRequestInterceptor
-  )
+  def getOrchestratorListenerBusContext(): OrchestratorListenerBusContext =
+    orchestratorListenerBusContext
 
-  override def setExecutorListener(engineListener: ExecutorListener): Unit = {}
 }

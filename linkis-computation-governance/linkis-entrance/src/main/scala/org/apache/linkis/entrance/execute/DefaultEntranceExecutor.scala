@@ -261,6 +261,15 @@ class DefaultEntranceExecutor(id: Long)
     true
   }
 
+  def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
+    val asyncReturn = getEngineExecuteAsyncReturn
+    if (asyncReturn.isDefined) {
+      asyncReturn.get.getOrchestrationFuture()
+    } else {
+      None
+    }
+  }
+
   override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
 
     val entranceExecuteRequest: EntranceExecuteRequest = request match {

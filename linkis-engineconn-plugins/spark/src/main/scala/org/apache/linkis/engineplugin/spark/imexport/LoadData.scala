@@ -146,8 +146,8 @@ object LoadData {
     val df = if (".xlsx".equalsIgnoreCase(suffix)) {
       // info(dateFormatsJson.toString()+ "----------")
       spark.read
-        .format("com.webank.wedatasphere.spark.excel")
-        .option("useHeader", hasHeader)
+        .format("com.crealytics.spark.excel")
+        .option("header", hasHeader)
         .option("maxRowsInMemory", 100)
         .option("sheetName", sheetName)
         // .option("dateFormat", dateFormat)

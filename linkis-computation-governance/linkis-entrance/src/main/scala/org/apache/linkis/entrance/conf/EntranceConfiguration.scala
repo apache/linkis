@@ -285,4 +285,7 @@ object EntranceConfiguration {
   val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
     CommonVars("linkis.entrance.failover.running.kill.enable", false)
 
+  val LINKIS_ENTRANCE_SKIP_ORCHESTRATOR =
+    CommonVars("linkis.entrance.skip.orchestrator", false).getValue
+
 }

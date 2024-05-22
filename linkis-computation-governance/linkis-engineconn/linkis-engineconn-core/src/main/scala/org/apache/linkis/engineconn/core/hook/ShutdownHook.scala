@@ -38,7 +38,7 @@ class ShutdownHook extends Logging {
 
   private val tryStopTimes = new AtomicInteger(0)
 
-  private val maxTimes = 5;
+  private val maxTimes = 10;
 
   def notifyError(e: Throwable): Unit = {
     lock.lock()
@@ -54,17 +54,17 @@ class ShutdownHook extends Logging {
 
   def notifyStop(): Unit = {
     lock.lock()
+    val num = tryStopTimes.incrementAndGet()
     try {
       setExitCode(0)
       stopped = true
       condition.signalAll()
-      val num = tryStopTimes.incrementAndGet()
+    } finally {
+      lock.unlock()
       if (num >= maxTimes) {
         logger.error(s"try to stop with times:${num}, now do system exit!!!")
         System.exit(0)
       }
-    } finally {
-      lock.unlock()
     }
   }
 

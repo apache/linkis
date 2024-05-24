@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor.jobhistory.entity;
 
+import org.apache.linkis.common.utils.JobHistoryInfo;
 import org.apache.linkis.monitor.jobhistory.QueryUtils;
 
 import java.util.Date;
@@ -25,42 +26,9 @@ public class JobHistory {
 
   private Long id;
 
-  private String jobReqId;
-
-  private String submitUser;
-
-  private String executeUser;
-
-  private String source;
-
-  private String labels;
-
-  private String params;
-
-  private String progress;
-
-  private String status;
-
-  private String logPath;
-
-  private Integer errorCode;
-
-  private String errorDesc;
-
-  private Date createdTime;
-
-  private Date updatedTime;
-
   private String updateTimeMills;
 
-  private String instances;
-
-  private String metrics;
-
-  private String engineType;
-
-  private String executionCode;
-
+  private JobHistoryInfo jobHistoryInfo = new JobHistoryInfo();
   private String observeInfo;
 
   public Long getId() {
@@ -72,139 +40,139 @@ public class JobHistory {
   }
 
   public String getJobReqId() {
-    return jobReqId;
+    return jobHistoryInfo.getJobReqId();
   }
 
   public void setJobReqId(String jobReqId) {
-    this.jobReqId = jobReqId;
+    jobHistoryInfo.setJobReqId(jobReqId);
   }
 
   public String getSubmitUser() {
-    return submitUser;
+    return jobHistoryInfo.getSubmitUser();
   }
 
   public void setSubmitUser(String submitUser) {
-    this.submitUser = submitUser;
+    jobHistoryInfo.setSubmitUser(submitUser);
   }
 
   public String getExecuteUser() {
-    return executeUser;
+    return jobHistoryInfo.getExecuteUser();
   }
 
   public void setExecuteUser(String executeUser) {
-    this.executeUser = executeUser;
+    jobHistoryInfo.setExecuteUser(executeUser);
   }
 
   public String getSource() {
-    return source;
+    return jobHistoryInfo.getSource();
   }
 
   public void setSource(String source) {
-    this.source = source;
+    jobHistoryInfo.setSource(source);
   }
 
   public String getLabels() {
-    return labels;
+    return jobHistoryInfo.getLabels();
   }
 
   public void setLabels(String labels) {
-    this.labels = labels;
+    jobHistoryInfo.setLabels(labels);
   }
 
   public String getParams() {
-    return params;
+    return jobHistoryInfo.getParams();
   }
 
   public void setParams(String params) {
-    this.params = params;
+    jobHistoryInfo.setParams(params);
   }
 
   public String getProgress() {
-    return progress;
+    return jobHistoryInfo.getProgress();
   }
 
   public void setProgress(String progress) {
-    this.progress = progress;
+    jobHistoryInfo.setProgress(progress);
   }
 
   public String getStatus() {
-    return status;
+    return jobHistoryInfo.getStatus();
   }
 
   public void setStatus(String status) {
-    this.status = status;
+    jobHistoryInfo.setStatus(status);
   }
 
   public String getLogPath() {
-    return logPath;
+    return jobHistoryInfo.getLogPath();
   }
 
   public void setLogPath(String logPath) {
-    this.logPath = logPath;
+    jobHistoryInfo.setLogPath(logPath);
   }
 
   public Integer getErrorCode() {
-    return errorCode;
+    return jobHistoryInfo.getErrorCode();
   }
 
   public void setErrorCode(Integer errorCode) {
-    this.errorCode = errorCode;
+    jobHistoryInfo.setErrorCode(errorCode);
   }
 
   public String getErrorDesc() {
-    return errorDesc;
+    return jobHistoryInfo.getErrorDesc();
   }
 
   public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
+    jobHistoryInfo.setErrorDesc(errorDesc);
   }
 
   public Date getCreatedTime() {
-    return createdTime;
+    return jobHistoryInfo.getCreatedTime();
   }
 
   public void setCreatedTime(Date createdTime) {
-    this.createdTime = createdTime;
+    jobHistoryInfo.setCreatedTime(createdTime);
   }
 
   public Date getUpdatedTime() {
-    return updatedTime;
+    return jobHistoryInfo.getUpdatedTime();
   }
 
   public void setUpdatedTime(Date updatedTime) {
-    this.updatedTime = updatedTime;
+    jobHistoryInfo.setUpdatedTime(updatedTime);
   }
 
   public String getInstances() {
-    return instances;
+    return jobHistoryInfo.getInstances();
   }
 
   public void setInstances(String instances) {
-    this.instances = instances;
+    jobHistoryInfo.setInstances(instances);
   }
 
   public String getMetrics() {
-    return metrics;
+    return jobHistoryInfo.getMetrics();
   }
 
   public void setMetrics(String metrics) {
-    this.metrics = metrics;
+    jobHistoryInfo.setMetrics(metrics);
   }
 
   public String getEngineType() {
-    return engineType;
+    return jobHistoryInfo.getEngineType();
   }
 
   public void setEngineType(String engineType) {
-    this.engineType = engineType;
+    jobHistoryInfo.setEngineType(engineType);
   }
 
   public String getExecutionCode() {
-    return executionCode;
+    return jobHistoryInfo.getExecutionCode();
   }
 
   public void setExecutionCode(String executionCode) {
-    this.executionCode = executionCode;
+    jobHistoryInfo.setExecutionCode(executionCode);
   }
 
   public String getUpdateTimeMills() {

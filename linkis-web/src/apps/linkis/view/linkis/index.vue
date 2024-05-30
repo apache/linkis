@@ -530,6 +530,7 @@ export default {
           isLogAdmin = res.admin
           storage.set('isLogAdmin', res.admin, 'session')
           storage.set('isLogHistoryAdmin', res.historyAdmin, 'session')
+          storage.set('isLogDeptAdmin', res.deptAdmin, 'session')
         })
 
         next((vm) => {

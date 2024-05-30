@@ -207,6 +207,7 @@
         "QD": "Starting",
         "LX": "By Category",
         "AZT": "By Status",
+        "AYY": "By Creator",
         "DDJK": "Waiting for API response!",
         "QDYQWFJS": "Cannot shut down an engine with starting status!",
         "WXZYQ": "No engine selected!",

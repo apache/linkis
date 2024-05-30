@@ -82,6 +82,7 @@
           "showAdvancedSearch": "高级筛选",
           "hideAdvancedSearch": "隐藏高级筛选",
           "manageView": "切换管理员视图",
+          "deptManageView": "切换部门管理员视图",
           "back": "返回",
           "download": "下载日志",
           "confirmText": "确认下载该日志",
@@ -97,6 +98,10 @@
           "tenant": "租户标签",
           "inputTenant": "请输入租户标签",
           "globalSettings": "全局设置",
+          "engineInstance": {
+            "label": "ECM",
+            "placeholder": "请输入ECM"
+          },
           "resultSet": {
             "prefixText": "因为您的结果集较大，为了更好的体验，",
             "linkText": "点击查看结果集",

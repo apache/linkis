@@ -116,7 +116,7 @@ export default {
     let engineInstance = this.$route.query.engineInstance
     const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
     // 仅管理员可以查看引擎日志
-    const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin')))
+    const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin') || storage.get('isLogDeptAdmin')))
 
     if(engineInstance && isAdminShowEngineLog) {
       let url = '/linkisManager/ecinfo/ecrHistoryList?';

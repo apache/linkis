@@ -87,6 +87,13 @@
               style="width:150px;"
             />
           </FormItem>
+          <FormItem prop="engineInstance" :label="$t('message.linkis.engineInstance.label')">
+            <Input
+              v-model.trim="searchBar.engineInstance"
+              :placeholder="$t('message.linkis.engineInstance.placeholder')"
+              style="width:150px;"
+            />
+          </FormItem>
         </Form>
       </div>
       <div class="search-btns">
@@ -107,9 +114,9 @@
           class="search-btn"
           type="primary"
           @click="switchAdmin(false)"
-          v-show="isLogAdmin || isHistoryAdmin"
+          v-show="isLogAdmin || isHistoryAdmin || isDeptAdmin"
           style="margin-right: 10px;"
-        >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
+        >{{ isAdminModel ? $t('message.linkis.generalView') : (isDeptAdmin && !isLogAdmin && !isHistoryAdmin ? $t('message.linkis.deptManageView') : $t('message.linkis.manageView')) }}</Button>
         <Button
           class="search-btn"
           type="primary"
@@ -283,6 +290,7 @@ export default {
       ],
       isLogAdmin: false,
       isHistoryAdmin: false,
+      isDeptAdmin: false,
       isAdminModel: false,
       moduleHeight: 300,
       lastChooseDate: ['', ''],
@@ -295,6 +303,7 @@ export default {
       await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
         this.isLogAdmin = res.admin
         this.isHistoryAdmin = res.historyAdmin
+        this.isDeptAdmin = res.deptAdmin
       })
       await api.fetch('/configuration/engineType', 'get').then(res => {
         this.getEngineTypes = ['all', ...res.engineType]
@@ -432,11 +441,13 @@ export default {
         status: this.searchBar.status,
         startDate: startDate && startDate.getTime(),
         endDate: endDate && endDate.getTime(),
+        engineInstance: this.searchBar.engineInstance,
         pageNow: page || this.pageSetting.current,
         pageSize: this.pageSetting.pageSize,
         proxyUser: this.searchBar.proxyUser,
-        isAdminView: this.isAdminModel,
-        instance: this.searchBar.instance?.replace(/ /g, '') || ''
+        isAdminView: this.isAdminModel && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin')),
+        instance: this.searchBar.instance?.replace(/ /g, '') || '',
+        isDeptView: this.isAdminModel && storage.get('isLogDeptAdmin') && !storage.get('isLogAdmin') && !storage.get('isLogHistoryAdmin')
       }
       if (!this.isAdminModel) {
         delete params.proxyUser
@@ -449,6 +460,7 @@ export default {
         delete params.endDate
         delete params.proxyUser
         delete params.instance
+        delete params.engineInstance
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {

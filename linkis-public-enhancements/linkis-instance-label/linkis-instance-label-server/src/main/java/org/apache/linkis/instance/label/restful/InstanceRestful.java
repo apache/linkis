@@ -175,14 +175,16 @@ public class InstanceRestful {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "serviceName", required = false, dataType = "String"),
     @ApiImplicitParam(name = "hostName", required = false, dataType = "String"),
-    @ApiImplicitParam(name = "ip", required = false, dataType = "ip")
+    @ApiImplicitParam(name = "ip", required = false, dataType = "String"),
+    @ApiImplicitParam(name = "version", required = false, dataType = "String")
   })
   @RequestMapping(path = "/serviceInstances", method = RequestMethod.GET)
   public Message getServiceInstance(
       HttpServletRequest request,
       @RequestParam(value = "serviceName", required = false) String serviceName,
       @RequestParam(value = "hostName", required = false) String hostName,
-      @RequestParam(value = "ip", required = false) String ip) {
+      @RequestParam(value = "ip", required = false) String ip,
+      @RequestParam(value = "version", required = false) String version) {
     Stream<String> serviceStream = discoveryClient.getServices().stream();
     serviceStream = serviceStream.filter(s -> s.toUpperCase().contains("LINKIS"));
     if (StringUtils.isNotBlank(serviceName)) {
@@ -198,6 +200,10 @@ public class InstanceRestful {
     }
     if (StringUtils.isNotBlank(hostName)) {
       instanceList = instanceList.filter(s -> s.getInstanceInfo().getHostName().equals(hostName));
+    }
+    if (StringUtils.isNotBlank(version)) {
+      instanceList =
+          instanceList.filter(s -> s.getMetadata().get("linkis.app.version").contains(version));
     }
     return Message.ok().data("list", instanceList.collect(Collectors.toList()));
   }

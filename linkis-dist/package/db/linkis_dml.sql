@@ -564,7 +564,7 @@ INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `cl
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('greenplum','greenplum数据库','greenplum','关系型数据库','',3);
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('doris','doris数据库','doris','olap','',4);
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('clickhouse','clickhouse数据库','clickhouse','olap','',4);
-
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('starrocks','starrocks数据库','starrocks','olap','',4);
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'mongodb';
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'username', '用户名', 'Username', NULL, 'TEXT', NULL, 1, '用户名', 'Username', '^[0-9A-Za-z_-]+$', NULL, '', NULL, now(), now());
@@ -572,8 +572,7 @@ INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `n
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'database', '默认库', 'Database', NULL, 'TEXT', NULL, 1, '默认库', 'Database', '^[0-9A-Za-z_-]+$', NULL, '', NULL,  now(), now());
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'host', 'Host', 'Host', NULL, 'TEXT', NULL, 1, 'mongodb Host', 'Host', NULL, NULL, NULL, NULL,  now(), now());
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'port', '端口', 'Port', NULL, 'TEXT', NULL, 1, '端口', 'Port', NULL, NULL, NULL, NULL,  now(), now());
-INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'params', '连接参数', 'Params', NULL, 'TEXT', NULL, 0, '输入JSON格式: {"param":"value"}', 'Input JSON Format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now());
-
+INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'params', '连接参数', 'Params', NULL, 'TEXT', NULL, 0, '输入JSON格式: {"param":"value"}', 'Input JSON Format: {"param":"value"}', NULL, NULL, NULL, NULL, now(), now());
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'hive';
 SET @data_source=CONCAT('/data-source-manager/env-list/all/type/',@data_source_type_id);
@@ -720,6 +719,16 @@ VALUES (@data_source_type_id, 'address', '地址', 'Address', NULL, 'TEXT', NULL
        (@data_source_type_id, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 1, '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
        (@data_source_type_id, 'databaseName', '数据库名(Database name)', 'Database name', NULL, 'TEXT', NULL, 0, '数据库名(Database name)', 'Database name', NULL, NULL, NULL, NULL,  now(), now());
 
+select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'starrocks';
+INSERT INTO `linkis_ps_dm_datasource_type_key`
+    (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`)
+VALUES (@data_source_type_id, 'host', '主机名(Host)', 'Host', NULL, 'TEXT', NULL, 0, '主机名(Host)', 'Host', NULL, NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'tcp_port', 'TCP端口号(Port)','Tcp_Port', 9030, 'TEXT', NULL, 0, 'TCP端口号','Tcp_Port', NULL, NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'http_port', 'HTTP端口号(Port)','Http_Port', 8030, 'TEXT', NULL, 0, 'HTTP端口号','Http_Port', NULL, NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'params', '连接参数(Connection params)', 'Connection params', NULL, 'TEXT', NULL, 0, '输入JSON格式(Input JSON format): {"param":"value"}', 'Input JSON format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'username', '用户名(Username)', 'Username', NULL, 'TEXT', NULL, 0, '用户名(Username)', 'Username', '^[0-9A-Za-z_-]+$', NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 0, '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
+       (@data_source_type_id, 'databaseName', '数据库名(Database name)', 'Database name', NULL, 'TEXT', NULL, 0, '数据库名(Database name)', 'Database name', NULL, NULL, NULL, NULL,  now(), now());
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'hive';
 INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境SIT', '测试环境SIT', @data_source_type_id, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);

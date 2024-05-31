@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service.mysql;
+package org.apache.linkis.metadata.query.service.starrocks;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.SecurityUtils;
@@ -30,6 +30,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author jefftlin
+ * 2024/5/24
+ */
 public class SqlConnection implements Closeable {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
@@ -80,9 +84,6 @@ public class SqlConnection implements Closeable {
       return;
     }
 
-    // security check
-    // SecurityUtils.checkJdbcSecurity(extraParams);
-
     // append force params
     SecurityUtils.appendMysqlForceParams(extraParams);
 
@@ -126,28 +127,22 @@ public class SqlConnection implements Closeable {
   public List<MetaColumnInfo> getColumns(String database, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    String columnSql = "SELECT * FROM `" + database + "`.`" + table + "` WHERE 1 = 2";
-    PreparedStatement ps = null;
+    String columnSql = "SHOW COLUMNS FROM " + database + "." + table;
+    Statement st = null;
     ResultSet rs = null;
-    ResultSetMetaData meta = null;
     try {
-      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
-      ps = conn.prepareStatement(columnSql);
-      rs = ps.executeQuery();
-      meta = rs.getMetaData();
-      int columnCount = meta.getColumnCount();
-      for (int i = 1; i < columnCount + 1; i++) {
+      st = conn.createStatement();
+      rs = st.executeQuery(columnSql);
+      int index = 1;
+      while (rs.next()) {
         MetaColumnInfo info = new MetaColumnInfo();
-        info.setIndex(i);
-        info.setName(meta.getColumnName(i));
-        info.setType(meta.getColumnTypeName(i));
-        if (primaryKeys.contains(meta.getColumnName(i))) {
-          info.setPrimaryKey(true);
-        }
+        info.setIndex(index++);
+        info.setName(rs.getString("Field"));
+        info.setType(rs.getString("Type"));
         columns.add(info);
       }
     } finally {
-      closeResource(null, ps, rs);
+      closeResource(null, st, rs);
     }
     return columns;
   }
@@ -156,16 +151,18 @@ public class SqlConnection implements Closeable {
    * Get primary keys
    *
    * @param connection connection
+   * @param database database name
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+  private List<String> getPrimaryKeys(Connection connection, String database, String table)
+      throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
       DatabaseMetaData dbMeta = connection.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
+      rs = dbMeta.getPrimaryKeys(null, database, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
       }

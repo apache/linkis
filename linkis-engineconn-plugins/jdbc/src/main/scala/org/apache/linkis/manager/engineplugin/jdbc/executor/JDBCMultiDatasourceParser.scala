@@ -24,13 +24,12 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary._
-import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException
-
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{JDBCGetDatasourceInfoException, JDBCParamsIllegalException}
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{CHANGE_DS_TYPE_TO_MYSQL, DS_TYPES_TO_EXECUTE_TASK_BY_JDBC}
 
 import java.text.MessageFormat
 import java.util
-
 import scala.collection.JavaConverters._
 
 object JDBCMultiDatasourceParser extends Logging {
@@ -102,7 +101,7 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
 
-    val dbType = dataSource.getDataSourceType.getName
+    var dbType = dataSource.getDataSourceType.getName
     val dbConnParams = dataSource.getConnectParams
     if (dbConnParams == null || dbConnParams.isEmpty) {
       throw JDBCParamsIllegalException(
@@ -117,6 +116,17 @@ object JDBCMultiDatasourceParser extends Logging {
         JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorCode,
         JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorDesc
       )
+    }
+
+    // check dbType
+    if (!DS_TYPES_TO_EXECUTE_TASK_BY_JDBC.contains(dbType)) {
+      throw new JDBCGetDatasourceInfoException(
+        UNSUPPORTED_DS_TYPE.getErrorCode,
+        MessageFormat.format(UNSUPPORTED_DS_TYPE.getErrorDesc, dbType)
+      )
+    }
+    if (CHANGE_DS_TYPE_TO_MYSQL) {
+      dbType = "mysql"
     }
 
     val jdbcUrl = createJdbcUrl(dbType, dbConnParams)

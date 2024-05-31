@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
@@ -296,12 +297,12 @@ public class ConnectionManager {
   private String getJdbcUrl(Map<String, String> properties) throws SQLException {
     String url = properties.get(JDBCEngineConnConstant.JDBC_URL);
     if (StringUtils.isBlank(url)) {
-      throw new SQLException(JDBCEngineConnConstant.JDBC_URL + " is not empty.");
+      throw new SQLException(JDBCEngineConnConstant.JDBC_URL + " cannot be empty.");
     }
     url = JdbcParamUtils.clearJdbcUrl(url);
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    JdbcParamUtils.validateJdbcUrl(url);
-    return url.trim();
+    SecurityUtils.checkJdbcConnUrl(url);
+    url = SecurityUtils.getJdbcUrl(url);
+    return url;
   }
 
   private String appendProxyUserToJDBCUrl(
@@ -329,7 +330,9 @@ public class ConnectionManager {
   private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
     String authType =
         properties.getOrDefault(JDBCEngineConnConstant.JDBC_AUTH_TYPE, USERNAME.getAuthType());
-    if (authType == null || authType.trim().length() == 0) return of(USERNAME.getAuthType());
+    if (authType == null || authType.trim().length() == 0) {
+      return of(USERNAME.getAuthType());
+    }
     return of(authType.trim().toUpperCase());
   }
 

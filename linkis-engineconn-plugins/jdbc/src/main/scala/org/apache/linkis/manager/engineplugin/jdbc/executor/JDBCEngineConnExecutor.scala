@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -116,7 +115,15 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var resultSet: ResultSet = null
     logger.info(s"The data source properties is $properties")
     Utils.tryCatch({
-      val dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
+      /* url + user as the cache key */
+      val jdbcUrl: String = properties.get(JDBCEngineConnConstant.JDBC_URL)
+      val execUser: String = properties.get(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER)
+      val proxyUser: String = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY)
+      var dataSourceIdentifier = s"$jdbcUrl-$execUser-$proxyUser"
+      /* If datasource is used, use datasource name as the cache key */
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
+      }
       connection = connectionManager.getConnection(dataSourceIdentifier, properties)
       logger.info("The jdbc connection has created successfully!")
     }) { e: Throwable =>
@@ -267,7 +274,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         )
       }
       val columns =
-        metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
+        metaArrayBuffer.map { c => new Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
       val metaData = new TableMetaData(columns)
       val resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
@@ -284,7 +291,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             }
             data
           }.toArray
-          resultSetWriter.addRecord(new TableRecord(r))
+          resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[Any]]))
           count += 1
         }
       }) { case e: Exception =>
@@ -371,6 +378,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   override def supportCallBackLogs(): Boolean = false
 
   override def getId: String = Sender.getThisServiceInstance.getInstance + s"_$id"
+
+  override def getConcurrentLimit: Int = JDBCConfiguration.JDBC_CONCURRENT_LIMIT.getValue
 
   override def killAll(): Unit = {
     logger.info("Killing all query task.")

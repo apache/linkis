@@ -34,5 +34,5 @@ public class CacheConfiguration {
   public static final CommonVars<String> MYSQL_RELATIONSHIP_LIST =
       CommonVars.apply(
           "wds.linkis.server.mdq.mysql.relationship",
-          "mysql,oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql,doris,clickhouse");
+          "mysql,oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql,doris,clickhouse,starrocks");
 }

@@ -147,3 +147,5 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43045','查询/操作的表 %s 分区数为 %s ，超过阈值 %s ，需要限制查询/操作的分区数量','Number of partitions scanned \\(=(\\d+)\\) on table (\\S+) exceeds limit \\(=(\\d+)\\)',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43046','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Number of dynamic partitions created is (\\S+), which is more than (\\S+)',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43047','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Maximum was set to (\\S+) partitions per node, number of dynamic partitions on this node: (\\S+)',0);
+
+update linkis_ps_dm_datasource_type_key set value_regex='^[0-9A-Za-z_-\\s]+$' where data_source_type_id=18 and `key`='username';

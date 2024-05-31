@@ -18,24 +18,47 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.conf.AMConfiguration.{
+  SUPPORT_CLUSTER_RULE_EC_TYPES,
+  YARN_QUEUE_NAME_CONFIG_KEY
+}
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
+import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
+import org.apache.linkis.manager.rm.external.service.ExternalResourceService
+import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
+import org.apache.linkis.manager.rm.utils.AcrossClusterRulesJudgeUtils.{
+  originClusterResourceCheck,
+  targetClusterResourceCheck
+}
+
+import org.apache.commons.lang3.StringUtils
 
 import java.text.MessageFormat
+import java.util
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
 
   val resourceType: ResourceType = ResourceType.Default
 
   val enableRequest = RMUtils.RM_REQUEST_ENABLE.getValue
+
+  var externalResourceService: ExternalResourceService = null
+
+  def setExternalResourceService(externalResourceService: ExternalResourceService): Unit = {
+    if (externalResourceService == null) {
+      this.externalResourceService = externalResourceService
+    }
+  }
 
   def canRequestResource(
       labelContainer: RMLabelContainer,
@@ -145,6 +168,33 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       throw new RMErrorException(
         RESOURCE_LATER_ERROR.getErrorCode,
         RESOURCE_LATER_ERROR.getErrorDesc + labelContainer.getCurrentLabel
+      )
+    }
+    val labels: util.List[Label[_]] = labelContainer.getLabels
+    val engineType: String = LabelUtil.getEngineType(labels)
+    val props: util.Map[String, String] = engineCreateRequest.getProperties
+    // hive cluster check
+    if (
+        externalResourceService != null && StringUtils.isNotBlank(
+          engineType
+        ) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(engineType) && props != null
+    ) {
+      val queueName = props.getOrDefault(YARN_QUEUE_NAME_CONFIG_KEY, "default")
+      logger.info(s"hive cluster check with queue: $queueName")
+      val yarnIdentifier = new YarnResourceIdentifier(queueName)
+      val providedYarnResource =
+        externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier)
+      val (maxCapacity, usedCapacity) =
+        (providedYarnResource.getMaxResource, providedYarnResource.getUsedResource)
+      // judge if is cross cluster task and origin cluster priority first
+      originClusterResourceCheck(engineCreateRequest, maxCapacity, usedCapacity)
+      // judge if is cross cluster task and target cluster priority first
+      targetClusterResourceCheck(
+        labelContainer,
+        engineCreateRequest,
+        maxCapacity,
+        usedCapacity,
+        externalResourceService
       )
     }
 

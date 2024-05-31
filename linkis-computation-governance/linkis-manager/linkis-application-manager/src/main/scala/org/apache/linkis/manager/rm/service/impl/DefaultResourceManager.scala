@@ -279,6 +279,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val emInstanceLabel = labelContainer.getEMInstanceLabel
     val userCreatorEngineTypeLabel = labelContainer.getCombinedUserCreatorEngineTypeLabel
 
+    // set externalResourceService for get yarn resource
+    requestResourceService.setExternalResourceService(externalResourceService)
     Utils.tryFinally {
       // check ecm resource if not enough return
       Utils.tryCatch {

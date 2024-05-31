@@ -27,4 +27,8 @@ public class WorkSpaceConstants {
   public static final String FILEPATH_ILLEGALITY = "File path illegality : {0} （文件路径错误 : {0}）";
   public static final String FILE_PERMISSION_ERROR =
       "File permissions prohibit modification of unreadable files: {0}  （文件权限禁止修改不可读: {0}）";
+  public static final String FILEPATH_ILLEGAL_SYMBOLS =
+      "File path illegal symbols : {0} （文件路径结果集路径包含非法字符 : {0}）";
+  public static final String FILEPATH_ILLEGAL =
+      "Result set path encryption failed, please check if the path is legal : {0} （文件路径加密失败，请检查路径是否合法 : {0}）";
 }

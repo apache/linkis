@@ -63,6 +63,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -1338,6 +1339,30 @@ public class FsRestfulApi {
         return Message.error(MessageFormat.format(FILE_PERMISSION_ERROR, filePermission));
       }
     }
+  }
+
+  @ApiOperation(value = "encrypt-path", notes = "encrypt file path", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "Path")
+  })
+  @RequestMapping(path = "/encrypt-path", method = RequestMethod.GET)
+  public Message encryptPath(
+      HttpServletRequest req,
+      @RequestParam(value = "filePath", required = false) String filePath) {
+    ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
+    }
+    if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
+    }
+    String filePathMd5Str = "";
+    try {
+      filePathMd5Str = WorkspaceUtil.encrypt(filePath);
+    } catch (NoSuchAlgorithmException e) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL, filePath));
+    }
+    return Message.ok().data("data", filePathMd5Str);
   }
 
   /**

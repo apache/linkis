@@ -148,4 +148,16 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43046','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Number of dynamic partitions created is (\\S+), which is more than (\\S+)',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43047','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Maximum was set to (\\S+) partitions per node, number of dynamic partitions on this node: (\\S+)',0);
 
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`,`en_description`, `en_name`, `en_treeName`, `template_required`) VALUES ('mapreduce.job.reduce.slowstart.completedmaps', '取值范围：0-1', 'Map任务数与总Map任务数之间的比例','1', 'Regex', '^(0(\\.\\d{1,2})?|1(\\.0{1,2})?)$', '0', '0', '1', 'hive引擎设置', 'hive', 'Value Range: 0-1', 'The ratio between the number of Map tasks and the total number of Map tasks', 'Hive Engine Settings', '1');
+
+insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'hive' and config.`key` = "mapreduce.job.reduce.slowstart.completedmaps" and label_value = "*-*,hive-2.3.3");
+
+
+insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id and relation.config_key_id = (select id FROM  linkis_ps_configuration_config_key where `key`="mapreduce.job.reduce.slowstart.completedmaps")AND label.label_value = '*-*,hive-2.3.3');
+
+
 update linkis_ps_dm_datasource_type_key set value_regex='^[0-9A-Za-z_-\\s]+$' where data_source_type_id=18 and `key`='username';

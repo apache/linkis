@@ -23,9 +23,10 @@ import org.apache.linkis.monitor.core.pac.DataFetcher;
 import org.apache.linkis.monitor.core.scanner.AnomalyScanner;
 import org.apache.linkis.monitor.core.scanner.DefaultScanner;
 import org.apache.linkis.monitor.factory.MapperFactory;
-import org.apache.linkis.monitor.jobhistory.JobHistoryDataFetcher;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrCodeRule;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrorCodeAlertSender;
+import org.apache.linkis.monitor.jobhistory.index.JobIndexRule;
+import org.apache.linkis.monitor.jobhistory.index.JobIndexSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedAlertSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedRule;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsAlertSender;
@@ -35,8 +36,8 @@ import org.apache.linkis.monitor.jobhistory.runtime.CommonRunTimeAlertSender;
 import org.apache.linkis.monitor.jobhistory.runtime.JobHistoryRunTimeAlertSender;
 import org.apache.linkis.monitor.jobhistory.runtime.JobHistoryRunTimeRule;
 import org.apache.linkis.monitor.until.CacheUtils;
+import org.apache.linkis.monitor.until.JobMonitorUtils;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
-import org.apache.linkis.monitor.utils.alert.ims.ImsAlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
 import org.apache.linkis.monitor.utils.log.LogUtils;
 
@@ -95,7 +96,7 @@ public class JobHistoryMonitor {
       id = CacheUtils.cacheBuilder.getIfPresent("jobHistoryId");
       logger.info("Get JobHistoryId from cache ID:" + id);
     }
-    List<DataFetcher> fetchers = generateFetchersfortime(startTime, endTime, id, "updated_time");
+    List<DataFetcher> fetchers = JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "updated_time");
     if (fetchers.isEmpty()) {
       logger.warn("generated 0 dataFetchers, plz check input");
       return;
@@ -109,7 +110,7 @@ public class JobHistoryMonitor {
             "JobHistoryErrCodeRule Alert error,Please check the linkis-et-monitor-ims.properties file");
       } else {
         logger.info("JobHistoryErrCodeRule Alert load {} success", errorCodeAlerts.size());
-        addIntervalToImsAlerts(errorCodeAlerts, realIntervals);
+        JobMonitorUtils.addIntervalToImsAlerts(errorCodeAlerts, realIntervals);
         JobHistoryErrCodeRule jobHistoryErrCodeRule =
             new JobHistoryErrCodeRule(
                 errorCodeAlerts.keySet(), new JobHistoryErrorCodeAlertSender(errorCodeAlerts));
@@ -166,7 +167,11 @@ public class JobHistoryMonitor {
     } catch (Exception e) {
       logger.warn("CommonJobRunTimeRule Scan Error msg: " + e.getMessage());
     }
-    run(scanner, fetchers, shouldStart);
+    // 任务指标上报
+    JobIndexRule jobIndexRule = new JobIndexRule(new JobIndexSender());
+    scanner.addScanRule(jobIndexRule);
+    // 执行任务扫描
+    JobMonitorUtils.run(scanner, fetchers, true);
   }
 
   @Scheduled(cron = "${linkis.monitor.jobHistory.timeout.cron}")
@@ -182,7 +187,7 @@ public class JobHistoryMonitor {
     AnomalyScanner scanner = new DefaultScanner();
     boolean shouldStart = false;
     List<DataFetcher> fetchers =
-        generateFetchers(startTime, endTime, maxIntervalMs, id, "created_time");
+        JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "created_time");
     if (fetchers.isEmpty()) {
       logger.warn("generated 0 dataFetchers, plz check input");
       return;
@@ -196,62 +201,12 @@ public class JobHistoryMonitor {
           "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
           jobTimeAlerts.size());
       shouldStart = true;
-      addIntervalToImsAlerts(jobTimeAlerts, realIntervals);
+      JobMonitorUtils.addIntervalToImsAlerts(jobTimeAlerts, realIntervals);
       JobTimeExceedRule jobTimeExceedRule =
           new JobTimeExceedRule(
               jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
       scanner.addScanRule(jobTimeExceedRule);
     }
-    run(scanner, fetchers, shouldStart);
-  }
-
-  public static void run(AnomalyScanner scanner, List<DataFetcher> fetchers, Boolean shouldStart) {
-    if (shouldStart) {
-      scanner.addDataFetchers(fetchers);
-      scanner.run();
-    }
-  }
-
-  private static List<DataFetcher> generateFetchers(
-      long startTime, long endTime, long maxIntervalMs, long id, String timeType) {
-    List<DataFetcher> ret = new ArrayList<>();
-    long pe = endTime;
-    long ps;
-    while (pe > startTime) {
-      ps = Math.max(pe - maxIntervalMs, startTime);
-      String[] fetcherArgs =
-          new String[] {String.valueOf(ps), String.valueOf(pe), String.valueOf(id), timeType};
-      ret.add(new JobHistoryDataFetcher(fetcherArgs, MapperFactory.getJobHistoryMapper()));
-      logger.info(
-          "Generated dataFetcher for startTime: " + new Date(ps) + ". EndTime: " + new Date(pe));
-      pe = pe - maxIntervalMs;
-    }
-    return ret;
-  }
-
-  private static List<DataFetcher> generateFetchersfortime(
-      long startTime, long endTime, long id, String timeType) {
-    List<DataFetcher> fetchers = new ArrayList<>();
-    String[] fetcherArgs =
-        new String[] {
-          String.valueOf(startTime), String.valueOf(endTime), String.valueOf(id), timeType
-        };
-    fetchers.add(new JobHistoryDataFetcher(fetcherArgs, MapperFactory.getJobHistoryMapper()));
-    logger.info(
-        "Generated dataFetcher for startTime: "
-            + new Date(startTime)
-            + ". EndTime: "
-            + new Date(endTime));
-    return fetchers;
-  }
-
-  private static void addIntervalToImsAlerts(Map<String, AlertDesc> alerts, long realIntervals) {
-    for (AlertDesc alert : alerts.values()) {
-      if (!(alert instanceof ImsAlertDesc)) {
-        logger.info("[warn]  ignore wrong alert" + alert);
-      } else {
-        ((ImsAlertDesc) alert).hitIntervalMs_$eq(realIntervals);
-      }
-    }
+    JobMonitorUtils.run(scanner, fetchers, shouldStart);
   }
 }

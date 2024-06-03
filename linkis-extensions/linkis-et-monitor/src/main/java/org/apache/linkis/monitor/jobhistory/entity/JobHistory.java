@@ -63,6 +63,10 @@ public class JobHistory {
 
   private String observeInfo;
 
+  private String orgId;
+
+  private String orgName;
+
   public Long getId() {
     return id;
   }
@@ -217,6 +221,22 @@ public class JobHistory {
 
   public void setObserveInfo(String observeInfo) {
     this.observeInfo = observeInfo;
+  }
+
+  public String getOrgId() {
+    return orgId;
+  }
+
+  public void setOrgId(String orgId) {
+    this.orgId = orgId;
+  }
+
+  public String getOrgName() {
+    return orgName;
+  }
+
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
   }
 
   @Override

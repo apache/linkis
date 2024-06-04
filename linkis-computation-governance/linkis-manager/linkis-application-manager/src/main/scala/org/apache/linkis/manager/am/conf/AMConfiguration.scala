@@ -129,6 +129,9 @@ object AMConfiguration {
   val SUPPORT_CLUSTER_RULE_EC_TYPES: String =
     CommonVars("linkis.support.cluster.rule.ec.types", "").getValue
 
+  val HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE =
+    CommonVars("linkis.hive.cluster.ec.execute.once.rule.enable", true).getValue
+
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""

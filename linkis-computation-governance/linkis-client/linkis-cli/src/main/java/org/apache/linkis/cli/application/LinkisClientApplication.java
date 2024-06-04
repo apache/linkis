@@ -69,7 +69,7 @@ public class LinkisClientApplication {
       CmdTemplate template = CmdTemplateFactory.getTemplateOri(e.getCmdType());
       if (template != null) {
         HelpInfoModel model = new HelpInfoModel();
-        model.buildModel(ctx.getTemplate());
+        model.buildModel(template);
         new HelpPresenter().present(model);
       }
       LoggerManager.getInformationLogger().error("Failed to build CliCtx", e);

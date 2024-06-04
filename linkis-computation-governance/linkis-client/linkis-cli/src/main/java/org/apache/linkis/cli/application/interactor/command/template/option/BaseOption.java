@@ -93,7 +93,7 @@ public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
   }
 
   public T getValue() {
-    return this.value;
+    return this.value == null ? this.defaultValue : this.value;
   }
 
   public void setValue(T value) {

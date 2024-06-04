@@ -63,6 +63,8 @@ object EngineType extends Enumeration with Logging {
 
   val HBASE = Value("hbase")
 
+  val JOBSERVER = Value("jobserver")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>

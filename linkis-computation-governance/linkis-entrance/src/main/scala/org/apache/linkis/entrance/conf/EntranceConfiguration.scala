@@ -215,7 +215,7 @@ object EntranceConfiguration {
   val GROUP_CACHE_EXPIRE_TIME = CommonVars("wds.linkis.consumer.group.expire.time", 50)
 
   val CLIENT_MONITOR_CREATOR =
-    CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")
+    CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI,BdpClient")
 
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)

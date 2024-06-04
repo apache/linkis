@@ -87,7 +87,7 @@ object AMConfiguration {
 
   val MULTI_USER_ENGINE_TYPES = CommonVars(
     "wds.linkis.multi.user.engine.types",
-    "jdbc,es,presto,io_file,appconn,openlookeng,trino"
+    "jdbc,es,presto,io_file,appconn,openlookeng,trino,jobserver"
   )
 
   val ALLOW_BATCH_KILL_ENGINE_TYPES =
@@ -134,7 +134,7 @@ object AMConfiguration {
 
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
-    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""
+    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root", jobserver:"$jvmUser"}"""
   }
 
   def isMultiUserEngine(engineType: String): Boolean = {

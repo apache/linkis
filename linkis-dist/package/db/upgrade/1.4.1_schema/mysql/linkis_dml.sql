@@ -161,3 +161,21 @@ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = labe
 
 
 update linkis_ps_dm_datasource_type_key set value_regex='^[0-9A-Za-z_-\\s]+$' where data_source_type_id=18 and `key`='username';
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13002";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13010";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，请在管理台增加executor内存或调优sql后执行" WHERE  error_code = "13003";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致引擎意外退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13004";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致Spark app应用退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13005";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致Spark context应用退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13006";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致Pyspark子进程退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60" WHERE  error_code = "13007";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整executor内存或联系管理员扩容" WHERE  error_code = "01002";
+
+UPDATE linkis_ps_error_code SET error_desc = "任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整executor内存或联系管理员扩容" WHERE  error_code = "01003";

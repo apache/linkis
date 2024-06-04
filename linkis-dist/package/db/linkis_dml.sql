@@ -370,8 +370,8 @@ insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`nam
 -- errorcode
 -- 01 linkis server
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01001','您的任务没有路由到后台ECM，请联系管理员','The em of labels',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','Linkis服务负载过高，请联系管理员扩容','Unexpected end of file from server',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01003','Linkis服务负载过高，请联系管理员扩容','failed to ask linkis Manager Can be retried SocketTimeoutException',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整executor内存或联系管理员扩容','Unexpected end of file from server',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01003','任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整executor内存或联系管理员扩容','failed to ask linkis Manager Can be retried SocketTimeoutException',0);INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','引擎在启动时被Kill，请联系管理员',' [0-9]+ Killed',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','引擎在启动时被Kill，请联系管理员',' [0-9]+ Killed',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01005','请求Yarn获取队列信息重试2次仍失败，请联系管理员','Failed to request external resourceClassCastException',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01006','没有健康可用的ecm节点，可能任务量大,导致节点资源处于不健康状态，尝试kill空闲引擎释放资源','There are corresponding ECM tenant labels',0);
@@ -401,15 +401,15 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 
 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13001','Java进程内存溢出，建议优化脚本内容','OutOfMemoryError',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13002','任务实际运行内存超过了设置的内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory增加内存。更多细节请参考Linkis常见问题Q60','Container killed by YARN for exceeding memory limits',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13003','使用资源过大，请调优sql或者加大资源','read record exception',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13004','引擎意外退出，可能是使用资源过大导致','failed because the engine quitted unexpectedly',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','Spark app应用退出，可能是复杂任务导致','Spark application has already stopped',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','Spark context退出，可能是复杂任务导致','Spark application sc has already stopped',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','Pyspark子进程意外退出，可能是复杂任务导致','Pyspark process  has stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13002','任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','Container killed by YARN for exceeding memory limits',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13003','任务运行内存超过设置内存限制，请在管理台增加executor内存或调优sql后执行','read record exception',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13004','任务运行内存超过设置内存限制，导致引擎意外退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','failed because the engine quitted unexpectedly',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','任务运行内存超过设置内存限制，导致Spark app应用退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','Spark application has already stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','任务运行内存超过设置内存限制，导致Spark context应用退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','Spark application sc has already stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','任务运行内存超过设置内存限制，导致Pyspark子进程退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','Pyspark process  has stopped',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13009','您的任务因为引擎退出（退出可能是引擎进程OOM或者主动kill引擎）导致失败','ERROR EC exits unexpectedly and actively kills the task',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13010','任务实际运行内存超过了设置的内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory增加内存','Container exited with a non-zero exit code',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13010','任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory调整内存。更多细节请参考Linkis常见问题Q60','Container exited with a non-zero exit code',0);-- 21 cluster Authority  22 db Authority
 -- 21 cluster Authority  22 db Authority
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue ([A-Za-z._0-9]+)',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21002','创建Python解释器失败，请联系管理员','initialize python executor failed',0);

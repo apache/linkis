@@ -113,4 +113,8 @@ public class ModuleUserUtils {
     }
     return tokenUser;
   }
+
+  public static void printAuditLog(String auditLogMsg) {
+    LOGGER.info(auditLogMsg);
+  }
 }

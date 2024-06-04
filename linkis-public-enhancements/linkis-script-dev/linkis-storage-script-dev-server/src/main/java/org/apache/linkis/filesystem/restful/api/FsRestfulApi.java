@@ -21,6 +21,7 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.common.utils.MD5Utils;
 import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
@@ -1358,7 +1359,7 @@ public class FsRestfulApi {
     }
     String filePathMd5Str = "";
     try {
-      filePathMd5Str = WorkspaceUtil.encrypt(filePath);
+      filePathMd5Str = MD5Utils.encrypt(filePath);
     } catch (NoSuchAlgorithmException e) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL, filePath));
     }

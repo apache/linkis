@@ -17,13 +17,14 @@
 
 package org.apache.linkis.gateway.security.token
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, MD5Utils, Utils}
 import org.apache.linkis.gateway.authentication.service.TokenService
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
 import org.apache.linkis.server.Message
+import org.apache.linkis.server.utils.ModuleUserUtils
 
 import org.apache.commons.lang3.StringUtils
 
@@ -54,7 +55,10 @@ object TokenAuthentication extends Logging {
     var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
 
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
-
+    ModuleUserUtils.printAuditLog(
+      String
+        .format("Use Linkis Auth : %s,User : %s,Ip : %s", MD5Utils.encrypt(token), tokenUser, host)
+    )
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
       token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
       tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue

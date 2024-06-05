@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.label.utils
 
-import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.{Label, TenantLabel}
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineConnModeLabel,
@@ -78,6 +78,20 @@ object LabelUtil {
 
   def getCodeTypeLabel(labels: util.List[Label[_]]): CodeLanguageLabel = {
     getLabelFromList[CodeLanguageLabel](labels)
+  }
+
+  def getTenantValue(labels: util.List[Label[_]]): String = {
+    if (null == labels) return ""
+    val tentantLabel = getTenantLabel(labels)
+    if (null != tentantLabel) {
+      tentantLabel.getTenant
+    } else {
+      ""
+    }
+  }
+
+  def getTenantLabel(labels: util.List[Label[_]]): TenantLabel = {
+    getLabelFromList[TenantLabel](labels)
   }
 
   def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel = {

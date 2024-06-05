@@ -22,11 +22,16 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.hook.{AskEngineConnHook, AskEngineConnHookContext}
+import org.apache.linkis.manager.am.label.MultiUserEngineReuseLabelChooser
 import org.apache.linkis.manager.am.service.engine.EngineAskEngineService.getAsyncId
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine._
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
+import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -38,9 +43,11 @@ import org.springframework.stereotype.Service
 
 import java.net.SocketTimeoutException
 import java.util
-import java.util.concurrent.ConcurrentHashMap
+import java.util.Locale
+import java.util.concurrent.{ConcurrentHashMap, Semaphore}
 import java.util.concurrent.atomic.AtomicInteger
 
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.concurrent._
 import scala.util.{Failure, Success}
 
@@ -61,10 +68,15 @@ class DefaultEngineAskEngineService
   @Autowired
   private var engineSwitchService: EngineSwitchService = _
 
+  @Autowired
+  private var multiUserEngineReuseLabelChooser: MultiUserEngineReuseLabelChooser = _
+
   @Autowired(required = false)
   @Qualifier
   /* The implementation class of hook must be annotated with @Qualifier to take effect(hook的实现类必须加上@Qualifier注解才能生效) */
   var hooksArray: Array[AskEngineConnHook] = _
+
+  private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
@@ -72,9 +84,14 @@ class DefaultEngineAskEngineService
       "AskEngineService-Thread-"
     )
 
+  private val engineCreateSemaphoreMap: java.util.Map[String, Semaphore] =
+    new ConcurrentHashMap[String, Semaphore]()
+
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {
-
+    val taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties)
+    LoggerUtils.setJobIdMDC(taskId)
+    logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
     if (hooksArray != null && hooksArray.size > 0) {
       val ctx = new AskEngineConnHookContext(engineAskRequest, sender)
 
@@ -104,59 +121,70 @@ class DefaultEngineAskEngineService
       )
     }
 
-    val taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties)
     val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
       LoggerUtils.setJobIdMDC(taskId)
-      logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
-      var reuseNode: EngineNode = null
-      if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
-        val engineReuseRequest = new EngineReuseRequest()
-        engineReuseRequest.setLabels(engineAskRequest.getLabels)
-        engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
-        engineReuseRequest.setUser(engineAskRequest.getUser)
-        engineReuseRequest.setProperties(engineAskRequest.getProperties)
-        reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
-          t: Throwable =>
-            t match {
-              case retryException: LinkisRetryException =>
-                logger.info(
-                  s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
-                )
-              case _ =>
-                logger.info(
-                  s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed",
-                  t
-                )
-            }
-            null
+      val (engineCreateKey, semaphore) =
+        Utils.tryAndWarn(getKeyAndSemaphore(engineAskRequest.getLabels))
+      Utils.tryFinally {
+        if (null != semaphore) {
+          try {
+            semaphore.acquire()
+            logger.info(s"$engineCreateKey succeed to get lock")
+          } catch {
+            case e: Exception =>
+              logger.warn(
+                s"Task: $taskId user ${engineAskRequest.getUser} acquire semaphore failed",
+                e
+              )
+          }
         }
-      }
+        var reuseNode: EngineNode = null
+        if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
+          val engineReuseRequest = new EngineReuseRequest()
+          engineReuseRequest.setLabels(engineAskRequest.getLabels)
+          engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
+          engineReuseRequest.setUser(engineAskRequest.getUser)
+          engineReuseRequest.setProperties(engineAskRequest.getProperties)
+          reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
+            t: Throwable =>
+              t match {
+                case retryException: LinkisRetryException =>
+                  logger.info(
+                    s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
+                  )
+                case _ =>
+                  logger.info(
+                    s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed",
+                    t
+                  )
+              }
+              null
+          }
+        }
 
-      if (null != reuseNode) {
-        logger.info(
-          s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode"
-        )
-        LoggerUtils.removeJobIdMDC()
-        (reuseNode, true)
-      } else {
-        LoggerUtils.setJobIdMDC(taskId)
-        logger.info(
-          s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
-        )
-        // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
-        engineAskRequest.getLabels.remove("engineInstance")
-        // 添加引擎启动驱动任务id标签
-        val labels: util.Map[String, AnyRef] = engineAskRequest.getLabels
-        labels.put(LabelKeyConstant.DRIVER_TASK_KEY, taskId)
+        if (null != reuseNode) {
+          logger.info(
+            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode"
+          )
+          (reuseNode, true)
+        } else {
+          logger.info(
+            s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
+          )
+          // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
+          engineAskRequest.getLabels.remove(LabelKeyConstant.ENGINE_INSTANCE_KEY)
+          // 添加引擎启动驱动任务id标签
+          val labels: util.Map[String, AnyRef] = engineAskRequest.getLabels
+          labels.put(LabelKeyConstant.DRIVER_TASK_KEY, taskId)
 
-        val engineCreateRequest = new EngineCreateRequest
-        engineCreateRequest.setLabels(engineAskRequest.getLabels)
-        engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
-        engineCreateRequest.setUser(engineAskRequest.getUser)
-        engineCreateRequest.setProperties(engineAskRequest.getProperties)
-        engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
-        Utils.tryFinally {
+          val engineCreateRequest = new EngineCreateRequest
+          engineCreateRequest.setLabels(engineAskRequest.getLabels)
+          engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
+          engineCreateRequest.setUser(engineAskRequest.getUser)
+          engineCreateRequest.setProperties(engineAskRequest.getProperties)
+          engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
+
           val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
           val timeout =
             if (engineCreateRequest.getTimeout <= 0) {
@@ -174,9 +202,15 @@ class DefaultEngineAskEngineService
             s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
           )
           (createEngineNode, false)
-        } {
-          LoggerUtils.removeJobIdMDC()
         }
+      } {
+        Utils.tryAndWarn {
+          if (null != semaphore) {
+            semaphore.release()
+            logger.info(s"$engineCreateKey succeed to relaese lock")
+          }
+        }
+        LoggerUtils.removeJobIdMDC()
       }
 
     }
@@ -238,6 +272,58 @@ class DefaultEngineAskEngineService
     }
     LoggerUtils.removeJobIdMDC()
     EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
+  }
+
+  /**
+   * Current limiting logic, according to the engine type, the current is limited through the token
+   * algorithm, for example, the default configuration of appconn is 10, and the appconn requested
+   * at the same time can only be 10
+   *   1. Returns as unique keys, the key labels of userCreator, engineTypelabel, and tenant label
+   *      2. Semaphore is the corresponding number of tokens
+   *
+   * 限流逻辑，针对引擎类型，通过令牌算法进行限流，比如appconn 默认配置的10同时进行请求的appconn只能为10
+   *   1. 返回为唯一键，为userCreator、engineTypelabel和tenant label的key标签 2. Semaphore 为对应的令牌数
+   *
+   * @param labels
+   * @return
+   */
+  private def getKeyAndSemaphore(labels: util.Map[String, AnyRef]): (String, Semaphore) = {
+    val labelList = LabelUtils.distinctLabel(
+      labelBuilderFactory.getLabels(labels),
+      new util.ArrayList[Label[_]]()
+    )
+    val chooseLabels = multiUserEngineReuseLabelChooser.chooseLabels(labelList)
+    val userCreatorAndEngineTypeLabel =
+      new RMLabelContainer(chooseLabels).getCombinedUserCreatorEngineTypeLabel
+    val engineCreateKey = if (null != userCreatorAndEngineTypeLabel) {
+      userCreatorAndEngineTypeLabel.getStringValue + LabelUtil.getTenantValue(chooseLabels)
+    } else {
+      ""
+    }
+    val engineType = LabelUtil.getEngineType(chooseLabels)
+    val semaphore =
+      if (
+          AMConfiguration.AM_ENGINE_ASK_MAX_NUMBER.contains(
+            engineType.toLowerCase(Locale.getDefault)
+          ) && StringUtils.isNotBlank(engineCreateKey)
+      ) {
+        val keyLock = engineCreateKey.intern()
+        if (!engineCreateSemaphoreMap.containsKey(engineCreateKey)) keyLock synchronized {
+          if (!engineCreateSemaphoreMap.containsKey(engineCreateKey)) {
+            engineCreateSemaphoreMap.put(
+              engineCreateKey,
+              new Semaphore(
+                AMConfiguration.AM_ENGINE_ASK_MAX_NUMBER
+                  .getOrElse(engineType.toLowerCase(Locale.getDefault), 10)
+              )
+            )
+          }
+        }
+        engineCreateSemaphoreMap.get(engineCreateKey)
+      } else {
+        null
+      }
+    (engineCreateKey, semaphore)
   }
 
 }

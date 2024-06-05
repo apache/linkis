@@ -146,11 +146,11 @@ object SQLSession extends Logging {
       )
     }
     val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    logger.info(s"Time taken: ${taken}, Fetched $index row(s).")
+    logger.info(s"Time taken: ${taken}, Fetched $index row(s)")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched ${columns.length} col(s) : $index row(s)"
     )
     engineExecutionContext.sendResultSet(writer)
   }

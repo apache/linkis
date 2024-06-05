@@ -113,10 +113,11 @@ class DefaultUserLabelService extends UserLabelService with Logging {
     labels.asScala.flatMap(label => getUserByLabel(label).asScala).distinct
   }.asJava
 
-  override def getUserLabels(user: String): util.List[Label[_]] = {
-    labelManagerPersistence.getLabelsByUser(user).asScala.map { label =>
-      labelFactory.createLabel(label.getLabelKey, label.getValue)
-    }
-  }.toList.asJava
+  /**
+   * This method is an empty implementation and is temporarily unavailable
+   * @param user
+   * @return
+   */
+  override def getUserLabels(user: String): util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
 }

@@ -75,6 +75,9 @@ class UJESSQLDriverMain extends Driver with Logging {
             case Array(FIXED_SESSION, value) =>
               props.setProperty(FIXED_SESSION, value)
               false
+            case Array(USE_SSL, value) =>
+              props.setProperty(USE_SSL, value)
+              false
             case Array(key, _) =>
               if (StringUtils.isBlank(key)) {
                 throw new LinkisSQLException(
@@ -138,6 +141,8 @@ object UJESSQLDriverMain {
   val PASSWORD = UJESSQLDriver.PASSWORD
   val TABLEAU_SERVER = UJESSQLDriver.TABLEAU_SERVER
   val FIXED_SESSION = UJESSQLDriver.FIXED_SESSION
+
+  val USE_SSL = UJESSQLDriver.USE_SSL
 
   val VERSION = UJESSQLDriver.VERSION
   val DEFAULT_VERSION = UJESSQLDriver.DEFAULT_VERSION

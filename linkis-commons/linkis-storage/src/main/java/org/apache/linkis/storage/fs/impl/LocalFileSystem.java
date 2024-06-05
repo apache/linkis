@@ -47,12 +47,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
 import java.nio.file.attribute.UserPrincipalLookupService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,9 +257,17 @@ public class LocalFileSystem extends FileSystem {
     LOG.info("Try to list path:" + path.getPath() + " with error msg");
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
+      Set<String> fileNameSet = new HashSet<>();
+      fileNameSet.add(path.getPath().trim());
       String message = "";
       for (File f : files) {
         try {
+          if (fileNameSet.contains(f.getPath())) {
+            LOG.info("File {} is duplicate", f.getPath());
+            continue;
+          } else {
+            fileNameSet.add(f.getParent().trim());
+          }
           rtn.add(get(f.getPath()));
         } catch (Throwable e) {
           LOG.warn("Failed to list path:", e);

@@ -156,7 +156,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             TaskLogEvent(
               this,
               LogUtils.generateInfo(
-                s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}"
+                s"Task submit to ec(任务已经提交给引擎执行): ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}"
               )
             )
           )

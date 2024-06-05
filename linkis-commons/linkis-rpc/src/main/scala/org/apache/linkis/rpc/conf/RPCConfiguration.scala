@@ -104,6 +104,13 @@ object RPCConfiguration {
   val SENDER_CACHE_CLEANING_HOUR =
     CommonVars("linkis.rpc.sender.cache.cleaning.time.hour", 6).getValue
 
+  // unit is HOUR
+  val RPC_RETRY_NUMBER =
+    CommonVars("linkis.rpc.retry.number", 5).getValue
+
+  val RPC_RETRY_PERIOD =
+    CommonVars[Long]("linkis.rpc.retry.period", 30000L).getValue
+
   val REFLECTIONS = new Reflections(
     SERVICE_SCAN_PACKAGE,
     new MethodAnnotationsScanner(),

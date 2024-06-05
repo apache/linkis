@@ -412,11 +412,19 @@ public class FsRestfulApi {
     }
     dirFileTree.setName(new File(path).getName());
     dirFileTree.setChildren(new ArrayList<>());
+    Set<String> fileNameSet = new HashSet<>();
+    fileNameSet.add(dirFileTree.getName().trim());
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
+        if (fileNameSet.contains(dirFileTreeChildren.getName().trim())) {
+          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getName());
+          continue;
+        } else {
+          fileNameSet.add(dirFileTreeChildren.getName().trim());
+        }
         dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());

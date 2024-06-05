@@ -100,12 +100,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
             )
             jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
 
-            /**
-             * // val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
-             * idToEngines.put(entranceEntranceExecutor.getId, entranceEntranceExecutor)
-             */
-//          instanceToEngines.put(engineConnExecutor.getServiceInstance.getInstance, entranceEntranceExecutor) // todo
-//          entranceEntranceExecutor.setInterceptors(getOrCreateInterceptors()) // todo
             entranceEntranceExecutor
           case _ =>
             throw new EntranceErrorException(

@@ -59,11 +59,20 @@ import org.apache.http.conn.{
   ConnectTimeoutException,
   HttpHostConnectException
 }
+import org.apache.http.conn.ssl.{SSLConnectionSocketFactory, TrustSelfSignedStrategy}
 import org.apache.http.entity.{ContentType, StringEntity}
 import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpClients}
+import org.apache.http.impl.client.{
+  BasicCookieStore,
+  CloseableHttpClient,
+  HttpClientBuilder,
+  HttpClients
+}
 import org.apache.http.message.BasicNameValuePair
+import org.apache.http.ssl.SSLContextBuilder
 import org.apache.http.util.EntityUtils
+
+import javax.net.ssl.{HostnameVerifier, SSLContext, SSLSession}
 
 import java.net.URI
 import java.util
@@ -80,12 +89,26 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected val cookieStore = new BasicCookieStore
 
-  protected val httpClient: CloseableHttpClient = HttpClients
+  private val httpClientBuilder: HttpClientBuilder = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
     .setMaxConnTotal(clientConfig.getMaxConnection)
     .setMaxConnPerRoute(clientConfig.getMaxConnection / 2)
-    .build
+
+  protected val httpClient: CloseableHttpClient = if (clientConfig.isSSL) {
+    val sslContext: SSLContext =
+      SSLContextBuilder.create.loadTrustMaterial(null, new TrustSelfSignedStrategy).build
+
+    val sslConnectionFactory = new SSLConnectionSocketFactory(
+      sslContext,
+      new HostnameVerifier() {
+        override def verify(hostname: String, session: SSLSession) = true
+      }
+    )
+    httpClientBuilder.setSSLSocketFactory(sslConnectionFactory).build()
+  } else {
+    httpClientBuilder.build()
+  }
 
   if (clientConfig.getAuthenticationStrategy != null) {
     clientConfig.getAuthenticationStrategy match {

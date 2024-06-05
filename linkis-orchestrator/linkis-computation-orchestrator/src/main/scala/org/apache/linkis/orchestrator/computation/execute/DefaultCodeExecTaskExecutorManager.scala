@@ -128,8 +128,10 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     execTask.getPhysicalContext.pushLog(
       TaskLogEvent(
         execTask,
-        LogUtils.generateInfo(s"Background is starting a new engine for you,execId ${execTask
-          .getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")
+        LogUtils.generateInfo(
+          "Background is starting a new engine for you(您的任务正在请求引擎中，请耐心等待)" + s",\nexecId ${execTask
+            .getIDInfo()} mark id is ${mark.getMarkId()}"
+        )
       )
     )
     val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark, execTask)

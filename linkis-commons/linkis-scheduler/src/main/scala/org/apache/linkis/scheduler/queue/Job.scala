@@ -196,15 +196,10 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   ): Unit = toState match {
     case Inited =>
       jobListener.foreach(_.onJobInited(this))
-    // TODO Add event（加事件）
     case Scheduled =>
       jobListener.foreach(_.onJobScheduled(this))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is scheduled.")))
-    // TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is running.")))
-    // TODO job start event
     case WaitForRetry =>
       jobListener.foreach(_.onJobWaitForRetry(this))
     case _ =>

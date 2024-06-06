@@ -41,6 +41,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
+import java.util.Random
 import java.util.concurrent.TimeUnit
 
 class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
@@ -154,6 +155,9 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
         override def run(): Unit = Utils.tryAndWarn {
           ExecutorManager.getInstance.getReportExecutor match {
             case executor: ConcurrentExecutor =>
+              val rand = new Random
+              val minute = rand.nextInt(5) + 1
+              Thread.sleep(minute * 60000L)
               if (executor.hasTaskRunning()) {
                 ExecutorHeartbeatServiceHolder
                   .getDefaultHeartbeatService()

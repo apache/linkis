@@ -15,21 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.client
+package org.apache.linkis.ujes.client.response
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.ujes.client.request.UJESJobAction
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
+import org.apache.linkis.ujes.client.request.UserAction
 
-class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
-  private val dwsHttpClient = new DWSHttpClient(clientConfig, "Linkis-Job-Execution-Thread")
+import scala.beans.BeanProperty
 
-  override def executeUJESJob(ujesJobAction: UJESJobAction): Result =
-    ujesJobAction match {
-      case action: Action => dwsHttpClient.execute(action)
-    }
-
-  override def close(): Unit = dwsHttpClient.close()
+@DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/isExist")
+class IsPathExistResult extends DWSResult with UserAction {
+  @BeanProperty var isExist: Boolean = _
 }

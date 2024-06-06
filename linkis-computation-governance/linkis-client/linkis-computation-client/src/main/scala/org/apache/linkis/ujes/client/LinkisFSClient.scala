@@ -17,19 +17,30 @@
 
 package org.apache.linkis.ujes.client
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.ujes.client.request.UJESJobAction
+import org.apache.linkis.ujes.client.request.{
+  CreateNewDirAction,
+  IsPathExistAction,
+  UploadFileAction
+}
+import org.apache.linkis.ujes.client.response.{
+  CreateNewDirResult,
+  IsPathExistResult,
+  UploadFileResult
+}
 
-class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
-  private val dwsHttpClient = new DWSHttpClient(clientConfig, "Linkis-Job-Execution-Thread")
+class LinkisFSClient(client: UJESClient) {
 
-  override def executeUJESJob(ujesJobAction: UJESJobAction): Result =
-    ujesJobAction match {
-      case action: Action => dwsHttpClient.execute(action)
-    }
+  def isPathExist(isPathExistAction: IsPathExistAction): Boolean = {
+    val result = client.executeUJESJob(isPathExistAction).asInstanceOf[IsPathExistResult]
+    result.isExist
+  }
 
-  override def close(): Unit = dwsHttpClient.close()
+  def createNewDir(makeDirAction: CreateNewDirAction): CreateNewDirResult = {
+    client.executeUJESJob(makeDirAction).asInstanceOf[CreateNewDirResult]
+  }
+
+  def upload(uploadFileAction: UploadFileAction): UploadFileResult = {
+    client.executeUJESJob(uploadFileAction).asInstanceOf[UploadFileResult]
+  }
+
 }

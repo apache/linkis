@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.client
+package org.apache.linkis.computation.client.once.result
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.ujes.client.request.UJESJobAction
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-class UJESClientImpl(clientConfig: DWSClientConfig) extends UJESClient {
-  private val dwsHttpClient = new DWSHttpClient(clientConfig, "Linkis-Job-Execution-Thread")
+import java.util
 
-  override def executeUJESJob(ujesJobAction: UJESJobAction): Result =
-    ujesJobAction match {
-      case action: Action => dwsHttpClient.execute(action)
-    }
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/listUserEngines")
+class ListEngineConnResult extends LinkisManagerResult {
 
-  override def close(): Unit = dwsHttpClient.close()
+  private var engines: util.List[util.Map[String, AnyRef]] = _
+
+  def setEngines(engines: util.List[util.Map[String, AnyRef]]): Unit = {
+    this.engines = engines
+  }
+
+  def getEngines: util.List[util.Map[String, AnyRef]] = engines
+
 }

@@ -499,4 +499,9 @@ public class LocalFileSystem extends FileSystem {
     LOG.info("Get file length with path:" + path);
     return new File(path).length();
   }
+
+  @Override
+  public String checkSum(FsPath dest){
+    return null;
+  }
 }

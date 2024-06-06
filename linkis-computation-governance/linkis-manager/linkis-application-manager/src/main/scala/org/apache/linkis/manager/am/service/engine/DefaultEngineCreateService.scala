@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
@@ -26,6 +25,10 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
+import org.apache.linkis.manager.am.conf.AMConfiguration.{
+  HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE,
+  SUPPORT_CLUSTER_RULE_EC_TYPES
+}
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
@@ -41,13 +44,13 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
   EngineConnCreationDescImpl
 }
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
-import org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
@@ -208,6 +211,23 @@ class DefaultEngineCreateService
         logger.warn(s"not enough resource: $reason")
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
     }
+
+    // 4.1 add once label for hive acrossCluster
+    val acrossClusterTask =
+      engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
+    val engineType: String = LabelUtil.getEngineType(labelList)
+    if (
+        StringUtils.isNotBlank(
+          acrossClusterTask
+        ) && acrossClusterTask.toBoolean && HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE && StringUtils
+          .isNotBlank(engineType) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(engineType)
+    ) {
+      val onceLabel =
+        LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[ExecuteOnceLabel])
+      logger.info("Add once label for hive cluster task")
+      labelList.add(onceLabel)
+    }
+
     // 5. build engineConn request
     val engineBuildRequest = EngineConnBuildRequestImpl(
       resourceTicketId,

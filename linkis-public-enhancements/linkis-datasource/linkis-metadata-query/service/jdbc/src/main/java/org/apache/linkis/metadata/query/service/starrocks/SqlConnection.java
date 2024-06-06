@@ -30,10 +30,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author jefftlin
- * 2024/5/24
- */
+/** @author jefftlin 2024/5/24 */
 public class SqlConnection implements Closeable {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);

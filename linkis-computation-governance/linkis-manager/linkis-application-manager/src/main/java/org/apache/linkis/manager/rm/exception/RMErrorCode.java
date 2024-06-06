@@ -63,7 +63,9 @@ public enum RMErrorCode implements LinkisErrorCode {
       12011,
       "Insufficient cluster queue cpu(集群队列cpu不足，建议增加集群队列最大cpu，参数配置-应用-spark：spark.executor.cores)"),
 
-  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance(集群队列实例不足，建议增加集群队列最大实例数，参数配置-全局参数-wds.linkis.rm.yarnqueue.instance.max)"),
+  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(
+      12012,
+      "Insufficient cluster queue instance(集群队列实例不足，建议增加集群队列最大实例数，参数配置-全局参数-wds.linkis.rm.yarnqueue.instance.max)"),
 
   ACROSS_CLUSTER_RULE_FAILED(12013, "across cluster rule failed(跨集群规则失败)"),
 

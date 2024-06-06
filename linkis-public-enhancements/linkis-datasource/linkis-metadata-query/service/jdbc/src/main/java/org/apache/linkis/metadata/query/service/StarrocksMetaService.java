@@ -52,7 +52,7 @@ public class StarrocksMetaService extends AbstractDbMetaService<SqlConnection> {
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
         extraParams =
-                Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }

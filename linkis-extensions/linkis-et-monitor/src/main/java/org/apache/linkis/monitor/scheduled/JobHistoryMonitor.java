@@ -96,7 +96,8 @@ public class JobHistoryMonitor {
       id = CacheUtils.cacheBuilder.getIfPresent("jobHistoryId");
       logger.info("Get JobHistoryId from cache ID:" + id);
     }
-    List<DataFetcher> fetchers = JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "updated_time");
+    List<DataFetcher> fetchers =
+        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "updated_time");
     if (fetchers.isEmpty()) {
       logger.warn("generated 0 dataFetchers, plz check input");
       return;

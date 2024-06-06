@@ -38,6 +38,8 @@ object ResultSetAction {
     // default value is :org.apache.linkis.storage.domain.Dolphin.LINKIS_NULL
     private var nullValue: String = "LINKIS_NULL"
 
+    private var enableLimit: Boolean = false
+
     def setUser(user: String): Builder = {
       this.user = user
       this
@@ -68,6 +70,11 @@ object ResultSetAction {
       this
     }
 
+    def setEnableLimit(enableLimit: Boolean): Builder = {
+      this.enableLimit = enableLimit
+      this
+    }
+
     def build(): ResultSetAction = {
       if (user == null) throw new UJESClientBuilderException("user is needed!")
       if (path == null) throw new UJESClientBuilderException("path is needed!")
@@ -76,6 +83,7 @@ object ResultSetAction {
       if (page > 0) resultSetAction.setParameter("page", page)
       if (pageSize > 0) resultSetAction.setParameter("pageSize", pageSize)
       resultSetAction.setParameter("charset", charset)
+      resultSetAction.setParameter("enableLimit", enableLimit)
       resultSetAction.setParameter("nullValue", nullValue)
       resultSetAction.setUser(user)
       resultSetAction

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.computation.client.once.result
 
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 import java.util
@@ -31,5 +32,42 @@ class GetEngineConnResult extends LinkisManagerResult {
   }
 
   def getNodeInfo: util.Map[String, Any] = engineConnNode
+
+  protected def getAs[T](map: util.Map[String, Any], key: String): T =
+    map.get(key).asInstanceOf[T]
+
+  def getTicketId(): String = getAs(engineConnNode, "ticketId")
+
+  def getServiceInstance(): ServiceInstance =
+    engineConnNode.get("serviceInstance") match {
+      case serviceInstance: util.Map[String, Any] =>
+        ServiceInstance(
+          getAs(serviceInstance, "applicationName"),
+          getAs(serviceInstance, "instance")
+        )
+      case _ => null
+    }
+
+  def getNodeStatus(): String = getAs(engineConnNode, "nodeStatus")
+
+  def getECMServiceInstance(): ServiceInstance =
+    engineConnNode.get("ecmServiceInstance") match {
+      case serviceInstance: util.Map[String, Any] =>
+        ServiceInstance(
+          getAs(serviceInstance, "applicationName"),
+          getAs(serviceInstance, "instance")
+        )
+      case _ => null
+    }
+
+  def getManagerServiceInstance(): ServiceInstance =
+    engineConnNode.get("managerServiceInstance") match {
+      case serviceInstance: util.Map[String, Any] =>
+        ServiceInstance(
+          getAs(serviceInstance, "applicationName"),
+          getAs(serviceInstance, "instance")
+        )
+      case _ => null
+    }
 
 }

@@ -43,14 +43,9 @@ public class Flag extends StdOption<Boolean> implements Cloneable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("\t")
-        .append(StringUtils.join(paramNames, "|"))
-        .append(" <")
-        .append(this.getDefaultValue().getClass().getSimpleName())
-        .append(">")
-        .append(System.lineSeparator());
+    sb.append("\t").append(StringUtils.join(paramNames, "|")).append(System.lineSeparator());
 
-    sb.append("\t\t").append(this.getDefaultValue()).append(System.lineSeparator());
+    sb.append("\t\t").append(this.getDescription()).append(System.lineSeparator());
 
     sb.append("\t\tdefault by: ").append(this.getDefaultValue()).append(System.lineSeparator());
 

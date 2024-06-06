@@ -53,6 +53,8 @@ public abstract class FileSystem implements Fs {
 
   public abstract long getLength(FsPath dest) throws IOException;
 
+  public abstract String checkSum(FsPath dest) throws IOException;
+
   public abstract boolean canExecute(FsPath dest) throws IOException;
 
   public abstract boolean setOwner(FsPath dest, String user, String group) throws IOException;

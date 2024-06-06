@@ -21,7 +21,6 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.common.utils.ByteTimeUtils;
-import org.apache.linkis.common.utils.MD5Utils;
 import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
@@ -64,7 +63,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -1356,22 +1354,18 @@ public class FsRestfulApi {
   })
   @RequestMapping(path = "/encrypt-path", method = RequestMethod.GET)
   public Message encryptPath(
-      HttpServletRequest req,
-      @RequestParam(value = "filePath", required = false) String filePath) {
-    ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
+      HttpServletRequest req, @RequestParam(value = "filePath", required = false) String filePath)
+      throws WorkSpaceException, IOException {
+    String username = ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
     if (StringUtils.isEmpty(filePath)) {
       return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
     }
     if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
-    String filePathMd5Str = "";
-    try {
-      filePathMd5Str = MD5Utils.encrypt(filePath);
-    } catch (NoSuchAlgorithmException e) {
-      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL, filePath));
-    }
-    return Message.ok().data("data", filePathMd5Str);
+    FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
+    String fileMD5Str = fs.checkSum(new FsPath(filePath));
+    return Message.ok().data("data", fileMD5Str);
   }
 
   /**

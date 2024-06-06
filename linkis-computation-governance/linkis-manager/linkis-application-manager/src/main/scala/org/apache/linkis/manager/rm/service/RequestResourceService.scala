@@ -17,34 +17,25 @@
 
 package org.apache.linkis.manager.rm.service
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.manager.am.conf.AMConfiguration.{
-  HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE,
-  SUPPORT_CLUSTER_RULE_EC_TYPES,
-  YARN_QUEUE_NAME_CONFIG_KEY
-}
+import org.apache.linkis.manager.am.conf.AMConfiguration.{HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE, SUPPORT_CLUSTER_RULE_EC_TYPES, YARN_QUEUE_NAME_CONFIG_KEY}
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
-import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
+import org.apache.linkis.manager.rm.utils.AcrossClusterRulesJudgeUtils.{originClusterResourceCheck, targetClusterResourceCheck}
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
-import org.apache.linkis.manager.rm.utils.AcrossClusterRulesJudgeUtils.{
-  originClusterResourceCheck,
-  targetClusterResourceCheck
-}
-
-import org.apache.commons.lang3.StringUtils
 
 import java.text.MessageFormat
 import java.util
@@ -184,9 +175,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     ) {
       // execute once
       if (HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE) {
-        val onceLabel =
-          LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[ExecuteOnceLabel])
-        labels.add(onceLabel)
+        engineCreateRequest.getLabels.put(LabelKeyConstant.EXECUTE_ONCE_KEY, "");
       }
       val queueName = props.getOrDefault(YARN_QUEUE_NAME_CONFIG_KEY, "default")
       logger.info(s"hive cluster check with queue: $queueName")

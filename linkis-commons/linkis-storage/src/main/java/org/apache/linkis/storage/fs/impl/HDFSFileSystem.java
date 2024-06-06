@@ -31,9 +31,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileUtil;
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.FsAction;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.security.UserGroupInformation;
@@ -477,5 +475,16 @@ public class HDFSFileSystem extends FileSystem {
   public long getLength(FsPath dest) throws IOException {
     FileStatus fileStatus = fs.getFileStatus(new Path(checkHDFSPath(dest.getPath())));
     return fileStatus.getLen();
+  }
+
+  @Override
+  public String checkSum(FsPath dest) throws IOException {
+    String path = checkHDFSPath(dest.getPath());
+    if (!exists(dest)) {
+      throw new IOException("directory or file not exists: " + path);
+    }
+    MD5MD5CRC32FileChecksum fileChecksum =
+        (MD5MD5CRC32FileChecksum) fs.getFileChecksum(new Path(path));
+    return fileChecksum.toString().split(":")[1];
   }
 }

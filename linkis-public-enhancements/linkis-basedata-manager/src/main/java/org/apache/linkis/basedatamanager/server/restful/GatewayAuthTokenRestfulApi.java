@@ -140,18 +140,15 @@ public class GatewayAuthTokenRestfulApi {
   }
 
   @ApiImplicitParams({
-          @ApiImplicitParam(paramType = "query", dataType = "string", name = "checkName"),
-          @ApiImplicitParam(paramType = "query", dataType = "string", name = "token")
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "checkName"),
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "token")
   })
-  @ApiOperation(
-          value = "Check",
-          notes = "Check the incoming token",
-          httpMethod = "GET")
+  @ApiOperation(value = "Check", notes = "Check the incoming token", httpMethod = "GET")
   @RequestMapping(path = "/check", method = RequestMethod.GET)
   public Message checkAuth(HttpServletRequest request, String token, String checkName) {
     String username =
-            ModuleUserUtils.getOperationUser(
-                    request, "Try to check auth token with checkName:" + checkName);
+        ModuleUserUtils.getOperationUser(
+            request, "Try to check auth token with checkName:" + checkName);
     if (!Configuration.isAdmin(username)) {
       return Message.error("User '" + username + "' is not admin user[非管理员用户]");
     }
@@ -170,9 +167,9 @@ public class GatewayAuthTokenRestfulApi {
       Long elapseDay = authToken.getElapseDay();
       Date createTime = authToken.getCreateTime();
       if (elapseDay != -1
-              && System.currentTimeMillis() > (createTime.getTime() + elapseDay * 24 * 3600 * 1000)) {
+          && System.currentTimeMillis() > (createTime.getTime() + elapseDay * 24 * 3600 * 1000)) {
         return Message.error("Token is not valid or stale(" + token + " 令牌已过期)!")
-                .data("result", checkResult);
+            .data("result", checkResult);
       }
       // token check
       String legalUsers = authToken.getLegalUsers();
@@ -181,7 +178,7 @@ public class GatewayAuthTokenRestfulApi {
           checkResult = true;
         } else {
           return Message.error("Illegal TokenUser for Token(Token非法用户: " + checkName + ")!")
-                  .data("result", checkResult);
+              .data("result", checkResult);
         }
       }
     } else {

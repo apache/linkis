@@ -279,12 +279,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val emInstanceLabel = labelContainer.getEMInstanceLabel
     val userCreatorEngineTypeLabel = labelContainer.getCombinedUserCreatorEngineTypeLabel
 
-    // set externalResourceService for get yarn resource
-    requestResourceService.setExternalResourceService(externalResourceService)
     Utils.tryFinally {
       // check ecm resource if not enough return
       Utils.tryCatch {
         labelContainer.setCurrentLabel(emInstanceLabel)
+        // set externalResourceService for get yarn resource
+        requestResourceService.setExternalResourceService(externalResourceService)
         if (!requestResourceService.canRequest(labelContainer, resource, engineCreateRequest)) {
           return NotEnoughResource(s"Labels:${emInstanceLabel.getStringValue} not enough resource")
         }
@@ -302,6 +302,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         )
       )
       Utils.tryCatch {
+        // set externalResourceService for get yarn resource
+        requestResourceService.setExternalResourceService(externalResourceService)
         labelContainer.setCurrentLabel(userCreatorEngineTypeLabel)
         if (!requestResourceService.canRequest(labelContainer, resource, engineCreateRequest)) {
           return NotEnoughResource(

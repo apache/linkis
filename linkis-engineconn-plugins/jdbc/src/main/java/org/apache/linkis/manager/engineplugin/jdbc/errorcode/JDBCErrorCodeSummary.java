@@ -53,8 +53,7 @@ public enum JDBCErrorCodeSummary implements LinkisErrorCode {
       26028,
       "In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty(kerberos的jdbc认证方式下，kerberos keytab不能为空)"),
   UNSUPPORTED_AUTHENTICATION_TYPE(26029, "Unsupported authentication type:{0}(不支持的身份验证类型)"),
-  UNSUPPORTED_DS_TYPE(
-          26030, "Unsupported datasource type:{0}(不支持的数据源类型)"),
+  UNSUPPORTED_DS_TYPE(26030, "Unsupported datasource type:{0}(不支持的数据源类型)"),
   ;
 
   private final int errorCode;

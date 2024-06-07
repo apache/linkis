@@ -34,5 +34,7 @@ object JDBCConfiguration {
 
   val CHANGE_DS_TYPE_TO_MYSQL = CommonVars[Boolean]("linkis.change.ds.type.to.mysql", true).getValue
 
-  val DS_TYPES_TO_EXECUTE_TASK_BY_JDBC = CommonVars[String]("linkis.can.execute.task.ds.types.by.jdbc", "starrocks").getValue
+  val DS_TYPES_TO_EXECUTE_TASK_BY_JDBC =
+    CommonVars[String]("linkis.can.execute.task.ds.types.by.jdbc", "starrocks").getValue
+
 }

@@ -22,14 +22,22 @@ import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
+  CHANGE_DS_TYPE_TO_MYSQL,
+  DS_TYPES_TO_EXECUTE_TASK_BY_JDBC
+}
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary._
-import org.apache.linkis.manager.engineplugin.jdbc.exception.{JDBCGetDatasourceInfoException, JDBCParamsIllegalException}
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{
+  JDBCGetDatasourceInfoException,
+  JDBCParamsIllegalException
+}
+
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{CHANGE_DS_TYPE_TO_MYSQL, DS_TYPES_TO_EXECUTE_TASK_BY_JDBC}
 
 import java.text.MessageFormat
 import java.util
+
 import scala.collection.JavaConverters._
 
 object JDBCMultiDatasourceParser extends Logging {

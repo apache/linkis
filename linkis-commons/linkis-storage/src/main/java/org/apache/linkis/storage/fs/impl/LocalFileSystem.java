@@ -501,7 +501,7 @@ public class LocalFileSystem extends FileSystem {
   }
 
   @Override
-  public String checkSum(FsPath dest){
+  public String checkSum(FsPath dest) {
     return null;
   }
 }

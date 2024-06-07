@@ -17,7 +17,6 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
-import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import org.apache.linkis.ecm.server.listener.EngineConnStopEvent

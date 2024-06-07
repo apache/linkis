@@ -40,6 +40,8 @@ class ClientConfigBuilder protected () {
   protected var maxConnection: Int = _
   protected var retryEnabled: Boolean = true
 
+  protected var ssl: Boolean = false
+
   protected var retryHandler: RetryHandler = {
     val retryHandler = new DefaultRetryHandler
     retryHandler.addRetryException(classOf[LinkisRetryException])
@@ -112,6 +114,11 @@ class ClientConfigBuilder protected () {
     this
   }
 
+  def setSSL(isSSL: Boolean): this.type = {
+    this.ssl = isSSL
+    this
+  }
+
   def build(): ClientConfig = new ClientConfig(
     serverUrl,
     discoveryEnabled,
@@ -126,7 +133,8 @@ class ClientConfigBuilder protected () {
     retryEnabled,
     retryHandler,
     authTokenKey,
-    authTokenValue
+    authTokenValue,
+    ssl
   )
 
 }

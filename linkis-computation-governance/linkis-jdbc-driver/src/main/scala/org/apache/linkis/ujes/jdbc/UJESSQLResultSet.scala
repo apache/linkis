@@ -160,11 +160,13 @@ class UJESSQLResultSet(
       return
     }
     metaData = resultSetResult.getMetadata.asInstanceOf[util.List[util.Map[String, String]]]
-    for (cursor <- 1 to metaData.size()) {
-      val col = metaData.get(cursor - 1)
-      resultSetMetaData.setColumnNameProperties(cursor, col.get("columnName"))
-      resultSetMetaData.setDataTypeProperties(cursor, col.get("dataType"))
-      resultSetMetaData.setCommentPropreties(cursor, col.get("comment"))
+    if (null != metaData) {
+      for (cursor <- 1 to metaData.size()) {
+        val col = metaData.get(cursor - 1)
+        resultSetMetaData.setColumnNameProperties(cursor, col.get("columnName"))
+        resultSetMetaData.setDataTypeProperties(cursor, col.get("dataType"))
+        resultSetMetaData.setCommentPropreties(cursor, col.get("comment"))
+      }
     }
   }
 

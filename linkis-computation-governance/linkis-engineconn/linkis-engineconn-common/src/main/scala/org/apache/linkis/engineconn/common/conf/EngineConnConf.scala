@@ -84,6 +84,10 @@ object EngineConnConf {
   val SEATUNNEL_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX =
     CommonVars("wds.linkis.seatunnel.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
 
+  val JOB_YARN_TASK_URL = CommonVars("linkis.job.task.yarn.url", "");
+
+  val JOB_YARN_CLUSTER_TASK_URL = CommonVars("linkis.job.task.yarn.cluster.url", "");
+
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 
   def getEngineTmpDir: String = System.getenv(ENGINE_CONN_LOCAL_TMP_DIR.getValue)

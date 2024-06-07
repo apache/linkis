@@ -212,22 +212,6 @@ class DefaultEngineCreateService
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
     }
 
-    // 4.1 add once label for hive acrossCluster
-    val acrossClusterTask =
-      engineCreateRequest.getProperties.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
-    val engineType: String = LabelUtil.getEngineType(labelList)
-    if (
-        StringUtils.isNotBlank(
-          acrossClusterTask
-        ) && acrossClusterTask.toBoolean && HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE && StringUtils
-          .isNotBlank(engineType) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(engineType)
-    ) {
-      val onceLabel =
-        LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[ExecuteOnceLabel])
-      logger.info("Add once label for hive cluster task")
-      labelList.add(onceLabel)
-    }
-
     // 5. build engineConn request
     val engineBuildRequest = EngineConnBuildRequestImpl(
       resourceTicketId,

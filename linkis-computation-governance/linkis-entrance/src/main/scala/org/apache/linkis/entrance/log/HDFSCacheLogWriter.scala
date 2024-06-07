@@ -100,33 +100,33 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
   def getCache: Option[Cache] = Some(sharedCache)
 
   private def cache(msg: String): Unit = {
+    if (sharedCache.cachedLogs == null) {
+      return
+    }
     WRITE_LOCKER synchronized {
-      val removed = sharedCache.cachedLogs.add(msg)
+      val isNextOneEmpty = sharedCache.cachedLogs.isNextOneEmpty
       val currentTime = new Date(System.currentTimeMillis())
-      if (removed != null || currentTime.after(pushTime)) {
+      if (isNextOneEmpty == false || currentTime.after(pushTime)) {
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
-        if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
-        // need append latest msg before fake clear
-        sb.append(msg).append("\n")
         sharedCache.cachedLogs.fakeClear()
         writeToFile(sb.toString())
         pushTime.setTime(
           currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue
         )
       }
+      sharedCache.cachedLogs.add(msg)
     }
   }
 
   private def writeToFile(msg: String): Unit = WRITE_LOCKER synchronized {
-    val log =
-      if (!firstWrite) "\n" + msg
-      else {
-        logger.info(s"$toString write first one line log")
-        firstWrite = false
-        msg
-      }
+    val log = msg
+    if (firstWrite) {
+      logger.info(s"$toString write first one line log")
+      firstWrite = false
+      msg
+    }
     Utils.tryAndWarnMsg {
       getOutputStream.write(log.getBytes(charset))
     }(s"$toString error when write query log to outputStream.")
@@ -144,10 +144,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   override def flush(): Unit = {
     val sb = new StringBuilder
-    sharedCache.cachedLogs.toList
-      .filter(_ != null)
-      .foreach(sb.append(_).append("\n"))
-    sharedCache.cachedLogs.clear()
+    if (sharedCache.cachedLogs != null) {
+      sharedCache.cachedLogs.toList
+        .filter(_ != null)
+        .foreach(sb.append(_).append("\n"))
+      sharedCache.cachedLogs.clear()
+    }
     writeToFile(sb.toString())
   }
 
@@ -157,6 +159,7 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
       fileSystem.close()
       fileSystem = null
     }(s"$toString Error encounters when closing fileSystem")
+    sharedCache.clearCachedLogs()
   }
 
   override def toString: String = logPath

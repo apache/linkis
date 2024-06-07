@@ -52,9 +52,9 @@ import org.slf4j.LoggerFactory;
 @Api(tags = "configuration template")
 @RestController
 @RequestMapping(path = "/configuration/template")
-public class TemplateManagerRestfulApi {
+public class TemplateRestfulApi {
 
-  private static final Logger logger = LoggerFactory.getLogger(TemplateManagerRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(TemplateRestfulApi.class);
 
   @Autowired private TemplateConfigKeyService templateConfigKeyService;
 
@@ -86,7 +86,8 @@ public class TemplateManagerRestfulApi {
     // check special admin token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        return Message.error("Token has no permission to updateKeyMapping.");
+        logger.warn("Token:{} has no permission to updateKeyMapping.", token);
+        return Message.error("Token:" + token + " has no permission to updateKeyMapping.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User:{} has no permission to updateKeyMapping.", username);
@@ -159,7 +160,8 @@ public class TemplateManagerRestfulApi {
     // check special admin token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        return Message.error("Token has no permission to queryKeyInfoList.");
+        logger.warn("Token:{} has no permission to queryKeyInfoList.", token);
+        return Message.error("Token:" + token + " has no permission to queryKeyInfoList.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User:{} has no permission to queryKeyInfoList.", username);
@@ -210,7 +212,8 @@ public class TemplateManagerRestfulApi {
     // check special admin token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        return Message.error("Token has no permission to apply.");
+        logger.warn("Token:{} has no permission to apply.", token);
+        return Message.error("Token:" + token + " has no permission to apply.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User:{} has no permission to apply.", username);

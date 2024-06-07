@@ -29,14 +29,15 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="desc" property="desc" jdbcType="VARCHAR"/>
         <result column="bussiness_user" property="bussinessUser" jdbcType="VARCHAR"/>
+        <result column="is_valid" property="isValid" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Tenant_Column_List">
-        id,user,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
+        id,user,creator,tenant_value,create_time,update_time,`desc`,bussiness_user,is_valid
     </sql>
 
     <sql id="Tenant_insert_Column_List">
-        `user`,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
+        `user`,creator,tenant_value,create_time,update_time,`desc`,bussiness_user,is_valid
     </sql>
 
     <insert id="createTenant" parameterType="org.apache.linkis.configuration.entity.TenantVo">
@@ -47,7 +48,8 @@
         #{createTime},
         #{updateTime},
         #{desc},
-        #{bussinessUser}
+        #{bussinessUser},
+        #{isValid}
         )
     </insert>
 
@@ -68,22 +70,23 @@
 
     <update id="updateTenant" parameterType="org.apache.linkis.configuration.entity.TenantVo">
         UPDATE linkis_cg_tenant_label_config
-        <set>
+        <trim prefix="set" suffixOverrides=",">
             <if test="user != null ">user = #{user},</if>
             <if test="creator != null">creator = #{creator},</if>
             <if test="tenantValue != null">tenant_value = #{tenantValue},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="desc != null">`desc` = #{desc},</if>
-            <if test="bussinessUser != null">bussiness_user = #{bussinessUser}</if>
-        </set>
+            <if test="bussinessUser != null">bussiness_user = #{bussinessUser},</if>
+            <if test="isValid != null">is_valid = #{isValid}</if>
+        </trim>
         WHERE id = #{id}
     </update>
 
 
     <select id="queryTenant" resultMap="TenantMap">
-        SELECT <include refid="Tenant_Column_List"/>
-        FROM linkis_cg_tenant_label_config
+        select <include refid="Tenant_Column_List"/>
+        from linkis_cg_tenant_label_config
         <where>
             <if test="user != null">`user` = #{user}</if>
             <if test="creator != null">and `creator` = #{creator}</if>

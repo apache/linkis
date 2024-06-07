@@ -339,7 +339,8 @@ class ConfigurationService extends Logging {
         val engineconfig =
           defaultEngineConfigs.asScala.find(_.getKey.equals(creatorConfig.getKey))
         if (engineconfig.isDefined) {
-          engineconfig.get.setDefaultValue(creatorConfig.getConfigValue)
+          engineconfig.get.setDefaultValue(creatorConfig.getDefaultValue)
+          engineconfig.get.setConfigValue(creatorConfig.getConfigValue)
         } else {
           defaultEngineConfigs.add(creatorConfig)
         }
@@ -375,30 +376,32 @@ class ConfigurationService extends Logging {
     }
     var defaultEngineConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     var defaultCreatorConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+    var defaultUserConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if (useDefaultConfig) {
-      val defaultCretorLabelList = LabelParameterParser.changeUserToDefault(labelList, false)
-      val defaultCreatorCombinedLabel =
-        combinedLabelBuilder.build("", defaultCretorLabelList).asInstanceOf[CombinedLabelImpl]
-      val defaultCreatorLabel = labelMapper.getLabelByKeyValue(
-        defaultCreatorCombinedLabel.getLabelKey,
-        defaultCreatorCombinedLabel.getStringValue
+      // query *-ide  default conf
+      val defaultCreatorLabel = getConfByLabelList(
+        LabelParameterParser.changeUserToDefault(labelList, false)
       )
       if (defaultCreatorLabel != null) {
         defaultCreatorConfigs = getConfigByLabelId(defaultCreatorLabel.getId, language)
       }
-      val defaultEngineLabelList = LabelParameterParser.changeUserToDefault(labelList)
-      val defaultEngineCombinedLabel =
-        combinedLabelBuilder.build("", defaultEngineLabelList).asInstanceOf[CombinedLabelImpl]
-      val defaultEngineLabel = labelMapper.getLabelByKeyValue(
-        defaultEngineCombinedLabel.getLabelKey,
-        defaultEngineCombinedLabel.getStringValue
+      // query user-*  default conf
+      val defaultUserLabel = getConfByLabelList(
+        LabelParameterParser.changeUserToDefault(labelList, true, false)
+      )
+      if (defaultUserLabel != null) {
+        defaultUserConfigs = getConfigByLabelId(defaultUserLabel.getId, language)
+      }
+      // query *-*  default conf
+      val defaultEngineLabel = getConfByLabelList(
+        LabelParameterParser.changeUserToDefault(labelList)
       )
       if (defaultEngineLabel != null) {
         defaultEngineConfigs = getConfigByLabelId(defaultEngineLabel.getId, language)
       }
       if (CollectionUtils.isEmpty(defaultEngineConfigs)) {
         logger.warn(
-          s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultEngineCombinedLabel.getStringValue}的默认配置信息是否完整)"
+          s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签 *-* 的默认配置信息是否完整)"
         )
       }
       val userCreatorLabel = labelList.asScala
@@ -407,6 +410,9 @@ class ConfigurationService extends Logging {
         .asInstanceOf[UserCreatorLabel]
       if (Configuration.USE_CREATOR_DEFAULE_VALUE && userCreatorLabel.getCreator != "*") {
         replaceCreatorToEngine(defaultCreatorConfigs, defaultEngineConfigs)
+      }
+      if (Configuration.USE_USER_DEFAULE_VALUE && userCreatorLabel.getUser != "*") {
+        replaceCreatorToEngine(defaultUserConfigs, defaultEngineConfigs)
       }
     }
 
@@ -439,6 +445,11 @@ class ConfigurationService extends Logging {
     }
 
     (configs, defaultEngineConfigs)
+  }
+
+  private def getConfByLabelList(labelList: java.util.List[Label[_]]): ConfigLabel = {
+    val combinedLabel = combinedLabelBuilder.build("", labelList).asInstanceOf[CombinedLabelImpl]
+    labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
   }
 
   /**

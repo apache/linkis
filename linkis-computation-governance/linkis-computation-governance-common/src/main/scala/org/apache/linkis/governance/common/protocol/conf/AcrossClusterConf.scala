@@ -19,17 +19,8 @@ package org.apache.linkis.governance.common.protocol.conf
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-trait TenantConf extends RequestProtocol
+trait AcrossClusterConf extends RequestProtocol
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
+case class AcrossClusterRequest(username: String) extends AcrossClusterConf
 
-case class TenantResponse(user: String, creator: String, isValid: String, tenant: String)
-
-case class DepartTenantRequest(creator: String, departmentId: String) extends TenantConf
-
-case class DepartTenantResponse(
-    creator: String,
-    departmentId: String,
-    isValid: String,
-    tenant: String
-)
+case class AcrossClusterResponse(clusterName: String, queueName: String)

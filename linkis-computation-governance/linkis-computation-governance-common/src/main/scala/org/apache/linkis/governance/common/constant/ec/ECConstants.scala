@@ -74,4 +74,8 @@ object ECConstants {
   val EC_OPERATE_STATUS = "status"
 
   val YARN_APP_RESULT_LIST_KEY = "yarnAppResultList"
+
+  val HIVE_OPTS = "HIVE_OPTS"
+
+  val SPARK_SUBMIT_OPTS = "SPARK_SUBMIT_OPTS"
 }

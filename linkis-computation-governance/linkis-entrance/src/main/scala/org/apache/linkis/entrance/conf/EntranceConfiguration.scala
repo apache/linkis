@@ -215,16 +215,19 @@ object EntranceConfiguration {
   val GROUP_CACHE_EXPIRE_TIME = CommonVars("wds.linkis.consumer.group.expire.time", 50)
 
   val CLIENT_MONITOR_CREATOR =
-    CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")
+    CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI,BdpClient")
 
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
   val TEMPLATE_CONF_SWITCH =
-    CommonVars("linkis.entrance.template.conf.interceptor.switch", false)
+    CommonVars("wds.linkis.entrance.template.conf.interceptor.switch", false)
 
-  val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
-    CommonVars("linkis.entrance.auto.clean.dirty.data.enable", false)
+  val TEMPLATE_CONF_ADD_ONCE_LABEL_ENABLE =
+    CommonVars("wds.linkis.entrance.template.add.once.label.enable", false)
+
+  val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR: CommonVars[Boolean] =
+    CommonVars[Boolean]("linkis.entrance.auto.clean.dirty.data.enable", true)
 
   val ENTRANCE_CREATOR_JOB_LIMIT: CommonVars[Int] =
     CommonVars[Int](
@@ -287,5 +290,8 @@ object EntranceConfiguration {
 
   val LINKIS_ENTRANCE_SKIP_ORCHESTRATOR =
     CommonVars("linkis.entrance.skip.orchestrator", false).getValue
+
+  val ENABLE_HDFS_RES_DIR_PRIVATE =
+    CommonVars[Boolean]("linkis.entrance.enable.hdfs.res.dir.private", false).getValue
 
 }

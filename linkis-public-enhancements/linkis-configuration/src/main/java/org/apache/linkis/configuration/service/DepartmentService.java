@@ -17,15 +17,11 @@
 
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.governance.common.protocol.conf.DepartTenantRequest;
-import org.apache.linkis.governance.common.protocol.conf.DepartTenantResponse;
-import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
-import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
+import org.apache.linkis.governance.common.protocol.conf.DepartmentRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartmentResponse;
 import org.apache.linkis.rpc.Sender;
 
-public interface TenantService {
+public interface DepartmentService {
 
-  TenantResponse getTenantData(TenantRequest request, Sender sender);
-
-  DepartTenantResponse getDepartTenantData(DepartTenantRequest departTenantRequest, Sender sender);
+  DepartmentResponse getDepartmentByUser(DepartmentRequest departmentRequest, Sender sender);
 }

@@ -23,16 +23,18 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel
-public class TenantVo {
-
+public class DepartmentTenantVo {
   @ApiModelProperty("id")
   private String id;
 
-  @ApiModelProperty("user")
-  private String user;
-
   @ApiModelProperty("creator")
   private String creator;
+
+  @ApiModelProperty("department")
+  private String department;
+
+  @ApiModelProperty("departmentId")
+  private String departmentId;
 
   @ApiModelProperty("tenantValue")
   private String tenantValue;
@@ -43,11 +45,8 @@ public class TenantVo {
   @ApiModelProperty("updateTime")
   private Date updateTime;
 
-  @ApiModelProperty("desc")
-  private String desc;
-
-  @ApiModelProperty("bussinessUser")
-  private String bussinessUser;
+  @ApiModelProperty("createBy")
+  private String createBy;
 
   @ApiModelProperty("isValid")
   private String isValid;
@@ -60,20 +59,20 @@ public class TenantVo {
     this.id = id;
   }
 
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
-
   public String getCreator() {
     return creator;
   }
 
   public void setCreator(String creator) {
     this.creator = creator;
+  }
+
+  public String getDepartmentId() {
+    return departmentId;
+  }
+
+  public void setDepartmentId(String departmentId) {
+    this.departmentId = departmentId;
   }
 
   public String getTenantValue() {
@@ -100,20 +99,20 @@ public class TenantVo {
     this.updateTime = updateTime;
   }
 
-  public String getDesc() {
-    return desc;
+  public String getCreateBy() {
+    return createBy;
   }
 
-  public void setDesc(String desc) {
-    this.desc = desc;
+  public void setCreateBy(String createBy) {
+    this.createBy = createBy;
   }
 
-  public String getBussinessUser() {
-    return bussinessUser;
+  public String getDepartment() {
+    return department;
   }
 
-  public void setBussinessUser(String bussinessUser) {
-    this.bussinessUser = bussinessUser;
+  public void setDepartment(String department) {
+    this.department = department;
   }
 
   public String getIsValid() {
@@ -126,15 +125,18 @@ public class TenantVo {
 
   @Override
   public String toString() {
-    return "TenantVo{"
+    return "DepartmentTenantVo{"
         + "id='"
         + id
         + '\''
-        + ", user='"
-        + user
-        + '\''
         + ", creator='"
         + creator
+        + '\''
+        + ", department='"
+        + department
+        + '\''
+        + ", departmentId='"
+        + departmentId
         + '\''
         + ", tenantValue='"
         + tenantValue
@@ -143,11 +145,8 @@ public class TenantVo {
         + createTime
         + ", updateTime="
         + updateTime
-        + ", desc='"
-        + desc
-        + '\''
         + ", bussinessUser='"
-        + bussinessUser
+        + createBy
         + ", isValid="
         + isValid
         + '\''

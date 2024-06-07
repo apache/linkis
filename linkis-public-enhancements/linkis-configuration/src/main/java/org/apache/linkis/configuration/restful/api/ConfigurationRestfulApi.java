@@ -142,7 +142,8 @@ public class ConfigurationRestfulApi {
         ModuleUserUtils.getOperationUser(
             req,
             MessageFormat.format(
-                "ConfigurationException,engineType:{0},version:{1}", engineType, version));
+                "getFullTreesByAppName,engineType:{0},version:{1},creator:{2}",
+                engineType, version, creator));
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
             username, creator, engineType, version);
@@ -173,7 +174,7 @@ public class ConfigurationRestfulApi {
     ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
     // Adding * represents returning all configuration information
     if ("*".equals(engineType)) {
-      engineType = null;
+      engineType = "";
     }
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
     List<Map<String, Object>> filterResult = new ArrayList<>();
@@ -497,7 +498,8 @@ public class ConfigurationRestfulApi {
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version"),
     @ApiImplicitParam(name = "creator", required = true, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "configKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "configValue", required = true, dataType = "String")
+    @ApiImplicitParam(name = "configValue", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "configKeyId", required = false, dataType = "String")
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
@@ -505,12 +507,13 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     Message message = Message.ok();
     String username = ModuleUserUtils.getOperationUser(req, "saveKey");
-    String engineType = (String) json.getOrDefault("engineType", "*");
-    String user = (String) json.getOrDefault("user", "");
-    String version = (String) json.getOrDefault("version", "*");
-    String creator = (String) json.getOrDefault("creator", "*");
-    String configKey = (String) json.get("configKey");
-    String value = (String) json.get("configValue");
+    String engineType = ((String) json.getOrDefault("engineType", "*")).trim();
+    String user = ((String) json.getOrDefault("user", "")).trim();
+    String version = ((String) json.getOrDefault("version", "*")).trim();
+    String creator = ((String) json.getOrDefault("creator", "*")).trim();
+    String configKey = ((String) json.get("configKey")).trim();
+    String value = ((String) json.get("configValue")).trim();
+    String configKeyId = ((String) json.getOrDefault("configKeyId", "")).trim();
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
       return Message.error("Only admin can modify other user configuration data");
@@ -531,7 +534,9 @@ public class ConfigurationRestfulApi {
     ConfigKeyValue configKeyValue = new ConfigKeyValue();
     configKeyValue.setKey(configKey);
     configKeyValue.setConfigValue(value);
-
+    if (StringUtils.isNotBlank(configKeyId)) {
+      configKeyValue.setId(Long.valueOf(configKeyId));
+    }
     try {
       configurationService.paramCheck(configKeyValue);
     } catch (Exception e) {
@@ -562,10 +567,10 @@ public class ConfigurationRestfulApi {
   public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
     String username = ModuleUserUtils.getOperationUser(req, "deleteKeyValue");
-    String engineType = (String) json.getOrDefault("engineType", "*");
-    String version = (String) json.getOrDefault("version", "*");
-    String creator = (String) json.getOrDefault("creator", "*");
-    String configKey = (String) json.get("configKey");
+    String engineType = ((String) json.getOrDefault("engineType", "*")).trim();
+    String version = ((String) json.getOrDefault("version", "*")).trim();
+    String creator = ((String) json.getOrDefault("creator", "*")).trim();
+    String configKey = ((String) json.get("configKey")).trim();
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -690,10 +695,6 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException, InstantiationException, IllegalAccessException {
     checkAdmin(ModuleUserUtils.getOperationUser(req, "saveBaseKeyValue"));
     String key = configKey.getKey();
-    String name = configKey.getName();
-    String treeName = configKey.getTreeName();
-    String description = configKey.getDescription();
-    Integer boundaryType = configKey.getBoundaryType();
     String defaultValue = configKey.getDefaultValue();
     String validateType = configKey.getValidateType();
     String validateRange = configKey.getValidateRange();
@@ -701,13 +702,14 @@ public class ConfigurationRestfulApi {
     if (StringUtils.isBlank(key)) {
       return Message.error("key cannot be empty");
     }
-    if (StringUtils.isBlank(name)) {
+    configKey.setKey(configKey.getKey().trim());
+    if (StringUtils.isBlank(configKey.getName())) {
       return Message.error("name cannot be empty");
     }
-    if (StringUtils.isBlank(description)) {
+    if (StringUtils.isBlank(configKey.getDescription())) {
       return Message.error("description cannot be empty");
     }
-    if (StringUtils.isBlank(treeName)) {
+    if (StringUtils.isBlank(configKey.getTreeName())) {
       return Message.error("treeName cannot be empty");
     }
     if (StringUtils.isBlank(validateType)) {
@@ -716,7 +718,7 @@ public class ConfigurationRestfulApi {
     if (!validateType.equals("None") && StringUtils.isBlank(validateRange)) {
       return Message.error("validateRange cannot be empty");
     }
-    if (null == boundaryType) {
+    if (null == configKey.getBoundaryType()) {
       return Message.error("boundaryType cannot be empty");
     }
     if (StringUtils.isNotEmpty(defaultValue)
@@ -730,6 +732,7 @@ public class ConfigurationRestfulApi {
               key, validateType, validateRange, defaultValue);
       throw new ConfigurationException(msg);
     }
+    configKey.setDefaultValue(configKey.getDefaultValue().trim());
     if (null == configKey.getId()) {
       List<ConfigKey> configBykey =
           configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));

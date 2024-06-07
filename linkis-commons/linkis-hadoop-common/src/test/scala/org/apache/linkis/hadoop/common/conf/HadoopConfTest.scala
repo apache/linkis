@@ -26,7 +26,7 @@ class HadoopConfTest {
   def constTest(): Unit = {
 
     Assertions.assertEquals("hadoop", HadoopConf.HADOOP_ROOT_USER.getValue)
-    Assertions.assertFalse(HadoopConf.KERBEROS_ENABLE.getValue)
+    Assertions.assertFalse(HadoopConf.KERBEROS_ENABLE)
     Assertions.assertEquals("/appcom/keytab/", HadoopConf.KEYTAB_FILE.getValue)
     Assertions.assertEquals("127.0.0.1", HadoopConf.KEYTAB_HOST.getValue)
     Assertions.assertFalse(HadoopConf.KEYTAB_HOST_ENABLED.getValue)

@@ -33,6 +33,8 @@ trait ExecutorHeartbeatService {
 
   def dealNodeHeartbeatRequest(nodeHeartbeatRequest: NodeHeartbeatRequest): NodeHeartbeatMsg
 
+  def setSelfUnhealthy(reason: String): Unit
+
 }
 
 object ExecutorHeartbeatServiceHolder {

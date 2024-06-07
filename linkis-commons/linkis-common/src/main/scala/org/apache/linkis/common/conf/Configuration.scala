@@ -65,6 +65,8 @@ object Configuration extends Logging {
 
   val JOB_HISTORY_ADMIN = CommonVars("wds.linkis.jobhistory.admin", "hadoop")
 
+  val JOB_HISTORY_DEPARTMENT_ADMIN = CommonVars("wds.linkis.jobhistory.department.admin", "hadoop")
+
   // Only the specified token has permission to call some api
   val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
 
@@ -122,6 +124,11 @@ object Configuration extends Logging {
   def isJobHistoryAdmin(username: String): Boolean = {
     getJobHistoryAdmin()
       .exists(username.equalsIgnoreCase)
+  }
+
+  def isDepartmentAdmin(username: String): Boolean = {
+    val departmentAdminUsers = JOB_HISTORY_DEPARTMENT_ADMIN.getHotValue.split(",")
+    departmentAdminUsers.exists(username.equalsIgnoreCase)
   }
 
   def getJobHistoryAdmin(): Array[String] = {

@@ -113,7 +113,6 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     logger.info("Reported status shuttingDown to manager.")
     Utils.tryQuietly(Thread.sleep(2000))
     shutDownHooked = true
-    ShutdownHook.getShutdownHook.notifyStop()
   }
 
   override def stopExecutor: Unit = {

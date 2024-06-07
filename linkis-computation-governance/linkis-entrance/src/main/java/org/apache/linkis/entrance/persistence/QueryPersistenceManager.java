@@ -164,6 +164,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
     cliHeartbeatMonitor.unRegisterIfCliJob(job);
     updateJobStatus(job);
+    job.clear();
   }
 
   private void updateJobStatus(Job job) {

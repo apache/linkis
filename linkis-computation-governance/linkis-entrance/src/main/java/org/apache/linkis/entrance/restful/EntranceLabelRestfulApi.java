@@ -17,12 +17,15 @@
 
 package org.apache.linkis.entrance.restful;
 
+import org.apache.linkis.DataWorkCloudApplication;
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
+import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
 import org.apache.linkis.protocol.label.InsLabelRemoveRequest;
 import org.apache.linkis.rpc.Sender;
@@ -30,12 +33,15 @@ import org.apache.linkis.scheduler.SchedulerContext;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -129,7 +135,23 @@ public class EntranceLabelRestfulApi {
   @ApiOperation(value = "isOnline", notes = "entrance isOnline", response = Message.class)
   @RequestMapping(path = "/isOnline", method = RequestMethod.GET)
   public Message isOnline(HttpServletRequest req) {
-    logger.info("Whether Entrance is online: {}", !offlineFlag);
-    return Message.ok().data("isOnline", !offlineFlag);
+    String thisInstance = Sender.getThisInstance();
+    ServiceInstance mainInstance = DataWorkCloudApplication.getServiceInstance();
+    ServiceInstance serviceInstance = new ServiceInstance();
+    serviceInstance.setApplicationName(mainInstance.getApplicationName());
+    serviceInstance.setInstance(thisInstance);
+    List<Label<?>> labelFromInstance =
+        InstanceLabelClient.getInstance().getLabelFromInstance(serviceInstance);
+    boolean res = true;
+    String offline = "offline";
+    if (!CollectionUtils.isEmpty(labelFromInstance)) {
+      for (Label label : labelFromInstance) {
+        if (offline.equals(label.getValue())) {
+          res = false;
+        }
+      }
+    }
+    logger.info("Whether Entrance is online: {}", res);
+    return Message.ok().data("isOnline", res);
   }
 }

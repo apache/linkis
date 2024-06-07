@@ -102,7 +102,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def init(): Unit = {
     setCodeParser(new PythonCodeParser)
     super.init()
-    logger.info("spark sql executor start")
+    logger.info("spark python executor start")
   }
 
   override def killTask(taskID: String): Unit = {
@@ -113,7 +113,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   override def close: Unit = {
-    logger.info("python executor ready to close")
+
+    logger.info(s"To remove pyspark executor")
+    Utils.tryAndError(
+      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
+    )
+    logger.info(s"Finished remove pyspark executor")
+
+    logger.info("To kill pyspark process")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
@@ -126,18 +133,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
           logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
           GovernanceUtils.killProcess(String.valueOf(p), s"kill pyspark process,pid: $pid", false)
         })
-        if (pid.isEmpty) {
-          process.destroy()
-          process = null
-        }
+
+        Utils.tryQuietly(process.destroy())
+        process = null
+        logger.info("Finished kill pyspark process")
       }("process close failed")
     }
-    logger.info(s"To delete python executor")
-    Utils.tryAndError(
-      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
-    )
-    logger.info(s"Finished to kill python")
-    logger.info("python executor Finished to close")
+
+    logger.info("python executor finished to close")
   }
 
   override def getKind: Kind = PySpark()

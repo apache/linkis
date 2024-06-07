@@ -146,12 +146,8 @@ public class GatewayAuthTokenRestfulApi {
   @ApiOperation(value = "Check", notes = "Check the incoming token", httpMethod = "GET")
   @RequestMapping(path = "/check", method = RequestMethod.GET)
   public Message checkAuth(HttpServletRequest request, String token, String checkName) {
-    String username =
-        ModuleUserUtils.getOperationUser(
-            request, "Try to check auth token with checkName:" + checkName);
-    if (!Configuration.isAdmin(username)) {
-      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
-    }
+    ModuleUserUtils.getOperationUser(
+        request, "Try to check auth token with checkName:" + checkName);
     Boolean checkResult = false;
     // 参数校验
     if (StringUtils.isBlank(checkName)) {

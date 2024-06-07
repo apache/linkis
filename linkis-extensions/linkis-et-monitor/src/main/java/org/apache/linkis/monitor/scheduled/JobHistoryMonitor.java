@@ -168,11 +168,15 @@ public class JobHistoryMonitor {
     } catch (Exception e) {
       logger.warn("CommonJobRunTimeRule Scan Error msg: " + e.getMessage());
     }
+    // 执行任务扫描
+    JobMonitorUtils.run(scanner, fetchers, true);
+
     // 任务指标上报
     JobIndexRule jobIndexRule = new JobIndexRule(new JobIndexSender());
     scanner.addScanRule(jobIndexRule);
-    // 执行任务扫描
-    JobMonitorUtils.run(scanner, fetchers, true);
+    List<DataFetcher> createFetcher =
+        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "created_time");
+    JobMonitorUtils.run(scanner, createFetcher, true);
   }
 
   @Scheduled(cron = "${linkis.monitor.jobHistory.timeout.cron}")

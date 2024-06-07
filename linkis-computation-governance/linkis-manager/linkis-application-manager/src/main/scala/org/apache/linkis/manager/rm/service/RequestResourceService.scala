@@ -55,9 +55,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
   var externalResourceService: ExternalResourceService = null
 
   def setExternalResourceService(externalResourceService: ExternalResourceService): Unit = {
-    if (externalResourceService == null) {
-      this.externalResourceService = externalResourceService
-    }
+    this.externalResourceService = externalResourceService
   }
 
   def canRequestResource(

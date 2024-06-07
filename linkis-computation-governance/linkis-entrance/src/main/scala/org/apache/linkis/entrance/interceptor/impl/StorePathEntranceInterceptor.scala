@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -44,6 +45,34 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
    * @return
    */
   override def apply(jobReq: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
+    val paramsMap = if (null != jobReq.getParams) {
+      jobReq.getParams
+    } else {
+      new util.HashMap[String, AnyRef]()
+    }
+    var runtimeMap = TaskUtils.getRuntimeMap(paramsMap)
+    if (null == runtimeMap || runtimeMap.isEmpty) {
+      runtimeMap = new util.HashMap[String, AnyRef]()
+    }
+    if (runtimeMap.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH.key)) {
+      return jobReq
+    }
+    if (EntranceConfiguration.ENABLE_HDFS_RES_DIR_PRIVATE) {
+      val parentPath = generateUserPrivateResDir(jobReq)
+      runtimeMap.put(GovernanceCommonConf.RESULT_SET_STORE_PATH.key, parentPath)
+      TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
+      val params = new util.HashMap[String, AnyRef]()
+      paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2))
+      jobReq.setResultLocation(parentPath)
+      jobReq.setParams(params)
+      jobReq
+    } else {
+      jobReq
+    }
+
+  }
+
+  private def generateUserPrivateResDir(jobReq: JobRequest): String = {
     var parentPath: String = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
     if (!parentPath.endsWith("/")) parentPath += "/"
     parentPath += jobReq.getExecuteUser
@@ -61,23 +90,7 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     // multi linkis cluster should not use same root folder , in which case result file may be overwrite
     parentPath += DateFormatUtils.format(System.currentTimeMillis, "yyyy-MM-dd/HHmmss") + "/" +
       userCreator._2 + "/" + jobReq.getId
-    val paramsMap = if (null != jobReq.getParams) {
-      jobReq.getParams
-    } else {
-      new util.HashMap[String, AnyRef]()
-    }
-
-    var runtimeMap = TaskUtils.getRuntimeMap(paramsMap)
-    if (null == runtimeMap || runtimeMap.isEmpty) {
-      runtimeMap = new util.HashMap[String, AnyRef]()
-    }
-    runtimeMap.put(GovernanceCommonConf.RESULT_SET_STORE_PATH.key, parentPath)
-    TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
-    val params = new util.HashMap[String, AnyRef]()
-    paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2))
-    jobReq.setResultLocation(parentPath)
-    jobReq.setParams(params)
-    jobReq
+    parentPath
   }
 
 }

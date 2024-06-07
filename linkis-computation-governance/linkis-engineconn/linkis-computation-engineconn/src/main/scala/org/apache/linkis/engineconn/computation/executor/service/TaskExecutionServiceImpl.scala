@@ -204,7 +204,11 @@ class TaskExecutionServiceImpl
         )
       }
 
-      val taskId: Int = taskExecutedNum.incrementAndGet()
+      val taskId: String = if (StringUtils.isNotBlank(jobId)) {
+        jobId
+      } else {
+        String.valueOf(taskExecutedNum.incrementAndGet())
+      }
       val retryAble: Boolean = {
         val retry =
           requestTask.getProperties.getOrDefault(
@@ -219,7 +223,7 @@ class TaskExecutionServiceImpl
         System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
         logger.info(s"Received job with id ${jobId}.")
       }
-      val task = new CommonEngineConnTask(String.valueOf(taskId), retryAble)
+      val task = new CommonEngineConnTask(taskId, retryAble)
       task.setCode(requestTask.getCode)
       task.setProperties(requestTask.getProperties)
       task.data(ComputationEngineConstant.LOCK_TYPE_NAME, requestTask.getLock)

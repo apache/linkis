@@ -21,6 +21,8 @@ abstract class ConsumeQueue {
   def remove(event: SchedulerEvent): Unit
   def getWaitingEvents: Array[SchedulerEvent]
   def size: Int
+
+  def waitingSize: Int
   def isEmpty: Boolean
   def isFull: Boolean
   def clearAll(): Unit

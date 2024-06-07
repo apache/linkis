@@ -36,10 +36,8 @@ object EnvConfiguration {
     CommonVars[String]("HADOOP_CONF_DIR", "/appcom/config/hadoop-config").getValue
   )
 
-  val ENGINE_CONN_JARS = CommonVars("wds.linkis.engineConn.jars", "", "engineConn额外的Jars")
-
   val ENGINE_CONN_CLASSPATH_FILES =
-    CommonVars("wds.linkis.engineConn.files", "", "engineConn额外的配置文件")
+    CommonVars("linkis.engineConn.classpath.files", "", "engineConn额外的配置文件")
 
   val MAX_METASPACE_SIZE = CommonVars("linkis.engineconn.metaspace.size.max", "256m")
 

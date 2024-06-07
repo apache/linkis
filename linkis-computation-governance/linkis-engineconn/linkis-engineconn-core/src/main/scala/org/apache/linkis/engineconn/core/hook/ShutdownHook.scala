@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.core.hook
 import org.apache.linkis.common.utils.Logging
 
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 
 class ShutdownHook extends Logging {
@@ -35,6 +36,10 @@ class ShutdownHook extends Logging {
   // Guarded by "lock"
   private var stopped: Boolean = false
 
+  private val tryStopTimes = new AtomicInteger(0)
+
+  private val maxTimes = 10;
+
   def notifyError(e: Throwable): Unit = {
     lock.lock()
     try {
@@ -49,12 +54,17 @@ class ShutdownHook extends Logging {
 
   def notifyStop(): Unit = {
     lock.lock()
+    val num = tryStopTimes.incrementAndGet()
     try {
       setExitCode(0)
       stopped = true
       condition.signalAll()
     } finally {
       lock.unlock()
+      if (num >= maxTimes) {
+        logger.error(s"try to stop with times:${num}, now do system exit!!!")
+        System.exit(0)
+      }
     }
   }
 

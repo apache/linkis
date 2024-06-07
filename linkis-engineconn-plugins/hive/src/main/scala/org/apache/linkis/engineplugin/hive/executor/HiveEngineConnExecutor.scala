@@ -34,6 +34,7 @@ import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.{
 }
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.hadoop.common.conf.HadoopConf
@@ -144,49 +145,82 @@ class HiveEngineConnExecutor(
     val realCode = code.trim()
     LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+
     if (StringUtils.isNotBlank(jobId)) {
-      LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
-      hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
+      val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutorContext.getProperties)
+      val tags = if (StringUtils.isAsciiPrintable(jobTags)) {
+        s"LINKIS_$jobId,$jobTags"
+      } else {
+        s"LINKIS_$jobId"
+      }
+      LOG.info(s"set mapreduce.job.tags=$tags")
+      hiveConf.set("mapreduce.job.tags", tags)
     }
+
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim}")
     val tokens = realCode.trim.split("""\s+""")
     SessionState.setCurrentSessionState(sessionState)
     sessionState.setLastCommand(code)
+    if (
+        engineExecutorContext.getCurrentParagraph == 1 && engineExecutorContext.getProperties
+          .containsKey(JobRequestConstants.LINKIS_JDBC_DEFAULT_DB)
+    ) {
+      val defaultDB =
+        engineExecutorContext.getProperties
+          .get(JobRequestConstants.LINKIS_JDBC_DEFAULT_DB)
+          .asInstanceOf[String]
+      logger.info(s"set default DB to $defaultDB")
+      sessionState.setCurrentDatabase(defaultDB)
+    }
     val proc = CommandProcessorFactory.get(tokens, hiveConf)
     this.proc = proc
     LOG.debug("ugi is " + ugi.getUserName)
-    ugi.doAs(new PrivilegedExceptionAction[ExecuteResponse]() {
-      override def run(): ExecuteResponse = {
-        proc match {
-          case any if HiveDriverProxy.isDriver(any) =>
-            logger.info(s"driver is $any")
-            thread = Thread.currentThread()
-            driver = new HiveDriverProxy(any)
-            executeHQL(realCode, driver)
-          case _ =>
-            val resp = proc.run(realCode.substring(tokens(0).length).trim)
-            val result = new String(baos.toByteArray)
-            logger.info("RESULT => {}", result)
-            engineExecutorContext.appendStdout(result)
-            baos.reset()
-            if (resp.getResponseCode != 0) {
-              clearCurrentProgress()
+    Utils.tryFinally {
+      ugi.doAs(new PrivilegedExceptionAction[ExecuteResponse]() {
+        override def run(): ExecuteResponse = {
+          proc match {
+            case any if HiveDriverProxy.isDriver(any) =>
+              logger.info(s"driver is $any")
+              thread = Thread.currentThread()
+              driver = new HiveDriverProxy(any)
+              executeHQL(realCode, driver)
+            case _ =>
+              val resp = proc.run(realCode.substring(tokens(0).length).trim)
+              val result = new String(baos.toByteArray)
+              logger.info("RESULT => {}", result)
+              engineExecutorContext.appendStdout(result)
+              baos.reset()
+              if (resp.getResponseCode != 0) {
+                clearCurrentProgress()
+                HiveProgressHelper.clearHiveProgress()
+                onComplete()
+                singleSqlProgressMap.clear()
+                HiveProgressHelper.storeSingleSQLProgress(0.0f)
+                throw resp.getException
+              }
               HiveProgressHelper.clearHiveProgress()
+              HiveProgressHelper.storeSingleSQLProgress(0.0f)
               onComplete()
               singleSqlProgressMap.clear()
-              HiveProgressHelper.storeSingleSQLProgress(0.0f)
-              throw resp.getException
-            }
-            HiveProgressHelper.clearHiveProgress()
-            HiveProgressHelper.storeSingleSQLProgress(0.0f)
-            onComplete()
-            singleSqlProgressMap.clear()
-            SuccessExecuteResponse()
+              SuccessExecuteResponse()
+          }
+        }
+      })
+    } {
+      if (this.driver != null) {
+        Utils.tryQuietly {
+          driver.close()
+          this.driver = null
+          val ss = SessionState.get()
+          if (ss != null) {
+            ss.deleteTmpOutputFile()
+            ss.deleteTmpErrOutputFile()
+          }
         }
       }
-    })
+    }
   }
 
   private def executeHQL(realCode: String, driver: HiveDriverProxy): ExecuteResponse = {

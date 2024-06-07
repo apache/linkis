@@ -23,6 +23,7 @@ import org.apache.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
@@ -52,6 +53,18 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       engineExecutionContext: EngineExecutionContext,
       jobGroup: String
   ): ExecuteResponse = {
+
+    if (
+        engineExecutionContext.getCurrentParagraph == 1 && engineExecutionContext.getProperties
+          .containsKey(JobRequestConstants.LINKIS_JDBC_DEFAULT_DB)
+    ) {
+      val defaultDB =
+        engineExecutionContext.getProperties
+          .get(JobRequestConstants.LINKIS_JDBC_DEFAULT_DB)
+          .asInstanceOf[String]
+      logger.info(s"set default DB to $defaultDB")
+      sparkEngineSession.sqlContext.sql(s"use $defaultDB")
+    }
 
     logger.info("SQLExecutor run query: " + code)
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")

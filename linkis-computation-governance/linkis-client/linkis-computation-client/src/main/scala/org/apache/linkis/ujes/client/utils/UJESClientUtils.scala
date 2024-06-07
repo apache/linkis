@@ -20,7 +20,6 @@ package org.apache.linkis.ujes.client.utils
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 import org.apache.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
 
-
 import java.util
 import java.util.Locale
 

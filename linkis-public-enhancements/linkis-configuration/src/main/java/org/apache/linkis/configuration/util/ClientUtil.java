@@ -37,15 +37,15 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpsUtil {
+public class ClientUtil {
 
-  private static final Logger logger = LoggerFactory.getLogger(HttpsUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(ClientUtil.class);
 
   public static DWSClientConfig dwsClientConfig = createClientConfig(null, null);
 
   public static UJESClientImpl client = new UJESClientImpl(dwsClientConfig);
 
-  public static Map<String, Object> sendHttp(String url, Map<String, Object> properties)
+  public static Map<String, Object> getEcmList(String url, Map<String, Object> properties)
       throws IOException {
     if (null == dwsClientConfig) {
       dwsClientConfig = createClientConfig(url, properties);
@@ -56,6 +56,10 @@ public class HttpsUtil {
     EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
     EmsListResult result = client.listECM(build);
     return result.getResultMap();
+  }
+
+  public static Map<String, Object> getEcmList() throws IOException {
+    return getEcmList(null, null);
   }
 
   private static DWSClientConfig createClientConfig(String url, Map<String, Object> properties) {

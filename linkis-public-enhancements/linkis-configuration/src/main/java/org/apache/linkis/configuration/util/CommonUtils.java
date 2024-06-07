@@ -42,28 +42,45 @@ public class CommonUtils {
   public static String ruleMap2String(
       String startTime,
       String endTime,
-      String CPUThreshold,
-      String MemoryThreshold,
-      String CPUPercentageThreshold,
-      String MemoryPercentageThreshold)
+      String crossQueue,
+      String priorityCluster,
+      String targetCPUThreshold,
+      String targetMemoryThreshold,
+      String targetCPUPercentageThreshold,
+      String targetMemoryPercentageThreshold,
+      String originCPUPercentageThreshold,
+      String originMemoryPercentageThreshold)
       throws JsonProcessingException {
-    Map<String, String> queueRuleMap = new HashMap<>();
     Map<String, String> timeRuleMap = new HashMap<>();
-    Map<String, String> thresholdRuleMap = new HashMap<>();
+    Map<String, String> queueRuleMap = new HashMap<>();
+    Map<String, String> targetClusterRuleMap = new HashMap<>();
+    Map<String, String> originClusterRuleMap = new HashMap<>();
+    Map<String, String> priorityClusterRuleMap = new HashMap<>();
     Map<String, Object> ruleMap = new HashMap<>();
-    queueRuleMap.put(KEY_QUEUE_SUFFIX, KEY_ACROSS_CLUSTER_QUEUE_SUFFIX);
     timeRuleMap.put(KEY_START_TIME, startTime);
     timeRuleMap.put(KEY_END_TIME, endTime);
-    thresholdRuleMap.put(KEY_CPU_THRESHOLD, CPUThreshold);
-    thresholdRuleMap.put(KEY_MEMORY_THRESHOLD, MemoryThreshold);
-    thresholdRuleMap.put(KEY_CPU_PERCENTAGE_THRESHOLD, CPUPercentageThreshold);
-    thresholdRuleMap.put(KEY_MEMORY_PERCENTAGE_THRESHOLD, MemoryPercentageThreshold);
-    ruleMap.put(KEY_QUEUE_RULE, queueRuleMap);
+    queueRuleMap.put(KEY_CROSS_QUEUE, crossQueue);
+    targetClusterRuleMap.put(KEY_TARGET_CPU_THRESHOLD, targetCPUThreshold);
+    targetClusterRuleMap.put(KEY_TARGET_MEMORY_THRESHOLD, targetMemoryThreshold);
+    targetClusterRuleMap.put(KEY_TARGET_CPU_PERCENTAGE_THRESHOLD, targetCPUPercentageThreshold);
+    targetClusterRuleMap.put(
+        KEY_TARGET_MEMORY_PERCENTAGE_THRESHOLD, targetMemoryPercentageThreshold);
+    originClusterRuleMap.put(KEY_ORIGIN_CPU_PERCENTAGE_THRESHOLD, originCPUPercentageThreshold);
+    originClusterRuleMap.put(
+        KEY_ORIGIN_MEMORY_PERCENTAGE_THRESHOLD, originMemoryPercentageThreshold);
+    priorityClusterRuleMap.put(KEY_PRIORITY_CLUSTER, priorityCluster);
     ruleMap.put(KEY_TIME_RULE, timeRuleMap);
-    ruleMap.put(KEY_THRESHOLD_RULE, thresholdRuleMap);
+    ruleMap.put(KEY_QUEUE_RULE, queueRuleMap);
+    ruleMap.put(KEY_TARGET_CLUSTER_RULE, targetClusterRuleMap);
+    ruleMap.put(KEY_ORIGIN_CLUSTER_RULE, originClusterRuleMap);
+    ruleMap.put(KEY_PRIORITY_CLUSTER_RULE, priorityClusterRuleMap);
     ObjectMapper map2Json = BDPJettyServerHelper.jacksonJson();
     String rules = map2Json.writeValueAsString(ruleMap);
 
     return rules;
+  }
+
+  public static String concatQueue(String crossQueue) {
+    return String.format("\"crossQueue\":\"%s\"", crossQueue);
   }
 }

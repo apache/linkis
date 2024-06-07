@@ -17,9 +17,12 @@
 
 package org.apache.linkis.configuration.service;
 
+import org.apache.linkis.configuration.entity.DepartmentTenantVo;
+import org.apache.linkis.configuration.entity.DepartmentVo;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 
+import java.util.List;
 import java.util.Map;
 
 public interface TenantConfigService {
@@ -36,4 +39,15 @@ public interface TenantConfigService {
   Boolean isExist(String user, String creator) throws ConfigurationException;
 
   TenantVo queryTenant(String user, String creator);
+
+  void saveDepartmentTenant(DepartmentTenantVo departmentTenantVo) throws ConfigurationException;
+
+  Map<String, Object> queryDepartmentTenant(
+      String departmentId, String creator, String tenantValue, Integer pageNow, Integer pageSize);
+
+  void deleteDepartmentTenant(Integer id);
+
+  DepartmentTenantVo queryDepartTenant(String creator, String departmentId);
+
+  List<DepartmentVo> queryDepartmentList();
 }

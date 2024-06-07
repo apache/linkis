@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.service;
+package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.governance.common.protocol.conf.DepartTenantRequest;
-import org.apache.linkis.governance.common.protocol.conf.DepartTenantResponse;
-import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
-import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
-import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.configuration.entity.DepartmentVo;
 
-public interface TenantService {
+import org.apache.ibatis.annotations.Param;
 
-  TenantResponse getTenantData(TenantRequest request, Sender sender);
+import java.util.List;
 
-  DepartTenantResponse getDepartTenantData(DepartTenantRequest departTenantRequest, Sender sender);
+public interface DepartmentMapper {
+
+  DepartmentVo getDepartmentByUser(@Param("user") String user);
+
+  List<DepartmentVo> queryDepartmentList();
 }

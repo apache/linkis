@@ -71,6 +71,8 @@ object EngineType extends Enumeration with Logging {
 
   val IMPALA = Value("impala")
 
+  val JOBSERVER = Value("jobserver")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>

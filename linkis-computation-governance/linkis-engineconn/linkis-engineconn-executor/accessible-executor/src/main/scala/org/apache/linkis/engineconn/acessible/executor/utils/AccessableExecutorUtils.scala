@@ -26,7 +26,6 @@ object AccessibleExecutorUtils {
   val manager: DefaultNodeHealthyInfoManager =
     getApplicationContext.getBean(classOf[DefaultNodeHealthyInfoManager])
 
-
   def currentEngineIsUnHealthy(): Boolean = {
     manager != null && manager.getNodeHealthy() == NodeHealthy.UnHealthy
   }

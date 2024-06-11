@@ -69,7 +69,6 @@ object SQLSession extends Logging {
         "Spark application sc has already stopped, please restart it."
       )
     }
-
     val startTime = System.currentTimeMillis()
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
 
@@ -121,7 +120,7 @@ object SQLSession extends Logging {
         )
       )
       .toArray[Column]
-    columns.foreach(c => logger.info(s"c is ${c.getColumnName()}, comment is ${c.getComment()}"))
+    columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer =
@@ -147,11 +146,11 @@ object SQLSession extends Logging {
       )
     }
     val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    logger.info(s"Time taken: ${taken}, Fetched $index row(s).")
+    logger.info(s"Time taken: ${taken}, Fetched $index row(s)")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched ${columns.length} col(s) : $index row(s)"
     )
     engineExecutionContext.sendResultSet(writer)
   }

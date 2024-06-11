@@ -33,4 +33,7 @@ object SchedulerConfiguration {
   val FIFO_CONSUMER_IDLE_SCAN_INIT_TIME =
     CommonVars("wds.linkis.fifo.consumer.idle.scan.init.time", new TimeType("1s"))
 
+  val MAX_GROUP_ALTER_WAITING_SIZE =
+    CommonVars("linkis.fifo.consumer.group.max.alter.waiting.size", 1000).getValue
+
 }

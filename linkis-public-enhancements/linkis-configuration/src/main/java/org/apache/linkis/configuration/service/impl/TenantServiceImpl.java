@@ -17,9 +17,12 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import org.apache.linkis.configuration.entity.DepartmentTenantVo;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.service.TenantConfigService;
 import org.apache.linkis.configuration.service.TenantService;
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantResponse;
 import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
 import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
 import org.apache.linkis.rpc.Sender;
@@ -45,10 +48,36 @@ public class TenantServiceImpl implements TenantService {
     if (null == tenantVo) {
       logger.warn(
           "TenantCache user {} creator {} data loading failed", request.user(), request.creator());
-      return new TenantResponse(request.user(), request.creator(), "");
+      return new TenantResponse(request.user(), request.creator(), "Y", "");
     } else {
       return new TenantResponse(
-          tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
+          tenantVo.getUser(),
+          tenantVo.getCreator(),
+          tenantVo.getIsValid(),
+          tenantVo.getTenantValue());
+    }
+  }
+
+  @Receiver
+  @Override
+  public DepartTenantResponse getDepartTenantData(
+      DepartTenantRequest departTenantRequest, Sender sender) {
+    DepartmentTenantVo departmentTenantVo =
+        tenantConfigService.queryDepartTenant(
+            departTenantRequest.creator(), departTenantRequest.departmentId());
+    if (null == departmentTenantVo) {
+      logger.warn(
+          "DepartTenant data loading failed creator {} department {},departTenant cache will set ''  ",
+          departTenantRequest.creator(),
+          departTenantRequest.departmentId());
+      return new DepartTenantResponse(
+          departTenantRequest.creator(), departTenantRequest.departmentId(), "Y", "");
+    } else {
+      return new DepartTenantResponse(
+          departmentTenantVo.getCreator(),
+          departmentTenantVo.getDepartmentId(),
+          departmentTenantVo.getIsValid(),
+          departmentTenantVo.getTenantValue());
     }
   }
 }

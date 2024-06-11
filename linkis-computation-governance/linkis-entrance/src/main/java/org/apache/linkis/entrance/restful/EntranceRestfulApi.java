@@ -41,6 +41,7 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.conf.ServerConfiguration;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.utils.LinkisSpringUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -100,7 +101,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   @RequestMapping(path = "/execute", method = RequestMethod.POST)
   public Message execute(HttpServletRequest req, @RequestBody Map<String, Object> json) {
     Message message = null;
-    logger.info("Begin to get an execID");
+    String operationUser = ModuleUserUtils.getOperationUser(req);
+    logger.info(
+        "Begin to get execute task for user {}, Client IP {}",
+        operationUser,
+        LinkisSpringUtils.getClientIP(req));
     json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
     json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
     HashMap<String, String> map = (HashMap<String, String>) json.get(TaskConstant.SOURCE);
@@ -127,7 +132,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 + jobReqId
                 + " in "
                 + Sender.getThisServiceInstance().toString()
-                + ". Please wait it to be scheduled"),
+                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
         job);
     message = Message.ok();
     message.setMethod("/api/entrance/execute");
@@ -143,9 +148,25 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   @RequestMapping(path = "/submit", method = RequestMethod.POST)
   public Message submit(HttpServletRequest req, @RequestBody Map<String, Object> json) {
     Message message = null;
-    logger.info("Begin to get an execID");
-    json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
+    String executeUser = ModuleUserUtils.getOperationUser(req);
+    logger.info(
+        "Begin to get execute task for user {}, Client IP {}",
+        executeUser,
+        LinkisSpringUtils.getClientIP(req));
     json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
+    String token = ModuleUserUtils.getToken(req);
+    Object tempExecuteUser = json.get(TaskConstant.EXECUTE_USER);
+    // check special admin token
+    if (StringUtils.isNotBlank(token) && tempExecuteUser != null) {
+      if (Configuration.isAdminToken(token)) {
+        logger.warn(
+            "ExecuteUser variable will be replaced by system value: {} -> {}",
+            tempExecuteUser,
+            executeUser);
+        executeUser = String.valueOf(tempExecuteUser);
+      }
+    }
+    json.put(TaskConstant.EXECUTE_USER, executeUser);
     HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
     if (map == null) {
       map = new HashMap<>();
@@ -165,7 +186,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 + jobReqId
                 + " in "
                 + Sender.getThisServiceInstance().toString()
-                + ". Please wait it to be scheduled"),
+                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
         job);
     String execID =
         ZuulEntranceUtils.generateExecID(

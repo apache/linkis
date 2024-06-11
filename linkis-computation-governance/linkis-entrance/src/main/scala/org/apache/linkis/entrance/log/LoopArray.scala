@@ -23,21 +23,33 @@ class LoopArray[T](maxCapacity: Int) {
 
   def this() = this(32)
 
+  // realSize 游标之前的数据 已经被重写覆盖了
+  // The data before realSize cursor has been overwritten by rewriting
   protected[this] var realSize = 0
-  private var flag = 0
+
+  // the loop begin indx
+  private var front = 0
+
+  // the loop last index
+  // 尾部 下一个存储的游标
   private var tail = 0
+
+  private var clearEleNums = 0
 
   def add(event: T): T = {
     var t = null.asInstanceOf[T]
     eventQueue synchronized {
-      val index = (tail + 1) % maxCapacity
-      if (index == flag) {
-        flag = (flag + 1) % maxCapacity
+      val nextIndex = (tail + 1) % maxCapacity
+      // 首尾相遇 第一次循环队列满了，后续所有add动作 nextIndex和front都是相等的 front指针不断往前循环移动
+      // When the first and last ends meet, the first circular queue is full, and all subsequent add actions nextIndex and front are equal.
+      // The front pointer continues to move forward in a circular motion.
+      if (nextIndex == front) {
+        front = (front + 1) % maxCapacity
         realSize += 1
       }
       t = eventQueue(tail).asInstanceOf[T]
       eventQueue(tail) = event
-      tail = index
+      tail = nextIndex
     }
     t
   }
@@ -51,18 +63,19 @@ class LoopArray[T](maxCapacity: Int) {
     } else if (index > _max) {
       throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
     }
-    val _index = (flag + (index - realSize + maxCapacity - 1)) % maxCapacity
+    val _index = (front + (index - realSize + maxCapacity - 1)) % maxCapacity
     eventQueue(_index).asInstanceOf[T]
   }
 
   def clear(): Unit = eventQueue synchronized {
-    flag = 0
+    front = 0
     tail = 0
     realSize = 0
     (0 until maxCapacity).foreach(eventQueue(_) = null)
   }
 
   def fakeClear(): Unit = eventQueue synchronized {
+    clearEleNums = clearEleNums + size
     (0 until maxCapacity).foreach(eventQueue(_) = null)
   }
 
@@ -73,16 +86,34 @@ class LoopArray[T](maxCapacity: Int) {
     if (_size == 0) {
       _size = 1
     }
-    realSize + _size - 1
+    realSize + _size
   }
 
-  private def filledSize = if (tail >= flag) tail - flag else tail + maxCapacity - flag
+  def fakeClearEleNums: Int = clearEleNums
+
+  private def filledSize = {
+    if (tail == front && tail == 0) {
+      0
+    } else if (tail > front) {
+      tail - front
+    } else {
+      tail + maxCapacity - front
+    }
+  }
 
   def size: Int = filledSize
 
   def isFull: Boolean = filledSize == maxCapacity - 1
 
-  def nonEmpty: Boolean = size > 0
+  // If it is not empty, it means that the loop queue is full this round.
+  // 不为空 说明本轮 循环队列满了
+  def isNextOneEmpty(): Boolean = {
+
+    eventQueue(tail).asInstanceOf[T] == null
+
+  }
+
+  def isEmpty: Boolean = size == 0
 
   def toList: List[T] = toIndexedSeq.toList
 

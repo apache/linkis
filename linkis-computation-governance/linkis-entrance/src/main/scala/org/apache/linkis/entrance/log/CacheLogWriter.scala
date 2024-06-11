@@ -33,22 +33,26 @@ class CacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user:
   def getCache: Option[Cache] = Some(sharedCache)
 
   private def cache(msg: String): Unit = {
+    if (sharedCache.cachedLogs == null) {
+      return
+    }
     this synchronized {
-      val removed = sharedCache.cachedLogs.add(msg)
+      val isNextOneEmpty = sharedCache.cachedLogs.isNextOneEmpty
       val currentTime = new Date(System.currentTimeMillis())
-      if (removed != null || currentTime.after(pushTime)) {
+
+      if (isNextOneEmpty == false || currentTime.after(pushTime)) {
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
-        if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
         // need append latest msg before clear
-        sb.append(msg).append("\n")
+        sb.append(msg)
         sharedCache.cachedLogs.fakeClear()
         super.write(sb.toString())
         pushTime.setTime(
           currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue
         )
       }
+      sharedCache.cachedLogs.add(msg)
     }
   }
 
@@ -65,10 +69,12 @@ class CacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user:
 
   override def flush(): Unit = {
     val sb = new StringBuilder
-    sharedCache.cachedLogs.toList
-      .filter(StringUtils.isNotEmpty)
-      .foreach(sb.append(_).append("\n"))
-    sharedCache.cachedLogs.clear()
+    if (sharedCache.cachedLogs != null) {
+      sharedCache.cachedLogs.toList
+        .filter(StringUtils.isNotEmpty)
+        .foreach(sb.append(_).append("\n"))
+      sharedCache.cachedLogs.clear()
+    }
     super.write(sb.toString())
     super.flush()
   }

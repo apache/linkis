@@ -18,7 +18,12 @@
 package org.apache.linkis.entrance.log
 
 class Cache(maxCapacity: Int) {
-  val cachedLogs: LoopArray[String] = LoopArray[String](maxCapacity)
+  var cachedLogs: LoopArray[String] = LoopArray[String](maxCapacity)
+
+  def clearCachedLogs(): Unit = {
+    this.cachedLogs = null
+  }
+
 }
 
 object Cache {

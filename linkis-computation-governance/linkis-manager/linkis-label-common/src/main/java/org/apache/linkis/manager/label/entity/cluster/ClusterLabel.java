@@ -28,7 +28,8 @@ import java.util.HashMap;
 
 import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.CLUSTER_LABEL_VALUE_ERROR;
 
-public class ClusterLabel extends GenericLabel implements EngineNodeLabel, UserModifiable {
+public class ClusterLabel extends GenericLabel
+    implements EMNodeLabel, EngineNodeLabel, UserModifiable {
 
   public ClusterLabel() {
     setLabelKey(LabelKeyConstant.YARN_CLUSTER_KEY);

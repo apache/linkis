@@ -17,6 +17,8 @@
 
 package org.apache.linkis.configuration.service;
 
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantRequest;
+import org.apache.linkis.governance.common.protocol.conf.DepartTenantResponse;
 import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
 import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
 import org.apache.linkis.rpc.Sender;
@@ -24,4 +26,6 @@ import org.apache.linkis.rpc.Sender;
 public interface TenantService {
 
   TenantResponse getTenantData(TenantRequest request, Sender sender);
+
+  DepartTenantResponse getDepartTenantData(DepartTenantRequest departTenantRequest, Sender sender);
 }

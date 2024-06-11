@@ -17,14 +17,15 @@
 
 package org.apache.linkis.scheduler
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.scheduler.conf.SchedulerConfiguration
 import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.queue.SchedulerEvent
 
 import org.apache.commons.lang3.StringUtils
 
-abstract class AbstractScheduler extends Scheduler {
+abstract class AbstractScheduler extends Scheduler with Logging {
   override def init(): Unit = {}
 
   override def start(): Unit = {}
@@ -52,6 +53,14 @@ abstract class AbstractScheduler extends Scheduler {
     val group = getSchedulerContext.getOrCreateGroupFactory.getOrCreateGroup(event)
     val consumer =
       getSchedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(group.getGroupName)
+    logger.info(
+      s"Consumer ${consumer.getGroup.getGroupName} running size ${consumer.getRunningSize} waiting size ${consumer.getWaitingSize}"
+    )
+    if (consumer.getWaitingSize >= SchedulerConfiguration.MAX_GROUP_ALTER_WAITING_SIZE) {
+      logger.warn(
+        s"Group waiting size exceed max alter waiting size ${consumer.getWaitingSize} group name ${consumer.getGroup.getGroupName}"
+      )
+    }
     val index = consumer.getConsumeQueue.offer(event)
     index.map(getEventId(_, group.getGroupName)).foreach(event.setId)
     if (index.isEmpty) {

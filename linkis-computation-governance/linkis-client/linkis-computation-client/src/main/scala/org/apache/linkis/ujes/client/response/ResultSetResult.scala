@@ -20,6 +20,9 @@ package org.apache.linkis.ujes.client.response
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.httpclient.dws.response.DWSResult
 import org.apache.linkis.ujes.client.request.UserAction
+import org.apache.linkis.ujes.client.utils.UJESClientUtils.evaluate
+
+import java.util
 
 import scala.beans.BeanProperty
 
@@ -27,6 +30,31 @@ import scala.beans.BeanProperty
 class ResultSetResult extends DWSResult with UserAction {
 
   private var `type`: String = _
+
+  private var metadataList: util.List[util.Map[String, String]] = _
+
+  private var fileContentList: util.List[util.ArrayList[_]] = _
+
+  def getMetadataList: util.List[util.Map[String, String]] = {
+    metadata.asInstanceOf[util.List[util.Map[String, String]]]
+  }
+
+  def getRowList: util.List[util.ArrayList[Any]] = {
+    val metaData = metadata.asInstanceOf[util.List[util.Map[String, String]]]
+    val fileContentList = fileContent.asInstanceOf[util.List[util.ArrayList[Any]]]
+    for (metaDataColnum <- 1 to metaData.size()) {
+      val col = metaData.get(metaDataColnum - 1)
+      if (!col.get("dataType").equals("string")) {
+        for (cursor <- 1 to fileContentList.size()) {
+          val colDataList = fileContentList.get(cursor - 1)
+          var colData = colDataList.get(metaDataColnum - 1)
+          colData = evaluate(col.get("dataType"), colData.toString)
+          colDataList.set(metaDataColnum - 1, colData)
+        }
+      }
+    }
+    fileContentList
+  }
 
   def setType(`type`: String): Unit = this.`type` = `type`
   def getType: String = `type`

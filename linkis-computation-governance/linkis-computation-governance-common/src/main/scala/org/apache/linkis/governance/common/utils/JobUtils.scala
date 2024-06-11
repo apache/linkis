@@ -19,8 +19,6 @@ package org.apache.linkis.governance.common.utils
 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 
-import org.apache.commons.collections.MapUtils
-
 import java.util;
 
 object JobUtils {
@@ -36,7 +34,33 @@ object JobUtils {
   }
 
   def getJobIdFromStringMap(map: util.Map[String, String]): String = {
-    if (MapUtils.isNotEmpty(map)) map.getOrDefault(JobRequestConstants.JOB_ID, null) else null
+    if (null != map && map.containsKey(JobRequestConstants.JOB_ID)) {
+      val value = map.get(JobRequestConstants.JOB_ID)
+      if (null != value) {
+        return value
+      }
+    }
+    null
+  }
+
+  def getJobSourceTagsFromStringMap(map: util.Map[String, String]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_SOURCE_TAGS)) {
+      val value = map.get(JobRequestConstants.JOB_SOURCE_TAGS)
+      if (null != value) {
+        return value
+      }
+    }
+    null
+  }
+
+  def getJobSourceTagsFromObjectMap(map: util.Map[String, Object]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_SOURCE_TAGS)) {
+      val value = map.get(JobRequestConstants.JOB_SOURCE_TAGS)
+      if (null != value) {
+        return value.toString
+      }
+    }
+    null
   }
 
 }

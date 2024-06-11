@@ -102,8 +102,7 @@ object ECMUtils extends Logging {
     // if enable estimate actual memory
     if (ECM_STIMATE_ACTUAL_MEMORY_ENABLE) {
 
-      // 90%
-      val totalByte = (HardwareUtils.getMaxMemory() * 0.9).asInstanceOf[Long]
+      val totalByte = HardwareUtils.getMaxMemory()
 
       val resultMemory = math.max(totalByte, ECM_PROTECTED_MEMORY)
       // max of PhysicalMemory or ECM_PROTECTED_MEMORY

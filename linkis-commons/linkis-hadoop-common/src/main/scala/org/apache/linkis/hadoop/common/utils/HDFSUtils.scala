@@ -66,8 +66,7 @@ object HDFSUtils extends Logging {
               )
             }
             .foreach { hdfsFileSystemContainer =>
-              val locker =
-                hdfsFileSystemContainer.getUser + JOINT + hdfsFileSystemContainer.getLabel + LOCKER_SUFFIX
+              val locker = hdfsFileSystemContainer.getUser + LOCKER_SUFFIX
               locker.intern() synchronized {
                 if (hdfsFileSystemContainer.canRemove()) {
                   fileSystemCache.remove(
@@ -248,7 +247,7 @@ object HDFSUtils extends Logging {
 
   def isKerberosEnabled(label: String): Boolean = {
     if (label == null) {
-      KERBEROS_ENABLE.getValue
+      KERBEROS_ENABLE
     } else {
       kerberosValueMapParser(KERBEROS_ENABLE_MAP.getValue).get(label).contains("true")
     }

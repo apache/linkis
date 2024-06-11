@@ -62,6 +62,9 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
+    if (Objects.isNull(extraParams)) {
+      extraParams = new HashMap<>();
+    }
     // Handle mysql security vulnerabilities
     validateParams(extraParams);
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
@@ -77,16 +80,11 @@ public class SqlConnection implements Closeable {
    * @param extraParams
    */
   private void validateParams(Map<String, Object> extraParams) {
-    if (extraParams == null) {
-      return;
-    }
-
     // append force params
     SecurityUtils.appendMysqlForceParams(extraParams);
-
     // print extraParams
     String logStr = SecurityUtils.parseParamsMapToMysqlParamUrl(extraParams);
-    LOG.info("mysql metadata url extraParams: {}", logStr);
+    LOG.info("starrocks metadata url extraParams: {}", logStr);
   }
 
   public List<String> getAllDatabases() throws SQLException {

@@ -47,6 +47,7 @@ class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener 
       codeBeforeHook: String
   ): String = {
     executeOnce = engineExecutionContext.getLabels.exists(_.isInstanceOf[ExecuteOnceLabel])
+    executeOnce = executeOnce || engineExecutionContext.getLabels.exists(_.isInstanceOf[ExecuteOnceLabel])
     if (executeOnce && !isRegister) {
       isRegister = true
       asyncListenerBusContext.addListener(this)

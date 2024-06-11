@@ -28,7 +28,10 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
+
+import java.util
 
 class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener with Logging {
 
@@ -47,7 +50,11 @@ class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener 
       codeBeforeHook: String
   ): String = {
     executeOnce = engineExecutionContext.getLabels.exists(_.isInstanceOf[ExecuteOnceLabel])
-    executeOnce = executeOnce || engineExecutionContext.getLabels.exists(_.isInstanceOf[ExecuteOnceLabel])
+    val creationLabelList: util.List[Label[_]] = engineCreationContext.getLabels()
+    if (creationLabelList != null) {
+      executeOnce =
+        executeOnce || creationLabelList.toArray().exists(_.isInstanceOf[ExecuteOnceLabel])
+    }
     if (executeOnce && !isRegister) {
       isRegister = true
       asyncListenerBusContext.addListener(this)

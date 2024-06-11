@@ -19,36 +19,57 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.governance.common.protocol.conf.{
+  RequestQueryEngineConfig,
+  ResponseQueryConfig
+}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
-import org.apache.linkis.manager.engineplugin.jdbc.exception.{JDBCGetDatasourceInfoException, JDBCParamsIllegalException}
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{
+  JDBCGetDatasourceInfoException,
+  JDBCParamsIllegalException
+}
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.{RPCMapCache, Sender}
-import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  AliasOutputExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.util.CollectionUtils
 
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
@@ -110,7 +131,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       logger.info("The jdbc connection has created successfully!")
     }) { e: Throwable =>
       logger.error(s"created data source connection error! $e")
-      return ErrorExecuteResponse("created data source connection error!", e)
+      return ErrorExecuteResponse(e.getMessage, e)
     }
 
     try {
@@ -213,15 +234,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       } { e: Throwable =>
         e match {
           case jpe: JDBCParamsIllegalException =>
-            throw new JDBCGetDatasourceInfoException(
-              jpe.getErrCode,
-              jpe.getDesc,
-              e
-            )
+            throw new JDBCGetDatasourceInfoException(jpe.getErrCode, jpe.getDesc, e)
           case _ =>
             throw new JDBCGetDatasourceInfoException(
               JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
-              JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc.concat(" ").concat(s"[$dataSourceName]"),
+              e.getMessage,
               e
             )
         }

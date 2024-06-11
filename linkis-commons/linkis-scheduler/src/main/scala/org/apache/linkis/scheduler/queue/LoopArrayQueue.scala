@@ -109,7 +109,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     max
   }
 
-  def waitingSize: Int = if (takeIndex <= realSize) size
+  override def waitingSize: Int = if (takeIndex <= realSize) size
   else {
     val length = size - takeIndex + realSize
     if (length < 0) 0 else length

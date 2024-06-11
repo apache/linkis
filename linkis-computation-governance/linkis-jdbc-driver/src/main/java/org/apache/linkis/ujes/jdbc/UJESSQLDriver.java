@@ -42,6 +42,7 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
   static String DB_NAME = "DBNAME";
   static String PARAMS = "PARAMS";
   static String ENGINE_TYPE = "EngineType";
+  static String ENGINE_VERSION = "EngineVersion";
 
   static String USER = "user";
   static String TOKEN_KEY = "key";
@@ -49,6 +50,8 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
   static String PASSWORD = "password";
   static boolean TABLEAU_SERVER = false;
   static String FIXED_SESSION = "fixedSession";
+
+  static String USE_SSL = "useSSL";
   static String VERSION = "version";
   static int DEFAULT_VERSION = 1;
   static String MAX_CONNECTION_SIZE = "maxConnectionSize";

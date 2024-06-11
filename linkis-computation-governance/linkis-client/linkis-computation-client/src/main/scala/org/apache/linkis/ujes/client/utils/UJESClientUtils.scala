@@ -17,7 +17,13 @@
 
 package org.apache.linkis.ujes.client.utils
 
+import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 import org.apache.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
+
+import java.util
+import java.util.Locale
+
+import com.google.gson.{Gson, JsonObject}
 
 object UJESClientUtils {
 
@@ -46,6 +52,35 @@ object UJESClientUtils {
     case "python" => EngineType.PYTHON.PY
     case "tsql" => EngineType.TRINO.TSQL
     case _ => EngineType.SPARK.SQL
+  }
+
+  def evaluate(dataType: String, value: String): Any = {
+    if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
+      dataType.toLowerCase(Locale.getDefault) match {
+        case "string" | "char" | "varchar" | "nvarchar" => value
+        case _ => null
+      }
+    } else {
+      dataType.toLowerCase(Locale.getDefault) match {
+        case null => throw new UJESClientBuilderException("data is empty")
+        case "char" | "varchar" | "nvarchar" | "string" => value
+        case "short" => value.toShort
+        case "int" => value.toInt
+        case "long" => value.toLong
+        case "float" => value.toFloat
+        case "double" => value.toDouble
+        case "boolean" => value.toBoolean
+        case "byte" => value.toByte
+        case "timestamp" => value
+        case "date" => value
+        case "bigint" => value.toLong
+        case "decimal" => value.toDouble
+        case "array" => new Gson().fromJson(value, classOf[util.ArrayList[Object]])
+        case "map" => new Gson().fromJson(value, classOf[util.HashMap[Object, Object]])
+        case "struct" => new Gson().fromJson(value, classOf[JsonObject])
+        case _ => value
+      }
+    }
   }
 
 }

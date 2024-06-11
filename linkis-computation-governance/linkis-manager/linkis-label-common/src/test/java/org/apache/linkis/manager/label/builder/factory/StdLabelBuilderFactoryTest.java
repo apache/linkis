@@ -19,10 +19,15 @@ package org.apache.linkis.manager.label.builder.factory;
 
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
 import org.apache.linkis.manager.label.builder.LabelBuilder;
+import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.*;
 
@@ -72,5 +77,15 @@ public class StdLabelBuilderFactoryTest {
     EMInstanceLabel emInstanceLabel1 =
         stdLabelBuilderFactory.createLabel("testLabelKey", null, EMInstanceLabel.class, null);
     Assertions.assertTrue(emInstanceLabel1.getLabelKey().equals("emInstance"));
+  }
+
+  @Test
+  public void test() {
+    Map input = new HashMap<String, String>();
+    input.put("userCreator", "username-IDE");
+    input.put("yarnCluster", "bdp-test");
+    input.put("executeOnce", "true");
+    List<Label> res = stdLabelBuilderFactory.getLabels(input);
+    System.out.println(res);
   }
 }

@@ -55,7 +55,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if ((Boolean) AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM().getValue()) {
+    if ((Boolean) (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM().getValue())) {
       Utils.defaultScheduler()
           .scheduleAtFixedRate(
               this, 3 * 60 * 1000, MONITOR_INTERVAL.getValue().toLong(), TimeUnit.MILLISECONDS);
@@ -77,7 +77,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
         }
       }
       if (null == concurrentExecutor) {
-        LOG.warn("shell executor can not is null");
+        LOG.warn("Executor can not is null");
         return;
       }
       isAvailable = true;
@@ -96,7 +96,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
       } else {
         if (concurrentExecutor.isIdle())
           synchronized (EXECUTOR_STATUS_LOCKER) {
-            LOG.info("monitor turn to executor status from busy to unlock");
+            LOG.info("monitor turn to executor status from unlock to busy");
             concurrentExecutor.transition(NodeStatus.Busy);
           }
       }

@@ -49,6 +49,9 @@ public class TenantVo {
   @ApiModelProperty("bussinessUser")
   private String bussinessUser;
 
+  @ApiModelProperty("isValid")
+  private String isValid;
+
   public String getId() {
     return id;
   }
@@ -113,6 +116,14 @@ public class TenantVo {
     this.bussinessUser = bussinessUser;
   }
 
+  public String getIsValid() {
+    return isValid;
+  }
+
+  public void setIsValid(String isValid) {
+    this.isValid = isValid;
+  }
+
   @Override
   public String toString() {
     return "TenantVo{"
@@ -137,6 +148,8 @@ public class TenantVo {
         + '\''
         + ", bussinessUser='"
         + bussinessUser
+        + ", isValid="
+        + isValid
         + '\''
         + '}';
   }

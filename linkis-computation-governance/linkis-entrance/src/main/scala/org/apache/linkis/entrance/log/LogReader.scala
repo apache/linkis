@@ -115,8 +115,11 @@ abstract class LogReader(charset: String) extends Closeable with Logging {
   }
 
   protected def readLog(deal: String => Unit, fromLine: Int, size: Int = 100): Int = {
-    val from = if (fromLine < 0) 0 else fromLine
-    var line, read = 0
+
+    // fromline param with begin 1 ,if set 0 missing first line
+    val from = if (fromLine < 1) 1 else fromLine
+    var line = 1
+    var read = 0
     val inputStream = getInputStream
     val lineIterator = IOUtils.lineIterator(inputStream, charset)
     Utils.tryFinally(while (lineIterator.hasNext && (read < size || size < 0)) {

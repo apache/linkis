@@ -25,8 +25,14 @@ class ParallelSchedulerContextImpl(override val maxParallelismUsers: Int)
     extends FIFOSchedulerContextImpl(maxParallelismUsers)
     with Logging {
 
+  /**
+   * Set the number of consumption groups supported The number of concurrency supported by each
+   * group is determined by
+   * org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory#setDefaultMaxRunningJobs(int)
+   */
   override protected def createGroupFactory(): GroupFactory = {
     val groupFactory = new ParallelGroupFactory
+
     groupFactory.setParallelism(maxParallelismUsers)
     groupFactory
   }

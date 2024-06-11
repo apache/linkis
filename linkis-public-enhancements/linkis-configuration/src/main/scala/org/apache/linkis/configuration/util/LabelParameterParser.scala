@@ -63,14 +63,16 @@ object LabelParameterParser {
 
   def changeUserToDefault(
       labelList: java.util.List[Label[_]],
-      withCreator: Boolean = true
+      withCreator: Boolean = true,
+      withUser: Boolean = true
   ): java.util.List[Label[_]] = {
     val newList = new util.LinkedList[Label[_]]()
     if (labelList != null) {
       labelList.asScala.foreach(label => {
         if (label.isInstanceOf[UserCreatorLabel]) {
           val newLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-          newLabel.setUser("*")
+          if (withUser) newLabel.setUser("*")
+          else newLabel.setUser(label.asInstanceOf[UserCreatorLabel].getUser)
           if (withCreator) newLabel.setCreator("*")
           else newLabel.setCreator(label.asInstanceOf[UserCreatorLabel].getCreator)
           newList.addLast(newLabel)

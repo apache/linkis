@@ -27,6 +27,11 @@ import java.util.concurrent.{ExecutorService, TimeUnit}
 
 import scala.collection.mutable
 
+/**
+ * @param maxParallelismUsers
+ *   Consumer Thread pool size is：5 * maxParallelismUsers + 1
+ * @param schedulerName
+ */
 class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
     extends ConsumerManager
     with Logging {

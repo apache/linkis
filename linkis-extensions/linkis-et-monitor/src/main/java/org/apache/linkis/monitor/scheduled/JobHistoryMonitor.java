@@ -81,6 +81,7 @@ public class JobHistoryMonitor {
     long startTime = endTime - intervalMs;
     long realIntervals = Math.min(endTime - startTime, maxIntervalMs);
     AnomalyScanner scanner = new DefaultScanner();
+    AnomalyScanner scannerIndex = new DefaultScanner();
     boolean shouldStart = true;
     long id;
     if (null == CacheUtils.cacheBuilder.getIfPresent("jobHistoryId")) {
@@ -173,10 +174,10 @@ public class JobHistoryMonitor {
 
     // 任务指标上报
     JobIndexRule jobIndexRule = new JobIndexRule(new JobIndexSender());
-    scanner.addScanRule(jobIndexRule);
+    scannerIndex.addScanRule(jobIndexRule);
     List<DataFetcher> createFetcher =
-        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "created_time");
-    JobMonitorUtils.run(scanner, createFetcher, true);
+        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "department");
+    JobMonitorUtils.run(scannerIndex, createFetcher, true);
   }
 
   @Scheduled(cron = "${linkis.monitor.jobHistory.timeout.cron}")

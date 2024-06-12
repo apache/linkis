@@ -100,8 +100,11 @@ class JobHistoryDataFetcher(args: Array[Any], mapper: JobHistoryMapper)
           .searchByCacheAndUpdateTime(id, null, list, new Date(start), new Date(end), null)
           .asInstanceOf[util.List[scala.Any]]
       } else {
-        val list = new util.ArrayList[String]()
+        var list = new util.ArrayList[String]()
         Constants.DATA_UNFINISHED_JOB_STATUS_ARRAY.foreach(list.add)
+        if (args(3).asInstanceOf[String].equals("department")) {
+          list = null;
+        }
         mapper
           .searchByCache(id, null, list, new Date(start), new Date(end), null)
           .asInstanceOf[util.List[scala.Any]]

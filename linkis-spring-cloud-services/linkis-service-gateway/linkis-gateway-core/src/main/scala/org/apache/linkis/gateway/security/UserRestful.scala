@@ -67,6 +67,10 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 
   override def doUserRequest(gatewayContext: GatewayContext): Unit = {
     val path = gatewayContext.getRequest.getRequestURI.replace(userRegex, "")
+    if (StringUtils.equals("sso-login", path)) {
+      ssoLogin(gatewayContext)
+      return
+    }
     val message = path match {
       case "register" => register(gatewayContext)
       case "login" =>
@@ -89,7 +93,6 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
       case "heartbeat" => heartbeat(gatewayContext)
       case "proxy" => proxy(gatewayContext)
       case "baseinfo" => baseinfo(gatewayContext)
-      case "sso-longin" => ssoLogin(gatewayContext)
       case _ =>
         Message.error("unknown request URI " + path)
     }
@@ -111,9 +114,13 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     }
   }
 
-  def ssoLogin(gatewayContext: GatewayContext): Message = {
-    Message.ok("succeed")
+  def ssoLogin(gatewayContext: GatewayContext): Unit = {
+    val message = Message.ok("succeed")
+    gatewayContext.getResponse.write(message)
+    gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
+    gatewayContext.getResponse.sendResponse()
   }
+
   def login(gatewayContext: GatewayContext): Message = {
     val message = tryLogin(gatewayContext)
     message

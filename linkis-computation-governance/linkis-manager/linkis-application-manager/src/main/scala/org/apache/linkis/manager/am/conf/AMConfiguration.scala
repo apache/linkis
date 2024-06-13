@@ -133,7 +133,7 @@ object AMConfiguration {
     CommonVars("linkis.hive.cluster.ec.execute.once.rule.enable", true).getValue
 
   val AM_ENGINE_ASK_MAX_NUMBER =
-    CommonVars("linkis.am.engine.ask.max.number", "appconn=10,trino=10").getValue
+    CommonVars("linkis.am.engine.ask.max.number", "appconn=5,trino=10").getValue
       .split(",")
       .map { keyValue =>
         val array = keyValue.split("=")

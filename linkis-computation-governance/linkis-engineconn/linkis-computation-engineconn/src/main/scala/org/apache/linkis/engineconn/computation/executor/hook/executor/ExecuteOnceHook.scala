@@ -51,13 +51,9 @@ class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener 
   ): String = {
     executeOnce = engineExecutionContext.getLabels.exists(_.isInstanceOf[ExecuteOnceLabel])
     val creationLabelList: util.List[Label[_]] = engineCreationContext.getLabels()
-    logger.info("testLabels execution:")
-    engineExecutionContext.getLabels.foreach(ll => logger.info(ll.toString))
     if (creationLabelList != null) {
       executeOnce =
         executeOnce || creationLabelList.toArray().exists(_.isInstanceOf[ExecuteOnceLabel])
-      logger.info("testLabels creation:")
-      creationLabelList.toArray().foreach(ll => logger.info(ll.toString))
     }
     if (executeOnce && !isRegister) {
       isRegister = true

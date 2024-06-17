@@ -120,7 +120,7 @@ abstract class SingleThreadUpstreamConnectionMonitor(
       val executor = ExecutorManager.getInstance.getReportExecutor
       executor match {
         case concurrentExecutor: ConcurrentExecutor =>
-          if (toBeRequested.size() > concurrentExecutor.getConcurrentLimit) {
+          if (toBeRequested.size() > (concurrentExecutor.getConcurrentLimit + 20)) {
             logger.warn(
               s"Executor running task has exceed the limit ${toBeRequested.size()}, executor id ${concurrentExecutor.getId}"
             )

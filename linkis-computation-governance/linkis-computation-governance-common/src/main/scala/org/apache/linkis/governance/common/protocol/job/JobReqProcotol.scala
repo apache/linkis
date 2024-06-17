@@ -18,6 +18,7 @@
 package org.apache.linkis.governance.common.protocol.job
 
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
@@ -25,7 +26,7 @@ import java.util.Date
 
 import scala.beans.BeanProperty
 
-trait JobReq extends RequestProtocol
+trait JobReq extends RequestProtocol with RetryableProtocol
 
 case class JobReqInsert(jobReq: JobRequest) extends JobReq
 

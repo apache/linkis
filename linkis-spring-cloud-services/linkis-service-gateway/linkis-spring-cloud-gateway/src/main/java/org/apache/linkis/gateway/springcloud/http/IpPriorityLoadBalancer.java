@@ -56,7 +56,7 @@ public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalance
         ((RequestDataContext) request.getContext())
             .getClientRequest()
             .getHeaders()
-            .get("client-ip");
+            .get("FIXED_INSTANCE");
     String clientIp = CollectionUtils.isNotEmpty(clientIpList) ? clientIpList.get(0) : null;
     ServiceInstanceListSupplier supplier =
         serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);

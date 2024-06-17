@@ -39,7 +39,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,10 +125,10 @@ public class SendAppender extends AbstractAppender {
     return new SendAppender(name, filter, layout, ignoreExceptions);
   }
 
-  /***
-   * <p>
-   * Match the hive log, if it matches the yarn log, print the log and replace it
-   *</p>
+  /**
+   * *
+   *
+   * <p>Match the hive log, if it matches the yarn log, print the log and replace it
    */
   public String matchLog(String logLine) {
     Matcher hiveMatcher = Pattern.compile(EngineConnConstant.hiveLogReg()).matcher(logLine);

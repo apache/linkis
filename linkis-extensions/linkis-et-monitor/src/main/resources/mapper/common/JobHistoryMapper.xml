@@ -52,7 +52,7 @@
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"
             parameterType="org.apache.linkis.monitor.jobhistory.entity.JobHistory">
-        SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
             <if test="job_req_id != null">and job_req_id = #{job_req_id}</if>
@@ -76,7 +76,7 @@
     </select>
 
     <select id="search" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/ SELECT
         <include refid="jobhistory_query"/>
         FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
@@ -123,7 +123,7 @@
     </update>
 
     <select id="searchByCache" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/  SELECT
         <include refid="jobhistory_query"/>
         FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
@@ -142,7 +142,7 @@
     </select>
 
     <select id="searchByCacheAndUpdateTime" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/  SELECT
         <include refid="jobhistory_query"/>
         FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
@@ -161,7 +161,7 @@
     </select>
 
     <select id="selectIdByHalfDay" resultType="java.lang.Long">
-        SELECT MIN(id) FROM linkis_ps_job_history_group_history
+        /*slave*/   SELECT MIN(id) FROM linkis_ps_job_history_group_history
         <where>
             updated_time >= date_sub(now(),interval 12 hour)
             <if test="id != null">and id > #{id}</if>
@@ -169,6 +169,6 @@
     </select>
 
     <select id="selectMaxId" resultType="java.lang.Long">
-        SELECT MAX(id) FROM linkis_ps_job_history_group_history
+        /*slave*/  SELECT MAX(id) FROM linkis_ps_job_history_group_history
     </select>
 </mapper>

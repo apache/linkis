@@ -182,9 +182,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 .linkiesTagModal {
-  /deep/ .ivu-tag {
+  ::v-deep .ivu-tag {
     vertical-align: middle;
-    /deep/ .ivu-tag-text {
+    ::v-deep .ivu-tag-text {
       display: inline-block;
       max-width: 140px;
       overflow: hidden;
@@ -193,7 +193,7 @@ export default {
       vertical-align: middle;
     }
   }
-  /deep/ .ivu-tooltip-inner {
+  ::v-deep .ivu-tooltip-inner {
     max-width: 100%;
   }
   .addAndCancel {

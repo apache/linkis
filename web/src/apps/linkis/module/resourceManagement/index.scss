@@ -43,7 +43,7 @@ td.table-name-column {
     cursor: pointer;
   }
 }
-/deep/.table-project-column {
+::v-deep.table-project-column {
   text-align: center;
   .ivu-table-cell {
     display: inline-block;
@@ -73,7 +73,7 @@ td.table-project-column {
     flex: 1
   }
 }
-/deep/.addTagClass {
+::v-deep.addTagClass {
   position: relative;
   z-index: 99;
 }

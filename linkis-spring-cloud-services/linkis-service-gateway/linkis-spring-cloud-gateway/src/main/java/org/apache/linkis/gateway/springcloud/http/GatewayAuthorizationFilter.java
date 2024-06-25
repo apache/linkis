@@ -131,7 +131,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     }
     String uri = scheme + serviceInstance.getApplicationName();
     if (StringUtils.isNotBlank(serviceInstance.getInstance())) {
-      exchange.getRequest().mutate().header("FIXED_INSTANCE", serviceInstance.getInstance());
+      exchange.getRequest().mutate().header(SpringCloudGatewayConstant.FIXED_INSTANCE, serviceInstance.getInstance());
     }
     return Route.async()
         .id(route.getId())

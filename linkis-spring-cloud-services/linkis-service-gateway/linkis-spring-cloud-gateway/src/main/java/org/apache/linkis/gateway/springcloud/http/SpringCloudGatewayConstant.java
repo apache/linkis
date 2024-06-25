@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.rpc.constant;
+package org.apache.linkis.gateway.springcloud.http;
 
-public class RpcConstant {
+public class SpringCloudGatewayConstant {
 
-  public static final String FIXED_INSTANCE = "client-ip";
+  public static final String FIXED_INSTANCE = "FIXED_INSTANCE";
 }

@@ -23,7 +23,8 @@ import org.apache.linkis.gateway.parser.{DefaultGatewayParser, GatewayParser}
 import org.apache.linkis.gateway.route.{DefaultGatewayRouter, GatewayRouter}
 import org.apache.linkis.gateway.springcloud.http.{
   GatewayAuthorizationFilter,
-  LinkisGatewayHttpHeadersFilter
+  LinkisGatewayHttpHeadersFilter,
+  LinkisLoadBalancerClientConfiguration
 }
 import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
 import org.apache.linkis.rpc.Sender
@@ -41,6 +42,7 @@ import org.springframework.cloud.gateway.route.builder.{
   PredicateSpec,
   RouteLocatorBuilder
 }
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import org.springframework.web.reactive.socket.server.WebSocketService
@@ -49,6 +51,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 @Configuration
 @AutoConfigureAfter(Array(classOf[GatewaySpringConfiguration], classOf[GatewayAutoConfiguration]))
+@LoadBalancerClients(defaultConfiguration = Array(classOf[LinkisLoadBalancerClientConfiguration]))
 class SpringCloudGatewayConfiguration {
   import SpringCloudGatewayConfiguration._
 

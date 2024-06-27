@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS "linkis_ps_configuration_config_value";
 CREATE TABLE linkis_ps_configuration_config_value (
 	id bigserial NOT NULL,
 	config_key_id int4 NULL,
-	config_value varchar(200) NULL,
+	config_value varchar(500) NULL,
 	config_label_id int8 NULL,
 	update_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -996,6 +996,7 @@ CREATE TABLE linkis_cg_manager_service_instance_metrics (
 	healthy_status varchar(255) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
+    description varchar(256) NULL,
 	CONSTRAINT linkis_manager_service_instance_metrics_pkey PRIMARY KEY (instance)
 );
 
@@ -1167,3 +1168,19 @@ CREATE TABLE "linkis_cg_user_ip_config" (
   CONSTRAINT linkis_cg_user_ip_config_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX uniq_user_creator_uic ON linkis_cg_user_ip_config USING btree ("user",creator);
+
+DROP TABLE IF EXISTS linkis_org_user;
+
+CREATE TABLE linkis_org_user (
+  cluster_code varchar(16) COMMENT 'cluster code',
+  user_type varchar(64) COMMENT 'user type',
+  user_name varchar(128) PRIMARY KEY COMMENT 'username',
+  org_id varchar(16) COMMENT 'org id',
+  org_name varchar(64) COMMENT 'org name',
+  queue_name varchar(64) COMMENT 'yarn queue name',
+  db_name varchar(64) COMMENT 'default db name',
+  interface_user varchar(64) COMMENT 'interface user',
+  is_union_analyse varchar(64) COMMENT 'is union analyse',
+  create_time varchar(64) COMMENT 'create time',
+  user_itsm_no varchar(64) COMMENT 'user itsm no'
+) COMMENT ON TABLE linkis_org_user IS 'user org info';

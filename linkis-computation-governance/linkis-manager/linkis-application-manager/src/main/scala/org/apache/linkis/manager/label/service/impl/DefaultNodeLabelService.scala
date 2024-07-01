@@ -369,7 +369,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       if (null == label) {
         persistenceLabel.setLabelValueSize(persistenceLabel.getValue.size())
         Utils.tryCatch(labelManagerPersistence.addLabel(persistenceLabel)) { t: Throwable =>
-          logger.warn(s"Failed to add label ${t.getClass}")
+          logger.warn(s"Failed to add label: " + persistenceLabel.getStringValue, t)
         }
       } else {
         persistenceLabel.setId(label.getId)

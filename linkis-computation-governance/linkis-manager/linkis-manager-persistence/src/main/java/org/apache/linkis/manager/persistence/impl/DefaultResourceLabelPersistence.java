@@ -153,7 +153,8 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
           labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
       if (labelByKeyValue == null) {
         throw new PersistenceErrorException(
-            210001, "label not found, this label may be removed already.");
+            210001,
+            "label not found, this label may be removed already: " + label.getStringValue());
       }
       labelId = labelByKeyValue.getId();
     }

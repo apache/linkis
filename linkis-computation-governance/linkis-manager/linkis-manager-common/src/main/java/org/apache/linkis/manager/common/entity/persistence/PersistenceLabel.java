@@ -95,7 +95,9 @@ public class PersistenceLabel extends GenericLabel {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
+    if (this == o) {
+      return true;
+    }
     if (o == null || getClass() != o.getClass()) {
       return false;
     } else if (!super.equals(o)) {
@@ -104,13 +106,20 @@ public class PersistenceLabel extends GenericLabel {
 
     PersistenceLabel that = (PersistenceLabel) o;
 
-    if (!this.getLabelKey().equals(that.getLabelKey())) return false;
-    return stringValue.equals(that.stringValue);
+    if (!this.getLabelKey().equals(that.getLabelKey())) {
+      return false;
+    }
+    String thisStringValue = getStringValue();
+    return thisStringValue.equals(that.getStringValue());
   }
 
   @Override
   public int hashCode() {
     int result = this.getLabelKey().hashCode();
+    String thisStringValue = getStringValue();
+    if (null == thisStringValue) {
+      return result;
+    }
     result = 31 * result + this.stringValue.hashCode();
     return result;
   }

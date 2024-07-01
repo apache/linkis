@@ -70,7 +70,7 @@ object Configuration extends Logging {
   // Only the specified token has permission to call some api
   val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
 
-  val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
+  val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", true).getValue
 
   val ERROR_MSG_TIP =
     CommonVars(

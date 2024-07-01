@@ -132,7 +132,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 + jobReqId
                 + " in "
                 + Sender.getThisServiceInstance().toString()
-                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
+                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以进行参数修改)"),
         job);
     message = Message.ok();
     message.setMethod("/api/entrance/execute");
@@ -186,7 +186,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                 + jobReqId
                 + " in "
                 + Sender.getThisServiceInstance().toString()
-                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
+                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以进行参数修改)"),
         job);
     String execID =
         ZuulEntranceUtils.generateExecID(

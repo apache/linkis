@@ -62,10 +62,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
       response = Message.class)
   @Override
   @RequestMapping(path = "dbs", method = RequestMethod.GET)
-  public Message queryDatabaseInfo(HttpServletRequest req) {
+  public Message queryDatabaseInfo(
+      HttpServletRequest req,
+      @RequestParam(value = "permission", required = false) String permission) {
     String userName = ModuleUserUtils.getOperationUser(req, "get dbs");
     try {
-      JsonNode dbs = dataSourceService.getDbs(userName);
+      JsonNode dbs = dataSourceService.getDbs(userName, permission);
       return Message.ok("").data("dbs", dbs);
     } catch (Exception e) {
       logger.error("Failed to get database(获取数据库失败)", e);

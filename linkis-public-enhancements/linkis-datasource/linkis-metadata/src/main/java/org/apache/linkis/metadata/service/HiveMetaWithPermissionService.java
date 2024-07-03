@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface HiveMetaWithPermissionService {
 
-  List<String> getDbsOptionalUserName(String userName);
+  List<String> getDbsOptionalUserName(String userName, String permission);
 
   List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(MetadataQueryParam queryParam);
 

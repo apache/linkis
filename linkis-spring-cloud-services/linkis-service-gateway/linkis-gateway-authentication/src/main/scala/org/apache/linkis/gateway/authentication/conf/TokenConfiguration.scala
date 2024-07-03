@@ -34,7 +34,7 @@ object TokenConfiguration {
   val TOKEN_CACHE_MAX_SIZE: Int =
     CommonVars[Int]("wds.linkis.token.cache.max.size", 5000).getValue
 
-  val TOKEN_CACHE_EXPIRE_HOURS: Int =
-    CommonVars[Int]("wds.linkis.token.cache.expire.hours", 2).getValue
+  val TOKEN_CACHE_EXPIRE_MINUTES: Int =
+    CommonVars[Int]("wds.linkis.token.cache.expire.minutes", 30).getValue
 
 }

@@ -26,6 +26,7 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SERVICE_NAME
 import org.apache.linkis.ecm.server.listener.EngineConnStopEvent
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
+import org.apache.linkis.ecm.utils.ECMCacheUtils
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -90,20 +91,36 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
           )
         }
         if (exitCode != 0) {
-          val canRetry = if (errorMsg.isEmpty) true else false
-          logger.warn(
-            s"Failed to start ec ${engineConn.getServiceInstance}, status shutting down exit code ${exitCode}, canRetry ${canRetry}, logPath ${logPath}"
-          )
-          Sender
-            .getSender(MANAGER_SERVICE_NAME)
-            .send(
-              EngineConnStatusCallbackToAM(
-                engineConn.getServiceInstance,
-                NodeStatus.ShuttingDown,
-                "Failed to start EngineConn, reason: " + errorMsg + s"\n You can go to this path($logPath) to find the reason or ask the administrator for help",
-                canRetry
+          val stopRequest = ECMCacheUtils.getStopEC(engineConn.getServiceInstance)
+          if (
+              null != stopRequest && engineConn.getPid != null && engineConn.getPid.equals(
+                stopRequest.getIdentifier
               )
+          ) {
+            logger.info(
+              s"EC ${engineConn.getServiceInstance} exit should by kill stop request $stopRequest, do not report status"
             )
+          } else {
+            val canRetry =
+              if (errorMsg.isEmpty || ECMConfiguration.EC_CAN_RETRY_EXIT_CODES.contains(exitCode)) {
+                true
+              } else {
+                false
+              }
+            logger.warn(
+              s"Failed to start ec ${engineConn.getServiceInstance}, status shutting down exit code ${exitCode}, canRetry ${canRetry}, logPath ${logPath}"
+            )
+            Sender
+              .getSender(MANAGER_SERVICE_NAME)
+              .send(
+                EngineConnStatusCallbackToAM(
+                  engineConn.getServiceInstance,
+                  NodeStatus.ShuttingDown,
+                  "Failed to start EngineConn, reason: " + errorMsg + s"\n You can go to this path($logPath) to find the reason or ask the administrator for help",
+                  canRetry
+                )
+              )
+          }
           engineConn.setStatus(NodeStatus.ShuttingDown)
         } else {
           engineConn.setStatus(NodeStatus.Success)

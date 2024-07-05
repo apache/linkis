@@ -139,7 +139,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         throw fatalException
       case e: Exception =>
         val hookName = getHookName(executionHook)
-        logger.error(s"execute preExecution hook : ${hookName} failed.")
+        logger.info(s"execute preExecution hook : ${hookName} failed.")
     }
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = kind match {

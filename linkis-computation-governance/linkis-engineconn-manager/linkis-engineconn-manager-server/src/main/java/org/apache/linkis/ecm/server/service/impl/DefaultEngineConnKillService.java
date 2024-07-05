@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.service.EngineConnKillService;
+import org.apache.linkis.ecm.utils.ECMCacheUtils;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.governance.common.utils.GovernanceUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
@@ -61,6 +62,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     String pid = null;
     if (AMConstant.PROCESS_MARK.equals(engineStopRequest.getIdentifierType())
         && StringUtils.isNotBlank(engineStopRequest.getIdentifier())) {
+      ECMCacheUtils.putStopECToCache(engineStopRequest.getServiceInstance(), engineStopRequest);
       pid = engineStopRequest.getIdentifier();
     }
     logger.info("dealEngineConnStop return pid: {}", pid);

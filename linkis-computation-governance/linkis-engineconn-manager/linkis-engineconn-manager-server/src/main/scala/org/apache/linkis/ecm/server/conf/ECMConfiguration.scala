@@ -115,4 +115,8 @@ object ECMConfiguration {
   val ECM_PROCESS_SCRIPT_KILL: Boolean =
     CommonVars[Boolean]("wds.linkis.ecm.script.kill.engineconn", true).getValue
 
+  val EC_CAN_RETRY_EXIT_CODES: Array[Int] =
+    CommonVars[String]("linkis.ecm.can.retry.exit.codes", "143").getValue
+      .split(",")
+      .map(_.toInt);
 }

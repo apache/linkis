@@ -52,18 +52,22 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
   private final String adminUser = DWSConfig.HIVE_DB_ADMIN_USER.getValue();
 
   @Override
-  public List<String> getDbsOptionalUserName(String userName) {
-    if (adminUser.equals(userName)) {
-      log.info("admin {} to get all dbs ", userName);
-      return hiveMetaDao.getAllDbs();
-    }
-    Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-    if (flag) {
-      List<String> roles = hiveMetaDao.getRolesByUser(userName);
-      return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+  public List<String> getDbsOptionalUserName(String userName, String permission) {
+    if (StringUtils.isNotBlank(permission) && permission.equals("write")) {
+      return hiveMetaDao.getCanWriteDbsByUser(userName);
     } else {
-      log.info("user {} to get all dbs no permission control", userName);
-      return hiveMetaDao.getAllDbs();
+      if (adminUser.equals(userName)) {
+        log.info("admin {} to get all dbs ", userName);
+        return hiveMetaDao.getAllDbs();
+      }
+      Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
+      if (flag) {
+        List<String> roles = hiveMetaDao.getRolesByUser(userName);
+        return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+      } else {
+        log.info("user {} to get all dbs no permission control", userName);
+        return hiveMetaDao.getAllDbs();
+      }
     }
   }
 

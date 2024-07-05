@@ -59,6 +59,7 @@
           "serviceName": "服务名称",
           "IP": "IP",
           "hostname": "主机名",
+          "versionInfo": "版本信息",
           "reset": "重置",
           "clearSearch": "清空",
           "showOperations": "显示操作",

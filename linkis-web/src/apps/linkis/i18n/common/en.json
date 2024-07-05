@@ -58,6 +58,7 @@
       "serviceName": "Service Name",
       "IP": "IP",
       "hostname": "Hostname",
+      "versionInfo": "Version Info",
       "resources": "Resources",
       "reset": "Reset",
       "clearSearch": "Clear",

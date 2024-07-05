@@ -70,8 +70,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
-  public JsonNode getDbs(String userName) throws Exception {
-    List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+  public JsonNode getDbs(String userName, String permission) throws Exception {
+    List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName, permission);
     ArrayNode dbsNode = jsonMapper.createArrayNode();
     for (String db : dbs) {
       ObjectNode dbNode = jsonMapper.createObjectNode();
@@ -85,7 +85,7 @@ public class DataSourceServiceImpl implements DataSourceService {
   @Override
   public JsonNode getDbsWithTables(String userName) {
     ArrayNode dbNodes = jsonMapper.createArrayNode();
-    List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+    List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName, null);
     MetadataQueryParam queryParam = MetadataQueryParam.of(userName);
     for (String db : dbs) {
       if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {

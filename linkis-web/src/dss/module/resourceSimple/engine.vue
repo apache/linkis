@@ -49,7 +49,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="shouldRender(subItem, item)"
+                  v-if="shouldRender(subitem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -92,7 +92,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="shouldRender(subItem, item)"
+                  v-if="shouldRender(subitem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -135,7 +135,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="shouldRender(subItem, item)"
+                  v-if="shouldRender(subitem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>

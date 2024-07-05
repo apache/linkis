@@ -61,21 +61,21 @@ fi
 get()
 {
   requestUrl="$gatewayUrl/api/rest_j/v1/configuration/keyvalue?creator=$creator&engineType=$engineType&version=$version&configKey=$configKey"
-  curl --location --request GET $requestUrl -H "Token-Code:BML-AUTH" -H "Token-User:$user"
+  curl --location --request GET $requestUrl -H "Token-Code:LINKIS-AUTH-eTaYLbQpmIulPyrXcMl" -H "Token-User:$user"
 }
 
 delete()
 {
   requestUrl="$gatewayUrl/api/rest_j/v1/configuration/keyvalue"
   requestBody="{\"engineType\":\"$engineType\",\"version\":\"$version\",\"creator\":\"$creator\",\"configKey\":\"$configKey\"}"
-  curl -i -X DELETE $requestUrl  -H "Accept: application/json"  -H "Content-Type: application/json" -H "Token-Code:BML-AUTH" -H "Token-User:$user" -d "$requestBody"
+  curl -i -X DELETE $requestUrl  -H "Accept: application/json"  -H "Content-Type: application/json" -H "Token-Code:LINKIS-AUTH-eTaYLbQpmIulPyrXcMl" -H "Token-User:$user" -d "$requestBody"
 }
 
 add()
 {
   requestUrl="$gatewayUrl/api/rest_j/v1/configuration/keyvalue"
   requestBody="{\"engineType\":\"$engineType\",\"version\":\"$version\",\"creator\":\"$creator\",\"configKey\":\"$configKey\",\"configValue\":\"$configValue\",\"force\":\"$force\",\"user\":\"$user\"}"
-  curl -i -X POST $requestUrl  -H "Accept: application/json"  -H "Content-Type: application/json" -H "Token-Code:BML-AUTH" -H "Token-User:hadoop" -d "$requestBody"
+  curl -i -X POST $requestUrl  -H "Accept: application/json"  -H "Content-Type: application/json" -H "Token-Code:LINKIS-AUTH-eTaYLbQpmIulPyrXcMl" -H "Token-User:hadoop" -d "$requestBody"
 }
 
 case $COMMAND in

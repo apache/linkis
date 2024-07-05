@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface DataSourceService {
 
-  JsonNode getDbs(String userName) throws Exception;
+  JsonNode getDbs(String userName, String permission) throws Exception;
 
   JsonNode getDbsWithTables(String userName) throws Exception;
 

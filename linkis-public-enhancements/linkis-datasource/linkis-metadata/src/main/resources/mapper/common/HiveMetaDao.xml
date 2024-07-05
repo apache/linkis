@@ -229,4 +229,22 @@
         AND t.TBL_NAME = #{tableName}
     </select>
 
+    <select id="getCanWriteDbsByUser" resultType="java.lang.String">
+        SELECT
+            t2.NAME AS NAME
+        FROM
+            `DB_PRIVS` t1
+        INNER JOIN `DBS` t2 ON t1.DB_ID = t2.DB_ID AND t1.DB_PRIV IN ('CREATE', 'UPDATE', 'ALL')
+        WHERE t1.PRINCIPAL_TYPE = 'USER' AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        UNION
+        SELECT
+            t3.NAME AS NAME
+        FROM
+            `TBL_PRIVS` t1
+        INNER JOIN `TBLS` t2 ON t1.TBL_ID = t2.TBL_ID AND t1.TBL_PRIV IN ('CREATE', 'UPDATE', 'ALL')
+        INNER JOIN `DBS` t3 ON t2.DB_ID = t3.DB_ID
+        WHERE
+            t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        ORDER BY NAME
+    </select>
 </mapper>

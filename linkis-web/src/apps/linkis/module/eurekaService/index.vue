@@ -23,7 +23,7 @@
       fix
     />
     <Row class="search-bar">
-      <Col span="6" class="search-item">
+      <Col span="5" class="search-item">
         <span class="lable">{{ $t('message.linkis.serviceName') }}</span>
         <Input
           v-model="app"
@@ -33,7 +33,7 @@
         ></Input>
       </Col>
       <Col
-        span="6"
+        span="5"
         class="search-item"
       >
         <span class="lable">{{
@@ -47,7 +47,7 @@
         ></Input>
       </Col>
       <Col
-        span="6"
+        span="5"
         class="search-item"
       >
         <span class="lable">{{
@@ -60,7 +60,21 @@
           @on-enter="searchAction"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col
+        span="5"
+        class="search-item"
+      >
+        <span class="lable">{{
+          $t("message.linkis.versionInfo")
+        }}</span>
+        <Input
+          v-model="version"
+          class="input"
+          :placeholder="$t('message.linkis.versionInfo')"
+          @on-enter="searchAction"
+        ></Input>
+      </Col>
+      <Col span="4" class="search-item">
         <Button class="search" type="primary" @click="searchAction">{{
           $t("message.linkis.find")
         }}</Button>
@@ -122,6 +136,7 @@ export default {
       app: "",
       ip: "",
       hostName: "",
+      version: "",
       page: {
         totalSize: 0,
         sizeOpts: [15, 30, 45],
@@ -199,12 +214,12 @@ export default {
       });
     },
     searchAction() {
-      this.search(this.app.replace(/ /g, '') || '', this.ip.replace(/ /g, '') || '', this.hostName.replace(/ /g, '') || '');
+      this.search(this.app.replace(/ /g, '') || '', this.ip.replace(/ /g, '') || '', this.hostName.replace(/ /g, '') || '', this.version.replace(/ /g, '') || '');
     },
     // Click to search to filter the data(点击搜索 对数据进行筛选)
-    search(app = "", ip = "", hostName = "") {
+    search(app = "", ip = "", hostName = "", version = "") {
       this.loading = true;
-      api.fetch("/microservice/serviceInstances", { serviceName: app, ip, hostName }, "get").then((res) => {
+      api.fetch("/microservice/serviceInstances", { serviceName: app, ip, hostName, version }, "get").then((res) => {
         this.allTableData = res.list.map(item => item.instanceInfo) || [];
         this.tableData = res.list.map(item => item.instanceInfo) || [];
         this.page.totalSize = this.tableData.length;

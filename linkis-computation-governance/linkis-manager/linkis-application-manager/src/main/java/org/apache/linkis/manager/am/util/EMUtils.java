@@ -69,7 +69,7 @@ public class EMUtils {
               creator, engineType);
       HttpGet httpGet = new HttpGet(Configuration.getGateWayURL() + url);
       httpGet.addHeader("Token-User", username);
-      httpGet.addHeader("Token-Code", "BML-AUTH");
+      httpGet.addHeader("Token-Code", Configuration.LINKIS_TOKEN().getValue());
       String responseStr =
           EntityUtils.toString(HttpClients.createDefault().execute(httpGet).getEntity());
       JsonNode fullTree = new ObjectMapper().readTree(responseStr).get("data").get("fullTree");

@@ -76,6 +76,8 @@ object Configuration extends Logging {
       "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
     )
 
+  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
       false

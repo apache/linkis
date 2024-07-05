@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct
 
 @Configuration
 @ComponentScan(Array("org.apache.linkis.monitor", "org.apache.linkis.mybatis"))
+@EnableAdminServer
 class LinkisJobHistoryScanSpringConfiguration {
 
   @Autowired

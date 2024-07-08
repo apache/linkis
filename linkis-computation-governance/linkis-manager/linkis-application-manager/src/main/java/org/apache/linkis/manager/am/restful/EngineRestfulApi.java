@@ -53,6 +53,7 @@ import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -732,6 +733,44 @@ public class EngineRestfulApi {
         .data("result", engineOperateResponse.getResult())
         .data("errorMsg", engineOperateResponse.errorMsg())
         .data("isError", engineOperateResponse.isError());
+  }
+
+  @ApiOperation(
+      value = "kill egineconns of a ecm",
+      notes = "Kill engine after updating configuration",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "creator", dataType = "String", required = true, example = "IDE"),
+    @ApiImplicitParam(
+        name = "engineType",
+        dataType = "String",
+        required = true,
+        example = "hive-2.3.3"),
+  })
+  @ApiOperationSupport(ignoreParameters = {"param"})
+  @RequestMapping(path = "/rm/killEngineByUpdateConfig", method = RequestMethod.POST)
+  public Message killEngineByUpdateConfig(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+      throws AMErrorException {
+    String userName = ModuleUserUtils.getOperationUser(req);
+    if (StorageUtils.getJvmUser().equals(userName)) {
+      return Message.error("JVM users do not support this feature (JVM 用户不支持此功能)");
+    }
+    JsonNode creator = jsonNode.get("creator");
+    if (null == creator || StringUtils.isBlank(creator.textValue())) {
+      return Message.error("instance is null in the parameters of the request(请求参数中【creator】为空)");
+    }
+    String creatorStr = creator.textValue();
+    if (creatorStr.equals(Configuration.GLOBAL_CONF_CHN_NAME())
+        || creatorStr.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
+        || creatorStr.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME())) {
+      creatorStr = "*";
+    }
+    String engineType = "";
+    if (null != jsonNode.get("engineType")) {
+      engineType = jsonNode.get("engineType").textValue();
+    }
+    engineStopService.stopUnlockEngineBySaveConf(userName, creatorStr, engineType);
+    return Message.ok("Kill engineConn succeed");
   }
 
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {

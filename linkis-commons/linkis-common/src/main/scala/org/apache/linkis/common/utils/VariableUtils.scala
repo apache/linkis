@@ -269,9 +269,24 @@ object VariableUtils extends Logging {
     val run_roday_mon = new CustomMonType(getMonthDay(false, run_today.getDate), false)
     nameAndType("run_last_mon_now") = MonType(new CustomMonType(run_roday_mon - 1, false, false))
     nameAndType("run_last_mon_now_std") = MonType(new CustomMonType(run_roday_mon - 1, true, false))
+    // calculate run_current_mon_now base on run_today
+    nameAndType("run_current_mon_now") = MonType(
+      new CustomMonType(run_roday_mon.toString, false, false)
+    )
+    nameAndType("run_current_mon_now_std") = MonType(
+      new CustomMonType(run_roday_mon.toString, true, false)
+    )
     // calculate run_mon_now base on run_today
     nameAndType("run_mon_now") = MonType(new CustomMonType(run_roday_mon.toString, false, false))
     nameAndType("run_mon_now_std") = MonType(new CustomMonType(run_roday_mon.toString, true, false))
+
+    // calculate run_last_mon base on run_today
+    nameAndType("run_today_hour") = HourType(
+      new CustomHourType(getCurHour(false, run_today.toString), false)
+    )
+    nameAndType("run_today_hour_std") = HourType(
+      new CustomHourType(getCurHour(false, run_today.toString), true)
+    )
   }
 
   /**

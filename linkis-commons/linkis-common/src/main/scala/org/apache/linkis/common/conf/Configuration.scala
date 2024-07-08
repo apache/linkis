@@ -78,6 +78,14 @@ object Configuration extends Logging {
 
   val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
 
+  val GLOBAL_CONF_CHN_NAME = "全局设置"
+
+  val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
+
+  val GLOBAL_CONF_CHN_EN_NAME = "GlobalSettings"
+
+  val GLOBAL_CONF_LABEL = "*-*,*-*"
+
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
       false

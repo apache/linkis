@@ -25,6 +25,7 @@ import org.apache.linkis.filesystem.entity.FSInfo
 import org.apache.linkis.filesystem.exception.{WorkSpaceException, WorkspaceExceptionManager}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.StorageUtils
 
 import org.springframework.stereotype.Service
 
@@ -121,6 +122,23 @@ class FsService extends Logging {
           case (_,list) =>list synchronized list.filter(f =>true).foreach(f =>list -=f)
         } */
         throw WorkspaceExceptionManager.createException(80001)
+    }
+  }
+
+  def getFileSystemForRead(user: String, fsPath: FsPath): FileSystem = {
+    if (!fsPath.getFsType.equals(StorageUtils.FILE)) {
+      // only hdfs change
+      var fs = getFileSystem(user, fsPath)
+      if (WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue) {
+        if (fs.canRead(fsPath, user)) {
+          fs = getFileSystem(StorageUtils.getJvmUser, fsPath)
+        } else {
+          throw WorkspaceExceptionManager.createException(80012)
+        }
+      }
+      fs
+    } else {
+      getFileSystem(user, fsPath)
     }
   }
 

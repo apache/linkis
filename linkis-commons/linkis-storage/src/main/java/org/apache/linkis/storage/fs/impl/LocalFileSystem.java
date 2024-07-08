@@ -426,6 +426,11 @@ public class LocalFileSystem extends FileSystem {
   }
 
   @Override
+  public boolean canRead(FsPath dest, String user) throws IOException {
+    return false;
+  }
+
+  @Override
   public boolean canWrite(FsPath dest) throws IOException {
     return can(
         dest,

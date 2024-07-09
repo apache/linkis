@@ -20,6 +20,7 @@ package org.apache.linkis.manager.engineplugin.shell.executor
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -189,8 +190,14 @@ class ShellEngineConnConcurrentExecutor(id: Int)
       }
       val env = processBuilder.environment()
       val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutionContext.getProperties)
+      val jobId = JobUtils.getJobIdFromMap(engineExecutionContext.getProperties)
+      if (StringUtils.isNotBlank(jobId)) {
+        logger.info(s"set env job id ${jobId}.")
+        env.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
+      }
       if (StringUtils.isAsciiPrintable(jobTags)) {
         env.put(ECConstants.HIVE_OPTS, s" --hiveconf mapreduce.job.tags=$jobTags")
+
       }
 
       processBuilder.redirectErrorStream(false)

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -175,6 +176,11 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       val env = processBuilder.environment()
+      val jobId = JobUtils.getJobIdFromMap(engineExecutionContext.getProperties)
+      if (StringUtils.isNotBlank(jobId)) {
+        logger.info(s"set env job id ${jobId}.")
+        env.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
+      }
       val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutionContext.getProperties)
       if (StringUtils.isAsciiPrintable(jobTags)) {
         env.put(ECConstants.HIVE_OPTS, s" --hiveconf mapreduce.job.tags=$jobTags")

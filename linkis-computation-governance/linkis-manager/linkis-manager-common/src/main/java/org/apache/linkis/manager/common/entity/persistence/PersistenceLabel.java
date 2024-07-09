@@ -120,7 +120,7 @@ public class PersistenceLabel extends GenericLabel {
     if (null == thisStringValue) {
       return result;
     }
-    result = 31 * result + this.stringValue.hashCode();
+    result = 31 * result + thisStringValue.hashCode();
     return result;
   }
 }

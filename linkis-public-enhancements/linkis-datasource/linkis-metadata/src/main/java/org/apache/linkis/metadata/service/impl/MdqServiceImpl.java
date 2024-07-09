@@ -384,7 +384,7 @@ public class MdqServiceImpl implements MdqService {
 
   private String getTableSize(String tableLocation) throws IOException {
     String tableSize = "0B";
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       tableSize =
           ByteTimeUtils.bytesToString(

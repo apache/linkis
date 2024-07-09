@@ -27,6 +27,7 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.engine.FixedEngineConnLabel
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
@@ -38,12 +39,14 @@ import java.{lang, util}
 import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
+import scala.util.matching.{Regex, UnanchoredRegex}
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 object TemplateConfUtils extends Logging {
 
   val confTemplateNameKey = "ec.resource.name"
+  val confFixedEngineConnLabelKey = "ec.fixed.sessionId"
 
   private val templateCache: LoadingCache[String, util.List[TemplateConfKey]] = CacheBuilder
     .newBuilder()
@@ -120,30 +123,36 @@ object TemplateConfUtils extends Logging {
    * @return
    *   String the last one of template conf name
    */
-  def getCustomTemplateConfName(code: String, codeType: String): String = {
+  def getCustomTemplateConfName(jobRequest: JobRequest, codeType: String): String = {
+    var code = jobRequest.getExecutionCode
     var templateConfName = "";
 
     var varString: String = null
     var errString: String = null
     var rightVarString: String = null
+    var fixECString: String = null
 
     val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         varString = s"""\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*---@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*---@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
         varString = s"""\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*##@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*##@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         varString = s"""\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*///@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*///@.+"""
       case _ =>
         return templateConfName
     }
 
     val customRegex = varString.r.unanchored
+    val fixECRegex: UnanchoredRegex = fixECString.r.unanchored
     val errRegex = errString.r.unanchored
     var codeRes = code.replaceAll("\r\n", "\n")
     // only allow set at fisrt line
@@ -170,6 +179,21 @@ object TemplateConfUtils extends Logging {
               )
             }
           }
+        case fixECRegex(sessionId) =>
+          // deal with fixedEngineConn configuration, add fixedEngineConn label if setting @set ec.fixed.sessionId=xxx
+          if (StringUtils.isNotBlank(sessionId)) {
+            val fixedEngineConnLabel =
+              LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                classOf[FixedEngineConnLabel]
+              )
+            fixedEngineConnLabel.setSessionId(sessionId)
+            jobRequest.getLabels.add(fixedEngineConnLabel)
+            logger.info(
+              s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
+            )
+          } else {
+            logger.info(s"The task ${jobRequest.getId} not set fixed engine conn")
+          }
         case errRegex() =>
           logger.warn(
             s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
@@ -192,8 +216,7 @@ object TemplateConfUtils extends Logging {
         val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
         if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
           val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-          templateName =
-            TemplateConfUtils.getCustomTemplateConfName(jobRequest.getExecutionCode, codeType)
+          templateName = getCustomTemplateConfName(jobRequest, codeType)
         }
 
         // code template name > start params template uuid
@@ -269,7 +292,6 @@ object TemplateConfUtils extends Logging {
             TaskUtils.addStartupMap(params, keyList)
           }
         }
-
       case _ =>
     }
     jobRequest

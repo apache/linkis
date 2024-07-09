@@ -356,8 +356,9 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
               templateUid);
       throw new ConfigurationException(msg);
     }
-
-    if (configKeyEngineTypeSet.size() != 1 || !configKeyEngineTypeSet.contains(engineType)) {
+    // support global template
+    configKeyEngineTypeSet.add("*");
+    if (!configKeyEngineTypeSet.contains(engineType)) {
       String msg =
           MessageFormat.format(
               "The engineType:{0} associated with the template:{1} does not match the input engineType:{2}, please check whether the parameters are correct"

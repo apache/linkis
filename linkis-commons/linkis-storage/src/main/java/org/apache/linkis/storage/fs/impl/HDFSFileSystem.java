@@ -80,7 +80,7 @@ public class HDFSFileSystem extends FileSystem {
 
   @Override
   public boolean canExecute(FsPath dest) throws IOException {
-    return canAccess(dest, FsAction.EXECUTE);
+    return canAccess(dest, FsAction.EXECUTE, this.user);
   }
 
   @Override
@@ -293,12 +293,16 @@ public class HDFSFileSystem extends FileSystem {
 
   @Override
   public boolean canRead(FsPath dest) throws IOException {
-    return canAccess(dest, FsAction.READ);
+    return canAccess(dest, FsAction.READ, this.user);
+  }
+
+  public boolean canRead(FsPath dest, String user) throws IOException {
+    return canAccess(dest, FsAction.READ, user);
   }
 
   @Override
   public boolean canWrite(FsPath dest) throws IOException {
-    return canAccess(dest, FsAction.WRITE);
+    return canAccess(dest, FsAction.WRITE, this.user);
   }
 
   @Override
@@ -387,7 +391,7 @@ public class HDFSFileSystem extends FileSystem {
     return fsPath;
   }
 
-  private boolean canAccess(FsPath fsPath, FsAction access) throws IOException {
+  private boolean canAccess(FsPath fsPath, FsAction access, String user) throws IOException {
     String path = checkHDFSPath(fsPath.getPath());
     if (!exists(fsPath)) {
       throw new IOException("directory or file not exists: " + path);

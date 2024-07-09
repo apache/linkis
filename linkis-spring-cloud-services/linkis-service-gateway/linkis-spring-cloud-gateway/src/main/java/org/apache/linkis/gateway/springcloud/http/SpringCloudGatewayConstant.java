@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-
 package org.apache.linkis.gateway.springcloud.http;
 
 public class SpringCloudGatewayConstant {
 
-    public static final String FIXED_INSTANCE = "FIXED_INSTANCE";
-
+  public static final String FIXED_INSTANCE = "FIXED_INSTANCE";
 }

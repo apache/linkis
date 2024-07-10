@@ -37,6 +37,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   @Autowired HiveMetaDao hiveMetaDao;
 
-  @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
+  @Autowired @Lazy HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
   ObjectMapper jsonMapper = new ObjectMapper();
 

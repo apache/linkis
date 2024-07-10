@@ -24,4 +24,7 @@ object LabelManagerConf {
   val LONG_LIVED_LABEL =
     CommonVars("wds.linkis.label.node.long.lived.label.keys", "tenant|yarnCluster").getValue
 
+  val TMP_LIVED_LABEL =
+    CommonVars("wds.linkis.label.node.tmp.lived.label.keys", "taskId").getValue
+
 }

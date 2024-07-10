@@ -60,6 +60,7 @@
             <if test="username != null"> username = #{username}</if>
             <if test="creator != null">and creator = #{creator}</if>
             <if test="clusterName != null">and cluster_name = #{clusterName}</if>
+            <if test="isValid != null">and is_valid = #{isValid}</if>
         </where>
     </select>
 

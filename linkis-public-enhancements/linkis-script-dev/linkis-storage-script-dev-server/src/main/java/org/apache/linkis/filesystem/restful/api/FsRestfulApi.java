@@ -411,21 +411,22 @@ public class FsRestfulApi {
     dirFileTree.setName(new File(path).getName());
     dirFileTree.setChildren(new ArrayList<>());
     Set<String> fileNameSet = new HashSet<>();
-    fileNameSet.add(dirFileTree.getName().trim());
+    fileNameSet.add(dirFileTree.getPath().trim());
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        if (fileNameSet.contains(dirFileTreeChildren.getName().trim())) {
-          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getName());
-          continue;
-        } else {
-          fileNameSet.add(dirFileTreeChildren.getName().trim());
-        }
+
         dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
+        if (fileNameSet.contains(dirFileTreeChildren.getPath().trim())) {
+          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getPath());
+          continue;
+        } else {
+          fileNameSet.add(dirFileTreeChildren.getPath().trim());
+        }
         if (!children.isdir()) {
           dirFileTreeChildren.setIsLeaf(true);
           dirFileTreeChildren.getProperties().put("size", String.valueOf(children.getLength()));

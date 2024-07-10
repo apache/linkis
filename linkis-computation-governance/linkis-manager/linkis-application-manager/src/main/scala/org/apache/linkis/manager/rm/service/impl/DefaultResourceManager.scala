@@ -696,10 +696,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                 if (label.isInstanceOf[EMInstanceLabel]) timeCheck(labelResource, usedResource)
                 if (
                     null != usedResource.getUsedResource && usedResource.getUsedResource > Resource
-                      .initResource(
-                        usedResource.getResourceType
-                      ) && labelResource.getUsedResource > Resource
-                      .initResource(labelResource.getResourceType)
+                      .initResource(usedResource.getResourceType)
                 ) {
                   labelResource.setUsedResource(
                     labelResource.getUsedResource - usedResource.getUsedResource

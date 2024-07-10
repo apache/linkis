@@ -211,6 +211,13 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       labels.filter(label => !LabelManagerConf.LONG_LIVED_LABEL.contains(label.getLabelKey))
     }
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId).asJava)
+
+    // remove taskId label
+    labels.foreach(label => {
+      if (LabelManagerConf.TMP_LIVED_LABEL.contains(label.getLabelKey)) {
+        labelManagerPersistence.removeLabel(label)
+      }
+    })
   }
 
   /**

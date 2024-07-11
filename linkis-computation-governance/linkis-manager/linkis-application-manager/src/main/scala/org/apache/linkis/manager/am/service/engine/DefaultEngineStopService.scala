@@ -290,10 +290,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       if (StringUtils.isEmpty(engineType) && creator.equals("*")) {
         engineNodes
           .filter(_.getOwner.equals(userName))
-          .foreach(node => {
-            engineInfoService
-              .updateEngineHealthyStatus(node.getServiceInstance, NodeHealthy.UnHealthy)
-          })
+          .foreach(dealEngineByEngineNode(_, userName))
       }
       // kill EMnode by user creator
       if (StringUtils.isNotBlank(engineType) && !creator.equals("*")) {
@@ -313,20 +310,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
             }
             filterResult
           })
-          .foreach(node => {
-            if (
-                NodeStatus.Unlock.equals(node.getNodeStatus) && AMConfiguration
-                  .isAllowKilledEngineType(LabelUtil.getEngineType(node.getLabels))
-            ) {
-              // stop engine
-              val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, userName)
-              stopEngine(stopEngineRequest, Sender.getSender(Sender.getThisServiceInstance))
-            } else {
-              // set unhealthy
-              engineInfoService
-                .updateEngineHealthyStatus(node.getServiceInstance, NodeHealthy.UnHealthy)
-            }
-          })
+          .foreach(dealEngineByEngineNode(_, userName))
       }
     })
   }
@@ -340,6 +324,21 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     val emNode = new AMEMNode
     emNode.setServiceInstance(ecmInstanceService)
     engineInfoService.listEMEngines(emNode).asScala
+  }
+
+  private def dealEngineByEngineNode(node: EngineNode, userName: String): Unit = {
+    if (
+        NodeStatus.Unlock.equals(node.getNodeStatus) && AMConfiguration
+          .isAllowKilledEngineType(LabelUtil.getEngineType(node.getLabels))
+    ) {
+      // stop engine
+      val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, userName)
+      stopEngine(stopEngineRequest, Sender.getSender(Sender.getThisServiceInstance))
+    } else {
+      // set unhealthy
+      engineInfoService
+        .updateEngineHealthyStatus(node.getServiceInstance, NodeHealthy.UnHealthy)
+    }
   }
 
 }

@@ -54,8 +54,6 @@
                 <exclude>com.google.protobuf:protobuf-java:jar</exclude>
                 <exclude>com.netflix.*:*:jar</exclude>
                 <exclude>com.ning:async-http-client:jar</exclude>
-                <exclude>com.sun.jersey.*:*:jar</exclude>
-                <exclude>com.sun.jersey:*:jar</exclude>
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
                 <exclude>com.thoughtworks.paranamer:paranamer:jar</exclude>
                 <exclude>com.thoughtworks.xstream:xstream:jar</exclude>
@@ -112,8 +110,6 @@
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
                 <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
                 <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
-                <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
-                <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
                 <exclude>org.codehaus.woodstox:stax2-api:jar</exclude>
                 <exclude>org.codehaus.woodstox:woodstox-core-asl:jar</exclude>

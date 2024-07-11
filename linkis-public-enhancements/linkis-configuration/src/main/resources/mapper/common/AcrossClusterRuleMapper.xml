@@ -62,6 +62,7 @@
             <if test="clusterName != null">and cluster_name = #{clusterName}</if>
             <if test="isValid != null">and is_valid = #{isValid}</if>
         </where>
+        ORDER BY create_time DESC
     </select>
 
 

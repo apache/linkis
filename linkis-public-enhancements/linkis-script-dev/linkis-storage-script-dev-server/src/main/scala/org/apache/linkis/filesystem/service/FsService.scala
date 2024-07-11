@@ -129,7 +129,7 @@ class FsService extends Logging {
     if (!fsPath.getFsType.equals(StorageUtils.FILE)) {
       // only hdfs change
       var fs = getFileSystem(user, fsPath)
-      if (WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue) {
+      if (WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue && fs.exists(fsPath)) {
         if (fs.canRead(fsPath, user)) {
           fs = getFileSystem(StorageUtils.getJvmUser, fsPath)
         } else {

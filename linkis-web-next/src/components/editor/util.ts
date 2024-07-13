@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import monaco from './monaco-loader';
 
-export const useMonaco = (language = 'json') => {
+export const useMonaco = (language: string) => {
     let monacoEditor: monaco.editor.IStandaloneCodeEditor | null = null;
-    let initReadOnly = false;
+    let initReadOnly = true;
     const updateVal = async (val: string) => {
         monacoEditor?.setValue(val);
         setTimeout(async () => {
@@ -45,7 +45,7 @@ export const useMonaco = (language = 'json') => {
             monaco.editor.create(el, {
                 language,
                 minimap: { enabled: false },
-                theme: 'vs-light',
+                theme: 'logview',
                 multiCursorModifier: 'ctrlCmd',
                 scrollbar: {
                     verticalScrollbarSize: 8,
@@ -53,6 +53,12 @@ export const useMonaco = (language = 'json') => {
                 },
                 tabSize: 2,
                 automaticLayout: true, // 自适应宽高
+                unicodeHighlight: {
+                    ambiguousCharacters: false
+                },
+                glyphMargin: false,
+                selectOnLineNumbers: false,
+                wordWrap: 'on',
                 ...editorOption,
             });
         return monacoEditor;

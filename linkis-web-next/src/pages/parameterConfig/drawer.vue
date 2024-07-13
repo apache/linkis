@@ -424,7 +424,7 @@ defineExpose({
 });
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .header {
     font-family: PingFangSC-Medium;
     font-size: 16px;

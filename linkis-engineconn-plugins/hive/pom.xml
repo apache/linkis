@@ -28,6 +28,7 @@
 
   <properties>
     <hive.version>2.3.3</hive.version>
+    <jackson.version>1.9.2</jackson.version>
   </properties>
 
   <dependencies>
@@ -319,6 +320,42 @@
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-apache-client4</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-core</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-xc</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
   </dependencies>

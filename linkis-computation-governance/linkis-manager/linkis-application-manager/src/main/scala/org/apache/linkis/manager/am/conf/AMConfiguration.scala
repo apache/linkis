@@ -93,6 +93,9 @@ object AMConfiguration {
   val ALLOW_BATCH_KILL_ENGINE_TYPES =
     CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python")
 
+  val UNALLOW_BATCH_KILL_ENGINE_TYPES =
+    CommonVars("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io")
+
   val MULTI_USER_ENGINE_USER =
     CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
 
@@ -165,6 +168,16 @@ object AMConfiguration {
   def isAllowKilledEngineType(engineType: String): Boolean = {
     val allowBatchKillEngine = AMConfiguration.ALLOW_BATCH_KILL_ENGINE_TYPES.getValue.split(",")
     val findResult = allowBatchKillEngine.find(_.equalsIgnoreCase(engineType))
+    if (findResult.isDefined) {
+      true
+    } else {
+      false
+    }
+  }
+
+  def isUnAllowKilledEngineType(engineType: String): Boolean = {
+    val unAllowBatchKillEngine = AMConfiguration.UNALLOW_BATCH_KILL_ENGINE_TYPES.getValue.split(",")
+    val findResult = unAllowBatchKillEngine.find(engineType.toLowerCase().contains(_))
     if (findResult.isDefined) {
       true
     } else {

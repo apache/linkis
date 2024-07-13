@@ -753,7 +753,7 @@ public class EngineRestfulApi {
       throws AMErrorException {
     String userName = ModuleUserUtils.getOperationUser(req);
     if (StorageUtils.getJvmUser().equals(userName)) {
-      return Message.error("JVM users do not support this feature (JVM 用户不支持此功能)");
+      return Message.error("hadoop users do not support this feature (hadoop 用户不支持此功能)");
     }
     JsonNode creator = jsonNode.get("creator");
     if (null == creator || StringUtils.isBlank(creator.textValue())) {
@@ -768,6 +768,10 @@ public class EngineRestfulApi {
     String engineType = "";
     if (null != jsonNode.get("engineType")) {
       engineType = jsonNode.get("engineType").textValue();
+    }
+    if (StringUtils.isNotBlank(engineType)
+        && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
+      return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
     }
     engineStopService.stopUnlockEngineBySaveConf(userName, creatorStr, engineType);
     return Message.ok("Kill engineConn succeed");

@@ -86,7 +86,7 @@ const cardList = [
 ];
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .list-wrapper {
     height: 592px;
 }

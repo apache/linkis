@@ -250,7 +250,7 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style scoped lang="less">
 @import '../../../style/variable.less';
 
 .login {

@@ -100,7 +100,7 @@ defineExpose({
 });
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .wrapper {
     height: 100%;
     .line {

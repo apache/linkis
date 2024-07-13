@@ -131,7 +131,7 @@ const options = {
 </script>
 
 <style src="./index.less" scoped></style>
-<style scoped>
+<style scoped lang="less">
 :deep(.fes-card__header) {
     background: #f7f7f8;
 }

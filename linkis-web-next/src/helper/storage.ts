@@ -67,7 +67,7 @@ const docCookies = {
     setItem: function (
         sKey: string,
         sValue: string,
-        vEnd?: boolean,
+        vEnd?: number | string | Date | boolean,
         sPath?: string,
         sDomain?: string,
         bSecure?: string,
@@ -88,7 +88,7 @@ const docCookies = {
                     sExpires = '; expires=' + vEnd;
                     break;
                 case Date:
-                    sExpires = '; expires=' + vEnd.toUTCString();
+                    sExpires = '; expires=' + (vEnd as Date).toUTCString();
                     break;
             }
         }
@@ -162,7 +162,7 @@ export const storageManager = {
 };
 
 export const cookieManager = {
-    set: function (key: string, value: string, expired: boolean) {
+    set: function (key: string, value: string, expired: number | string | Date | boolean) {
         if (expired) docCookies.setItem(key, value, expired);
         else docCookies.setItem(key, value);
     },

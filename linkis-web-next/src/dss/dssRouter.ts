@@ -16,25 +16,6 @@
  */
 
 export default [
-    // log view(日志查看)
-    {
-        path: '/log',
-        name: 'log',
-        meta: {
-            title: 'Log',
-            publicPage: true,
-        },
-        component: () => import('./view/logPage/index.vue'),
-    },
-    {
-        path: '/commonIframe',
-        name: 'commonIframe',
-        meta: {
-            title: 'DSS Component',
-            publicPage: true,
-        },
-        component: () => import('./view/commonIframe/index.vue'),
-    },
     {
         path: '/login',
         name: 'login',

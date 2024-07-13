@@ -15,57 +15,11 @@
  * limitations under the License.
  */
 
-import qs from 'qs';
-import md5 from 'md5';
 import objectUtil from './object';
 import typeUtil from './type';
 import convertUtil from './convert';
-// import currentModules from './currentModules';
 
 let util = {
-    executeCopy(textValue: string) {
-        const input = document.createElement('textarea');
-        document.body.appendChild(input);
-        input.value = textValue;
-        input.select();
-        document.execCommand('Copy');
-        input.remove();
-    },
-    md5,
-    /**
-     * Replace the parameter placeholders in the format of ${projectId} in the url with real parameters(替换url中 形如 ${projectId} 格式的参数占位符为真实参数)
-     * ! url should be an escaped link address that conforms to the URI specification. If the parameter is not defined in obj, the final address will lose the parameter(url应该是转义过的符合URI规范的链接地址，参数如未在obj定义则最终地址会丢失该参数)
-     */
-    replaceHolder(url: string, obj: Record<string, any>) {
-        obj = {
-            dssurl: location.origin,
-            cookies: document.cookie,
-            ...obj,
-        };
-        let dist = url.split('?');
-        let params = qs.parse(dist[1]);
-        const holderReg = /\$\{([^}]*)}/g;
-        let result: Record<string, any> = {};
-        dist[0] = dist[0].replace(holderReg, function (a: unknown, b: string) {
-            return obj[b];
-        });
-        if (dist[1]) {
-            for (let key in params) {
-                const resKey = key.replace(holderReg, function (a, b) {
-                    return obj[b];
-                });
-                result[resKey] = (params[key] as string)?.replace(
-                    holderReg,
-                    function (a: unknown, b: string) {
-                        return obj[b];
-                    },
-                );
-            }
-        }
-        const distUrl =
-            dist.length > 1 ? `${dist[0]}?${qs.stringify(result)}` : dist[0];
-        return distUrl;
-    },
     // How to open a new tab browser(打开新tab浏览器也方法)
     windowOpen(url: string) {
         const newTab = window.open('about:blank');
@@ -110,4 +64,3 @@ export default util as typeof util &
     typeof objectUtil &
     typeof typeUtil &
     typeof convertUtil;
-// typeof currentModules;

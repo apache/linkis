@@ -138,7 +138,6 @@ public abstract class AbstractEntranceParser extends EntranceParser {
     job.setEntranceContext(entranceContext);
     job.setListenerEventBus(null);
     job.setProgress(0f);
-    job.setJobRequest(jobReq);
     job.setCodeParser(new EmptyCodeParser());
     return job;
   }

@@ -241,6 +241,7 @@ The following file are provided under the Apache 2.0 License.
     linkis-engineconn-plugins/hbase/hbase-shims-1.4.3/src/main/resources/hbase-ruby/*
     linkis-engineconn-plugins/hbase/hbase-shims-2.2.6/src/main/resources/hbase-ruby/*
     linkis-engineconn-plugins/hbase/hbase-shims-2.5.3/src/main/resources/hbase-ruby/*
+    linkis-engineconn-plugins/spark/src/main/java/org/apache/linkis/engineplugin/spark/executor/SecureRandomStringUtils.java
 
 The files:
     .mvn/wrapper/MavenWrapperDownloader.java

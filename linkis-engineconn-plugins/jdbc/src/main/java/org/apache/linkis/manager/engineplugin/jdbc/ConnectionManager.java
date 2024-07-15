@@ -189,14 +189,12 @@ public class ConnectionManager {
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
 
     int connectionTimeout =
-        JDBCPropertiesParser.getInt(
-            properties, JDBCEngineConnConstant.JDBC_CONNECTION_TIMEOUT, 0);
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_CONNECTION_TIMEOUT, 0);
     int socketTimeout =
-            JDBCPropertiesParser.getInt(
-                    properties, JDBCEngineConnConstant.JDBC_SOCKET_TIMEOUT, 0);
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_SOCKET_TIMEOUT, 0);
     int queryTimeout =
-            JDBCPropertiesParser.getInt(
-                    properties, JDBCConfiguration$.MODULE$.JDBC_QUERY_TIMEOUT().key(), 0);
+        JDBCPropertiesParser.getInt(
+            properties, JDBCConfiguration$.MODULE$.JDBC_QUERY_TIMEOUT().key(), 0);
 
     DruidDataSource datasource = new DruidDataSource();
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);

@@ -456,6 +456,11 @@
       <version>${hadoop.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.sun.jersey.contribs</groupId>
+      <artifactId>jersey-apache-client4</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

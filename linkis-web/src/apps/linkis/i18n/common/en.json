@@ -36,6 +36,7 @@
       "tip": "Tip",
       "serverTip": "No Results（resultLocation:null）",
       "log": "Task Log",
+      "executionCode": "Execution Code",
       "detail": "Task Detail",
       "result": "Task Result",
       "engineLog": "Engine Log",
@@ -74,6 +75,7 @@
       "create": "Create",
       "noDataText": "No data yet",
       "jobId": "JobID",
+      "remarkPlaceholder": "Please provide a description for adding or modifying labels, otherwise the labels will be cleaned up",
       "engineInstance": {
         "label": "ECM",
         "placeholder": "Please input ECM"
@@ -355,7 +357,9 @@
         "show": "Show",
         "advancedSetting": "Advanced Settings",
         "dataDev": "Data Development",
-        "maxLimit": "(The resource template specifies an upper limit value of {limit})"
+        "maxLimit": "(The resource template specifies an upper limit value of {limit})",
+        "killEngine": "Should the existing engine be marked as non-reusable?",
+        "killEngineTitle": "Mark the engine as non-reusable"
       },
       "globalValiable": "Global Variables",
       "rules": {

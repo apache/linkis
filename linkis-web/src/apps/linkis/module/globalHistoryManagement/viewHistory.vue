@@ -19,6 +19,7 @@
   <div class="global-history">
     <Tabs @on-click="onClickTabs">
       <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
+      <TabPane name="code" :label="$t('message.linkis.executionCode')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
       <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
@@ -28,7 +29,8 @@
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
 
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
-    <log ref="logRef" v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" />
+    <log ref="logRef" key="log" v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" />
+    <log ref="codeRef" key="code" v-if="tabName === 'code'" :logs="codes" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" status="code" />
     <result
       v-if="tabName === 'result'"
       class="result-class"
@@ -99,6 +101,7 @@ export default {
         warning: '',
         info: ''
       },
+      codes: { code: '' },
       engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
@@ -170,6 +173,9 @@ export default {
           })
         }
 
+      } else if(name === 'code') {
+        window.console.log('click code')
+        
       } else {
         this.$nextTick(() => {
           this.$refs.logRef.fold();
@@ -371,9 +377,11 @@ export default {
       try {
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
+        const executionCode = option.executionCode;
         this.jobhistoryTask = option
         this.script.runType = option.runType
         this.yarnAddress = option.yarnAddress
+        this.codes = { code: executionCode }
         if (!jobhistory.task.logPath) {
           const errCode = jobhistory.task.errCode
             ? `\n${this.$t('message.linkis.errorCode')}：${

@@ -36,6 +36,7 @@
           "serverTip": "无结果集（resultLocation:null）",
           "stopEngineTip": "请问确认要停止当前引擎？",
           "log": "任务日志",
+          "executionCode": "执行代码",
           "detail": "任务详情",
           "result": "任务结果",
           "engineLog": "引擎日志",
@@ -65,6 +66,7 @@
           "showOperations": "显示操作",
           "hide": "隐藏操作",
           "resetAll": "全部重置",
+          "remarkPlaceholder": "添加或修改标签请给描述信息，否则标签会被清理",
           "remove": "移除",
           "submit": "确定",
           "search": "搜索",
@@ -331,7 +333,9 @@
               "show": "显示",
               "advancedSetting": "高级设置",
               "dataDev": "数据开发",
-              "maxLimit": "(资源模板指定上限值为{limit})"
+              "maxLimit": "(资源模板指定上限值为{limit})",
+              "killEngine": "是否将现有的引擎标记为不可复用?",
+              "killEngineTitle": "标记引擎为不可复用"
           },
           "globalValiable": "全局变量",
           "rules": {

@@ -752,19 +752,16 @@ public class EngineRestfulApi {
   public Message killEngineByUpdateConfig(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws AMErrorException {
     String userName = ModuleUserUtils.getOperationUser(req);
-    if (StorageUtils.getJvmUser().equals(userName)) {
-      return Message.error("hadoop users do not support this feature (hadoop 用户不支持此功能)");
+    String jvmUser = StorageUtils.getJvmUser();
+    if (jvmUser.equals(userName)) {
+      return Message.error(
+          jvmUser + " users do not support this feature (" + jvmUser + " 用户不支持此功能)");
     }
     JsonNode creator = jsonNode.get("creator");
     if (null == creator || StringUtils.isBlank(creator.textValue())) {
       return Message.error("instance is null in the parameters of the request(请求参数中【creator】为空)");
     }
-    String creatorStr = creator.textValue();
-    if (creatorStr.equals(Configuration.GLOBAL_CONF_CHN_NAME())
-        || creatorStr.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
-        || creatorStr.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME())) {
-      creatorStr = "*";
-    }
+    String creatorStr = Configuration.getGlobalCreator(creator.textValue());
     String engineType = "";
     if (null != jsonNode.get("engineType")) {
       engineType = jsonNode.get("engineType").textValue();
@@ -773,7 +770,7 @@ public class EngineRestfulApi {
         && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
       return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
     }
-    engineStopService.stopUnlockEngineBySaveConf(userName, creatorStr, engineType);
+    engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
     return Message.ok("Kill engineConn succeed");
   }
 

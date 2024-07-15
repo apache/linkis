@@ -52,26 +52,27 @@ public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   @Override
   public Mono<Response<ServiceInstance>> choose(Request request) {
+    RequestData clientRequest = ((RequestDataContext) request.getContext()).getClientRequest();
     List<String> clientIpList =
-        ((RequestDataContext) request.getContext())
-            .getClientRequest()
-            .getHeaders()
-            .get(SpringCloudGatewayConstant.FIXED_INSTANCE);
+        clientRequest.getHeaders().get(SpringCloudGatewayConstant.FIXED_INSTANCE);
     String clientIp = CollectionUtils.isNotEmpty(clientIpList) ? clientIpList.get(0) : null;
     ServiceInstanceListSupplier supplier =
         serviceInstanceListSupplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new);
     return supplier
         .get(request)
         .next()
-        .map(serviceInstances -> processInstanceResponse(supplier, serviceInstances, clientIp));
+        .map(
+            serviceInstances ->
+                processInstanceResponse(supplier, serviceInstances, clientIp, clientRequest));
   }
 
   private Response<ServiceInstance> processInstanceResponse(
       ServiceInstanceListSupplier supplier,
       List<ServiceInstance> serviceInstances,
-      String clientIp) {
+      String clientIp,
+      RequestData request) {
     Response<ServiceInstance> serviceInstanceResponse =
-        getInstanceResponse(serviceInstances, clientIp);
+        getInstanceResponse(serviceInstances, clientIp, request);
     if (supplier instanceof SelectedInstanceCallback && serviceInstanceResponse.hasServer()) {
       ((SelectedInstanceCallback) supplier)
           .selectedServiceInstance(serviceInstanceResponse.getServer());
@@ -80,7 +81,7 @@ public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalance
   }
 
   private Response<ServiceInstance> getInstanceResponse(
-      List<ServiceInstance> instances, String clientIp) {
+      List<ServiceInstance> instances, String clientIp, RequestData request) {
     if (instances.isEmpty()) {
       logger.warn("No servers available for service: " + serviceId);
       return new EmptyResponse();
@@ -94,10 +95,10 @@ public class IpPriorityLoadBalancer implements ReactorServiceInstanceLoadBalance
       return new DefaultResponse(
           instances.get(ThreadLocalRandom.current().nextInt(instances.size())));
     }
-    ServiceInstance chooseInstance = null;
     for (ServiceInstance instance : instances) {
       if (Objects.equals(ipAndPort[0], instance.getHost())
           && Objects.equals(ipAndPort[1], String.valueOf(instance.getPort()))) {
+        logger.info("Request {} fixed route to instance {}", request.getUrl(), instance);
         return new DefaultResponse(instance);
       }
     }

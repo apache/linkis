@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
@@ -25,8 +26,15 @@ import org.apache.linkis.manager.am.service.em.EMInfoService
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EngineNode}
-import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource}
-import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
+import org.apache.linkis.manager.common.entity.resource.{
+  DriverAndYarnResource,
+  LoadInstanceResource
+}
+import org.apache.linkis.manager.common.protocol.engine.{
+  EngineConnReleaseRequest,
+  EngineStopRequest,
+  EngineSuicideRequest
+}
 import org.apache.linkis.manager.dao.NodeMetricManagerMapper
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
@@ -37,16 +45,19 @@ import org.apache.linkis.manager.rm.service.impl.DefaultResourceManager
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.concurrent.{ExecutionContextExecutorService, Future}
+
 import com.fasterxml.jackson.core.JsonProcessingException
-import org.apache.linkis.common.conf.Configuration
 
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {

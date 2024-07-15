@@ -126,7 +126,11 @@ class FsService extends Logging {
   }
 
   def getFileSystemForRead(user: String, fsPath: FsPath): FileSystem = {
-    if (WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue && fsPath.getFsType.equals(StorageUtils.FILE)) {
+    if (
+        WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue && fsPath.getFsType.equals(
+          StorageUtils.FILE
+        )
+    ) {
       // only hdfs change
       val fs = getFileSystem(StorageUtils.getJvmUser, fsPath)
       if (fs.exists(fsPath)) {

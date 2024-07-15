@@ -143,7 +143,7 @@ public class TemplateRestfulApi {
         operator,
         itemParms.asText());
 
-    if ("*".equals(engineType)) {
+    if (org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_SYMBOL().equals(engineType)) {
       engineType = "";
     }
     templateConfigKeyService.updateKeyMapping(

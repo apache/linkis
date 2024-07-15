@@ -123,7 +123,11 @@ object TemplateConfUtils extends Logging {
    * @return
    *   String the last one of template conf name
    */
-  def getCustomTemplateConfName(jobRequest: JobRequest, codeType: String, logAppender: lang.StringBuilder): String = {
+  def getCustomTemplateConfName(
+      jobRequest: JobRequest,
+      codeType: String,
+      logAppender: lang.StringBuilder
+  ): String = {
     var code = jobRequest.getExecutionCode
     var templateConfName = "";
 
@@ -191,7 +195,9 @@ object TemplateConfUtils extends Logging {
             logger.info(
               s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
             )
-            logAppender.append(s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}")
+            logAppender.append(
+              s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
+            )
           } else {
             logger.info(s"The task ${jobRequest.getId} not set fixed engine conn")
           }

@@ -357,7 +357,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       throw new ConfigurationException(msg);
     }
     // support global template
-    configKeyEngineTypeSet.add("*");
+    configKeyEngineTypeSet.add(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_SYMBOL());
     if (!configKeyEngineTypeSet.contains(engineType)) {
       String msg =
           MessageFormat.format(

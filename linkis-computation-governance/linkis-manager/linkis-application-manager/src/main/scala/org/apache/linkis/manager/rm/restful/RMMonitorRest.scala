@@ -565,7 +565,7 @@ class RMMonitorRest extends Logging {
     "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
   }
 
-  private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
+  def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
     val serviceInstancelist = nodeManagerPersistence
       .getNodes(user)
       .map(_.getServiceInstance)

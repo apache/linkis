@@ -127,7 +127,7 @@ class FsService extends Logging {
 
   def getFileSystemForRead(user: String, fsPath: FsPath): FileSystem = {
     if (
-        WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue && fsPath.getFsType.equals(
+        WorkSpaceConfiguration.FILESYSTEM_JVM_USER_SWITCH.getValue && !fsPath.getFsType.equals(
           StorageUtils.FILE
         )
     ) {

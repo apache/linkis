@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.label.service
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance
+import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.label.entity.Label
 
 import java.util
@@ -89,5 +89,10 @@ trait NodeLabelService {
   def getNodeLabelsByInstanceList(
       instanceList: util.List[ServiceInstance]
   ): util.HashMap[String, util.List[Label[_]]]
+
+  def getEngineNodesWithResourceByUser(
+      user: String,
+      withResource: Boolean = false
+  ): Array[EngineNode]
 
 }

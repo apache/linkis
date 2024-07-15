@@ -83,9 +83,6 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   @Autowired
   private var emInfoService: EMInfoService = _
 
-  @Autowired
-  private var rmMonitorRest: RMMonitorRest = _
-
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
       AMConfiguration.ASYNC_STOP_ENGINE_MAX_THREAD_SIZE,
@@ -288,11 +285,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       engineType: String
   ): Unit = {
     // get all engineNodes list
-    val engineNodes = rmMonitorRest.getEngineNodes(userName)
+    val engineNodes = nodeLabelService.getEngineNodesWithResourceByUser(userName)
     if (StringUtils.isEmpty(engineType) && creator.equals(Configuration.GLOBAL_CONF_SYMBOL)) {
-      Future {
-        dealEngineByEngineNode(engineNodes.toList, userName)
-      }
+      dealEngineByEngineNode(engineNodes.toList, userName)
     }
     // kill EMnode by user creator
     if (StringUtils.isNotBlank(engineType) && !creator.equals(Configuration.GLOBAL_CONF_SYMBOL)) {
@@ -313,9 +308,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
           filterResult
         })
         .toList
-      Future {
-        dealEngineByEngineNode(filterEngineNode, userName)
-      }
+      dealEngineByEngineNode(filterEngineNode, userName)
     }
   }
 

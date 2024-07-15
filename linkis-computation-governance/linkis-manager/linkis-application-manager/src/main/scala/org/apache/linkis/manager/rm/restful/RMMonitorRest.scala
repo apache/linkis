@@ -151,7 +151,7 @@ class RMMonitorRest extends Logging {
       else param.get("userCreator").asInstanceOf[String]
     val engineType =
       if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
-    val nodes = getEngineNodes(userName, true)
+    val nodes = nodeLabelService.getEngineNodesWithResourceByUser(userName, true)
 
     val creatorToApplicationList = getCreatorToApplicationList(userCreator, engineType, nodes)
 
@@ -293,7 +293,7 @@ class RMMonitorRest extends Logging {
   ): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "get userresources")
-    var nodes = getEngineNodes(userName, true)
+    var nodes = nodeLabelService.getEngineNodesWithResourceByUser(userName, true)
     if (nodes == null) {
       nodes = new Array[EngineNode](0)
     } else {
@@ -322,7 +322,7 @@ class RMMonitorRest extends Logging {
   ): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "get engines")
-    val nodes = getEngineNodes(userName, true)
+    val nodes = nodeLabelService.getEngineNodesWithResourceByUser(userName, true)
     if (nodes == null || nodes.isEmpty) return message
     val engines = ArrayBuffer[mutable.HashMap[String, Any]]()
     nodes.foreach { node =>
@@ -557,88 +557,6 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "queues", clusters)
   }
 
-  private def getUserCreator(userCreatorLabel: UserCreatorLabel): String = {
-    "(" + userCreatorLabel.getUser + "," + userCreatorLabel.getCreator + ")"
-  }
-
-  private def getEngineType(engineTypeLabel: EngineTypeLabel): String = {
-    "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
-  }
-
-  def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
-    val serviceInstancelist = nodeManagerPersistence
-      .getNodes(user)
-      .map(_.getServiceInstance)
-      .asJava
-    val nodes = nodeManagerPersistence.getEngineNodeByServiceInstance(serviceInstancelist)
-    val metrics = nodeMetricManagerPersistence
-      .getNodeMetrics(nodes)
-      .asScala
-      .map(m => (m.getServiceInstance.toString, m))
-      .toMap
-    val configurationMap = new mutable.HashMap[String, Resource]
-    val labelsMap =
-      nodeLabelService.getNodeLabelsByInstanceList(nodes.map(_.getServiceInstance).asJava)
-    nodes.asScala
-      .map { node =>
-//        node.setLabels(nodeLabelService.getNodeLabels(node.getServiceInstance))
-        node.setLabels(labelsMap.get(node.getServiceInstance.toString))
-        if (!node.getLabels.asScala.exists(_.isInstanceOf[UserCreatorLabel])) {
-          null
-        } else {
-          metrics
-            .get(node.getServiceInstance.toString)
-            .foreach(metricsConverter.fillMetricsToNode(node, _))
-          if (withResource) {
-            val userCreatorLabelOption =
-              node.getLabels.asScala.find(_.isInstanceOf[UserCreatorLabel])
-            val engineTypeLabelOption =
-              node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel])
-            val engineInstanceOption =
-              node.getLabels.asScala.find(_.isInstanceOf[EngineInstanceLabel])
-            if (
-                userCreatorLabelOption.isDefined && engineTypeLabelOption.isDefined && engineInstanceOption.isDefined
-            ) {
-              val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
-              val engineTypeLabel = engineTypeLabelOption.get.asInstanceOf[EngineTypeLabel]
-              val engineInstanceLabel = engineInstanceOption.get.asInstanceOf[EngineInstanceLabel]
-              engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
-              engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
-              val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
-              val configurationKey =
-                getUserCreator(userCreatorLabel) + getEngineType(engineTypeLabel)
-              val configuredResource = configurationMap.get(configurationKey) match {
-                case Some(resource) => resource
-                case None =>
-                  if (nodeResource != null) {
-                    val resource = UserConfiguration.getUserConfiguredResource(
-                      nodeResource.getResourceType,
-                      userCreatorLabel,
-                      engineTypeLabel
-                    )
-                    configurationMap.put(configurationKey, resource)
-                    resource
-                  } else null
-              }
-              if (nodeResource != null) {
-                nodeResource.setMaxResource(configuredResource)
-                if (null == nodeResource.getUsedResource) {
-                  nodeResource.setUsedResource(nodeResource.getLockedResource)
-                }
-                if (null == nodeResource.getMinResource) {
-                  nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
-                }
-                node.setNodeResource(nodeResource)
-              }
-            }
-          }
-          node
-        }
-      }
-      .filter(_ != null)
-      .toArray
-  }
-
   private def getEngineNodesByUserList(
       userList: List[String],
       withResource: Boolean = false
@@ -770,13 +688,13 @@ class RMMonitorRest extends Logging {
         .find(_.isInstanceOf[EngineTypeLabel])
         .get
         .asInstanceOf[EngineTypeLabel]
-      val userCreator = getUserCreator(userCreatorLabel)
+      val userCreator = RMUtils.getUserCreator(userCreatorLabel)
 
       if (!userCreatorEngineTypeResourceMap.contains(userCreator)) {
         userCreatorEngineTypeResourceMap.put(userCreator, new mutable.HashMap[String, NodeResource])
       }
       val engineTypeResourceMap = userCreatorEngineTypeResourceMap.get(userCreator).get
-      val engineType = getEngineType(engineTypeLabel)
+      val engineType = RMUtils.getEngineType(engineTypeLabel)
       if (!engineTypeResourceMap.contains(engineType)) {
         val nodeResource = CommonNodeResource.initNodeResource(ResourceType.LoadInstance)
         engineTypeResourceMap.put(engineType, nodeResource)
@@ -821,8 +739,8 @@ class RMMonitorRest extends Logging {
         .find(_.isInstanceOf[EngineTypeLabel])
         .get
         .asInstanceOf[EngineTypeLabel]
-      if (getUserCreator(userCreatorLabel).equals(userCreator)) {
-        if (engineType == null || getEngineType(engineTypeLabel).equals(engineType)) {
+      if (RMUtils.getUserCreator(userCreatorLabel).equals(userCreator)) {
+        if (engineType == null || RMUtils.getEngineType(engineTypeLabel).equals(engineType)) {
           if (!creatorToApplicationList.containsKey(userCreatorLabel.getCreator)) {
             val applicationList = new util.HashMap[String, Any]
             applicationList.put("engineInstances", new util.ArrayList[Any])

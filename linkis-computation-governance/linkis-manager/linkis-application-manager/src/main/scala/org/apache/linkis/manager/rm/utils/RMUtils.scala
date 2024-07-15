@@ -344,56 +344,12 @@ object RMUtils extends Logging {
     resourceMap
   }
 
-  def dealYarnData(
-      providedYarnResource: NodeResource,
-      linkisYarnResources: util.HashMap[String, util.HashMap[String, Any]]
-  ): util.HashMap[String, Any] = {
-    val yarnResource = new util.HashMap[String, Any]
-    val realYarnMap = new util.HashMap[String, Any]
-    // deal real yarn data
-    val realMaxResource = providedYarnResource.getMaxResource.asInstanceOf[YarnResource]
-    val realMaxResourceMap = new util.HashMap[String, Any]
-    realMaxResourceMap.put(
-      "queueMemory",
-      ByteTimeUtils.negativeByteStringAsGb(realMaxResource.queueMemory + "b") + "G"
-    )
-    realMaxResourceMap.put("queueCpu", realMaxResource.queueCores)
-    realMaxResourceMap.put("instance", realMaxResource.queueInstances)
-
-    val realUsedResource = providedYarnResource.getUsedResource.asInstanceOf[YarnResource]
-    val realUsedResourceMap = new util.HashMap[String, Any]
-    realUsedResourceMap.put(
-      "queueMemory",
-      ByteTimeUtils.negativeByteStringAsGb(realUsedResource.queueMemory + "b") + "G"
-    )
-    realUsedResourceMap.put("queueCpu", realUsedResource.queueCores)
-    realUsedResourceMap.put("instance", realUsedResource.queueInstances)
-
-    realYarnMap.put("queueName", realMaxResource.queueName)
-    realYarnMap.put("maxResource", realMaxResourceMap)
-    realYarnMap.put("usedResource", realUsedResourceMap)
-
-    yarnResource.put("real", realYarnMap)
-    yarnResource.put("limit", linkisYarnResources)
-    yarnResource
+  def getUserCreator(userCreatorLabel: UserCreatorLabel): String = {
+    "(" + userCreatorLabel.getUser + "," + userCreatorLabel.getCreator + ")"
   }
 
-  def dealEcmData(emList: util.List[EMNodeVo]): util.HashMap[String, Any] = {
-    val ecmDataMap = new util.HashMap[String, Any]
-    val emNodeList = new util.ArrayList[util.HashMap[String, Any]]
-    emList.asScala.foreach(emNode => {
-      val emNodeMap = new util.HashMap[String, Any]
-      emNodeMap.put("instance", emNode.getInstance())
-      emNodeMap.put("maxResource", emNode.getMaxResource())
-      emNodeMap.put("usedResource", emNode.getUsedResource())
-      emNodeMap.put("lockedResource", emNode.getLockedResource())
-      emNodeMap.put("leftResource", emNode.getLeftResource())
-      emNodeMap.put("nodeHealthy", emNode.getNodeHealthy())
-      emNodeMap.put("startTime", emNode.getStartTime())
-      emNodeList.add(emNodeMap)
-    })
-    ecmDataMap.put("list", emNodeList)
-    ecmDataMap
+  def getEngineType(engineTypeLabel: EngineTypeLabel): String = {
+    "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
   }
 
 }

@@ -146,7 +146,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     try {
       statement = connection.createStatement()
-      statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
+      if (statement.getQueryTimeout == 0) {
+        statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
+      }
       statement.setFetchSize(outputPrintLimit)
       statement.setMaxRows(outputPrintLimit)
 

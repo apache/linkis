@@ -308,7 +308,7 @@ export default {
       return true
     },
     isAll() {
-      return ['hql', 'sql'].includes(this.script.runType) || this.download.format === '1';
+      return ['hql', 'sql', 'tsql'].includes(this.script.runType) || this.download.format === '1';
     },
     isExcel() {
       return this.download.format === '2';

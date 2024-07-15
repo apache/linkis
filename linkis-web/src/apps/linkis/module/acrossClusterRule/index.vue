@@ -22,37 +22,44 @@
       size="large"
       fix/>
     <Row class="search-bar">
-      <Col span="6" class="search-item">
+      
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.userName')" class="search-label">{{$t('message.linkis.ipListManagement.userName')}}</span>
         <Input
           v-model="queryData.username"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputUser')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.appName')" class="search-label">{{$t('message.linkis.ipListManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputApp')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.cluster')" class="search-label">{{$t('message.linkis.ipListManagement.cluster')}}</span>
         <Input
           v-model="queryData.clusterName"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputCluster')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6">
+      <Col span="5" class="search-item">
+        <span :title="$t('message.linkis.ipListManagement.isValid')" class="search-label">{{$t('message.linkis.ipListManagement.isValid')}}</span>
+        <Select v-model="queryData.isValid" filterable clearable style="width: calc(100% - 105px);">
+          <Option v-for="item in validOptions" :value="item.value" :key="item.value" :label="item.label"/>
+        </Select>
+      </Col>
+      <Col span="4">
         <Button :disabled="isBatch" type="primary" class="button" @click="search">{{
           $t('message.linkis.ipListManagement.search')
         }}</Button>
@@ -192,11 +199,13 @@ export default {
       loading: false,
       queryData: {
         username: '',
-        creator: ''
+        creator: '',
+        isValid: '',
       },
       confirmQuery: {
         username: '',
         creator: '',
+        isValid: '',
       },
       tableColumns: [
         // {
@@ -444,6 +453,7 @@ export default {
       errorJson: false,
       batchList: [],
       completeModifyInfo: false,
+      validOptions: [{label: this.$t('message.linkis.yes'), value: 'Y'}, {label: this.$t('message.linkis.no'), value: 'N'}],
     }
   },
   computed: {
@@ -526,6 +536,7 @@ export default {
         username: '',
         creator: '',
         clusterName: '',
+        isValid: '',
       };
       this.confirmQuery = {
         username: '',
@@ -854,8 +865,8 @@ export default {
       await this.getTableData();
     },
     async search() {
-      const { username, creator, clusterName } = this.queryData;
-      this.confirmQuery = { username, creator, clusterName };
+      const { username, creator, clusterName, isValid } = this.queryData;
+      this.confirmQuery = { username, creator, clusterName, isValid };
       this.page.pageNow = 1;
       await this.getTableData()
     },

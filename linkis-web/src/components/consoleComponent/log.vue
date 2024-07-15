@@ -42,6 +42,11 @@
             v-if="logs.info !== undefined"
             name="info"
             label="Info"/>
+          <TabPane
+            v-if="logs.code !== undefined"
+            name="code"
+            label="Code"
+          />
         </Tabs>
         <Input
           v-model="searchText"
@@ -129,7 +134,7 @@ export default {
       if (this.$refs.logEditor.editor) {
         this.$refs.logEditor.editor.revealLine(val);
       }
-    }
+    },
   },
   computed: {
     height() {
@@ -138,6 +143,9 @@ export default {
   },
   mounted() {
     elementResizeEvent.bind(this.$el, this.resize);
+    if(this.status === 'code') {
+      this.curPage = 'code'
+    }
   },
   beforeDestroy() {
     elementResizeEvent.unbind(this.$el);

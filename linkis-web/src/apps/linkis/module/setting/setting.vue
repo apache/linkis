@@ -411,6 +411,20 @@ export default {
           this.getAppVariable(this.activeMenu);
           this.unValidMsg = {};
           this.$Message.success(this.$t("message.linkis.save"));
+          this.$Modal.confirm({
+            title: this.$t('message.linkis.setting.killEngineTitle'),
+            content: this.$t('message.linkis.setting.killEngine'),
+            onOk: async () => {
+              try {
+                api.fetch("/linkisManager/rm/killEngineByUpdateConfig", {
+                  creator: this.currentTabName,
+                  engineType: this.subCategory[this.currentTabName] ? this.subCategory[this.currentTabName].categoryName : null
+                })
+              } catch (err) {
+                window.console.warn(err)
+              }
+            }
+          })
         })
         .catch((err) => {
           this.loading = false;

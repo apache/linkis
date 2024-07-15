@@ -83,7 +83,7 @@
           </Select>
         </FormItem>
         <FormItem :label="`${$t('message.linkis.remark')}：`">
-          <Input v-model="formItem.description" />
+          <Input v-model="formItem.description" :placeholder="$t('message.linkis.remarkPlaceholder')" />
         </FormItem>
       </Form>
     </Modal>

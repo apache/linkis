@@ -141,7 +141,13 @@ object JDBCMultiDatasourceParser extends Logging {
         JDBC_PORT_NOT_NULL.getErrorDesc
       )
     }
-    var jdbcUrl = s"jdbc:$dbType://$host:$port"
+
+    var jdbcUrl: String = if (dbType == "doris") {
+      s"jdbc:mysql://$host:$port"
+    } else {
+      s"jdbc:$dbType://$host:$port"
+    }
+
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
     if (strObjIsNotBlank(dbName)) {
       jdbcUrl = s"$jdbcUrl/$dbName"

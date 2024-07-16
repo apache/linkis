@@ -42,43 +42,42 @@ if [ "$LINKIS_CONF_DIR" = "" ]; then
   export LINKIS_CONF_DIR=$LINKIS_HOME/conf
 fi
 source $LINKIS_CONF_DIR/linkis-env.sh
-
+source $LINKIS_CONF_DIR/linkis-distribution-env.sh
 
 function startApp(){
 echo "<-------------------------------->"
 echo "Begin to start $SERVER_NAME"
 SERVER_START_CMD="sh $LINKIS_HOME/sbin/linkis-daemon.sh restart $SERVER_NAME"
-if test -z "$SERVER_IP"
-then
-  SERVER_IP=$local_host
-fi
-
-executeCMD $SERVER_IP "$SERVER_START_CMD"
+ip_arr=(`echo $SERVER_IP | tr ',' ' '`)
+for current_ip in ${ip_arr[*]}
+do
+echo "[$current_ip]"
+executeCMD $current_ip "$SERVER_START_CMD"
+done
 
 isSuccess "start $SERVER_NAME"
 echo "<-------------------------------->"
-sleep 3
+sleep 1
 }
 
 echo "<-------------------------------->"
 echo "Linkis manager data is being cleared"
 sh $LINKIS_HOME/sbin/clear-server.sh
 
-if [ "$DISCOVERY" == "EUREKA" ]; then
-  #linkis-mg-eureka
-  export SERVER_NAME="mg-eureka"
-  SERVER_IP=$EUREKA_INSTALL_IP
-  startApp
-fi
+
+#linkis-mg-eureka
+export SERVER_NAME="mg-eureka"
+SERVER_IP=$EUREKA_SERVER_IPS
+startApp
 
 #linkis-mg-gateway
 SERVER_NAME="mg-gateway"
-SERVER_IP=$GATEWAY_INSTALL_IP
+SERVER_IP=$GATEWAY_SERVER_IPS
 startApp
 
 #linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
-SERVER_IP=$PUBLICSERVICE_INSTALL_IP
+SERVER_IP=$PUBLICSERVICE_SERVER_IPS
 startApp
 
 echo "sleeping 15s before start cg-linkismanager, please be patient"
@@ -86,7 +85,7 @@ sleep 15
 
 #linkis-cg-linkismanage
 SERVER_NAME="cg-linkismanager"
-SERVER_IP=$MANAGER_INSTALL_IP
+SERVER_IP=$MANAGER_SERVER_IPS
 startApp
 
 echo "sleeping 20s before start cg-entrance, please be patient"
@@ -94,12 +93,12 @@ sleep 20
 
 #linkis-cg-entrance
 SERVER_NAME="cg-entrance"
-SERVER_IP=$ENTRANCE_INSTALL_IP
+SERVER_IP=$ENTRANCE_SERVER_IPS
 startApp
 
 #linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
-SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
+SERVER_IP=$ENGINECONNMANAGER_SERVER_IPS
 startApp
 
 echo "start-all shell script executed completely"
@@ -136,11 +135,9 @@ sleep 3
 }
 
 #linkis-mg-eureka
-if [ "$DISCOVERY" == "EUREKA" ]; then
-  export SERVER_NAME="mg-eureka"
-  SERVER_IP=$EUREKA_INSTALL_IP
-  checkServer
-fi
+export SERVER_NAME="mg-eureka"
+SERVER_IP=$EUREKA_INSTALL_IP
+checkServer
 
 
 #linkis-mg-gateway
@@ -169,4 +166,4 @@ SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 checkServer
 
-echo "Apache Linkis started successfully"
+echo "Apache Linkis started successfully in a distributed manner."

@@ -159,9 +159,9 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     if (!paramsMap.isEmpty) {
-      val paramsJoin =
-        for ((k, v) <- paramsMap.asScala) yield s"$k=${v.toString}".toList.mkString("&")
-      jdbcUrl = s"$jdbcUrl&$paramsJoin"
+      for (elem <- paramsMap.asScala) {
+        jdbcUrl = s"$jdbcUrl&${elem._1}=${elem._2}"
+      }
     }
 
     jdbcUrl

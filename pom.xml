@@ -178,7 +178,7 @@
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <mysql.connector.scope>test</mysql.connector.scope>
     <postgresql.connector.version>42.3.9</postgresql.connector.version>
-    <druid.version>1.2.16</druid.version>
+    <druid.version>1.2.23</druid.version>
     <mongodb.driver.version>3.12.8</mongodb.driver.version>
 
     <!-- utils -->

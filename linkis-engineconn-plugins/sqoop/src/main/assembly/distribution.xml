@@ -84,7 +84,6 @@
                 <exclude>com.netflix.ribbon:ribbon-transport:jar</exclude>
                 <exclude>com.netflix.servo:servo-core:jar</exclude>
                 <exclude>com.ning:async-http-client:jar</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
                 <exclude>com.sun.jersey:jersey-client:jar</exclude>
                 <exclude>com.sun.jersey:jersey-core:jar</exclude>
                 <exclude>com.sun.jersey:jersey-json:jar</exclude>

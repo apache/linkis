@@ -85,7 +85,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       execTask: CodeLogicalUnitExecTask
   ): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
-    var count = getEngineConnApplyAttempts() + 1
+    var count = getEngineConnApplyAttempts()
     var retryException: LinkisRetryException = null
     while (count >= 1) {
       count = count - 1
@@ -116,7 +116,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}"
           )
           retryException = t
-
+          Thread.sleep(5000)
           // add isCrossClusterRetryException flag
           if (retryException.getDesc.contains(AMConstant.ORIGIN_CLUSTER_RETRY_DES)) {
             engineAskRequest.getProperties.put(AMConstant.ORIGIN_CLUSTER_RETRY, "true")

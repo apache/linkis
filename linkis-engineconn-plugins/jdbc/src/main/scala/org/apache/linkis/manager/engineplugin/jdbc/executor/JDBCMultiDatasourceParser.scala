@@ -144,13 +144,22 @@ object JDBCMultiDatasourceParser extends Logging {
 
     var jdbcUrl: String = if (dbType == "doris") {
       s"jdbc:mysql://$host:$port"
+    } else if (dbType == "kingbase") {
+      s"jdbc:kingbase8://$host:$port"
     } else {
       s"jdbc:$dbType://$host:$port"
     }
 
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
-    if (strObjIsNotBlank(dbName)) {
-      jdbcUrl = s"$jdbcUrl/$dbName"
+    val instance = dbConnParams.get(JDBCEngineConnConstant.DS_INSTANCE)
+    if (dbType == "doris" || dbType == "kingbase") {
+      if (strObjIsNotBlank(instance)) {
+        jdbcUrl = s"$jdbcUrl/$instance"
+      }
+    } else {
+      if (strObjIsNotBlank(dbName)) {
+        jdbcUrl = s"$jdbcUrl/$dbName"
+      }
     }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)

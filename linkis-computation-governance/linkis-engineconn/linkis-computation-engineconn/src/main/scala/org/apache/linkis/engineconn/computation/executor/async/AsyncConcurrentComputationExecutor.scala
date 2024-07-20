@@ -105,9 +105,6 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
       })
     } { e =>
       logger.info("failed to do with hook", e)
-      engineExecutionContext.appendStdout(
-        LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getStackTrace(e)}")
-      )
     }
     if (hookedCode.length > 100) {
       logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")

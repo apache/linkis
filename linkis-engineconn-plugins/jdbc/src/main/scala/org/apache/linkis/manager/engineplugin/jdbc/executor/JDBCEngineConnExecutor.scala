@@ -272,7 +272,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   ): ExecuteResponse = {
     if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
       logger.info(s"current result is a ResultSet Object , but there are no more results!")
-      engineExecutorContext.appendStdout("Query executed successfully.")
       SuccessExecuteResponse()
     } else {
       val md = resultSet.getMetaData

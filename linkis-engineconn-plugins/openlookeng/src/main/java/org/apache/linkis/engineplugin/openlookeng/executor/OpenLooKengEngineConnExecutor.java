@@ -20,7 +20,6 @@ package org.apache.linkis.engineplugin.openlookeng.executor;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
-import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask;
@@ -358,7 +357,6 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
         if (cause == null) {
           errorString = ExceptionUtils.getStackTrace(cause);
         }
-        engineExecutorContext.appendStdout(LogUtils.generateERROR(errorString));
         return new ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause);
       }
     } else if (statement.isClientAborted()) {

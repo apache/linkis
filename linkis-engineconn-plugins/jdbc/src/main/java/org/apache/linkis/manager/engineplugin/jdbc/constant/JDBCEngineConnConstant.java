@@ -63,6 +63,7 @@ public class JDBCEngineConnConstant {
 
   public static final String DS_JDBC_HOST = "host";
   public static final String DS_JDBC_PORT = "port";
+  public static final String DS_INSTANCE = "instance";
   public static final String DS_JDBC_DB_NAME = "databaseName";
   public static final String DS_JDBC_USERNAME = "username";
   public static final String DS_JDBC_PASSWORD = "password";

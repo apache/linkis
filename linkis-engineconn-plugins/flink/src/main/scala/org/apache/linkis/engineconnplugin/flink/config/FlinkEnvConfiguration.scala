@@ -36,7 +36,7 @@ object FlinkEnvConfiguration {
 
   val FLINK_DIST_JAR_PATH = CommonVars(
     "flink.dist.jar.path",
-    FLINK_HOME.getValue + s"/lib/flink-dist_2.11-${FLINK_VERSION.getValue}.jar"
+    FLINK_HOME.getValue + s"/lib/flink-dist_2.12-${FLINK_VERSION.getValue}.jar"
   )
 
   val FLINK_PROVIDED_LIB_PATH = CommonVars("flink.lib.path", "")

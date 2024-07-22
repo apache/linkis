@@ -150,6 +150,7 @@ public class SqlConnection extends AbstractSqlConnection {
               .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
+    LOG.info("jdbc connection url: {}", url);
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 

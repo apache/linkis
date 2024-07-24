@@ -18,7 +18,6 @@
 package org.apache.linkis.entrance.execute
 
 import org.apache.linkis.common.exception.WarnException
-import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
@@ -36,8 +35,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
     with Logging {
 
   private val idGenerator = new AtomicLong(0)
-
-  def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor]
 
   override def delete(executor: Executor): Unit = {
     if (null != executor) {
@@ -91,15 +88,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
           case jobReq: JobRequest =>
             val entranceEntranceExecutor =
               new DefaultEntranceExecutor(jobReq.getId)
-            // getEngineConn Executor
-            job.getLogListener.foreach(
-              _.onLogUpdate(
-                job,
-                LogUtils.generateInfo("Your job is being scheduled by orchestrator.")
-              )
-            )
             jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
-
             entranceEntranceExecutor
           case _ =>
             throw new EntranceErrorException(

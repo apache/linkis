@@ -30,19 +30,8 @@ object EntranceConfiguration {
   val JOB_MAX_PERSIST_WAIT_TIME =
     CommonVars("wds.linkis.entrance.job.persist.wait.max", new TimeType("5m"))
 
-  val MULTI_ENTRANCE_CONDITION = CommonVars("wds.linkis.entrance.multi.entrance.flag", true)
-
   val JOBHISTORY_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
-
-  /**
-   * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
-   * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀
-   */
-  val DEFAULT_LOGPATH_PREFIX = CommonVars[String](
-    "wds.linkis.entrance.config.log.path",
-    CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue
-  )
 
   /**
    * Default_Cache_Max is used to specify the size of the LoopArray of the CacheLogWriter
@@ -247,8 +236,5 @@ object EntranceConfiguration {
 
   val ENABLE_HDFS_JVM_USER =
     CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", true).getValue
-
-  val ENABLE_HDFS_RES_DIR_PRIVATE =
-    CommonVars[Boolean]("linkis.entrance.enable.hdfs.res.dir.private", false).getValue
 
 }

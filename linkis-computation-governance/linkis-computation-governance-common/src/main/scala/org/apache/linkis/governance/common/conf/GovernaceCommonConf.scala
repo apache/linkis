@@ -86,4 +86,13 @@ object GovernanceCommonConf {
   val EC_APP_MANAGE_MODE =
     CommonVars("linkis.ec.app.manage.mode", "attach")
 
+  /**
+   * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
+   * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀 和 结果集的前缀
+   */
+  val DEFAULT_LOGPATH_PREFIX = CommonVars[String](
+    "wds.linkis.entrance.config.log.path",
+    CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue
+  ).getValue
+
 }

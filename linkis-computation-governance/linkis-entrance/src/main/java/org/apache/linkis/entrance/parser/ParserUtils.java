@@ -18,8 +18,8 @@
 package org.apache.linkis.entrance.parser;
 
 import org.apache.linkis.common.io.FsPath;
-import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.utils.CommonLogPathUtils;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.manager.label.utils.LabelUtil;
 import org.apache.linkis.storage.utils.StorageUtils;
@@ -28,32 +28,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class ParserUtils {
-
-  private static final Map<String, String> types = new HashMap<>();
-
-  static {
-    types.put("py", "python");
-    types.put("python", "python");
-    types.put("sql", "sql");
-    types.put("pyspark", "python");
-    types.put("scala", "scala");
-    types.put("rspark", "r");
-    types.put("r", "r");
-    types.put("java", "java");
-    types.put("hql", "hql");
-    types.put("sparksql", "sql");
-  }
 
   public static void generateLogPath(JobRequest jobRequest, Map<String, String> params) {
     String logPath = null;
     String logPathPrefix = null;
     String logMid = "log";
     if (StringUtils.isEmpty(logPathPrefix)) {
-      logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
+      logPathPrefix = GovernanceCommonConf.DEFAULT_LOGPATH_PREFIX();
     }
     /*Determine whether logPathPrefix is terminated with /, if it is, delete */
     /*判断是否logPathPrefix是否是以 / 结尾， 如果是，就删除*/
@@ -86,9 +70,5 @@ public final class ParserUtils {
               + ".log";
     }
     jobRequest.setLogPath(logPath);
-  }
-
-  public static String getCorrespondingType(String runType) {
-    return types.get(runType.toLowerCase());
   }
 }

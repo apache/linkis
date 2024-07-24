@@ -28,19 +28,9 @@ import org.apache.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
 import org.apache.linkis.entrance.interceptor.OnceJobInterceptor;
 import org.apache.linkis.entrance.interceptor.impl.*;
-import org.apache.linkis.entrance.log.CacheLogManager;
-import org.apache.linkis.entrance.log.ErrorCodeListener;
-import org.apache.linkis.entrance.log.ErrorCodeManager;
-import org.apache.linkis.entrance.log.FlexibleErrorCodeManager$;
-import org.apache.linkis.entrance.log.LogManager;
-import org.apache.linkis.entrance.log.PersistenceErrorCodeListener;
+import org.apache.linkis.entrance.log.*;
 import org.apache.linkis.entrance.parser.CommonEntranceParser;
-import org.apache.linkis.entrance.persistence.EntranceResultSetEngine;
-import org.apache.linkis.entrance.persistence.PersistenceEngine;
-import org.apache.linkis.entrance.persistence.PersistenceManager;
-import org.apache.linkis.entrance.persistence.QueryPersistenceEngine;
-import org.apache.linkis.entrance.persistence.QueryPersistenceManager;
-import org.apache.linkis.entrance.persistence.ResultSetEngine;
+import org.apache.linkis.entrance.persistence.*;
 import org.apache.linkis.entrance.scheduler.EntranceGroupFactory;
 import org.apache.linkis.entrance.scheduler.EntranceParallelConsumerManager;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
@@ -137,8 +127,6 @@ public class EntranceSpringConfiguration {
       new OnceJobInterceptor(),
       new CSEntranceInterceptor(),
       new ShellDangerousGrammerInterceptor(),
-      // new PythonCodeCheckInterceptor(),
-      // new DBInfoCompleteInterceptor(),
       new CompatibleInterceptor(),
       new SparkCodeCheckInterceptor(),
       new SQLCodeCheckInterceptor(),
@@ -146,11 +134,9 @@ public class EntranceSpringConfiguration {
       new ParserVarLabelInterceptor(),
       new VarSubstitutionInterceptor(),
       new LogPathCreateInterceptor(),
-      new StorePathEntranceInterceptor(),
       new ScalaCodeInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
-      //      new SetTenantLabelInterceptor(),
       new UserCreatorIPCheckInterceptor()
     };
   }

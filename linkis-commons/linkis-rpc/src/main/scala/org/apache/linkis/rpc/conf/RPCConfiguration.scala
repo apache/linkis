@@ -121,9 +121,6 @@ object RPCConfiguration {
   val BDP_RPC_CACHE_CONF_EXPIRE_TIME: CommonVars[Long] =
     CommonVars("wds.linkis.rpc.cache.expire.time", 120000L)
 
-  val ENABLE_SPRING_PARAMS: Boolean =
-    CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
-
   val RPC_READ_TIME_OUT: Int =
     CommonVars[Int]("spring.ribbon.ReadTimeout", 100000).getValue
 

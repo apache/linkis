@@ -19,24 +19,37 @@
     height: 100%;
     .line {
         display: flex;
-        height: 42px;
+        min-height: 42px;
         justify-content: space-between;
         align-items: center;
-        .text {
-            .title {
-                font-family: PingFangSC-Regular;
-                font-size: 14px;
-                color: #0f1222;
-                line-height: 22px;
-                font-weight: 400;
-            }
-            .description {
-                font-family: PingFangSC-Regular;
-                font-size: 12px;
-                color: #93949b;
-                line-height: 20px;
-                font-weight: 400;
-            }
+        .title {
+            font-size: 14px;
+            color: #0f1222;
+            line-height: 22px;
+            font-weight: 400;
+            white-space: normal;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+        .description {
+            font-size: 12px;
+            color: #93949b;
+            line-height: 20px;
+            font-weight: 400;
+            white-space: normal;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+        .regex-input {
+            transform: translateY(12px);
+        }
+        .model-value {
+            width: 120px;
+            white-space: normal;
+            word-break: break-all;
+            word-wrap: break-word;
+            display: flex;
+            justify-content: end;
         }
     }
 }

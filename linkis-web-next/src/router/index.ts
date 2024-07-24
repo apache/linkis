@@ -84,46 +84,12 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         name: 'parameterConfig',
                         path: '/console/parameterConfig',
-                        redirect: '/console/parameterConfig/ide',
                         component: () => import('@/pages/parameterConfig/index.vue'),
                         meta: {
                             title: 'Parameter Config',
                             publicPage: true,
                         },
-                        children: [
-                            {
-                                name: 'ide',
-                                path: '/console/parameterConfig/ide',
-                                component: () =>
-                                    import('@/pages/parameterConfig/ide/index.vue'),
-                                meta: {
-                                    title: 'Setting IDE',
-                                    publicPage: true,
-                                },
-                            },
-                            {
-                                name: 'scripts',
-                                path: '/console/parameterConfig/scripts',
-                                component: () =>
-                                    import('@/pages/parameterConfig/scripts/index.vue'),
-                                meta: {
-                                    title: 'Setting Scripts',
-                                    publicPage: true,
-                                },
-                            },
-                            {
-                                name: 'tableauServer',
-                                path: '/console/parameterConfig/tableauServer',
-                                component: () =>
-                                    import(
-                                        '@/pages/parameterConfig/tableauServer/index.vue'
-                                    ),
-                                meta: {
-                                    title: 'Setting Tableau Server',
-                                    publicPage: true,
-                                },
-                            },
-                        ],
+                        children: [],
                     },
                 ]
             },

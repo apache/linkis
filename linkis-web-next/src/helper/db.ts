@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import Dexie from 'dexie';
+import { Dexie } from 'dexie';
 /**
  * wrap db operator
  * @class DB

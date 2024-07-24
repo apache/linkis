@@ -115,7 +115,7 @@ disruptor-3.3.6.jar
 disruptor-3.4.2.jar
 dnsjava-2.1.7.jar
 dropwizard-metrics-hadoop-metrics2-reporter-0.1.2.jar
-druid-1.2.16.jar
+druid-1.2.23.jar
 elasticsearch-rest-client-6.8.15.jar
 elasticsearch-rest-client-7.6.2.jar
 elasticsearch-rest-client-sniffer-7.6.2.jar

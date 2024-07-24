@@ -319,6 +319,7 @@ const addEngine = () => {
 
 const confirmEditing = () => {
     tmpData.value.categoryName = trim(tmpData.value.categoryName);
+    // 判断引擎类型和引擎版本是否为空，若为空则通过错误信息提示用户，且阻断后续逻辑
     let isBlank = false;
     tmpData.value.childCategory.forEach((cate: any) => {
         if(cate.engineType === '' || cate.version === '' || !cate.version) {
@@ -327,11 +328,13 @@ const confirmEditing = () => {
         }
     })
     if (isBlank) return;
+    // 判断当前的引擎列表中是否有重复的引擎，若存在重复引擎则通过错误信息提示用户，且阻断后续逻辑
     const distinctEngineTypeList = [...new Set(tmpData.value.childCategory.map((cate: any) => cate.engineType))];
     if (distinctEngineTypeList.length !== tmpData.value.childCategory.length) {
         FMessage.error(t('message.linkis.nonRepetitiveEngines'))
         return;
     }
+    // 添加新应用时判断应用名称是否为空，若为空则通过错误信息提示用户，且阻断后续逻辑
     if (isAddingApplicationAndEngine.value) {
         if (tmpData.value.categoryName.length === 0) {
             FMessage.error(t('message.linkis.tableColumns.addApplicationRules'));
@@ -344,6 +347,7 @@ const confirmEditing = () => {
         closable: true,
         onOk: async () => {
             if (isAddingApplicationAndEngine.value) {
+                // 添加新应用时，先创建应用
                 try {
                     await api.fetch("/configuration/createFirstCategory", {
                         categoryName: tmpData.value.categoryName,
@@ -354,6 +358,7 @@ const confirmEditing = () => {
                     FMessage.error(t('message.linkis.failedToAddCreator'));
                     return;
                 }
+                // 应用创建成功后，获取应用的categoryId
                 let categoryId;
                 try {
                     const res = await api.fetch("/configuration/getCategory", "get");
@@ -363,6 +368,7 @@ const confirmEditing = () => {
                     await refresh();
                     return;
                 }
+                // 获取categoryId后，依次创建引擎列表中的各个引擎
                 for (const cate of tmpData.value.childCategory) {
                     try {
                         await api.fetch("/configuration/createSecondCategory", {
@@ -378,6 +384,7 @@ const confirmEditing = () => {
                 }
             }
             if (isEditingApplicationAndEngine.value) {
+                // 编辑应用时，先判断是否需要更改应用描述
                 if(tmpData.value.description !== tmpDataBeforeEditing.value.description) {
                     try {
                         await api.fetch("configuration/updateCategoryInfo", {
@@ -389,24 +396,29 @@ const confirmEditing = () => {
                         FMessage.error(t('message.linkis.failedToUpdateCreator'));
                     }
                 }
-                const addList = [] as any[];
-                const modifyList = [] as any[];
+                const addList = [] as any[]; // 需要添加的引擎列表
+                const modifyList = [] as any[]; // 需要修改的引擎列表
+                // 对现有引擎列表中的所有引擎进行分类
                 tmpData.value.childCategory.forEach((cate: any) => {
                     const originCateIndex = tmpDataBeforeEditing.value.childCategory.findIndex((v: any) => v.engineType === cate.engineType);
                     if (originCateIndex === -1) {
+                        // 将原始列表中没有的引擎放入addList中
                         addList.push(cate);
                     } else {
                         const originCate = tmpDataBeforeEditing.value.childCategory[originCateIndex];
                         if (cate.version === originCate.version) {
+                            // 原始列表中的引擎版本与现有列表中的引擎版本一致且描述发生了修改，就把该引擎从原始列表中剔除，放到modifyList中
                             tmpDataBeforeEditing.value.childCategory.splice(originCateIndex, 1);
                             if (cate.description !== originCate.description) {
                                 modifyList.push(cate);
                             }
                         } else {
+                            // 原始列表中的引擎版本与现有列表中的引擎版本不一致，直接将该引擎加入addList中，作为新引擎安装
                             addList.push(cate);
                         }
                     }
                 })
+                // 经过上述操作，原始列表tmpDataBeforeEditing.value.childCategory中只会保留需要被删除的引擎，将这些引擎遍历删除
                 for (const cateToDelete of tmpDataBeforeEditing.value.childCategory) {
                     try {
                         await api.fetch("/configuration/deleteCategory", { categoryId: cateToDelete.categoryId }, "post")
@@ -423,6 +435,7 @@ const confirmEditing = () => {
                         );
                     }
                 }
+                // 遍历添加addList中的引擎
                 for (const cateToAdd of addList) {
                     try {
                         await api.fetch("/configuration/createSecondCategory", {
@@ -436,6 +449,7 @@ const confirmEditing = () => {
                         FMessage.error(cateToAdd.engineType + cateToAdd.version + t('message.linkis.failedToAddEngine'));
                     }
                 }
+                // 遍历修改modifyList中的引擎
                 for (const cateToModify of modifyList) {
                     try {
                         await api.fetch("configuration/updateCategoryInfo", {
@@ -448,6 +462,7 @@ const confirmEditing = () => {
                     }
                 }
             }
+            // 完成编辑操作后刷新页面
             await refresh();
         }
     });

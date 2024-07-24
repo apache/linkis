@@ -129,7 +129,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       TaskLogEvent(
         execTask,
         LogUtils.generateInfo(
-          "Background is starting a new engine for you(您的任务正在请求引擎中，请耐心等待)" + s",\nexecId ${execTask
+          "Background is starting a new engine for you(您的任务正在请求引擎中，请耐心等待)" + s", execId ${execTask
             .getIDInfo()} mark id is ${mark.getMarkId()}"
         )
       )

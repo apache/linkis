@@ -29,6 +29,8 @@ import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.service.LabelResourceService
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.CannotGetJdbcConnectionException
+import org.springframework.retry.annotation.{Backoff, Retryable}
 import org.springframework.stereotype.Component
 
 import java.util
@@ -49,10 +51,14 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
 
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  override def getLabelResource(label: Label[_]): NodeResource = {
+  override def getLabelResource(label: Label[_]): NodeResource =
     resourceLabelService.getResourceByLabel(label)
-  }
 
+  @Retryable(
+    value = Array(Array(classOf[CannotGetJdbcConnectionException])),
+    maxAttempts = 5,
+    backoff = new Backoff(delay = 10000)
+  )
   override def setLabelResource(
       label: Label[_],
       nodeResource: NodeResource,

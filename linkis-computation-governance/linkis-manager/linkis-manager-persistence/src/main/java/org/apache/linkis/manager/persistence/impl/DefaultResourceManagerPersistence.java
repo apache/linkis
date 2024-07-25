@@ -29,6 +29,10 @@ import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,6 +162,9 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
     resourceManagerMapper.nodeResourceUpdateByResourceId(resourceId, persistenceResource);
   }
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      backoff = @Backoff(delay = 10000))
   @Override
   public PersistenceResource getNodeResourceByTicketId(String ticketId) {
     PersistenceResource persistenceResource =

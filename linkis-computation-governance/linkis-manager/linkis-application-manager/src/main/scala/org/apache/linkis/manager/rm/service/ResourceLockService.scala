@@ -53,7 +53,7 @@ class ResourceLockService extends Logging {
       }
       isLocked
     } { case t: Throwable =>
-      logger.error(s"failed to lock label [${persistenceLock.getLockObject}]", t)
+      logger.error(s"Failed to lock label [${persistenceLock.getLockObject}]", t)
       false
     }
   }
@@ -63,10 +63,14 @@ class ResourceLockService extends Logging {
       lockManagerPersistence.unlock(persistenceLock)
       logger.info("unlocked " + persistenceLock.getLockObject)
     } { case t: Throwable =>
-      logger.error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
+      logger.error(s"Failed to unlock label [${persistenceLock.getLockObject}]", t)
     }
   }
 
+  /**
+   * Clean up the created time before end Date 清理所创建时间在end Date之前的
+   * @param timeout
+   */
   def clearTimeoutLock(timeout: Long): Unit = {
     val endDate = new Date(System.currentTimeMillis() - timeout)
     val locks = lockManagerPersistence.getTimeOutLocks(endDate)

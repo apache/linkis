@@ -104,7 +104,6 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
     if (persistenceResource.isEmpty) {
       null
     } else {
-      // TODO: 判断取哪个resource
       ResourceUtils.fromPersistenceResource(persistenceResource.get(0))
     }
   }

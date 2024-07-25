@@ -119,7 +119,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       LinkisRetryException linkisRetryException =
           new LinkisRetryException(
               NODE_INFO_DUPLICATE.getErrorCode(), NODE_INFO_DUPLICATE.getErrorMessage());
-      linkisRetryException.initCause(linkisRetryException);
+      linkisRetryException.initCause(e);
       throw linkisRetryException;
     } catch (Exception e) {
       NodeInstanceNotFoundException nodeInstanceNotFoundException =

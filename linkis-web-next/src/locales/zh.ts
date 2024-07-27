@@ -18,6 +18,7 @@
 export default {
     message: {
         common: {
+            lang: 'English',
             statisticsTime: '统计日期',
             fullScreen: '全屏',
             log: '日志',
@@ -286,13 +287,14 @@ export default {
             login: {
                 loginTitle: '欢迎登录Linkis系统！',
                 userName: '请输入用户名',
-                remenber: '记住当前用户',
+                remember: '记住当前用户',
                 login: '登录',
                 passwordHint: '请输入密码！',
                 loginSuccess: '登录成功',
                 haveLogin: '您已经登录，请不要重复登录',
                 vaildFaild: '验证未通过！',
                 selectProxyTip: '用户代理未选择！',
+                logoutSuccess: '您已成功退出'
             },
             dynamicForm: {
                 rule: {

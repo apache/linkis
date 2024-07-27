@@ -121,7 +121,12 @@
                 </FForm>
             </template>
             <template v-else>
-                <f-table :data="dataList" class="table" :rowKey="(row: Record<string, number | string>) => row.categoryId">
+                <f-table
+                    :data="dataList"
+                    class="table"
+                    :rowKey="(row: Record<string, number | string>) => row.categoryId"
+                    :emptyText="t('message.linkis.noDataText')"
+                >
                     <template v-for="col in tableColumns" :key="col.label">
                         <f-table-column
                             v-if="col.formatter"

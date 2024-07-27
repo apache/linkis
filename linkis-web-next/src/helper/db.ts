@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Dexie } from 'dexie';
+import { Dexie, Table } from 'dexie';
 /**
  * wrap db operator
  * @class DB
@@ -27,7 +27,7 @@ export default class DB {
     errHandler: any;
     /**
      * Creates an instance of DB.
-     * @param {*} name
+     * @param {String} name
      * @param {Object} stores
      * @param {Number} version
      * @memberof DB
@@ -39,7 +39,7 @@ export default class DB {
     /**
      *
      * @param {*} stores
-     * @param {*} version
+     * @param {Number} version
      * @memberof DB
      */
     updateVersion(stores: any, version: number) {
@@ -56,17 +56,16 @@ export default class DB {
      * If it does not exist, it will be added.
      * @param {String} table
      * @param {Object | Array} fields
-     * @param {*} id
      * @memberof DB
      */
-    async put(table, fields) {
+    async put(table: keyof Dexie, fields: object[]) {
         const promiseArr = [];
         if (Array.isArray(fields)) {
             fields.forEach((item) => {
-                promiseArr.push(this.db[table].put(item));
+                promiseArr.push((this.db[table] as unknown as Table).put(item));
             });
         } else {
-            promiseArr.push(this.db[table].put(fields));
+            promiseArr.push((this.db[table] as unknown as Table).put(fields));
         }
         try {
             return await Promise.all(promiseArr);
@@ -80,14 +79,14 @@ export default class DB {
      * @param {Array} keys
      * @memberof DB
      */
-    async get(table, keys) {
+    async get(table: keyof Dexie, keys: string[]) {
         const promiseArr = [];
         if (Array.isArray(keys)) {
             keys.forEach((item) => {
-                promiseArr.push(this.db[table].get(item));
+                promiseArr.push((this.db[table] as unknown as Table).get(item));
             });
         } else {
-            promiseArr.push(this.db[table].get(keys));
+            promiseArr.push((this.db[table] as unknown as Table).get(keys));
         }
         try {
             return await Promise.all(promiseArr);
@@ -97,37 +96,37 @@ export default class DB {
     }
     /**
      *
-     * @param {*} table
-     * @param {String | Object} clause
+     * @param {String} table
+     * @param {String | Array} clause
      * @memberof DB
      * @return {this}
      */
-    where(table, clause) {
-        this.whereClause = this.db[table].where(clause);
+    where(table: keyof Dexie, clause: string | string[]) {
+        this.whereClause = (this.db[table] as unknown as Table).where(clause);
         return this;
     }
     /**
      *
-     * @param {*} table
+     * @param {String} table
      * @param {*} key
      * @param {*} changes
      * @return {updated}
      * @memberof DB
      */
-    async update(table, key, changes) {
+    async update(table: keyof Dexie, key: any, changes: {[keyPath: string]: any}) {
         try {
-            return await this.db[table].update(key, changes);
+            return await (this.db[table] as unknown as Table).update(key, changes);
         } catch (e) {
             return this._errorCatch(e);
         }
     }
     /**
      *
-     * @param {String | Object} clause
+     * @param {String | Array} clause
      * @memberof DB
      * @return {this}
      */
-    equals(clause) {
+    equals(clause: string| string[]) {
         this.collection = this.whereClause.where(clause);
         return this;
     }
@@ -137,7 +136,7 @@ export default class DB {
      * @memberof DB
      * @return {this}
      */
-    anyOf(clause) {
+    anyOf(clause: string| string[]) {
         this.collection = this.whereClause.where(clause);
         return this;
     }
@@ -147,7 +146,7 @@ export default class DB {
      * @memberof DB
      * @return {Promise}
      */
-    async first(cb) {
+    async first(cb: Function) {
         try {
             return await this.collection.first(cb);
         } catch (e) {
@@ -159,26 +158,26 @@ export default class DB {
      * @memberof DB
      * @return {Promise}
      */
-    async delete(...args) {
+    async delete(...args: any[]) {
         const len = args.length;
-        const table = args[0];
+        const table: keyof Dexie = args[0];
         let key = args[1];
         try {
             if (len === 0) {
                 return await this.collection.delete();
             } else if (len === 2) {
-                return await this.db[table].delete(key);
+                return await (this.db[table] as unknown as Table).delete(key);
             }
         } catch (e) {
             return this._errorCatch(e);
         }
     }
     /**
-     * @param {*} table
+     * @param {String} table
      * @memberof DB
      * @return {Promise}
      */
-    async toArray(table) {
+    async toArray(table: keyof Dexie) {
         try {
             if (table) {
                 this.collection = this.db[table];

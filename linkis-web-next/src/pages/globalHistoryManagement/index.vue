@@ -39,6 +39,7 @@
             :data="dataList"
             :height="500"
             :rowKey="(row: Record<string, number | string>) => row"
+            :emptyText="t('message.linkis.noDataText')"
         >
             <f-table-column
                 v-if="filterRef?.isCheckingTaskToStop"
@@ -335,7 +336,7 @@ const find = async (
         }
         return res;
     } catch (err) {
-        FMessage.error('Something Wrong!');
+        window.console.error(err);
     }
 };
 

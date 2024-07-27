@@ -25,7 +25,7 @@
             >
                 <FInput
                     v-model="formData.taskID"
-                    placeholder="请输入"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
                     type="number"
                 />
             </FFormItem>
@@ -36,7 +36,7 @@
                 <FSelect
                     v-model="formData.status"
                     clearable
-                    placeholder="请选择"
+                    :placeholder="t('message.linkis.unselect')"
                 >
                     <FOption
                         v-for="(item, index) in statusList"
@@ -52,7 +52,7 @@
             >
                 <FInput
                     v-model="formData.creator"
-                    placeholder="请输入"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
                 />
             </FFormItem>
             <FFormItem
@@ -62,7 +62,7 @@
                 <FSelect
                     v-model="formData.executeApplicationName"
                     clearable
-                    placeholder="请选择"
+                    :placeholder="t('message.linkis.unselect')"
                 >
                     <FOption
                         v-for="(item, index) in engineList"
@@ -92,7 +92,7 @@
             >
                 <FInput
                     v-model="formData.proxyUser"
-                    placeholder="请输入"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
                 />
             </FFormItem>
         </FForm>
@@ -313,7 +313,6 @@ defineExpose({
 <style scoped lang="less">
 .buttons {
     float: right;
-    width: 360px;
     display: flex;
     margin: -8px 0 16px 0;
     gap: 16px;

@@ -18,6 +18,7 @@
 export default {
     message: {
         common: {
+            lang: '简体中文',
             statisticsTime: 'Time Range',
             fullScreen: 'FullScreen',
             log: 'Log',
@@ -301,16 +302,17 @@ export default {
             login: {
                 loginTitle: 'Welcome to Linkis Console!',
                 userName: 'Please enter your username',
-                remenber: 'Remember me',
+                remember: 'Remember me',
                 login: 'Login',
                 passwordHint: 'Please enter your password',
                 password: 'Please enter password！',
-                loginSuccess: 'Login Success',
+                loginSuccess: 'Log in successfully',
                 haveLogin:
                     'You have already logged in, please do not login repeatedly',
                 vaildFaild: 'Authentication failed!',
                 toRegister: 'No account? Create one',
                 selectProxyTip: 'No select proxy',
+                logoutSuccess: 'Log out successfully'
             },
             dynamicForm: {
                 rule: {
@@ -405,8 +407,8 @@ export default {
             globalConfigs: 'Global Configs',
             applicationDesc: 'Desc',
             applicationName: 'Name',
-            addApplicationAndEngine: 'ADD',
-            editApplicationAndEngine: 'EDIT',
+            addApplicationAndEngine: 'Add application and engine',
+            editApplicationAndEngine: 'Edit application and engine',
             failedToAddCreator: 'Failed to add creator',
             successfullyAddCreator: 'Successfully add creator',
             nonRepetitiveEngines: 'Do not add repetitive engines',
@@ -664,7 +666,7 @@ export default {
                 failedReason: 'Key Information',
                 executeApplicationName: 'Engine',
                 requestApplicationName: 'Application',
-                umUser: 'Creator',
+                umUser: 'Username',
                 progress: 'Progress',
                 createdTime: 'Created at',
                 updatedTime: 'Updated at',

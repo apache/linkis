@@ -15,40 +15,23 @@
  * limitations under the License.
  */
 
-import hql from './languages/hql';
 import log from './languages/log';
-import sas from './languages/sas';
-import sh from './languages/sh';
-import out from './languages/out';
 import defaultView from './theme/defaultView';
 import logview from './theme/logView';
-import hqlKeyword from './keyword/hql';
-import pythonKeyword from './keyword/python';
-import sasKeyword from './keyword/sas';
-import shKeyword from './keyword/sh';
 
 import * as monaco from 'monaco-editor';
+import { find } from 'lodash';
 
 const languagesList = monaco.languages.getLanguages();
 const findLang = find(languagesList, (lang) => {
-    return lang.id === 'hql';
+    return lang.id === 'log';
 });
 if (!findLang) {
-    // Register languages(注册languages)
-    hql.register(monaco);
+    // register languages(注册languages)
     log.register(monaco);
-    sas.register(monaco);
-    sh.register(monaco);
-    out.register(monaco);
     // register theme(注册theme)
     defaultView.register(monaco);
     logview.register(monaco);
-
-    // (Register Keyword Prediction)
-    hqlKeyword.register(monaco);
-    pythonKeyword.register(monaco);
-    sasKeyword.register(monaco);
-    shKeyword.register(monaco);
 }
 
 export default monaco;

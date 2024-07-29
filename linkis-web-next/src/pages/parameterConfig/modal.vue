@@ -19,43 +19,62 @@
     <FSpace>
         <FModal
             v-model:show="show"
-            title="常规"
             displayDirective="if"
-            @ok="show = false"
+            @ok="handleSaveGlobalSettings"
         >
             <template #title>
-                <div>全局配置</div>
+                <div>{{ t('message.linkis.globalSettings') }}</div>
             </template>
-
-            <div class="list-wrapper">
-                <template
-                    v-for="(dataItem, index) in dataList"
-                    :key="dataItem.name"
-                >
+            <div class="list-wrapper"> 
+                <template v-for="dataItem in dataList[0].settings" :key="dataItem.key">
                     <div class="line">
-                        <div class="text">
-                            <div class="title">{{ dataItem.name }}</div>
+                        <div>
+                            <div class="title">{{ dataItem.name || dataItem.key }}</div>
                             <div class="description">
-                                {{ dataItem.description }}
+                                {{ dataItem.name ? `[${dataItem.key}]` : '' }}
                             </div>
                         </div>
-
-                        <div class="value">
+                        <div>
                             <FSpace>
-                                <div>
-                                    <FInput
+                                <div style="width: 120px">
+                                    <FInputNumber
+                                        v-if="dataItem.validateType === 'NumInterval'"
                                         style="width: 120px"
-                                        ref="inputRef"
-                                        v-model="dataItem.value"
-                                        placeholder="请输入"
+                                        :precision="0"
+                                        v-model="dataItem.configValue"
+                                        :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
+                                        :min="JSON.parse(dataItem.validateRange)[0]"
+                                        :max="JSON.parse(dataItem.validateRange)[1]"
+                                    />
+                                    <FForm v-else-if="dataItem.validateType === 'Regex'">
+                                        <FFormItem
+                                            :value="dataItem.configValue"
+                                            :rules="[{
+                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                // @ts-ignore 
+                                                trigger: ['change', 'blur'],
+                                                message: dataItem.description,
+                                                type: 'regexp',
+                                                validator: () => new RegExp(dataItem.validateRange).test(dataItem.configValue)
+                                            }]"
+                                        >
+                                            <FInput
+                                                class="regex-input"
+                                                v-model="dataItem.configValue"
+                                                :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
+                                            />
+                                        </FFormItem>
+                                    </FForm>
+                                    <FInput
+                                        v-else
+                                        v-model="dataItem.configValue"
+                                        :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
                                     />
                                 </div>
                             </FSpace>
                         </div>
                     </div>
-                    <template v-if="index !== dataList.length - 1">
-                        <FDivider></FDivider>
-                    </template>
+                    <FDivider />
                 </template>
             </div>
         </FModal>
@@ -63,25 +82,65 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import api from '@/service/api';
+import { FMessage } from '@fesjs/fes-design';
+import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const show = ref(false);
+const dataList = ref<Array<{
+    name: string,
+    description: string | null,
+    settings: Array<{
+        name: string,
+        key: string,
+        description: string,
+        defaultValue: string,
+        configValue: string,
+        validateType: string,
+        validateRange: string,
+    }>
+}>>([]);
 
-const dataList = reactive([
-    { name: 'yarn队列名', description: '{wds.linkis.yarnqueue}', value: '1' },
-    { name: '队列CPU使用上限', description: '2', value: '2' },
-    { name: '队列内存使用上限', description: '3', value: '3' },
-    { name: '全局各个引擎内存使用上限', description: '3', value: '3' },
-    { name: '全局各个引擎核心个数上限', description: '3', value: '3' },
-    { name: '全局各个引擎最大并发数', description: '3', value: '3' },
-]);
+const handleSaveGlobalSettings = async () => {
+    try {
+        await api.fetch("/configuration/saveFullTree", {
+            fullTree: dataList.value,
+            creator: 'GlobalSettings',
+            engineType: null,
+        })
+        FMessage.success(t('message.common.saveSuccess'));
+        show.value = false;
+        handleInitialization();
+    } catch (error) {
+        window.console.error(error);
+    }
+}
+
+const handleInitialization = async () => {
+    const res = await api.fetch("/configuration/getFullTreesByAppName", { creator: 'GlobalSettings' }, "get");
+    dataList.value = res.fullTree;
+}
 
 const open = () => {
     show.value = true;
 };
+
+onMounted(() => {
+    handleInitialization();
+})
 
 defineExpose({
     open,
 });
 </script>
 <style src="./index.less" scoped></style>
+<style scoped lang="less">
+.list-wrapper {
+    height: 500px;
+    overflow: auto;
+    margin-right: -24px;
+    padding-right: 20px;
+}
+</style>

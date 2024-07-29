@@ -18,24 +18,26 @@
 import axios from 'axios'
 
 // data storage(数据存储)
-export const cache = {
+export const cache: {
+  [key: string]: any
+} = {
   data: {},
-  set(key, data) {
+  set(key: string, data: any) {
     this.data[key] = data
   },
-  get(key) {
+  get(key: string) {
     return this.data[key]
   },
-  clear(key) {
+  clear(key: string) {
     delete this.data[key]
   }
 }
 
 // Create a unique key value(建立唯一的key值)
-export const buildUniqueUrl = (url, method, params = {}, data = {}) => {
-  const paramStr = (obj) => {
+export const buildUniqueUrl = (url: string | URL, method: string, params = {}, data = {}) => {
+  const paramStr = (obj: any) => {
     if (toString.call(obj) === '[object Object]') {
-      return JSON.stringify(Object.keys(obj).sort().reduce((result, key) => {
+      return JSON.stringify(Object.keys(obj).sort().reduce((result: any, key) => {
         result[key] = obj[key]
         return result
       }, {}))
@@ -48,7 +50,7 @@ export const buildUniqueUrl = (url, method, params = {}, data = {}) => {
 }
 
 // prevent duplicate requests(防止重复请求)
-export default (options = {}) => async config => {
+export default (options = {}) => async (config: any) => {
   const defaultOptions = {
     time: 0, // Set to 0, do not clear the cache(设置为0，不清除缓存)
     ...options
@@ -58,7 +60,10 @@ export default (options = {}) => async config => {
   if (!responsePromise) {
     responsePromise = (async () => {
       try {
-        const response = await axios.defaults.adapter(config)
+        let response;
+        if(typeof axios.defaults.adapter === 'function') {
+          response = await axios.defaults.adapter(config)
+        }
         return Promise.resolve(response)
       } catch (reason) {
         cache.clear(index)
@@ -72,5 +77,5 @@ export default (options = {}) => async config => {
       }, defaultOptions.time)
     }
   }
-  return responsePromise.then(data => JSON.parse(JSON.stringify(data))) // To prevent data source pollution(为防止数据源污染)
+  return responsePromise.then((data: any) => JSON.parse(JSON.stringify(data))) // To prevent data source pollution(为防止数据源污染)
 }

@@ -22,100 +22,76 @@ import dssRouter from '@/dss/dssRouter';
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
-        name: 'layout',
+        name: 'root',
         redirect: '/console/globalHistoryManagement',
-        component: () => import('@/layout.vue'),
         meta: {
             title: 'Linkis',
             publicPage: true, // Permission disclosure(权限公开)
         },
         children: [
             {
-                name: 'globalHistoryManagement',
-                path: '/console/globalHistoryManagement',
-                component: () =>
-                    import('@/pages/globalHistoryManagement/index.vue'),
+                path: '/console',
+                name: 'layout',
+                redirect: '/console/globalHistoryManagement',
+                component: () => import('@/layout.vue'),
                 meta: {
-                    title: 'Global History Management',
-                    publicPage: true,
-                },
-            },
-            {
-                name: 'resource',
-                path: '/console/resource',
-                redirect: '/console/resource/manage',
-                component: () => import('@/pages/resource/index.vue'),
-                meta: {
-                    title: 'resource',
+                    title: 'Console',
                     publicPage: true,
                 },
                 children: [
                     {
-                        name: 'history',
-                        path: '/console/resource/history',
+                        name: 'globalHistoryManagement',
+                        path: '/console/globalHistoryManagement',
                         component: () =>
-                            import('@/pages/resource/history/index.vue'),
+                            import('@/pages/globalHistoryManagement/index.vue'),
                         meta: {
-                            title: 'Resource History',
+                            title: 'Global History Management',
                             publicPage: true,
                         },
                     },
                     {
-                        name: 'manage',
-                        path: '/console/resource/manage',
-                        component: () =>
-                            import('@/pages/resource/manage/index.vue'),
+                        name: 'resource',
+                        path: '/console/resource',
+                        redirect: '/console/resource/manage',
+                        component: () => import('@/pages/resource/index.vue'),
                         meta: {
-                            title: 'Resource Manage',
+                            title: 'Resource',
                             publicPage: true,
                         },
-                    },
-                ],
-            },
-
-            {
-                name: 'parameterConfig',
-                path: '/console/parameterConfig',
-                redirect: '/console/parameterConfig/ide',
-                component: () => import('@/pages/parameterConfig/index.vue'),
-                meta: {
-                    title: 'parameterConfig',
-                    publicPage: true,
-                },
-                children: [
-                    {
-                        name: 'ide',
-                        path: '/console/parameterConfig/ide',
-                        component: () =>
-                            import('@/pages/parameterConfig/ide/index.vue'),
-                        meta: {
-                            title: 'setting ide',
-                            publicPage: true,
-                        },
-                    },
-                    {
-                        name: 'scripts',
-                        path: '/console/parameterConfig/scripts',
-                        component: () =>
-                            import('@/pages/parameterConfig/scripts/index.vue'),
-                        meta: {
-                            title: 'setting scripts',
-                            publicPage: true,
-                        },
+                        children: [
+                            {
+                                name: 'history',
+                                path: '/console/resource/history',
+                                component: () =>
+                                    import('@/pages/resource/history/index.vue'),
+                                meta: {
+                                    title: 'Resource History',
+                                    publicPage: true,
+                                },
+                            },
+                            {
+                                name: 'manage',
+                                path: '/console/resource/manage',
+                                component: () =>
+                                    import('@/pages/resource/manage/index.vue'),
+                                meta: {
+                                    title: 'Resource Manage',
+                                    publicPage: true,
+                                },
+                            },
+                        ],
                     },
                     {
-                        name: 'tableauServer',
-                        path: '/console/parameterConfig/tableauServer',
-                        component: () =>
-                            import(
-                                '@/pages/parameterConfig/tableauServer/index.vue'
-                            ),
+                        name: 'parameterConfig',
+                        path: '/console/parameterConfig',
+                        component: () => import('@/pages/parameterConfig/index.vue'),
                         meta: {
-                            title: 'setting tableau server',
+                            title: 'Parameter Config',
                             publicPage: true,
                         },
+                        children: [],
                     },
-                ],
+                ]
             },
         ],
     },

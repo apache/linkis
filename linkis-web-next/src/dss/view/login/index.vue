@@ -18,20 +18,12 @@
 
 <template>
     <div class="login">
-        <i class="login-bg" />
+        <i class="login-bg"></i>
         <div class="login-main">
-            <!-- :rules="ruleInline" -->
             <FForm ref="loginFormRef" :model="loginForm" labelPosition="top">
-                <span class="login-title">
+                <div class="login-title">
                     {{ $t('message.common.login.loginTitle') }}
-                </span>
-
-                <!-- :rules="[
-                        {
-                            required: true,
-                            message: $t('message.common.login.userName'),
-                        },
-                    ]" -->
+                </div>
                 <FFormItem prop="user">
                     <template #label>
                         <div class="label">
@@ -41,17 +33,10 @@
                     <FInput
                         class="login-input"
                         v-model="loginForm.user"
-                        type="text"
                         :placeholder="$t('message.common.login.userName')"
                         size="large"
                     />
                 </FFormItem>
-                <!-- :rules="[
-                        {
-                            required: true,
-                            message: $t('message.common.login.passwordHint'),
-                        },
-                    ]" -->
                 <FFormItem prop="password">
                     <template #label>
                         <div class="label password">
@@ -70,11 +55,10 @@
                     v-model="rememberUserNameAndPass"
                     class="remember-user-name"
                 >
-                    {{ $t('message.common.login.remenber') }}
+                    {{ $t('message.common.login.remember') }}
                 </FCheckbox>
-
                 <FButton
-                    @click="handleSubmit('loginForm')"
+                    @click="handleSubmit"
                     class="login-btn"
                     :loading="loading"
                     type="primary"
@@ -99,8 +83,7 @@ import { config } from '@/config/db';
 
 export default defineComponent({
     setup() {
-        const loginFormRef = ref(null);
-
+        const loginFormRef = ref();
         return {
             userName: '',
             loginFormRef,
@@ -108,24 +91,6 @@ export default defineComponent({
             loginForm: {
                 user: '',
                 password: '',
-            },
-            ruleInline: {
-                user: [
-                    {
-                        required: true,
-                        message: 'message.common.login.userName',
-                        trigger: 'blur',
-                    },
-                    // {type: 'string', pattern: /^[0-9a-zA-Z\.\-_]{4,16}$/, message: '无效的用户名！', trigger: 'change'},
-                ],
-                password: [
-                    {
-                        required: true,
-                        message: 'message.common.login.password',
-                        trigger: 'blur',
-                    },
-                    // {type: 'string', pattern: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,18}$/, message: '请输入6至12位的密码', trigger: 'change'},
-                ],
             },
             rememberUserNameAndPass: false,
             publicKeyData: {
@@ -150,10 +115,7 @@ export default defineComponent({
                 this.publicKeyData = res;
             });
         },
-        handleSubmit(name: string) {
-            console.log(this.loginForm.user, name);
-            // this.loginFormRef.validate((valid: boolean) => {
-            // if (valid) {
+        handleSubmit() {
             this.loading = true;
             if (!this.rememberUserNameAndPass) {
                 storage.remove('saveUserNameAndPass', 'local');
@@ -191,57 +153,43 @@ export default defineComponent({
                 Object.keys(config.stores).map((key) =>
                     (db as any).db?.[key]?.clear(),
                 );
-                api.fetch('/user/login', params)
-                    .then((rst: any) => {
-                        this.loading = false;
-                        storage.set('userName', rst.userName, 'session');
+                api.fetch('/user/login', params).then((rst: any) => {
+                    this.loading = false;
+                    storage.set('userName', rst.userName, 'session');
+                    storage.set(
+                        'enableWatermark',
+                        rst.enableWatermark,
+                        'session',
+                    );
+                    // save username(保存用户名)
+                    if (this.rememberUserNameAndPass) {
                         storage.set(
-                            'enableWatermark',
-                            rst.enableWatermark,
-                            'session',
+                            'saveUserNameAndPass',
+                            `${this.loginForm.user}&${this.loginForm.password}`,
+                            'local',
                         );
-                        // save username(保存用户名)
-                        if (this.rememberUserNameAndPass) {
-                            storage.set(
-                                'saveUserNameAndPass',
-                                `${this.loginForm.user}&${this.loginForm.password}`,
-                                'local',
-                            );
-                        }
-                        if (rst) {
-                            this.userName = rst.userName;
-                            this.$router.push({ path: '/' });
-                            FMessage.success(
-                                this.$t('message.common.login.loginSuccess'),
-                            );
-                        }
-                    })
-                    .catch((err: any) => {
-                        if (this.rememberUserNameAndPass) {
-                            storage.set(
-                                'saveUserNameAndPass',
-                                `${this.loginForm.user}&${this.loginForm.password}`,
-                                'local',
-                            );
-                        }
-                        if (
-                            err.message.indexOf(
-                                '已经登录，请先退出再进行登录',
-                            ) !== -1
-                        ) {
-                            // this.getPageHomeUrl().then(() => {
-                            this.$router.push({ path: '/' });
-                            // });
-                        }
-                        this.loading = false;
-                    });
+                    }
+                    if (rst) {
+                        this.userName = rst.userName;
+                        this.$router.push({ path: '/' });
+                        FMessage.success(
+                            this.$t('message.common.login.loginSuccess'),
+                        );
+                    }
+                }).catch((err: any) => {
+                    if (this.rememberUserNameAndPass) {
+                        storage.set(
+                            'saveUserNameAndPass',
+                            `${this.loginForm.user}&${this.loginForm.password}`,
+                            'local',
+                        );
+                    }
+                    if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
+                        this.$router.push({ path: '/' });
+                    }
+                    this.loading = false;
+                });
             });
-            // }
-            //  else {
-            //   console.error(this.$t('message.common.login.vaildFaild'))
-            //   FMessage.error(this.$t('message.common.login.vaildFaild'))
-            // }
-            // })
         },
         // clear local cache
         clearSession() {
@@ -250,31 +198,22 @@ export default defineComponent({
     },
 });
 </script>
-<style scoped>
+<style scoped lang="less">
 @import '../../../style/variable.less';
 
 .login {
     height: 100%;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    background-color: #001c40;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
     .login-bg {
         position: fixed;
         width: 100%;
         height: 100%;
-        top: 0;
-        left: 0;
         background: url('@/dss/assets/images/loginbgc.svg') no-repeat;
         background-position: 55% 40%;
         background-color: #001c40;
     }
-
     .login-main {
         position: relative;
         width: 450px;
@@ -284,23 +223,17 @@ export default defineComponent({
         padding: 50px;
         border-radius: 6px;
         box-shadow: 2px 2px 40px 0px rgba(0, 0, 0, 0.9);
-        z-index: 10;
-
         .login-title {
             font-size: 20px;
-            font-weight: 400px;
-            display: block;
             text-align: center;
             color: #044b93;
             font-weight: 600;
         }
-
         .label {
             font-size: 14px;
             line-height: 22px;
             margin-top: 20px;
         }
-
         .login-input {
             height: 50px;
             border-radius: 4px;
@@ -308,14 +241,17 @@ export default defineComponent({
             color: #515a6e;
             border: 1px solid #dee4ec;
         }
-
+        .remember-user-name {
+            position: absolute;
+            bottom: 106px;
+            font-size: 12px;
+        }
         .login-btn {
             position: absolute;
             bottom: 50px;
             left: 50px;
             width: 357px;
         }
-
         :deep(span.fes-input-inner) {
             display: block;
             height: 48px;
@@ -324,38 +260,13 @@ export default defineComponent({
             padding: auto 6px;
             padding: 0;
         }
-
         :deep(.fes-input.login-input) {
             padding: 0;
         }
-
         :deep(.fes-input-inner-el) {
             transform: translateY(-2px);
             padding-left: 12px;
             height: 100%;
-        }
-
-        .remember-user-name {
-            position: absolute;
-            bottom: 106px;
-            font-size: 12px;
-        }
-
-        .ivu-form-item {
-            margin-bottom: 20px;
-        }
-    }
-
-    :deep(.fes-form-item-label::before) {
-        display: none;
-    }
-
-    .radioGroup {
-        padding-left: 20px;
-        display: block;
-
-        .ivu-radio-group-item {
-            width: 100%;
         }
     }
 }

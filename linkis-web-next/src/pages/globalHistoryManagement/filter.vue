@@ -17,116 +17,103 @@
 
 <template>
     <div class="label">{{ $t('message.linkis.globalTaskQuery') }}</div>
-    <div class="filter">
-        <FForm ref="formRef" class="form" v-show="!isCheckingTaskToStop">
+    <div>
+        <FForm v-show="!isCheckingTaskToStop" layout="inline" :span="4">
             <FFormItem
-                :label="$t('message.linkis.jobId')"
-                :props="$t('message.linkis.jobId')"
+                :label="$t('message.linkis.columns.taskID')"
+                :props="$t('message.linkis.columns.taskID')"
             >
                 <FInput
-                    v-model="formData.id"
-                    placeholder="请输入"
-                    class="short-form-item"
-                ></FInput>
+                    v-model="formData.taskID"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
+                    type="number"
+                />
             </FFormItem>
-
             <FFormItem
-                :label="$t('message.linkis.codeQuery.status')"
-                :props="$t('message.linkis.codeQuery.status')"
+                :label="$t('message.linkis.columns.status')"
+                :props="$t('message.linkis.columns.status')"
             >
                 <FSelect
                     v-model="formData.status"
                     clearable
-                    placeholder="请选择"
-                    class="short-form-item"
+                    :placeholder="t('message.linkis.unselect')"
                 >
                     <FOption
                         v-for="(item, index) in statusList"
                         :key="index"
                         :value="item.value"
                         :label="$t(item.label)"
-                    >
-                    </FOption>
+                    />
                 </FSelect>
             </FFormItem>
-
             <FFormItem
-                :label="$t('message.common.resourceSimple.YQ')"
-                :props="$t('message.common.resourceSimple.YQ')"
+                :label="$t('message.linkis.columns.requestApplicationName')"
+                :props="$t('message.linkis.columns.requestApplicationName')"
+            >
+                <FInput
+                    v-model="formData.creator"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
+                />
+            </FFormItem>
+            <FFormItem
+                :label="$t('message.linkis.columns.executeApplicationName')"
+                :props="$t('message.linkis.columns.executeApplicationName')"
             >
                 <FSelect
-                    v-model="formData.engine"
+                    v-model="formData.executeApplicationName"
                     clearable
-                    placeholder="请选择"
-                    class="short-form-item"
+                    :placeholder="t('message.linkis.unselect')"
                 >
                     <FOption
                         v-for="(item, index) in engineList"
                         :key="index"
                         :value="item.value"
                         :label="$t(item.label)"
-                    >
-                    </FOption>
+                    />
                 </FSelect>
             </FFormItem>
-
             <FFormItem
-                :label="$t('message.linkis.codeQuery.createdTime')"
-                :prop="$t('message.linkis.codeQuery.createdTime')"
-                class="long-form-item"
+                :label="$t('message.linkis.columns.createdTime')"
+                :prop="$t('message.linkis.columns.createdTime')"
+                :span="8"
             >
+                <!-- 日期修改完成后需要让日期选择组件失焦 -->
                 <FDatePicker
-                    v-model="formData.dateRange"
                     type="daterange"
-                    :modelValue="[
-                        Date.now(),
-                        Date.now() + 7 * 24 * 60 * 60 * 1000,
-                    ]"
-                >
-                    <template #separator> - </template>
-                </FDatePicker>
+                    v-model="formData.timeRange"
+                    :shortcuts="$props.shortcuts"
+                    @focus="(e:any) => { e.target.blur() }"
+                />
             </FFormItem>
-
-            <!-- TODO:  -->
-            <!-- <FFormItem
-                :label="$t('message.linkis.datasource.creator')"
-                :props="$t('message.linkis.datasource.creator')"
+            <FFormItem
+                :label="$t('message.linkis.columns.umUser')"
+                :props="$t('message.linkis.columns.umUser')"
+                v-if="isAdminView"
             >
-                <FSelect
-                    v-model="formData.creator"
-                    clearable
-                    placeholder="请选择"
-                    class="short-form-item"
-                >
-                    <FOption
-                        v-for="(item, index) in optionList"
-                        :key="index"
-                        :value="item.value"
-                        :label="$t(item.label)"
-                    >
-                    </FOption>
-                </FSelect>
-            </FFormItem> -->
-
-            <div class="buttons">
-                <template v-if="!isCheckingTaskToStop">
-                    <FButton type="primary" @click="search">
-                        {{ $t('message.linkis.find') }}
-                    </FButton>
-                    <FButton @click="reset">
-                        {{ $t('message.linkis.EnginePluginManagement.Reset') }}
-                    </FButton>
-                    <FButton
-                        class="stop-button"
-                        @click="isCheckingTaskToStop = true"
-                    >
-                        {{ $t('message.linkis.batchStopping') }}
-                    </FButton>
-                </template>
-            </div>
+                <FInput
+                    v-model="formData.proxyUser"
+                    :placeholder="t('message.linkis.datasource.pleaseInput')"
+                />
+            </FFormItem>
         </FForm>
+        <div class="buttons">
+            <template v-if="!isCheckingTaskToStop">
+                <FButton type="primary" @click="search">
+                    {{ $t('message.linkis.find') }}
+                </FButton>
+                <FButton @click="reset">
+                    {{ $t('message.linkis.reset') }}
+                </FButton>
+                <FButton @click="switchAdmin" v-show="isLogAdmin || isHistoryAdmin">
+                    {{ isAdminView ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}
+                </FButton>
+                <FButton @click="isCheckingTaskToStop = true">
+                    {{ $t('message.linkis.batchStop') }}
+                </FButton>
+            </template>
+        </div>
         <template v-if="isCheckingTaskToStop">
-            <div class="buttons">
+            <div>
                 <FButton
                     type="primary"
                     class="confirm-stop-button"
@@ -151,28 +138,35 @@ import { ref, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '@/service/api';
 import { CheckedRow, CheckedRows } from './type';
+import storage from '@/helper/storage';
 
 const { t } = useI18n();
 
 const emit = defineEmits(['search']);
 const props = defineProps<{
+    tableRef: any;
     pageSize: number;
     currentPage: number;
     checkedRows: CheckedRows;
+    isLogAdmin: boolean;
+    isHistoryAdmin: boolean;
+    shortcuts: any;
 }>();
 
 const isCheckingTaskToStop = ref(false);
-const formRef = ref<null | typeof FForm>(null);
 
 const formData = reactive({
-    id: '',
+    taskID: '',
     status: '',
-    engine: '',
-    dateRange: '',
+    executeApplicationName: '',
+    timeRange: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()],
     creator: '',
+    proxyUser: '',
+    isAdminView: false,
 });
 
 const engineList = ref<Array<{ label: string; value: string }>>([]);
+const isAdminView = ref<boolean>(storage.get('isAdminView') === 'true');
 
 const statusList = ref([
     {
@@ -211,16 +205,16 @@ const statusList = ref([
 
 const getParams = () => {
     const params = {
-        taskID: formData.id,
+        taskID: formData.taskID,
         creator: formData.creator,
-        executeApplicationName: formData.engine,
+        executeApplicationName: formData.executeApplicationName === 'all' ? '' : formData.executeApplicationName,
         status: formData.status,
-        startDate: formData.dateRange?.[0],
-        endDate: formData.dateRange?.[1],
+        startDate: formData.timeRange?.[0],
+        endDate: formData.timeRange?.[1],
+        proxyUser: formData.proxyUser,
+        isAdminView: formData.isAdminView,
         pageNow: props?.currentPage,
         pageSize: props?.pageSize,
-        // proxyUser: this.searchBar.proxyUser,
-        // isAdminView: this.isAdminModel,
         // instance: this.searchBar.instance?.replace(/ /g, '') || '',
     };
     return params;
@@ -232,19 +226,31 @@ const search = async () => {
 };
 
 const reset = () => {
-    formData.id = '';
+    formData.taskID = '';
     formData.status = '';
-    formData.engine = '';
-    formData.dateRange = '';
+    formData.executeApplicationName = '';
+    formData.timeRange = [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date().getTime()];
     formData.creator = '';
-
+    formData.proxyUser = '';
     search();
 };
+
+const switchAdmin = () => {
+    if (isAdminView.value) {
+        formData.taskID = '';
+        formData.proxyUser = '';
+        storage.set('isAdminView', 'false')
+    } else {
+        storage.set('isAdminView', 'true')
+    }
+    isAdminView.value = !isAdminView.value;
+    formData.isAdminView = isAdminView.value;
+    search();
+}
 
 const confirmStop = () => {
     // instance, taskID, strongerExecId
     const selected = props.checkedRows;
-
     if (!selected.length) {
         FMessage.warning(t('message.linkis.unselect'));
         return;
@@ -275,15 +281,15 @@ const confirmStop = () => {
                 ),
             );
     });
-
     Promise.all(p).then(() => {
         FMessage.success(t('message.common.notice.kill.desc'));
         search();
+    }).finally(() => {
+        props.tableRef.clearSelection();
     });
 };
 
 onMounted(() => {
-    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/configuration/engineType', 'get').then(
         (res: { engineType: Array<string> }) => {
             // engine config selector list
@@ -293,47 +299,25 @@ onMounted(() => {
             }));
         },
     );
+    search();
 });
 
 defineExpose({
     isCheckingTaskToStop,
     handleSearch: search,
+    formData,
 });
 </script>
 
 <style scoped src="./index.less"></style>
-<style scoped>
-.filter {
-    position: relative;
-    height: 54px;
-
-    .form {
-        display: flex;
-        gap: 22px;
-
-        .short-form-item {
-            width: 100px;
-        }
-
-        .long-form-item {
-            width: 300px;
-        }
-    }
-
-    .buttons {
-        margin-left: 10px;
-        flex: 1;
-        display: flex;
-        justify-content: flex-start;
-        gap: 16px;
-
-        .stop-button {
-            margin-left: auto;
-            text-align: center;
-        }
-    }
-    :deep(button) {
-        padding-left: 16px;
-    }
+<style scoped lang="less">
+.buttons {
+    float: right;
+    display: flex;
+    margin: -8px 0 16px 0;
+    gap: 16px;
+}
+.confirm-stop-button {
+    margin: 0 12px 12px 0;
 }
 </style>

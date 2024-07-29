@@ -17,12 +17,14 @@
 
 <template>
     <div class="menu-wrapper">
-        <f-menu mode="vertical" id="menu">
+        <f-menu mode="vertical" id="menu" :collapsed="collapsed" accordion v-model="activePath">
             <template v-for="menuItem in menuItemsConfig" :key="menuItem.title">
                 <template v-if="menuItem.items">
-                    <f-sub-menu :value="menuItem.title">
-                        <template #label>
+                    <f-sub-menu :value="menuItem.path">
+                        <template #icon>
                             <img :src="menuItem.icon" />
+                        </template>
+                        <template #label>
                             <div class="title-text">
                                 {{ $t(menuItem.title) }}
                             </div>
@@ -33,9 +35,9 @@
                                 :key="subMenuItem.title"
                             >
                                 <f-menu-item
-                                    :value="menuItem.title + subMenuItem.title"
+                                    :value="subMenuItem.path"
                                     @click="
-                                        handleClick(subMenuItem?.path ?? '/')
+                                        handleClick(subMenuItem.path ?? '/')
                                     "
                                 >
                                     <template #label>
@@ -50,11 +52,13 @@
                 </template>
                 <template v-else>
                     <f-menu-item
-                        :value="menuItem.title"
+                        :value="menuItem.path"
                         @click="handleClick(menuItem?.path ?? '/')"
                     >
-                        <template #label>
+                        <template #icon>
                             <img :src="menuItem.icon" />
+                        </template>
+                        <template #label>
                             <div class="title-text">
                                 {{ $t(menuItem.title) }}
                             </div>
@@ -67,9 +71,15 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
+defineProps<{
+    collapsed: boolean
+}>();
+
 const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.globalHistory',
@@ -89,49 +99,74 @@ const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.dateReport',
         icon: '/sidebar/dateReport.svg',
-        path: '',
+        path: '/x',
     },
     {
         title: 'message.linkis.sideNavList.function.children.ECMManage',
         icon: '/sidebar/ECMManage.svg',
-        path: '',
+        path: '/xx',
     },
     {
         title: 'message.linkis.sideNavList.function.children.microserviceManage',
         icon: '/sidebar/microserviceManage.svg',
-        path: '',
+        path: '/xxx',
     },
     {
         title: 'message.linkis.sideNavList.function.children.dataSourceManage',
         icon: '/sidebar/dataSourceManage.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/xxxx',
+        items: [{ title: 'xxx', path: '/xxxx' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.udfFunctionTitle',
         icon: '/sidebar/udfFunctionTitle.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/xxxxx',
+        items: [{ title: 'xxx', path: '/xxxxx' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.basedataManagement',
         icon: '/sidebar/basedataManagement.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/xxxxxx',
+        items: [{ title: 'xxx', path: '/xxxxxx' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.codeQuery',
         icon: '/sidebar/codeQuery.svg',
-        path: '',
+        path: '/xxxxxxxxx',
     },
 ];
+
+// 获取当前路径，使得sidebar显示的当前菜单能够与当前路径相匹配
+const getActivePath = () => {
+    const currentPath = router.currentRoute.value.path;
+    let activePath = currentPath;
+    menuItemsConfig.forEach(config => {
+        if(currentPath.startsWith(config.path)){
+            activePath = config.path;
+            if(config.items){
+                config.items.forEach(subItem => {
+                    if(currentPath.startsWith(subItem.path)){
+                        activePath = subItem.path;
+                    }
+                })
+            }
+        }
+    })
+    return activePath;
+}
+
+const activePath = ref(getActivePath());
 
 const handleClick = (path: string) => {
     router.push(path);
 };
+
+watch(
+    () => router.currentRoute.value.path,
+    () => {
+        activePath.value = getActivePath();
+    }
+);
 </script>
 
 <style src="./index.less" scoped></style>
-<style scoped>
-.submenu-item {
-    height: 54px;
-    line-height: 54px;
-}
-</style>

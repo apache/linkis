@@ -1,5 +1,5 @@
 {
-  "name": "LINKIS-WEB-NEXT",
+  "name": "linkis-web-next",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -15,7 +15,7 @@
     "@vitejs/plugin-vue": "^4.1.0",
     "axios": "^1.6.0",
     "dayjs": "^1.11.10",
-    "dexie": "^3.2.4",
+    "dexie": "^3.2.7",
     "md5": "^2.3.0",
     "monaco-editor": "^0.43.0",
     "qs": "^6.11.2",

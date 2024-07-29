@@ -17,19 +17,18 @@
 
 <template>
     <FSpace class="wrapper">
-        <FTooltip mode="popover">
+        <FTooltip mode="popover" showAfter="500">
             <div :style="props.textStyle">{{ props.text }}</div>
             <template #title>
-                <div class="title">
+                <div class="tip-title">
                     {{ props.tipTitle }}
                 </div>
             </template>
             <template #content>
-                <div class="content" ref="contentRef">
+                <div ref="contentRef" class="tip-content">
                     {{ props.tipContent }}
                 </div>
-                <div class="content" v-html="tipHTMLContent"></div>
-                <!-- <slot name="default"></slot> -->
+                <div v-html="tipHTMLContent" class="tip-content"></div>
             </template>
         </FTooltip>
     </FSpace>
@@ -53,20 +52,17 @@ defineExpose({
 });
 </script>
 
-<style lang="less" src="./index.less"></style>
-<style scoped>
+<style scoped lang="less">
 .wrapper {
     cursor: pointer;
-    .title {
-        font-family: PingFangSC-Medium;
+    .tip-title {
         font-size: 16px;
         color: #0f1222;
         letter-spacing: 0;
         line-height: 24px;
-        font-weight: 500;
+        font-weight: bold;
     }
-
-    .content {
+    .tip-content {
         max-width: 640px;
     }
 }

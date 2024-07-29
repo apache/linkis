@@ -52,9 +52,10 @@ import {
 import App from '@/App.vue';
 import router from '@/router/index';
 import messages from '@/locales';
+import storage from './helper/storage';
 
 const i18n = createI18n({
-    locale: 'zh',
+    locale: storage.get('locale', 'local') || 'zh',
     fallbackLocale: 'en',
     legacy: false,
     messages,

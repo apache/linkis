@@ -358,8 +358,8 @@
         "advancedSetting": "Advanced Settings",
         "dataDev": "Data Development",
         "maxLimit": "(The resource template specifies an upper limit value of {limit})",
-        "killEngine": "Should the existing engine be marked as non-reusable?",
-        "killEngineTitle": "Mark the engine as non-reusable"
+        "killEngine": "The parameter changes have taken effect. Clicking 'OK' will stop the idle engines, and busy engines will stop after task execution",
+        "killEngineTitle": "Whether to stop idle engines"
       },
       "globalValiable": "Global Variables",
       "rules": {

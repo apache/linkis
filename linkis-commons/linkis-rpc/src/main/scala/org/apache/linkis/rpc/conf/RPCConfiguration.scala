@@ -97,9 +97,6 @@ object RPCConfiguration {
   val SERVICE_SCAN_PACKAGE: String =
     CommonVars("wds.linkis.ms.service.scan.package", "org.apache.linkis").getValue
 
-  val ENABLE_SPRING_PARAMS: Boolean =
-    CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
-
   // unit is HOUR
   val SENDER_CACHE_CLEANING_HOUR =
     CommonVars("linkis.rpc.sender.cache.cleaning.time.hour", 6).getValue

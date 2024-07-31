@@ -334,8 +334,8 @@
               "advancedSetting": "高级设置",
               "dataDev": "数据开发",
               "maxLimit": "(资源模板指定上限值为{limit})",
-              "killEngine": "是否将现有的引擎标记为不可复用?",
-              "killEngineTitle": "标记引擎为不可复用"
+              "killEngine": "参数修改已生效，点击确定将停止空闲引擎，繁忙引擎在任务执行后停止",
+              "killEngineTitle": "是否停止空闲引擎"
           },
           "globalValiable": "全局变量",
           "rules": {

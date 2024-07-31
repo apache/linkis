@@ -133,7 +133,6 @@ object TemplateConfUtils extends Logging {
 
     var varString: String = null
     var errString: String = null
-    var rightVarString: String = null
     var fixECString: String = null
 
     val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
@@ -159,54 +158,63 @@ object TemplateConfUtils extends Logging {
     val fixECRegex: UnanchoredRegex = fixECString.r.unanchored
     val errRegex = errString.r.unanchored
     var codeRes = code.replaceAll("\r\n", "\n")
-    // only allow set at fisrt line
-    val res = codeRes.split("\n")
-    if (res.size > 0) {
-      val str = res(0)
-      str match {
-        case customRegex() =>
-          val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
-          val res: Array[String] = clearStr.split("=")
-          if (res != null && res.length == 2) {
-            templateConfName = res(1).trim
-            logger.info(s"get template conf name $templateConfName")
-          } else {
-            if (res.length > 2) {
-              throw new LinkisCommonErrorException(
-                20044,
-                s"$str template conf name var defined uncorrectly"
+
+    // 匹配任意行，只能是单独的行
+    if (codeRes.contains(confTemplateNameKey) || codeRes.contains(confFixedEngineConnLabelKey)) {
+      val res = codeRes.split("\n")
+      // 用于标识，匹配到就退出
+      var matchFlag = false
+      res.foreach(str => {
+        if (matchFlag) {
+          return templateConfName
+        }
+        str match {
+          case customRegex() =>
+            val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
+            val res: Array[String] = clearStr.split("=")
+            if (res != null && res.length == 2) {
+              templateConfName = res(1).trim
+              logger.info(s"get template conf name $templateConfName")
+            } else {
+              if (res.length > 2) {
+                throw new LinkisCommonErrorException(
+                  20044,
+                  s"$str template conf name var defined uncorrectly"
+                )
+              } else {
+                throw new LinkisCommonErrorException(
+                  20045,
+                  s"template conf name var  was defined uncorrectly:$str"
+                )
+              }
+            }
+            matchFlag = true
+          case fixECRegex(sessionId) =>
+            // deal with fixedEngineConn configuration, add fixedEngineConn label if setting @set ec.fixed.sessionId=xxx
+            if (StringUtils.isNotBlank(sessionId)) {
+              val fixedEngineConnLabel =
+                LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                  classOf[FixedEngineConnLabel]
+                )
+              fixedEngineConnLabel.setSessionId(sessionId)
+              jobRequest.getLabels.add(fixedEngineConnLabel)
+              logger.info(
+                s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
+              )
+              logAppender.append(
+                s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
               )
             } else {
-              throw new LinkisCommonErrorException(
-                20045,
-                s"template conf name var  was defined uncorrectly:$str"
-              )
+              logger.info(s"The task ${jobRequest.getId} not set fixed engine conn")
             }
-          }
-        case fixECRegex(sessionId) =>
-          // deal with fixedEngineConn configuration, add fixedEngineConn label if setting @set ec.fixed.sessionId=xxx
-          if (StringUtils.isNotBlank(sessionId)) {
-            val fixedEngineConnLabel =
-              LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
-                classOf[FixedEngineConnLabel]
-              )
-            fixedEngineConnLabel.setSessionId(sessionId)
-            jobRequest.getLabels.add(fixedEngineConnLabel)
-            logger.info(
-              s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
+            matchFlag = true
+          case errRegex() =>
+            logger.warn(
+              s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
             )
-            logAppender.append(
-              s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
-            )
-          } else {
-            logger.info(s"The task ${jobRequest.getId} not set fixed engine conn")
-          }
-        case errRegex() =>
-          logger.warn(
-            s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
-          )
-        case _ =>
-      }
+          case _ =>
+        }
+      })
     }
     templateConfName
   }

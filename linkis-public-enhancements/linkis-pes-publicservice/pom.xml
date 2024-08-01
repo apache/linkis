@@ -24,7 +24,7 @@
     <version>${revision}</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
-  <artifactId>linkis-storage-script-dev-server</artifactId>
+  <artifactId>linkis-pes-publicservice</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>

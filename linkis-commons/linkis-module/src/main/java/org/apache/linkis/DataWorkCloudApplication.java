@@ -50,6 +50,7 @@ import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
@@ -68,6 +69,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 @EnableDiscoveryClient
 @RefreshScope
 @EnableFeignClients
+@EnableRetry
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
   private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
 

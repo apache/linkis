@@ -21,13 +21,11 @@ import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageConfiguration, StorageUtils}
-
-import java.text.SimpleDateFormat
-import java.util.Date
 
 object CommonLogPathUtils {
 
@@ -58,34 +56,20 @@ object CommonLogPathUtils {
     }
   }
 
-  private val resPrefix = EntranceConfiguration.DEFAULT_LOGPATH_PREFIX.getValue
-
-  /**
-   * get result path parentPath: resPrefix + dateStr + result + creator subPath: parentPath +
-   * executeUser + taskid + filename
-   * @param jobRequest
-   * @return
-   */
   def getResultParentPath(jobRequest: JobRequest): String = {
-    val resStb = new StringBuilder()
-    if (resStb.endsWith("/")) {
-      resStb.append(resPrefix)
-    } else {
-      resStb.append(resPrefix).append("/")
-    }
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-    val date = new Date(System.currentTimeMillis)
-    val dateString = dateFormat.format(date)
     val userCreator = LabelUtil.getUserCreatorLabel(jobRequest.getLabels)
     val creator =
-      if (null == userCreator) EntranceConfiguration.DEFAULT_CREATE_SERVICE
+      if (null == userCreator) EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue
       else userCreator.getCreator
-    resStb.append("result").append("/").append(dateString).append("/").append(creator)
-    resStb.toString()
+    GovernanceUtils.getResultParentPath(creator)
   }
 
   def getResultPath(jobRequest: JobRequest): String = {
-    val parentPath = getResultParentPath(jobRequest)
+    val userCreator = LabelUtil.getUserCreatorLabel(jobRequest.getLabels)
+    val creator =
+      if (null == userCreator) EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue
+      else userCreator.getCreator
+    val parentPath = GovernanceUtils.getResultParentPath(creator)
     parentPath + "/" + jobRequest.getExecuteUser + "/" + jobRequest.getId
   }
 

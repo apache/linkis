@@ -20,6 +20,7 @@ package org.apache.linkis.computation.client.once.simple
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.LinkisJobBuilder
+import org.apache.linkis.computation.client.LinkisJobBuilder.clientConfig
 import org.apache.linkis.computation.client.once.LinkisManagerClient
 import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
 import org.apache.linkis.computation.client.once.simple.SimpleOnceJobBuilder._
@@ -28,6 +29,8 @@ import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
 import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils
 import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
 import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.UJESJobException
@@ -38,11 +41,18 @@ import java.util
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 
-class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[SubmittableSimpleOnceJob] {
+class SimpleOnceJobBuilder private[simple] (
+    private val bmlClient: BmlClient,
+    private val linkisManagerClient: LinkisManagerClient
+) extends LinkisJobBuilder[SubmittableSimpleOnceJob] {
 
   private var createService: String = _
   private var maxSubmitTime: Long = _
   private var description: String = _
+
+  def this() = {
+    this(null, null)
+  }
 
   def setCreateService(createService: String): this.type = {
     this.createService = createService
@@ -69,8 +79,24 @@ class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[Submittab
     val contentMap = OnceExecutorContentUtils.contentToMap(onceExecutorContent)
     val bytes = DWSHttpClient.jacksonJson.writeValueAsBytes(contentMap)
     val response =
-      getBmlClient.uploadResource(executeUser, getFilePath, new ByteArrayInputStream(bytes))
+      getThisBMLClient.uploadResource(executeUser, getFilePath, new ByteArrayInputStream(bytes))
     OnceExecutorContentUtils.resourceToValue(BmlResource(response.resourceId, response.version))
+  }
+
+  protected def getThisBMLClient(): BmlClient = {
+    if (null == this.bmlClient) {
+      getBmlClient(LinkisJobBuilder.getDefaultClientConfig)
+    } else {
+      this.bmlClient
+    }
+  }
+
+  protected def getThisLinkisManagerClient(): LinkisManagerClient = {
+    if (null == this.linkisManagerClient) {
+      getLinkisManagerClient
+    } else {
+      this.linkisManagerClient
+    }
   }
 
   override def build(): SubmittableSimpleOnceJob = {
@@ -99,7 +125,7 @@ class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[Submittab
       .setMaxSubmitTime(maxSubmitTime)
       .setDescription(description)
       .build()
-    new SubmittableSimpleOnceJob(getLinkisManagerClient, createEngineConnAction)
+    new SubmittableSimpleOnceJob(getThisLinkisManagerClient, createEngineConnAction)
   }
 
   implicit def toMap(map: util.Map[String, Any]): util.Map[String, String] = map.map {
@@ -128,10 +154,27 @@ object SimpleOnceJobBuilder {
   private var bmlClient: BmlClient = _
   private var linkisManagerClient: LinkisManagerClient = _
 
-  def getBmlClient: BmlClient = {
+  def getBmlClient(clientConfig: DWSClientConfig): BmlClient = {
     if (bmlClient == null) synchronized {
       if (bmlClient == null) {
-        bmlClient = BmlClientFactory.createBmlClient(LinkisJobBuilder.getDefaultClientConfig)
+        val newClientConfig = DWSClientConfigBuilder
+          .newBuilder()
+          .addServerUrl(clientConfig.getServerUrl)
+          .connectionTimeout(clientConfig.getConnectTimeout)
+          .discoveryEnabled(clientConfig.isDiscoveryEnabled)
+          .loadbalancerEnabled(clientConfig.isLoadbalancerEnabled)
+          .maxConnectionSize(clientConfig.getMaxConnection)
+          .retryEnabled(clientConfig.isRetryEnabled)
+          .setRetryHandler(clientConfig.getRetryHandler)
+          .readTimeout(
+            clientConfig.getReadTimeout
+          ) // We think 90s is enough, if SocketTimeoutException is throw, just set a new clientConfig to modify it.
+          .setAuthenticationStrategy(new TokenAuthenticationStrategy())
+          .setAuthTokenKey(TokenAuthenticationStrategy.TOKEN_KEY)
+          .setAuthTokenValue("LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+          .setDWSVersion(clientConfig.getDWSVersion)
+          .build()
+        bmlClient = BmlClientFactory.createBmlClient(newClientConfig)
         Utils.addShutdownHook(() => bmlClient.close())
       }
     }

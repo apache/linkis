@@ -436,9 +436,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def printLog(log: Any): Unit = {
     logger.info(log.toString)
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }

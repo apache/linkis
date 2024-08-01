@@ -21,12 +21,14 @@ import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   TaskLogUpdateEvent,
   TaskProgressUpdateEvent,
   TaskResultCreateEvent,
   TaskResultSizeCreatedEvent
 }
+import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.cs.CSTableResultSetWriter
 import org.apache.linkis.engineconn.executor.ExecutorExecutionContext
@@ -196,8 +198,12 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
       taskLog = s"${log.substring(0, limitLength)}..."
       logger.info("The log is too long and will be intercepted,log limit length : {}", limitLength)
     }
-    val listenerBus = getEngineSyncListenerBus
-    getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))
+    if (!AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
+      LogHelper.cacheLog(taskLog)
+    } else {
+      val listenerBus = getEngineSyncListenerBus
+      getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))
+    }
   }
 
   override def close(): Unit = {

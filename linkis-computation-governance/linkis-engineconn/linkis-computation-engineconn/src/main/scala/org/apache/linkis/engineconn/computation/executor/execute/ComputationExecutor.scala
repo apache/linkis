@@ -418,7 +418,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       // skip log jobId because it corresponding jobid when the ec created
       if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
-        sb.append(s"${key}=${value.toString}\n")
+        sb.append(s"${key}=${value}\n")
       }
     })
 

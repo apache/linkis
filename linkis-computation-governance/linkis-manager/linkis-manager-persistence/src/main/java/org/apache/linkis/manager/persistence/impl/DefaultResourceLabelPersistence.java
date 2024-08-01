@@ -31,6 +31,10 @@ import org.apache.linkis.manager.util.PersistenceUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +124,10 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
     }
   }
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   @Override
   public List<PersistenceResource> getResourceByLabel(PersistenceLabel label) {
     // label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询

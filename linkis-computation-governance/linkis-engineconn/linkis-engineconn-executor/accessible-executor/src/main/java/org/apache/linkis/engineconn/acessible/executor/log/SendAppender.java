@@ -101,7 +101,7 @@ public class SendAppender extends AbstractAppender {
         }
       }
       if (!flag) {
-        logStr = matchLog(logStr);
+        // logStr = matchLog(logStr);
         logCache.cacheLog(logStr);
       }
     } else {

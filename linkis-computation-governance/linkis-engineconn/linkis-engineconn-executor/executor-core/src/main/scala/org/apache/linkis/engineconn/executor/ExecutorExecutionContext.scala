@@ -20,11 +20,10 @@ package org.apache.linkis.engineconn.executor
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.label.entity.Label
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.DateFormatUtils
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -60,9 +59,8 @@ trait ExecutorExecutionContext {
   def setLabels(labels: Array[Label[_]]): Unit = this.labels = labels
 
   protected def getDefaultStorePath: String = {
-    val path = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
-    val pathPrefix = (if (path.endsWith("/")) path else path + "/") + Utils.getJvmUser + "/" +
-      DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd") + "/"
+    val path = GovernanceUtils.getResultParentPath("default")
+    val pathPrefix = (if (path.endsWith("/")) path else path + "/") + Utils.getJvmUser + "/"
     getJobId.map(pathPrefix + _ + "/" + System.nanoTime).getOrElse(pathPrefix + System.nanoTime)
   }
 
@@ -81,11 +79,11 @@ trait ExecutorExecutionContext {
   protected def getDefaultResultSetByType: String
 
   def createDefaultResultSetWriter(): ResultSetWriter[_ <: MetaData, _ <: Record] = {
-    createResultSetWriter(getResultSetByType(getDefaultResultSetByType)) // todo check
+    createResultSetWriter(getResultSetByType(getDefaultResultSetByType))
   }
 
   def createDefaultResultSetWriter(alias: String): ResultSetWriter[_ <: MetaData, _ <: Record] =
-    createResultSetWriter(getResultSetByType(getDefaultResultSetByType), alias) // todo check
+    createResultSetWriter(getResultSetByType(getDefaultResultSetByType), alias)
 
   def createResultSetWriter(resultSetType: String): ResultSetWriter[_ <: MetaData, _ <: Record] =
     createResultSetWriter(getResultSetByType(resultSetType), null)

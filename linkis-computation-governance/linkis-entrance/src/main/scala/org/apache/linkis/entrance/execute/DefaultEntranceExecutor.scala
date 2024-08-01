@@ -130,34 +130,9 @@ class DefaultEntranceExecutor(id: Long)
                 null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0
             ) {
               val resultsetSize = arrayResultSetPathResp.getResultSets.length
-              entranceExecuteRequest.getJob.setResultSize(resultsetSize)
               entranceExecuteRequest.getJob
                 .asInstanceOf[EntranceJob]
                 .addAndGetResultSize(resultsetSize)
-            }
-            val firstResultSet = arrayResultSetPathResp.getResultSets.headOption.orNull
-            if (null != firstResultSet) {
-              // assert that all result set files have same parent path, so we get the first
-              Utils.tryCatch {
-                entranceExecuteRequest.getJob
-                  .asInstanceOf[EntranceJob]
-                  .getEntranceContext
-                  .getOrCreatePersistenceManager()
-                  .onResultSetCreated(
-                    entranceExecuteRequest.getJob,
-                    AliasOutputExecuteResponse(firstResultSet.alias, firstResultSet.result)
-                  )
-              } { case e: Exception =>
-                val msg = s"Persist resultSet error. ${e.getMessage}"
-                logger.error(msg)
-                val errorExecuteResponse = new DefaultFailedTaskResponse(
-                  msg,
-                  EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
-                  e
-                )
-                dealResponse(errorExecuteResponse, entranceExecuteRequest, orchestration)
-                return
-              }
             }
           case _ =>
             logger.info(

@@ -34,6 +34,10 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,6 +138,10 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     }
   }
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   @Override
   public PersistenceLabel getLabel(int id) {
     PersistenceLabel persistenceLabel = labelManagerMapper.getLabel(id);

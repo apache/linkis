@@ -24,8 +24,9 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util
-import java.util.{ArrayList, List}
+import java.util.{ArrayList, Date, List}
 
 object GovernanceUtils extends Logging {
 
@@ -119,6 +120,28 @@ object GovernanceUtils extends Logging {
         logger.warn("Method findPid failed, " + e.getMessage)
         null
     }
+  }
+
+  /**
+   * get result path parentPath: resPrefix + dateStr + result + creator subPath: parentPath +
+   * executeUser + taskid + filename
+   *
+   * @param creator
+   * @return
+   */
+  def getResultParentPath(creator: String): String = {
+    val resPrefix = GovernanceCommonConf.DEFAULT_LOGPATH_PREFIX
+    val resStb = new StringBuilder()
+    if (resStb.endsWith("/")) {
+      resStb.append(resPrefix)
+    } else {
+      resStb.append(resPrefix).append("/")
+    }
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val date = new Date(System.currentTimeMillis)
+    val dateString = dateFormat.format(date)
+    resStb.append("result").append("/").append(dateString).append("/").append(creator)
+    resStb.toString()
   }
 
 }

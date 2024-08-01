@@ -44,6 +44,10 @@ object LogHelper extends Logging {
 
   def setLogListener(logListener: LogListener): Unit = this.logListener = logListener
 
+  def cacheLog(log: String): Unit = {
+    logCache.cacheLog(log)
+  }
+
   def pushAllRemainLogs(): Unit = {
     //    logger.info(s"start to push all remain logs")
     Thread.sleep(30)

@@ -255,9 +255,7 @@ class PythonSession extends Logging {
 
   def printLog(log: Any): Unit = {
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }

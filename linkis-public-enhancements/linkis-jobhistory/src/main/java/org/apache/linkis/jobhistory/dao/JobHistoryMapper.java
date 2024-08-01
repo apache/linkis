@@ -21,6 +21,10 @@ import org.apache.linkis.jobhistory.entity.JobHistory;
 
 import org.apache.ibatis.annotations.Param;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +32,16 @@ public interface JobHistoryMapper {
 
   List<JobHistory> selectJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void insertJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void updateJobHistory(JobHistory jobReq);
 
   List<JobHistory> searchWithIdOrderAsc(

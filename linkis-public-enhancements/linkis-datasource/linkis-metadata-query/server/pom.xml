@@ -26,16 +26,10 @@
   <artifactId>linkis-metadata-query-server</artifactId>
 
   <dependencies>
-    <!--Metadata common-->
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <!-- data source manager common dependency-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasource-manager-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>

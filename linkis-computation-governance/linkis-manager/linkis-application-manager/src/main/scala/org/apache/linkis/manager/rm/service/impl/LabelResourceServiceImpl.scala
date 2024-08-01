@@ -55,7 +55,7 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
     resourceLabelService.getResourceByLabel(label)
 
   @Retryable(
-    value = Array(Array(classOf[CannotGetJdbcConnectionException])),
+    value = Array(classOf[CannotGetJdbcConnectionException]),
     maxAttempts = 5,
     backoff = new Backoff(delay = 10000)
   )

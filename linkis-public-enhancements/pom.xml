@@ -39,12 +39,8 @@
     <module>linkis-udf-service</module>
     <module>linkis-jobhistory</module>
     <module>linkis-configuration</module>
-    <module>linkis-variable</module>
     <module>linkis-instance-label-server</module>
-    <module>linkis-storage-script-dev-server</module>
-    <module>linkis-basedata-manager</module>
-    <module>linkis-error-code-server</module>
-
+    <module>linkis-pes-publicservice</module>
   </modules>
 
   <dependencies>
@@ -95,22 +91,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-variable</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-storage-script-dev-server</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-error-code-server</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-basedata-manager</artifactId>
+      <artifactId>linkis-pes-publicservice</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

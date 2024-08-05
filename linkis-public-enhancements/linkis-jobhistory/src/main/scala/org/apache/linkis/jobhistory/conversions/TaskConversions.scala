@@ -274,6 +274,32 @@ object TaskConversions extends Logging {
     ) {
       createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_IS_REUSE) && metrics
+          .get(TaskConstant.JOB_IS_REUSE) != null
+    ) {
+      taskVO.setIsReuse(metrics.get(TaskConstant.JOB_IS_REUSE).toString)
+    }
+
+    var requestStartTime: Date = null
+    var requestEndTime: Date = null
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+          .get(TaskConstant.JOB_SUBMIT_TIME) != null
+    ) {
+      requestStartTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
+      taskVO.setRequestStartTime(requestStartTime)
+    }
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SCHEDULE_TIME) && metrics
+          .get(TaskConstant.JOB_SCHEDULE_TIME) != null
+    ) {
+      requestEndTime = dealString2Date(metrics.get(TaskConstant.JOB_SCHEDULE_TIME).toString)
+      taskVO.setRequestEndTime(requestEndTime)
+    }
+    if (null != requestStartTime && null != requestStartTime) {
+      taskVO.setRequestSpendTime(requestEndTime.getTime - requestStartTime.getTime)
+    }
     if (null != createTime) {
       if (isJobFinished(job.getStatus)) {
         if (null != completeTime) {

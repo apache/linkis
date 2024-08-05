@@ -63,7 +63,7 @@ public interface TaskConstant {
   String JOB_MEMORY_PERCENT = "memoryPercent";
   String JOB_CORE_RGB = "coreRGB";
   String JOB_MEMORY_RGB = "memoryRGB";
-
+  String JOB_IS_REUSE = "isReuse";
   String JOB_ENGINECONN_MAP = "engineconnMap";
   String ENGINE_INSTANCE = "engineInstance";
   String TICKET_ID = "ticketId";

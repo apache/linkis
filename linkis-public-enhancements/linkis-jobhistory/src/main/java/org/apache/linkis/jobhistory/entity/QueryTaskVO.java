@@ -59,6 +59,10 @@ public class QueryTaskVO {
   private boolean canRetry;
 
   private String observeInfo;
+  private String isReuse;
+  private Date requestStartTime;
+  private Date requestEndTime;
+  private Long requestSpendTime;
 
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
@@ -292,5 +296,37 @@ public class QueryTaskVO {
 
   public void setExecuteUser(String executeUser) {
     this.executeUser = executeUser;
+  }
+
+  public String getIsReuse() {
+    return isReuse;
+  }
+
+  public void setIsReuse(String isReuse) {
+    this.isReuse = isReuse;
+  }
+
+  public Date getRequestStartTime() {
+    return requestStartTime;
+  }
+
+  public void setRequestStartTime(Date requestStartTime) {
+    this.requestStartTime = requestStartTime;
+  }
+
+  public Date getRequestEndTime() {
+    return requestEndTime;
+  }
+
+  public void setRequestEndTime(Date requestEndTime) {
+    this.requestEndTime = requestEndTime;
+  }
+
+  public Long getRequestSpendTime() {
+    return requestSpendTime;
+  }
+
+  public void setRequestSpendTime(Long requestSpendTime) {
+    this.requestSpendTime = requestSpendTime;
   }
 }

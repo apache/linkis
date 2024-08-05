@@ -217,6 +217,9 @@ object JobHistoryHelper extends Logging {
     if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
       metricsMap.put(TaskConstant.ENGINE_INSTANCE, infoMap.get(TaskConstant.ENGINE_INSTANCE))
     }
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_IS_REUSE)) {
+      metricsMap.put(TaskConstant.JOB_IS_REUSE, infoMap.get(TaskConstant.JOB_IS_REUSE))
+    }
   }
 
 }

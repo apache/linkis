@@ -714,14 +714,12 @@ public class FsRestfulApi {
                   "en_msg",
                   "Because your result set is large, to view the full result set, use the Result set Export feature.");
             }
-            if (columnPageSize >= realSize) {
+            if (columnIndices.length >= realSize) {
               newMap = realMap;
             } else {
-              int startIndex = (columnPage - 1) * columnPageSize;
-              int endIndex = Math.min(startIndex + pageSize, realMap.length);
-              newMap = new Map[endIndex - startIndex];
-              for (int i = 0; i < newMap.length; i++) {
-                newMap[i] = realMap[startIndex + i];
+              newMap = new Map[columnIndices.length];
+              for (int i = 0; i < columnIndices.length; i++) {
+                newMap[i] = realMap[columnIndices[i]];
               }
             }
           }

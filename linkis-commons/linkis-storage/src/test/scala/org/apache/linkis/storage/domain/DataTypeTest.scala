@@ -19,19 +19,7 @@ package org.apache.linkis.storage.domain
 
 import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
-import scala.collection.mutable.ArrayBuffer
-
 class DataTypeTest {
-
-  @Test
-  @DisplayName("columnTest")
-  def columnTest(): Unit = {
-    val columns = new ArrayBuffer[Column]()
-    columns += Column("a", "b", "c")
-    columns += new Column("a", "b", "c", 1)
-    Assertions.assertEquals(-1, columns(0).index)
-    Assertions.assertEquals(1, columns(1).index)
-  }
 
   @Test
   @DisplayName("constTest")

@@ -153,20 +153,9 @@ case object StructType extends DataType("struct", 2002)
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
 case class Column(columnName: String, dataType: DataType, comment: String) {
-
-  // column index
-  var index: Int = -1
-
   def toArray: Array[Any] = {
-    Array[Any](columnName, dataType, comment, index)
+    Array[Any](columnName, dataType, comment)
   }
-
-  def this(columnName: String, dataType: DataType, comment: String, index: Int) {
-    this(columnName, dataType, comment)
-    this.index = index
-  }
-
   override def toString: String =
-    s"columnName:$columnName,dataType:$dataType,comment:$comment, index:$index"
-
+    s"columnName:$columnName,dataType:$dataType,comment:$comment"
 }

@@ -62,7 +62,7 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       len = colArray(i + 2).toInt
       val colComment = Dolphin.toStringValue(Dolphin.getString(bytes, index, len))
       index += len
-      columns += new Column(colName, colType, colComment, i)
+      columns += Column(colName, colType, colComment)
     }
     metaData = new TableMetaData(columns.toArray)
     metaData

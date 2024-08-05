@@ -29,14 +29,18 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
+import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.BeanUtils
 
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
+
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+
 import com.fasterxml.jackson.core.JsonProcessingException
 
 object TaskConversions extends Logging {

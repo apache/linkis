@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -29,18 +29,14 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
-
+import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.BeanUtils
 
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
-
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
-
 import com.fasterxml.jackson.core.JsonProcessingException
 
 object TaskConversions extends Logging {
@@ -340,6 +336,25 @@ object TaskConversions extends Logging {
       logger.warn("String to Date deserialization failed.")
       null
     }
+  }
+
+  def getJobRuntime(jobHistory: JobHistory): String = {
+    val metricsMap =
+      BDPJettyServerHelper.gson.fromJson((jobHistory.getMetrics), classOf[util.Map[String, Object]])
+    var runTime = ""
+    if (metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)) {
+      val completeTime = dealString2Date(
+        metricsMap.get(TaskConstant.JOB_COMPLETE_TIME).toString
+      ).getTime
+      val submitTime = dealString2Date(
+        metricsMap.get(TaskConstant.JOB_SUBMIT_TIME).toString
+      ).getTime
+      runTime = ByteTimeUtils.msDurationToString(completeTime - submitTime)
+    } else {
+      runTime =
+        "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)"
+    }
+    runTime
   }
 
 }

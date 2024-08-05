@@ -65,7 +65,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -604,12 +603,12 @@ public class FsRestfulApi {
         name = "columnIndex",
         required = false,
         dataType = "Integer",
-        defaultValue = "-1"),
+        defaultValue = "0"),
     @ApiImplicitParam(
         name = "columnPageSize",
         required = false,
         dataType = "Integer",
-        defaultValue = "-1"),
+        defaultValue = "500"),
     @ApiImplicitParam(
         name = "pageSize",
         required = true,
@@ -625,9 +624,8 @@ public class FsRestfulApi {
       @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
       @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit,
       @RequestParam(value = "columnIndices", required = false) int[] columnIndices,
-      @RequestParam(value = "columnIndex", required = false, defaultValue = "-1")
-          Integer columnIndex,
-      @RequestParam(value = "columnPageSize", required = false, defaultValue = "-1")
+      @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
+      @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
           Integer columnPageSize)
       throws IOException, WorkSpaceException {
 
@@ -636,9 +634,13 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
 
+    if (columnPageSize < 1 || columnPageSize > 500) {
+      throw WorkspaceExceptionManager.createException(80036, path);
+    }
+
     // 组装列索引
     if (columnIndices == null || columnIndices.length == 0) {
-      columnIndices = genColumnIndices(columnIndex, columnPageSize);
+      columnIndices = genColumnIndices(columnPage, columnPageSize);
     } else {
       if (!isAscending(columnIndices)) {
         throw WorkspaceExceptionManager.createException(80035);
@@ -704,15 +706,22 @@ public class FsRestfulApi {
           if (metaMap instanceof Map[]) {
             Map[] realMap = (Map[]) metaMap;
             int realSize = realMap.length;
-            if (realSize > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()) {
+            message.data("totalColumn", realSize);
+            if (realSize > 10000) {
               message.data("column_limit_display", true);
-              message.data("zh_msg", "全量结果集超过500列，如需查看完整结果集，请使用结果集导出功能");
+              message.data("zh_msg", "全量结果集超过10000列，页面提供500列数据预览，如需查看完整结果集，请使用结果集导出功能");
               message.data(
                   "en_msg",
                   "Because your result set is large, to view the full result set, use the Result set Export feature.");
-              newMap = new Map[LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()];
-              for (int i = 0; i < LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE(); i++) {
-                newMap[i] = realMap[i];
+            }
+            if (columnPageSize >= realSize) {
+              newMap = realMap;
+            } else {
+              int startIndex = (columnPage - 1) * columnPageSize;
+              int endIndex = Math.min(startIndex + pageSize, realMap.length);
+              newMap = new Map[endIndex - startIndex];
+              for (int i = 0; i < newMap.length; i++) {
+                newMap[i] = realMap[startIndex + i];
               }
             }
           }
@@ -756,22 +765,14 @@ public class FsRestfulApi {
   /**
    * 组装获取列索引
    *
-   * @param columnIndex
+   * @param columnPage default 1
    * @param columnPageSize
    * @return
    */
-  private int[] genColumnIndices(Integer columnIndex, Integer columnPageSize) {
-    if (columnIndex == -1) {
-      return null;
-    }
-    if (columnIndex >= 0
-        && (columnPageSize == -1
-            || columnPageSize > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE())) {
-      columnPageSize = LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE();
-    }
+  private int[] genColumnIndices(Integer columnPage, Integer columnPageSize) {
     int[] indexArray = new int[columnPageSize];
     for (int i = 0; i < columnPageSize; i++) {
-      indexArray[i] = columnIndex * columnPageSize + i;
+      indexArray[i] = (columnPage - 1) * columnPageSize + i;
     }
     return indexArray;
   }

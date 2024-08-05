@@ -153,9 +153,12 @@ case object StructType extends DataType("struct", 2002)
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
 case class Column(columnName: String, dataType: DataType, comment: String) {
+
   def toArray: Array[Any] = {
     Array[Any](columnName, dataType, comment)
   }
+
   override def toString: String =
     s"columnName:$columnName,dataType:$dataType,comment:$comment"
+
 }

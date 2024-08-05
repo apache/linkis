@@ -46,7 +46,7 @@ public class EcmClearTask {
       cmdlist.add("sh");
       cmdlist.add(shellPath + "linkis-ec-clear.sh");
       try {
-        Utils.exec(cmdlist.toArray(new String[0]), 3000L);
+        Utils.exec(cmdlist.toArray(new String[0]), 1800000L);
       } catch (Exception e) {
         logger.warn("Shell linkis-ec-clear.sh execution failed, msg:" + e.getMessage());
       }

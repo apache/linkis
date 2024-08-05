@@ -618,7 +618,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     }
   }
 
-  private def tryLockOneLabel(
+  override def tryLockOneLabel(
       label: Label[_],
       timeOut: Long = -1,
       user: String
@@ -936,6 +936,14 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       canCreateECRes.setReason("EMLabel,userCreator and engineTypeLabel cannot null")
     }
     requestResourceService.canRequestResource(labelContainer, resource, engineCreateRequest)
+  }
+
+  override def resetResource(label: PersistenceLabel, resource: NodeResource): Unit = {
+    labelResourceService.setLabelResource(label, resource, label.getStringValue)
+  }
+
+  override def unLock(persistenceLock: PersistenceLock): Unit = {
+    resourceLockService.unLock(persistenceLock)
   }
 
 }

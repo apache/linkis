@@ -150,6 +150,10 @@ object AMConfiguration {
       }
       .toMap
 
+  val AM_ECM_RESET_RESOURCE = CommonVars("linkis.am.ecm.reset.resource.enable", true).getValue
+
+  val AM_USER_RESET_RESOURCE = CommonVars("linkis.am.user.reset.resource.enable", true).getValue
+
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root", jobserver:"$jvmUser"}"""

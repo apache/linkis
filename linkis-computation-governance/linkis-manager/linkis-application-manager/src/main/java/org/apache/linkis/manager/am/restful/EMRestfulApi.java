@@ -577,4 +577,18 @@ public class EMRestfulApi {
         .data("yarnResource", canCreateECRes.getYarnResource())
         .data("checkResult", canCreateECRes.isCanCreateEC());
   }
+
+  @RequestMapping(path = "/reset-resource", method = RequestMethod.GET)
+  public Message resetResource(
+      HttpServletRequest req,
+      @RequestParam(value = "serviceInstance", required = false) String serviceInstance,
+      @RequestParam(value = "username", required = false) String username) {
+
+    String loginUser = ModuleUserUtils.getOperationUser(req, "taskprediction");
+    if (Configuration.isNotAdmin(loginUser)) {
+      return Message.error("Only admin can use reset resource (重置资源仅管理员使用)");
+    }
+    emInfoService.resetResource(serviceInstance, username);
+    return Message.ok();
+  }
 }

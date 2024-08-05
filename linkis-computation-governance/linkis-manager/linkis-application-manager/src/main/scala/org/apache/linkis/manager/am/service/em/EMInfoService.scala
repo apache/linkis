@@ -33,4 +33,6 @@ trait EMInfoService {
 
   def updateEMInfo(serviceInstance: ServiceInstance, nodeHealthyInfo: NodeHealthyInfo)
 
+  def resetResource(serviceInstance: String, username: String)
+
 }

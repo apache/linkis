@@ -102,7 +102,7 @@ public class QueryRestfulApi {
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
 
     try {
-      if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH() && null != jobHistory) {
+      if (null != jobHistory) {
         QueryUtils.exchangeExecutionCode(jobHistory);
       }
     } catch (Exception e) {
@@ -476,35 +476,5 @@ public class QueryRestfulApi {
       vos.add(taskVO);
     }
     return Message.ok().data(JobRequestConstants.JOB_HISTORY_LIST(), vos);
-  }
-
-  @ApiOperation(
-      value = "job-extra-info",
-      notes = "job extra info:metrix info ,job runtime",
-      response = Message.class)
-  @RequestMapping(path = "/job-extra-info", method = RequestMethod.GET)
-  public Message jobeExtraInfo(
-      HttpServletRequest req, @RequestParam(value = "jobId", required = false) Long jobId) {
-    String username = SecurityFilter.getLoginUsername(req);
-    if (null == jobId) {
-      return Message.error("Invalid jobId cannot be empty");
-    }
-    if (Configuration.isJobHistoryAdmin(username)
-        || Configuration.isAdmin(username)
-        || Configuration.isDepartmentAdmin(username)) {
-      username = null;
-    }
-    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
-    String runtime = TaskConversions.getJobRuntime(jobHistory);
-    try {
-      if (null != jobHistory) {
-        QueryUtils.exchangeExecutionCode(jobHistory);
-      }
-    } catch (Exception e) {
-      log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
-    }
-    return Message.ok()
-        .data("runtime", runtime)
-        .data("executionCode", jobHistory.getExecutionCode());
   }
 }

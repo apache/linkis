@@ -15,21 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.exception;
+package org.apache.linkis.engineplugin.nebula.exception;
 
-public class ErrorException extends LinkisRuntimeException {
-  private ExceptionLevel level = ExceptionLevel.ERROR;
+import org.apache.linkis.common.exception.ErrorException;
 
-  public ErrorException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+public class NebulaStateInvalidException extends ErrorException {
 
-  public ErrorException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
-
-  @Override
-  public ExceptionLevel getLevel() {
-    return this.level;
+  public NebulaStateInvalidException(int errorCode, String message) {
+    super(errorCode, message);
   }
 }

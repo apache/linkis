@@ -69,6 +69,9 @@ public class LabelCommonConfig {
   public static final CommonVars<String> DATAX_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.datax.engine.version", "3.0.0");
 
+  public static final CommonVars<String> NEBULA_ENGINE_VERSION =
+      CommonVars.apply("wds.linkis.nebula.engine.version", "3.0.0");
+
   public static final CommonVars<String> PRESTO_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.presto.engine.version", "0.234");
 

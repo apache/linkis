@@ -124,7 +124,7 @@
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
     <json4s.version>3.5.3</json4s.version>
-
+    <nebula.version>3.0.0</nebula.version>
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
     <jline.version>2.14.6</jline.version>

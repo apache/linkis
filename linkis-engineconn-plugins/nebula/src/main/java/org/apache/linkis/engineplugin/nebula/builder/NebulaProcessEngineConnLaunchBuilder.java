@@ -15,21 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.exception;
+package org.apache.linkis.engineplugin.nebula.builder;
 
-public class ErrorException extends LinkisRuntimeException {
-  private ExceptionLevel level = ExceptionLevel.ERROR;
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
 
-  public ErrorException(int errCode, String desc) {
-    super(errCode, desc);
-  }
-
-  public ErrorException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
-
-  @Override
-  public ExceptionLevel getLevel() {
-    return this.level;
-  }
-}
+public class NebulaProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}

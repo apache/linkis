@@ -161,14 +161,12 @@ case class Column(columnName: String, dataType: DataType, comment: String) {
     Array[Any](columnName, dataType, comment, index)
   }
 
-  override def toString: String = s"columnName:$columnName,dataType:$dataType,comment:$comment, index:$index"
-}
-
-object Column {
-  // 带列索引的构造
-  def apply(columnName: String, dataType: DataType, comment: String, idx: Int): Column = {
-    new Column(columnName, dataType, comment) {
-      override val index: Int = idx
-    }
+  def this(columnName: String, dataType: DataType, comment: String, index: Int) {
+    this(columnName, dataType, comment)
+    this.index = index
   }
+
+  override def toString: String =
+    s"columnName:$columnName,dataType:$dataType,comment:$comment, index:$index"
+
 }

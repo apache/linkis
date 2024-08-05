@@ -152,11 +152,23 @@ case object ListType extends DataType("list", 2001)
 case object StructType extends DataType("struct", 2002)
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
-case class Column(columnName: String, dataType: DataType, comment: String, index: Int) {
+case class Column(columnName: String, dataType: DataType, comment: String) {
+
+  // column index
+  var index: Int = -1
 
   def toArray: Array[Any] = {
     Array[Any](columnName, dataType, comment, index)
   }
 
   override def toString: String = s"columnName:$columnName,dataType:$dataType,comment:$comment, index:$index"
+}
+
+object Column {
+  // 带列索引的构造
+  def apply(columnName: String, dataType: DataType, comment: String, idx: Int): Column = {
+    new Column(columnName, dataType, comment) {
+      override val index: Int = idx
+    }
+  }
 }

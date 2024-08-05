@@ -152,11 +152,11 @@ case object ListType extends DataType("list", 2001)
 case object StructType extends DataType("struct", 2002)
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
-case class Column(columnName: String, dataType: DataType, comment: String) {
+case class Column(columnName: String, dataType: DataType, comment: String, index: Int) {
 
   def toArray: Array[Any] = {
-    Array[Any](columnName, dataType, comment)
+    Array[Any](columnName, dataType, comment, index)
   }
 
-  override def toString: String = s"columnName:$columnName,dataType:$dataType,comment:$comment"
+  override def toString: String = s"columnName:$columnName,dataType:$dataType,comment:$comment, index:$index"
 }

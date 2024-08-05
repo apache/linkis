@@ -65,6 +65,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -591,16 +592,29 @@ public class FsRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
     @ApiImplicitParam(name = "page", required = true, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer", defaultValue = "5000"),
+    @ApiImplicitParam(name = "nullValue", required = false, dataType = "String", defaultValue = ""),
+    @ApiImplicitParam(
+        name = "enableLimit",
+        required = false,
+        dataType = "String",
+        defaultValue = ""),
+    @ApiImplicitParam(name = "columnIndices", required = false, dataType = "array"),
+    @ApiImplicitParam(
+        name = "columnIndex",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "-1"),
+    @ApiImplicitParam(
+        name = "columnPageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "-1"),
     @ApiImplicitParam(
         name = "pageSize",
         required = true,
         dataType = "Integer",
-        defaultValue = "5000"),
-    @ApiImplicitParam(
-        name = "charset",
-        required = true,
-        dataType = "String",
-        defaultValue = "utf-8")
+        defaultValue = "5000")
   })
   @RequestMapping(path = "/openFile", method = RequestMethod.GET)
   public Message openFile(
@@ -609,12 +623,26 @@ public class FsRestfulApi {
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
       @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
-      @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit)
+      @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit,
+      @RequestParam(value = "columnIndices", required = false) int[] columnIndices,
+      @RequestParam(value = "columnIndex", required = false, defaultValue = "-1")
+          Integer columnIndex,
+      @RequestParam(value = "columnPageSize", required = false, defaultValue = "-1")
+          Integer columnPageSize)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
+    }
+
+    // 组装列索引
+    if (columnIndices == null || columnIndices.length == 0) {
+      columnIndices = genColumnIndices(columnIndex, columnPageSize);
+    } else {
+      if (!isAscending(columnIndices)) {
+        throw WorkspaceExceptionManager.createException(80035);
+      }
     }
 
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
@@ -648,6 +676,14 @@ public class FsRestfulApi {
         if (StringUtils.isNotBlank(enableLimit)) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
+        }
+
+        if (columnIndices != null && columnIndices.length > 0) {
+          LOGGER.info(
+              "set column indices: {} for thread: {}",
+              columnIndices.length,
+              Thread.currentThread().getName());
+          LinkisStorageConf.columnIndicesThreadLocal().set(columnIndices);
         }
 
         fileSource = fileSource.page(page, pageSize);
@@ -715,6 +751,154 @@ public class FsRestfulApi {
       LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);
     }
+  }
+
+  @ApiOperation(
+      value = "getResultSetColumns",
+      notes = "get result set columns",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+    @ApiImplicitParam(name = "columnName", required = true, dataType = "String", defaultValue = ""),
+    @ApiImplicitParam(name = "page", required = true, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = true,
+        dataType = "Integer",
+        defaultValue = "500")
+  })
+  @RequestMapping(path = "/getResultSetColumns", method = RequestMethod.GET)
+  public Message getResultSetColumns(
+      HttpServletRequest req,
+      @RequestParam(value = "path", required = false) String path,
+      @RequestParam(value = "columnName", required = false) String columnName,
+      @RequestParam(value = "page", defaultValue = "1") Integer page,
+      @RequestParam(value = "pageSize", defaultValue = "500") Integer pageSize)
+      throws IOException, WorkSpaceException {
+
+    Message message = Message.ok();
+    if (StringUtils.isEmpty(path)) {
+      throw WorkspaceExceptionManager.createException(80004, path);
+    }
+
+    String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
+    LoggerUtils.setJobIdMDC("getResultSetColumnsThread_" + userName);
+    LOGGER.info("userName {} start to get result set columns from {}", userName, path);
+    Long startTime = System.currentTimeMillis();
+    if (!checkIsUsersDirectory(path, userName)) {
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
+    }
+    FsPath fsPath = new FsPath(path);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
+    // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
+    if (!fileSystem.canRead(fsPath)) {
+      throw WorkspaceExceptionManager.createException(80012);
+    }
+
+    FileSource fileSource = null;
+    try {
+      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
+
+      if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
+        // 只获取列名称
+        fileSource = fileSource.page(1, 0);
+      } else if (fileSystem.getLength(fsPath)
+          > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+        // Increase file size limit, making it easy to OOM without limitation
+        throw WorkspaceExceptionManager.createException(80032);
+      }
+
+      try {
+        Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+        LOGGER.info(
+            "Finished to get result set columns {}, taken {} ms",
+            path,
+            System.currentTimeMillis() - startTime);
+        IOUtils.closeQuietly(fileSource);
+        Object metaMap = result.getFirst();
+        Map[] newMap = null;
+        Map[] mapArray = (Map[]) metaMap;
+
+        // 支持按列名模糊查询
+        if (mapArray != null && mapArray.length > 0 && StringUtils.isNotBlank(columnName)) {
+          Stream<Map> filterMap =
+              Arrays.stream(mapArray)
+                  .filter(
+                      m -> {
+                        String name = (String) m.get("columnName");
+                        return name.contains(columnName);
+                      });
+          mapArray = filterMap.toArray(Map[]::new);
+        }
+
+        // 支持分页
+        if (mapArray != null && mapArray.length <= pageSize) {
+          newMap = mapArray;
+        } else {
+          int startIndex = (page - 1) * pageSize;
+          int endIndex = Math.min(startIndex + pageSize, mapArray.length);
+          newMap = new Map[endIndex - startIndex];
+          for (int i = startIndex; i < endIndex; i++) {
+            newMap[i - startIndex] = mapArray[i];
+          }
+        }
+
+        message.data("metadata", newMap);
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("totalColumns", newMap == null ? 0 : newMap.length);
+        return message;
+      } catch (ColLengthExceedException e) {
+        LOGGER.info("Failed to get result set columns {}", path, e);
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("display_prohibited", true);
+        message.data("errMsg", e.getMessage());
+        return message;
+      }
+    } finally {
+      LoggerUtils.removeJobIdMDC();
+      IOUtils.closeQuietly(fileSource);
+    }
+  }
+
+  /**
+   * 组装获取列索引
+   *
+   * @param columnIndex
+   * @param columnPageSize
+   * @return
+   */
+  private int[] genColumnIndices(Integer columnIndex, Integer columnPageSize) {
+    if (columnIndex == -1) {
+      return null;
+    }
+    if (columnIndex >= 0
+        && (columnPageSize == -1
+            || columnPageSize > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE())) {
+      columnPageSize = LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE();
+    }
+    int[] indexArray = new int[columnPageSize];
+    for (int i = 0; i < columnPageSize; i++) {
+      indexArray[i] = columnIndex * columnPageSize + i;
+    }
+    return new int[0];
+  }
+
+  /**
+   * 判断数组是否是升序
+   *
+   * @param array
+   * @return
+   */
+  private static boolean isAscending(int[] array) {
+    if (array == null || array.length < 2) {
+      return true;
+    }
+    for (int i = 0; i < array.length - 1; i++) {
+      if (array[i] > array[i + 1]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

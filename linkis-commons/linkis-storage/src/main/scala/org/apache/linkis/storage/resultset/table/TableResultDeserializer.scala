@@ -62,7 +62,7 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       len = colArray(i + 2).toInt
       val colComment = Dolphin.toStringValue(Dolphin.getString(bytes, index, len))
       index += len
-      columns += Column(colName, colType, colComment)
+      columns += Column(colName, colType, colComment, i)
     }
     metaData = new TableMetaData(columns.toArray)
     metaData
@@ -86,14 +86,21 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
     if (StringUtils.isNotBlank(LinkisStorageConf.enableLimitThreadLocal.get())) {
       enableLimit = true
     }
-    val columnSize =
+    var columnSize =
       if (enableLimit && metaData.columns.size > LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE) {
         LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE
       } else {
         colArray.size
       }
-    val rowArray = new Array[Any](columnSize)
 
+    var rowArray = new Array[Any](columnSize)
+    val columnIndices: Array[Int] = LinkisStorageConf.columnIndicesThreadLocal.get()
+    // use column index if columnIndices is not empty and  the length of columnIndices is less to the column size
+    if (columnIndices != null && columnIndices.length > 0 && columnIndices.length <= columnSize) {
+      rowArray = new Array[Any](columnIndices.length)
+    }
+
+    var colIdx = 0
     for (i <- 0 until columnSize) {
       val len = colArray(i).toInt
       val res = Dolphin.getString(bytes, index, len)
@@ -108,9 +115,17 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
         )
       }
       index += len
-      if (i >= metaData.columns.length) rowArray(i) = res
-      else {
-        rowArray(i) = toValue(metaData.columns(i).dataType, res)
+      // deal with specified column indices
+      if (columnIndices != null && columnIndices.length > 0 && columnIndices.length < columnSize) {
+        if (columnIndices.contains(i)) {
+          rowArray(colIdx) = res
+          colIdx += 1
+        }
+      } else {
+        if (i >= metaData.columns.length) rowArray(i) = res
+        else {
+          rowArray(i) = toValue(metaData.columns(i).dataType, res)
+        }
       }
     }
     new TableRecord(rowArray)

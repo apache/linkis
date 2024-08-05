@@ -27,6 +27,8 @@ object LinkisStorageConf {
 
   val enableLimitThreadLocal: ThreadLocal[String] = new ThreadLocal[String]
 
+  val columnIndicesThreadLocal: ThreadLocal[Array[Int]] = new ThreadLocal[Array[Int]]
+
   val HDFS_FILE_SYSTEM_REST_ERRS: String =
     CommonVars
       .apply(

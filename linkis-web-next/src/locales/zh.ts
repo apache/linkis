@@ -51,11 +51,11 @@ export default {
             feedback: '反馈',
             exceptionTips: '后台接口异常，请联系开发处理！',
             separator: {
-                comma: '逗号(,)',
-                tab: 'tab键(\\t)',
-                semicolon: '分号(;)',
-                space: '空格()',
-                vertical: '竖线(|)',
+                comma: '逗号',
+                tab: 'tab键',
+                semicolon: '分号',
+                space: '空格',
+                vertical: '竖线',
             },
             tabs: {
                 progress: '进度',
@@ -339,6 +339,7 @@ export default {
                 resultGroupLineFilter: '对结果集的列进行筛选',
                 resultGroup: '结果集',
                 all: '是否全量',
+                allDownLoad: '所有结果集',
                 autoFormat: '自动格式化',
                 downloadMode: '下载方式：',
                 deepAnalysis: '分 析 进 阶',
@@ -489,6 +490,8 @@ export default {
             tenant: '租户标签',
             inputTenant: '请输入租户标签',
             globalSettings: '全局配置',
+            downloadLogs: '下载日志',
+            downloadLogsConfirm: '确认要下载日志吗？',
             resultSet: {
                 prefixText: '因为您的结果集较大，为了更好的体验，',
                 linkText: '点击查看结果集',

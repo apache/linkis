@@ -28,21 +28,27 @@ import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.*;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.transitional.TaskStatus;
+import org.apache.linkis.jobhistory.util.JobhistoryUtils;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.http.Consts;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.*;
@@ -52,6 +58,7 @@ import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -506,5 +513,74 @@ public class QueryRestfulApi {
     return Message.ok()
         .data("runtime", runtime)
         .data("executionCode", jobHistory.getExecutionCode());
+  }
+
+  @ApiOperation(
+      value = "download job list",
+      notes = "download job history list",
+      response = Message.class)
+  @RequestMapping(path = "/download-job-list", method = RequestMethod.GET)
+  public void downloadJobList(
+      HttpServletRequest req,
+      HttpServletResponse response,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize,
+      @RequestParam(value = "taskID", required = false) Long taskID,
+      @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser,
+      @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
+      @RequestParam(value = "isDeptView", required = false) Boolean isDeptView,
+      @RequestParam(value = "instance", required = false) String instance,
+      @RequestParam(value = "engineInstance", required = false) String engineInstance)
+      throws IOException, QueryException {
+    String userName = ModuleUserUtils.getOperationUser(req, "downloadEngineLog");
+    String language = req.getHeader("Content-Language");
+    ServletOutputStream outputStream = null;
+    try {
+
+      Message message =
+          list(
+              req,
+              startDate,
+              endDate,
+              status,
+              pageNow,
+              pageSize,
+              taskID,
+              executeApplicationName,
+              creator,
+              proxyUser,
+              isAdminView,
+              isDeptView,
+              instance,
+              engineInstance);
+      String jsonStr = BDPJettyServerHelper.gson().toJson(message.getData().get("tasks"));
+      List<QueryTaskVO> queryTaskVOList =
+          BDPJettyServerHelper.gson()
+              .fromJson(jsonStr, new TypeToken<List<QueryTaskVO>>() {}.getType());
+      byte[] bytes = JobhistoryUtils.downLoadJobToExcel(queryTaskVOList, language);
+      response.setCharacterEncoding(Consts.UTF_8.toString());
+      response.addHeader("Content-Type", "application/json;charset=UTF-8");
+      response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      response.addHeader(
+          "Content-Disposition",
+          "attachment;filename=" + userName + "_" + startDate + "_history.xlsx");
+      response.addHeader("Content-Length", bytes.length + "");
+      outputStream = response.getOutputStream();
+      outputStream.write(bytes);
+    } catch (Exception e) {
+      response.reset();
+      log.warn("Download Job History Failed Msg :", e);
+    } finally {
+      if (outputStream != null) {
+        outputStream.flush();
+      }
+      IOUtils.closeQuietly(outputStream);
+    }
   }
 }

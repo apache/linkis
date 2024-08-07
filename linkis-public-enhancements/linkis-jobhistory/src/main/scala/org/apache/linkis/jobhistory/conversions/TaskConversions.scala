@@ -297,7 +297,7 @@ object TaskConversions extends Logging {
       requestEndTime = dealString2Date(metrics.get(TaskConstant.JOB_SCHEDULE_TIME).toString)
       taskVO.setRequestEndTime(requestEndTime)
     }
-    if (null != requestStartTime && null != requestStartTime) {
+    if (null != requestStartTime && null != requestEndTime) {
       taskVO.setRequestSpendTime(requestEndTime.getTime - requestStartTime.getTime)
     }
     if (null != createTime) {
@@ -365,6 +365,15 @@ object TaskConversions extends Logging {
     } { _ =>
       logger.warn("String to Date deserialization failed.")
       null
+    }
+  }
+
+  def dateFomat(date: Date): String = {
+    if (null != date) {
+      val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+      dateFormat.format(date)
+    } else {
+      ""
     }
   }
 

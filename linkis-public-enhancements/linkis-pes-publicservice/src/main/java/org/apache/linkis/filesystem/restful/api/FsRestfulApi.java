@@ -600,11 +600,6 @@ public class FsRestfulApi {
         defaultValue = ""),
     @ApiImplicitParam(name = "columnIndices", required = false, dataType = "array"),
     @ApiImplicitParam(
-        name = "columnIndex",
-        required = false,
-        dataType = "Integer",
-        defaultValue = "0"),
-    @ApiImplicitParam(
         name = "columnPageSize",
         required = false,
         dataType = "Integer",
@@ -623,7 +618,6 @@ public class FsRestfulApi {
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
       @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
       @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit,
-      @RequestParam(value = "columnIndices", required = false) int[] columnIndices,
       @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
       @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
           Integer columnPageSize)
@@ -634,18 +628,12 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
 
-    if (columnPageSize < 1 || columnPageSize > 500) {
+    if (columnPage < 1 || columnPageSize < 1 || columnPageSize > 500) {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
     // 组装列索引
-    if (columnIndices == null || columnIndices.length == 0) {
-      columnIndices = genColumnIndices(columnPage, columnPageSize);
-    } else {
-      if (!isAscending(columnIndices)) {
-        throw WorkspaceExceptionManager.createException(80035);
-      }
-    }
+    int[] columnIndices = genColumnIndices(columnPage, columnPageSize);
 
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
     LoggerUtils.setJobIdMDC("openFileThread_" + userName);
@@ -707,9 +695,13 @@ public class FsRestfulApi {
             Map[] realMap = (Map[]) metaMap;
             int realSize = realMap.length;
             message.data("totalColumn", realSize);
-            if (realSize > 10000) {
+            if (realSize > FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()) {
               message.data("column_limit_display", true);
-              message.data("zh_msg", "全量结果集超过10000列，页面提供500列数据预览，如需查看完整结果集，请使用结果集导出功能");
+              message.data(
+                  "zh_msg",
+                  "全量结果集超过"
+                      + FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()
+                      + "列，页面提供500列数据预览，如需查看完整结果集，请使用结果集导出功能");
               message.data(
                   "en_msg",
                   "Because your result set is large, to view the full result set, use the Result set Export feature.");
@@ -786,7 +778,7 @@ public class FsRestfulApi {
       return true;
     }
     for (int i = 0; i < array.length - 1; i++) {
-      if (array[i] > array[i + 1]) {
+      if (array[i] >= array[i + 1] || array[i] < 0 || array[i + 1] < 0) {
         return false;
       }
     }

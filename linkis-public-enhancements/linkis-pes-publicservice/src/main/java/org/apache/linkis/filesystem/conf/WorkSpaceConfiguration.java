@@ -67,6 +67,9 @@ public class WorkSpaceConfiguration {
   public static final CommonVars<Integer> FILESYSTEM_RESULTSET_ROW_LIMIT =
       CommonVars$.MODULE$.apply("linkis.filesystem.resultset.row.limit", 100000);
 
+  public static final CommonVars<Integer> FILESYSTEM_RESULT_SET_COLUMN_LIMIT =
+      CommonVars$.MODULE$.apply("linkis.filesystem.result.set.column.limit", 10000);
+
   public static final CommonVars<Boolean> FILESYSTEM_JVM_USER_SWITCH =
       CommonVars$.MODULE$.apply("linkis.filesystem.jvm.user.switch", true);
 

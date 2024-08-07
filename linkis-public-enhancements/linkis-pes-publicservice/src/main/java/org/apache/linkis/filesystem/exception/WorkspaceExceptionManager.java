@@ -82,10 +82,13 @@ public class WorkspaceExceptionManager {
               "The result set exceeds {0} rows and page viewing is currently not supported. Please download to view or view in the shared directory(结果集行数超过{0}行，暂不支持页面查看。请下载查看或在共享目录中查看)");
           put(
               "80035",
-              "Parameter error, column index order is incorrect, please pass parameters in ascending order (参数错误，列索引顺序不正确，请按升序传参)");
+              "Parameter error, column index order is incorrect, please pass parameters in ascending order (参数错误，列索引顺序不正确或范围错误，请传入非复数并按升序传参)");
           put(
               "80036",
-              "Parameter error, page size is incorrect, please pass in a number within [1-500] (参数错误，分页大小不正确，请传入[1-500]内的数)");
+              "Parameter error, page size is incorrect, please pass in a number within [1-500] (分页参数错误，页码从1开始，页大小需在[1-500]范围内)");
+          put(
+              "80037",
+              "Parameter error, page size is incorrect, please pass in a number within [1-500] (参数错误，列筛选最多支持筛选50列)");
         }
       };
 

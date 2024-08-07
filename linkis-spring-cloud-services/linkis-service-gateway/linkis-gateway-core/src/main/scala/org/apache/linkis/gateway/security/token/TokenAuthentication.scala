@@ -25,8 +25,9 @@ import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.utils.ModuleUserUtils
-
 import org.apache.commons.lang3.StringUtils
+
+import scala.util.Try
 
 object TokenAuthentication extends Logging {
 
@@ -57,18 +58,25 @@ object TokenAuthentication extends Logging {
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
     ModuleUserUtils.printAuditLog(
       String
-        .format("Use Linkis Auth : %s,User : %s,Ip : %s", MD5Utils.encrypt(token), tokenUser, host)
+        .format("Use Linkis Auth : %s,User : %s,Ip : %s", encryptToken(token), tokenUser, host)
     )
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
-      token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
-      tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue
-      if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
+      val tokenArr = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)
+      val tokenUserArr = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)
+      val isTokenValid = Try(tokenArr(0).getValue)
+      val isTokenUserValid = Try(tokenUserArr(0).getValue)
+      val isValid =
+        (isTokenValid.isSuccess && tokenArr.nonEmpty && isTokenValid.get.trim.nonEmpty) &&
+          (isTokenUserValid.isSuccess && tokenUserArr.nonEmpty && isTokenUserValid.get.trim.nonEmpty)
+      if(!isValid) {
         val message = Message.noLogin(
           s"请在Header或Cookie中同时指定$TOKEN_KEY 和 $TOKEN_USER_KEY，以便完成token认证！"
         ) << gatewayContext.getRequest.getRequestURI
         SecurityFilter.filterResponse(gatewayContext, message)
         return false
       }
+      token = tokenArr(0).getValue
+      tokenUser = tokenUserArr(0).getValue
     }
     var tokenAlive = false
     val tokenAliveArr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)
@@ -125,6 +133,11 @@ object TokenAuthentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, authMsg)
       false
     }
+  }
+
+  def encryptToken(token: String): String = {
+    if (StringUtils.isBlank(token)) ""
+    else MD5Utils.encrypt(token)
   }
 
 }

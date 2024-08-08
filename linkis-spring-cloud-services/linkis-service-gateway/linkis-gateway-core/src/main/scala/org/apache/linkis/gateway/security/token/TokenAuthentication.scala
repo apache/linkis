@@ -25,6 +25,7 @@ import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.utils.ModuleUserUtils
+
 import org.apache.commons.lang3.StringUtils
 
 import scala.util.Try
@@ -52,8 +53,10 @@ object TokenAuthentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, message)
       return false
     }
-    var token = gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)(0)
-    var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
+    val tokenOpt = Option(gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)).map(_.head)
+    val tokenUserOpt = Option(gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)).map(_.head)
+    var token = tokenOpt.getOrElse("")
+    var tokenUser = tokenUserOpt.getOrElse("")
 
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
     ModuleUserUtils.printAuditLog(
@@ -61,22 +64,21 @@ object TokenAuthentication extends Logging {
         .format("Use Linkis Auth : %s,User : %s,Ip : %s", encryptToken(token), tokenUser, host)
     )
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
-      val tokenArr = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)
-      val tokenUserArr = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)
-      val isTokenValid = Try(tokenArr(0).getValue)
-      val isTokenUserValid = Try(tokenUserArr(0).getValue)
-      val isValid =
-        (isTokenValid.isSuccess && tokenArr.nonEmpty && isTokenValid.get.trim.nonEmpty) &&
-          (isTokenUserValid.isSuccess && tokenUserArr.nonEmpty && isTokenUserValid.get.trim.nonEmpty)
-      if(!isValid) {
+      val cookieTokenOpt = Option(gatewayContext.getRequest.getCookies.get(TOKEN_KEY)).map(_.head)
+      val cookieTokenUserOpt =
+        Option(gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)).map(_.head)
+      val isValid = cookieTokenOpt.nonEmpty && StringUtils.isNotBlank(
+        cookieTokenOpt.get.getValue
+      ) && cookieTokenUserOpt.nonEmpty && StringUtils.isNotBlank(cookieTokenUserOpt.get.getValue)
+      if (!isValid) {
         val message = Message.noLogin(
           s"请在Header或Cookie中同时指定$TOKEN_KEY 和 $TOKEN_USER_KEY，以便完成token认证！"
         ) << gatewayContext.getRequest.getRequestURI
         SecurityFilter.filterResponse(gatewayContext, message)
         return false
       }
-      token = tokenArr(0).getValue
-      tokenUser = tokenUserArr(0).getValue
+      token = cookieTokenOpt.get.getValue
+      tokenUser = cookieTokenUserOpt.get.getValue
     }
     var tokenAlive = false
     val tokenAliveArr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)

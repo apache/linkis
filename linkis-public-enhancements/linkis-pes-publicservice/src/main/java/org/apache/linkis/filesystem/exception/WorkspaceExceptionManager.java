@@ -85,7 +85,7 @@ public class WorkspaceExceptionManager {
               "Parameter error, column index order is incorrect, please pass parameters in ascending order (参数错误，列索引顺序不正确或范围错误，请传入非复数并按升序传参)");
           put(
               "80036",
-              "Parameter error, page size is incorrect, please pass in a number within [1-500] (分页参数错误，页码从1开始，页大小需在[1-500]范围内)");
+              "Parameter error, page size is incorrect, please pass in a number within [1-500] (分页参数错误，页码从1开始，页大小需在[1-500]范围内，获取的列索引需在实际结果集列数范围内)");
           put(
               "80037",
               "Parameter error, page size is incorrect, please pass in a number within [1-500] (参数错误，列筛选最多支持筛选50列)");

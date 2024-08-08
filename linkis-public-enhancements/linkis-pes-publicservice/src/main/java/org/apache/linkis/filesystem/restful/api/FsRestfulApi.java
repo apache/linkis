@@ -632,9 +632,6 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
-    // 组装列索引
-    int[] columnIndices = genColumnIndices(columnPage, columnPageSize);
-
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
     LoggerUtils.setJobIdMDC("openFileThread_" + userName);
     LOGGER.info("userName {} start to open File {}", userName, path);
@@ -649,6 +646,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80012);
     }
 
+    int[] columnIndices = null;
     FileSource fileSource = null;
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
@@ -663,16 +661,12 @@ public class FsRestfulApi {
           throw WorkspaceExceptionManager.createException(
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
+
         if (StringUtils.isNotBlank(enableLimit)) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
-        }
-
-        if (columnIndices != null && columnIndices.length > 0) {
-          LOGGER.info(
-              "set column indices: {} for thread: {}",
-              columnIndices.length,
-              Thread.currentThread().getName());
+          // 组装列索引
+          columnIndices = genColumnIndices(columnPage, columnPageSize);
           LinkisStorageConf.columnIndicesThreadLocal().set(columnIndices);
         }
 
@@ -694,6 +688,12 @@ public class FsRestfulApi {
           if (metaMap instanceof Map[]) {
             Map[] realMap = (Map[]) metaMap;
             int realSize = realMap.length;
+
+            // 判断列索引在实际列数范围内
+            if ((columnPage - 1) * columnPageSize > realSize) {
+              throw WorkspaceExceptionManager.createException(80036, path);
+            }
+
             message.data("totalColumn", realSize);
             if (realSize > FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()) {
               message.data("column_limit_display", true);
@@ -706,11 +706,15 @@ public class FsRestfulApi {
                   "en_msg",
                   "Because your result set is large, to view the full result set, use the Result set Export feature.");
             }
-            if (columnIndices.length >= realSize) {
+            if (columnIndices == null || columnIndices.length >= realSize) {
               newMap = realMap;
             } else {
-              newMap = new Map[columnIndices.length];
-              for (int i = 0; i < columnIndices.length; i++) {
+              int realLength =
+                  (columnPage * columnPageSize) > realSize
+                      ? realSize - (columnPage - 1) * columnPageSize
+                      : columnPageSize;
+              newMap = new Map[realLength];
+              for (int i = 0; i < realLength; i++) {
                 newMap[i] = realMap[columnIndices[i]];
               }
             }
@@ -765,24 +769,6 @@ public class FsRestfulApi {
       indexArray[i] = (columnPage - 1) * columnPageSize + i;
     }
     return indexArray;
-  }
-
-  /**
-   * 判断数组是否是升序
-   *
-   * @param array
-   * @return
-   */
-  private static boolean isAscending(int[] array) {
-    if (array == null || array.length < 2) {
-      return true;
-    }
-    for (int i = 0; i < array.length - 1; i++) {
-      if (array[i] >= array[i + 1] || array[i] < 0 || array[i + 1] < 0) {
-        return false;
-      }
-    }
-    return true;
   }
 
   /**

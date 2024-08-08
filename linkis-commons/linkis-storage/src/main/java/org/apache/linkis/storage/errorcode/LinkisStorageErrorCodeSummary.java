@@ -40,6 +40,8 @@ public enum LinkisStorageErrorCodeSummary implements LinkisErrorCode {
 
   RESULT_COL_LENGTH(52003, "Col value length {0} exceed limit {1}"),
 
+  RESULT_COLUMN_INDEX_OUT_OF_BOUNDS(52004, "Column index value {0} exceed limit {1}"),
+
   RESULT_ROW_LENGTH(520034, "Row value length {0} exceed limit {1}"),
 
   RESULT_COL_SIZE(520035, "Col size length {0} exceed limit {1}"),

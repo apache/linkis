@@ -567,8 +567,7 @@ export default {
                         resource: '资源管理',
                         resourceEngineConnList: '历史引擎',
                         setting: '参数配置',
-                        dateReport: '全局变量',
-                        globalValiable: '常见问题',
+                        globalVariable: '全局变量',
                         ECMManage: 'ECM管理',
                         microserviceManage: '微服务管理',
                         udfFunctionTitle: 'UDF函数',
@@ -711,7 +710,7 @@ export default {
                 advancedSetting: '高级设置',
                 dataDev: '数据开发',
             },
-            globalValiable: '全局变量',
+            globalVariable: '全局变量',
             rules: {
                 first: {
                     required: '变量 {text} 的key为空',

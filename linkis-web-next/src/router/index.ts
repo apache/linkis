@@ -91,6 +91,16 @@ const routes: Array<RouteRecordRaw> = [
                         },
                         children: [],
                     },
+                    {
+                        name: 'globalVariables',
+                        path: '/console/globalVariables',
+                        component: () => import('@/pages/globalVariables/index.vue'),
+                        meta: {
+                            title: 'Global Variables',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
                 ]
             },
         ],

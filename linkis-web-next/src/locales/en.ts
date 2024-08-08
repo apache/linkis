@@ -595,8 +595,7 @@ export default {
                         resource: 'Resource Management',
                         resourceEngineConnList: 'History Engine',
                         setting: 'Settings',
-                        dateReport: 'Global Variables',
-                        globalValiable: 'Frequently Asked',
+                        globalVariable: 'Global Variables',
                         microserviceManage: 'Microservice Management',
                         ECMManage: 'ECM Management',
                         udfFunctionTitle: 'UDF Function',
@@ -741,7 +740,7 @@ export default {
                 advancedSetting: 'Advanced Settings',
                 dataDev: 'Data Development',
             },
-            globalValiable: 'Global Variables',
+            globalVariable: 'Global Variables',
             rules: {
                 first: {
                     required: 'The key of variable {text} is empty',

@@ -97,9 +97,9 @@ const menuItemsConfig = [
         path: '/console/parameterConfig',
     },
     {
-        title: 'message.linkis.sideNavList.function.children.dateReport',
-        icon: '/sidebar/dateReport.svg',
-        path: '/x',
+        title: 'message.linkis.sideNavList.function.children.globalVariable',
+        icon: '/sidebar/globalVariable.svg',
+        path: '/console/globalVariables',
     },
     {
         title: 'message.linkis.sideNavList.function.children.ECMManage',

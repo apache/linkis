@@ -82,7 +82,6 @@
 <script setup lang="ts">
 import { ref, h, Ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { FMessage } from '@fesjs/fes-design';
 import dayjs from 'dayjs';
 import Drawer from './drawer/index.vue';
 import Filter from './filter.vue';

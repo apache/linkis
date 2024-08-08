@@ -52,11 +52,11 @@ export default {
             exceptionTips:
                 'Background interface exception, please contact development processing!',
             separator: {
-                comma: 'Comma(,)',
-                tab: 'Tab(\\t)',
-                semicolon: 'Semicolon(;)',
-                space: 'Space()',
-                vertical: 'Vertical bar(|)',
+                comma: 'Comma',
+                tab: 'Tab',
+                semicolon: 'Semicolon',
+                space: 'Space',
+                vertical: 'Vertical bar',
             },
             tabs: {
                 progress: 'Progress',
@@ -358,6 +358,7 @@ export default {
                 resultGroupLineFilter: 'Result Group Line Filter',
                 resultGroup: 'Result Group',
                 all: 'all',
+                allDownLoad: 'All Result Sets',
                 autoFormat: 'Auto Format',
                 downloadMode: 'Download Mode :',
                 deepAnalysis: 'Deep Analysis',
@@ -512,6 +513,8 @@ export default {
             tenant: 'Tenant',
             inputTenant: 'Please Input Tenant',
             globalSettings: 'GlobalSettings',
+            downloadLogs: 'Download Logs',
+            downloadLogsConfirm: 'Are you sure to download logs?',
             resultSet: {
                 prefixText:
                     'Because your result set is large, for a better experience, ',
@@ -592,8 +595,7 @@ export default {
                         resource: 'Resource Management',
                         resourceEngineConnList: 'History Engine',
                         setting: 'Settings',
-                        dateReport: 'Global Variables',
-                        globalValiable: 'Frequently Asked',
+                        globalVariable: 'Global Variables',
                         microserviceManage: 'Microservice Management',
                         ECMManage: 'ECM Management',
                         udfFunctionTitle: 'UDF Function',
@@ -738,7 +740,7 @@ export default {
                 advancedSetting: 'Advanced Settings',
                 dataDev: 'Data Development',
             },
-            globalValiable: 'Global Variables',
+            globalVariable: 'Global Variables',
             rules: {
                 first: {
                     required: 'The key of variable {text} is empty',

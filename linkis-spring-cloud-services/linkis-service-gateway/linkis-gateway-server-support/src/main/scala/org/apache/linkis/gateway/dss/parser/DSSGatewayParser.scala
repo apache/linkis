@@ -45,6 +45,11 @@ class DSSGatewayParser extends AbstractGatewayParser {
   val appConns = DSSGatewayConfiguration.DSS_URL_APPCONNS.getValue.split(",")
 
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean = {
+    val requestMethod = gatewayContext.getRequest.getMethod.toUpperCase(Locale.getDefault)
+    if ("DELETE".equals(requestMethod)) {
+      return false
+    }
+
     var contentType = gatewayContext.getRequest.getHeaders.get("Content-Type")
     if (null == contentType) {
       contentType = gatewayContext.getRequest.getHeaders.get("content-type")

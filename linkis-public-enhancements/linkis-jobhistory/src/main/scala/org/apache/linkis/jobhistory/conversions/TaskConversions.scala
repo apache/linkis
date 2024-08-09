@@ -31,13 +31,13 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.{BooleanUtils, StringUtils}
 
 import org.springframework.beans.BeanUtils
 
 import java.text.SimpleDateFormat
 import java.util
-import java.util.Date
+import java.util.{Date, Map}
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
@@ -278,7 +278,9 @@ object TaskConversions extends Logging {
         null != metrics && metrics.containsKey(TaskConstant.JOB_IS_REUSE) && metrics
           .get(TaskConstant.JOB_IS_REUSE) != null
     ) {
-      taskVO.setIsReuse(metrics.get(TaskConstant.JOB_IS_REUSE).toString)
+
+      taskVO.setIsReuse(BooleanUtils.toBoolean(metrics.get(TaskConstant.JOB_IS_REUSE).toString))
+
     }
 
     var requestStartTime: Date = null
@@ -313,7 +315,7 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+    if (null != metrics && metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
       taskVO.setEngineInstance(metrics.get(TaskConstant.ENGINE_INSTANCE).toString)
     } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
       taskVO.setCanRetry(true)
@@ -342,6 +344,7 @@ object TaskConversions extends Logging {
       }
     }
     taskVO.setObserveInfo(job.getObserveInfo)
+    taskVO.setMetrics(job.getMetrics)
     taskVO
   }
 
@@ -377,9 +380,7 @@ object TaskConversions extends Logging {
     }
   }
 
-  def getJobRuntime(jobHistory: JobHistory): String = {
-    val metricsMap =
-      BDPJettyServerHelper.gson.fromJson((jobHistory.getMetrics), classOf[util.Map[String, Object]])
+  def getJobRuntime(metricsMap: util.Map[String, String]): String = {
     var runTime = ""
     if (metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)) {
       val completeTime = dealString2Date(

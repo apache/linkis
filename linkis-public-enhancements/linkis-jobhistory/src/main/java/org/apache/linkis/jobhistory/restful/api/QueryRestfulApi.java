@@ -20,8 +20,6 @@ package org.apache.linkis.jobhistory.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
-import org.apache.linkis.governance.common.protocol.conf.DepartmentRequest;
-import org.apache.linkis.governance.common.protocol.conf.DepartmentResponse;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
@@ -106,10 +104,11 @@ public class QueryRestfulApi {
         || Configuration.isDepartmentAdmin(username)) {
       username = null;
     }
-    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
+    JobHistory jobHistory =
+        jobHistoryQueryService.getJobHistoryByIdAndNameNoMetrics(jobId, username);
 
     try {
-      if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH() && null != jobHistory) {
+      if (null != jobHistory) {
         QueryUtils.exchangeExecutionCode(jobHistory);
       }
     } catch (Exception e) {
@@ -210,17 +209,11 @@ public class QueryRestfulApi {
         username = null;
       }
     } else if (null != isDeptView && isDeptView) {
-      Object responseObject = sender.ask(new DepartmentRequest(username));
-      if (responseObject instanceof DepartmentResponse) {
-        DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
-        if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
-          departmentId = departmentResponse.departmentId();
-          if (StringUtils.isNotBlank(proxyUser)) {
-            username = proxyUser;
-          } else {
-            username = null;
-          }
-        }
+      departmentId = JobhistoryUtils.getDepartmentByuser(username);
+      if (StringUtils.isNotBlank(departmentId)) {
+        username = proxyUser;
+      } else {
+        username = null;
       }
     }
     if (StringUtils.isBlank(instance)) {
@@ -496,23 +489,42 @@ public class QueryRestfulApi {
     if (null == jobId) {
       return Message.error("Invalid jobId cannot be empty");
     }
-    if (Configuration.isJobHistoryAdmin(username)
-        || Configuration.isAdmin(username)
-        || Configuration.isDepartmentAdmin(username)) {
+    JobHistory jobHistory = null;
+    if (Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username)) {
       username = null;
-    }
-    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
-    String runtime = TaskConversions.getJobRuntime(jobHistory);
-    try {
-      if (null != jobHistory) {
-        QueryUtils.exchangeExecutionCode(jobHistory);
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
+    } else {
+      if (Configuration.isDepartmentAdmin(username)) {
+        String departmentId = JobhistoryUtils.getDepartmentByuser(username);
+        if (StringUtils.isNotBlank(departmentId)) {
+          List<JobHistory> list =
+              jobHistoryQueryService.search(
+                  jobId, null, null, null, null, null, null, null, null, departmentId, null);
+          if (!CollectionUtils.isEmpty(list)) {
+            jobHistory = list.get(0);
+          }
+        }
+      } else {
+        jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
       }
-    } catch (Exception e) {
-      log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
     }
-    return Message.ok()
-        .data("runtime", runtime)
-        .data("executionCode", jobHistory.getExecutionCode());
+
+    if (jobHistory == null) {
+      return Message.error(
+          "The corresponding job was not found, or there may be no permission to view the job"
+              + "(没有找到对应的job，也可能是没有查看该job的权限)");
+    } else {
+      try {
+        QueryUtils.exchangeExecutionCode(jobHistory);
+      } catch (Exception e) {
+        log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
+      }
+    }
+    Map<String, String> metricsMap =
+        BDPJettyServerHelper.gson().fromJson(jobHistory.getMetrics(), Map.class);
+    metricsMap.put("executionCode", jobHistory.getExecutionCode());
+    metricsMap.put("runtime", TaskConversions.getJobRuntime(metricsMap));
+    return Message.ok().data("metricsMap", metricsMap);
   }
 
   @ApiOperation(
@@ -563,7 +575,8 @@ public class QueryRestfulApi {
       List<QueryTaskVO> queryTaskVOList =
           BDPJettyServerHelper.gson()
               .fromJson(jsonStr, new TypeToken<List<QueryTaskVO>>() {}.getType());
-      byte[] bytes = JobhistoryUtils.downLoadJobToExcel(queryTaskVOList, language);
+      byte[] bytes =
+          JobhistoryUtils.downLoadJobToExcel(queryTaskVOList, language, isAdminView, isDeptView);
       response.setCharacterEncoding(Consts.UTF_8.toString());
       response.addHeader("Content-Type", "application/json;charset=UTF-8");
       response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

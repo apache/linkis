@@ -46,8 +46,8 @@
 
     <sql id="job_list">
         `id`, `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
-        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
-        `instances`, `metrics`,`engine_type`, `execution_code`, `result_location`
+        `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
+        `instances`,`engine_type`, `result_location`, `observe_info`
     </sql>
 
     <sql id="insert_job_list">
@@ -66,6 +66,24 @@
 
   <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="jobReqId != null">and job_req_id = #{jobReqId}</if>
+            <if test="submitUser != null">and submit_user = #{submitUser}</if>
+            <if test="executeUser != null">and execute_user = #{executeUser}</if>
+            <if test="progress != null">and progress = #{progress}</if>
+            <if test="status != null">and status = #{status}</if>
+            <if test="createdTime != null">and created_time = #{createdTime}</if>
+            <if test="updatedTime != null">and updated_time = #{updatedTime}</if>
+            <if test="instances != null">and instances = #{instances}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+        </where>
+    </select>
+
+    <select id="selectJobHistoryNoMetrics" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        SELECT
+        <include refid="job_list"/>
+        FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
             <if test="jobReqId != null">and job_req_id = #{jobReqId}</if>
@@ -251,4 +269,5 @@
         <if test="umUser != null">and submit_user = #{umUser}</if>
         ORDER BY linkis_ps_job_history_group_history.created_time DESC
     </select>
+
 </mapper>

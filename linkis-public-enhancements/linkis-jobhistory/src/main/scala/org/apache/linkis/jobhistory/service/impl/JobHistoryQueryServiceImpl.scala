@@ -28,6 +28,7 @@ import org.apache.linkis.governance.common.entity.job.{
 }
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
@@ -253,6 +254,22 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobReq.setSubmitUser(userName)
     val jobHistoryList = jobHistoryMapper.selectJobHistory(jobReq)
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
+  }
+
+  override def getJobHistoryByIdAndNameNoMetrics(
+      jobId: java.lang.Long,
+      userName: String
+  ): JobHistory = {
+    val jobReq = new JobHistory
+    jobReq.setId(jobId)
+    jobReq.setSubmitUser(userName)
+    if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH) {
+      val jobHistoryList = jobHistoryMapper.selectJobHistory(jobReq)
+      if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
+    } else {
+      val jobHistoryList = jobHistoryMapper.selectJobHistoryNoMetrics(jobReq)
+      if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
+    }
   }
 
   override def search(

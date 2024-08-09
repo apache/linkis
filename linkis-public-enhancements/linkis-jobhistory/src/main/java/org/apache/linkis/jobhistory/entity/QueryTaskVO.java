@@ -59,10 +59,12 @@ public class QueryTaskVO {
   private boolean canRetry;
 
   private String observeInfo;
-  private String isReuse;
+  private Boolean isReuse;
   private Date requestStartTime;
   private Date requestEndTime;
   private Long requestSpendTime;
+
+  private String metrics;
 
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
@@ -298,11 +300,11 @@ public class QueryTaskVO {
     this.executeUser = executeUser;
   }
 
-  public String getIsReuse() {
+  public Boolean getIsReuse() {
     return isReuse;
   }
 
-  public void setIsReuse(String isReuse) {
+  public void setIsReuse(Boolean isReuse) {
     this.isReuse = isReuse;
   }
 
@@ -328,5 +330,13 @@ public class QueryTaskVO {
 
   public void setRequestSpendTime(Long requestSpendTime) {
     this.requestSpendTime = requestSpendTime;
+  }
+
+  public String getMetrics() {
+    return metrics;
+  }
+
+  public void setMetrics(String metrics) {
+    this.metrics = metrics;
   }
 }

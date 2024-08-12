@@ -26,8 +26,6 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.conf.ServerConfiguration;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -64,6 +62,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SpringBootApplication(scanBasePackages = {"org.apache.linkis", "com.webank.wedatasphere"})
 @EnableDiscoveryClient
@@ -71,7 +71,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 @EnableFeignClients
 @EnableRetry
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
-  private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
+  private static final Logger logger = LoggerFactory.getLogger(DataWorkCloudApplication.class);
 
   private static ConfigurableApplicationContext applicationContext;
   private static ServiceInstance serviceInstance;

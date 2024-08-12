@@ -57,14 +57,18 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val sparkConf = getValueAndRemove(properties, LINKIS_SPARK_CONF)
     // sparkcsonf DEMO:spark.sql.shuffle.partitions=10;spark.memory.fraction=0.6
     if (StringUtils.isNotBlank(sparkConf)) {
-      val strArrary = sparkConf.split(";").toList
-      strArrary.foreach { keyAndValue =>
-        val key = keyAndValue.split("=")(0).trim
-        val value = keyAndValue.split("=")(1).trim
-        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
-          engineConnBuildRequest.engineConnCreationDesc.properties.put(key, value)
+      sparkConf.split(";").filter(StringUtils.isNotBlank(_)).foreach { keyAndValue =>
+        val values = keyAndValue.split("=")
+        if (values.length != 2) {
+          logger.warn(s"spark conf has invalid value, keyAndValue:${keyAndValue}")
         } else {
-          logger.warn(s"spark conf has empty value, key:${key}, value:${value}")
+          val key = keyAndValue.split("=")(0).trim
+          val value = keyAndValue.split("=")(1).trim
+          if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
+            engineConnBuildRequest.engineConnCreationDesc.properties.put(key, value)
+          } else {
+            logger.warn(s"spark conf has empty value, key:${key}, value:${value}")
+          }
         }
       }
     }

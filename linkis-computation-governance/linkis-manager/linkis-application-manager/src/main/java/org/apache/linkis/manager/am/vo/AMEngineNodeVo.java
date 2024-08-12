@@ -129,6 +129,7 @@ public class AMEngineNodeVo {
   }
 
   public ResourceType getResourceType() {
+
     return resourceType;
   }
 

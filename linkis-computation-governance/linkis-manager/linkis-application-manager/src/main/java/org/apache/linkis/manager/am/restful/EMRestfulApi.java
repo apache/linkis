@@ -577,13 +577,17 @@ public class EMRestfulApi {
         .data("yarnResource", canCreateECRes.getYarnResource())
         .data("checkResult", canCreateECRes.isCanCreateEC());
   }
+
   @ApiOperation(
-          value = "reset resource",
-          notes = "ecm & user resource reset",
-          response = Message.class)
+      value = "reset resource",
+      notes = "ecm & user resource reset",
+      response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "serviceInstance", dataType = "String", example = "gz.bdz.bdplxxxxx.webank:9102"),
-          @ApiImplicitParam(name = "username", dataType = "String", example = "hadoop")
+    @ApiImplicitParam(
+        name = "serviceInstance",
+        dataType = "String",
+        example = "gz.bdz.bdplxxxxx.webank:9102"),
+    @ApiImplicitParam(name = "username", dataType = "String", example = "hadoop")
   })
   @RequestMapping(path = "/reset-resource", method = RequestMethod.GET)
   public Message resetResource(

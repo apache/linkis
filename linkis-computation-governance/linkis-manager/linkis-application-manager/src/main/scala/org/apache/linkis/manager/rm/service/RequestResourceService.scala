@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.conf.AMConfiguration.{
   SUPPORT_CLUSTER_RULE_EC_TYPES,
   YARN_QUEUE_NAME_CONFIG_KEY
@@ -171,11 +172,19 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     val labels: util.List[Label[_]] = labelContainer.getLabels
     val engineType: String = LabelUtil.getEngineType(labels)
     val props: util.Map[String, String] = engineCreateRequest.getProperties
+
+    // 是否是跨集群的任务
+    var acrossClusterTask: Boolean = false
+    if (props != null) {
+      acrossClusterTask = props.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false").toBoolean
+    }
     // hive cluster check
     if (
         externalResourceService != null && StringUtils.isNotBlank(
           engineType
-        ) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(engineType) && props != null
+        ) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(
+          engineType
+        ) && props != null && acrossClusterTask
     ) {
       val queueName = props.getOrDefault(YARN_QUEUE_NAME_CONFIG_KEY, "default")
       logger.info(s"hive cluster check with queue: $queueName")

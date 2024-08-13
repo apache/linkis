@@ -93,7 +93,7 @@ public class JobhistoryUtils {
       if (null == queryTaskVO.getIsReuse()) {
         row.createCell(6).setCellValue("");
       } else {
-        row.createCell(6).setCellValue(queryTaskVO.getIsReuse());
+        row.createCell(6).setCellValue(queryTaskVO.getIsReuse() ? "是" : "否");
       }
       row.createCell(7).setCellValue(TaskConversions.dateFomat(queryTaskVO.getRequestStartTime()));
       row.createCell(8).setCellValue(TaskConversions.dateFomat(queryTaskVO.getRequestEndTime()));

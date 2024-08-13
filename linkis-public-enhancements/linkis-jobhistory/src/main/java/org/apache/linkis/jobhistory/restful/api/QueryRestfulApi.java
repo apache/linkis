@@ -104,11 +104,10 @@ public class QueryRestfulApi {
         || Configuration.isDepartmentAdmin(username)) {
       username = null;
     }
-    JobHistory jobHistory =
-        jobHistoryQueryService.getJobHistoryByIdAndNameNoMetrics(jobId, username);
+    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
 
     try {
-      if (null != jobHistory) {
+      if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()&&null != jobHistory) {
         QueryUtils.exchangeExecutionCode(jobHistory);
       }
     } catch (Exception e) {

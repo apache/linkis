@@ -30,7 +30,7 @@ import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
-import java.io.{InputStream, OutputStream}
+import java.io.{BufferedReader, InputStream, InputStreamReader, OutputStream}
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Arrays, Date}
@@ -115,28 +115,31 @@ object QueryUtils extends Logging {
     val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
     val position = infos(0).toInt
     var lengthLeft = infos(1).toInt
-    val tub = new Array[Byte](1024)
+    val tub = new Array[Char](1024)
     val executionCode: StringBuilder = new StringBuilder
     val fsPath: FsPath = new FsPath(path)
     val fileSystem =
       FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var is: InputStream = null
+    var bufferedReader: BufferedReader = null
     if (!fileSystem.exists(fsPath)) return
     Utils.tryFinally {
       is = fileSystem.read(fsPath)
-      if (position > 0) is.skip(position)
+      bufferedReader = new BufferedReader(new InputStreamReader(is, CHARSET))
+      if (position > 0) bufferedReader.skip(position)
       breakable {
         while (lengthLeft > 0) {
-          val readed = is.read(tub)
+          val readed = bufferedReader.read(tub)
           val useful = Math.min(readed, lengthLeft)
           if (useful < 0) break()
           lengthLeft -= useful
-          executionCode.append(new String(tub, 0, useful, CHARSET))
+          executionCode.append(new String(tub))
         }
       }
     } {
       IOUtils.closeQuietly(is)
+      IOUtils.closeQuietly(bufferedReader)
       if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
     }
     queryTask.setExecutionCode(executionCode.toString())

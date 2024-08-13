@@ -21,35 +21,22 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
-    <relativePath>../../../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-cs-server</artifactId>
+  <artifactId>linkis-bmlserver</artifactId>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-mybatis</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-scheduler</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-pes-rpc-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-ps-common-lock</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
@@ -57,24 +44,16 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-jcl</artifactId>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-mybatis</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-math3</artifactId>
+      <artifactId>linkis-storage</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>

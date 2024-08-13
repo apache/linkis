@@ -213,7 +213,7 @@ public class QueryRestfulApi {
       }
     } else if (null != isDeptView && isDeptView) {
       departmentId = JobhistoryUtils.getDepartmentByuser(username);
-      if (StringUtils.isNotBlank(departmentId)) {
+      if (StringUtils.isNotBlank(departmentId) && StringUtils.isNotBlank(proxyUser)) {
         username = proxyUser;
       } else {
         username = null;

@@ -107,8 +107,12 @@ public class QueryRestfulApi {
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
 
     try {
-      if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH() && null != jobHistory) {
-        QueryUtils.exchangeExecutionCode(jobHistory);
+      if (null != jobHistory) {
+        if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
+          QueryUtils.exchangeExecutionCode(jobHistory);
+        } else {
+          jobHistory.setExecutionCode(null);
+        }
       }
     } catch (Exception e) {
       log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);

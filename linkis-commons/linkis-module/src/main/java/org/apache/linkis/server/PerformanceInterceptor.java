@@ -34,21 +34,24 @@ public class PerformanceInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(
       HttpServletRequest request, HttpServletResponse response, Object handler) {
-    request.setAttribute("startTime", System.currentTimeMillis());
+    request.setAttribute("Linkis_startTime", System.currentTimeMillis());
     return true;
   }
 
   @Override
   public void afterCompletion(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-    long startTime = (Long) request.getAttribute("startTime");
-    long endTime = System.currentTimeMillis();
-    long executeTime = endTime - startTime;
-    logger.info(
-        "Request client address：{} request URL: {}  Method: {} taken: {} ms",
-        LinkisSpringUtils.getClientIP(request),
-        request.getRequestURI(),
-        request.getMethod(),
-        executeTime);
+    Object startObject = request.getAttribute("Linkis_startTime");
+    if (null != startObject) {
+      long startTime = (Long) startObject;
+      long endTime = System.currentTimeMillis();
+      long executeTime = endTime - startTime;
+      logger.info(
+              "Request client address：{} request URL: {}  Method: {} taken: {} ms",
+              LinkisSpringUtils.getClientIP(request),
+              request.getRequestURI(),
+              request.getMethod(),
+              executeTime);
+    }
   }
 }

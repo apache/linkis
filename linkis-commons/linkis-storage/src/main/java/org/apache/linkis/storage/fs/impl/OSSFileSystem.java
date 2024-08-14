@@ -287,6 +287,11 @@ public class OSSFileSystem extends FileSystem {
   }
 
   @Override
+  public boolean canRead(FsPath fsPath, String s) throws IOException {
+    return false;
+  }
+
+  @Override
   public boolean canWrite(FsPath dest) throws IOException {
     return true;
   }

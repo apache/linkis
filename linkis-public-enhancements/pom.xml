@@ -33,7 +33,7 @@
     <module>linkis-pes-rpc-client</module>
     <module>linkis-ps-common-lock</module>
     <module>linkis-bml-server</module>
-    <module>linkis-context-service</module>
+    <module>linkis-cs-server</module>
     <module>linkis-datasource</module>
     <module>linkis-udf-service</module>
     <module>linkis-jobhistory</module>

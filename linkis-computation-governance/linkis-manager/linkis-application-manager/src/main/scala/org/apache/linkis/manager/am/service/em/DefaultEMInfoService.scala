@@ -30,6 +30,7 @@ import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource,
 import org.apache.linkis.manager.common.protocol.em.GetEMInfoRequest
 import org.apache.linkis.manager.common.protocol.node.NodeHealthyRequest
 import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -147,11 +148,11 @@ class DefaultEMInfoService extends EMInfoService with Logging {
 
   override def resetResource(serviceInstance: String, username: String): Unit = {
     // ECM开关
-    if (AMConfiguration.AM_ECM_RESET_RESOURCE) {
-      val filteredECMs = if (StringUtils.isNotBlank(serviceInstance)) {
-        getAllEM().filter(_.getServiceInstance.getInstance.equals(serviceInstance))
-      } else {
+    if (AMConfiguration.AM_ECM_RESET_RESOURCE && StringUtils.isNotBlank(serviceInstance)) {
+      val filteredECMs = if (serviceInstance.equals("*")) {
         getAllEM()
+      } else {
+        getAllEM().filter(_.getServiceInstance.getInstance.equals(serviceInstance))
       }
       // 遍历处理ECM
       filteredECMs.foreach { ecmInstance =>
@@ -162,8 +163,9 @@ class DefaultEMInfoService extends EMInfoService with Logging {
             ecmInstance.getServiceInstance.getInstance
           )
         )
+        val eMInstanceLabel = ecmInstance.getLabels.filter(_.isInstanceOf[EMInstanceLabel]).head
         val lock =
-          resourceManager.tryLockOneLabel(ecmInstance.getLabels.head, -1, Utils.getJvmUser)
+          resourceManager.tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
         engineInfoService
           .updateEngineHealthyStatus(ecmInstance.getServiceInstance, NodeHealthy.UnHealthy)
         Utils.tryFinally {
@@ -174,23 +176,23 @@ class DefaultEMInfoService extends EMInfoService with Logging {
           val (realSumResource, useResource, lockResource) =
             collectResource(nodeResource, ResourceType.LoadInstance)
           // 收集ECM资源
-          val ecmResource =
-            ecmInstance.getNodeResource.getUsedResource + ecmInstance.getNodeResource.getLockedResource
+          val ecmNodeResource = ecmInstance.getNodeResource
           // 资源对比，资源重置
-          if (!(ecmResource == realSumResource)) {
+          if (
+              (!(useResource == ecmNodeResource.getUsedResource)) || (!(lockResource == ecmNodeResource.getLockedResource))
+          ) {
             logger.info(
               MessageFormat.format(
                 "ECM:{0} resources will be reset, Record Resources:{1} ,Real Resources:{2}",
                 ecmInstance.getServiceInstance.getInstance,
-                ecmResource,
+                ecmNodeResource.getUsedResource + ecmNodeResource.getLockedResource,
                 realSumResource
               )
             )
-            val ecmNodeResource = ecmInstance.getNodeResource
             ecmNodeResource.setLockedResource(lockResource)
             ecmNodeResource.setLeftResource(ecmNodeResource.getMaxResource - realSumResource)
             ecmNodeResource.setUsedResource(useResource)
-            val persistence = ResourceUtils.toPersistenceResource(ecmInstance.getNodeResource)
+            val persistence = ResourceUtils.toPersistenceResource(ecmNodeResource)
             val resourceLabel = labelManagerPersistence.getLabelByResource(persistence)
             resourceManager.resetResource(resourceLabel.head, ecmNodeResource)
           }
@@ -209,12 +211,12 @@ class DefaultEMInfoService extends EMInfoService with Logging {
     }
 
     // 用户资源重置
-    if (AMConfiguration.AM_USER_RESET_RESOURCE) {
+    if (AMConfiguration.AM_USER_RESET_RESOURCE && StringUtils.isNotBlank(username)) {
       // 获取用户的标签
-      val user = if (StringUtils.isNotBlank(username)) {
-        username
-      } else {
+      val user = if (username.equals("*")) {
         ""
+      } else {
+        username
       }
       val labelValuePattern =
         MessageFormat.format("%{0}%,%{1}%,%{2}%,%", "", user, "")
@@ -235,41 +237,38 @@ class DefaultEMInfoService extends EMInfoService with Logging {
         val lock = resourceManager.tryLockOneLabel(resourceLabel.head, -1, labelUser)
         Utils.tryFinally {
           val userPersistenceResource = ResourceUtils.fromPersistenceResource(userLabelResource)
-          val userLabelResourceSum =
-            userPersistenceResource.getUsedResource + userPersistenceResource.getLockedResource
           val userResourceType = ResourceType.valueOf(userLabelResource.getResourceType)
-          val matchResult = userLabelResourceSum.caseMore(Resource.initResource(userResourceType))
-          if (matchResult) {
-            val userEngineNodes = nodeLabelService.getEngineNodesWithResourceByUser(labelUser, true)
-            val userEngineNodeFilter = userEngineNodes
-              .filter { node =>
-                val userCreatorLabelStr =
-                  LabelUtil.getUserCreatorLabel(node.getLabels).getStringValue
-                val engineTypeLabelStr = LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue
-                userLabelResource.getCreator.equalsIgnoreCase(
-                  s"${userCreatorLabelStr},${engineTypeLabelStr}"
-                )
-              }
-              .map(_.getNodeResource)
-            // 收集所有node所使用的资源（汇总、已使用、上锁）
-            val (sumResource, uedResource, lockResource) =
-              collectResource(userEngineNodeFilter, userResourceType)
-            if (!(sumResource == userLabelResourceSum)) {
-              logger.info(
-                MessageFormat.format(
-                  "LabelUser:{0} resources will be reset, Record Resources:{1} ,Real Resources:{2}",
-                  labelUser,
-                  userLabelResourceSum,
-                  sumResource
-                )
+          val userEngineNodes = nodeLabelService.getEngineNodesWithResourceByUser(labelUser, true)
+          val userEngineNodeFilter = userEngineNodes
+            .filter { node =>
+              val userCreatorLabelStr =
+                LabelUtil.getUserCreatorLabel(node.getLabels).getStringValue
+              val engineTypeLabelStr = LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue
+              userLabelResource.getCreator.equalsIgnoreCase(
+                s"${userCreatorLabelStr},${engineTypeLabelStr}"
               )
-              userPersistenceResource.setLeftResource(
-                userPersistenceResource.getMaxResource - sumResource
-              )
-              userPersistenceResource.setUsedResource(uedResource)
-              userPersistenceResource.setLockedResource(lockResource)
-              resourceManager.resetResource(resourceLabel.head, userPersistenceResource)
             }
+            .map(_.getNodeResource)
+          // 收集所有node所使用的资源（汇总、已使用、上锁）
+          val (sumResource, uedResource, lockResource) =
+            collectResource(userEngineNodeFilter, userResourceType)
+          if (
+              (!(uedResource == userPersistenceResource.getUsedResource)) || (!(lockResource == userPersistenceResource.getLockedResource))
+          ) {
+            logger.info(
+              MessageFormat.format(
+                "LabelUser:{0} resources will be reset, Record Resources:{1} ,Real Resources:{2}",
+                labelUser,
+                userPersistenceResource.getUsedResource + userPersistenceResource.getLockedResource,
+                sumResource
+              )
+            )
+            userPersistenceResource.setLeftResource(
+              userPersistenceResource.getMaxResource - sumResource
+            )
+            userPersistenceResource.setUsedResource(uedResource)
+            userPersistenceResource.setLockedResource(lockResource)
+            resourceManager.resetResource(resourceLabel.head, userPersistenceResource)
           }
         } {
           resourceManager.unLock(lock)

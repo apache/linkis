@@ -47,11 +47,11 @@ public class PerformanceInterceptor implements HandlerInterceptor {
       long endTime = System.currentTimeMillis();
       long executeTime = endTime - startTime;
       logger.info(
-              "Request client address：{} request URL: {}  Method: {} taken: {} ms",
-              LinkisSpringUtils.getClientIP(request),
-              request.getRequestURI(),
-              request.getMethod(),
-              executeTime);
+          "Request client address：{} request URL: {}  Method: {} taken: {} ms",
+          LinkisSpringUtils.getClientIP(request),
+          request.getRequestURI(),
+          request.getMethod(),
+          executeTime);
     }
   }
 }

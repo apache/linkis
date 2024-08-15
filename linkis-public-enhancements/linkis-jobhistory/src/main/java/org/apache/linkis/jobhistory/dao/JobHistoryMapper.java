@@ -128,5 +128,5 @@ public interface JobHistoryMapper {
   List<JobHistory> selectJobHistoryByTaskidList(
       @Param("idList") List<String> idList, @Param("umUser") String username);
 
-  List<JobHistory> selectJobHistoryNoMetrics(JobHistory jobReq);
+  List<JobHistory> selectJobHistoryNoCode(JobHistory jobReq);
 }

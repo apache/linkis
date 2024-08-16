@@ -29,8 +29,7 @@ public enum LinkisRpcErrorCodeSummary implements LinkisErrorCode {
   CORRESPONDING_TO_INITIALIZE(
       10004, "The corresponding anti-sequence class:{0} failed to initialize(对应的反序列类:{0} 初始化失败)"),
   CORRESPONDING_CLASS_ILLEGAL(
-          10005,
-          "The corresponding anti-sequence class:{0} is illegal (对应的反序列类:{0} 不合法)"),
+      10005, "The corresponding anti-sequence class:{0} is illegal (对应的反序列类:{0} 不合法)"),
   APPLICATION_IS_NOT_EXISTS(
       10051, "The instance:{0} of application {1} does not exist(应用程序:{0} 的实例:{1} 不存在)."),
 

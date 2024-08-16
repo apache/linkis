@@ -20,15 +20,17 @@ package org.apache.linkis.rpc.transform
 import org.apache.linkis.common.exception.ExceptionManager
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_CLASS_ILLEGAL
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_NOT_FOUND
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_TO_INITIALIZE
-import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_CLASS_ILLEGAL
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
 import java.text.MessageFormat
+
 import scala.runtime.BoxedUnit
+
 import org.slf4j.LoggerFactory
 
 private[linkis] trait RPCConsumer {
@@ -51,7 +53,10 @@ private[linkis] object RPCConsumer {
           val objectStr = data.get(OBJECT_VALUE).toString
           val objectClass = data.get(CLASS_VALUE).toString
           logger.debug("The corresponding anti-sequence is class {}", objectClass)
-          if (RPCConfiguration.ENABLE_RPC_OBJECT_PREFIX_WHITE_LIST_CHECK && !RPCConfiguration.RPC_OBJECT_PREFIX_WHITE_LIST.exists(prefix => objectClass.startsWith(prefix))) {
+          if (
+              RPCConfiguration.ENABLE_RPC_OBJECT_PREFIX_WHITE_LIST_CHECK && !RPCConfiguration.RPC_OBJECT_PREFIX_WHITE_LIST
+                .exists(prefix => objectClass.startsWith(prefix))
+          ) {
             throw new DWCURIException(
               CORRESPONDING_CLASS_ILLEGAL.getErrorCode,
               MessageFormat.format(CORRESPONDING_CLASS_ILLEGAL.getErrorDesc, objectClass)

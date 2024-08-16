@@ -178,13 +178,14 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     if (props != null) {
       acrossClusterTask = props.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false").toBoolean
     }
+
     // hive cluster check
     if (
         externalResourceService != null && StringUtils.isNotBlank(
           engineType
         ) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(
           engineType
-        ) && props != null && acrossClusterTask
+        ) && props != null && acrossClusterTask && !"spark".equals(engineType)
     ) {
       val queueName = props.getOrDefault(YARN_QUEUE_NAME_CONFIG_KEY, "default")
       logger.info(s"hive cluster check with queue: $queueName")

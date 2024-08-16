@@ -81,11 +81,11 @@ object ResultSetAction {
       this.columnPage = columnPage
       this
     }
+
     def setColumnPageSize(columnPageSize: Int): Builder = {
       this.columnPageSize = columnPageSize
       this
     }
-
 
     def build(): ResultSetAction = {
       if (user == null) throw new UJESClientBuilderException("user is needed!")

@@ -44,6 +44,7 @@ class ClientConfig private () {
   private var maxConnection: Int = 20
   private var retryEnabled: Boolean = _
   private var retryHandler: RetryHandler = _
+  private var ssl: Boolean = false
 
   protected[config] def this(
       serverUrl: String,
@@ -59,7 +60,8 @@ class ClientConfig private () {
       retryEnabled: Boolean,
       retryHandler: RetryHandler,
       authTokenKey: String,
-      authTokenValue: String
+      authTokenValue: String,
+      isSSL: Boolean = false
   ) = {
     this()
     this.serverUrl = serverUrl
@@ -78,6 +80,7 @@ class ClientConfig private () {
     this.retryHandler = retryHandler
     this.authTokenKey = authTokenKey
     this.authTokenValue = authTokenValue
+    this.ssl = isSSL
     authenticationStrategy match {
       case ab: AbstractAuthenticationStrategy => ab.setClientConfig(this)
       case _ =>
@@ -122,5 +125,7 @@ class ClientConfig private () {
   def isRetryEnabled: Boolean = retryEnabled
 
   def getRetryHandler: RetryHandler = retryHandler
+
+  def isSSL: Boolean = ssl
 
 }

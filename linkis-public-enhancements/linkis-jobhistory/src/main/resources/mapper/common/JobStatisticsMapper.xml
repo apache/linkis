@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="org.apache.linkis.jobhistory.dao.JobStatisticsMapper">
+
+    <resultMap id="jobStatisticsMap" type="org.apache.linkis.jobhistory.entity.JobStatistics" autoMapping="false" >
+        <id property="id" column="id" />
+        <result property = "sumCount" column = "sumcount" />
+        <result property = "succeedCount" column = "succeedcount" />
+        <result property = "failedCount" column = "failedcount" />
+        <result property = "cancelledCount" column = "cancelledcount" />
+    </resultMap>
+
+
+    <select id="taskExecutionStatistics" useCache="true" resultMap="jobStatisticsMap" >
+        SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Succeed' then 1 END) succeedcount,
+        COUNT(case WHEN status ='Failed' then 1 END) failedcount,
+        COUNT(case WHEN status ='Cancelled' then 1 END) cancelledcount
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">
+                and submit_user = #{umUser}
+            </if>
+            <if test="engineType != null">
+                and engine_type = #{engineType}
+            </if>
+            <if test="startDate != null">
+                and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

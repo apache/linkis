@@ -21,135 +21,138 @@
       v-if="loading"
       size="large"
       fix/>
-    <div
-      class="engine-content"
-      v-if="ideEngineList.length > 0">
-      <div class="engine-header-bar">
-        <h3 class="data-type-title">{{ $t('message.common.resourceSimple.YS') }}</h3>
-        <div class="classify">
-          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
-          <Select v-model="ideSelectData">
-            <Option
-              v-for="item in typeList"
-              :value="item.value"
-              :key="item.value">{{ item.label }}</Option>
-          </Select>
+    <div class="engine-content-wrapper">
+      <div
+        class="engine-content"
+        v-if="ideEngineList.length > 0">
+        <div class="engine-header-bar">
+          <h3 class="data-type-title">{{ $t('message.common.resourceSimple.YS') }}</h3>
+          <div class="classify">
+            <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
+            <Select v-model="ideSelectData">
+              <Option
+                v-for="item in typeList"
+                :value="item.value"
+                :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+        </div>
+        <div
+          class="engine-list"
+          v-for="item in ideClassList"
+          :key="item">
+          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <ul class="engine-ul">
+            <template
+              v-for="(subitem, index) in ideEngineList">
+              <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
+                <li
+                  class="engine-li"
+                  :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  :key="index"
+                  @click="subitem.isActive = !subitem.isActive">
+                  <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
+                  <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/> -->
+                  <Icon
+                    v-show="subitem.isActive"
+                    class="engine-right"
+                    :class="supportColor(subitem.engineStatus)"
+                    type="md-checkmark"></Icon>
+                </li>
+              </Tooltip>
+            </template>
+          </ul>
         </div>
       </div>
       <div
-        class="engine-list"
-        v-for="item in ideClassList"
-        :key="item">
-        <span class="engline-name">{{ calssifyName(item) }}</span>
-        <ul class="engine-ul">
-          <template
-            v-for="(subitem, index) in ideEngineList">
-            <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
-              <li
-                class="engine-li"
-                :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
-                :key="index"
-                @click="subitem.isActive = !subitem.isActive">
-                <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
-                <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/> -->
-                <Icon
-                  v-show="subitem.isActive"
-                  class="engine-right"
-                  :class="supportColor(subitem.engineStatus)"
-                  type="md-checkmark"></Icon>
-              </li>
-            </Tooltip>
-          </template>
-        </ul>
-      </div>
-    </div>
-    <div
-      class="engine-content"
-      v-if="boardEngineList.length > 0">
-      <div class="engine-header-bar">
-        <h3 class="data-type-title">{{ $t('message.common.resourceSimple.ZH') }}</h3>
-        <div class="classify">
-          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
-          <Select v-model="boardSelectData">
-            <Option
-              v-for="item in typeList"
-              :value="item.value"
-              :key="item.value">{{ item.label }}</Option>
-          </Select>
+        class="engine-content"
+        v-if="boardEngineList.length > 0">
+        <div class="engine-header-bar">
+          <h3 class="data-type-title">{{ $t('message.common.resourceSimple.ZH') }}</h3>
+          <div class="classify">
+            <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
+            <Select v-model="boardSelectData">
+              <Option
+                v-for="item in typeList"
+                :value="item.value"
+                :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+        </div>
+        <div
+          class="engine-list"
+          v-for="item in boardClassList"
+          :key="item">
+          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <ul class="engine-ul">
+            <template
+              v-for="(subitem, index) in boardEngineList">
+              <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
+                <li
+                  class="engine-li"
+                  :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  :key="index"
+                  @click="subitem.isActive = !subitem.isActive">
+                  <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
+                  <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
+                  <Icon
+                    v-show="subitem.isActive"
+                    class="engine-right"
+                    :class="supportColor(subitem.engineStatus)"
+                    type="md-checkmark"></Icon>
+                </li>
+              </Tooltip>
+            </template>
+          </ul>
         </div>
       </div>
       <div
-        class="engine-list"
-        v-for="item in boardClassList"
-        :key="item">
-        <span class="engline-name">{{ calssifyName(item) }}</span>
-        <ul class="engine-ul">
-          <template
-            v-for="(subitem, index) in boardEngineList">
-            <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
-              <li
-                class="engine-li"
-                :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
-                :key="index"
-                @click="subitem.isActive = !subitem.isActive">
-                <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
-                <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
-                <Icon
-                  v-show="subitem.isActive"
-                  class="engine-right"
-                  :class="supportColor(subitem.engineStatus)"
-                  type="md-checkmark"></Icon>
-              </li>
-            </Tooltip>
-          </template>
-        </ul>
-      </div>
-    </div>
-    <div
-      class="engine-content"
-      v-if="otherEngineList.length > 0">
-      <div class="engine-header-bar">
-        <h3 class="data-type-title">Other</h3>
-        <div class="classify">
-          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
-          <Select v-model="otherSelectData">
-            <Option
-              v-for="item in typeList"
-              :value="item.value"
-              :key="item.value">{{ item.label }}</Option>
-          </Select>
+        class="engine-content"
+        v-if="otherEngineList.length > 0">
+        <div class="engine-header-bar">
+          <h3 class="data-type-title">Other</h3>
+          <div class="classify">
+            <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
+            <Select v-model="otherSelectData">
+              <Option
+                v-for="item in typeList"
+                :value="item.value"
+                :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </div>
+        </div>
+        <div
+          class="engine-list"
+          v-for="item in otherClassList"
+          :key="item">
+          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <ul class="engine-ul">
+            <template
+              v-for="(subitem, index) in otherEngineList">
+              <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
+                <li
+                  class="engine-li"
+                  :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  :key="index"
+                  @click="subitem.isActive = !subitem.isActive">
+                  <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
+                  <!--  <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
+                  <Icon
+                    v-show="subitem.isActive"
+                    class="engine-right"
+                    :class="supportColor(subitem.engineStatus)"
+                    type="md-checkmark"></Icon>
+                </li>
+              </Tooltip>
+            </template>
+          </ul>
         </div>
       </div>
-      <div
-        class="engine-list"
-        v-for="item in otherClassList"
-        :key="item">
-        <span class="engline-name">{{ calssifyName(item) }}</span>
-        <ul class="engine-ul">
-          <template
-            v-for="(subitem, index) in otherEngineList">
-            <Tooltip :key="index" :content="calssifyName(subitem.engineType)" placement="left" :disabled="calssifyName(subitem.engineType).length < 8">
-              <li
-                class="engine-li"
-                :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
-                :key="index"
-                @click="subitem.isActive = !subitem.isActive">
-                <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
-                <!--  <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
-                <Icon
-                  v-show="subitem.isActive"
-                  class="engine-right"
-                  :class="supportColor(subitem.engineStatus)"
-                  type="md-checkmark"></Icon>
-              </li>
-            </Tooltip>
-          </template>
-        </ul>
-      </div>
     </div>
+   
     <span
       class="no-data"
       v-if="ideEngineList.length === 0 && boardEngineList.length === 0 && otherEngineList.length === 0">{{ $t('message.common.resourceSimple.ZWSJ') }}</span>
@@ -245,6 +248,8 @@ export default {
           return 'Openlookeng';
         case 'elasticsearch':
           return 'Elasticsearch';
+        case 'trino':
+          return 'Trino';
         case 'Unlock':
           return this.$t('message.common.resourceSimple.KX')
         case 'Idle':

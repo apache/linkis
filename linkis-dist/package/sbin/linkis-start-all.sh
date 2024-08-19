@@ -64,10 +64,12 @@ echo "<-------------------------------->"
 echo "Linkis manager data is being cleared"
 sh $LINKIS_HOME/sbin/clear-server.sh
 
-#linkis-mg-eureka
-export SERVER_NAME="mg-eureka"
-SERVER_IP=$EUREKA_INSTALL_IP
-startApp
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  #linkis-mg-eureka
+  export SERVER_NAME="mg-eureka"
+  SERVER_IP=$EUREKA_INSTALL_IP
+  startApp
+fi
 
 #linkis-mg-gateway
 SERVER_NAME="mg-gateway"
@@ -131,9 +133,11 @@ sleep 3
 }
 
 #linkis-mg-eureka
-export SERVER_NAME="mg-eureka"
-SERVER_IP=$EUREKA_INSTALL_IP
-checkServer
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  export SERVER_NAME="mg-eureka"
+  SERVER_IP=$EUREKA_INSTALL_IP
+  checkServer
+fi
 
 
 #linkis-mg-gateway

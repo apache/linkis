@@ -119,14 +119,11 @@ public class UserConfiguration {
       UserCreatorLabel userCreatorLabel,
       EngineTypeLabel engineTypeLabel) {
     try {
+      Map<UserCreatorLabel, EngineTypeLabel> labelTuple =
+          new HashMap<UserCreatorLabel, EngineTypeLabel>();
+      labelTuple.put(userCreatorLabel, engineTypeLabel);
       Resource userCreatorAvailableResource =
-          generateResource(
-              resourceType,
-              engineMapCache.getCacheMap(
-                  buildRequestLabel(
-                      userCreatorLabel.getUser(),
-                      userCreatorLabel.getCreator(),
-                      engineTypeLabel.getEngineType())));
+          generateResource(resourceType, engineMapCache.getCacheMap(labelTuple));
       logger.info(
           userCreatorLabel.getUser()
               + "on creator "
@@ -199,6 +196,26 @@ public class UserConfiguration {
                 RMConfiguration.USER_AVAILABLE_YARN_INSTANCE.getValue(userConfiguration),
                 RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration));
         return new DriverAndYarnResource(loadInstanceResource, yarnResource);
+      case Kubernetes:
+        return new KubernetesResource(
+            RMConfiguration.USER_AVAILABLE_KUBERNETES_INSTANCE_MEMORY
+                .getValue(userConfiguration)
+                .toLong(),
+            RMConfiguration.USER_AVAILABLE_KUBERNETES_INSTANCE_CPU.getValue(userConfiguration),
+            RMConfiguration.USER_AVAILABLE_KUBERNETES_INSTANCE_NAMESPACE.getValue(
+                userConfiguration));
+      case DriverAndKubernetes:
+        return new DriverAndKubernetesResource(
+            new LoadInstanceResource(
+                RMConfiguration.USER_AVAILABLE_MEMORY.getValue(userConfiguration).toLong(),
+                RMConfiguration.USER_AVAILABLE_CPU.getValue(userConfiguration),
+                RMConfiguration.USER_AVAILABLE_INSTANCE.getValue(userConfiguration)),
+            new KubernetesResource(
+                RMConfiguration.USER_AVAILABLE_KUBERNETES_INSTANCE_MEMORY
+                    .getValue(userConfiguration)
+                    .toLong(),
+                RMConfiguration.USER_AVAILABLE_KUBERNETES_INSTANCE_CPU.getValue(
+                    userConfiguration)));
       case Special:
         return new SpecialResource(new HashMap<String, Object>());
       default:

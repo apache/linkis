@@ -19,6 +19,7 @@ package org.apache.linkis.orchestrator.ecm
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.entity.node.EngineNode
@@ -29,6 +30,7 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineCreateSuccess
 }
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{DefaultMark, Mark, MarkReq, Policy}
@@ -38,6 +40,7 @@ import org.apache.linkis.orchestrator.ecm.service.impl.{
   ComputationConcurrentEngineConnExecutor,
   ComputationEngineConnExecutor
 }
+import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
 import org.apache.linkis.rpc.Sender
 
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -77,7 +80,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   override protected def askEngineConnExecutor(
       engineAskRequest: EngineAskRequest,
-      mark: Mark
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
   ): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
     var count = getEngineConnApplyAttempts()
@@ -86,7 +90,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       count = count - 1
       val start = System.currentTimeMillis()
       try {
-        val (engineNode, reuse) = getEngineNodeAskManager(engineAskRequest, mark)
+        val (engineNode, reuse) =
+          getEngineNodeAskManager(engineAskRequest, mark, execTask)
         if (null != engineNode) {
           val engineConnExecutor =
             if (
@@ -110,6 +115,9 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}"
           )
           retryException = t
+          // add isCrossClusterRetryException flag
+          engineAskRequest.getProperties.put("isCrossClusterRetryException", "true")
+
         case t: Throwable =>
           val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)
           logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")
@@ -128,7 +136,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   private def getEngineNodeAskManager(
       engineAskRequest: EngineAskRequest,
-      mark: Mark
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
   ): (EngineNode, Boolean) = {
     val response = Utils.tryCatch(getManagerSender().ask(engineAskRequest)) { t: Throwable =>
       val baseMsg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried "
@@ -143,6 +152,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           throw t
       }
     }
+
     response match {
       case engineNode: EngineNode =>
         logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
@@ -155,6 +165,9 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             engineAskAsyncResponse.getId,
             engineAskAsyncResponse.getManagerInstance
           ): _*
+        )
+        execTask.getPhysicalContext.pushLog(
+          TaskLogEvent(execTask, LogUtils.generateInfo(s"Request LinkisManager:${response}"))
         )
         cacheMap.getAndRemove(
           engineAskAsyncResponse.getId,

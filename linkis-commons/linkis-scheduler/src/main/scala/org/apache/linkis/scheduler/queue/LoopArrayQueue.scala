@@ -40,7 +40,12 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
 
   override def getWaitingEvents: Array[SchedulerEvent] = {
     eventQueue synchronized {
-      toIndexedSeq.filter(x => x.getState.equals(SchedulerEventState.Inited)).toArray
+      toIndexedSeq
+        .filter(x =>
+          x.getState.equals(SchedulerEventState.Inited) || x.getState
+            .equals(SchedulerEventState.Scheduled)
+        )
+        .toArray
     }
   }
 
@@ -104,7 +109,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     max
   }
 
-  def waitingSize: Int = if (takeIndex <= realSize) size
+  override def waitingSize: Int = if (takeIndex <= realSize) size
   else {
     val length = size - takeIndex + realSize
     if (length < 0) 0 else length

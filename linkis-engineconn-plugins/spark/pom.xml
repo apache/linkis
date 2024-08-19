@@ -155,6 +155,16 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.micrometer</groupId>
+          <artifactId>micrometer-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.micrometer</groupId>
+          <artifactId>micrometer-registry-prometheus</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.sf.py4j</groupId>
@@ -352,7 +362,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasource-client</artifactId>
+      <artifactId>linkis-pes-client</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -416,9 +426,8 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-model-core</artifactId>
-      <version>5.4.1</version>
+      <version>${kubernetes-client.version}</version>
     </dependency>
-
   </dependencies>
 
   <build>

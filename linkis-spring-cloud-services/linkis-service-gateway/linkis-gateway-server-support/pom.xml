@@ -70,7 +70,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cs-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -78,6 +78,13 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-instance-label-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- jobhistory -->
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-jobhistory</artifactId>
       <version>${project.version}</version>
     </dependency>
 

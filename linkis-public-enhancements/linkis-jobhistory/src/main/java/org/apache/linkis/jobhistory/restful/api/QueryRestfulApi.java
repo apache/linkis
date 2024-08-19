@@ -25,6 +25,7 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.*;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
+import org.apache.linkis.jobhistory.transitional.TaskStatus;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.server.Message;
@@ -101,6 +102,10 @@ public class QueryRestfulApi {
       return Message.error(
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
+    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())) {
+      //  任务运行时不显示异常信息(Do not display exception information during task runtime)
+      taskVO.setErrCode(null);
+      taskVO.setErrDesc(null);
     }
 
     return Message.ok().data(TaskConstant.TASK, taskVO);
@@ -227,14 +232,30 @@ public class QueryRestfulApi {
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "listundonetasks", notes = "list undone tasks", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
-    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "Long",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
     @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
-    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "Long",
+        value = "start task id"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
   public Message listundonetasks(
@@ -321,13 +342,29 @@ public class QueryRestfulApi {
 
   @ApiOperation(value = "listundone", notes = "list undone", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
-    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
-    @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "Long",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "Long",
+        value = "startTaskID"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   /** Method list should not contain subjob, which may cause performance problems. */
   @RequestMapping(path = "/listundone", method = RequestMethod.GET)
@@ -350,17 +387,13 @@ public class QueryRestfulApi {
     }
     if (StringUtils.isEmpty(creator)) {
       creator = null;
-    } else {
-      if (!QueryUtils.checkNameValid(creator)) {
-        return Message.error("Invalid creator : " + creator);
-      }
+    } else if (!QueryUtils.checkNameValid(creator)) {
+      return Message.error("Invalid creator : " + creator);
     }
     if (StringUtils.isEmpty(engineType)) {
       engineType = null;
-    } else {
-      if (!QueryUtils.checkNameValid(engineType)) {
-        return Message.error("Invalid engienType: " + engineType);
-      }
+    } else if (!QueryUtils.checkNameValid(engineType)) {
+      return Message.error("Invalid engienType: " + engineType);
     }
     Date sDate = new Date(startDate);
     Date eDate = new Date(endDate);
@@ -378,5 +411,94 @@ public class QueryRestfulApi {
             username, creator, sDate, eDate, engineType, queryCacheManager.getUndoneTaskMinId());
 
     return Message.ok().data(JobRequestConstants.TOTAL_PAGE(), total);
+  }
+
+  /** Method list should not contain subjob, which may cause performance problems. */
+  @ApiOperation(value = "listDurationTop", notes = "listDurationTop", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
+    @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
+    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "proxyUser",
+        required = false,
+        dataType = "String",
+        value = "proxyUser"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+  })
+  @RequestMapping(path = "/listDurationTop", method = RequestMethod.GET)
+  public Message listDurationTop(
+      HttpServletRequest req,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize)
+      throws QueryException {
+    if (StringUtils.isEmpty(pageNow)) {
+      pageNow = 1;
+    }
+    if (StringUtils.isEmpty(pageSize)) {
+      pageSize = 20;
+    }
+    if (StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
+    }
+    if (StringUtils.isEmpty(creator)) {
+      creator = null;
+    } else {
+      if (!QueryUtils.checkNameValid(creator)) {
+        return Message.error("Invalid creator : " + creator);
+      }
+    }
+    if (!StringUtils.isEmpty(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        return Message.error("Invalid applicationName : " + executeApplicationName);
+      }
+    } else {
+      executeApplicationName = null;
+    }
+
+    if (endDate == null) {
+      endDate = System.currentTimeMillis();
+    }
+    if (startDate == null) {
+      startDate = 0L;
+    }
+
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(endDate);
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(calendar.getTime().getTime()); // todo check
+    }
+    List<JobHistory> queryTasks = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      queryTasks =
+          jobHistoryQueryService.taskDurationTopN(
+              sDate, eDate, proxyUser, creator, executeApplicationName);
+    } finally {
+      PageHelper.clearPage();
+    }
+
+    List<QueryTaskVO> vos = new ArrayList<>();
+    for (JobHistory jobHistory : queryTasks) {
+      QueryUtils.exchangeExecutionCode(jobHistory);
+      QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+      vos.add(taskVO);
+    }
+    return Message.ok().data(TaskConstant.TASKS, vos);
   }
 }

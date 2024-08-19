@@ -17,7 +17,7 @@
 
 package org.apache.linkis.governance.common.exception
 
-import org.apache.linkis.common.exception.{ErrorException, ExceptionLevel, LinkisRuntimeException}
+import org.apache.linkis.common.exception.{ExceptionLevel, LinkisRuntimeException}
 
 class GovernanceErrorException(errorCode: Int, errorMsg: String)
     extends LinkisRuntimeException(errorCode, errorMsg) {

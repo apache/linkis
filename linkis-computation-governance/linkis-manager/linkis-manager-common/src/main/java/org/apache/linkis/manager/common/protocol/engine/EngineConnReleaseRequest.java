@@ -82,4 +82,23 @@ public class EngineConnReleaseRequest implements EngineRequest {
   public void setNodeStatus(NodeStatus nodeStatus) {
     this.nodeStatus = nodeStatus;
   }
+
+  @Override
+  public String toString() {
+    return "EngineConnReleaseRequest{"
+        + "serviceInstance="
+        + serviceInstance
+        + ", user='"
+        + user
+        + '\''
+        + ", msg='"
+        + msg
+        + '\''
+        + ", nodeStatus="
+        + nodeStatus
+        + ", ticketId='"
+        + ticketId
+        + '\''
+        + '}';
+  }
 }

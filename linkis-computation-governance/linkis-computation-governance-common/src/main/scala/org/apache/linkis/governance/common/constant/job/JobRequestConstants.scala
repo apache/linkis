@@ -34,4 +34,8 @@ object JobRequestConstants {
 
   val JOB_DETAIL_LIST = "jobDetailList"
 
+  val JOB_SOURCE_TAGS = "job.source.tags"
+
+  val LINKIS_JDBC_DEFAULT_DB = "linkis.jdbc.default.db"
+
 }

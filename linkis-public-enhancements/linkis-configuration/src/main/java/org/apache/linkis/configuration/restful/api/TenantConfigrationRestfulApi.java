@@ -18,6 +18,7 @@
 package org.apache.linkis.configuration.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.configuration.entity.DepartmentTenantVo;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
@@ -25,7 +26,7 @@ import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -75,15 +76,15 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
+      parameterVerification(tenantVo);
       if (tenantConfigService.isExist(tenantVo.getUser(), tenantVo.getCreator())) {
         throw new ConfigurationException("User-creator is existed");
       }
-      parameterVerification(tenantVo);
       tenantConfigService.createTenant(tenantVo);
     } catch (DuplicateKeyException e) {
       return Message.error("Failed to create-tenant,msg:create user-creator is existed");
     } catch (ConfigurationException e) {
-      return Message.error("Failed to update-tenant,msg:" + e.getMessage());
+      return Message.error("Failed to create-tenant,msg:" + e.getMessage());
     }
     return Message.ok();
   }
@@ -112,10 +113,6 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to update-tenant,msg: only administrators can configure");
       }
-      //      if (!tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(),
-      // null)) {
-      //        throw new ConfigurationException("User-creator is not existed");
-      //      }
       parameterVerification(tenantVo);
       tenantConfigService.updateTenant(tenantVo);
     } catch (ConfigurationException e) {
@@ -266,5 +263,128 @@ public class TenantConfigrationRestfulApi {
     if (tenantVo.getCreator().equals("*") && tenantVo.getUser().equals("*")) {
       throw new ConfigurationException("User && Creator cannot be both *");
     }
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        paramType = "body",
+        dataType = "DepartmentTenantVo",
+        name = "departmentTenantVo",
+        value = "departmentTenantVo")
+  })
+  @ApiOperation(
+      value = "save-department-tenant",
+      notes = "save department tenant",
+      httpMethod = "POST",
+      response = Message.class)
+  @RequestMapping(path = "/save-department-tenant", method = RequestMethod.POST)
+  public Message saveDepartmentTenant(
+      HttpServletRequest req, @RequestBody DepartmentTenantVo departmentTenantVo)
+      throws ConfigurationException {
+    String userName = ModuleUserUtils.getOperationUser(req, "execute saveDepartmentTenant");
+    if (!Configuration.isAdmin(userName)) {
+      return Message.error("Failed to save-department-tenant,msg: only administrator users to use");
+    }
+    if (StringUtils.isBlank(departmentTenantVo.getTenantValue())) {
+      return Message.error("tenant can not be empty");
+    }
+    if (StringUtils.isBlank(departmentTenantVo.getCreator())) {
+      return Message.error("creator can not be empty");
+    }
+    if (StringUtils.isBlank(departmentTenantVo.getDepartmentId())) {
+      return Message.error("departmentId can not be empty");
+    }
+    // Query whether the data exists before executing the update
+    if (StringUtils.isBlank(departmentTenantVo.getId())) {
+      DepartmentTenantVo departTenant =
+          tenantConfigService.queryDepartTenant(
+              departmentTenantVo.getCreator(), departmentTenantVo.getDepartmentId());
+      if (null != departTenant) {
+        return Message.error("department creator is exist");
+      }
+    }
+    tenantConfigService.saveDepartmentTenant(departmentTenantVo);
+    return Message.ok();
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        paramType = "query",
+        dataType = "string",
+        name = "department",
+        value = "department"),
+    @ApiImplicitParam(
+        paramType = "query",
+        dataType = "string",
+        name = "creator",
+        value = "creator"),
+    @ApiImplicitParam(
+        paramType = "query",
+        dataType = "string",
+        name = "tenantValue",
+        value = "tenantValue"),
+    @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageNow", value = "pageNow"),
+    @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "pageSize")
+  })
+  @ApiOperation(
+      value = "query-department-tenant",
+      notes = "query department tenant list",
+      httpMethod = "GET",
+      response = Message.class)
+  @RequestMapping(path = "/query-department-tenant", method = RequestMethod.GET)
+  public Message queryDepartmentTenant(
+      HttpServletRequest req,
+      @RequestParam(value = "departmentId", required = false) String departmentId,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "tenantValue", required = false) String tenantValue,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+    String userName = ModuleUserUtils.getOperationUser(req, "execute queryDepartmentTenantList");
+    if (!Configuration.isAdmin(userName)) {
+      return Message.error("Failed to query-tenant-list,msg: only administrator users to use");
+    }
+    if (StringUtils.isBlank(departmentId)) departmentId = null;
+    if (StringUtils.isBlank(creator)) creator = null;
+    if (StringUtils.isBlank(tenantValue)) tenantValue = null;
+    Map<String, Object> resultMap =
+        tenantConfigService.queryDepartmentTenant(
+            departmentId, creator, tenantValue, pageNow, pageSize);
+    return Message.ok()
+        .data("tenantList", resultMap.get("tenantList"))
+        .data(JobRequestConstants.TOTAL_PAGE(), resultMap.get(JobRequestConstants.TOTAL_PAGE()));
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query", dataType = "int", name = "id", value = "id")
+  })
+  @ApiOperation(
+      value = "delete-department-tenant",
+      notes = "delete department tenant",
+      httpMethod = "GET",
+      response = Message.class)
+  @RequestMapping(path = "/delete-department-tenant", method = RequestMethod.GET)
+  public Message deleteDepartmentTenant(
+      HttpServletRequest req, @RequestParam(value = "id") Integer id) {
+    String userName =
+        ModuleUserUtils.getOperationUser(req, "execute deleteDepartmentTenant,id: " + id);
+    if (!Configuration.isAdmin(userName)) {
+      return Message.error(
+          "Failed to delete-department-tenant,msg: only administrator users to use");
+    }
+    if (StringUtils.isBlank(id.toString())) {
+      return Message.error("id can not be empty");
+    }
+    tenantConfigService.deleteDepartmentTenant(id);
+    return Message.ok();
+  }
+
+  @ApiOperation(
+      value = "query department",
+      notes = "query department",
+      httpMethod = "GET",
+      response = Message.class)
+  @RequestMapping(path = "/query-department", method = RequestMethod.GET)
+  public Message queryDepartmentList() {
+    return Message.ok().data("departmentList", tenantConfigService.queryDepartmentList());
   }
 }

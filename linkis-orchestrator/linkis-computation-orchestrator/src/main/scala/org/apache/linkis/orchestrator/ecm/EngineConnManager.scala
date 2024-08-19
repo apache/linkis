@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{Mark, MarkReq, Policy}
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
@@ -59,7 +60,10 @@ trait EngineConnManager {
    * @param mark
    * @return
    */
-  def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor
+  def getAvailableEngineConnExecutor(
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
+  ): EngineConnExecutor
 
   /**
    * Remove the engineConn related to the Mark Release lock and other information
@@ -121,7 +125,10 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   override def getMarkCache(): util.Map[Mark, util.List[ServiceInstance]] = markCache
 
-  override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
+  override def getAvailableEngineConnExecutor(
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
+  ): EngineConnExecutor = {
     logger.info(s"mark ${mark.getMarkId()} start to  getAvailableEngineConnExecutor")
     if (null != mark) {
       tryReuseEngineConnExecutor(mark) match {
@@ -129,7 +136,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
         case None =>
       }
       val engineConnExecutor =
-        askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq(), mark)
+        askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq(), mark, execTask)
       engineConnExecutor.useEngineConn
       saveToMarkCache(mark, engineConnExecutor)
       logger.debug(
@@ -233,7 +240,8 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   protected def askEngineConnExecutor(
       engineAskRequest: EngineAskRequest,
-      mark: Mark
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
   ): EngineConnExecutor
 
   override def releaseMark(mark: Mark): Unit = {

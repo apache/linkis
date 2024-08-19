@@ -20,10 +20,11 @@ package org.apache.linkis.datasourcemanager.core.restful;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import org.apache.linkis.datasourcemanager.common.util.CryptoUtils;
 import org.apache.linkis.datasourcemanager.core.restful.exception.BeanValidationExceptionMapper;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.server.Message;
+
+import org.apache.commons.codec.binary.Base64;
 
 import javax.validation.ConstraintViolationException;
 
@@ -65,9 +66,11 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
+            Object password = connectParams.get(keyDefinition.getKey());
             if (null != password) {
-              connectParams.put(keyDefinition.getKey(), CryptoUtils.object2String(password));
+              connectParams.put(
+                  keyDefinition.getKey(),
+                  new String(new Base64().encode(String.valueOf(password).getBytes())));
             }
           }
         });
@@ -84,9 +87,11 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
+            Object password = connectParams.get(keyDefinition.getKey());
             if (null != password) {
-              connectParams.put(keyDefinition.getKey(), CryptoUtils.string2Object(password));
+              connectParams.put(
+                  keyDefinition.getKey(),
+                  new String(new Base64().decode(String.valueOf(password).getBytes())));
             }
           }
         });

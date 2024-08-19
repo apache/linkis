@@ -148,11 +148,14 @@
                 {{$t('message.common.toolbar.downloadMode')}}
               </Row>
               <Row>
-                <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all')}}</Checkbox>
+                <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all', {count: String(allPath.length)})}}</Checkbox>
               </Row>
-              <Row>
-                <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
-              </Row>
+              <div v-if="isExcel">
+                <Row>
+                  <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
+                </Row>
+              </div>
+              
             </div>
             <Row class="confirm">
               <Col span="10">
@@ -227,6 +230,10 @@ export default {
       type: String,
       default: '',
     },
+    allPath: {
+      type: Array,
+      default: () => []
+    },
     showFilter: {
       type: Boolean,
       default: false
@@ -294,7 +301,10 @@ export default {
       return describe
     },
     isAll() {
-      return ['hql', 'sql'].includes(this.script.runType) && this.download.format === '2';
+      return ['hql', 'sql'].includes(this.script.runType) || this.download.format === '1';
+    },
+    isExcel() {
+      return this.download.format === '2';
     },
     rsDownload() {
       return storage.get('resultSetExportEnable');
@@ -342,6 +352,19 @@ export default {
       const resultType = this.resultsShowType === '1' ? 'visual' : 'dataWrangler';
       this.$emit('on-analysis', resultType);
     },
+    downloadFromHref(url) {
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', '');
+      const evObj = document.createEvent('MouseEvents');
+      evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+      return link.dispatchEvent(evObj)
+    },
+    pause(msec = 1000) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, msec);
+      })
+    },
     async downloadConfirm() {
       const splitor = this.download.format === '1' ? 'csv' : 'xlsx';
       const charset = this.download.coding === '1' ? 'utf-8' : 'gbk';
@@ -359,11 +382,11 @@ export default {
       let temPath = this.currentPath;
       // The result set path of the api execution download is different(api执行下载的结果集路径不一样)
       let apiPath = `${this.getResultUrl}/resultsetToExcel`;
-      if (this.isAll && this.allDownload) {
+      if (this.isAll && this.allDownload && this.isExcel) {
         temPath = temPath.substring(0, temPath.lastIndexOf('/'));
         apiPath = `${this.getResultUrl}/resultsetsToExcel`
       }
-      let url = `http://${window.location.host}/api/rest_j/v1/` + apiPath +'?path=' + temPath + '&charset=' + charset + '&outputFileType=' + splitor + '&nullValue=' + nullValue + '&outputFileName=' + filename;
+      let url = `http://${window.location.host}/api/rest_j/v1/` + apiPath + '?charset=' + charset + '&outputFileType=' + splitor + '&nullValue=' + nullValue;
       // If the api execution page gets the result set, you need to bring the taskId(如果是api执行页获取结果集，需要带上taskId)
       if(this.getResultUrl !== 'filesystem') {
         url += `&taskId=${this.comData.taskID}`
@@ -373,19 +396,45 @@ export default {
         let separator = encodeURIComponent(separatorItem.key || '');
         url += `&csvSeparator=${separator}`
       }
-      if(this.isAll) {
+      if(this.isAll && this.isExcel) {
         url += `&autoFormat=${this.autoFormat}`
       }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)
       await api.fetch('/user/heartbeat', 'get');
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', '');
-      const evObj = document.createEvent('MouseEvents');
-      evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
-      const flag = link.dispatchEvent(evObj);
+      const eventList = [];
+      let flag = null;
+      if (this.isAll && !this.isExcel && this.allDownload) {
+        let count = 0
+        for(let [index, path] of this.allPath.sort((a, b) => {
+          return +(a.split('.')[0].substring(1)) - +(b.split('.')[0].substring(1))
+        }).entries()) {
+          let temUrl = url;
+          temUrl += `&path=${path}`
+          const name = `ResultSet${index + 1}`
+          temUrl += '&outputFileName=' + name
+          const event = this.downloadFromHref(temUrl)
+          eventList.push(event);
+          if(++count >= 10) {
+            await this.pause(1000);
+            count = 0;
+          }
+        }
+        // this.allPath.forEach(path => {
+        //   let temUrl = url;
+        //   temUrl += `&path=${path}`
+        //   const name = `ResultSet${Number(path.substring(temPath.lastIndexOf('/')).split('.')[0].split('_')[1]) + 1}`
+        //   temUrl += '&outputFileName=' + name
+        //   const event = this.downloadFromHref(temUrl)
+        //   eventList.push(event);
+        // });
+      } else {
+        url += `&path=${temPath}` + '&outputFileName=' + filename
+        flag = this.downloadFromHref(url);
+      }
       this.$nextTick(() => {
-        if (flag) {
+        if (flag && this.isExcel) {
+          this.$Message.success(this.$t('message.common.toolbar.success.download'));
+        } else if (!this.isExcel && !eventList.includes(false)) {
           this.$Message.success(this.$t('message.common.toolbar.success.download'));
         }
       });

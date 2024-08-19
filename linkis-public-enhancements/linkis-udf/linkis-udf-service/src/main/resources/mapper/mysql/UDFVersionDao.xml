@@ -32,7 +32,7 @@
 
     <sql id="udf_Version_List">
         `id`, `udf_id`, `path`, `bml_resource_id`, `bml_resource_version`, `is_published`,`register_format`,
-        `use_format`, `description`, `create_time`,`md5`
+        `use_format`, `description`, `create_time`,`md5`,`update_time`
     </sql>
 
     <insert id="addUdfVersion" useGeneratedKeys="true" keyProperty="id"
@@ -42,7 +42,7 @@
         ) VALUES (
         #{id,jdbcType=BIGINT},#{udfId,jdbcType=BIGINT},#{path,jdbcType=VARCHAR},#{bmlResourceId,jdbcType=VARCHAR},
         #{bmlResourceVersion,jdbcType=VARCHAR},#{isPublished,jdbcType=TINYINT},#{registerFormat,jdbcType=VARCHAR},
-        #{useFormat,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{md5,jdbcType=VARCHAR}
+        #{useFormat,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{md5,jdbcType=VARCHAR},now()
         )
     </insert>
 
@@ -61,7 +61,7 @@
 
     <update id="updatePublishStatus">
         UPDATE linkis_ps_udf_version
-        SET is_published = #{isPublished}
+        SET is_published = #{isPublished},update_time =now()
         WHERE udf_id = #{udfId}
         AND bml_resource_version = #{version}
     </update>
@@ -104,7 +104,7 @@
 
     <update id="updateResourceIdByUdfId">
         UPDATE linkis_ps_udf_version
-        SET bml_resource_id = #{resourceId}, path = replace(`path`, #{oldUser}, #{newUser})
+        SET bml_resource_id = #{resourceId}, path = replace(`path`, #{oldUser}, #{newUser}),update_time=now()
         WHERE udf_id = #{udfId}
     </update>
 

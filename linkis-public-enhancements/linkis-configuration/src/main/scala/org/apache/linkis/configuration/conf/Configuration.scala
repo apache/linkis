@@ -46,4 +46,7 @@ object Configuration {
   val REMOVE_APPLICATION_CACHE =
     CommonVars.apply("linkis.configuration.remove.application.cache", "IDE").getValue
 
+  val USE_USER_DEFAULE_VALUE =
+    CommonVars.apply("wds.linkis.configuration.use.user.default.value", true).getValue
+
 }

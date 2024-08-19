@@ -38,6 +38,13 @@ ARG LINKIS_VERSION=0.0.0
 
 RUN useradd -r -s /bin/bash -u 100001 -g root -G wheel hadoop
 
+# Update mirrors to use vault.centos.org as CentOS 7 is EOL since 2024-06-30
+RUN sed -i \
+      -e 's/^mirrorlist/#mirrorlist/' \
+      -e 's/^#baseurl/baseurl/' \
+      -e 's/mirror\.centos\.org/vault.centos.org/' \
+      /etc/yum.repos.d/*.repo
+
 # if you want to set specific yum repos conf file, you can put its at linkis-dist/docker/CentOS-Base.repo
 # and exec [COPY  apache-linkis-*-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
 

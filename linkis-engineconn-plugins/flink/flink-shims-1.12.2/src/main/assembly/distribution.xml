@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
+    <id>linkis-engineconn-plugin-flink</id>
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>flink</baseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
+            <!-- Now, select which projects to include in this module-set. -->
+            <outputDirectory>/dist/${flink.version}/lib</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <unpack>false</unpack>
+            <useStrictFiltering>false</useStrictFiltering>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+
+            <excludes>
+                <exclude>antlr:antlr:jar</exclude>
+                <exclude>aopalliance:aopalliance:jar</exclude>
+                <exclude>asm:asm:jar</exclude>
+                <exclude>cglib:cglib:jar</exclude>
+                <exclude>com.amazonaws:*:jar</exclude>
+                <exclude>com.fasterxml.jackson.*:*:jar</exclude>
+                <exclude>com.github.andrewoma.dexx:dexx-collections:jar</exclude>
+                <exclude>com.github.vlsi.compactmap:compactmap:jar</exclude>
+                <exclude>com.google.code.findbugs:annotations:jar</exclude>
+                <exclude>com.google.code.findbugs:jsr305:jar</exclude>
+                <exclude>com.google.code.gson:gson:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>com.google.inject:guice:jar</exclude>
+                <exclude>com.google.protobuf:protobuf-java:jar</exclude>
+                <exclude>com.netflix.*:*:jar</exclude>
+                <exclude>com.ning:async-http-client:jar</exclude>
+                <exclude>com.sun.jersey.*:*:jar</exclude>
+                <exclude>com.sun.jersey:*:jar</exclude>
+                <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
+                <exclude>com.thoughtworks.paranamer:paranamer:jar</exclude>
+                <exclude>com.thoughtworks.xstream:xstream:jar</exclude>
+                <exclude>org.apache.linkis:linkis-common:jar</exclude>
+                <exclude>org.apache.linkis:linkis-module:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
+                <exclude>commons-cli:commons-cli:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>commons-configuration:commons-configuration:jar</exclude>
+                <exclude>commons-daemon:commons-daemon:jar</exclude>
+                <exclude>commons-dbcp:commons-dbcp:jar</exclude>
+                <exclude>commons-digester:commons-digester:jar</exclude>
+                <exclude>commons-httpclient:commons-httpclient:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>commons-jxpath:commons-jxpath:jar</exclude>
+                <exclude>commons-lang:commons-lang:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>commons-pool:commons-pool:jar</exclude>
+                <exclude>io.micrometer:micrometer-core:jar</exclude>
+                <exclude>io.netty:*:jar</exclude>
+                <exclude>io.reactivex:*:jar</exclude>
+                <exclude>javax.activation:activation:jar</exclude>
+                <exclude>javax.annotation:javax.annotation-api:jar</exclude>
+                <exclude>javax.inject:javax.inject:jar</exclude>
+                <exclude>javax.servlet:javax.servlet-api:jar</exclude>
+                <exclude>javax.servlet.jsp:jsp-api:jar</exclude>
+                <exclude>javax.validation:validation-api:jar</exclude>
+                <exclude>javax.websocket:javax.websocket-api:jar</exclude>
+                <exclude>javax.ws.rs:javax.ws.rs-api:jar</exclude>
+                <exclude>javax.xml.bind:jaxb-api:jar</exclude>
+                <exclude>javax.xml.stream:stax-api:jar</exclude>
+                <exclude>joda-time:joda-time:jar</exclude>
+                <exclude>log4j:*:jar</exclude>
+                <exclude>mysql:mysql-connector-java:jar</exclude>
+                <exclude>net.databinder.dispatch:*:jar</exclude>
+                <exclude>org.antlr:antlr-runtime:jar</exclude>
+                <exclude>org.antlr:stringtemplate:jar</exclude>
+                <exclude>org.apache.commons:commons-compress:jar</exclude>
+                <exclude>org.apache.commons:commons-math:jar</exclude>
+                <exclude>org.apache.commons:commons-math3:jar</exclude>
+                <exclude>org.apache.curator:*:jar</exclude>
+                <exclude>org.apache.directory.*:*:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
+                <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <exclude>org.apache.httpcomponents:*:jar</exclude>
+                <exclude>org.apache.logging.log4j:*:jar</exclude>
+                <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
+                <exclude>org.aspectj:aspectjweaver:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
+                <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
+                <exclude>org.codehaus.jettison:jettison:jar</exclude>
+                <exclude>org.codehaus.woodstox:stax2-api:jar</exclude>
+                <exclude>org.codehaus.woodstox:woodstox-core-asl:jar</exclude>
+                <exclude>org.eclipse.jetty:*:jar</exclude>
+                <exclude>org.eclipse.jetty.*:*:jar</exclude>
+                <exclude>org.fusesource.leveldbjni:leveldbjni-all:jar</exclude>
+                <exclude>org.glassfish.hk2:*:jar</exclude>
+                <exclude>org.glassfish.hk2.*:*:jar</exclude>
+                <exclude>org.glassfish.jersey.*:*:jar</exclude>
+                <exclude>org.hdrhistogram:HdrHistogram:jar</exclude>
+                <exclude>org.javassist:javassist:jar</exclude>
+                <exclude>org.json4s:*:jar</exclude>
+                <exclude>org.jsoup:jsoup:jar</exclude>
+                <exclude>org.jvnet.mimepull:mimepull:jar</exclude>
+                <exclude>org.jvnet:tiger-types:jar</exclude>
+                <exclude>org.latencyutils:LatencyUtils:jar</exclude>
+                <exclude>org.mortbay.jasper:apache-el:jar</exclude>
+                <exclude>org.mortbay.jetty:jetty:jar</exclude>
+                <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
+                <exclude>org.ow2.asm:asm-analysis:jar</exclude>
+                <exclude>org.ow2.asm:asm-commons:jar</exclude>
+                <exclude>org.ow2.asm:asm-tree:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
+                <exclude>org.scala-lang.modules:scala-parser-combinators_2.11:jar</exclude>
+                <exclude>org.scala-lang.modules:scala-xml_2.11:jar</exclude>
+                <exclude>org.scala-lang:*:jar</exclude>
+                <exclude>org.slf4j:*:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-actuator:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-actuator-autoconfigure:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-autoconfigure:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-actuator:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-aop:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-jetty:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-json:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-log4j2:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-web:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-commons:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-config-client:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-context:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-archaius:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-core:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-eureka-client:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-ribbon:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-config:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-eureka:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-archaius:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-ribbon:jar</exclude>
+                <exclude>org.springframework.security:spring-security-crypto:jar</exclude>
+                <exclude>org.springframework.security:spring-security-rsa:jar</exclude>
+                <exclude>org.springframework:spring-aop:jar</exclude>
+                <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-context:jar</exclude>
+                <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-expression:jar</exclude>
+                <exclude>org.springframework:spring-jcl:jar</exclude>
+                <exclude>org.springframework:spring-web:jar</exclude>
+                <exclude>org.springframework:spring-webmvc:jar</exclude>
+                <exclude>org.tukaani:xz:jar</exclude>
+                <exclude>org.yaml:snakeyaml:jar</exclude>
+                <exclude>software.amazon.ion:ion-java:jar</exclude>
+                <exclude>xerces:xercesImpl:jar</exclude>
+                <exclude>xmlenc:xmlenc:jar</exclude>
+                <exclude>xmlpull:xmlpull:jar</exclude>
+                <exclude>xpp3:xpp3_min:jar</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+
+        <fileSet>
+            <directory>${basedir}/src/main/resources</directory>
+            <includes>
+                <include>*</include>
+            </includes>
+            <fileMode>0777</fileMode>
+            <directoryMode>0755</directoryMode>
+            <outputDirectory>dist/${flink.version}/conf</outputDirectory>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>${basedir}/target</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*doc.jar</exclude>
+            </excludes>
+            <fileMode>0777</fileMode>
+            <outputDirectory>plugin/${flink.version}</outputDirectory>
+        </fileSet>
+
+    </fileSets>
+
+
+</assembly>
+

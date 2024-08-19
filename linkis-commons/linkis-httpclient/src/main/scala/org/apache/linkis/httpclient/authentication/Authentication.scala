@@ -25,4 +25,6 @@ trait Authentication {
 
   def updateLastAccessTime(): Unit
 
+  def getCreateTime: Long = System.currentTimeMillis()
+
 }

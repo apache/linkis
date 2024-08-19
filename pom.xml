@@ -102,13 +102,16 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.4.0</revision>
+    <revision>1.6.0</revision>
 
     <zookeeper.version>3.5.9</zookeeper.version>
     <curator.version>4.2.0</curator.version>
     <hadoop.version>3.3.4</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
     <hbase.version>2.5.3</hbase.version>
+    <jruby.verison>9.3.4.0</jruby.verison>
+    <jcodings.version>1.0.56</jcodings.version>
+    <joni.version>2.1.42</joni.version>
     <hive.version>3.1.3</hive.version>
     <spark.version>3.2.1</spark.version>
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
@@ -118,7 +121,12 @@
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
-    <flink.version>1.12.2</flink.version>
+    <storage.parquet.scope>provided</storage.parquet.scope>
+    <storage.orc.scope>provided</storage.orc.scope>
+
+    <flink.version>1.16.2</flink.version>
+    <libfb303.version>0.9.3</libfb303.version>
+    <minlog.version>1.3.0</minlog.version>
     <io_file.version>1.0</io_file.version>
     <jdbc.version>4</jdbc.version>
     <trino.version>371</trino.version>
@@ -126,6 +134,9 @@
     <openlookeng.version>1.5.0</openlookeng.version>
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
+    <nebula.version>3.0.0</nebula.version>
+    <doris.version>1.2.6</doris.version>
+    <repl.version>1</repl.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>
     <shell.version>1</shell.version>
@@ -146,6 +157,9 @@
 
     <protobuf.version>3.16.3</protobuf.version>
 
+    <parquet-avro.version>1.10.0</parquet-avro.version>
+    <orc-core.version>1.5.8</orc-core.version>
+
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
     <netty.version>4.1.86.Final</netty.version>
@@ -153,9 +167,9 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpmime.version>${httpclient.version}</httpmime.version>
 
-    <knife4j.version>2.0.9</knife4j.version>
-    <springfox.version>2.10.5</springfox.version>
-    <poi.version>5.2.3</poi.version>
+    <knife4j.version>3.0.3</knife4j.version>
+    <springfox.version>3.0.0</springfox.version>
+    <poi.version>5.2.5</poi.version>
     <reflections.version>0.9.12</reflections.version>
 
     <!-- dbs -->
@@ -163,8 +177,8 @@
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <mysql.connector.scope>test</mysql.connector.scope>
-    <postgresql.connector.version>42.3.8</postgresql.connector.version>
-    <druid.version>1.2.16</druid.version>
+    <postgresql.connector.version>42.3.9</postgresql.connector.version>
+    <druid.version>1.2.23</druid.version>
     <mongodb.driver.version>3.12.8</mongodb.driver.version>
 
     <!-- utils -->
@@ -176,7 +190,7 @@
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-compress.version>1.21</commons-compress.version>
+    <commons-compress.version>1.26.1</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
@@ -205,11 +219,13 @@
     <h2.version>2.2.220</h2.version>
 
     <!-- spring -->
-    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
-    <spring-security.version>5.7.5</spring-security.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
-    <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
-    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+    <spring-framework.version>5.3.27</spring-framework.version>
+    <spring-security.version>5.7.8</spring-security.version>
+    <spring.boot.version>2.7.11</spring.boot.version>
+    <spring-netflix.version>3.1.7</spring-netflix.version>
+    <spring-cloud.version>2021.0.8</spring-cloud.version>
+    <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>
+    <spring-cloud-common.version>3.1.7</spring-cloud-common.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1251,6 +1267,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!--    batch to create test data-->
+      <dependency>
+        <groupId>org.instancio</groupId>
+        <artifactId>instancio-junit</artifactId>
+        <version>2.16.1</version>
+        <scope>test</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
@@ -1338,6 +1363,11 @@
             <artifactId>HikariCP</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -1767,6 +1797,61 @@
         <scala.binary.version>2.11</scala.binary.version>
       </properties>
     </profile>
+    <!-- hbase -->
+    <profile>
+      <id>hbase-2.5</id>
+      <activation>
+        <property>
+          <name>!hbase.profile</name>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-2.5</profiles.active>
+        <hbase.version>2.5.3</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-1.2</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>1.2</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-1.2</profiles.active>
+        <hbase.version>1.2.0</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-1.4</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>1.4</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-1.4</profiles.active>
+        <hbase.version>1.4.3</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-2.2</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>2.2</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-2.2</profiles.active>
+        <hbase.version>2.2.6</hbase.version>
+      </properties>
+    </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->
     <profile>
       <id>jacoco</id>
@@ -1862,6 +1947,20 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <!-- storage  -->
+    <profile>
+      <id>storage-parquet</id>
+      <properties>
+        <storage.parquet.scope>compile</storage.parquet.scope>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>storage-orc</id>
+      <properties>
+        <storage.orc.scope>compile</storage.orc.scope>
+      </properties>
     </profile>
   </profiles>
 </project>

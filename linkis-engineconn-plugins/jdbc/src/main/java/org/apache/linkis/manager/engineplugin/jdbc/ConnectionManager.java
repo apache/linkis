@@ -19,20 +19,24 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration$;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 import org.apache.linkis.manager.engineplugin.jdbc.utils.JdbcParamUtils;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import javax.sql.DataSource;
 
+import java.io.Closeable;
 import java.security.PrivilegedExceptionAction;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -42,7 +46,8 @@ import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.USERNAME;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.of;
 import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
 
 public class ConnectionManager {
@@ -103,8 +108,10 @@ public class ConnectionManager {
     }
     for (DataSource dataSource : this.dataSourceFactories.values()) {
       try {
-        ((BasicDataSource) dataSource).close();
-      } catch (SQLException e) {
+        if (dataSource instanceof Closeable) {
+          ((Closeable) dataSource).close();
+        }
+      } catch (Exception e) {
         LOG.error("Error while closing datasource...", e);
       }
     }
@@ -181,11 +188,20 @@ public class ConnectionManager {
         JDBCPropertiesParser.getInt(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
 
+    int connectionTimeout =
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_CONNECTION_TIMEOUT, 0);
+    int socketTimeout =
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_SOCKET_TIMEOUT, 0);
+    int queryTimeout =
+        JDBCPropertiesParser.getInt(
+            properties, JDBCConfiguration$.MODULE$.JDBC_QUERY_TIMEOUT().key(), 0);
+
     DruidDataSource datasource = new DruidDataSource();
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
     datasource.setUsername(username);
     datasource.setPassword(password);
+    datasource.setConnectProperties(SecurityUtils.getMysqlSecurityParams());
     datasource.setDriverClassName(driverClassName);
     datasource.setInitialSize(initialSize);
     datasource.setMinIdle(minIdle);
@@ -200,6 +216,15 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+    if (connectionTimeout > 0) {
+      datasource.setConnectTimeout(connectionTimeout);
+    }
+    if (socketTimeout > 0) {
+      datasource.setSocketTimeout(socketTimeout);
+    }
+    if (queryTimeout > 0) {
+      datasource.setQueryTimeout(queryTimeout);
+    }
     return datasource;
   }
 

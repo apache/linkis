@@ -59,13 +59,23 @@ import org.apache.http.conn.{
   ConnectTimeoutException,
   HttpHostConnectException
 }
+import org.apache.http.conn.ssl.{SSLConnectionSocketFactory, TrustSelfSignedStrategy}
 import org.apache.http.entity.{ContentType, StringEntity}
 import org.apache.http.entity.mime.MultipartEntityBuilder
-import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpClients}
+import org.apache.http.impl.client.{
+  BasicCookieStore,
+  CloseableHttpClient,
+  HttpClientBuilder,
+  HttpClients
+}
 import org.apache.http.message.BasicNameValuePair
+import org.apache.http.ssl.SSLContextBuilder
 import org.apache.http.util.EntityUtils
 
+import javax.net.ssl.{HostnameVerifier, SSLContext, SSLSession}
+
 import java.net.URI
+import java.nio.charset.Charset
 import java.util
 import java.util.Locale
 
@@ -80,12 +90,26 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected val cookieStore = new BasicCookieStore
 
-  protected val httpClient: CloseableHttpClient = HttpClients
+  private val httpClientBuilder: HttpClientBuilder = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
     .setMaxConnTotal(clientConfig.getMaxConnection)
     .setMaxConnPerRoute(clientConfig.getMaxConnection / 2)
-    .build
+
+  protected val httpClient: CloseableHttpClient = if (clientConfig.isSSL) {
+    val sslContext: SSLContext =
+      SSLContextBuilder.create.loadTrustMaterial(null, new TrustSelfSignedStrategy).build
+
+    val sslConnectionFactory = new SSLConnectionSocketFactory(
+      sslContext,
+      new HostnameVerifier() {
+        override def verify(hostname: String, session: SSLSession) = true
+      }
+    )
+    httpClientBuilder.setSSLSocketFactory(sslConnectionFactory).build()
+  } else {
+    httpClientBuilder.build()
+  }
 
   if (clientConfig.getAuthenticationStrategy != null) {
     clientConfig.getAuthenticationStrategy match {
@@ -142,23 +166,31 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       val req = prepareReq(action)
       val startTime = System.currentTimeMillis
       val response = executeRequest(req, Some(waitTime).filter(_ > 0))
+      val taken = System.currentTimeMillis - startTime
+      attempts.add(taken)
+      val costTime = ByteTimeUtils.msDurationToString(taken)
+      logger.info(
+        s"invoke ${req.getURI} get status ${response.getStatusLine.getStatusCode} taken: ${costTime}."
+      )
       if (response.getStatusLine.getStatusCode == 401) {
-        tryLogin(action, getRequestUrl(action), true)
-        logger.info("The user is not logged in, please log in first, you can set a retry")
         val msg = Utils.tryCatch(EntityUtils.toString(response.getEntity)) { t =>
           logger.warn("failed to parse entity", t)
           ""
         }
         IOUtils.closeQuietly(response)
-        throw new HttpClientRetryException(
-          "The user is not logged in, please log in first, you can set a retry, message: " + msg
-        )
+        tryLogin(action, getRequestUrl(action), true)
+        if (attempts.size() <= 1) {
+          logger.info("The user is not logged in, default retry once")
+          addAttempt()
+        } else {
+          logger.info("The user is not logged in, you can set a retry")
+          throw new HttpClientRetryException(
+            "The user is not logged in, please log in first, you can set a retry, message: " + msg
+          )
+        }
+      } else {
+        response
       }
-      val taken = System.currentTimeMillis - startTime
-      attempts.add(taken)
-      val costTime = ByteTimeUtils.msDurationToString(taken)
-      logger.info(s"invoke ${req.getURI} taken: ${costTime}.")
-      response
     }
 
     val response =
@@ -285,7 +317,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
               if (v != null) nameValuePairs.add(new BasicNameValuePair(k, v.toString))
             }
           }
-          httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs))
+          httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs, Charset.defaultCharset))
         }
 
         if (StringUtils.isNotBlank(put.getRequestPayload)) {
@@ -343,7 +375,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             post.getParameters.asScala.foreach { case (k, v) =>
               if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps))
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset))
           } else if (post.getFormParams.asScala.nonEmpty) {
             post.getFormParams.asScala.foreach { case (k, v) =>
               if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))

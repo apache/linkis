@@ -27,4 +27,11 @@ class ConfigurationTest {
     Assertions.assertFalse(Configuration.isAdmin("HaDooop"))
   }
 
+  @Test private[conf] def testFormatValue(): Unit = {
+    val confvalue = CommonVars[Int]("linkis.test.error.conf", 456).getValue
+    val confvalue2 = CommonVars[Int]("linkis.test.error.conf2", 789).getValue
+    Assertions.assertTrue(123 == confvalue)
+    Assertions.assertTrue(456 == confvalue2)
+  }
+
 }

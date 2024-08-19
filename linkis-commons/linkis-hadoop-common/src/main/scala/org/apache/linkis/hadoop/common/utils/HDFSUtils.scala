@@ -31,21 +31,29 @@ import org.apache.hadoop.security.UserGroupInformation
 import java.io.File
 import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+import java.util.concurrent.atomic.AtomicLong
 
 import scala.collection.JavaConverters._
 
 object HDFSUtils extends Logging {
 
   private val fileSystemCache: java.util.Map[String, HDFSFileSystemContainer] =
-    new java.util.HashMap[String, HDFSFileSystemContainer]()
+    new ConcurrentHashMap[String, HDFSFileSystemContainer]()
 
   private val LOCKER_SUFFIX = "_HDFS"
   private val DEFAULT_CACHE_LABEL = "default"
   private val JOINT = "_"
 
-  if (HadoopConf.HDFS_ENABLE_CACHE) {
-    logger.info("HDFS Cache enabled ")
+  private val count = new AtomicLong
+
+  /**
+   * For FS opened with public tenants, we should not perform close action, but should close only
+   * when hdfsfilesystem encounters closed problem
+   * 对于使用公共租户开启的FS，我们不应该去执行close动作，应该由hdfsfilesystem遇到closed问题时才进行关闭
+   */
+  if (HadoopConf.HDFS_ENABLE_CACHE && HadoopConf.HDFS_ENABLE_CACHE_CLOSE) {
+    logger.info("HDFS Cache clear enabled ")
     Utils.defaultScheduler.scheduleAtFixedRate(
       new Runnable {
         override def run(): Unit = Utils.tryAndWarn {
@@ -58,8 +66,7 @@ object HDFSUtils extends Logging {
               )
             }
             .foreach { hdfsFileSystemContainer =>
-              val locker =
-                hdfsFileSystemContainer.getUser + JOINT + hdfsFileSystemContainer.getLabel + LOCKER_SUFFIX
+              val locker = hdfsFileSystemContainer.getUser + LOCKER_SUFFIX
               locker.intern() synchronized {
                 if (hdfsFileSystemContainer.canRemove()) {
                   fileSystemCache.remove(
@@ -240,7 +247,7 @@ object HDFSUtils extends Logging {
 
   def isKerberosEnabled(label: String): Boolean = {
     if (label == null) {
-      KERBEROS_ENABLE.getValue
+      KERBEROS_ENABLE
     } else {
       kerberosValueMapParser(KERBEROS_ENABLE_MAP.getValue).get(label).contains("true")
     }

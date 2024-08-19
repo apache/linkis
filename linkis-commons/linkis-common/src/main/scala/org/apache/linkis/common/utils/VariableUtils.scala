@@ -143,13 +143,23 @@ object VariableUtils extends Logging {
     }
     initAllDateVars(run_date, nameAndType)
     val codeOperation = parserVar(code, nameAndType)
-    parserDate(codeOperation, run_date)
+    parserDate(codeType, codeOperation, run_date)
   }
 
+  @deprecated
   private def parserDate(code: String, run_date: CustomDateType): String = {
     if (Configuration.VARIABLE_OPERATION) {
       val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
       VariableOperationUtils.replaces(zonedDateTime, code)
+    } else {
+      code
+    }
+  }
+
+  private def parserDate(codeType: String, code: String, run_date: CustomDateType): String = {
+    if (Configuration.VARIABLE_OPERATION) {
+      val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
+      VariableOperationUtils.replaces(codeType, zonedDateTime, code)
     } else {
       code
     }
@@ -255,6 +265,10 @@ object VariableUtils extends Logging {
     nameAndType("run_today_h_std") = HourType(
       new CustomHourType(nameAndType(RUN_TODAY_H).asInstanceOf[HourType].getValue, true)
     )
+    // calculate run_last_mon base on run_today
+    val run_roday_mon = new CustomMonType(getMonthDay(false, run_today.getDate), false)
+    nameAndType("run_last_mon_now") = MonType(new CustomMonType(run_roday_mon - 1, false, false))
+    nameAndType("run_last_mon_now_std") = MonType(new CustomMonType(run_roday_mon - 1, true, false))
   }
 
   /**
@@ -337,7 +351,7 @@ object VariableUtils extends Logging {
    *
    * @param code
    *   :code
-   * @param codeType
+   * @param languageType
    *   :SQL,PYTHON
    * @return
    */
@@ -346,27 +360,37 @@ object VariableUtils extends Logging {
 
     var varString: String = null
     var errString: String = null
+    var rightVarString: String = null
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         varString = """\s*--@set\s*.+\s*"""
+        rightVarString = """^\s*--@set\s*.+\s*"""
         errString = """\s*--@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
         varString = """\s*#@set\s*.+\s*"""
+        rightVarString = """^\s*#@set\s*.+\s*"""
         errString = """\s*#@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         varString = """\s*//@set\s*.+\s*"""
+        rightVarString = """^\s*//@set\s*.+\s*"""
         errString = """\s*//@.+"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_JAVA =>
         varString = """\s*!!@set\s*.+\s*"""
+        rightVarString = """^\s*!!@set\s*.+\s*"""
       case _ =>
         return nameAndValue
     }
 
     val customRegex = varString.r.unanchored
+    val customRightRegex = rightVarString.r.unanchored
     val errRegex = errString.r.unanchored
     code.split("\n").foreach { str =>
       {
+
+        if (customRightRegex.unapplySeq(str).size < customRegex.unapplySeq(str).size) {
+          logger.warn(s"code:$str is wrong custom variable format!!!")
+        }
         str match {
           case customRegex() =>
             val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str

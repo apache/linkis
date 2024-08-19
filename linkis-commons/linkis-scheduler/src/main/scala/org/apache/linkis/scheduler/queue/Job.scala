@@ -196,23 +196,15 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   ): Unit = toState match {
     case Inited =>
       jobListener.foreach(_.onJobInited(this))
-    // TODO Add event（加事件）
     case Scheduled =>
       jobListener.foreach(_.onJobScheduled(this))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is scheduled.")))
-    // TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is running.")))
-    // TODO job start event
     case WaitForRetry =>
       jobListener.foreach(_.onJobWaitForRetry(this))
     case _ =>
       jobDaemon.foreach(_.kill())
       jobListener.foreach(_.onJobCompleted(this))
-//      if(getJobInfo != null) logListener.foreach(_.onLogUpdate(this, getJobInfo.getMetric))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is completed.")))
-    // TODO job end event
   }
 
   protected def transitionCompleted(executeCompleted: CompletedExecuteResponse): Unit = {
@@ -303,6 +295,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   override def run(): Unit = {
+    Thread.currentThread().setName(s"Job_${toString}_Thread")
     if (!isScheduled || interrupt) return
     startTime = System.currentTimeMillis
     Utils.tryAndWarn(transition(Running))
@@ -351,6 +344,16 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   override def toString: String = if (StringUtils.isNotBlank(getName)) getName else getId
+
+  /**
+   * clear job memory
+   */
+  def clear(): Unit = {
+    logger.info(s" clear job base info $getId")
+    this.executor = null
+    this.jobDaemon = null
+  }
+
 }
 
 /**

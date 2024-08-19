@@ -1,0 +1,59 @@
+{
+  "name": "linkis-web-next",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@fesjs/fes-design": "^0.7.31",
+    "@types/lodash": "^4.14.198",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "axios": "^1.6.0",
+    "dayjs": "^1.11.10",
+    "dexie": "^3.2.7",
+    "md5": "^2.3.0",
+    "monaco-editor": "^0.43.0",
+    "qs": "^6.11.2",
+    "vite": "^4.5.3",
+    "vue": "^3.2.47",
+    "vue-i18n": "^9.4.1",
+    "vue-router": "^4.2.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "eslint": "^8.41.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-vue": "^9.14.1",
+    "husky": "^7.0.0",
+    "jsencrypt": "^3.3.2",
+    "less": "^4.2.0",
+    "lint-staged": "^13.3.0",
+    "prettier": "2.8.8",
+    "typescript": "^5.0.2",
+    "vue-eslint-parser": "^9.3.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,vue,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{scss,less,css,html,md,json}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged",
+      "commit-msg": "commitlint -E $HUSKY_GIT_PARAMS"
+    }
+  }
+}

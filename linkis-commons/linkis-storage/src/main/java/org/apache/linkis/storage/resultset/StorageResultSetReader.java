@@ -33,7 +33,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,6 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
   private Fs fs;
 
   private final int READ_CACHE = 1024;
-  private final byte[] bytes = new byte[READ_CACHE];
 
   public StorageResultSetReader(ResultSet<K, V> resultSet, InputStream inputStream) {
     super(resultSet, inputStream);
@@ -84,21 +82,18 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
       return null;
     }
 
-    byte[] rowBuffer = new byte[0];
     int len = 0;
-
-    while (rowLen > 0 && len >= 0) {
-      if (rowLen > READ_CACHE) {
-        len = StorageUtils.readBytes(inputStream, bytes, READ_CACHE);
-      } else {
-        len = StorageUtils.readBytes(inputStream, bytes, rowLen);
-      }
-
-      if (len > 0) {
-        rowLen -= len;
-        rowBuffer = Arrays.copyOf(rowBuffer, rowBuffer.length + len);
-        System.arraycopy(bytes, 0, rowBuffer, rowBuffer.length - len, len);
-      }
+    byte[] rowBuffer = null;
+    try {
+      rowBuffer = new byte[rowLen];
+      len = StorageUtils.readBytes(inputStream, rowBuffer, rowLen);
+    } catch (OutOfMemoryError error) {
+      logger.error("Result set read oom, read size {} Byte", rowLen);
+      throw new RuntimeException(error);
+    }
+    if (len != rowLen) {
+      throw new RuntimeException(
+          "Can't get the value of the field, maybe the IO stream has been read or has been closed!(拿不到字段的值，也许IO流已读取完毕或已被关闭！)");
     }
     rowCount++;
     return rowBuffer;

@@ -42,16 +42,13 @@ import org.apache.linkis.entrance.persistence.QueryPersistenceEngine;
 import org.apache.linkis.entrance.persistence.QueryPersistenceManager;
 import org.apache.linkis.entrance.persistence.ResultSetEngine;
 import org.apache.linkis.entrance.scheduler.EntranceGroupFactory;
+import org.apache.linkis.entrance.scheduler.EntranceParallelConsumerManager;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
-import org.apache.linkis.orchestrator.ecm.EngineConnManagerBuilder;
-import org.apache.linkis.orchestrator.ecm.EngineConnManagerBuilder$;
-import org.apache.linkis.orchestrator.ecm.entity.Policy;
 import org.apache.linkis.scheduler.Scheduler;
 import org.apache.linkis.scheduler.SchedulerContext;
 import org.apache.linkis.scheduler.executer.ExecutorManager;
 import org.apache.linkis.scheduler.queue.ConsumerManager;
 import org.apache.linkis.scheduler.queue.GroupFactory;
-import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -150,7 +147,7 @@ public class EntranceSpringConfiguration {
       new ScalaCodeInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
-      new SetTenantLabelInterceptor(),
+      //      new SetTenantLabelInterceptor(),
       new UserCreatorIPCheckInterceptor()
     };
   }
@@ -190,7 +187,7 @@ public class EntranceSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ConsumerManager consumerManager() {
-    return new ParallelConsumerManager(
+    return new EntranceParallelConsumerManager(
         ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue(), "EntranceJobScheduler");
   }
 
@@ -204,9 +201,7 @@ public class EntranceSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ExecutorManager executorManager(GroupFactory groupFactory) {
-    EngineConnManagerBuilder engineConnManagerBuilder = EngineConnManagerBuilder$.MODULE$.builder();
-    engineConnManagerBuilder.setPolicy(Policy.Process);
-    return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
+    return new EntranceExecutorManagerImpl(groupFactory);
   }
 
   @Bean

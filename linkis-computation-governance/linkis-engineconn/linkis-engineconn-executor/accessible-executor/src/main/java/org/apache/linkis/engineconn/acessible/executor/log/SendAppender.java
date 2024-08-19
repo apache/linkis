@@ -18,9 +18,12 @@
 package org.apache.linkis.engineconn.acessible.executor.log;
 
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration;
+import org.apache.linkis.engineconn.common.conf.EngineConnConf;
+import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
 import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListenerBus;
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -34,6 +37,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +96,7 @@ public class SendAppender extends AbstractAppender {
         }
       }
       if (!flag) {
+        logStr = matchLog(logStr);
         logCache.cacheLog(logStr);
       }
     } else {
@@ -112,5 +118,18 @@ public class SendAppender extends AbstractAppender {
       layout = PatternLayout.createDefaultLayout();
     }
     return new SendAppender(name, filter, layout, ignoreExceptions);
+  }
+
+  public String matchLog(String logLine) {
+    String yarnUrl = EngineConnConf.JOB_YARN_TASK_URL().getValue();
+    if (StringUtils.isNotBlank(yarnUrl)) {
+      Matcher hiveMatcher = Pattern.compile(EngineConnConstant.hiveLogReg()).matcher(logLine);
+      if (hiveMatcher.find()) {
+        logLine =
+            hiveMatcher.replaceAll(
+                EngineConnConstant.YARN_LOG_URL() + yarnUrl + hiveMatcher.group(1));
+      }
+    }
+    return logLine;
   }
 }

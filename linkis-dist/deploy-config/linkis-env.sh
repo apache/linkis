@@ -111,6 +111,9 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #            Linkis in a distributed manner and set the following microservice parameters
 #
 
+###  DISCOVERY
+DISCOVERY=EUREKA
+
 ###  EUREKA install information
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
 #EUREKA: Microservices Service Registration Discovery Center
@@ -118,6 +121,10 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 EUREKA_PORT=20303
 export EUREKA_PREFER_IP=false
 #EUREKA_HEAP_SIZE="512M"
+
+###  NACOS install information
+###  NACOS
+NACOS_SERVER_ADDR=127.0.0.1:8848
 
 ##linkis-mg-gateway
 #GATEWAY_INSTALL_IP=127.0.0.1
@@ -160,7 +167,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.4.0
+LINKIS_VERSION=1.5.0
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
@@ -177,3 +184,7 @@ export PROMETHEUS_ENABLE=false
 export ENABLE_HDFS=true
 export ENABLE_HIVE=true
 export ENABLE_SPARK=true
+
+## define  MYSQL_CONNECT_JAVA_PATH&OLK_JDBC_PATH, the linkis can check JDBC driver
+MYSQL_CONNECT_JAVA_PATH=
+OLK_JDBC_PATH=

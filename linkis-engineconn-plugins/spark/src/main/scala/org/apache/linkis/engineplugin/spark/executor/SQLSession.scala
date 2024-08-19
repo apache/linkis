@@ -120,7 +120,7 @@ object SQLSession extends Logging {
         )
       )
       .toArray[Column]
-    columns.foreach(c => logger.info(s"c is ${c.getColumnName()}, comment is ${c.getComment()}"))
+    columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer =
@@ -146,11 +146,11 @@ object SQLSession extends Logging {
       )
     }
     val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    logger.warn(s"Time taken: ${taken}, Fetched $index row(s).")
+    logger.info(s"Time taken: ${taken}, Fetched $index row(s)")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched ${columns.length} col(s) : $index row(s)"
     )
     engineExecutionContext.sendResultSet(writer)
   }
@@ -178,7 +178,7 @@ object SQLSession extends Logging {
           }
           .mkString("{", ",", "}")
       case (seq: Seq[_], ArrayType(typ, _)) =>
-        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[\"", "\",\"", "\"]")
       case (map: Map[_, _], MapType(kType, vType, _)) =>
         map
           .map { case (key, value) =>
@@ -188,7 +188,7 @@ object SQLSession extends Logging {
           .sorted
           .mkString("{", ",", "}")
       case (null, _) => "null"
-      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      // case (str: String, StringType) => str.replaceAll("\n|\t", " ")
       case (double: Double, DoubleType) => nf.format(double)
       case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
       case (other: Any, tpe) => other.toString
@@ -203,7 +203,7 @@ object SQLSession extends Logging {
           }
           .mkString("{", ",", "}")
       case (seq: Seq[_], ArrayType(typ, _)) =>
-        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[\"", "\",\"", "\"]")
       case (map: Map[_, _], MapType(kType, vType, _)) =>
         map
           .map { case (key, value) =>
@@ -213,8 +213,13 @@ object SQLSession extends Logging {
           .sorted
           .mkString("{", ",", "}")
 
-      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
-      case (double: Double, DoubleType) => nf.format(double)
+      // case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) =>
+        if (double.isNaN) {
+          "NaN"
+        } else {
+          nf.format(double)
+        }
       case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
       case (other: Any, tpe) => other.toString
       case _ => null

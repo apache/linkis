@@ -27,6 +27,11 @@ import java.util.concurrent.{ExecutorService, TimeUnit}
 
 import scala.collection.mutable
 
+/**
+ * @param maxParallelismUsers
+ *   Consumer Thread pool size is：5 * maxParallelismUsers + 1
+ * @param schedulerName
+ */
 class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
     extends ConsumerManager
     with Logging {
@@ -126,8 +131,8 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
 
   override def destroyConsumer(groupName: String): Unit =
     consumerGroupMap.get(groupName).foreach { tmpConsumer =>
-      tmpConsumer.shutdown()
-      consumerGroupMap.remove(groupName)
+      Utils.tryAndWarn(tmpConsumer.shutdown())
+      Utils.tryAndWarn(consumerGroupMap.remove(groupName))
       consumerListener.foreach(_.onConsumerDestroyed(tmpConsumer))
       logger.warn(s"Consumer of group ($groupName) in $schedulerName is destroyed.")
     }

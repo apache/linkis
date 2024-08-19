@@ -102,11 +102,13 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     Utils.newCachedExecutionContext(5, "Spark-Scala-REPL-Thread-", true)
 
   override def init(): Unit = {
-
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
-
     setCodeParser(new ScalaCodeParser)
+    super.init()
+    logger.info("spark scala executor start")
+  }
 
+  def lazyInitLoadILoop(): Unit = {
     if (sparkILoop == null) {
       synchronized {
         if (sparkILoop == null) createSparkILoop
@@ -146,6 +148,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       jobGroup: String
   ): ExecuteResponse = {
     this.jobGroup.append(jobGroup)
+    lazyInitLoadILoop()
     if (null != sparkILoop.intp && null != sparkILoop.intp.classLoader) {
       Thread.currentThread().setContextClassLoader(sparkILoop.intp.classLoader)
     }
@@ -153,12 +156,21 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       lineOutputStream.reset(engineExecutionContext)
     }
 
-    lazyLoadILoop
+    doBindSparkSession()
+
     lineOutputStream.ready()
     if (sparkILoopInited) {
       this.engineExecutionContextFactory.setEngineExecutionContext(engineExecutionContext)
     }
     var res: ExecuteResponse = null
+
+    if (Thread.currentThread().isInterrupted) {
+      logger.error("The thread of execution has been interrupted and the task should be terminated")
+      return ErrorExecuteResponse(
+        "The thread of execution has been interrupted and the task should be terminated",
+        null
+      )
+    }
 
     Utils.tryCatch {
       res = executeLine(code, engineExecutionContext)
@@ -220,30 +232,43 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           // error("incomplete code.")
           IncompleteExecuteResponse(null)
         case Results.Error =>
-          lineOutputStream.flush()
-          val output = lineOutputStream.toString
-          IOUtils.closeQuietly(lineOutputStream)
-          var errorMsg: String = null
-          if (StringUtils.isNotBlank(output)) {
-            errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t =>
-              t.getMessage
+          if (Thread.currentThread().isInterrupted) {
+            logger.error(
+              "The thread of execution has been interrupted and the task should be terminated"
             )
-            logger.error("Execute code error for " + errorMsg)
-            engineExecutionContext.appendStdout("Execute code error for " + errorMsg)
-            if (matchFatalLog(errorMsg)) {
-              logger.error("engine log fatal logs now to set status to shutdown")
-              ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+            Utils.tryQuietly {
+              IOUtils.closeQuietly(lineOutputStream)
             }
-          } else {
-            logger.error("No error message is captured, please see the detailed log")
-          }
-          ErrorExecuteResponse(
-            errorMsg,
-            ExecuteError(
-              EXECUTE_SPARKSCALA_FAILED.getErrorCode,
-              EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+            ErrorExecuteResponse(
+              "The thread of execution has been interrupted and the task should be terminated",
+              null
             )
-          )
+          } else {
+            lineOutputStream.flush()
+            val output = lineOutputStream.toString
+            IOUtils.closeQuietly(lineOutputStream)
+            var errorMsg: String = null
+            if (StringUtils.isNotBlank(output)) {
+              errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t =>
+                t.getMessage
+              )
+              logger.error("Execute code error for " + errorMsg)
+              engineExecutionContext.appendStdout("Execute code error for " + errorMsg)
+              if (matchFatalLog(errorMsg)) {
+                logger.error("engine log fatal logs now to set status to shutdown")
+                ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+              }
+            } else {
+              logger.error("No error message is captured, please see the detailed log")
+            }
+            ErrorExecuteResponse(
+              errorMsg,
+              ExecuteError(
+                EXECUTE_SPARKSCALA_FAILED.getErrorCode,
+                EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+              )
+            )
+          }
       }
     }
     // reset the java stdout
@@ -275,11 +300,10 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     }
   }
 
-  private def lazyLoadILoop = { // lazy loaded.
+  private def doBindSparkSession() = { // lazy loaded.
     if (!bindFlag) {
       bindSparkSession
     }
-
   }
 
   private def initSparkILoop = {
@@ -418,6 +442,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override protected def getExecutorIdPreFix: String = "SparkScalaExecutor_"
+
 }
 
 class EngineExecutionContextFactory {

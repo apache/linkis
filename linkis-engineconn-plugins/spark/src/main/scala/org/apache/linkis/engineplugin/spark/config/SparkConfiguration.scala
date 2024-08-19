@@ -30,6 +30,10 @@ object SparkConfiguration extends Logging {
   val SPARK_HOME_ENV = "SPARK_HOME"
   val SPARK_CONF_DIR_ENV = "SPARK_CONF_DIR"
 
+  val SPARK_YARN_CLIENT = "client"
+
+  val SPARK_YARN_CLUSTER = "cluster"
+
   val PROCESS_MAX_THREADS = CommonVars[Int]("wds.linkis.process.threadpool.max", 100)
 
   val SPARK_SESSION_HOOK = CommonVars[String]("wds.linkis.engine.spark.session.hook", "")
@@ -46,6 +50,9 @@ object SparkConfiguration extends Logging {
 
   val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", "client")
 
+  val SPARK_YARN_CLUSTER_JARS =
+    CommonVars[String]("linkis.spark.yarn.cluster.jars", "hdfs:///spark/cluster")
+
   val SPARK_APP_NAME = CommonVars[String]("spark.app.name", "Linkis-EngineConn-Spark")
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
   val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
@@ -61,11 +68,20 @@ object SparkConfiguration extends Logging {
   val SPARK_K8S_RESTART_POLICY = CommonVars[String]("linkis.spark.k8s.restartPolicy", "Never")
   val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
   val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
+  val SPARK_K8S_UI_PORT = CommonVars[String]("linkis.spark.k8s.ui.port", "4040")
+
+  val SPARK_K8S_EXECUTOR_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.executor.request.cores", "1")
+
+  val SPARK_K8S_DRIVER_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.driver.request.cores", "1")
 
   val SPARK_KUBERNETES_FILE_UPLOAD_PATH =
     CommonVars[String]("spark.kubernetes.file.upload.path", "local:///opt/spark/tmp")
 
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
+
+  val SPARK_PYTHON_FILES = CommonVars[String]("spark.submit.pyFiles", "")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
@@ -137,7 +153,7 @@ object SparkConfiguration extends Logging {
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
   val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
+    CommonVars[String]("pyspark.python3.path", "python3")
 
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
@@ -149,6 +165,7 @@ object SparkConfiguration extends Logging {
 
   val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
 
+  val LINKIS_SPARK_CONF = CommonVars[String]("spark.conf", "")
   val SPARK_APPLICATION_ARGS = CommonVars("spark.app.args", "")
   val SPARK_APPLICATION_MAIN_CLASS = CommonVars("spark.app.main.class", "")
 

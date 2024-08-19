@@ -289,22 +289,12 @@ export default [
       },
     },
     {
-      name: 'codeQuery',
-      path: 'codeQuery',
+      name: 'configManagement',
+      path: 'configManagement',
       component: () =>
-        import('./module/codeQuery/index.vue'),
+        import('./module/configManagement/index.vue'),
       meta: {
-        title: 'codeQuery',
-        publicPage: true,
-      },
-    },
-    {
-      name: 'codeDetail',
-      path: 'codeDetail',
-      component: () =>
-        import('./module/codeQuery/codeDetail/index.vue'),
-      meta: {
-        title: 'codeDetail',
+        title: 'configManagement',
         publicPage: true,
       },
     },
@@ -317,6 +307,36 @@ export default [
         title: 'viewHistoryDetail',
         publicPage: true,
         noLayout: true
+      },
+    },
+    {
+      name: 'userConfig',
+      path: 'userConfig',
+      component: () =>
+        import('./module/userConfig/index.vue'),
+      meta: {
+        title: 'userConfig',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'statisticsDashboard',
+      path: 'statisticsDashboard',
+      component: () =>
+        import('./module/statisticsDashboard/index.vue'),
+      meta: {
+        title: 'statisticsDashboard',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'statisticsDashboardDetail',
+      path: 'statisticsDashboardDetail',
+      component: () =>
+        import('./module/statisticsDashboard/statisticsDashboard.vue'),
+      meta: {
+        title: 'statisticsDashboardHistory',
+        publicPage: true,
       },
     },
     ],

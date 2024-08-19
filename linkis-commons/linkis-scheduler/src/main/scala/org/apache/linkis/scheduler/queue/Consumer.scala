@@ -38,10 +38,15 @@ abstract class Consumer(schedulerContext: SchedulerContext, executeService: Exec
 
   def getRunningEvents: Array[SchedulerEvent]
 
+  def getMaxRunningEvents: Int
+
+  def getRunningSize: Int
+
+  def getWaitingSize: Int
+
   def start(): Unit
 
   def shutdown(): Unit = {
-    logger.info(s"$toString is ready to stop!")
     terminate = true
     logger.info(s"$toString stopped!")
   }

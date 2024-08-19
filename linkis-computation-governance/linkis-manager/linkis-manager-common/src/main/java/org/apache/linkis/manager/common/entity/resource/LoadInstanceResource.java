@@ -53,6 +53,11 @@ public class LoadInstanceResource extends Resource {
       this.memory = d.getLoadInstanceResource().getMemory();
       this.cores = d.getLoadInstanceResource().getCores();
       this.instances = d.getLoadInstanceResource().getInstances();
+    } else if (r instanceof DriverAndKubernetesResource) {
+      DriverAndKubernetesResource d = (DriverAndKubernetesResource) r;
+      this.memory = d.getLoadInstanceResource().getMemory();
+      this.cores = d.getLoadInstanceResource().getCores();
+      this.instances = d.getLoadInstanceResource().getInstances();
     } else {
       this.memory = Long.MAX_VALUE;
       this.cores = Integer.MAX_VALUE;
@@ -131,6 +136,27 @@ public class LoadInstanceResource extends Resource {
   @Override
   public boolean less(Resource r) {
     return !notLess(r);
+  }
+
+  @Override
+  public int compare(Resource r) {
+    LoadInstanceResource temp = new LoadInstanceResource(r);
+
+    if (this.getMemory() > temp.getMemory()) {
+      return 1;
+    } else if (this.getMemory() < temp.getMemory()) {
+      return -1;
+    } else {
+      // If memory is equal, compare cores
+      if (this.getCores() > temp.getCores()) {
+        return 1;
+      } else if (this.getCores() < temp.getCores()) {
+        return -1;
+      } else {
+        // If cores are equal, compare instances
+        return Integer.compare(this.getInstances(), temp.getInstances());
+      }
+    }
   }
 
   @Override

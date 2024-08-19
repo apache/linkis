@@ -17,6 +17,7 @@
 
 package org.apache.linkis.ujes.client
 
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
@@ -24,11 +25,13 @@ import org.apache.linkis.httpclient.response.Result
 import org.apache.linkis.ujes.client.request._
 import org.apache.linkis.ujes.client.request.JobExecIdAction.JobServiceType
 import org.apache.linkis.ujes.client.response._
+import org.apache.linkis.ujes.client.utils.UJESClientUtils
 
 import java.io.Closeable
+import java.util
 import java.util.concurrent.TimeUnit
 
-abstract class UJESClient extends Closeable {
+abstract class UJESClient extends Closeable with Logging {
 
   def execute(jobExecuteAction: JobExecuteAction): JobExecuteResult = executeUJESJob(
     jobExecuteAction
@@ -37,7 +40,7 @@ abstract class UJESClient extends Closeable {
   def submit(jobSubmitAction: JobSubmitAction): JobSubmitResult =
     executeUJESJob(jobSubmitAction).asInstanceOf[JobSubmitResult]
 
-  protected[client] def executeUJESJob(ujesJobAction: UJESJobAction): Result
+  def executeUJESJob(ujesJobAction: UJESJobAction): Result
 
   private def executeJobExecIdAction[T](
       jobExecuteResult: JobExecuteResult,
@@ -52,12 +55,34 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(jobExecIdAction).asInstanceOf[T]
   }
 
+  /**
+   * only get the status of the cache Task status should be based on getJobInfo
+   * @param jobExecuteResult
+   * @return
+   */
   def status(jobExecuteResult: JobExecuteResult): JobStatusResult =
     executeJobExecIdAction(jobExecuteResult, JobServiceType.JobStatus)
 
+  /**
+   * IF exception return null progress result
+   * @param jobExecuteResult
+   * @return
+   */
   def progress(jobExecuteResult: JobExecuteResult): JobProgressResult =
-    executeJobExecIdAction(jobExecuteResult, JobServiceType.JobProgress)
+    Utils.tryCatch(executeJobExecIdAction(jobExecuteResult, JobServiceType.JobProgress)) { t =>
+      logger.warn("Failed to get progress, return empty progress.", t)
+      val result = new JobProgressResult
+      result.setProgress(0)
+      result
+    }
 
+  /**
+   * If exception return null log
+   * @param jobExecuteResult
+   * @param fromLine
+   * @param size
+   * @return
+   */
   def log(jobExecuteResult: JobExecuteResult, fromLine: Int, size: Int): JobLogResult = {
     val jobLogAction = JobLogAction
       .builder()
@@ -66,13 +91,19 @@ abstract class UJESClient extends Closeable {
       .setFromLine(fromLine)
       .setSize(size)
       .build()
-    executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]
+
+    Utils.tryCatch(executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]) { t =>
+      logger.warn("Failed to get Log, return empty log.", t)
+      null
+    }
   }
 
-  def list(jobListAction: JobListAction): JobListResult = {
-    executeUJESJob(jobListAction).asInstanceOf[JobListResult]
-  }
-
+  /**
+   * If exception return null log
+   * @param jobExecuteResult
+   * @param jobLogResult
+   * @return
+   */
   def log(jobExecuteResult: JobExecuteResult, jobLogResult: JobLogResult): JobLogResult = {
     val jobLogAction = JobLogAction
       .builder()
@@ -80,11 +111,19 @@ abstract class UJESClient extends Closeable {
       .setUser(jobExecuteResult.getUser)
       .setFromLine(jobLogResult.getFromLine)
       .build()
-    executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]
+
+    Utils.tryCatch(executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]) { t =>
+      logger.warn("Failed to get Log, return empty log.", t)
+      null
+    }
   }
 
   def openLog(openLogAction: OpenLogAction): OpenLogResult = {
     executeUJESJob(openLogAction).asInstanceOf[OpenLogResult]
+  }
+
+  def list(jobListAction: JobListAction): JobListResult = {
+    executeUJESJob(jobListAction).asInstanceOf[JobListResult]
   }
 
   def kill(jobExecuteResult: JobExecuteResult): JobKillResult =

@@ -349,6 +349,17 @@ public class SpecialResource extends Resource {
   }
 
   @Override
+  public int compare(Resource r) {
+    if (this.moreThan(r)) {
+      return 1;
+    } else if (this.less(r)) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  @Override
   public String toJson() {
     return String.format("Special:%s", resources);
   }

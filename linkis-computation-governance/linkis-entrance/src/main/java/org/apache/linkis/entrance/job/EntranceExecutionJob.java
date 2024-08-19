@@ -27,8 +27,10 @@ import org.apache.linkis.entrance.log.LogWriter;
 import org.apache.linkis.entrance.log.WebSocketCacheLogReader;
 import org.apache.linkis.entrance.log.WebSocketLogWriter;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
+import org.apache.linkis.entrance.utils.CommonLogPathUtils;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
+import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.protocol.task.RequestTask$;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.orchestrator.plans.ast.QueryParams$;
@@ -125,11 +127,12 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     // add resultSet path root
     Map<String, String> starupMapTmp = new HashMap<>();
     Map<String, Object> starupMapOri = TaskUtils.getStartupMap(getParams());
+    JobRequest jobRequest = getJobRequest();
     if (starupMapOri.isEmpty()) {
       TaskUtils.addStartupMap(getParams(), starupMapOri);
     }
     if (!starupMapOri.containsKey(JobRequestConstants.JOB_REQUEST_LIST())) {
-      starupMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
+      starupMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(jobRequest.getId()));
     }
     for (Map.Entry<String, Object> entry : starupMapOri.entrySet()) {
       if (null != entry.getKey() && null != entry.getValue()) {
@@ -142,7 +145,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
       runtimeMapOri = TaskUtils.getRuntimeMap(getParams());
     }
     if (!runtimeMapOri.containsKey(JobRequestConstants.JOB_ID())) {
-      runtimeMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
+      runtimeMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(jobRequest.getId()));
     }
     Map<String, String> runtimeMapTmp = new HashMap<>();
     for (Map.Entry<String, Object> entry : runtimeMapOri.entrySet()) {
@@ -150,13 +153,21 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         runtimeMapTmp.put(entry.getKey(), entry.getValue().toString());
       }
     }
+
     String resultSetPathRoot = GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue(runtimeMapTmp);
+
+    if (!runtimeMapTmp.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH().key())) {
+      String resultParentPath = CommonLogPathUtils.getResultParentPath(jobRequest);
+      CommonLogPathUtils.buildCommonPath(resultParentPath);
+      resultSetPathRoot = CommonLogPathUtils.getResultPath(jobRequest);
+    }
+
     Map<String, Object> jobMap = new HashMap<String, Object>();
     jobMap.put(RequestTask$.MODULE$.RESULT_SET_STORE_PATH(), resultSetPathRoot);
     runtimeMapOri.put(QueryParams$.MODULE$.JOB_KEY(), jobMap);
-
+    jobRequest.setResultLocation(resultSetPathRoot);
     EntranceExecuteRequest executeRequest = new EntranceExecuteRequest(this);
-    List<Label<?>> labels = new ArrayList<Label<?>>(getJobRequest().getLabels());
+    List<Label<?>> labels = new ArrayList<Label<?>>(jobRequest.getLabels());
     executeRequest.setLabels(labels);
     return executeRequest;
   }
@@ -224,26 +235,32 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             : "not submit to  ec";
 
     StringBuffer sb = new StringBuffer();
-    sb.append("Task creation time(任务创建时间): ")
+    sb.append("Task time point information(任务时间节点信息):\n")
+        .append("[Task creation time(任务创建时间)]  :")
         .append(createTime)
-        .append(", Task scheduling time(任务调度时间): ")
+        .append("\n")
+        .append("[Task scheduling time(任务调度时间)]:")
         .append(scheduleTime)
-        .append(", Task start time(任务开始时间): ")
+        .append("\n")
+        .append("[Task start time(任务开始时间)]     :")
         .append(startTime)
-        .append(", Mission end time(任务结束时间): ")
+        .append("\n")
+        .append("[Task end time(任务结束时间)]       :")
         .append(endTime)
         .append("\n")
         .append(LogUtils.generateInfo(""))
-        .append("Task submit to Orchestrator time:")
+        .append("[Task submit to Orchestrator time]:")
         .append(jobToOrchestrator)
-        .append(", Task request EngineConn time:")
+        .append("\n")
+        .append("[Task request EngineConn time]    :")
         .append(jobRequestEC)
-        .append(", Task submit to EngineConn time:")
+        .append("\n")
+        .append("[Task submit to EngineConn time]  :")
         .append(jobSubmitToEC)
         .append("\n")
         .append(
             LogUtils.generateInfo(
-                "Your mission(您的任务) "
+                "Your task jobId(您的任务) "
                     + this.getJobRequest().getId()
                     + " The total time spent is(总耗时时间为): "
                     + runTime));
@@ -268,5 +285,14 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     } catch (Exception e) {
       logger.warn("Close logWriter and logReader failed. {}", e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void clear() {
+    super.clear();
+    this.setParams(null);
+    JobRequest jobRequest = this.getJobRequest();
+    jobRequest.setExecutionCode(null);
+    jobRequest.setMetrics(null);
   }
 }

@@ -22,7 +22,7 @@ if [[ -d $dependencies_path ]];then
   echo "rm -r -f dependencies_path"
   rm -r -f $dependencies_path
 fi
-cd ../../
+cd $basepath/../../
 mvn dependency:copy-dependencies -DexcludeGroupIds=org.apache.linkis -DincludeScope=runtime -DoutputDirectory=$dependencies_path
 ls $dependencies_path | sort -n > $basepath/known-dependencies.txt
 rm -r -f $dependencies_path

@@ -17,9 +17,9 @@
 
 package org.apache.linkis.httpclient.config
 
+import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{DefaultRetryHandler, RetryHandler}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
-import org.apache.linkis.httpclient.exception.HttpClientRetryException
 import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
 
 import scala.concurrent.duration.TimeUnit
@@ -39,11 +39,12 @@ class ClientConfigBuilder protected () {
   protected var readTimeout: Long = _
   protected var maxConnection: Int = _
   protected var retryEnabled: Boolean = true
-  protected var retryHandler: RetryHandler = buildDefaultRetryHandler()
 
-  def buildDefaultRetryHandler(): RetryHandler = {
-    retryHandler = new DefaultRetryHandler
-    retryHandler.addRetryException(classOf[HttpClientRetryException])
+  protected var ssl: Boolean = false
+
+  protected var retryHandler: RetryHandler = {
+    val retryHandler = new DefaultRetryHandler
+    retryHandler.addRetryException(classOf[LinkisRetryException])
     retryHandler
   }
 
@@ -113,6 +114,11 @@ class ClientConfigBuilder protected () {
     this
   }
 
+  def setSSL(isSSL: Boolean): this.type = {
+    this.ssl = isSSL
+    this
+  }
+
   def build(): ClientConfig = new ClientConfig(
     serverUrl,
     discoveryEnabled,
@@ -127,7 +133,8 @@ class ClientConfigBuilder protected () {
     retryEnabled,
     retryHandler,
     authTokenKey,
-    authTokenValue
+    authTokenValue,
+    ssl
   )
 
 }

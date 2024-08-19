@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<svg width="11.6666667px" height="12.0837657px" viewBox="0 0 11.6666667 12.0837657" version="1.1"
+    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>基础数据管理-常规</title>
+    <g id="参数配置-0807" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="参数配置备份" transform="translate(-18.166667, -522.875000)">
+            <g id="编组-6" transform="translate(0.000000, 54.000000)">
+                <g id="01-导航/一级标题/加icon-默认" transform="translate(0.000000, 448.000000)">
+                    <g id="基础数据管理-常规" transform="translate(17.000000, 20.000000)">
+                        <rect id="矩形" x="0" y="0" width="14" height="14"></rect>
+                        <g id="编组-2" transform="translate(1.166667, 0.875000)">
+                            <g id="编组" transform="translate(0.000000, 11.208766)" fill="#000000" fill-rule="nonzero">
+                                <path
+                                    d="M11.1394685,0.875 L0.52544663,0.875 C0.234699495,0.875 0,0.679583333 0,0.4375 C0,0.195416667 0.234699495,0 0.52544663,0 L11.14122,0 C11.4319672,0 11.6666667,0.195416667 11.6666667,0.4375 C11.6666667,0.679583333 11.4302157,0.875 11.1394685,0.875 Z"
+                                    id="形状"></path>
+                            </g>
+                            <rect id="矩形" stroke="#000000" stroke-width="0.875" x="8.60416667" y="3.35416667"
+                                width="2.04166667" height="6.70833333" rx="0.583333333"></rect>
+                            <rect id="矩形备份" stroke="#000000" stroke-width="0.875" x="4.8125" y="0.4375"
+                                width="2.04166667" height="9.625" rx="0.583333333"></rect>
+                            <rect id="矩形备份-2" stroke="#000000" stroke-width="0.875" x="1.02083333" y="3.35416667"
+                                width="2.04166667" height="6.70833333" rx="0.583333333"></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

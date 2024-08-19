@@ -107,11 +107,15 @@ public class JobhistoryUtils {
             10,
             formatExecuteApplicationName(
                 queryTaskVO.getExecuteApplicationName(), queryTaskVO.getRequestApplicationName()));
-        createCell(
-            row,
-            11,
-            viewResult ? formatDateTime(queryTaskVO.getCreatedTime()) : queryTaskVO.getUmUser());
-        createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
+        if (viewResult) {
+          createCell(
+              row,
+              11,
+              viewResult ? formatDateTime(queryTaskVO.getCreatedTime()) : queryTaskVO.getUmUser());
+          createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
+        } else {
+          createCell(row, 11, formatDateTime(queryTaskVO.getCreatedTime()));
+        }
       }
     }
     try {

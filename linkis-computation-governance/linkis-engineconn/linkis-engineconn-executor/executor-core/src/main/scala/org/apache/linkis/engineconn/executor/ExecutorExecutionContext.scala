@@ -20,12 +20,14 @@ package org.apache.linkis.engineconn.executor
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.label.entity.Label
+
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 
 import java.util.concurrent.atomic.AtomicInteger
+
 import scala.collection.mutable.ArrayBuffer
 
 trait ExecutorExecutionContext {

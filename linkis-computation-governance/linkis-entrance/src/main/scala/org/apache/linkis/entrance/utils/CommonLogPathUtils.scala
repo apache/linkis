@@ -44,7 +44,8 @@ object CommonLogPathUtils {
     }
     // create defalut creator path
     if (isResPath) {
-      val defaultPath = GovernanceUtils.getResultParentPath(GovernanceUtils.LINKIS_DEFAULT_RES_CREATOR)
+      val defaultPath =
+        GovernanceUtils.getResultParentPath(GovernanceUtils.LINKIS_DEFAULT_RES_CREATOR)
       val resPath = new FsPath(defaultPath)
       if (!fileSystem.exists(resPath)) {
         FileSystemUtils.mkdirs(fileSystem, resPath, StorageUtils.getJvmUser)

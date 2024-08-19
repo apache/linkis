@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -36,26 +35,33 @@ import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequestImpl, EngineConnCreationDescImpl}
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{
+  EngineConnBuildRequestImpl,
+  EngineConnCreationDescImpl
+}
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
-import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
-import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
+import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeUnit, TimeoutException}
+import java.util.concurrent.{TimeoutException, TimeUnit}
+
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 

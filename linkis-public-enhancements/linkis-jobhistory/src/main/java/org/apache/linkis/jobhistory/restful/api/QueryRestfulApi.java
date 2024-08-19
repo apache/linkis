@@ -576,7 +576,7 @@ public class QueryRestfulApi {
     if (StringUtils.isNotBlank(executeApplicationName)
         && !QueryUtils.checkNameValid(executeApplicationName)) {
       throw new LinkisCommonErrorException(
-              21304, "Invalid applicationName : " + executeApplicationName);
+          21304, "Invalid applicationName : " + executeApplicationName);
     } else {
       executeApplicationName = null;
     }

@@ -387,4 +387,11 @@ public class TenantConfigrationRestfulApi {
   public Message queryDepartmentList() {
     return Message.ok().data("departmentList", tenantConfigService.queryDepartmentList());
   }
+
+  @RequestMapping(path = "/query-user-department", method = RequestMethod.GET)
+  public Message queryDepartmentList(
+      HttpServletRequest req, @RequestParam(value = "username") String username) {
+    ModuleUserUtils.getOperationUser(req, "query department of " + username);
+    return Message.ok().data("department", tenantConfigService.getDepartmentByUser(username));
+  }
 }

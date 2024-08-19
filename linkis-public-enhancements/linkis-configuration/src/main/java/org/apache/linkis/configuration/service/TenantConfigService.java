@@ -50,4 +50,6 @@ public interface TenantConfigService {
   DepartmentTenantVo queryDepartTenant(String creator, String departmentId);
 
   List<DepartmentVo> queryDepartmentList();
+
+  DepartmentVo getDepartmentByUser(String user);
 }

@@ -498,7 +498,7 @@ public class QueryRestfulApi {
               endDate,
               status,
               pageNow,
-              pageSize,
+              5000,
               taskID,
               executeApplicationName,
               creator,
@@ -508,6 +508,24 @@ public class QueryRestfulApi {
               instance,
               engineInstance);
       PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
+      if (pageInfo.getTotal() > 5000) {
+        queryTasks.addAll(
+            getJobhistoryList(
+                req,
+                startDate,
+                endDate,
+                status,
+                2,
+                5000,
+                taskID,
+                executeApplicationName,
+                creator,
+                proxyUser,
+                isAdminView,
+                isDeptView,
+                instance,
+                engineInstance));
+      }
       List<QueryTaskVO> vos =
           pageInfo.getList().stream()
               .peek(jobHistory -> QueryUtils.exchangeExecutionCode(jobHistory))
@@ -576,7 +594,7 @@ public class QueryRestfulApi {
     if (StringUtils.isNotBlank(executeApplicationName)
         && !QueryUtils.checkNameValid(executeApplicationName)) {
       throw new LinkisCommonErrorException(
-              21304, "Invalid applicationName : " + executeApplicationName);
+          21304, "Invalid applicationName : " + executeApplicationName);
     } else {
       executeApplicationName = null;
     }

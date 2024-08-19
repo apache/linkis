@@ -52,9 +52,12 @@ private[linkis] object RPCConsumer {
           if (data.isEmpty) return BoxedUnit.UNIT
           val objectStr = data.get(OBJECT_VALUE).toString
           val objectClass = data.get(CLASS_VALUE).toString
+          val isRequestProtocol = data.get(IS_REQUEST_PROTOCOL_CLASS).toString
           logger.debug("The corresponding anti-sequence is class {}", objectClass)
           if (
-              RPCConfiguration.ENABLE_RPC_OBJECT_PREFIX_WHITE_LIST_CHECK && !RPCConfiguration.RPC_OBJECT_PREFIX_WHITE_LIST
+              RPCConfiguration.ENABLE_RPC_OBJECT_PREFIX_WHITE_LIST_CHECK && "true".equals(
+                isRequestProtocol
+              ) && !RPCConfiguration.RPC_OBJECT_PREFIX_WHITE_LIST
                 .exists(prefix => objectClass.startsWith(prefix))
           ) {
             throw new DWCURIException(

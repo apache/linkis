@@ -30,6 +30,8 @@ import java.util.{ArrayList, Date, List}
 
 object GovernanceUtils extends Logging {
 
+  val LINKIS_DEFAULT_RES_CREATOR = "linkis_default"
+
   def killProcess(pid: String, desc: String, isSudo: Boolean): Unit = {
     val subProcessKillScriptPath = Configuration.getLinkisHome() + "/sbin/kill-process-by-pid.sh"
     if (

@@ -37,14 +37,10 @@ import org.apache.linkis.manager.rm.utils.AcrossClusterRulesJudgeUtils.{
 
 import org.apache.commons.lang3.StringUtils
 
-import org.json4s.DefaultFormats
-
 class DriverAndYarnReqResourceService(
     labelResourceService: LabelResourceService,
     externalResourceService: ExternalResourceService
 ) extends RequestResourceService(labelResourceService) {
-
-  implicit val formats = DefaultFormats + ResourceSerializer
 
   override val resourceType: ResourceType = DriverAndYarn
 

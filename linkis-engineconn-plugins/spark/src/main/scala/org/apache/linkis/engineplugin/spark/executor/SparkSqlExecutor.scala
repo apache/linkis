@@ -25,13 +25,10 @@ import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
-
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 
 import java.lang.reflect.InvocationTargetException
 
@@ -89,6 +86,7 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           )
         )
       )
+      transformTaskStatus(lastTask, ExecutionNodeStatus.Succeed)
       SQLSession.showDF(
         sparkEngineSession.sparkContext,
         jobGroup,

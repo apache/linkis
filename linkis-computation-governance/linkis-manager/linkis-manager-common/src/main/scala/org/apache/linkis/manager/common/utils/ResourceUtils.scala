@@ -17,22 +17,36 @@
 
 package org.apache.linkis.manager.common.utils
 
+import org.apache.linkis.common.utils.JsonUtils
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
 
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.{read, write}
-
 object ResourceUtils {
 
-  implicit val formats = DefaultFormats + ResourceSerializer
-
-  def deserializeResource(plainResource: String): Resource = {
-    read[Resource](plainResource)
+  def deserializeResource(plainResource: String, resourceType: ResourceType): Resource = {
+    if (resourceType.equals(ResourceType.CPU)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[CPUResource])
+    } else if (resourceType.equals(ResourceType.DriverAndYarn)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[DriverAndYarnResource])
+    } else if (resourceType.equals(ResourceType.Instance)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[InstanceResource])
+    } else if (resourceType.equals(ResourceType.LoadInstance)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[LoadInstanceResource])
+    } else if (resourceType.equals(ResourceType.Load)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[LoadResource])
+    } else if (resourceType.equals(ResourceType.Memory)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[MemoryResource])
+    } else if (resourceType.equals(ResourceType.Special)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[SpecialResource])
+    } else if (resourceType.equals(ResourceType.Yarn)) {
+      JsonUtils.jackson.readValue(plainResource, classOf[YarnResource])
+    } else {
+      JsonUtils.jackson.readValue(plainResource, classOf[LoadResource])
+    }
   }
 
   def serializeResource(resource: Resource): String = {
-    write(resource)
+    JsonUtils.jackson.writeValueAsString(resource)
   }
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {
@@ -65,24 +79,37 @@ object ResourceUtils {
   def fromPersistenceResource(persistenceResource: PersistenceResource): CommonNodeResource = {
     if (persistenceResource == null) return null
     val nodeResource = new CommonNodeResource
+    val resourceType = ResourceType.valueOf(persistenceResource.getResourceType)
     nodeResource.setId(persistenceResource.getId)
     if (persistenceResource.getMaxResource != null) {
-      nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
+      nodeResource.setMaxResource(
+        deserializeResource(persistenceResource.getMaxResource, resourceType)
+      )
     }
     if (persistenceResource.getMinResource != null) {
-      nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
+      nodeResource.setMinResource(
+        deserializeResource(persistenceResource.getMinResource, resourceType)
+      )
     }
     if (persistenceResource.getLockedResource != null) {
-      nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
+      nodeResource.setLockedResource(
+        deserializeResource(persistenceResource.getLockedResource, resourceType)
+      )
     }
     if (persistenceResource.getExpectedResource != null) {
-      nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
+      nodeResource.setExpectedResource(
+        deserializeResource(persistenceResource.getExpectedResource, resourceType)
+      )
     }
     if (persistenceResource.getLeftResource != null) {
-      nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
+      nodeResource.setLeftResource(
+        deserializeResource(persistenceResource.getLeftResource, resourceType)
+      )
     }
     if (persistenceResource.getUsedResource != null) {
-      nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
+      nodeResource.setUsedResource(
+        deserializeResource(persistenceResource.getUsedResource, resourceType)
+      )
     }
     if (persistenceResource.getCreateTime != null) {
       nodeResource.setCreateTime(persistenceResource.getCreateTime)
@@ -90,31 +117,44 @@ object ResourceUtils {
     if (persistenceResource.getUpdateTime != null) {
       nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
     }
-    nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
+    nodeResource.setResourceType(resourceType)
     nodeResource
   }
 
   def fromPersistenceResourceAndUser(persistenceResource: PersistenceResource): UserResource = {
     if (persistenceResource == null) return null
     val nodeResource = new UserResource
+    val resourceType = ResourceType.valueOf(persistenceResource.getResourceType)
     nodeResource.setId(persistenceResource.getId)
     if (persistenceResource.getMaxResource != null) {
-      nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
+      nodeResource.setMaxResource(
+        deserializeResource(persistenceResource.getMaxResource, resourceType)
+      )
     }
     if (persistenceResource.getMinResource != null) {
-      nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
+      nodeResource.setMinResource(
+        deserializeResource(persistenceResource.getMinResource, resourceType)
+      )
     }
     if (persistenceResource.getLockedResource != null) {
-      nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
+      nodeResource.setLockedResource(
+        deserializeResource(persistenceResource.getLockedResource, resourceType)
+      )
     }
     if (persistenceResource.getExpectedResource != null) {
-      nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
+      nodeResource.setExpectedResource(
+        deserializeResource(persistenceResource.getExpectedResource, resourceType)
+      )
     }
     if (persistenceResource.getLeftResource != null) {
-      nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
+      nodeResource.setLeftResource(
+        deserializeResource(persistenceResource.getLeftResource, resourceType)
+      )
     }
     if (persistenceResource.getUsedResource != null) {
-      nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
+      nodeResource.setUsedResource(
+        deserializeResource(persistenceResource.getUsedResource, resourceType)
+      )
     }
     if (persistenceResource.getCreateTime != null) {
       nodeResource.setCreateTime(persistenceResource.getCreateTime)
@@ -122,7 +162,7 @@ object ResourceUtils {
     if (persistenceResource.getUpdateTime != null) {
       nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
     }
-    nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
+    nodeResource.setResourceType(resourceType)
     nodeResource
   }
 

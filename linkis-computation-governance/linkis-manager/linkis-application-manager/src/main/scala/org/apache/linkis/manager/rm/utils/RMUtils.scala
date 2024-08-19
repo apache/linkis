@@ -17,8 +17,8 @@
 
 package org.apache.linkis.manager.rm.utils
 
-import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
 import org.apache.linkis.manager.am.vo.EMNodeVo
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.persistence.{
@@ -26,7 +26,6 @@ import org.apache.linkis.manager.common.entity.persistence.{
   PersistenceResource
 }
 import org.apache.linkis.manager.common.entity.resource.{Resource, _}
-import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.LabelManagerUtils.labelFactory
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
@@ -34,7 +33,6 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.rm.conf.ResourceStatus
 import org.apache.linkis.manager.rm.restful.vo.{UserCreatorEngineType, UserResourceVo}
-import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
@@ -44,13 +42,10 @@ import java.util.{List, UUID}
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 import com.google.common.collect.Lists
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.{read, write}
 
 object RMUtils extends Logging {
 
-  implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
-  val mapper = BDPJettyServerHelper.jacksonJson
+  val jacksonUtil = JsonUtils.jackson
 
   val MANAGER_KILL_ENGINE_EAIT =
     CommonVars("wds.linkis.manager.rm.kill.engine.wait", new TimeType("30s"))
@@ -77,11 +72,11 @@ object RMUtils extends Logging {
   val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", true)
 
   def deserializeResource(plainResource: String): Resource = {
-    read[Resource](plainResource)
+    jacksonUtil.readValue(plainResource, classOf[Resource])
   }
 
   def serializeResource(resource: Resource): String = {
-    write(resource)
+    jacksonUtil.writeValueAsString(resource)
   }
 
   def toUserResourceVo(userResource: UserResource): UserResourceVo = {
@@ -102,27 +97,42 @@ object RMUtils extends Logging {
     if (userResource.getId != null) userResourceVo.setId(userResource.getId)
     if (userResource.getUsedResource != null) {
       userResourceVo.setUsedResource(
-        mapper.readValue(write(userResource.getUsedResource), classOf[util.Map[String, Any]])
+        jacksonUtil.readValue(
+          jacksonUtil.writeValueAsString(userResource.getUsedResource),
+          classOf[util.Map[String, Any]]
+        )
       )
     }
     if (userResource.getLeftResource != null) {
       userResourceVo.setLeftResource(
-        mapper.readValue(write(userResource.getLeftResource), classOf[util.Map[String, Any]])
+        jacksonUtil.readValue(
+          jacksonUtil.writeValueAsString(userResource.getLeftResource),
+          classOf[util.Map[String, Any]]
+        )
       )
     }
     if (userResource.getLockedResource != null) {
       userResourceVo.setLockedResource(
-        mapper.readValue(write(userResource.getLockedResource), classOf[util.Map[String, Any]])
+        jacksonUtil.readValue(
+          jacksonUtil.writeValueAsString(userResource.getLockedResource),
+          classOf[util.Map[String, Any]]
+        )
       )
     }
     if (userResource.getMaxResource != null) {
       userResourceVo.setMaxResource(
-        mapper.readValue(write(userResource.getMaxResource), classOf[util.Map[String, Any]])
+        jacksonUtil.readValue(
+          jacksonUtil.writeValueAsString(userResource.getMaxResource),
+          classOf[util.Map[String, Any]]
+        )
       )
     }
     if (userResource.getMinResource != null) {
       userResourceVo.setMinResource(
-        mapper.readValue(write(userResource.getMinResource), classOf[util.Map[String, Any]])
+        jacksonUtil.readValue(
+          jacksonUtil.writeValueAsString(userResource.getMinResource),
+          classOf[util.Map[String, Any]]
+        )
       )
     }
     if (userResource.getResourceType != null) {
@@ -202,9 +212,9 @@ object RMUtils extends Logging {
       return null
     }
     if (firstNodeResource == null) {
-      return secondNodeResource.asInstanceOf[CommonNodeResource]
+      secondNodeResource.asInstanceOf[CommonNodeResource]
     } else {
-      return firstNodeResource.asInstanceOf[CommonNodeResource]
+      firstNodeResource.asInstanceOf[CommonNodeResource]
     }
   }
 

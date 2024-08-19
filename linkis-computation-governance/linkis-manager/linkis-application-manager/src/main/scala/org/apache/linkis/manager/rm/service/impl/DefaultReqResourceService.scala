@@ -17,15 +17,11 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
-import org.apache.linkis.manager.common.entity.resource.{ResourceSerializer, ResourceType}
+import org.apache.linkis.manager.common.entity.resource.ResourceType
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
-
-import org.json4s.DefaultFormats
 
 class DefaultReqResourceService(labelResourceService: LabelResourceService)
     extends RequestResourceService(labelResourceService) {
-
-  implicit val formats = DefaultFormats + ResourceSerializer
 
   override val resourceType: ResourceType = ResourceType.Default
 

@@ -828,7 +828,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
 
   override def getResourceInfo(serviceInstances: Array[ServiceInstance]): ResourceInfo = {
-    val resourceInfo = new ResourceInfo(Lists.newArrayList())
+    val resourceInfo = ResourceInfo(Lists.newArrayList())
     serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
       var aggregatedResource: NodeResource = null

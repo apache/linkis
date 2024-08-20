@@ -108,10 +108,7 @@ public class JobhistoryUtils {
             formatExecuteApplicationName(
                 queryTaskVO.getExecuteApplicationName(), queryTaskVO.getRequestApplicationName()));
         if (viewResult) {
-          createCell(
-              row,
-              11,
-              viewResult ? formatDateTime(queryTaskVO.getCreatedTime()) : queryTaskVO.getUmUser());
+          createCell(row, 11, queryTaskVO.getUmUser());
           createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
         } else {
           createCell(row, 11, formatDateTime(queryTaskVO.getCreatedTime()));
@@ -151,7 +148,7 @@ public class JobhistoryUtils {
 
   // 截断executionCode的方法
   private static String abbreviateExecutionCode(String executionCode) {
-    return StringUtils.abbreviate(executionCode, 32767);
+    return StringUtils.abbreviate(executionCode, 1000);
   }
 
   // 格式化isReuse的方法

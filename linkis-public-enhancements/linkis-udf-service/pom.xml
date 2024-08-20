@@ -16,22 +16,23 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
-    <relativePath>../../../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
+  <artifactId>linkis-udf-service</artifactId>
+  <packaging>jar</packaging>
+  <name>linkis-udf-service</name>
 
-  <artifactId>linkis-bmlserver</artifactId>
-
+  <properties>
+    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+  </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-mybatis</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-pes-common</artifactId>
@@ -39,15 +40,21 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-pes-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-mybatis</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -55,44 +62,50 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-ps-common-lock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
   </dependencies>
-
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/application.yml</exclude>
+          <exclude>**/bootstrap.yml</exclude>
+          <exclude>**/log4j2.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+      </plugin>
+
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <skipAssembly>false</skipAssembly>
-          <finalName>out</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <attach>false</attach>
-          <descriptors>
-            <descriptor>src/main/assembly/distribution.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/distribution.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
+
 </project>

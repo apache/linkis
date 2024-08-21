@@ -18,6 +18,7 @@
 package org.apache.linkis.jobhistory.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.exception.LinkisCommonErrorException;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -56,7 +57,6 @@ import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -104,18 +104,18 @@ public class QueryRestfulApi {
         || Configuration.isDepartmentAdmin(username)) {
       username = null;
     }
-    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
-
-    try {
-      if (null != jobHistory) {
-        if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
+    JobHistory jobHistory = null;
+    if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndNameNoCode(jobId, username);
+    } else {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
+      try {
+        if (null != jobHistory) {
           QueryUtils.exchangeExecutionCode(jobHistory);
-        } else {
-          jobHistory.setExecutionCode(null);
         }
+      } catch (Exception e) {
+        log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
       }
-    } catch (Exception e) {
-      log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
     }
     QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
     // todo check
@@ -165,93 +165,27 @@ public class QueryRestfulApi {
       @RequestParam(value = "instance", required = false) String instance,
       @RequestParam(value = "engineInstance", required = false) String engineInstance)
       throws IOException, QueryException {
-    String username = SecurityFilter.getLoginUsername(req);
-    if (StringUtils.isBlank(status)) {
-      status = null;
-    }
-    if (null == pageNow) {
-      pageNow = 1;
-    }
-    if (null == pageSize) {
-      pageSize = 20;
-    }
-    if (null == endDate) {
-      endDate = System.currentTimeMillis();
-    }
-    if (null == startDate) {
-      startDate = 0L;
-    }
-    if (StringUtils.isBlank(creator)) {
-      creator = null;
-    } else if (!QueryUtils.checkNameValid(creator)) {
-      return Message.error("Invalid creator : " + creator);
-    }
-    if (StringUtils.isNotBlank(executeApplicationName)) {
-      if (!QueryUtils.checkNameValid(executeApplicationName)) {
-        return Message.error("Invalid applicationName : " + executeApplicationName);
-      }
-    } else {
-      executeApplicationName = null;
-    }
-    Date sDate = new Date(startDate);
-    Date eDate = new Date(endDate);
-    if (sDate.getTime() == eDate.getTime()) {
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTimeInMillis(endDate);
-      calendar.add(Calendar.DAY_OF_MONTH, 1);
-      eDate = new Date(calendar.getTime().getTime()); // todo check
-    }
-    if (isAdminView == null) {
-      isAdminView = false;
-    }
-    String departmentId = null;
-    if (Configuration.isJobHistoryAdmin(username) & isAdminView) {
-      if (StringUtils.isNotBlank(proxyUser)) {
-        username = proxyUser;
-      } else {
-        username = null;
-      }
-    } else if (null != isDeptView && isDeptView) {
-      departmentId = JobhistoryUtils.getDepartmentByuser(username);
-      if (StringUtils.isNotBlank(departmentId) && StringUtils.isNotBlank(proxyUser)) {
-        username = proxyUser;
-      } else {
-        username = null;
-      }
-    }
-    if (StringUtils.isBlank(instance)) {
-      instance = null;
-    } else if (!QueryUtils.checkInstanceNameValid(instance)) {
-      return Message.error("Invalid instances : " + instance);
-    }
-    if (StringUtils.isBlank(engineInstance)) {
-      engineInstance = null;
-    } else {
-      if (!QueryUtils.checkInstanceNameValid(engineInstance)) {
-        return Message.error("Invalid instances : " + engineInstance);
-      }
-    }
-
     List<JobHistory> queryTasks = null;
-    PageHelper.startPage(pageNow, pageSize);
     try {
       queryTasks =
-          jobHistoryQueryService.search(
-              taskID,
-              username,
+          getJobhistoryList(
+              req,
+              startDate,
+              endDate,
               status,
-              creator,
-              sDate,
-              eDate,
+              pageNow,
+              pageSize,
+              taskID,
               executeApplicationName,
-              null,
+              creator,
+              proxyUser,
+              isAdminView,
+              isDeptView,
               instance,
-              departmentId,
               engineInstance);
-    } finally {
-      PageHelper.clearPage();
+    } catch (Exception e) {
+      return Message.error(e.getMessage());
     }
-
     PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
     List<JobHistory> list = pageInfo.getList();
     long total = pageInfo.getTotal();
@@ -557,15 +491,14 @@ public class QueryRestfulApi {
     String language = req.getHeader("Content-Language");
     ServletOutputStream outputStream = null;
     try {
-
-      Message message =
-          list(
+      List<JobHistory> queryTasks =
+          getJobhistoryList(
               req,
               startDate,
               endDate,
               status,
               pageNow,
-              pageSize,
+              5000,
               taskID,
               executeApplicationName,
               creator,
@@ -574,12 +507,33 @@ public class QueryRestfulApi {
               isDeptView,
               instance,
               engineInstance);
-      String jsonStr = BDPJettyServerHelper.gson().toJson(message.getData().get("tasks"));
-      List<QueryTaskVO> queryTaskVOList =
-          BDPJettyServerHelper.gson()
-              .fromJson(jsonStr, new TypeToken<List<QueryTaskVO>>() {}.getType());
+      PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
+      if (pageInfo.getTotal() > 5000) {
+        queryTasks.addAll(
+            getJobhistoryList(
+                req,
+                startDate,
+                endDate,
+                status,
+                2,
+                5000,
+                taskID,
+                executeApplicationName,
+                creator,
+                proxyUser,
+                isAdminView,
+                isDeptView,
+                instance,
+                engineInstance));
+      }
+      List<QueryTaskVO> vos =
+          pageInfo.getList().stream()
+              .peek(jobHistory -> QueryUtils.exchangeExecutionCode(jobHistory))
+              .map(jobHistory -> TaskConversions.jobHistory2TaskVO(jobHistory, null))
+              .collect(Collectors.toList());
       byte[] bytes =
-          JobhistoryUtils.downLoadJobToExcel(queryTaskVOList, language, isAdminView, isDeptView);
+          JobhistoryUtils.downLoadJobToExcel(
+              vos, language, isAdminView, isDeptView, pageInfo.getTotal());
       response.setCharacterEncoding(Consts.UTF_8.toString());
       response.addHeader("Content-Type", "application/json;charset=UTF-8");
       response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -598,5 +552,107 @@ public class QueryRestfulApi {
       }
       IOUtils.closeQuietly(outputStream);
     }
+  }
+
+  private List<JobHistory> getJobhistoryList(
+      HttpServletRequest req,
+      Long startDate,
+      Long endDate,
+      String status,
+      Integer pageNow,
+      Integer pageSize,
+      Long taskID,
+      String executeApplicationName,
+      String creator,
+      String proxyUser,
+      Boolean isAdminView,
+      Boolean isDeptView,
+      String instance,
+      String engineInstance)
+      throws LinkisCommonErrorException {
+    String username = SecurityFilter.getLoginUsername(req);
+    if (StringUtils.isBlank(status)) {
+      status = null;
+    }
+    if (null == pageNow) {
+      pageNow = 1;
+    }
+    if (null == pageSize) {
+      pageSize = 20;
+    }
+    if (null == endDate) {
+      endDate = System.currentTimeMillis();
+    }
+    if (null == startDate) {
+      startDate = 0L;
+    }
+    if (StringUtils.isBlank(creator)) {
+      creator = null;
+    } else if (!QueryUtils.checkNameValid(creator)) {
+      throw new LinkisCommonErrorException(21304, "Invalid creator : " + creator);
+    }
+    if (StringUtils.isNotBlank(executeApplicationName)
+        && !QueryUtils.checkNameValid(executeApplicationName)) {
+      throw new LinkisCommonErrorException(
+          21304, "Invalid applicationName : " + executeApplicationName);
+    } else {
+      executeApplicationName = null;
+    }
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(endDate);
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(calendar.getTime().getTime()); // todo check
+    }
+    if (isAdminView == null) {
+      isAdminView = false;
+    }
+    String departmentId = null;
+    if (Configuration.isJobHistoryAdmin(username) & isAdminView) {
+      if (StringUtils.isNotBlank(proxyUser)) {
+        username = proxyUser;
+      } else {
+        username = null;
+      }
+    } else if (null != isDeptView && isDeptView) {
+      departmentId = JobhistoryUtils.getDepartmentByuser(username);
+      if (StringUtils.isNotBlank(departmentId) && StringUtils.isNotBlank(proxyUser)) {
+        username = proxyUser;
+      } else {
+        username = null;
+      }
+    }
+    if (StringUtils.isBlank(instance)) {
+      instance = null;
+    } else if (!QueryUtils.checkInstanceNameValid(instance)) {
+      throw new LinkisCommonErrorException(21304, "Invalid instances : " + instance);
+    }
+    if (StringUtils.isBlank(engineInstance)) {
+      engineInstance = null;
+    } else if (!QueryUtils.checkInstanceNameValid(engineInstance)) {
+      throw new LinkisCommonErrorException(21304, "Invalid instances : " + engineInstance);
+    }
+    List<JobHistory> queryTasks = new ArrayList<>();
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      queryTasks =
+          jobHistoryQueryService.search(
+              taskID,
+              username,
+              status,
+              creator,
+              sDate,
+              eDate,
+              executeApplicationName,
+              null,
+              instance,
+              departmentId,
+              engineInstance);
+    } finally {
+      PageHelper.clearPage();
+    }
+    return queryTasks;
   }
 }

@@ -41,6 +41,6 @@ object JobhistoryConfiguration {
   val JOB_HISTORY_QUERY_LIMIT = CommonVars[Integer]("linkis.jobhistory.query.task.batch.limit", 30)
 
   val JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH =
-    CommonVars[Boolean]("linkis.jobhistory.query.execution.code.switch", false).getValue
+    CommonVars[Boolean]("linkis.jobhistory.query.execution.code.switch", true).getValue
 
 }

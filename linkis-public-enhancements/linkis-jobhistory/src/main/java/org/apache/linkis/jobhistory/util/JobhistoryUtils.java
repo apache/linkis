@@ -32,7 +32,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class JobhistoryUtils {
 
@@ -45,7 +48,11 @@ public class JobhistoryUtils {
           Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());;
 
   public static byte[] downLoadJobToExcel(
-      List<QueryTaskVO> jobHistoryList, String language, Boolean isAdminView, Boolean isDeptView)
+      List<QueryTaskVO> jobHistoryList,
+      String language,
+      Boolean isAdminView,
+      Boolean isDeptView,
+      Long pageInfo)
       throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     Workbook workbook = new XSSFWorkbook();
@@ -75,42 +82,37 @@ public class JobhistoryUtils {
     }
     // Add data rows
     int rowNum = 1;
-    for (QueryTaskVO queryTaskVO : jobHistoryList) {
-      Row row = sheet.createRow(rowNum++);
-      row.createCell(0).setCellValue(queryTaskVO.getTaskID());
-      row.createCell(1).setCellValue(queryTaskVO.getSourceTailor());
-      String executionCode = queryTaskVO.getExecutionCode();
-      if (executionCode.length() >= 32767) {
-        executionCode = executionCode.substring(0, 32767);
-      }
-      row.createCell(2).setCellValue(executionCode);
-      row.createCell(3).setCellValue(queryTaskVO.getStatus());
-      if (null == queryTaskVO.getCostTime()) {
-        queryTaskVO.setCostTime(0L);
-      }
-      row.createCell(4).setCellValue(Utils.msDurationToString(queryTaskVO.getCostTime()));
-      row.createCell(5).setCellValue(queryTaskVO.getErrDesc());
-      if (null == queryTaskVO.getIsReuse()) {
-        row.createCell(6).setCellValue("");
-      } else {
-        row.createCell(6).setCellValue(queryTaskVO.getIsReuse() ? "是" : "否");
-      }
-      row.createCell(7).setCellValue(TaskConversions.dateFomat(queryTaskVO.getRequestStartTime()));
-      row.createCell(8).setCellValue(TaskConversions.dateFomat(queryTaskVO.getRequestEndTime()));
-      if (null == queryTaskVO.getRequestSpendTime()) {
-        queryTaskVO.setRequestSpendTime(0L);
-      }
-      row.createCell(9).setCellValue(Utils.msDurationToString(queryTaskVO.getRequestSpendTime()));
-      row.createCell(10)
-          .setCellValue(
-              queryTaskVO.getExecuteApplicationName()
-                  + "/"
-                  + queryTaskVO.getRequestApplicationName());
-      if (viewResult) {
-        row.createCell(11).setCellValue(queryTaskVO.getUmUser());
-        row.createCell(12).setCellValue(TaskConversions.dateFomat(queryTaskVO.getCreatedTime()));
-      } else {
-        row.createCell(11).setCellValue(TaskConversions.dateFomat(queryTaskVO.getCreatedTime()));
+    List<List<QueryTaskVO>> batches = Lists.partition(jobHistoryList, 5000);
+    for (List<QueryTaskVO> queryTaskList : batches) {
+      for (QueryTaskVO queryTaskVO : queryTaskList) {
+        Row row = sheet.createRow(rowNum++);
+        createCell(row, 0, queryTaskVO.getTaskID());
+        createCell(row, 1, queryTaskVO.getSourceTailor());
+        createCell(row, 2, abbreviateExecutionCode(queryTaskVO.getExecutionCode()));
+        createCell(row, 3, queryTaskVO.getStatus());
+        if (null == queryTaskVO.getCostTime()) {
+          queryTaskVO.setCostTime(0L);
+        }
+        createCell(row, 4, Utils.msDurationToString(queryTaskVO.getCostTime()));
+        createCell(row, 5, queryTaskVO.getErrDesc());
+        createCell(row, 6, formatIsReuse(queryTaskVO.getIsReuse()));
+        createCell(row, 7, formatDateTime(queryTaskVO.getRequestStartTime()));
+        createCell(row, 8, formatDateTime(queryTaskVO.getRequestEndTime()));
+        if (null == queryTaskVO.getRequestSpendTime()) {
+          queryTaskVO.setRequestSpendTime(0L);
+        }
+        createCell(row, 9, Utils.msDurationToString(queryTaskVO.getRequestSpendTime()));
+        createCell(
+            row,
+            10,
+            formatExecuteApplicationName(
+                queryTaskVO.getExecuteApplicationName(), queryTaskVO.getRequestApplicationName()));
+        if (viewResult) {
+          createCell(row, 11, queryTaskVO.getUmUser());
+          createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
+        } else {
+          createCell(row, 11, formatDateTime(queryTaskVO.getCreatedTime()));
+        }
       }
     }
     try {
@@ -135,5 +137,33 @@ public class JobhistoryUtils {
       }
     }
     return departmentId;
+  }
+  // 创建单元格的方法
+  private static void createCell(Row row, int columnIndex, Object value) {
+    Cell cell = row.createCell(columnIndex);
+    if (value != null) {
+      cell.setCellValue(value.toString());
+    }
+  }
+
+  // 截断executionCode的方法
+  private static String abbreviateExecutionCode(String executionCode) {
+    return StringUtils.abbreviate(executionCode, 1000);
+  }
+
+  // 格式化isReuse的方法
+  private static String formatIsReuse(Boolean isReuse) {
+    return isReuse != null ? (isReuse ? "是" : "否") : "";
+  }
+
+  // 格式化日期的方法
+  private static String formatDateTime(Date date) {
+    return date != null ? TaskConversions.dateFomat(date) : "";
+  }
+
+  // 格式化executeApplicationName的方法
+  private static String formatExecuteApplicationName(
+      String executeApplicationName, String requestApplicationName) {
+    return executeApplicationName + "/" + requestApplicationName;
   }
 }

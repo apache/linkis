@@ -256,20 +256,15 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
-  override def getJobHistoryByIdAndNameNoMetrics(
+  override def getJobHistoryByIdAndNameNoCode(
       jobId: java.lang.Long,
       userName: String
   ): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
-    if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH) {
-      val jobHistoryList = jobHistoryMapper.selectJobHistory(jobReq)
-      if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
-    } else {
-      val jobHistoryList = jobHistoryMapper.selectJobHistoryNoMetrics(jobReq)
-      if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
-    }
+    val jobHistoryList = jobHistoryMapper.selectJobHistoryNoCode(jobReq)
+    if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
   override def search(

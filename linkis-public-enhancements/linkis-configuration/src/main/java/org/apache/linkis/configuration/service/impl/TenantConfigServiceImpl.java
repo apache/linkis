@@ -253,4 +253,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
                     (existing, replacement) -> existing))
             .values());
   }
+
+  @Override
+  public DepartmentVo getDepartmentByUser(String user) {
+
+    return departmentMapper.getDepartmentByUser(user);
+  }
 }

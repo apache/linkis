@@ -46,8 +46,8 @@
 
     <sql id="job_list">
         `id`, `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
-        `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
-        `instances`,`engine_type`, `result_location`, `observe_info`
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
+        `instances`, `metrics`,`engine_type`, `result_location`
     </sql>
 
     <sql id="insert_job_list">
@@ -80,7 +80,7 @@
         </where>
     </select>
 
-    <select id="selectJobHistoryNoMetrics" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+    <select id="selectJobHistoryNoCode" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         SELECT
         <include refid="job_list"/>
         FROM linkis_ps_job_history_group_history

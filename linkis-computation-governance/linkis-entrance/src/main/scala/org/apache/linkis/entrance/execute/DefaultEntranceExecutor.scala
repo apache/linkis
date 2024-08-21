@@ -107,7 +107,6 @@ class DefaultEntranceExecutor(id: Long)
       entranceExecuteRequest: EntranceExecuteRequest,
       orchestration: Orchestration
   ): Unit = {
-    LoggerUtils.setJobIdMDC(getId.toString)
     orchestrationResponse match {
       case succeedResponse: SucceedTaskResponse =>
         succeedResponse match {
@@ -161,7 +160,6 @@ class DefaultEntranceExecutor(id: Long)
           _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
         )
     }
-    LoggerUtils.removeJobIdMDC()
   }
 
   def requestToComputationJobReq(entranceExecuteRequest: EntranceExecuteRequest): JobReq = {

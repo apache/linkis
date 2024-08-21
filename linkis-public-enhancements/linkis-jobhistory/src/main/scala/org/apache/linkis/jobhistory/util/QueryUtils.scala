@@ -140,7 +140,6 @@ object QueryUtils extends Logging {
         }
       }
     } {
-      IOUtils.closeQuietly(is)
       IOUtils.closeQuietly(bufferedReader)
       if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
     }

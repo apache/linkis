@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.executor
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.label.entity.Label
 
@@ -59,7 +60,11 @@ trait ExecutorExecutionContext {
   def setLabels(labels: Array[Label[_]]): Unit = this.labels = labels
 
   protected def getDefaultStorePath: String = {
-    val path = GovernanceUtils.getResultParentPath("default")
+    val path = if (EngineConnExecutorConfiguration.LINKIS_RES_DEFAULT_ENABLED) {
+      GovernanceUtils.getResultParentPath(GovernanceUtils.LINKIS_DEFAULT_RES_CREATOR)
+    } else {
+      "hdfs:///apps-data/" + Utils.getJvmUser
+    }
     val pathPrefix = (if (path.endsWith("/")) path else path + "/") + Utils.getJvmUser + "/"
     getJobId.map(pathPrefix + _ + "/" + System.nanoTime).getOrElse(pathPrefix + System.nanoTime)
   }

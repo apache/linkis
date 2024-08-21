@@ -29,7 +29,7 @@ import org.apache.linkis.storage.utils.{FileSystemUtils, StorageConfiguration, S
 
 object CommonLogPathUtils {
 
-  def buildCommonPath(commonPath: String): Unit = {
+  def buildCommonPath(commonPath: String, isResPath: Boolean): Unit = {
     val fileSystem = getRootFs(commonPath)
     fileSystem.init(null)
     val realPath: String = if (commonPath.endsWith("/")) {
@@ -41,6 +41,16 @@ object CommonLogPathUtils {
     if (!fileSystem.exists(fsPath)) {
       FileSystemUtils.mkdirs(fileSystem, fsPath, StorageUtils.getJvmUser)
       fileSystem.setPermission(fsPath, "770")
+    }
+    // create defalut creator path
+    if (isResPath) {
+      val defaultPath =
+        GovernanceUtils.getResultParentPath(GovernanceUtils.LINKIS_DEFAULT_RES_CREATOR)
+      val resPath = new FsPath(defaultPath)
+      if (!fileSystem.exists(resPath)) {
+        FileSystemUtils.mkdirs(fileSystem, resPath, StorageUtils.getJvmUser)
+        fileSystem.setPermission(resPath, "770")
+      }
     }
     Utils.tryQuietly(fileSystem.close())
   }

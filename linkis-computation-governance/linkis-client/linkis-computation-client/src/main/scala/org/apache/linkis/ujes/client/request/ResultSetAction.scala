@@ -39,6 +39,8 @@ object ResultSetAction {
     private var nullValue: String = "LINKIS_NULL"
 
     private var enableLimit: Boolean = false
+    private var columnPage: Int = _
+    private var columnPageSize: Int = _
 
     def setUser(user: String): Builder = {
       this.user = user
@@ -75,6 +77,16 @@ object ResultSetAction {
       this
     }
 
+    def setColumnPage(columnPage: Int): Builder = {
+      this.columnPage = columnPage
+      this
+    }
+
+    def setColumnPageSize(columnPageSize: Int): Builder = {
+      this.columnPageSize = columnPageSize
+      this
+    }
+
     def build(): ResultSetAction = {
       if (user == null) throw new UJESClientBuilderException("user is needed!")
       if (path == null) throw new UJESClientBuilderException("path is needed!")
@@ -85,6 +97,8 @@ object ResultSetAction {
       resultSetAction.setParameter("charset", charset)
       resultSetAction.setParameter("enableLimit", enableLimit)
       resultSetAction.setParameter("nullValue", nullValue)
+      resultSetAction.setParameter("columnPage", columnPage)
+      resultSetAction.setParameter("columnPageSize", columnPageSize)
       resultSetAction.setUser(user)
       resultSetAction
     }

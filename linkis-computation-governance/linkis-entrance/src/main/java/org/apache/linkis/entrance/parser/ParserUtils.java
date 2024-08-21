@@ -53,7 +53,7 @@ public final class ParserUtils {
     if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
       String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
       logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
-      CommonLogPathUtils.buildCommonPath(commonLogPath);
+      CommonLogPathUtils.buildCommonPath(commonLogPath, false);
     } else {
       logPath =
           logPathPrefix

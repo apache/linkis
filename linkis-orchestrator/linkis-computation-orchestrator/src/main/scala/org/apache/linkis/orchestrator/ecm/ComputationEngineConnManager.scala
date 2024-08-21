@@ -85,7 +85,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       execTask: CodeLogicalUnitExecTask
   ): EngineConnExecutor = {
     engineAskRequest.setTimeOut(getEngineConnApplyTime)
-    var count = getEngineConnApplyAttempts()
+    var count = getEngineConnApplyAttempts() + 1
     var retryException: LinkisRetryException = null
     while (count >= 1) {
       count = count - 1

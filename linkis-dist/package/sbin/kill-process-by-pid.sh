@@ -22,7 +22,7 @@ if [ "$LINKIS_HOME" = "" ]; then
   export LINKIS_HOME=$INSTALL_HOME
 fi
 if [ "$LINKIS_LOG_DIR" = "" ]; then
-  export LINKIS_LOG_DIR="/data/bdp/logs/linkis"
+  export LINKIS_LOG_DIR="/data/logs/bdpe-ujes"
 fi
 ecmPid=`cat $LINKIS_HOME/pid/linkis_cg-engineconnmanager.pid`
 month=`date '+%Y-%m'`

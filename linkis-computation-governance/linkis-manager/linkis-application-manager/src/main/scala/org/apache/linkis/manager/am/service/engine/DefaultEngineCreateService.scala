@@ -25,10 +25,6 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
-import org.apache.linkis.manager.am.conf.AMConfiguration.{
-  HIVE_CLUSTER_EC_EXECUTE_ONCE_RULE_ENABLE,
-  SUPPORT_CLUSTER_RULE_EC_TYPES
-}
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
@@ -47,10 +43,9 @@ import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResou
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
+import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager

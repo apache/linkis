@@ -110,38 +110,44 @@ object QueryUtils extends Logging {
       return
     }
     val codePath = queryTask.getExecutionCode
-    val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
-    val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
-    val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
-    val position = infos(0).toInt
-    var lengthLeft = infos(1).toInt
-    val tub = new Array[Char](1024)
     val executionCode: StringBuilder = new StringBuilder
-    val fsPath: FsPath = new FsPath(path)
-    val fileSystem =
-      FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
-    fileSystem.init(null)
-    var is: InputStream = null
-    var bufferedReader: BufferedReader = null
-    if (!fileSystem.exists(fsPath)) return
-    Utils.tryFinally {
-      is = fileSystem.read(fsPath)
-      bufferedReader = new BufferedReader(new InputStreamReader(is, CHARSET))
-      if (position > 0) bufferedReader.skip(position)
-      breakable {
-        while (lengthLeft > 0) {
-          val readed = bufferedReader.read(tub)
-          val useful = Math.min(readed, lengthLeft)
-          if (useful < 0) break()
-          lengthLeft -= useful
-          val usefulChars = new Array[Char](useful)
-          System.arraycopy(tub, 0, usefulChars, 0, useful)
-          executionCode.append(new String(usefulChars))
+    if (codePath.split(CODE_SPLIT).length >= 2) {
+      val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
+      val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
+      val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
+      val position = infos(0).toInt
+      var lengthLeft = infos(1).toInt
+      val tub = new Array[Char](1024)
+      val fsPath: FsPath = new FsPath(path)
+      val fileSystem =
+        FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
+      fileSystem.init(null)
+      var is: InputStream = null
+      var bufferedReader: BufferedReader = null
+      if (!fileSystem.exists(fsPath)) return
+      Utils.tryFinally {
+        is = fileSystem.read(fsPath)
+        bufferedReader = new BufferedReader(new InputStreamReader(is, CHARSET))
+        if (position > 0) bufferedReader.skip(position)
+        breakable {
+          while (lengthLeft > 0) {
+            val readed = bufferedReader.read(tub)
+            val useful = Math.min(readed, lengthLeft)
+            if (useful < 0) break()
+            lengthLeft -= useful
+            val usefulChars = new Array[Char](useful)
+            System.arraycopy(tub, 0, usefulChars, 0, useful)
+            executionCode.append(new String(usefulChars))
+          }
         }
+      } {
+        IOUtils.closeQuietly(bufferedReader)
+        if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
       }
-    } {
-      IOUtils.closeQuietly(bufferedReader)
-      if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
+    } else {
+      logger.error(
+        s"Can't read executionCode from HDFS, jobId:${queryTask.getId},error codePath:$codePath "
+      )
     }
     queryTask.setExecutionCode(executionCode.toString())
   }

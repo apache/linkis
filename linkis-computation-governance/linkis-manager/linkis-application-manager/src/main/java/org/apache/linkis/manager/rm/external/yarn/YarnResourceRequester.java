@@ -17,8 +17,6 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
-import org.apache.linkis.manager.am.util.LinkisUtils;
-import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -78,22 +76,19 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
     String realQueueName = "root." + queueName;
 
-    return LinkisUtils.tryCatch(
-        () -> {
-          YarnQueueInfo resources = getResources(rmWebAddress, realQueueName, queueName, provider);
-
-          CommonNodeResource nodeResource = new CommonNodeResource();
-          nodeResource.setMaxResource(resources.getMaxResource());
-          nodeResource.setUsedResource(resources.getUsedResource());
-          nodeResource.setMaxApps(resources.getMaxApps());
-          nodeResource.setNumPendingApps(resources.getNumPendingApps());
-          nodeResource.setNumActiveApps(resources.getNumActiveApps());
-          return nodeResource;
-        },
-        t -> {
-          throw new RMErrorException(
-              YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), t);
-        });
+    try {
+      YarnQueueInfo resources = getResources(rmWebAddress, realQueueName, queueName, provider);
+      CommonNodeResource nodeResource = new CommonNodeResource();
+      nodeResource.setMaxResource(resources.getMaxResource());
+      nodeResource.setUsedResource(resources.getUsedResource());
+      nodeResource.setMaxApps(resources.getMaxApps());
+      nodeResource.setNumPendingApps(resources.getNumPendingApps());
+      nodeResource.setNumActiveApps(resources.getNumActiveApps());
+      return nodeResource;
+    } catch (Exception e) {
+      throw new RMErrorException(
+          YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
+    }
   }
 
   public Optional<YarnResource> maxEffectiveHandle(
@@ -422,8 +417,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
                     + rmAddressMap.size());
           }
           if (StringUtils.isNotBlank(haAddress)) {
-            String[] addresses =
-                haAddress.split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue());
+            String[] addresses = haAddress.split(";");
             for (String address : addresses) {
               try {
                 JsonNode response = getResponseByUrl("info", address, provider);

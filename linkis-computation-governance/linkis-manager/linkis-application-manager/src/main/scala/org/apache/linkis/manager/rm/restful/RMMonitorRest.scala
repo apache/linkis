@@ -418,10 +418,10 @@ class RMMonitorRest extends Logging {
     val yarnAppsInfo =
       externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier)
     val userList =
-      yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).keys.toList.asJava
+      yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].getUser).keys.toList.asJava
     Utils.tryCatch {
       val nodesList = getEngineNodesByUserList(userList, true)
-      yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).foreach { userAppInfo =>
+      yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].getUser).foreach { userAppInfo =>
         var busyResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         var idleResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         val appIdToEngineNode = new mutable.HashMap[String, EngineNode]()
@@ -441,15 +441,15 @@ class RMMonitorRest extends Logging {
           })
         }
         userAppInfo._2.foreach { appInfo =>
-          appIdToEngineNode.get(appInfo.asInstanceOf[YarnAppInfo].id) match {
+          appIdToEngineNode.get(appInfo.asInstanceOf[YarnAppInfo].getId) match {
             case Some(node) =>
               if (NodeStatus.Busy == node.getNodeStatus) {
-                busyResource = busyResource.add(appInfo.asInstanceOf[YarnAppInfo].usedResource)
+                busyResource = busyResource.add(appInfo.asInstanceOf[YarnAppInfo].getUsedResource)
               } else {
-                idleResource = idleResource.add(appInfo.asInstanceOf[YarnAppInfo].usedResource)
+                idleResource = idleResource.add(appInfo.asInstanceOf[YarnAppInfo].getUsedResource)
               }
             case None =>
-              busyResource = busyResource.add(appInfo.asInstanceOf[YarnAppInfo].usedResource)
+              busyResource = busyResource.add(appInfo.asInstanceOf[YarnAppInfo].getUsedResource)
           }
         }
 

@@ -85,7 +85,5 @@ object RMConfiguration {
   val DEFAULT_YARN_TYPE = CommonVars("wds.linkis.rm.default.yarn.cluster.type", "Yarn")
   val EXTERNAL_RETRY_NUM = CommonVars("wds.linkis.rm.external.retry.num", 3)
 
-  val DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER =
-    CommonVars("wds.linkis.rm.default.yarn.webaddress.delimiter", ";")
 
 }

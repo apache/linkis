@@ -164,6 +164,6 @@ public class JobhistoryUtils {
   // 格式化executeApplicationName的方法
   private static String formatExecuteApplicationName(
       String executeApplicationName, String requestApplicationName) {
-    return requestApplicationName + "/" + executeApplicationName ;
+    return requestApplicationName + "/" + executeApplicationName;
   }
 }

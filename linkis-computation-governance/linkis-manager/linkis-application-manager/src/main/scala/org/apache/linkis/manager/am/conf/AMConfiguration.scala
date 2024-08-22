@@ -156,7 +156,7 @@ object AMConfiguration {
 
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
-    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root", jobserver:"$jvmUser"}"""
+    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root", jobserver:"$jvmUser"}, nebula:"$jvmUser"}"""
   }
 
   def isMultiUserEngine(engineType: String): Boolean = {

@@ -1423,6 +1423,72 @@ public class FsRestfulApi {
     return Message.ok().data("data", fileMD5Str);
   }
 
+  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
+    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+  })
+  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
+  public Message pythonUpload(
+      HttpServletRequest req,
+      @RequestParam("file") MultipartFile file,
+      @RequestParam(value = "fileName", required = false) String fileName)
+      throws WorkSpaceException, IOException {
+
+    // 获取登录用户
+    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
+
+    // 校验文件名称
+    if (StringUtils.isBlank(fileName)) {
+      return Message.error("文件名称不能为空");
+    }
+    // 获取文件名称
+    String fileNameSuffix = fileName.substring(0, fileName.lastIndexOf("."));
+    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
+    }
+
+    // 校验文件类型
+    if (!file.getOriginalFilename().endsWith(".py")
+        && !file.getOriginalFilename().endsWith(".zip")) {
+      return Message.error("仅支持.py和.zip格式模块文件");
+    }
+
+    // 校验文件大小
+    if (file.getSize() > 50 * 1024 * 1024) {
+      return Message.error("限制最大单个文件50M");
+    }
+
+    // 定义目录路径
+    String path = "hdfs:///appcom/linkis/udf/" + username;
+    FsPath fsPath = new FsPath(path);
+
+    // 获取文件系统实例
+    FileSystem fileSystem = fsService.getFileSystem(username, fsPath);
+
+    // 确认目录是否存在，不存在则创建新目录
+    if (!fileSystem.exists(fsPath)) {
+      try {
+        fileSystem.mkdirs(fsPath);
+      } catch (IOException e) {
+        return Message.error("创建目录失败：" + e.getMessage());
+      }
+    }
+
+    // 构建新的文件路径
+    String newPath = fsPath.getPath() + "/" + file.getOriginalFilename();
+    FsPath fsPathNew = new FsPath(newPath);
+
+    // 上传文件
+    try (InputStream is = file.getInputStream();
+        OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
+      IOUtils.copy(is, outputStream);
+    } catch (IOException e) {
+      return Message.error("文件上传失败：" + e.getMessage());
+    }
+    // 返回成功消息并包含文件地址
+    return Message.ok().data("filePath", newPath);
+  }
   /**
    * *
    *

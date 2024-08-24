@@ -18,10 +18,9 @@
 package org.apache.linkis.udf.api.rpc
 
 import org.apache.linkis.rpc.{Receiver, Sender}
-import org.apache.linkis.udf.service.{UDFService, UDFTreeService}
+import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
 
 import java.lang
-
 import scala.concurrent.duration.Duration
 
 class UdfReceiver extends Receiver {
@@ -38,6 +37,17 @@ class UdfReceiver extends Receiver {
 
   override def receive(message: Any, sender: Sender): Unit = {}
 
+  // 注⼊PythonModuleInfoService
+//  val pythonModuleInfoService: PythonModuleInfoService = context.system.asInstanceOf[ExtendedActorSystem].lifecycle.systemManager.asInstanceOf[SystemManager].pythonModuleInfoService
+//
+//  def parseModuleInfoFromPath(path: String): PythonModuleInfoVO = {
+//    // 假设路径格式为 "username/module_name/module_version"
+//    val parts = path.split("/")
+//    var vo = PythonModuleInfoVO()
+//    vo.setPath(path)
+//    vo
+//  }
+
   override def receiveAndReply(message: Any, sender: Sender): Any = {
     message match {
       case RequestUdfTree(userName, treeType, treeId, treeCategory) =>
@@ -46,6 +56,12 @@ class UdfReceiver extends Receiver {
       case RequestUdfIds(userName, udfIds, treeCategory) =>
         val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
         new ResponseUdfs(udfs)
+//      case RequestPythonModuleProtocol(userName, engineTypes) =>
+//        // 获取Python模块路径列表
+//        val paths = pythonModuleInfoService.getPathsByUsernameAndEnginetypes(userName, engineTypes)
+//        // 将路径列表转换为PythonModuleInfo列表
+//        val pythonModuleInfoList = paths.map(parseModuleInfoFromPath)
+//        new ResponsePythonModuleProtocol(pythonModuleInfoList)
       case _ =>
     }
   }

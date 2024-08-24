@@ -17,23 +17,21 @@
 
 package org.apache.linkis.jobhistory.util
 
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.IS_VIEW_FS_ENV
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
-import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-
 import java.io.{BufferedReader, InputStream, InputStreamReader, OutputStream}
 import java.text.SimpleDateFormat
-import java.util
-import java.util.{Arrays, Date}
+import java.util.Date
 import java.util.regex.Pattern
 
 object QueryUtils extends Logging {
@@ -44,7 +42,6 @@ object QueryUtils extends Logging {
   private val CODE_STORE_PREFIX_VIEW_FS =
     CommonVars("wds.linkis.query.store.prefix.viewfs", "hdfs:///apps-data/")
 
-  private val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
   private val CODE_STORE_SUFFIX = CommonVars("wds.linkis.query.store.suffix", "")
   private val CODE_STORE_LENGTH = CommonVars("wds.linkis.query.code.store.length", 50000)
   private val CHARSET = "utf-8"

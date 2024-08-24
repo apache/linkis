@@ -18,9 +18,12 @@
 package org.apache.linkis.udf.api.rpc
 
 import org.apache.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.udf.entity.{PythonModuleInfo, PythonModuleInfoVO}
 import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
 
-import java.lang
+import java.{lang, util}
+
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.concurrent.duration.Duration
 
 class UdfReceiver extends Receiver {
@@ -29,24 +32,35 @@ class UdfReceiver extends Receiver {
 
   private var udfService: UDFService = _
 
+  // 注⼊PythonModuleInfoService
+  private var pythonModuleInfoService: PythonModuleInfoService = _
+
   def this(udfTreeService: UDFTreeService, udfService: UDFService) = {
     this()
     this.udfTreeService = udfTreeService
     this.udfService = udfService
   }
 
+  def this(
+      udfTreeService: UDFTreeService,
+      udfService: UDFService,
+      pythonModuleInfoService: PythonModuleInfoService
+  ) = {
+    this(udfTreeService, udfService)
+    this.pythonModuleInfoService = pythonModuleInfoService
+  }
+
   override def receive(message: Any, sender: Sender): Unit = {}
 
-  // 注⼊PythonModuleInfoService
-//  val pythonModuleInfoService: PythonModuleInfoService = context.system.asInstanceOf[ExtendedActorSystem].lifecycle.systemManager.asInstanceOf[SystemManager].pythonModuleInfoService
-//
-//  def parseModuleInfoFromPath(path: String): PythonModuleInfoVO = {
-//    // 假设路径格式为 "username/module_name/module_version"
-//    val parts = path.split("/")
-//    var vo = PythonModuleInfoVO()
-//    vo.setPath(path)
-//    vo
-//  }
+  def parseModuleInfoVO(info: PythonModuleInfo): PythonModuleInfoVO = {
+    // 假设路径格式为 "username/module_name/module_version"
+    val vo = new PythonModuleInfoVO()
+    vo.setPath(info.getPath)
+    vo.setName(info.getName)
+    vo.setId(info.getId)
+    vo.setCreateUser(info.getCreateUser)
+    vo
+  }
 
   override def receiveAndReply(message: Any, sender: Sender): Any = {
     message match {
@@ -56,12 +70,20 @@ class UdfReceiver extends Receiver {
       case RequestUdfIds(userName, udfIds, treeCategory) =>
         val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
         new ResponseUdfs(udfs)
-//      case RequestPythonModuleProtocol(userName, engineTypes) =>
-//        // 获取Python模块路径列表
-//        val paths = pythonModuleInfoService.getPathsByUsernameAndEnginetypes(userName, engineTypes)
-//        // 将路径列表转换为PythonModuleInfo列表
-//        val pythonModuleInfoList = paths.map(parseModuleInfoFromPath)
-//        new ResponsePythonModuleProtocol(pythonModuleInfoList)
+      case RequestPythonModuleProtocol(userName, engineType) =>
+        // 获取Python模块路径列表
+        var list = new java.util.ArrayList[String]()
+        list.add(engineType)
+        list.add("all")
+        val infoes: util.List[PythonModuleInfo] =
+          pythonModuleInfoService.getPathsByUsernameAndEnginetypes(userName, list)
+        // 将路径列表转换为PythonModuleInfo列表
+        var voList = new java.util.ArrayList[PythonModuleInfoVO]()
+        infoes.asScala.foreach(info => {
+          val vo: PythonModuleInfoVO = parseModuleInfoVO(info)
+          voList.add(vo)
+        })
+        new ResponsePythonModuleProtocol(voList)
       case _ =>
     }
   }

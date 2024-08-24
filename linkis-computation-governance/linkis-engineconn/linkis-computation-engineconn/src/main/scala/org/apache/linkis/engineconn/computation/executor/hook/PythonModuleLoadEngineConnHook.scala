@@ -33,7 +33,7 @@ abstract class PythonModuleLoadEngineConnHook
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
   ): Unit = {
-    Utils.tryAndWarnMsg{
+    Utils.tryAndWarnMsg {
       val codeLanguageLabel = new CodeLanguageLabel
       codeLanguageLabel.setCodeType(runType.toString)
       logger.info(s"engineType: ${engineType}")

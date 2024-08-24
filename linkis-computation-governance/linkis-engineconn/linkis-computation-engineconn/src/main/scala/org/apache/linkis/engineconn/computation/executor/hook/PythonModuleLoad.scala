@@ -17,9 +17,13 @@
 
 package org.apache.linkis.engineconn.computation.executor.hook
 
+import org.apache.linkis.common.conf.Configuration.IS_VIEW_FS_ENV
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
-import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.manager.label.entity.Label
@@ -28,10 +32,11 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.udf.UDFClientConfiguration
 import org.apache.linkis.udf.api.rpc.{RequestPythonModuleProtocol, ResponsePythonModuleProtocol}
 import org.apache.linkis.udf.entity.PythonModuleInfoVO
+
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.common.conf.Configuration.IS_VIEW_FS_ENV
 
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 

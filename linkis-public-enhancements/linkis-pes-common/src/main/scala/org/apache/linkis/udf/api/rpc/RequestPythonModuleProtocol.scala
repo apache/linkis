@@ -25,3 +25,4 @@ case class RequestPythonModuleProtocol(userName: String, engineType: String)
     extends RetryableProtocol
     with CacheableProtocol
     with PythonModuleProtocol
+    with UdfProtocol

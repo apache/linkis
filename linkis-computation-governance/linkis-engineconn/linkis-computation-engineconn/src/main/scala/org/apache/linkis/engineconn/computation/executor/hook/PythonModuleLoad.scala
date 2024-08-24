@@ -79,21 +79,25 @@ abstract class PythonModuleLoad extends Logging {
       infoList = new util.ArrayList[PythonModuleInfoVO]()
     }
 
-    if (infoList.isEmpty) {
-      val pmi = new PythonModuleInfoVO()
-      pmi.setPath("viewfs:///apps-data/hadoop/hello_world.py")
-      infoList.add(pmi)
-
-      val pmi1 = new PythonModuleInfoVO()
-      pmi1.setPath("viewfs:///apps-data/hadoop/redis2.zip")
-      infoList.add(pmi1)
-    }
-
     // 替换Viewfs
     if (IS_VIEW_FS_ENV.getValue) {
       infoList.asScala.foreach { info =>
         val path = info.getPath
-        info.setPath(path.replace("hdfs://", "viewfs://"))
+        logger.info(s"python path: ${path}")
+        if (path.startsWith("hdfs") || path.startsWith("viewfs")) {
+          info.setPath(path.replace("hdfs://", "viewfs://"))
+        } else {
+          info.setPath("viewfs://" + path)
+        }
+      }
+    } else {
+
+      infoList.asScala.foreach { info =>
+        val path = info.getPath
+        logger.info(s"hdfs python path: ${path}")
+        if (!path.startsWith("hdfs")) {
+          info.setPath("hdfs://" + path)
+        }
       }
     }
 

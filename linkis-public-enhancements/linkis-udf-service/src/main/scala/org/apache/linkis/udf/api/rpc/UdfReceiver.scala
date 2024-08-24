@@ -17,6 +17,7 @@
 
 package org.apache.linkis.udf.api.rpc
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.rpc.{Receiver, Sender}
 import org.apache.linkis.udf.entity.{PythonModuleInfo, PythonModuleInfoVO}
 import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
@@ -25,8 +26,9 @@ import java.{lang, util}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.concurrent.duration.Duration
+import scala.tools.nsc.interactive.Logger
 
-class UdfReceiver extends Receiver {
+class UdfReceiver extends Receiver with Logging {
 
   private var udfTreeService: UDFTreeService = _
 
@@ -63,6 +65,7 @@ class UdfReceiver extends Receiver {
   }
 
   override def receiveAndReply(message: Any, sender: Sender): Any = {
+    logger.info(s"udfPython message: ${message.getClass.getName}")
     message match {
       case RequestUdfTree(userName, treeType, treeId, treeCategory) =>
         val udfTree = udfTreeService.getTreeById(treeId, userName, treeType, treeCategory)
@@ -71,6 +74,7 @@ class UdfReceiver extends Receiver {
         val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
         new ResponseUdfs(udfs)
       case RequestPythonModuleProtocol(userName, engineType) =>
+        logger.info(s"RequestPythonModuleProtocol: userName: $userName, engineType: $engineType")
         // 获取Python模块路径列表
         var list = new java.util.ArrayList[String]()
         list.add(engineType)

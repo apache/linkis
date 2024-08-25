@@ -17,9 +17,9 @@
 
 package org.apache.linkis.udf.dao;
 
-import org.apache.linkis.udf.entity.PythonModuleInfo;
-
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.linkis.udf.entity.PythonModuleInfo;
 
 import java.util.List;
 
@@ -40,5 +40,5 @@ public interface PythonModuleInfoMapper {
 
   // SQL 5: 查询包含多个引擎类型的hdfs路径
   List<PythonModuleInfo> selectPathsByUsernameAndEnginetypes(
-      String username, List<String> enginetypes);
+      @Param("username") String username, @Param("enginetypes") List<String> enginetypes);
 }

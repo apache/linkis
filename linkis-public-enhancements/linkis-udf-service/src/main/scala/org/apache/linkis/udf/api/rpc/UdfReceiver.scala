@@ -74,7 +74,7 @@ class UdfReceiver extends Receiver with Logging {
         val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
         new ResponseUdfs(udfs)
       case RequestPythonModuleProtocol(userName, engineType) =>
-        logger.info(s"RequestPythonModuleProtocol: userName: $userName, engineType: $engineType")
+        logger.info(s"RequestPythonModuleProtocol: userName: $userName, engineType: $engineType, sendInstance: $sender.")
         // 获取Python模块路径列表
         var list = new java.util.ArrayList[String]()
         list.add(engineType)

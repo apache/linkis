@@ -17,9 +17,10 @@
 
 package org.apache.linkis.udf.dao;
 
+import org.apache.linkis.udf.entity.PythonModuleInfo;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.linkis.udf.entity.PythonModuleInfo;
 
 import java.util.List;
 

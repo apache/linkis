@@ -1201,6 +1201,10 @@ public class UDFRestfulApi {
     }
     // 根据id判断是插入还是更新
     if (pythonModuleInfo.getId() == null) {
+      Integer newExpire = pythonModuleInfo.getIsExpire();
+      pythonModuleInfo.setCreateUser(userName);
+      // 查询未过期的
+      pythonModuleInfo.setIsExpire(0);
       PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
       // 插入逻辑
       if (moduleInfo != null) {
@@ -1208,7 +1212,7 @@ public class UDFRestfulApi {
       }
       pythonModuleInfo.setCreateTime(new Date());
       pythonModuleInfo.setUpdateTime(new Date());
-      pythonModuleInfo.setCreateUser(userName);
+      pythonModuleInfo.setIsExpire(newExpire);
       pythonModuleInfo.setUpdateUser(userName);
       pythonModuleInfoService.insertPythonModuleInfo(pythonModuleInfo);
       return Message.ok().data("id", pythonModuleInfo.getId());
@@ -1225,6 +1229,14 @@ public class UDFRestfulApi {
       }
       if (moduleInfo.getIsExpire() != 0) {
         return Message.error("当前模块已过期，不允许进行修改操作");
+      }
+      // 如果模块过期，则修改数据库中的模块名称和文件名称
+      if (pythonModuleInfo.getIsExpire() == 1) {
+        // 修改数据库中的模块名称和文件名称
+        String newName = moduleInfo.getName() + "_" + System.currentTimeMillis();
+        String newPath = moduleInfo.getPath() + "_" + System.currentTimeMillis();
+        pythonModuleInfo.setPath(newPath);
+        pythonModuleInfo.setName(newName);
       }
       pythonModuleInfo.setUpdateUser(userName);
       pythonModuleInfo.setUpdateTime(new Date());

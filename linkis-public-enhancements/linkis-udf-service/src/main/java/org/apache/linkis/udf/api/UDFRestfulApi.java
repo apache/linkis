@@ -1201,6 +1201,7 @@ public class UDFRestfulApi {
     }
     // 根据id判断是插入还是更新
     if (pythonModuleInfo.getId() == null) {
+      pythonModuleInfo.setCreateUser(userName);
       PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
       // 插入逻辑
       if (moduleInfo != null) {
@@ -1208,7 +1209,6 @@ public class UDFRestfulApi {
       }
       pythonModuleInfo.setCreateTime(new Date());
       pythonModuleInfo.setUpdateTime(new Date());
-      pythonModuleInfo.setCreateUser(userName);
       pythonModuleInfo.setUpdateUser(userName);
       pythonModuleInfoService.insertPythonModuleInfo(pythonModuleInfo);
       return Message.ok().data("id", pythonModuleInfo.getId());

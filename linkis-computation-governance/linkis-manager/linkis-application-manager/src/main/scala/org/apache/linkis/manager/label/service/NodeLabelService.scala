@@ -48,6 +48,11 @@ trait NodeLabelService {
 
   def updateLabelsToNode(instance: ServiceInstance, label: util.List[Label[_]]): Unit
 
+  def labelsFromInstanceToNewInstance(
+      oldServiceInstance: ServiceInstance,
+      newServiceInstance: ServiceInstance
+  ): Unit
+
   /**
    * Remove the labels related by node instance
    *

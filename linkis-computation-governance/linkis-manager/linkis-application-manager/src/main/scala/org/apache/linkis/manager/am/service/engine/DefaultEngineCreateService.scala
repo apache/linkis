@@ -381,10 +381,18 @@ class DefaultEngineCreateService
 
   private def ensuresIdle(engineNode: EngineNode, resourceTicketId: String): Boolean = {
 
-    val engineNodeInfo = Utils.tryAndWarnMsg(
-      getEngineNodeManager.getEngineNodeInfoByDB(engineNode)
-    )("Failed to from db get engine node info")
+    val engineNodeInfo =
+      Utils.tryAndWarnMsg(if (engineNode.getMark == AMConstant.CLUSTER_PROCESS_MARK) {
+        getEngineNodeManager.getEngineNodeInfoByTicketId(resourceTicketId)
+      } else {
+        getEngineNodeManager.getEngineNodeInfoByDB(engineNode)
+      })("Failed to from db get engine node info")
+
     if (null == engineNodeInfo) return false
+
+    if (engineNodeInfo.getServiceInstance != null) {
+      engineNode.setServiceInstance(engineNodeInfo.getServiceInstance)
+    }
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
       val msg = if (metrics != null) metrics.getHeartBeatMsg else null

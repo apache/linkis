@@ -159,7 +159,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         && !queues.isNull()
         && !queues.isMissingNode()
         && queues.isArray()
-        && ((ArrayNode) queues).size() > 0) {
+        && queues.size() > 0) {
       return queues;
     } else {
       return resp.get("childQueues");

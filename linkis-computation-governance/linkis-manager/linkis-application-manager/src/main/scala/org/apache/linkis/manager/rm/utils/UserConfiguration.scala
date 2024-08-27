@@ -163,7 +163,7 @@ object UserConfiguration extends Logging {
           USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration)
         )
       )
-    case ResourceType.Special => new SpecialResource(new java.util.HashMap[String, AnyVal]())
+    case ResourceType.Special => new SpecialResource(new java.util.HashMap[String, AnyRef]())
     case _ =>
       throw new RMWarnException(
         NOT_RESOURCE_RESULT_TYPE.getErrorCode,

@@ -23,10 +23,8 @@ import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.{
   DriverAndYarnResource,
   Resource,
-  ResourceSerializer,
   ResourceType
 }
-import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.server.BDPJettyServerHelper
 
@@ -201,7 +199,7 @@ object AMUtils {
           }
           if (node.getNodeResource.getUsedResource != null) {
             val realResource = node.getNodeResource.getUsedResource match {
-              case dy: DriverAndYarnResource => dy.loadInstanceResource
+              case dy: DriverAndYarnResource => dy.getLoadInstanceResource
               case _ => node.getNodeResource.getUsedResource
             }
             AMEngineNodeVo.setUsedResource(

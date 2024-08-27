@@ -124,7 +124,7 @@ public class EngineRestfulApi {
     engineAskRequest.setUser(userName);
     long timeout = engineAskRequest.getTimeOut();
     if (timeout <= 0) {
-      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME().getValue().toLong();
+      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME.getValue().toLong();
       engineAskRequest.setTimeOut(timeout);
     }
     Map<String, Object> retEngineNode = new HashMap<>();
@@ -208,7 +208,7 @@ public class EngineRestfulApi {
               EngineNode createNode = engineCreateService.createEngine(engineCreateRequest, sender);
               long timeout = 0L;
               if (engineCreateRequest.getTimeout() <= 0) {
-                timeout = AMConfiguration.ENGINE_START_MAX_TIME().getValue().toLong();
+                timeout = AMConfiguration.ENGINE_START_MAX_TIME.getValue().toLong();
               } else {
                 timeout = engineCreateRequest.getTimeout();
               }
@@ -301,7 +301,7 @@ public class EngineRestfulApi {
     engineCreateRequest.setUser(userName);
     long timeout = engineCreateRequest.getTimeout();
     if (timeout <= 0) {
-      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME().getValue().toLong();
+      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME.getValue().toLong();
       engineCreateRequest.setTimeout(timeout);
     }
     logger.info(

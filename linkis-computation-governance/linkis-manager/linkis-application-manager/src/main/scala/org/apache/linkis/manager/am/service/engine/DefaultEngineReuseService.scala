@@ -179,10 +179,10 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           .filter(engine => {
             if (engine.getNodeResource.getUsedResource != null) {
               // 引擎资源只有满足需要的资源才复用
-              engine.getNodeResource.getUsedResource >= resource.getMaxResource
+              engine.getNodeResource.getUsedResource.notLess(resource.getMaxResource)
             } else {
               // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
-              engine.getNodeResource.getLockedResource >= resource.getMaxResource
+              engine.getNodeResource.getLockedResource.notLess(resource.getMaxResource)
             }
           })
       }
@@ -201,8 +201,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       if (engineReuseRequest.getTimeOut <= 0) {
         AMConfiguration.ENGINE_REUSE_MAX_TIME.getValue.toLong
       } else engineReuseRequest.getTimeOut
-    val reuseLimit =
-      if (engineReuseRequest.getReuseCount <= 0) AMConfiguration.ENGINE_REUSE_COUNT_LIMIT.getValue
+    val reuseLimit: Int =
+      if (engineReuseRequest.getReuseCount <= 0) AMConfiguration.ENGINE_REUSE_COUNT_LIMIT
       else engineReuseRequest.getReuseCount
 
     def selectEngineToReuse: Boolean = {

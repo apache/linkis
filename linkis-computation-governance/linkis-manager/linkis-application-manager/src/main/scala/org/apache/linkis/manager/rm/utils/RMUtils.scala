@@ -141,13 +141,13 @@ object RMUtils extends Logging {
     if (userResource.getLeftResource != null && userResource.getMaxResource != null) {
       if (userResource.getResourceType.equals(ResourceType.DriverAndYarn)) {
         val leftDriverResource =
-          userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+          userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].getLoadInstanceResource
         val leftYarnResource =
-          userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].yarnResource
+          userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].getYarnResource
         val maxDriverResource =
-          userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+          userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].getLoadInstanceResource
         val maxYarnResource =
-          userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].yarnResource
+          userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].getYarnResource
         userResourceVo.setLoadResourceStatus(
           ResourceStatus.measure(leftDriverResource, maxDriverResource)
         )
@@ -327,13 +327,13 @@ object RMUtils extends Logging {
 
   def getYarnResourceMap(resource: Resource): util.HashMap[String, Any] = {
     val resourceMap = new util.HashMap[String, Any]
-    val yarnResource = resource.asInstanceOf[DriverAndYarnResource].yarnResource
+    val yarnResource = resource.asInstanceOf[DriverAndYarnResource].getYarnResource
     resourceMap.put(
       "queueMemory",
-      ByteTimeUtils.negativeByteStringAsGb(yarnResource.queueMemory + "b") + "G"
+      ByteTimeUtils.negativeByteStringAsGb(yarnResource.getQueueMemory + "b") + "G"
     )
-    resourceMap.put("queueCpu", yarnResource.queueCores)
-    resourceMap.put("instance", yarnResource.queueInstances)
+    resourceMap.put("queueCpu", yarnResource.getQueueCores)
+    resourceMap.put("instance", yarnResource.getQueueInstances)
     resourceMap
   }
 
@@ -341,16 +341,16 @@ object RMUtils extends Logging {
     val resourceMap = new util.HashMap[String, Any]
     var loadInstanceResource = new LoadInstanceResource(0, 0, 0)
     if (engineType.contains("spark")) {
-      loadInstanceResource = resource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+      loadInstanceResource = resource.asInstanceOf[DriverAndYarnResource].getLoadInstanceResource
     } else {
       loadInstanceResource = resource.asInstanceOf[LoadInstanceResource]
     }
 
     resourceMap.put(
       "memory",
-      ByteTimeUtils.negativeByteStringAsGb(loadInstanceResource.memory + "b") + "G"
+      ByteTimeUtils.negativeByteStringAsGb(loadInstanceResource.getMemory + "b") + "G"
     )
-    resourceMap.put("core", loadInstanceResource.cores)
+    resourceMap.put("core", loadInstanceResource.getCores)
     resourceMap
   }
 

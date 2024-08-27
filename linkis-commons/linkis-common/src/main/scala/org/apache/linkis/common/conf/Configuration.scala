@@ -70,6 +70,8 @@ object Configuration extends Logging {
 
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
+  val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
+
   val ERROR_MSG_TIP =
     CommonVars(
       "linkis.jobhistory.error.msg.tip",

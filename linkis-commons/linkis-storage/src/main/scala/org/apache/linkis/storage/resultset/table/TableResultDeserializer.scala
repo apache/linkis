@@ -39,6 +39,8 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
 
   var metaData: TableMetaData = _
 
+  var columnSet: Set[Int] = null
+
   import DataType._
 
   override def createMetaData(bytes: Array[Byte]): TableMetaData = {
@@ -91,6 +93,9 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       enableLimit = true
     }
     val columnIndices: Array[Int] = LinkisStorageConf.columnIndicesThreadLocal.get()
+    if (columnSet == null && columnIndices != null) {
+      columnSet = columnIndices.toSet
+    }
 
     val lastIndex =
       if (columnIndices != null && columnIndices.length > 0) columnIndices(columnIndices.length - 1)
@@ -134,7 +139,7 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       index += len
       // 如果enableLimit为true，则采取的是列分页
       if (enableLimit) {
-        if (columnIndices.contains(i)) {
+        if (columnSet.contains(i)) {
           rowArray(colIdx) = res
           colIdx += 1
         }

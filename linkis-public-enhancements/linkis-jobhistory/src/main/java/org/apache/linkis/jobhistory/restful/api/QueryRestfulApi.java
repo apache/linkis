@@ -591,10 +591,11 @@ public class QueryRestfulApi {
     } else if (!QueryUtils.checkNameValid(creator)) {
       throw new LinkisCommonErrorException(21304, "Invalid creator : " + creator);
     }
-    if (StringUtils.isNotBlank(executeApplicationName)
-        && !QueryUtils.checkNameValid(executeApplicationName)) {
-      throw new LinkisCommonErrorException(
-          21304, "Invalid applicationName : " + executeApplicationName);
+    if (StringUtils.isNotBlank(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        throw new LinkisCommonErrorException(
+            21304, "Invalid applicationName : " + executeApplicationName);
+      }
     } else {
       executeApplicationName = null;
     }
@@ -634,6 +635,7 @@ public class QueryRestfulApi {
     } else if (!QueryUtils.checkInstanceNameValid(engineInstance)) {
       throw new LinkisCommonErrorException(21304, "Invalid instances : " + engineInstance);
     }
+
     List<JobHistory> queryTasks = new ArrayList<>();
     PageHelper.startPage(pageNow, pageSize);
     try {

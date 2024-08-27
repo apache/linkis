@@ -17,40 +17,20 @@
 
 package org.apache.linkis.storage.exception;
 
-public enum StorageErrorCode {
+import org.apache.linkis.common.exception.ErrorException;
 
-  /** */
-  FS_NOT_INIT(53001, "please init first"),
-  INCONSISTENT_DATA(53001, "Inconsistent row data read,read %s,need rowLen %s"),
-  FS_OOM(53002, "OOM occurred while reading the file"),
-  FS_ERROR(53003, "Failed to operation fs"),
+public class StorageReadException extends ErrorException {
 
-  READ_PARQUET_FAILED(53004, "Failed to read parquet file"),
-
-  READ_ORC_FAILED(53005, "Failed to read orc file");
-
-  StorageErrorCode(int errorCode, String message) {
-    this.code = errorCode;
-    this.message = message;
+  public StorageReadException(int errCode, String desc) {
+    super(errCode, desc);
   }
 
-  private int code;
-
-  private String message;
-
-  public int getCode() {
-    return code;
+  public StorageReadException(int errCode, String desc, Throwable t) {
+    super(errCode, desc);
+    initCause(t);
   }
 
-  public void setCode(int code) {
-    this.code = code;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
+  public StorageReadException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
   }
 }

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.fs.impl;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
@@ -30,7 +31,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.fs.permission.FsAction;
 import org.apache.hadoop.fs.permission.FsPermission;
@@ -51,7 +51,7 @@ public class HDFSFileSystem extends FileSystem {
   public static final String HDFS_PREFIX_WITHOUT_AUTH = "hdfs:///";
   public static final String HDFS_PREFIX_WITH_AUTH = "hdfs://";
   private org.apache.hadoop.fs.FileSystem fs = null;
-  private Configuration conf = null;
+  private org.apache.hadoop.conf.Configuration conf = null;
 
   private String label = null;
 
@@ -181,7 +181,9 @@ public class HDFSFileSystem extends FileSystem {
     if (user == null) {
       throw new IOException("User cannot be empty(用户不能为空)");
     }
-
+    if (label == null && Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
+      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
+    }
     /** if properties is null do not to create conf */
     if (MapUtils.isNotEmpty(properties)) {
       conf = HDFSUtils.getConfigurationByLabel(user, label);
@@ -195,9 +197,9 @@ public class HDFSFileSystem extends FileSystem {
       }
     }
     if (null != conf) {
-      fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+      fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
     } else {
-      fs = HDFSUtils.getHDFSUserFileSystem(user);
+      fs = HDFSUtils.getHDFSUserFileSystem(user, label);
     }
 
     if (fs == null) {
@@ -329,15 +331,15 @@ public class HDFSFileSystem extends FileSystem {
       synchronized (this) {
         if (fs != null) {
           if (HadoopConf.HDFS_ENABLE_CACHE()) {
-            HDFSUtils.closeHDFSFIleSystem(fs, user, true);
+            HDFSUtils.closeHDFSFIleSystem(fs, user, label, true);
           } else {
-            HDFSUtils.closeHDFSFIleSystem(fs, user);
+            HDFSUtils.closeHDFSFIleSystem(fs, user, label);
           }
           logger.warn("{} FS reset close.", user);
           if (null != conf) {
-            fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+            fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
           } else {
-            fs = HDFSUtils.getHDFSUserFileSystem(user);
+            fs = HDFSUtils.getHDFSUserFileSystem(user, label);
           }
         }
       }

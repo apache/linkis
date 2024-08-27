@@ -60,11 +60,9 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-
 class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     extends ConcurrentComputationExecutor(outputLimit)
     with Logging {
-
 
   val fsIdCount = new AtomicLong()
 

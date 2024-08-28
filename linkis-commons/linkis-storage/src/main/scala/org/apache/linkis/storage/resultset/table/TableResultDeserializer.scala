@@ -140,7 +140,7 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       // 如果enableLimit为true，则采取的是列分页
       if (enableLimit) {
         if (columnSet.contains(i)) {
-          rowArray(colIdx) = res
+          rowArray(colIdx) = toValue(metaData.columns(i).dataType, res)
           colIdx += 1
         }
       } else {

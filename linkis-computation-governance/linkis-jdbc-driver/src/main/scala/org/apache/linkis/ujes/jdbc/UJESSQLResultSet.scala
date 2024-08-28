@@ -20,37 +20,17 @@ package org.apache.linkis.ujes.jdbc
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ujes.client.request.ResultSetAction
 import org.apache.linkis.ujes.client.response.ResultSetResult
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.ujes.client.utils.UJESClientUtils
 
 import java.{sql, util}
 import java.io.{InputStream, Reader}
 import java.math.MathContext
 import java.net.URL
-import java.sql.{
-  Blob,
-  Clob,
-  Connection,
-  Date,
-  NClob,
-  Ref,
-  ResultSet,
-  RowId,
-  SQLWarning,
-  SQLXML,
-  Statement,
-  Time,
-  Timestamp
-}
+import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, RowId, SQLWarning, SQLXML, Statement, Time, Timestamp}
 import java.util.{Calendar, Locale}
-
 import org.joda.time.DateTimeZone
-import org.joda.time.format.{
-  DateTimeFormat,
-  DateTimeFormatterBuilder,
-  DateTimeParser,
-  ISODateTimeFormat
-}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder, DateTimeParser, ISODateTimeFormat}
 
 class UJESSQLResultSet(
     resultSetList: Array[String],
@@ -235,36 +215,7 @@ class UJESSQLResultSet(
   }
 
   private def evaluate(dataType: String, value: String): Any = {
-
-    if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
-      dataType.toLowerCase(Locale.getDefault) match {
-        case "string" | "char" | "varchar" | "nvarchar" => value
-        case _ => null
-      }
-    } else {
-      dataType.toLowerCase(Locale.getDefault) match {
-        case null => throw new LinkisSQLException(LinkisSQLErrorCode.METADATA_EMPTY)
-        case "char" | "varchar" | "nvarchar" | "string" => value
-        case "short" => value.toShort
-        case "int" => value.toInt
-        case "long" => value.toLong
-        case "float" => value.toFloat
-        case "double" => value.toDouble
-        case "boolean" => value.toBoolean
-        case "byte" => value.toByte
-        case "timestamp" => value
-        case "date" => value
-        case "bigint" => value.toLong
-        case "decimal" => value.toDouble
-        case "array" => value.toArray
-        case "map" => value
-        case _ =>
-          throw new LinkisSQLException(
-            LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
-            s"Can't infer the SQL type to use for an instance of ${dataType}. Use getObject() with an explicit Types value to specify the type to use"
-          )
-      }
-    }
+    UJESClientUtils.evaluate(dataType, value)
   }
 
   private def getColumnValue(columnIndex: Int): Any = {

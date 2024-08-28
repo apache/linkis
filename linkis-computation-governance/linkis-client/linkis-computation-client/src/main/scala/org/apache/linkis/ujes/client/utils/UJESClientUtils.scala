@@ -28,6 +28,9 @@ import com.google.gson.{Gson, JsonObject}
 
 object UJESClientUtils {
 
+
+  val gson: Gson = new Gson()
+
   def toEngineType(engineType: String): EngineType = engineType match {
     case "spark" => EngineType.SPARK
     case "hive" => EngineType.HIVE
@@ -72,13 +75,11 @@ object UJESClientUtils {
         case "double" => value.toDouble
         case "boolean" => value.toBoolean
         case "byte" => value.toByte
-        case "timestamp" => value
-        case "date" => value
         case "bigint" => value.toLong
         case "decimal" => value.toDouble
-        case "array" => new Gson().fromJson(value, classOf[util.ArrayList[Object]])
-        case "map" => new Gson().fromJson(value, classOf[util.HashMap[Object, Object]])
-        case "struct" => new Gson().fromJson(value, classOf[JsonObject])
+        case "array" => gson.fromJson(value, classOf[util.ArrayList[Object]])
+        case "map" => gson.fromJson(value, classOf[util.HashMap[Object, Object]])
+        case "struct" => gson.fromJson(value, classOf[JsonObject])
         case _ => value
       }
     }

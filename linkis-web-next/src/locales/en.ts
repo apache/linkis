@@ -441,6 +441,9 @@ export default {
             ConfirmEdit: 'Done',
             serviceRegistryCenter: 'Service Registry Center',
             addTags: 'Add Tags',
+            labelEmptyError: 'Label cannot be empty',
+            labelNoSpecialSymbol: 'Spance and Chinese characters are not allowed',
+            labelLengthLimit: 'Label length should not exceed 16',
             unfold: 'Unfold',
             fold: 'Fold',
             jumpPage: 'Please check in the jump page...',
@@ -547,6 +550,7 @@ export default {
                 executionCode: 'Execution Code',
                 status: 'Status',
                 label: 'Label',
+                editLabel: 'Edit Label',
                 engineVersion: 'Engine Version',
                 engineVersionCannotBeNull: 'Engine Version Cannot Be Null',
                 addApplicationRules:

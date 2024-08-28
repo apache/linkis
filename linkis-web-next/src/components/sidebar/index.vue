@@ -109,7 +109,7 @@ const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.microserviceManage',
         icon: '/sidebar/microserviceManage.svg',
-        path: '/xxx',
+        path: '/console/microServiceManagement',
     },
     {
         title: 'message.linkis.sideNavList.function.children.dataSourceManage',

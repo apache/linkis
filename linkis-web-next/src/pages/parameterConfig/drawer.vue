@@ -274,7 +274,7 @@ const tableColumns = [
         formatter: ({ row }: { row: { updateTime: number } }) => dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-        // 在“操作”两个字前添加空格，使其能与“查看”上下对齐
+        // 在“操作”两个字前添加空格，使其能与“编辑”上下对齐
         label: `\u00A0\u00A0\u00A0\u00A0${t('message.linkis.columns.control.title')}`,
         width: 140,
         action: [
@@ -487,13 +487,13 @@ const handleInitialization = async () => {
     // Get settings directory(获取设置目录)
     const cateRes = await api.fetch("/configuration/getCategory", "get");
     menuList.value = cateRes.Category.filter((menu: any) => menu.categoryName !== 'GlobalSettings') || [];
-    handleChangePagination(currentPage.value, pageSize.value)
+    handleChangePagination(currentPage.value, pageSize.value);
     // Get all engine types(获取所有引擎类型)
     const engineTypeRes = await api.fetch("/configuration/engineType", "get");
     engineTypes.value = engineTypeRes.engineType.map((type: string) => ({ name: type, value: type }));
     // Get all engine type versions(获取所有引擎版本)
     engineTypeRes.engineType.forEach(async (type: string) => {
-        const engineTypeVersionRes = await api.fetch(`/engineplugin/getTypeVersionList/${type}`, {}, "get")
+        const engineTypeVersionRes = await api.fetch(`/engineplugin/getTypeVersionList/${type}`, {}, "get");
         engineTypeVersions.value[type] = (engineTypeVersionRes.queryList || []).map((item: string) => {
             if (/^v/.test(item)) {
                 const version = item.replace(/v/, '');

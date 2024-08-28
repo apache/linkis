@@ -16,69 +16,67 @@
   -->
 
 <template>
-    <FSpace>
-        <FModal
-            v-model:show="show"
-            displayDirective="if"
-            @ok="handleSaveGlobalSettings"
-        >
-            <template #title>
-                <div>{{ t('message.linkis.globalSettings') }}</div>
-            </template>
-            <div class="list-wrapper"> 
-                <template v-for="dataItem in dataList[0].settings" :key="dataItem.key">
-                    <div class="line">
-                        <div>
-                            <div class="title">{{ dataItem.name || dataItem.key }}</div>
-                            <div class="description">
-                                {{ dataItem.name ? `[${dataItem.key}]` : '' }}
-                            </div>
-                        </div>
-                        <div>
-                            <FSpace>
-                                <div style="width: 120px">
-                                    <FInputNumber
-                                        v-if="dataItem.validateType === 'NumInterval'"
-                                        style="width: 120px"
-                                        :precision="0"
-                                        v-model="dataItem.configValue"
-                                        :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
-                                        :min="JSON.parse(dataItem.validateRange)[0]"
-                                        :max="JSON.parse(dataItem.validateRange)[1]"
-                                    />
-                                    <FForm v-else-if="dataItem.validateType === 'Regex'">
-                                        <FFormItem
-                                            :value="dataItem.configValue"
-                                            :rules="[{
-                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                                // @ts-ignore 
-                                                trigger: ['change', 'blur'],
-                                                message: dataItem.description,
-                                                type: 'regexp',
-                                                validator: () => new RegExp(dataItem.validateRange).test(dataItem.configValue)
-                                            }]"
-                                        >
-                                            <FInput
-                                                class="regex-input"
-                                                v-model="dataItem.configValue"
-                                                :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
-                                            />
-                                        </FFormItem>
-                                    </FForm>
-                                    <FInput
-                                        v-else
-                                        v-model="dataItem.configValue"
-                                        :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
-                                    />
-                                </div>
-                            </FSpace>
+    <FModal
+        v-model:show="show"
+        displayDirective="if"
+        @ok="handleSaveGlobalSettings"
+    >
+        <template #title>
+            <div>{{ t('message.linkis.globalSettings') }}</div>
+        </template>
+        <div class="list-wrapper"> 
+            <template v-for="dataItem in dataList[0].settings" :key="dataItem.key">
+                <div class="line">
+                    <div>
+                        <div class="title">{{ dataItem.name || dataItem.key }}</div>
+                        <div class="description">
+                            {{ dataItem.name ? `[${dataItem.key}]` : '' }}
                         </div>
                     </div>
-                    <FDivider />
-                </template>
-            </div>
-        </FModal>
-    </FSpace>
+                    <div>
+                        <FSpace>
+                            <div style="width: 120px">
+                                <FInputNumber
+                                    v-if="dataItem.validateType === 'NumInterval'"
+                                    style="width: 120px"
+                                    :precision="0"
+                                    v-model="dataItem.configValue"
+                                    :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
+                                    :min="JSON.parse(dataItem.validateRange)[0]"
+                                    :max="JSON.parse(dataItem.validateRange)[1]"
+                                />
+                                <FForm v-else-if="dataItem.validateType === 'Regex'">
+                                    <FFormItem
+                                        :value="dataItem.configValue"
+                                        :rules="[{
+                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                            // @ts-ignore 
+                                            trigger: ['change', 'blur'],
+                                            message: dataItem.description,
+                                            type: 'regexp',
+                                            validator: () => new RegExp(dataItem.validateRange).test(dataItem.configValue)
+                                        }]"
+                                    >
+                                        <FInput
+                                            class="regex-input"
+                                            v-model="dataItem.configValue"
+                                            :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
+                                        />
+                                    </FFormItem>
+                                </FForm>
+                                <FInput
+                                    v-else
+                                    v-model="dataItem.configValue"
+                                    :placeholder="dataItem.defaultValue ? `${$t('message.linkis.defaultValue')}: ${dataItem.defaultValue}` : $t('message.linkis.datasource.pleaseInput')"
+                                />
+                            </div>
+                        </FSpace>
+                    </div>
+                </div>
+                <FDivider />
+            </template>
+        </div>
+    </FModal>
 </template>
 
 <script setup lang="ts">

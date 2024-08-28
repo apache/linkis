@@ -101,6 +101,16 @@ const routes: Array<RouteRecordRaw> = [
                         },
                         children: [],
                     },
+                    {
+                        name: 'microServiceManagement',
+                        path: '/console/microServiceManagement',
+                        component: () => import('@/pages/microServiceManagement/index.vue'),
+                        meta: {
+                            title: 'Micro Service Management',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
                 ]
             },
         ],

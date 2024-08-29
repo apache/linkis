@@ -17,12 +17,10 @@
 
 package org.apache.linkis.common.utils;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.VariableOperationFailedException;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Iterator;
@@ -62,9 +60,16 @@ public class VariableOperationUtils {
    * @return
    */
   public static ZonedDateTime toZonedDateTime(Date date, ZoneId zoneId) {
-    Instant instant = date.toInstant();
-    LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
-    return ZonedDateTime.of(localDateTime, zoneId);
+    if (Configuration.VARIABLE_OPERATION_USE_NOW()) {
+      LocalTime currentTime = LocalTime.now();
+      LocalDate localDate = date.toInstant().atZone(zoneId).toLocalDate();
+      LocalDateTime localDateTime = LocalDateTime.of(localDate, currentTime);
+      return ZonedDateTime.of(localDateTime, zoneId);
+    } else {
+      Instant instant = date.toInstant();
+      LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
+      return ZonedDateTime.of(localDateTime, zoneId);
+    }
   }
 
   /**

@@ -190,9 +190,7 @@ public class EntranceSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ExecutorManager executorManager(GroupFactory groupFactory) {
-    EngineConnManagerBuilder engineConnManagerBuilder = EngineConnManagerBuilder$.MODULE$.builder();
-    engineConnManagerBuilder.setPolicy(Policy.Process);
-    return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
+    return new EntranceExecutorManagerImpl(groupFactory);
   }
 
   @Bean

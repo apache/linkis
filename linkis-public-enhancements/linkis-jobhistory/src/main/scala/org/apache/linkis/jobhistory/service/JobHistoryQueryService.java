@@ -55,4 +55,6 @@ public interface JobHistoryQueryService {
     void clearUndoneTasksByEntranceInstance(EntranceInstanceConfRequest request, Sender sender);
 
     List<JobHistory> searchByTasks(List<String> taskidList, String username);
+
+
 }

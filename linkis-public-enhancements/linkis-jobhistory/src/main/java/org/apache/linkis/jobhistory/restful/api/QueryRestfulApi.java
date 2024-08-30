@@ -554,6 +554,95 @@ public class QueryRestfulApi {
     }
   }
 
+  /** Method list should not contain subjob, which may cause performance problems. */
+  @ApiOperation(value = "listDurationTop", notes = "listDurationTop", response = Message.class)
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
+          @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
+          @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+          @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+          @ApiImplicitParam(
+                  name = "proxyUser",
+                  required = false,
+                  dataType = "String",
+                  value = "proxyUser"),
+          @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+          @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+  })
+  @RequestMapping(path = "/listDurationTop", method = RequestMethod.GET)
+  public Message listDurationTop(
+          HttpServletRequest req,
+          @RequestParam(value = "startDate", required = false) Long startDate,
+          @RequestParam(value = "endDate", required = false) Long endDate,
+          @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+          @RequestParam(value = "creator", required = false) String creator,
+          @RequestParam(value = "proxyUser", required = false) String proxyUser,
+          @RequestParam(value = "pageNow", required = false) Integer pageNow,
+          @RequestParam(value = "pageSize", required = false) Integer pageSize)
+          throws QueryException {
+    if (org.springframework.util.StringUtils.isEmpty(pageNow)) {
+      pageNow = 1;
+    }
+    if (org.springframework.util.StringUtils.isEmpty(pageSize)) {
+      pageSize = 20;
+    }
+    if (org.springframework.util.StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
+    }
+    if (org.springframework.util.StringUtils.isEmpty(creator)) {
+      creator = null;
+    } else {
+      if (!QueryUtils.checkNameValid(creator)) {
+        return Message.error("Invalid creator : " + creator);
+      }
+    }
+    if (!org.springframework.util.StringUtils.isEmpty(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        return Message.error("Invalid applicationName : " + executeApplicationName);
+      }
+    } else {
+      executeApplicationName = null;
+    }
+
+    if (endDate == null) {
+      endDate = System.currentTimeMillis();
+    }
+    if (startDate == null) {
+      startDate = 0L;
+    }
+
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(endDate);
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(calendar.getTime().getTime()); // todo check
+    }
+    List<JobHistory> queryTasks = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      queryTasks =
+              jobHistoryQueryService.taskDurationTopN(
+                      sDate, eDate, proxyUser, creator, executeApplicationName);
+    } finally {
+      PageHelper.clearPage();
+    }
+
+    List<QueryTaskVO> vos = new ArrayList<>();
+    for (JobHistory jobHistory : queryTasks) {
+      QueryUtils.exchangeExecutionCode(jobHistory);
+      QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+      vos.add(taskVO);
+    }
+    return Message.ok().data(TaskConstant.TASKS, vos);
+  }
+
   private List<JobHistory> getJobhistoryList(
       HttpServletRequest req,
       Long startDate,

@@ -30,7 +30,6 @@
     <module>hive</module>
     <module>spark</module>
     <module>python</module>
-    <module>openlookeng</module>
     <module>io_file</module>
     <module>shell</module>
     <module>pipeline</module>
@@ -39,7 +38,6 @@
     <module>sqoop</module>
     <module>presto</module>
     <module>trino</module>
-    <module>elasticsearch</module>
     <module>seatunnel</module>
     <module>hbase</module>
     <module>nebula</module>

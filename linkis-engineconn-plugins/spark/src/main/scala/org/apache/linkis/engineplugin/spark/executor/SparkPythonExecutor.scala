@@ -38,7 +38,7 @@ import org.apache.linkis.storage.resultset.ResultSetWriter
 
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -76,7 +76,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = RandomStringUtils.randomAlphanumeric(256)
+  private lazy val py4jToken: String = SecureRandomStringUtils.randomAlphanumeric(256)
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()

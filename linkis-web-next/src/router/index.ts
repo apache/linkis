@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         name: 'resource',
                         path: '/console/resource',
-                        redirect: '/console/resource/manage',
+                        redirect: '/console/resource/history',
                         component: () => import('@/pages/resource/index.vue'),
                         meta: {
                             title: 'Resource',

@@ -81,7 +81,7 @@
                 <FDatePicker
                     type="daterange"
                     v-model="formData.timeRange"
-                    :shortcuts="$props.shortcuts"
+                    :shortcuts="props.shortcuts"
                     @focus="(e:any) => { e.target.blur() }"
                 />
             </FFormItem>

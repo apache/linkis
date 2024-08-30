@@ -57,7 +57,7 @@
     <f-table
         :data="dataList"
         class="table"
-        :rowKey="(row: Record<string, number | string>) => row.categoryId"
+        :rowKey="(row: Record<string, number | string>) => row.instance"
         :emptyText="t('message.linkis.noDataText')"
     >
         <template v-for="col in tableColumns" :key="col.label">

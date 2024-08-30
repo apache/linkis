@@ -163,7 +163,7 @@
 
     <!-- test -->
     <junit5.version>5.7.2</junit5.version>
-    <mockito-bom.version>4.3.1</mockito-bom.version>
+    <mockito.version>3.9.0</mockito.version>
     <assertj.version>3.17.2</assertj.version>
     <h2.version>2.2.220</h2.version>
 

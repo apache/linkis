@@ -444,7 +444,7 @@ export default {
 </script>
 <style lang="scss" src="./index.scss" scoped></style>
 <style lang="scss" scoped>
-/deep/ .ivu-btn {
+::v-deep .ivu-btn {
   &:hover {
     border-color: transparent;
   }

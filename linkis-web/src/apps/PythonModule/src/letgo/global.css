@@ -1,0 +1,4 @@
+.buttons .fes-form-item-content {
+  display: flex;
+  justify-content: space-between;
+}

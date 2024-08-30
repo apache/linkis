@@ -55,7 +55,7 @@ import api from '@/common/service/api'
 import mixin from '@/common/service/mixin'
 import util from '@/common/util'
 import ViewLog from '@/apps/linkis/module/resourceManagement/log.vue'
-import { isUndefined } from 'lodash'
+import { cloneDeep, isUndefined } from 'lodash'
 import storage from '@/common/helper/storage';
 
 export default {
@@ -109,10 +109,16 @@ export default {
       hasEngine: false,
       param: {},
       yarnAddress: '',
+      logTimer: null,
     }
   },
   created() {
     this.hasResultData = false
+  },
+  unmouted() {
+    if(this.logTimer) {
+      clearTimeout(this.logTimer);
+    }
   },
   async mounted() {
     let taskID = this.$route.query.taskID
@@ -147,7 +153,7 @@ export default {
       this.foldFlag = true;
     },
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
-    onClickTabs(name) {
+    async onClickTabs(name) {
       this.tabName = name
       if (name === 'result') {
         // Determine whether it is a result set(判断是否为结果集)
@@ -174,8 +180,11 @@ export default {
         }
 
       } else if(name === 'code') {
-        window.console.log('click code')
-        
+        // window.console.log('click code')
+        if(this.codes.code) return;
+        const res = await api.fetch(`/jobhistory/job-extra-info?jobId=${this.$route.query.taskID}`, 'get')
+        const { executionCode } = res.metricsMap;
+        this.codes = { code: executionCode };
       } else {
         this.$nextTick(() => {
           this.$refs.logRef.fold();
@@ -372,16 +381,53 @@ export default {
 
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
+    async getLogs(jobhistory) {
+      const params = {
+        path: jobhistory.task.logPath
+      }
+      if (this.$route.query.proxyUser) {
+        params.proxyUser = this.$route.query.proxyUser
+      }
+      let openLog = {}
+      if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
+        const tempParams = {
+          fromLine: this.fromLine,
+          size: 10000,
+        }
+        openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
+      } else {
+        openLog = await api.fetch('/filesystem/openLog', params, 'get')
+      }
+      if (openLog) {
+        const log = cloneDeep(this.logs)
+        const convertLogs = util.convertLog(openLog.log)
+        Object.keys(convertLogs).forEach(key => {
+          if (convertLogs[key]) {
+            log[key] += convertLogs[key] + '\n'
+          }
+        })
+        this.logs = log
+        this.fromLine = openLog.fromLine
+        this.$nextTick(() => {
+          this.$refs.logRef.fold();
+          this.foldFlag = true;
+        })
+        if (convertLogs['all'].split('\n').length >= 10000 && ['Scheduled', 'Running'].includes(this.$route.query.status)) {
+          if(this.logTimer) clearTimeout(this.logTimer);
+          this.logTimer = setTimeout(async () => await this.getLogs(jobhistory), 2000);
+        }
+      }
+    },
     // Get historical details(获取历史详情)
     async initHistory(jobId) {
       try {
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
-        const executionCode = option.executionCode;
+        // const executionCode = option.executionCode;
         this.jobhistoryTask = option
         this.script.runType = option.runType
         this.yarnAddress = option.yarnAddress
-        this.codes = { code: executionCode }
+        // this.codes = { code: executionCode }
         if (!jobhistory.task.logPath) {
           const errCode = jobhistory.task.errCode
             ? `\n${this.$t('message.linkis.errorCode')}：${
@@ -398,37 +444,8 @@ export default {
           this.fromLine = 1
           return
         }
-        const params = {
-          path: jobhistory.task.logPath
-        }
-        if (this.$route.query.proxyUser) {
-          params.proxyUser = this.$route.query.proxyUser
-        }
-        let openLog = {}
-        if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
-          const tempParams = {
-            fromLine: this.fromLine,
-            size: -1,
-          }
-          openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
-        } else {
-          openLog = await api.fetch('/filesystem/openLog', params, 'get')
-        }
-        if (openLog) {
-          const log = { all: '', error: '', warning: '', info: '' }
-          const convertLogs = util.convertLog(openLog.log)
-          Object.keys(convertLogs).forEach(key => {
-            if (convertLogs[key]) {
-              log[key] += convertLogs[key] + '\n'
-            }
-          })
-          this.logs = log
-          this.fromLine = log['all'].split('\n').length
-        }
-        this.$nextTick(() => {
-          this.$refs.logRef.fold();
-          this.foldFlag = true;
-        })
+        await this.getLogs(jobhistory);
+        
         this.isLoading = false
       } catch (errorMsg) {
         window.console.error(errorMsg)
@@ -561,10 +578,10 @@ export default {
   top: 0;
   right: 20px;
 }
-/deep/ .table-div {
+::v-deep .table-div {
   height: 100% !important;
 }
-/deep/ .log {
+::v-deep .log {
     height: calc(100% - 70px)
 }
 </style>

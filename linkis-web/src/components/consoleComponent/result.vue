@@ -739,7 +739,7 @@ export default {
 .result-normal-table .columnClass {
   height: 30px;
   line-height: 1.25;
-  /deep/.ivu-table-cell {
+  ::v-deep .ivu-table-cell {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

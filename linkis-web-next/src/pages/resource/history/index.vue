@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-  <template>
+<template>
     <FForm layout="inline" :span="4">
         <FFormItem
             :label="t('message.linkis.tableColumns.instanceName')"

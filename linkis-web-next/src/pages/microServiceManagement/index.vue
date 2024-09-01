@@ -56,7 +56,6 @@
     </FForm>
     <f-table
         :data="dataList"
-        class="table"
         :rowKey="(row: Record<string, number | string>) => row.instance"
         :emptyText="t('message.linkis.noDataText')"
     >

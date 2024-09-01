@@ -102,11 +102,30 @@ const routes: Array<RouteRecordRaw> = [
                         children: [],
                     },
                     {
+                        name: 'ECMManagement',
+                        path: '/console/ECMManagement',
+                        component: () => import('@/pages/ECMManagement/index.vue'),
+                        meta: {
+                            title: 'ECMManagement',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
+                    {
+                        name: 'Engines',
+                        path: '/console/ECMManagement/engines/:instance',
+                        component: () => import('@/pages/ECMManagement/engine.vue'),
+                        meta: {
+                            title: 'ECM Engines',
+                            publicPage: true,
+                        },
+                    },
+                    {
                         name: 'microServiceManagement',
                         path: '/console/microServiceManagement',
                         component: () => import('@/pages/microServiceManagement/index.vue'),
                         meta: {
-                            title: 'Micro Service Management',
+                            title: 'Microservice Management',
                             publicPage: true,
                         },
                         children: [],

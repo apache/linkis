@@ -104,7 +104,7 @@ const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.ECMManage',
         icon: '/sidebar/ECMManage.svg',
-        path: '/xx',
+        path: '/console/ECMManagement',
     },
     {
         title: 'message.linkis.sideNavList.function.children.microserviceManage',

@@ -122,13 +122,35 @@
           type="primary"
           @click="clickAdvance"
         >{{ showAdvance ? $t('message.linkis.hideAdvancedSearch') :  $t('message.linkis.showAdvancedSearch') }}</Button>
+        <Dropdown placement="bottom-start" trigger="click">
+          <Button
+            class="search-btn"
+            type="primary"
+          >{{$t('message.linkis.tableSetting')}}</Button>
+          <template #list>
+            <DropdownMenu>
+              <CheckboxGroup v-model="visibleColumns" style="display: flex; flex-direction: column; padding: 10px 10px 0;">
+                <Checkbox :label="item.title" v-for="(item, index) in column" v-show="item.title" :key="index" style="margin-bottom: 10px">
+                  <span>{{item.title}}</span>
+                </Checkbox>
+              </CheckboxGroup>
+            </DropdownMenu>
+          </template>
+        </Dropdown>
+        <Button
+          class="search-btn"
+          type="primary"
+          @click="download"
+          :loading="downloading"
+        >{{ $t('message.linkis.downloadLog') }}</Button>
       </div>
+      
     </div>
     <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight +'px'}">
       <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
       <history-table
         v-if="!isLoading"
-        :columns="column"
+        :columns="filteredColumns"
         :data="list"
         :height="moduleHeight"
         :no-data-text="$t('message.linkis.noDataText')"
@@ -160,6 +182,7 @@ import storage from '@/common/helper/storage'
 import table from '@/components/virtualTable'
 import mixin from '@/common/service/mixin'
 import api from '@/common/service/api'
+import axios from 'axios'
 export default {
   name: 'GlobalHistory',
   components: {
@@ -171,6 +194,7 @@ export default {
     return {
       list: [],
       column: [],
+      visibleColumns: [],
       getEngineTypes: [],
       isLoading: false,
       showAdvance: false,
@@ -190,6 +214,18 @@ export default {
       },
       inputType: 'number',
       shortcutOpt: {
+        disabledDate(date) {
+          if (!date) {
+            return false;
+          }
+
+          const now = new Date();
+          const ninetyDaysAgo = new Date(now);
+          ninetyDaysAgo.setDate(now.getDate() - 90);
+          ninetyDaysAgo.setHours(0, 0, 0, 0);
+
+          return date.valueOf() < ninetyDaysAgo.valueOf() || date.valueOf() > now.valueOf();
+        },
         shortcuts: [
           {
             text: this.$t('message.linkis.shortcuts.week'),
@@ -294,7 +330,8 @@ export default {
       isAdminModel: false,
       moduleHeight: 300,
       lastChooseDate: ['', ''],
-      curDateTime: ['', '']
+      curDateTime: ['', ''],
+      downloading: false
     }
   },
   async created() {
@@ -314,6 +351,29 @@ export default {
 
   },
   mounted() {
+    if(sessionStorage.getItem('last-page-columns')) {
+      this.visibleColumns = JSON.parse(sessionStorage.getItem('last-page-columns'))
+    } else {
+      this.visibleColumns = this.getColumns().filter(
+        (item) => {
+          return [
+            'checked',
+            'control',
+            'taskID',
+            'source',
+            'executionCode',
+            'status',
+            'costTime',
+            'failedReason',
+            'requestApplicationName',
+            'createdTime',
+            'isReuse',
+          ].includes(item.key)
+        }
+      ).map(item => item.title);
+      this.visibleColumns.push(this.$t('message.linkis.tableColumns.user'));
+    }
+    
     this.init()
     this.moduleHeight = this.$parent.$el.clientHeight - 220
     // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
@@ -331,13 +391,92 @@ export default {
       sessionStorage.removeItem('last-searchbar-status');
       sessionStorage.removeItem('last-pageSetting-status');
       sessionStorage.removeItem('last-searchbar-advance');
+      sessionStorage.removeItem('last-page-columns');
     }
     next();
   },
   activated() {
     this.init()
   },
+  computed: {
+    filteredColumns() {
+      return this.column.filter(item => this.visibleColumns.includes(item.title));
+    }
+  },
   methods: {
+    async download() {
+      try {
+        
+        if(this.downloading) return;
+        if(this.pageSetting.total >= 10000) {
+          this.$Modal.confirm({
+            title: this.$t('message.linkis.countinueDownload'),
+            content: this.$t('message.linkis.exceed10000'),
+            onOk: async () => {
+              try {
+                const params = this.getParams();
+                params.pageNow = 1;
+                params.pageSize = 10000;
+                this.downloading = true;
+                const res = await axios({
+                  url: process.env.VUE_APP_MN_CONFIG_PREFIX || `http://${window.location.host}/api/rest_j/v1/jobhistory/download-job-list`,
+                  method: 'get',
+                  responseType: 'blob',
+                  params,
+                  headers: {
+                    'Content-Language': localStorage.getItem('locale') || 'zh-CN'
+                  }
+                })
+                
+                let blob = res.data
+                let url = window.URL.createObjectURL(blob);
+                let l = document.createElement('a')
+                l.href = url;
+                l.download = 'ResultOfJobHistory';
+                document.body.appendChild(l);
+                l.click()
+                window.URL.revokeObjectURL(url)
+                this.downloading = false
+                this.$Message.success(this.$t('message.linkis.downloadSucceed'))
+              } catch (err) {
+                window.console.warn(err)
+                this.downloading = false;
+              }
+            
+            }
+          })
+        } else {
+          this.downloading = true
+          const params = this.getParams();
+          params.pageNow = 1;
+          params.pageSize = 10000;
+          const res = await axios({
+            url: process.env.VUE_APP_MN_CONFIG_PREFIX || `http://${window.location.host}/api/rest_j/v1/jobhistory/download-job-list`,
+            method: 'get',
+            responseType: 'blob',
+            params,
+            headers: {
+              'Content-Language': localStorage.getItem('locale') || 'zh-CN'
+            }
+          })
+          let blob = res.data
+          let url = window.URL.createObjectURL(blob);
+          let l = document.createElement('a')
+          l.href = url;
+          l.download = 'ResultOfJobHistory';
+          document.body.appendChild(l);
+          l.click()
+          window.URL.revokeObjectURL(url)
+          this.downloading = false
+          this.$Message.success(this.$t('message.linkis.downloadSucceed'))
+        }
+       
+      } catch(err) {
+        this.downloading = false
+      }
+      
+        
+    },
     getHeight() {
       this.moduleHeight = this.$parent.$el.clientHeight - 228
       if(this.showAdvance) {
@@ -424,6 +563,7 @@ export default {
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)
       storage.set('last-searchbar-advance', this.showAdvance)
+      storage.set('last-page-columns', this.visibleColumns)
       // Jump to view the history details page(跳转查看历史详情页面)
       this.$router.push({
         path: '/console/viewHistory',
@@ -514,6 +654,7 @@ export default {
         this.pageSetting.current = 1;
       }
       const params = this.getParams()
+      
       this.column = this.getColumns()
       api
         .fetch('/jobhistory/list', params, 'get')
@@ -551,6 +692,15 @@ export default {
             runType: item.runType,
             instance: item.instance,
             engineInstance: item.engineInstance,
+            isReuse: item.isReuse === null 
+              ? '' 
+              : item.isReuse 
+                ? this.$t('message.linkis.yes') 
+                : this.$t('message.linkis.no'),
+            requestSpendTime: item.requestSpendTime,
+            requestStartTime: item.requestStartTime,
+            requestEndTime: item.requestEndTime,
+            metrics: item.metrics
           }
         })
       }
@@ -559,7 +709,12 @@ export default {
           disabled:
               ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
           failedReason: getFailedReason(item),
-          source: item.sourceTailor
+          source: item.sourceTailor,
+          isReuse: item.isReuse === null 
+            ? '' 
+            : item.isReuse 
+              ? this.$t('message.linkis.yes') 
+              : this.$t('message.linkis.no'),
         })
       })
     },
@@ -647,6 +802,48 @@ export default {
           }
         },
         {
+          title: this.$t('message.linkis.tableColumns.isReuse'),
+          key: 'isReuse',
+          align: 'center',
+          width: 100,
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestStartTime'),
+          key: 'requestStartTime',
+          align: 'center',
+          width: 150,
+          // overflow to show(溢出以...显示)
+          renderType: 'formatTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestEndTime'),
+          key: 'requestEndTime',
+          align: 'center',
+          width: 150,
+          renderType: 'formatTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestSpendTime'),
+          key: 'requestSpendTime',
+          align: 'center',
+          width: 100,
+          // overflow to show(溢出以...显示)
+          renderType: 'convertTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.metrix'),
+          key: 'metrics',
+          align: 'center',
+          width: 300,
+          // overflow to show(溢出以...显示)
+          ellipsis: true
+          // renderType: 'tooltip',
+        },
+        {
           title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
           key: 'requestApplicationName',
           align: 'center',
@@ -692,6 +889,7 @@ export default {
         if (this.isAdminModel) {
           this.searchBar.id = null
           this.searchBar.proxyUser = ''
+
         }
         this.isAdminModel = !this.isAdminModel
         this.search(isInit)
@@ -793,4 +991,6 @@ export default {
   }
 }
 </script>
-<style src="./index.scss" lang="scss"></style>
+<style src="./index.scss" lang="scss">
+
+</style>

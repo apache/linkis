@@ -37,21 +37,21 @@
                   <span>{{item.name}}</span>
                   <div class="sub-menu-row">
                     <Icon
-                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
+                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
                       type="ios-arrow-down" class="user-icon" />
                     <Icon
-                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
+                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
                       type="ios-arrow-up" class="user-icon" />
                   </div>
                 </div>
                 <div
-                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12') && !item.showSubMenu">
+                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13') && !item.showSubMenu">
                   <div @click.stop="">
                     <CellGroup
                       v-for="(item3, index3) in getChildMap(item.key).children"
                       :key="index3" @on-click="clickToRoute">
                       <div
-                        v-if="isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7'].includes(item3.key)">
+                        v-if="isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7', '1-13-1'].includes(item3.key)">
                         <Cell :key="index3" :class="{ crrentItem: crrentItem === item3.key }"
                           :title="item3.name" :name="item3.key" />
                       </div>
@@ -116,6 +116,26 @@ import storage from '@/common/helper/storage'
 import api from '@/common/service/api'
 export default {
   name: 'Layout',
+  mounted() {
+    window.addEventListener('message', (e) => {
+      if(e.data === 'Unauhorized') {
+        this.$emit('clear-session');
+        storage.set('need-refresh-proposals-hql', true);
+        storage.set('need-refresh-proposals-python', true);
+        this.$router.push({ path: '/login' });
+      }
+    })
+  },
+  unmounted() {
+    window.removeEventListener('message', (e) => {
+      if(e.data === 'Unauhorized') {
+        this.$emit('clear-session');
+        storage.set('need-refresh-proposals-hql', true);
+        storage.set('need-refresh-proposals-python', true);
+        this.$router.push({ path: '/login' });
+      }
+    })
+  },
   data() {
     return {
       crrentItem: '1-1',
@@ -184,6 +204,13 @@ export default {
             showSubMenu: true,
           },
           {
+            key: '1-13',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.taskResourceManage'
+            ),
+            showSubMenu: true,
+          },
+          {
             key: '1-10',
             name: this.$t(
               'message.linkis.sideNavList.function.children.basedataManagement'
@@ -198,6 +225,7 @@ export default {
             ),
             showSubMenu: true,
           },
+          // {key: '1-13', name: this.$t('message.linkis.sideNavList.function.children.pythonModule'), path: '/console/pythonModule' },
         ],
       },
       datasourceNavList: {
@@ -324,6 +352,7 @@ export default {
           },
           {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
           {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
+          
         ],
       },
       opsTool: {
@@ -338,6 +367,21 @@ export default {
               'message.linkis.sideNavList.function.children.userConfig'
             ),
             path: '/console/userConfig',
+          },
+        ],
+      },
+      taskResourceManage: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.children.taskResourceManage'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {
+            key: '1-13-1',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.pythonModule'
+            ),
+            path: '/console/pythonModule',
           },
         ],
       },
@@ -395,6 +439,7 @@ export default {
         '1-9': this.urmSideNavList,
         '1-10': this.basedataNavList,
         '1-12': this.opsTool,
+        '1-13': this.taskResourceManage
       }
       return map[key]
     },
@@ -409,14 +454,19 @@ export default {
           !this.sideNavList.children[7].showSubMenu
         return
       }
-      if (index === '1-10') {
+      if (index === '1-13') {
         this.sideNavList.children[8].showSubMenu =
           !this.sideNavList.children[8].showSubMenu
         return
       }
+      if (index === '1-10') {
+        this.sideNavList.children[9].showSubMenu =
+          !this.sideNavList.children[9].showSubMenu
+        return
+      }
       if (index === '1-12') {
-        this.sideNavList.children[10].showSubMenu =
-          !this.sideNavList.children[10].showSubMenu
+        this.sideNavList.children[11].showSubMenu =
+          !this.sideNavList.children[11].showSubMenu
         return
       }
       // index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
@@ -438,33 +488,37 @@ export default {
           activedCellParent = this.urmSideNavList
           this.sideNavList.children[7].showSubMenu = false
           break
+        case '1-13-1':
+          activedCellParent = this.taskResourceManage
+          this.sideNavList.children[8].showSubMenu = false
+          break
         case '1-10-5':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-6':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-7':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-4':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-3':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-2':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-1':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         default:
           activedCellParent = this.sideNavList

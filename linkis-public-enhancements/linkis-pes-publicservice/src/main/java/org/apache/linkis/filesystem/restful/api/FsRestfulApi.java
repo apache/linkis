@@ -1470,6 +1470,7 @@ public class FsRestfulApi {
     if (!fileSystem.exists(fsPath)) {
       try {
         fileSystem.mkdirs(fsPath);
+        fileSystem.setPermission(fsPath, "770");
       } catch (IOException e) {
         return Message.error("创建目录失败：" + e.getMessage());
       }

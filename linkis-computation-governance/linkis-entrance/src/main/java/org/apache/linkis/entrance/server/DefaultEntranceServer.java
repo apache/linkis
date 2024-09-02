@@ -100,7 +100,7 @@ public class DefaultEntranceServer extends EntranceServer {
     } else {
       if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED()) {
         logger.warn("Entrance exit to update and clean all ConsumeQueue task instances");
-        updateAllNotExecutionTaskInstances(false);
+        //updateAllNotExecutionTaskInstances(false);
       }
 
       logger.warn("Entrance exit to stop all job");

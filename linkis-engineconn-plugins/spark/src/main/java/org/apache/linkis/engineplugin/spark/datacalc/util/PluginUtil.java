@@ -49,7 +49,6 @@ public class PluginUtil {
     classMap.put("rocketmq", RocketmqSource.class);
     classMap.put("mongo", MongoSource.class);
     classMap.put("elasticsearch", ElasticsearchSource.class);
-    classMap.put("solr", SolrSource.class);
     classMap.put("kafka", KafkaSource.class);
     classMap.put("starrocks", StarrocksSource.class);
     classMap.put("doris", DorisSource.class);

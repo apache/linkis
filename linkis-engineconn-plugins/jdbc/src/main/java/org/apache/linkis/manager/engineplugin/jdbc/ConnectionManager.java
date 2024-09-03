@@ -216,12 +216,6 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
-    if (connectionTimeout > 0) {
-      datasource.setConnectTimeout(connectionTimeout);
-    }
-    if (socketTimeout > 0) {
-      datasource.setSocketTimeout(socketTimeout);
-    }
     if (queryTimeout > 0) {
       datasource.setQueryTimeout(queryTimeout);
     }

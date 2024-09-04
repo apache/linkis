@@ -186,8 +186,10 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     logger.error(msg)
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Failed))
+    } {
       close()
-    }(stopOnceExecutor(msg))
+      stopOnceExecutor(msg)
+    }
     true
   }
 
@@ -197,8 +199,10 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     logger.warn(msg)
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Success))
+    } {
       close()
-    }(stopOnceExecutor(msg))
+      stopOnceExecutor(msg)
+    }
     true
   }
 

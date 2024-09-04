@@ -249,6 +249,10 @@ class DefaultEngineCreateService
     )
     engineNode.setTicketId(resourceTicketId)
 
+    val params: String = BDPJettyServerHelper.gson.toJson(engineCreateRequest.getProperties)
+    logger.info(s"Task: $taskId finished to create  engineConn with params: $params")
+    engineNode.setParams(params)
+
     // 7.Update persistent information: including inserting engine/metrics
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)

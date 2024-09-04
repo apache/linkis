@@ -25,17 +25,13 @@ import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.{
-  AMEngineNode,
-  EngineNode,
-  RMNode,
-  ScoreServiceInstance
-}
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
+import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
+import org.apache.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceNode}
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
   EngineOperateResponse
 }
+import org.apache.linkis.manager.dao.NodeManagerMapper
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{
@@ -56,7 +52,6 @@ import java.lang.reflect.UndeclaredThrowableException
 import java.util
 
 import scala.collection.JavaConverters._
-import scala.tools.scalap.scalax.util.StringUtil
 
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
@@ -78,6 +73,9 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
 
   @Autowired
   private var resourceManager: ResourceManager = _
+
+  @Autowired
+  private var nodeManagerMapper: NodeManagerMapper = _
 
   @Autowired
   private var labelManagerPersistence: LabelManagerPersistence = _
@@ -207,16 +205,20 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     if (null == scoreServiceInstances || scoreServiceInstances.isEmpty) {
       return null
     }
+    val instances: util.List[String] = new util.ArrayList[String]()
     val engineNodes = scoreServiceInstances.map { scoreServiceInstances =>
       val engineNode = new AMEngineNode()
       engineNode.setScore(scoreServiceInstances.getScore)
       engineNode.setServiceInstance(scoreServiceInstances.getServiceInstance)
+      instances.add(scoreServiceInstances.getServiceInstance.getInstance)
       engineNode
     }
-    // 1. add nodeMetrics 2 add RM info
+    // 1. add nodeMetrics 2 add RM info 3 add params
     val resourceInfo =
       resourceManager.getResourceInfo(scoreServiceInstances.map(_.getServiceInstance))
     val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodes.toList.asJava)
+    val persistenceNodes: util.List[PersistenceNode] =
+      nodeManagerMapper.getNodesByInstances(instances)
     engineNodes.map { engineNode =>
       val optionMetrics =
         nodeMetrics.asScala.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
@@ -228,6 +230,15 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
 
       optionMetrics.foreach(metricsConverter.fillMetricsToNode(engineNode, _))
       optionRMNode.foreach(rmNode => engineNode.setNodeResource(rmNode.getNodeResource))
+
+      val maybeNode: Option[PersistenceNode] =
+        persistenceNodes.asScala.find(
+          _.getInstance.equals(engineNode.getServiceInstance.getInstance)
+        )
+      val persistenceNode: PersistenceNode = maybeNode.get
+      if (persistenceNode != null) {
+        engineNode.setParams(persistenceNode.getParams)
+      }
 
       engineNode
     }

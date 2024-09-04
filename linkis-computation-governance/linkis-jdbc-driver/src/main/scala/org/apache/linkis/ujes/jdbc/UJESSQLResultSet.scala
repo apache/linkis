@@ -20,17 +20,38 @@ package org.apache.linkis.ujes.jdbc
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ujes.client.request.ResultSetAction
 import org.apache.linkis.ujes.client.response.ResultSetResult
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.ujes.client.utils.UJESClientUtils
+
+import org.apache.commons.lang3.StringUtils
 
 import java.{sql, util}
 import java.io.{InputStream, Reader}
 import java.math.MathContext
 import java.net.URL
-import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, RowId, SQLWarning, SQLXML, Statement, Time, Timestamp}
+import java.sql.{
+  Blob,
+  Clob,
+  Connection,
+  Date,
+  NClob,
+  Ref,
+  ResultSet,
+  RowId,
+  SQLWarning,
+  SQLXML,
+  Statement,
+  Time,
+  Timestamp
+}
 import java.util.{Calendar, Locale}
+
 import org.joda.time.DateTimeZone
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder, DateTimeParser, ISODateTimeFormat}
+import org.joda.time.format.{
+  DateTimeFormat,
+  DateTimeFormatterBuilder,
+  DateTimeParser,
+  ISODateTimeFormat
+}
 
 class UJESSQLResultSet(
     resultSetList: Array[String],

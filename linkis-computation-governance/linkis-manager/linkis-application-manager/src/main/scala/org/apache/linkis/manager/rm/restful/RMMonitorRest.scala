@@ -342,10 +342,9 @@ class RMMonitorRest extends Logging {
 
       // return labels
       val labels: util.List[Label[_]] = node.getLabels
-      val labelJson: String = BDPJettyServerHelper.gson.toJson(labels)
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
-      record.put("labels", labelJson)
+      record.put("labels", labels)
       if (node.getNodeResource != null) {
         if (node.getNodeResource.getLockedResource != null) {
           record.put("preUsedResource", node.getNodeResource.getLockedResource)

@@ -28,7 +28,6 @@ import com.google.gson.{Gson, JsonObject}
 
 object UJESClientUtils {
 
-
   val gson: Gson = new Gson()
 
   def toEngineType(engineType: String): EngineType = engineType match {

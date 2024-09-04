@@ -17,19 +17,16 @@
 
 package org.apache.linkis.common.utils;
 
-import org.apache.linkis.common.conf.CommonVars;
-import org.apache.linkis.common.conf.CommonVars$;
-import org.apache.linkis.common.exception.LinkisSecurityException;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.common.exception.LinkisSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +76,8 @@ public abstract class SecurityUtils {
 
   private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
 
-  private static final String BLACKLIST_REGEX = "autodeserialize|allowloadlocalinfile|allowurlinlocalinfile|allowloadlocalinfileinpath";
+  private static final String BLACKLIST_REGEX =
+      "autodeserialize|allowloadlocalinfile|allowurlinlocalinfile|allowloadlocalinfileinpath";
 
   /**
    * check mysql connection params
@@ -121,7 +119,8 @@ public abstract class SecurityUtils {
     // 3. Check params. Mainly vulnerability parameters. Note the url encoding
     checkParams(extraParams);
 
-    // 4. Check url security, especially for the possibility of malicious characters appearing on the host
+    // 4. Check url security, especially for the possibility of malicious characters appearing on
+    // the host
     checkUrlIsSafe(url);
   }
 
@@ -287,7 +286,7 @@ public abstract class SecurityUtils {
       }
     }
   }
-  
+
   /**
    * check url is safe
    *
@@ -295,26 +294,27 @@ public abstract class SecurityUtils {
    */
   public static void checkUrlIsSafe(String url) {
     try {
-        String lowercaseURL = url.toLowerCase();
-        
-        Pattern pattern = Pattern.compile(BLACKLIST_REGEX);
-        Matcher matcher = pattern.matcher(lowercaseURL);
-        
-        StringBuilder foundKeywords = new StringBuilder();
-        while (matcher.find()) {
-            if (foundKeywords.length() > 0) {
-                foundKeywords.append(", ");
-            }
-            foundKeywords.append(matcher.group());
-        }
-        
+      String lowercaseURL = url.toLowerCase();
+
+      Pattern pattern = Pattern.compile(BLACKLIST_REGEX);
+      Matcher matcher = pattern.matcher(lowercaseURL);
+
+      StringBuilder foundKeywords = new StringBuilder();
+      while (matcher.find()) {
         if (foundKeywords.length() > 0) {
-            throw new LinkisSecurityException(35000, "url contains blacklisted characters: " + foundKeywords);
+          foundKeywords.append(", ");
         }
+        foundKeywords.append(matcher.group());
+      }
+
+      if (foundKeywords.length() > 0) {
+        throw new LinkisSecurityException(
+            35000, "url contains blacklisted characters: " + foundKeywords);
+      }
     } catch (Exception e) {
-        throw new LinkisSecurityException(35000, "error occurred during url security check: " + e);
+      throw new LinkisSecurityException(35000, "error occurred during url security check: " + e);
     }
-}
+  }
 
   private static Map<String, Object> parseMysqlUrlParamsToMap(String paramsUrl) {
     if (StringUtils.isBlank(paramsUrl)) {

@@ -42,6 +42,9 @@ public class NebulaConfiguration {
   public static final CommonVars<String> NEBULA_PASSWORD =
       CommonVars.apply("linkis.nebula.password", "nebula");
 
+  public static final CommonVars<String> NEBULA_SPACE =
+          CommonVars.apply("linkis.nebula.space", "nebula");
+
   public static final CommonVars<Boolean> NEBULA_RECONNECT_ENABLED =
       CommonVars.apply(
           "linkis.nebula.reconnect.enabled",

@@ -17,29 +17,34 @@
 
 package org.apache.linkis.engineconn.computation.executor.hook
 
-import org.apache.commons.lang3.StringUtils
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.linkis.common.conf.Configuration.IS_VIEW_FS_ENV
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.hook.EngineConnHook
-import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
+import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.udf.UDFClientConfiguration
 import org.apache.linkis.udf.api.rpc.{RequestPythonModuleProtocol, ResponsePythonModuleProtocol}
 import org.apache.linkis.udf.entity.PythonModuleInfoVO
 
+import org.apache.commons.lang3.StringUtils
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
+
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
@@ -241,10 +246,14 @@ class PythonEngineHook extends PythonModuleLoadEngineConnHook {
       if (!tmpDir.endsWith("/")) {
         tmpDir += "/"
       }
-      val destPath: String = tmpDir + new java.io.File(path).getName
+      val fileName: String = new java.io.File(path).getName
+      val destPath: String = tmpDir + fileName
       val config: Configuration = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER.getValue)
       val fs: FileSystem = HDFSUtils.getHDFSUserFileSystem(user, config)
       fs.copyToLocalFile(new Path(path), new Path("file://" + destPath))
+      if (fileName.endsWith("zip")) {
+        tmpDir += fileName
+      }
       loadCode = s"import sys; sys.path.append('${tmpDir}')"
       logger.info(s"5 load local python code: ${loadCode} in path: $destPath")
     })

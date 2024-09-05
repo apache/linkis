@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.utils.GovernanceUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.PYTHON_VERSION_KEY
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
@@ -69,7 +70,7 @@ class PythonSession extends Logging {
   private def getPyVersion(): String = {
     if (null != EngineConnServer.getEngineCreationContext.getOptions) {
       EngineConnServer.getEngineCreationContext.getOptions
-        .getOrDefault("python.version", "python")
+        .getOrDefault(PYTHON_VERSION_KEY, "python")
     } else {
       PythonEngineConfiguration.PYTHON_VERSION.getValue
     }

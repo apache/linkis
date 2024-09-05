@@ -21,6 +21,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.hook.EngineConnHook
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.PYTHON_VERSION_KEY
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.executor.PythonSession
 
@@ -36,7 +37,7 @@ class PythonVersionEngineHook extends EngineConnHook with Logging {
     val params =
       if (engineCreationContext.getOptions == null) new util.HashMap[String, String]()
       else engineCreationContext.getOptions
-    _pythonVersion = params.getOrDefault("python.version", "python3")
+    _pythonVersion = params.getOrDefault(PYTHON_VERSION_KEY, "python3")
     _pythonExtraPackage = params
       .getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip")
       .toString

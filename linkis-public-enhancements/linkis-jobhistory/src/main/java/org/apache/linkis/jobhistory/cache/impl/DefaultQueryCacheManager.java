@@ -20,7 +20,6 @@ package org.apache.linkis.jobhistory.cache.impl;
 import org.apache.linkis.jobhistory.cache.QueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
-import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -32,14 +31,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
@@ -187,24 +181,24 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
 
   @Override
   public void refreshUndoneTask() {
-    PageHelper.startPage(1, 10);
-    List<JobHistory> queryTasks = null;
+    List<Integer> queryTasks = null;
+    Date eDate = new Date(System.currentTimeMillis());
+    Date sDate = DateUtils.addDays(eDate, -1);
     try {
-
-      Date eDate = new Date(System.currentTimeMillis());
-      Date sDate = DateUtils.addDays(eDate, -1);
       queryTasks =
           jobHistoryMapper.searchWithIdOrderAsc(
               sDate, eDate, undoneTaskMinId, Arrays.asList("Running", "Inited", "Scheduled"));
-    } finally {
-      PageHelper.clearPage();
+    } catch (Exception e) {
+      logger.warn("Failed to refresh undone tasks", e);
     }
-
-    PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
-    List<JobHistory> list = pageInfo.getList();
-    if (!list.isEmpty()) {
-      undoneTaskMinId = list.get(0).getId();
+    if (null != queryTasks && !queryTasks.isEmpty()) {
+      undoneTaskMinId = queryTasks.get(0).longValue();
       logger.info("Refreshing undone tasks, minimum id: {}", undoneTaskMinId);
+    } else {
+      Integer maxID = jobHistoryMapper.maxID(sDate, eDate, undoneTaskMinId);
+      if (null != maxID && maxID > undoneTaskMinId) {
+        undoneTaskMinId = maxID.longValue();
+      }
     }
   }
 

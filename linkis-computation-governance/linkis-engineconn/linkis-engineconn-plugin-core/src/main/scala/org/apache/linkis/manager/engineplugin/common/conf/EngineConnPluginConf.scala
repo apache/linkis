@@ -35,4 +35,7 @@ object EngineConnPluginConf {
     "org.apache.linkis.engineconn.launch.EngineConnServer"
   )
 
+  val PYTHON_VERSION_KEY: String = "python.version"
+  val SPARK_PYTHON_VERSION_KEY: String = "spark.python.version"
+
 }

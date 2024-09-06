@@ -54,6 +54,11 @@ object Constants {
     .split(",")
     .toSet[String]
 
+  val ECC_DEFAULT_RECEIVERS = CommonVars.properties
+    .getProperty("linkis.alert.ecc.receiver.default", "v_rantao")
+    .split(",")
+    .toSet[String]
+
   val ALERT_IMS_MAX_LINES = CommonVars[Int]("linkis.alert.content.max.lines", 8).getValue
 
   val TIMEOUT_INTERVALS_SECONDS =

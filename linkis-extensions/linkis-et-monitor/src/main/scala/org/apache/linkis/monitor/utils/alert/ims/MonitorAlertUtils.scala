@@ -17,24 +17,21 @@
 
 package org.apache.linkis.monitor.utils.alert.ims
 
-import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.utils.alert.AlertDesc
 
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.exception.ExceptionUtils
-
-import java.io.{BufferedReader, File, FileInputStream, InputStream, InputStreamReader}
+import java.io._
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Properties
-
 import scala.collection.JavaConverters._
-
-import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 object MonitorAlertUtils extends Logging {
 
@@ -118,6 +115,26 @@ object MonitorAlertUtils extends Logging {
           set
         }
 
+        val eccReceivers = {
+          val set: util.Set[String] = new util.HashSet[String]
+          if (StringUtils.isNotBlank(data.eccReceivers)) {
+            data.eccReceivers.split(",").map(r => set.add(r))
+          }
+          if (!repaceParams.containsKey("$eccAlertUser")) {
+            Constants.ECC_DEFAULT_RECEIVERS.foreach(e => {
+              if (StringUtils.isNotBlank(e)) {
+                set.add(e)
+              }
+            })
+          } else {
+            set.add(repaceParams.get("$eccAlertUser"))
+          }
+          if (StringUtils.isNotBlank(repaceParams.get("eccReceiver"))) {
+            repaceParams.get("eccReceiver").split(",").map(r => set.add(r))
+          }
+          set
+        }
+
         val subSystemId = repaceParams.getOrDefault("subSystemId", Constants.ALERT_SUB_SYSTEM_ID)
         val alertTitle = "集群[" + Constants.LINKIS_CLUSTER_NAME + "]" + repaceParams
           .getOrDefault("title", data.alertTitle)
@@ -147,7 +164,8 @@ object MonitorAlertUtils extends Logging {
               }
               set
             },
-            receivers
+            receivers,
+            eccReceivers
           )
         )
         val realK = StringUtils.substringAfter(k, prefix)

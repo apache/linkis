@@ -233,7 +233,10 @@ public class UJESSQLResultSetTest {
 
     UJESSQLResultSet ujessqlResultSet =
         new UJESSQLResultSet(
-            new String[] {"path1", "path2", "path3", "path4"}, new LinkisSQLStatement(linkisSQLConnection), 0, 0);
+            new String[] {"path1", "path2", "path3", "path4"},
+            new LinkisSQLStatement(linkisSQLConnection),
+            0,
+            0);
 
     // 查询
     ujessqlResultSet.next();

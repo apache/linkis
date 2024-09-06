@@ -77,6 +77,7 @@ class UJESSQLResultSet(
   private var path: String = _
   private var metaData: util.List[util.Map[String, String]] = _
   private val statement: LinkisSQLStatement = ujesStatement
+  private var nextResultSet: UJESSQLResultSet = _
 
   private val connection: LinkisSQLConnection =
     ujesStatement.getConnection.asInstanceOf[LinkisSQLConnection]
@@ -103,7 +104,15 @@ class UJESSQLResultSet(
 
   private def getResultSetPath(resultSetList: Array[String]): String = {
     if (resultSetList.length > 0) {
-      resultSetList(resultSetList.length - 1)
+      val enableMultiResult = connection.getProps.getProperty(UJESSQLDriverMain.ENABLE_MULTI_RESULT)
+      enableMultiResult match {
+        case "Y" =>
+          // 配置开启时，返回首个结果集
+          resultSetList(0)
+        case _ =>
+          // 配置关闭时，返回以最后一个结果集为准
+          resultSetList(resultSetList.length - 1)
+      }
     } else {
       ""
     }
@@ -111,6 +120,12 @@ class UJESSQLResultSet(
 
   private def resultSetResultInit(): Unit = {
     if (path == null) path = getResultSetPath(resultSetList)
+    // 设置下一个结果集
+    val enableMultiResult = connection.getProps.getProperty(UJESSQLDriverMain.ENABLE_MULTI_RESULT)
+    if (resultSetList.length > 1 && "Y".equals(enableMultiResult)) {
+      this.nextResultSet =
+        new UJESSQLResultSet(resultSetList.drop(1), this.statement, maxRows, fetchSize)
+    }
     val user = connection.getProps.getProperty("user")
     if (StringUtils.isNotBlank(path)) {
       val resultAction =
@@ -271,6 +286,10 @@ class UJESSQLResultSet(
         case _ => any.asInstanceOf[String]
       }
     }
+  }
+
+  def clearNextResultSet: Any = {
+    this.nextResultSet = null
   }
 
   override def getBoolean(columnIndex: Int): Boolean = {
@@ -652,6 +671,8 @@ class UJESSQLResultSet(
     updateCurrentRow(currentRowCursor)
     true
   }
+
+  def getNextResultSet: UJESSQLResultSet = this.nextResultSet
 
   override def setFetchDirection(direction: Int): Unit = {
     throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)

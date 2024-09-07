@@ -15,27 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.protocol;
+package org.apache.linkis.rpc.message.utils;
 
-public class AbstractRetryableProtocol implements RetryableProtocol {
+import java.lang.reflect.Field;
 
-  @Override
-  public long maxPeriod() {
-    return 3000L;
-  }
+import feign.Request.Options;
 
-  @Override
-  public Class<? extends Throwable>[] retryExceptions() {
-    return new Class[] {};
-  }
+public class LoadBalancerOptionsUtils {
 
-  @Override
-  public int retryNum() {
-    return 2;
-  }
+  private static Options DEFAULT_OPTIONS = null;
 
-  @Override
-  public long period() {
-    return 1000L;
+  private static Object locker = new Object();
+
+  public static Options getDefaultOptions() throws NoSuchFieldException, IllegalAccessException {
+    if (null == DEFAULT_OPTIONS) {
+      synchronized (locker) {
+        Class<?> clazz = null;
+        Field optionField = clazz.getDeclaredField("DEFAULT_OPTIONS");
+        optionField.setAccessible(true);
+        Object o = optionField.get(clazz);
+        DEFAULT_OPTIONS = (Options) o;
+      }
+    }
+    return DEFAULT_OPTIONS;
   }
 }

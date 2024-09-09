@@ -195,3 +195,5 @@ INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hos
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('EXCHANGIS-AUTH-HhJByvaOFvSOXkoBYev', '*', '*', 'BDP', DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d'), -1, 'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('HPMS-AUTH-OmQkjRwrhFMSSNdnrsO', '*', '*', 'BDP', DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d'), -1, 'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DSM-AUTH-HhJByvaOFvSOXkoBYev', '*', '*', 'BDP', curdate(), curdate(), -1, 'LINKIS');
+
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43020','Python 进程已停止，查询失败！','python process has stopped',0);

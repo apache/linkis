@@ -52,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
                     {
                         name: 'resource',
                         path: '/console/resource',
-                        redirect: '/console/resource/manage',
+                        redirect: '/console/resource/history',
                         component: () => import('@/pages/resource/index.vue'),
                         meta: {
                             title: 'Resource',
@@ -87,6 +87,45 @@ const routes: Array<RouteRecordRaw> = [
                         component: () => import('@/pages/parameterConfig/index.vue'),
                         meta: {
                             title: 'Parameter Config',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
+                    {
+                        name: 'globalVariables',
+                        path: '/console/globalVariables',
+                        component: () => import('@/pages/globalVariables/index.vue'),
+                        meta: {
+                            title: 'Global Variables',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
+                    {
+                        name: 'ECMManagement',
+                        path: '/console/ECMManagement',
+                        component: () => import('@/pages/ECMManagement/index.vue'),
+                        meta: {
+                            title: 'ECMManagement',
+                            publicPage: true,
+                        },
+                        children: [],
+                    },
+                    {
+                        name: 'Engines',
+                        path: '/console/ECMManagement/engines/:instance',
+                        component: () => import('@/pages/ECMManagement/engine.vue'),
+                        meta: {
+                            title: 'ECM Engines',
+                            publicPage: true,
+                        },
+                    },
+                    {
+                        name: 'microServiceManagement',
+                        path: '/console/microServiceManagement',
+                        component: () => import('@/pages/microServiceManagement/index.vue'),
+                        meta: {
+                            title: 'Microservice Management',
                             publicPage: true,
                         },
                         children: [],

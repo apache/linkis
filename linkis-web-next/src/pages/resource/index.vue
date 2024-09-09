@@ -17,18 +17,24 @@
 
 <template>
     <FTabs @change="onTabChange">
-        <FTabPane name="资源管理" value="/console/resource/manage"></FTabPane>
         <FTabPane
-            name="历史管理"
+            :name="t('message.linkis.sideNavList.function.children.resourceEngineConnList')"
             value="/console/resource/history"
-            displayDirective="show"
-        >
-        </FTabPane>
+        />
+        <FTabPane
+            :name="t('message.linkis.sideNavList.function.children.resource')"
+            value="/console/resource/manage"
+        />
     </FTabs>
-    <router-view></router-view>
+    <div class="content">
+        <router-view />
+    </div>
 </template>
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const router = useRouter();
 const onTabChange = (key: string) => {
@@ -38,5 +44,9 @@ const onTabChange = (key: string) => {
 <style lang="less" scoped>
 :deep(.fes-tabs-tab-pane-wrapper) {
     display: none;
+}
+
+.content {
+    margin-top: 20px;
 }
 </style>

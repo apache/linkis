@@ -16,7 +16,7 @@
   -->
 
 <template>
-    <FTabs @change="handleChangeTab">
+    <FTabs @change="handleChangeTab" :modelValue="activeTabKey">
         <FTabPane v-for="menu in menuList" :key="menu.categoryName" :name="menu.categoryName" :value="menu.categoryName">
             <div class="card-list">
                 <template v-for="item in childCategory" :key="`${menu.categoryName}-${item.categoryName}`">
@@ -58,6 +58,7 @@ const drawerRef = ref<Ref<{ open: () => void }> | null>(null);
 const modalRef = ref<Ref<{ open: () => void }> | null>(null);
 const isLogAdmin = ref<boolean>(false);
 const isHistoryAdmin = ref<boolean>(false);
+const activeTabKey = ref();
 const menuList = ref<Array<{ categoryName: string, childCategory: Array<any> }>>([]);
 const childCategory = ref<Array<{
     categoryName: string,
@@ -138,6 +139,7 @@ const formatValidateRange = (value: any, type: string) => {
 
 const handleChangeTab = (menu: any) => {
     childCategory.value = menuList.value.find((v: any) => v.categoryName === menu)?.childCategory;
+    activeTabKey.value = menu;
 }
 
 const getCategory = async () => {
@@ -145,13 +147,11 @@ const getCategory = async () => {
     // get settings directory(获取设置目录)
     const rst = await api.fetch("/configuration/getCategory", "get");
     menuList.value = rst.Category.filter((menu: any) => menu.categoryName !== 'GlobalSettings') || [];
-    for (const menu of menuList.value) {
-        for (const category of menu.childCategory) {
-            const arr = category.categoryName.split('-');
-            const res = await getAppVariable(menu.categoryName, arr[0], arr[1]);
-            category.fullTree = res.fullTree;
-        }
-    }
+    await Promise.all(menuList.value.map((menu: any) => Promise.all(menu.childCategory.map(async (category: any) => {
+        const arr = category.categoryName.split('-');
+        const res = await getAppVariable(menu.categoryName, arr[0], arr[1]);
+        category.fullTree = res.fullTree;
+    }))))
     handleChangeTab(menuList.value?.[0].categoryName)
 }
 

@@ -15,9 +15,8 @@
   ~ limitations under the License.
   -->
 
-<template>
+  <template>
     <FDrawer
-        ref="drawerRef"
         v-model:show="show"
         placement="bottom"
         @ok="show = false"
@@ -40,7 +39,7 @@
                     </div>
                 </div>
                 <div class="title-text">
-                    {{ $t('message.linkis.jobId') }}：{{ tableRawData?.taskID }}
+                    {{ $t('message.linkis.tableColumns.engineInstance') }}：{{ engine?.serviceInstance }}
                 </div>
                 <FTabs @change="onDrawerTabChange" class="drawer-tabs" v-model="activeDrawerTabPane">
                     <template v-for="tab in tabs" :key="tab.name">
@@ -50,9 +49,7 @@
             </div>
         </template>
         <template #default>
-            <task-logs v-if="activeDrawerTabPane === 1" :task="task" :isFullScreen="isFullScreen" />
-            <task-results v-if="activeDrawerTabPane === 2" :task="task" :isFullScreen="isFullScreen" />
-            <task-details v-if="activeDrawerTabPane === 3" :task="task" :params="params" :isFullScreen="isFullScreen" />
+            <Log v-if="activeDrawerTabPane === 1" :engine="props.engine" :isFullScreen="isFullScreen" />
         </template>
     </FDrawer>
 </template>
@@ -60,60 +57,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import TaskLogs from './taskLogs.vue';
-import TaskDetails from './taskDetails.vue';
-import TaskResults from './taskResults.vue';
-import api from '@/service/api';
+import Log from './log.vue';
 
 const { t } = useI18n();
 
+const props = defineProps<{
+    engine: any,
+}>();
+
 enum TAB_PANE_VALUE {
-    'TASK_LOG' = 1,
-    'TASK_RESULT' = 2,
-    'ENGINE_LOG' = 3,
+    'ENGINE_LOG' = 1,
 }
 
 const tabs = [
-    { name: 'message.linkis.log', value: TAB_PANE_VALUE.TASK_LOG },
-    { name: 'message.linkis.result', value: TAB_PANE_VALUE.TASK_RESULT },
-    { name: 'message.linkis.detail', value: TAB_PANE_VALUE.ENGINE_LOG },
+    { name: 'message.common.log', value: TAB_PANE_VALUE.ENGINE_LOG },
 ];
 
-const activeDrawerTabPane = ref(TAB_PANE_VALUE.TASK_LOG);
+const activeDrawerTabPane = ref(TAB_PANE_VALUE.ENGINE_LOG);
 const show = ref(false);
-const tableRawData = ref<Record<string, string | number>>();
 const drawerHeight = ref(520);
-const drawerRef = ref();
-const task = ref();
-const params = ref();
 const isFullScreen = ref(false);
 
-const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
-const open = async (rawData: Record<string, string | number>) => {
-    tableRawData.value = rawData;
-    try {
-        const jobhistory = await api.fetch(`/jobhistory/${tableRawData.value.taskID}/get`, 'get')
-        task.value = jobhistory.task;
-        let url = '/linkisManager/ecinfo/ecrHistoryList?';
-        const endDate = new Date(); 
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 3);
-        url += `instance=${task.value.engineInstance}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`;
-        const rst = await api.fetch(url,'get');
-        params.value = rst.engineList[0];
-    } catch (errorMsg) {
-        window.console.error(errorMsg)
-    }
-    activeDrawerTabPane.value = TAB_PANE_VALUE.TASK_LOG;
+const open = () => {
     show.value = true;
 };
 

@@ -16,12 +16,12 @@
   -->
 
 <template>
-    <div class="label">{{ $t('message.linkis.globalTaskQuery') }}</div>
+    <div class="label">{{ t('message.linkis.globalTaskQuery') }}</div>
     <div>
         <FForm v-show="!isCheckingTaskToStop" layout="inline" :span="4">
             <FFormItem
-                :label="$t('message.linkis.columns.taskID')"
-                :props="$t('message.linkis.columns.taskID')"
+                :label="t('message.linkis.columns.taskID')"
+                :props="t('message.linkis.columns.taskID')"
             >
                 <FInput
                     v-model="formData.taskID"
@@ -30,8 +30,8 @@
                 />
             </FFormItem>
             <FFormItem
-                :label="$t('message.linkis.columns.status')"
-                :props="$t('message.linkis.columns.status')"
+                :label="t('message.linkis.columns.status')"
+                :props="t('message.linkis.columns.status')"
             >
                 <FSelect
                     v-model="formData.status"
@@ -42,13 +42,13 @@
                         v-for="(item, index) in statusList"
                         :key="index"
                         :value="item.value"
-                        :label="$t(item.label)"
+                        :label="t(item.label)"
                     />
                 </FSelect>
             </FFormItem>
             <FFormItem
-                :label="$t('message.linkis.columns.requestApplicationName')"
-                :props="$t('message.linkis.columns.requestApplicationName')"
+                :label="t('message.linkis.columns.requestApplicationName')"
+                :props="t('message.linkis.columns.requestApplicationName')"
             >
                 <FInput
                     v-model="formData.creator"
@@ -56,8 +56,8 @@
                 />
             </FFormItem>
             <FFormItem
-                :label="$t('message.linkis.columns.executeApplicationName')"
-                :props="$t('message.linkis.columns.executeApplicationName')"
+                :label="t('message.linkis.columns.executeApplicationName')"
+                :props="t('message.linkis.columns.executeApplicationName')"
             >
                 <FSelect
                     v-model="formData.executeApplicationName"
@@ -68,26 +68,26 @@
                         v-for="(item, index) in engineList"
                         :key="index"
                         :value="item.value"
-                        :label="$t(item.label)"
+                        :label="t(item.label)"
                     />
                 </FSelect>
             </FFormItem>
             <FFormItem
-                :label="$t('message.linkis.columns.createdTime')"
-                :prop="$t('message.linkis.columns.createdTime')"
+                :label="t('message.linkis.columns.createdTime')"
+                :prop="t('message.linkis.columns.createdTime')"
                 :span="8"
             >
                 <!-- 日期修改完成后需要让日期选择组件失焦 -->
                 <FDatePicker
                     type="daterange"
                     v-model="formData.timeRange"
-                    :shortcuts="$props.shortcuts"
+                    :shortcuts="props.shortcuts"
                     @focus="(e:any) => { e.target.blur() }"
                 />
             </FFormItem>
             <FFormItem
-                :label="$t('message.linkis.columns.umUser')"
-                :props="$t('message.linkis.columns.umUser')"
+                :label="t('message.linkis.columns.umUser')"
+                :props="t('message.linkis.columns.umUser')"
                 v-if="isAdminView"
             >
                 <FInput
@@ -99,16 +99,16 @@
         <div class="buttons">
             <template v-if="!isCheckingTaskToStop">
                 <FButton type="primary" @click="search">
-                    {{ $t('message.linkis.find') }}
+                    {{ t('message.linkis.find') }}
                 </FButton>
                 <FButton @click="reset">
-                    {{ $t('message.linkis.reset') }}
+                    {{ t('message.linkis.reset') }}
                 </FButton>
                 <FButton @click="switchAdmin" v-show="isLogAdmin || isHistoryAdmin">
-                    {{ isAdminView ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}
+                    {{ isAdminView ? t('message.linkis.generalView') : t('message.linkis.manageView') }}
                 </FButton>
                 <FButton @click="isCheckingTaskToStop = true">
-                    {{ $t('message.linkis.batchStop') }}
+                    {{ t('message.linkis.batchStop') }}
                 </FButton>
             </template>
         </div>
@@ -119,13 +119,13 @@
                     class="confirm-stop-button"
                     @click="confirmStop"
                 >
-                    {{ $t('message.linkis.confirmToStop') }}
+                    {{ t('message.linkis.confirmToStop') }}
                 </FButton>
                 <FButton
                     class="confirm-stop-button"
                     @click="isCheckingTaskToStop = false"
                 >
-                    {{ $t('message.linkis.cancel') }}
+                    {{ t('message.linkis.cancel') }}
                 </FButton>
             </div>
         </template>
@@ -133,7 +133,7 @@
 </template>
 
 <script lang="ts" setup>
-import { FForm, FMessage } from '@fesjs/fes-design';
+import { FMessage } from '@fesjs/fes-design';
 import { ref, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '@/service/api';

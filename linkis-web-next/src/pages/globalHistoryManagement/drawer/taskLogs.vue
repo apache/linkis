@@ -19,7 +19,7 @@
     <div class="sub-tabs">
         <FInput
             class="search-input"
-            :placeholder="$t('message.linkis.search')"
+            :placeholder="t('message.linkis.search')"
             v-model="searchText"
             @change="handleSearch"
         />
@@ -33,25 +33,24 @@
                     "
                     :value="tab.value"
                     :style="`color:${tab.color}`"
-                >
-                    <WeEditor
-                        :model-value="formattedLogs"
-                        :height="props.isFullScreen ? '85vh' : '420px'"
-                        v-if="formattedLogs !== ''"
-                    />
-                    <div v-else :style="{ height: props.isFullScreen ? '85vh' : '420px' }" class="no-log">
-                        <img src="/log/noLog.svg" />
-                        <div>{{ $t('message.linkis.noLog') }}</div>
-                    </div>
-                </FTabPane>
+                />
             </template>
         </FTabs>
+        <WeEditor
+            :model-value="formattedLogs"
+            :height="props.isFullScreen ? '85vh' : '420px'"
+            v-if="formattedLogs !== ''"
+        />
+        <div v-else :style="{ height: props.isFullScreen ? '85vh' : '420px' }" class="no-log">
+            <img src="/log/noLog.svg" />
+            <div>{{ t('message.linkis.noLog') }}</div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { trim, forEach, filter } from 'lodash';
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import WeEditor from '@/components/editor/index.vue';
 import api from '@/service/api';
@@ -160,60 +159,68 @@ const handleSearch = () => {
     formattedLogs.value = getFormattedLogs();
 }
 
+const handleInitiation = async () => {
+    if(props.task) {
+        if (!props.task.logPath) {
+            const errCode = props.task.errCode
+            ? `\n${t('message.linkis.errorCode')}：${
+                props.task.errCode
+            }`
+            : ''
+            const errDesc = props.task.errDesc
+            ? `\n${t('message.linkis.errorDescription')}：${
+                props.task.errDesc
+            }`
+            : ''
+            const info = t('message.linkis.notLog') + errCode + errDesc
+            logs.value = { all: info, error: '', warning: '', info: '' }
+            fromLine.value = 1
+            return
+        }
+        const params:any = {
+            path: props.task.logPath
+        }
+        if (storage.get('isAdminView') === 'true') {
+            params.proxyUser = props.task.umUser
+        }
+        let openLog:{ log: string | Array<string> } = { log: [] }
+        try {
+            if (props.task.status === 'Scheduled' || props.task.status === 'Running') {
+                const tempParams = {
+                fromLine: fromLine.value,
+                size: -1,
+                }
+                openLog = await api.fetch(`/entrance/${props.task.execID}/log`, tempParams, 'get')
+            } else {
+                openLog = await api.fetch('/filesystem/openLog', params, 'get')
+            }
+            if (openLog) {
+                const log:{ [key: string]: any } = { all: '', error: '', warning: '', info: '' }
+                const convertLogs = util.convertLog(openLog.log)
+                Object.keys(convertLogs).forEach(key => {
+                if (convertLogs[key]) {
+                    log[key] += convertLogs[key] + '\n'
+                }
+                })
+                logs.value = log
+                fromLine.value = log['all'].split('\n').length
+                formattedLogs.value = getFormattedLogs();
+            }
+        } catch (errorMsg) {
+            window.console.error(errorMsg)
+        }
+        activeTaskLogTabPane.value = LOG_CLASS_PANE_VALUE.ALL;
+    }
+}
+
+onMounted(() => {
+    handleInitiation();
+})
+
 watch(
     () => props.task,
-    async () => {
-        if(props.task) {
-            if (!props.task.logPath) {
-                const errCode = props.task.errCode
-                ? `\n${t('message.linkis.errorCode')}：${
-                    props.task.errCode
-                }`
-                : ''
-                const errDesc = props.task.errDesc
-                ? `\n${t('message.linkis.errorDescription')}：${
-                    props.task.errDesc
-                }`
-                : ''
-                const info = t('message.linkis.notLog') + errCode + errDesc
-                logs.value = { all: info, error: '', warning: '', info: '' }
-                fromLine.value = 1
-                return
-            }
-            const params:any = {
-                path: props.task.logPath
-            }
-            if (storage.get('isAdminView') === 'true') {
-                params.proxyUser = props.task.umUser
-            }
-            let openLog:{ log: string | Array<string> } = { log: [] }
-            try {
-                if (props.task.status === 'Scheduled' || props.task.status === 'Running') {
-                    const tempParams = {
-                    fromLine: fromLine.value,
-                    size: -1,
-                    }
-                    openLog = await api.fetch(`/entrance/${props.task.execID}/log`, tempParams, 'get')
-                } else {
-                    openLog = await api.fetch('/filesystem/openLog', params, 'get')
-                }
-                if (openLog) {
-                    const log:{ [key: string]: any } = { all: '', error: '', warning: '', info: '' }
-                    const convertLogs = util.convertLog(openLog.log)
-                    Object.keys(convertLogs).forEach(key => {
-                    if (convertLogs[key]) {
-                        log[key] += convertLogs[key] + '\n'
-                    }
-                    })
-                    logs.value = log
-                    fromLine.value = log['all'].split('\n').length
-                    formattedLogs.value = getFormattedLogs();
-                }
-            } catch (errorMsg) {
-                window.console.error(errorMsg)
-            }
-            activeTaskLogTabPane.value = LOG_CLASS_PANE_VALUE.ALL;
-        }
+    () => {
+        handleInitiation();
     }
 )
 </script>
@@ -224,18 +231,12 @@ watch(
     .task-log-tabs {
         background-color: #f7f7f8;
         padding-left: 10px;
-        .no-log {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            color: #b7b7bc;
-            font-size: 14px;
-        }
     }
     :deep(.fes-tabs-tab-active) {
         background-color: #fff;
+    }
+    :deep(.fes-tabs-tab-pane-wrapper) {
+        display: none;
     }
     .search-input {
         margin-top: 4px;
@@ -246,6 +247,15 @@ watch(
     }
     :deep(.fes-input-inner) {
         height: 24px;
+    }
+    .no-log {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        color: #b7b7bc;
+        font-size: 14px;
     }
 }
 </style>

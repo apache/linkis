@@ -227,6 +227,8 @@ const handleDeleteCreator = (row: any) => {
     FModal.confirm({
         title: t('message.common.userMenu.title'),
         content: t('message.linkis.confirmToDeleteCreator'),
+        okText: t('message.linkis.submit'),
+        cancelText: t('message.linkis.cancel'),
         closable: true,
         onOk: async () => {
             await api.fetch("/configuration/deleteCategory", { categoryId: row.categoryId }, "post")
@@ -272,7 +274,7 @@ const tableColumns = [
         formatter: ({ row }: { row: { updateTime: number } }) => dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-        // 在“操作”两个字前添加空格，使其能与“查看”上下对齐
+        // 在“操作”两个字前添加空格，使其能与“编辑”上下对齐
         label: `\u00A0\u00A0\u00A0\u00A0${t('message.linkis.columns.control.title')}`,
         width: 140,
         action: [
@@ -350,6 +352,8 @@ const confirmEditing = () => {
         title: t('message.common.userMenu.title'),
         content: t('message.linkis.confirmToModifyCreator'),
         closable: true,
+        okText: t('message.linkis.submit'),
+        cancelText: t('message.linkis.cancel'),
         onOk: async () => {
             if (isAddingApplicationAndEngine.value) {
                 // 添加新应用时，先创建应用
@@ -373,20 +377,19 @@ const confirmEditing = () => {
                     await refresh();
                     return;
                 }
-                // 获取categoryId后，依次创建引擎列表中的各个引擎
-                for (const cate of tmpData.value.childCategory) {
-                    try {
-                        await api.fetch("/configuration/createSecondCategory", {
-                            categoryId,
-                            engineType: cate.engineType,
-                            version: cate.version,
-                            description: cate.description,
-                        }, "post")
+                // 获取categoryId后，创建引擎列表中的各个引擎
+                await Promise.all(tmpData.value.childCategory.map((cate: any) => {
+                    return api.fetch("/configuration/createSecondCategory", {
+                        categoryId,
+                        engineType: cate.engineType,
+                        version: cate.version,
+                        description: cate.description,
+                    }, "post").then(() => {
                         FMessage.success(cate.engineType + cate.version + t('message.linkis.successfullyAddEngine'));
-                    } catch (error) {
+                    }).catch(() => {
                         FMessage.error(cate.engineType + cate.version + t('message.linkis.failedToAddEngine'));
-                    }
-                }
+                    });
+                }))
             }
             if (isEditingApplicationAndEngine.value) {
                 // 编辑应用时，先判断是否需要更改应用描述
@@ -423,49 +426,46 @@ const confirmEditing = () => {
                         }
                     }
                 })
-                // 经过上述操作，原始列表tmpDataBeforeEditing.value.childCategory中只会保留需要被删除的引擎，将这些引擎遍历删除
-                for (const cateToDelete of tmpDataBeforeEditing.value.childCategory) {
-                    try {
-                        await api.fetch("/configuration/deleteCategory", { categoryId: cateToDelete.categoryId }, "post")
+                // 经过上述操作，原始列表tmpDataBeforeEditing.value.childCategory中只会保留需要被删除的引擎，将这些引擎删除
+                await Promise.all(tmpDataBeforeEditing.value.childCategory.map((cateToDelete: any) => {
+                    return api.fetch("/configuration/deleteCategory", { categoryId: cateToDelete.categoryId }, "post").then(() => {
                         FMessage.success(
                             cateToDelete.engineType +
                             cateToDelete.version +
                             t('message.linkis.basedataManagement.engineConfigurationTemplate.delSuccess')
                         );
-                    } catch (error) {
+                    }).catch(() => {
                         FMessage.error(
                             cateToDelete.engineType +
                             cateToDelete.version +
                             t('message.linkis.basedataManagement.engineConfigurationTemplate.delFail')
                         );
-                    }
-                }
+                    });
+                }))
                 // 遍历添加addList中的引擎
-                for (const cateToAdd of addList) {
-                    try {
-                        await api.fetch("/configuration/createSecondCategory", {
-                            categoryId: tmpData.value.categoryId,
-                            engineType: cateToAdd.engineType,
-                            version: cateToAdd.version,
-                            description: cateToAdd.description,
-                        }, "post")
+                await Promise.all(addList.map((cateToAdd: any) => {
+                    return api.fetch("/configuration/createSecondCategory", {
+                        categoryId: tmpData.value.categoryId,
+                        engineType: cateToAdd.engineType,
+                        version: cateToAdd.version,
+                        description: cateToAdd.description,
+                    }, "post").then(() => {
                         FMessage.success(cateToAdd.engineType + cateToAdd.version + t('message.linkis.successfullyAddEngine'));
-                    } catch (error) {
+                    }).catch(() => {
                         FMessage.error(cateToAdd.engineType + cateToAdd.version + t('message.linkis.failedToAddEngine'));
-                    }
-                }
+                    });
+                }))
                 // 遍历修改modifyList中的引擎
-                for (const cateToModify of modifyList) {
-                    try {
-                        await api.fetch("configuration/updateCategoryInfo", {
-                            categoryId: cateToModify.categoryId,
-                            description: cateToModify.description
-                        }, "post")
+                await Promise.all(modifyList.map((cateToModify: any) => {
+                    return api.fetch("configuration/updateCategoryInfo", {
+                        categoryId: cateToModify.categoryId,
+                        description: cateToModify.description
+                    }, "post").then(() => {
                         FMessage.success(cateToModify.engineType + cateToModify.version + t('message.linkis.successfullyUpdateEngine'));
-                    } catch (error) {
+                    }).catch(() => {
                         FMessage.error(cateToModify.engineType + cateToModify.version + t('message.linkis.failedToUpdateEngine'));
-                    }
-                }
+                    });
+                }))
             }
             // 完成编辑操作后刷新页面
             await refresh();
@@ -487,13 +487,13 @@ const handleInitialization = async () => {
     // Get settings directory(获取设置目录)
     const cateRes = await api.fetch("/configuration/getCategory", "get");
     menuList.value = cateRes.Category.filter((menu: any) => menu.categoryName !== 'GlobalSettings') || [];
-    handleChangePagination(currentPage.value, pageSize.value)
+    handleChangePagination(currentPage.value, pageSize.value);
     // Get all engine types(获取所有引擎类型)
     const engineTypeRes = await api.fetch("/configuration/engineType", "get");
     engineTypes.value = engineTypeRes.engineType.map((type: string) => ({ name: type, value: type }));
     // Get all engine type versions(获取所有引擎版本)
     engineTypeRes.engineType.forEach(async (type: string) => {
-        const engineTypeVersionRes = await api.fetch(`/engineplugin/getTypeVersionList/${type}`, {}, "get")
+        const engineTypeVersionRes = await api.fetch(`/engineplugin/getTypeVersionList/${type}`, {}, "get");
         engineTypeVersions.value[type] = (engineTypeVersionRes.queryList || []).map((item: string) => {
             if (/^v/.test(item)) {
                 const version = item.replace(/v/, '');

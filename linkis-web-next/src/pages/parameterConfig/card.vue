@@ -130,16 +130,23 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
+type DataList = Array<{
+    name: string;
+    description: string;
+    value: string | number;
+    settings: any;
+}>;
+
 const props = defineProps<{
     name: string;
     description: string;
-    dataList: any;
+    dataList: DataList;
     creator: string;
     engineType: string;
 }>();
 const isEditing = ref(false);
 const listData = ref([...props.dataList]);
-const listDataBeforeEditing = ref<any>([]);
+const listDataBeforeEditing = ref<DataList>([]);
 const isDisabled = ref(false);
 
 const options = {

@@ -91,7 +91,7 @@ object AMConfiguration {
   )
 
   val ALLOW_BATCH_KILL_ENGINE_TYPES =
-    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python")
+    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python,nebula")
 
   val UNALLOW_BATCH_KILL_ENGINE_TYPES =
     CommonVars("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file")

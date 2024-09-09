@@ -292,8 +292,8 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
       } catch (Exception e) {
         logger.error("Nebula Session initialization failed.");
         throw new NebulaClientException(
-            NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorCode(),
-            NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorDesc());
+                NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorCode(),
+                NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorDesc());
       }
       sessionCache.put(taskId, session);
       return session;

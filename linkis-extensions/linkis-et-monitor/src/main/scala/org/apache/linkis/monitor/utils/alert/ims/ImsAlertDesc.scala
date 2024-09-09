@@ -17,18 +17,16 @@
 
 package org.apache.linkis.monitor.utils.alert.ims
 
+import org.apache.commons.collections.CollectionUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.utils.ScanUtils
 import org.apache.linkis.monitor.utils.alert.AlertDesc
 import org.apache.linkis.monitor.utils.alert.ims.ImsAlertLevel.ImsAlertLevel
 import org.apache.linkis.monitor.utils.alert.ims.ImsAlertWay.ImsAlertWay
 
-import org.apache.commons.collections.CollectionUtils
-import org.apache.commons.lang3.StringUtils
-
 import java.util
 import java.util.HashSet
-
 import scala.collection.JavaConverters._
 
 case class ImsAlertDesc(

@@ -17,9 +17,9 @@
 
 package org.apache.linkis.monitor.utils.alert.ims
 
-import java.util
-
 import com.fasterxml.jackson.annotation.JsonProperty
+
+import java.util
 
 case class ImsRequest(@JsonProperty("alertList") alertList: util.List[AlertEntity])
 

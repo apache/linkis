@@ -105,7 +105,7 @@ object LoadData {
       if (".xls".equalsIgnoreCase(suffix)) {
         val config = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER.getValue)
         config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), null, config)
         path = XlsUtils.excelToCsv(fs.open(new Path(path)), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
@@ -117,13 +117,13 @@ object LoadData {
       } else if (".xls".equalsIgnoreCase(suffix)) {
         val config = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER.getValue)
         config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), null, config)
         path = XlsUtils.excelToCsv(new FileInputStream(path), fs, hasHeader, sheetNames)
         hasHeader = false
       } else {
         val config = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER.getValue)
         config.setBoolean("fs.hdfs.impl.disable.cache", true)
-        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), config)
+        fs = HDFSUtils.getHDFSUserFileSystem(System.getProperty("user.name"), null, config)
         path = copyFileToHdfs(path, fs)
       }
     }
@@ -193,7 +193,7 @@ object LoadData {
     } finally {
       if (fs != null) {
         fs.delete(new Path(path), true)
-        fs.close()
+        // fs.close()
       }
     }
     // warn(s"create table $database $tableName Success")

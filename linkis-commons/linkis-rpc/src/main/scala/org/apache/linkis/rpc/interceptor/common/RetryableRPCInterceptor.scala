@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.RetryHandler
 import org.apache.linkis.protocol.RetryableProtocol
+import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.exception.DWCRPCRetryException
 import org.apache.linkis.rpc.interceptor.{
   RPCInterceptor,
@@ -34,7 +35,7 @@ import org.apache.commons.lang3.StringUtils
 
 import org.springframework.stereotype.Component
 
-import java.net.ConnectException
+import java.net.{ConnectException, SocketTimeoutException}
 
 import feign.RetryableException
 
@@ -57,12 +58,13 @@ class RetryableRPCInterceptor extends RPCInterceptor {
   class RPCRetryHandler extends RetryHandler {
     addRetryException(classOf[ConnectException])
     addRetryException(classOf[RetryableException])
+    addRetryException(classOf[SocketTimeoutException])
     private var serviceInstance: Option[ServiceInstance] = None
 
     def setRetryInfo(retry: RetryableProtocol, chain: RPCInterceptorChain): Unit = {
-      setRetryNum(retry.retryNum)
-      setRetryPeriod(retry.period)
-      setRetryMaxPeriod(retry.maxPeriod)
+      setRetryNum(RPCConfiguration.RPC_RETRY_NUMBER)
+      setRetryPeriod(RPCConfiguration.RPC_RETRY_PERIOD)
+      setRetryMaxPeriod(RPCConfiguration.RPC_RETRY_PERIOD * 2)
       retry.retryExceptions.foreach(addRetryException)
       chain match {
         case s: ServiceInstanceRPCInterceptorChain =>

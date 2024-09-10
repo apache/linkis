@@ -739,6 +739,7 @@ spring-tx-5.3.27.jar
 spring-web-5.3.27.jar
 spring-webflux-5.3.27.jar
 spring-webmvc-5.3.27.jar
+spring-retry-1.3.4.jar
 springfox-bean-validators-3.0.0.jar
 springfox-boot-starter-3.0.0.jar
 springfox-core-3.0.0.jar

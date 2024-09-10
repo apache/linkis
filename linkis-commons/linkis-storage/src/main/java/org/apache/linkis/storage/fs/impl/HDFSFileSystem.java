@@ -182,7 +182,7 @@ public class HDFSFileSystem extends FileSystem {
       throw new IOException("User cannot be empty(用户不能为空)");
     }
 
-    if (label == null && (boolean) Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
+    if (label == null && (boolean) Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
       label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
     }
     conf = HDFSUtils.getConfigurationByLabel(user, label);

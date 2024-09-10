@@ -688,6 +688,7 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
   `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `params` text COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,

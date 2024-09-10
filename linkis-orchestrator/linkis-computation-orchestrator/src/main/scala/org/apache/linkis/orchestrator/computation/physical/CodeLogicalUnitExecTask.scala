@@ -29,6 +29,7 @@ import org.apache.linkis.orchestrator.computation.execute.{
   CodeExecTaskExecutorManager
 }
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
+import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 import org.apache.linkis.orchestrator.exception.{
   OrchestratorErrorCodeSummary,
   OrchestratorErrorException,
@@ -46,6 +47,7 @@ import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
@@ -116,6 +118,18 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             t
           )
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
+      }
+      val params = codeExecutor.getEngineConnExecutor
+        .asInstanceOf[ComputationEngineConnExecutor]
+        .getEngineNode
+        .getParams
+      val paramsMap: util.Map[String, String] =
+        BDPJettyServerHelper.gson.fromJson(params, classOf[util.Map[String, String]])
+      val enginePythonVersion: String = getPythonVersion(paramsMap)
+      if (StringUtils.isNotBlank(enginePythonVersion)) {
+        getPhysicalContext.pushLog(
+          TaskLogEvent(this, LogUtils.generateInfo("Your Python Version: " + enginePythonVersion))
+        )
       }
       response match {
         case SubmitResponse(engineConnExecId) =>
@@ -191,6 +205,19 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       )
     }
 
+  }
+
+  private def getPythonVersion(prop: util.Map[String, String]): String = {
+    var pythonVersion: String = null
+    if (prop == null) {
+      return null
+    }
+    if (prop.containsKey("python.version")) {
+      pythonVersion = prop.get("python.version")
+    } else if (prop.containsKey("spark.python.version")) {
+      pythonVersion = prop.get("spark.python.version")
+    }
+    pythonVersion
   }
 
   private def toRequestTask: RequestTask = {

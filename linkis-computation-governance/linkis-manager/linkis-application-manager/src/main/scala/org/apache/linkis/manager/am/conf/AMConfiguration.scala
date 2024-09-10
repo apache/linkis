@@ -91,10 +91,10 @@ object AMConfiguration {
   )
 
   val ALLOW_BATCH_KILL_ENGINE_TYPES =
-    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python")
+    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python,nebula")
 
   val UNALLOW_BATCH_KILL_ENGINE_TYPES =
-    CommonVars("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file")
+    CommonVars("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,jdbc")
 
   val MULTI_USER_ENGINE_USER =
     CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)

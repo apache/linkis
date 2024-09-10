@@ -66,6 +66,9 @@
             <if test="persistenceNode.identifier != null">
                 identifier = #{persistenceNode.identifier},
             </if>
+            <if test="persistenceNode.params != null">
+                params = #{persistenceNode.params},
+            </if>
         </set>
         WHERE instance = #{instance}
     </update>

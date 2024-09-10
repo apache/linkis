@@ -17,12 +17,15 @@
 
 package org.apache.linkis.engineconn.computation.executor.hook
 
-import org.apache.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
+import org.apache.linkis.engineconn.common.creation.{
+  DefaultEngineCreationContext,
+  EngineCreationContext
+}
 import org.apache.linkis.engineconn.common.engineconn.DefaultEngineConn
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.{mock, verify, when}
-
 
 // 单元测试案例
 class PythonModuleLoadEngineConnHookTest {
@@ -77,6 +80,6 @@ class PythonModuleLoadEngineConnHookTest {
     // 执行测试方法
     hook.beforeExecutionExecute(mockEngineCreationContext, mockEngineConn)
 
-
   }
+
 }

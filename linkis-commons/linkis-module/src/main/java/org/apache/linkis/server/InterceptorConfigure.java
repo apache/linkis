@@ -15,21 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.exception;
+package org.apache.linkis.server;
 
-public class FatalException extends LinkisException {
-  private ExceptionLevel level = ExceptionLevel.FATAL;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-  public FatalException(int errCode, String desc) {
-    super(errCode, desc);
-  }
-
-  public FatalException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+@Configuration
+public class InterceptorConfigure implements WebMvcConfigurer {
 
   @Override
-  public ExceptionLevel getLevel() {
-    return this.level;
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new PerformanceInterceptor());
   }
 }

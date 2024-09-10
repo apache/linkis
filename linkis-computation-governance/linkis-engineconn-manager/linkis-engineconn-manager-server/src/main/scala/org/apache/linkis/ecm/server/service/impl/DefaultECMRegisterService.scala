@@ -62,7 +62,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
       ENGINE_CONN_MANAGER_SPRING_NAME
     )
 
-    if (Configuration.IS_MULTIPLE_YARN_CLUSTER.getValue.asInstanceOf[Boolean]) {
+    if (Configuration.IS_MULTIPLE_YARN_CLUSTER) {
       labels.asScala += LabelKeyConstant.YARN_CLUSTER_KEY ->
         (ECM_YARN_CLUSTER_TYPE + "_" + ECM_YARN_CLUSTER_NAME)
     }

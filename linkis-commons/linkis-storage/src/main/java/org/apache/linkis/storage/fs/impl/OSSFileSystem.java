@@ -152,8 +152,7 @@ public class OSSFileSystem extends FileSystem {
   public void init(Map<String, String> properties) throws IOException {
     // read origin configs from hadoop conf
     if (label == null
-        && (boolean)
-            org.apache.linkis.common.conf.Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
+        && (boolean) org.apache.linkis.common.conf.Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
       label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
     }
     conf = HDFSUtils.getConfigurationByLabel(user, label);

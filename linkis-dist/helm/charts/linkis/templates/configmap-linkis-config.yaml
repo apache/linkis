@@ -137,7 +137,7 @@ data:
     wds.linkis.client.common.gatewayUrl={{- include "linkis.gateway.url" . }}
     wds.linkis.client.common.authStrategy=token
     wds.linkis.client.common.tokenKey=Validation-Code
-    wds.linkis.client.common.tokenValue=LINKIS-AUTH-eTaYLbQpmIulPyrXcMl
+    wds.linkis.client.common.tokenValue=LINKIS_TOKEN
     #wds.linkis.client.noncustomizable.enable.user.specification=true
     #wds.linkis.client.noncustomizable.enable.proxy.user=true
 

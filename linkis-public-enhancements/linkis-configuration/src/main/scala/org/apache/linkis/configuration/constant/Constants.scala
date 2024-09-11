@@ -18,6 +18,7 @@
 package org.apache.linkis.configuration.constant
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 
 object Constants {
 
@@ -30,7 +31,7 @@ object Constants {
   val AUTH_TOKEN_VALUE: CommonVars[String] =
     CommonVars[String](
       "linkis.configuration.linkisclient.auth.token.value",
-      "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl"
+      LINKIS_TOKEN.getValue
     )
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =

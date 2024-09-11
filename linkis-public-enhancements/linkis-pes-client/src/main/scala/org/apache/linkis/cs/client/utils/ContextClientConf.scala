@@ -18,6 +18,7 @@
 package org.apache.linkis.cs.client.utils
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 
 object ContextClientConf {
 
@@ -25,7 +26,7 @@ object ContextClientConf {
     CommonVars[String]("wds.linkis.context.client.auth.key", "Token-Code")
 
   val CONTEXT_CLIENT_AUTH_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.context.client.auth.value", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+    CommonVars[String]("wds.linkis.context.client.auth.value", LINKIS_TOKEN.getValue)
 
   val URL_PREFIX: CommonVars[String] =
     CommonVars[String](

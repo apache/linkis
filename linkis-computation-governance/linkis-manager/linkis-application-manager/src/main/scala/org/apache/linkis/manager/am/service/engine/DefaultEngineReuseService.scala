@@ -30,6 +30,11 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
+  PYTHON_VERSION_KEY,
+  SPARK_PYTHON_VERSION_KEY
+}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
@@ -298,10 +303,11 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     if (prop == null) {
       return null
     }
-    if (prop.containsKey("python.version")) {
-      pythonVersion = prop.get("python.version")
-    } else if (prop.containsKey("spark.python.version")) {
-      pythonVersion = prop.get("spark.python.version")
+
+    if (prop.containsKey(PYTHON_VERSION_KEY)) {
+      pythonVersion = prop.get(PYTHON_VERSION_KEY)
+    } else if (prop.containsKey(SPARK_PYTHON_VERSION_KEY)) {
+      pythonVersion = prop.get(SPARK_PYTHON_VERSION_KEY)
     }
     pythonVersion
   }

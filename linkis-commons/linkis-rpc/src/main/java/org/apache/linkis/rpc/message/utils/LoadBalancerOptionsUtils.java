@@ -15,21 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.exception;
+package org.apache.linkis.rpc.message.utils;
 
-public class FatalException extends LinkisException {
-  private ExceptionLevel level = ExceptionLevel.FATAL;
+import java.lang.reflect.Field;
 
-  public FatalException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+import feign.Request.Options;
 
-  public FatalException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+public class LoadBalancerOptionsUtils {
 
-  @Override
-  public ExceptionLevel getLevel() {
-    return this.level;
+  private static Options DEFAULT_OPTIONS = null;
+
+  private static Object locker = new Object();
+
+  public static Options getDefaultOptions() throws NoSuchFieldException, IllegalAccessException {
+    if (null == DEFAULT_OPTIONS) {
+      synchronized (locker) {
+        Class<?> clazz = null;
+        Field optionField = clazz.getDeclaredField("DEFAULT_OPTIONS");
+        optionField.setAccessible(true);
+        Object o = optionField.get(clazz);
+        DEFAULT_OPTIONS = (Options) o;
+      }
+    }
+    return DEFAULT_OPTIONS;
   }
 }

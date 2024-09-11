@@ -20,6 +20,7 @@ package org.apache.linkis.rpc.sender
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
+import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.interceptor.{RPCInterceptor, ServiceInstanceRPCInterceptorChain}
 import org.apache.linkis.server.conf.ServerConfiguration
 
@@ -56,6 +57,9 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
       })
     }
     super.doBuilder(builder)
+    if (RPCConfiguration.ENABLE_SPRING_PARAMS) {
+      builder.options(RPCConfiguration.configOptions)
+    }
     if (StringUtils.isBlank(serviceInstance.getInstance)) {
       builder
         .contract(getContract)

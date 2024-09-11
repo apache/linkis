@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.python.executor
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
@@ -93,6 +94,11 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       logger.info("Python executor reset new engineExecutorContext!")
     }
     engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
+    if (this.engineExecutionContext.getCurrentParagraph == 1) {
+      engineExecutionContext.appendStdout(
+        LogUtils.generateInfo(s"Your Python Version is:\n$pythonVersion")
+      )
+    }
     pythonSession.execute(code)
 //    lineOutputStream.flush()
     SuccessExecuteResponse()

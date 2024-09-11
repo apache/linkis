@@ -55,7 +55,7 @@ object Constants {
     .toSet[String]
 
   val ECC_DEFAULT_RECEIVERS = CommonVars.properties
-    .getProperty("linkis.alert.ecc.receiver.default", "v_rantao")
+    .getProperty("linkis.alert.ecc.receiver.default", "")
     .split(",")
     .toSet[String]
 

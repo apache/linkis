@@ -18,9 +18,8 @@
 package org.apache.linkis.server.security
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.common.utils.{DESUtil, Logging}
+import org.apache.linkis.common.utils.{AESUtils, Logging}
 import org.apache.linkis.server.conf.ServerConfiguration
-
 import org.apache.commons.lang3.StringUtils
 
 import javax.servlet.http.{Cookie, HttpServletRequest}
@@ -34,7 +33,7 @@ object ProxyUserSSOUtils extends Logging {
     CommonVars("wds.linkis.proxy.ticket.header.crypt.key", "bfs_").getValue
 
   private val linkisTrustCode =
-    DESUtil.encrypt(PROXY_TICKET_HEADER_CONTENT, PROXY_TICKET_HEADER_CRYPT_KEY)
+    AESUtils.encrypt(PROXY_TICKET_HEADER_CONTENT, PROXY_TICKET_HEADER_CRYPT_KEY)
 
   private[security] val PROXY_USER_TICKET_ID_STRING =
     ServerConfiguration.LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY.getValue
@@ -44,7 +43,7 @@ object ProxyUserSSOUtils extends Logging {
   private def getProxyUsernameByTicket(ticketId: String): Option[String] =
     if (StringUtils.isBlank(ticketId)) None
     else {
-      val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
+      val userName = AESUtils.decrypt(ticketId, ServerConfiguration.cryptKey)
       if (userName.startsWith(linkisTrustCode)) Some(userName.substring(linkisTrustCode.length))
       else None
     }
@@ -54,7 +53,7 @@ object ProxyUserSSOUtils extends Logging {
       logger.info(s"$trustCode error,will be use default username")
       userName
     } else {
-      DESUtil.encrypt(trustCode + userName, ServerConfiguration.cryptKey)
+      AESUtils.encrypt(trustCode + userName, ServerConfiguration.cryptKey)
     }
   }
 

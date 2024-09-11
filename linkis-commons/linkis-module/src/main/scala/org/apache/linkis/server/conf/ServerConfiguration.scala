@@ -18,9 +18,10 @@
 package org.apache.linkis.server.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.linkis.common.utils.{AESUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
 import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.BDPInitServerException
+
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
@@ -55,7 +56,7 @@ object ServerConfiguration extends Logging {
   def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId)) {
     None
   } else {
-    val userName = AESUtils.decrypt(ticketId, ServerConfiguration.cryptKey)
+    val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
     if (userName.startsWith(ticketHeader)) Some(userName.substring(ticketHeader.length))
     else None
   }
@@ -69,9 +70,9 @@ object ServerConfiguration extends Logging {
       val time = userName.split(",")(1)
       val proxyUser = username + LINKIE_USERNAME_SUFFIX_NAME
       logger.info(s"$username will be proxied as ${proxyUser}")
-      AESUtils.encrypt(ticketHeader + proxyUser + "," + time, ServerConfiguration.cryptKey)
+      DESUtil.encrypt(ticketHeader + proxyUser + "," + time, ServerConfiguration.cryptKey)
     } else {
-      AESUtils.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
+      DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
     }
   }
 

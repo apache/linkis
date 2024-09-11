@@ -583,7 +583,7 @@
         "dateRange": "Date Range",
         "engineType": "Engine Type",
         "placeholder": {
-            "executionCode": "Please Input Execution Code",
+            "executionCode": "Please enter the execution code, which does not support special characters such as ', `, and can use % and _ as wildcards: % represents any character, and _ represents a single character.",
             "dateRange": "Please select date range",
             "status": "Please select status"
         },

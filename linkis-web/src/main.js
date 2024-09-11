@@ -62,7 +62,14 @@ Vue.config.productionTip = false
 Vue.prototype.$Message.config({
   duration: 3
 })
-
+const locale = localStorage.getItem('locale')
+if(locale) {
+  if(locale === 'zh-CN') {
+    localStorage.setItem('fes_locale', 'zh-CN')
+  } else if(locale === 'en') {
+    localStorage.setItem('fes_locale', 'en-US')
+  }
+}
 new Vue({
   router,
   i18n,

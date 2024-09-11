@@ -20,7 +20,7 @@
     <layout-header
       v-show="showHeader"
       @clear-session="clearSession"/>
-    <router-view/>
+    <router-view />
     <layout-footer v-show="showFooter"/>
   </div>
 </template>

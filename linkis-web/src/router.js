@@ -22,17 +22,24 @@ import { routes } from './dynamic-apps'
 import axios from 'axios'
 // eslint-disable-next-line require-jsdoc
 async function checkNeedShowUpdate() {
-  const { data } = await axios.get(`/dss/linkis/index.html?t=${Date.now()}`)
-  let serverAppHash = data.split('src="js/app.')[1].split('>')[0]
-  serverAppHash = serverAppHash && serverAppHash.substring(0, 8)
-  const appjs = [
-    ...document.getElementsByTagName('script')
-  ]
-    .map(it => it.src)
-    .find(it => /app\.[\da-z]{8}\.js/.test(it))
-  const pageAppHash = appjs && appjs.match(/app\.([\da-z]{8})\.js/)[1];
-  window.console.log(serverAppHash, pageAppHash);
-  return Promise.resolve(pageAppHash !== serverAppHash)
+  try {
+    const { data } = await axios.get(`/dss/linkis/index.html?t=${Date.now()}`)
+    let serverAppHash = data.split('src="js/app.')[1].split('>')[0]
+    serverAppHash = serverAppHash && serverAppHash.substring(0, 8)
+    const appjs = [
+      ...document.getElementsByTagName('script')
+    ]
+      .map(it => it.src)
+      .find(it => /app\.[\da-z]{8}\.js/.test(it))
+    const pageAppHash = appjs && appjs.match(/app\.([\da-z]{8})\.js/)[1];
+    window.console.log(serverAppHash, pageAppHash);
+    return Promise.resolve(pageAppHash !== serverAppHash)
+  } catch(err) {
+    
+    window.console.error(err)
+    return Promise.reject(false)
+  }
+  
 }
 // Solve the error of repeated click routing jump(解决重复点击路由跳转报错)
 const originalPush = VueRouter.prototype.push;

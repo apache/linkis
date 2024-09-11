@@ -6,7 +6,8 @@ export default {
   name: 'pythonModule',
   data() {
     return {
-      target: `./dist/#/index`
+      target: `./dist/?nocache=${new Date().getTime()}/#/index`,
+      // target: `http://10.107.97.166:8088?nocache=${new Date().getTime()}/#/index`
     }
   }
 }

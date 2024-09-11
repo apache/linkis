@@ -101,7 +101,9 @@
             </Tabs>
           </div>
           <div class="content-body-side-right-content">
-            <router-view></router-view>
+            <keep-alive :include="['codeQuery']">
+              <router-view />
+            </keep-alive>
           </div>
         </div>
       </div>
@@ -125,6 +127,11 @@ export default {
         this.$router.push({ path: '/login' });
       }
     })
+    if(!localStorage.getItem('hasRead')) {
+      this.clickToRoute('1-13-1')
+      // this.crrentItem = '1-13-1'
+      // this.$router.push({path: '/console/pythonModule'})
+    }
   },
   unmounted() {
     window.removeEventListener('message', (e) => {

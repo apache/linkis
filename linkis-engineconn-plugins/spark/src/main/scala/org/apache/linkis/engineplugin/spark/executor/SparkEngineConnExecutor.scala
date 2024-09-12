@@ -171,7 +171,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         // with unit if set configuration with unit
         // if not set sc get will get the value of spark.yarn.executor.memoryOverhead such as 512(without unit)
         val memoryOverhead = sc.getConf.get("spark.executor.memoryOverhead", "1G")
-        val pythonVersion = sc.getConf.get("spark.python.version")
+        val pythonVersion = SparkConfiguration.SPARK_PYTHON_VERSION.getValue(
+          EngineConnObject.getEngineCreationContext.getOptions
+        )
         val sb = new StringBuilder
         sb.append(s"spark.executor.instances=$executorNum\n")
         sb.append(s"spark.executor.memory=${executorMem}G\n")

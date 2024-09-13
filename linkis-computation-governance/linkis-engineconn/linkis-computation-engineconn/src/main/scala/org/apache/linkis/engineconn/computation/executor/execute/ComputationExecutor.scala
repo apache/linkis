@@ -238,7 +238,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           fetchMoreResultSet(
             engineConnTask.getTaskId,
             engineExecutionContext.getProperties
-              .getOrDefault(JobRequestConstants.DIRECT_PUSH_FETCH_SIZE, 100)
+              .getOrDefault(JobRequestConstants.DIRECT_PUSH_FETCH_SIZE, "100")
               .toString
               .toInt
           )

@@ -44,11 +44,16 @@ public interface JobHistoryMapper {
       backoff = @Backoff(delay = 10000))
   void updateJobHistory(JobHistory jobReq);
 
-  List<JobHistory> searchWithIdOrderAsc(
+  List<Integer> searchWithIdOrderAsc(
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("startId") Long startId,
       @Param("status") List<String> status);
+
+  Integer maxID(
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("startId") Long startId);
 
   List<JobHistory> search(
       @Param("id") Long id,

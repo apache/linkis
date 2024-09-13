@@ -29,10 +29,7 @@ object Constants {
     CommonVars[String]("linkis.configuration.linkisclient.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String](
-      "linkis.configuration.linkisclient.auth.token.value",
-      LINKIS_TOKEN.getValue
-    )
+    CommonVars[String]("linkis.configuration.linkisclient.auth.token.value", LINKIS_TOKEN.getValue)
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =
     CommonVars[Int]("linkis.configuration.linkisclient.connection.max.size", 10)

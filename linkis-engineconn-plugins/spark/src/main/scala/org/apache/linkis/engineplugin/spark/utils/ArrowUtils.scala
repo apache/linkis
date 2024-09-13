@@ -28,13 +28,10 @@ import org.apache.arrow.vector.{
   VectorSchemaRoot
 }
 import org.apache.arrow.vector.ipc.ArrowStreamWriter
-import org.apache.arrow.vector.types.pojo.{ArrowType, Field, FieldType, Schema}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{BooleanType, DoubleType, IntegerType, LongType, StringType}
 
 import java.io.ByteArrayOutputStream
-
-import scala.jdk.CollectionConverters.asJavaIterableConverter
 
 object ArrowUtils {
 
@@ -106,7 +103,10 @@ object ArrowUtils {
     }
 
     val javaFieldVectors: java.lang.Iterable[FieldVector] =
-      fieldVectors.map(_.asInstanceOf[FieldVector]).asJava
+      fieldVectors
+        .map(_.asInstanceOf[FieldVector])
+        .iterator
+        .asInstanceOf[java.lang.Iterable[FieldVector]]
     val root = new VectorSchemaRoot(javaFieldVectors)
 
     (root, fieldVectors)

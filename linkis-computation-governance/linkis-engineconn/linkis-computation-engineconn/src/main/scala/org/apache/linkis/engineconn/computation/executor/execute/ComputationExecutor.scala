@@ -36,6 +36,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
@@ -88,7 +89,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   protected val failedTasks: Count = new Count
 
-  private var lastTask: EngineConnTask = _
+  protected var lastTask: EngineConnTask = _
 
   private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
 
@@ -232,11 +233,21 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
         val code = codes(index)
         engineExecutionContext.setCurrentParagraph(index + 1)
-        response = Utils.tryCatch(if (incomplete.nonEmpty) {
+
+        response = Utils.tryCatch(if (isFetchMethodOfDirectPush(engineConnTask.getTaskId)) {
+          fetchMoreResultSet(
+            engineConnTask.getTaskId,
+            engineExecutionContext.getProperties
+              .getOrDefault(JobRequestConstants.DIRECT_PUSH_FETCH_SIZE, 100)
+              .toString
+              .toInt
+          )
+        } else if (incomplete.nonEmpty) {
           executeCompletely(engineExecutionContext, code, incomplete.toString())
         } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
         }
+
         incomplete ++= code
         response match {
           case e: ErrorExecuteResponse =>
@@ -245,6 +256,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
             return response
           case SuccessExecuteResponse() =>
             engineExecutionContext.appendStdout("\n")
+            incomplete.setLength(0)
+          case ReadyForFetchResultResponse() =>
+            incomplete.setLength(0)
+          case FetchResultResponse(_, _) =>
             incomplete.setLength(0)
           case e: OutputExecuteResponse =>
             incomplete.setLength(0)
@@ -274,6 +289,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         case s: SuccessExecuteResponse =>
           succeedTasks.increase()
           s
+        case s: FetchResultResponse =>
+          if (!s.hasMoreData) {
+            succeedTasks.increase()
+          }
+          s
         case incompleteExecuteResponse: IncompleteExecuteResponse =>
           ErrorExecuteResponse(
             s"The task cannot be an incomplete response ${incompleteExecuteResponse.message}",
@@ -286,6 +306,16 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       runningTasks.decrease()
       this.internalExecute = false
     }
+  }
+
+  // The following two methods need to implemented to support directly pushing task.
+  def isFetchMethodOfDirectPush(taskId: String): Boolean = false
+
+  def fetchMoreResultSet(taskId: String, fetchSize: Int): FetchResultResponse = {
+    throw new UnsupportedOperationException(
+      "Method fetchMoreResultSet() is not supported, it can only be used in " +
+        "the engine which support directly pushing task like spark and hive."
+    )
   }
 
   def execute(engineConnTask: EngineConnTask): ExecuteResponse = Utils.tryFinally {
@@ -355,6 +385,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         engineConnTask.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
       )
     }
+    if (engineConnTask.getProperties.containsKey(JobRequestConstants.ENABLE_DIRECT_PUSH)) {
+      engineExecutionContext.setEnableDirectPush(
+        engineConnTask.getProperties.get(JobRequestConstants.ENABLE_DIRECT_PUSH).toString.toBoolean
+      )
+      logger.info(s"Enable direct push in engineTask ${engineConnTask.getTaskId}.")
+    }
     logger.info(s"StorePath : ${engineExecutionContext.getStorePath.orNull}.")
     engineExecutionContext.setJobId(engineConnTask.getTaskId)
     engineExecutionContext.getProperties.putAll(engineConnTask.getProperties)
@@ -405,7 +441,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
       case ExecutionNodeStatus.Running =>
         if (
-            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
+            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled || newStatus == ExecutionNodeStatus.Ready
         ) {
           task.setStatus(newStatus)
         } else {

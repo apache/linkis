@@ -25,6 +25,7 @@ public enum ExecutionNodeStatus {
   Succeed,
   Failed,
   Cancelled,
+  Ready,
   Timeout;
 
   public static boolean isRunning(ExecutionNodeStatus eventStatus) {

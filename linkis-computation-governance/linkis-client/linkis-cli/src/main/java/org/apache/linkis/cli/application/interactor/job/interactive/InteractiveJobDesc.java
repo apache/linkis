@@ -30,6 +30,9 @@ public class InteractiveJobDesc {
   private Map<String, Object> labelMap;
   private Map<String, Object> sourceMap;
 
+  // 需要加到header中的一些参数
+  private Map<String, String> headers;
+
   public String getSubmitUser() {
     return submitUser;
   }
@@ -100,5 +103,13 @@ public class InteractiveJobDesc {
 
   public void setLabelMap(Map<String, Object> labelMap) {
     this.labelMap = labelMap;
+  }
+
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
+
+  public void setHeaders(Map<String, String> headers) {
+    this.headers = headers;
   }
 }

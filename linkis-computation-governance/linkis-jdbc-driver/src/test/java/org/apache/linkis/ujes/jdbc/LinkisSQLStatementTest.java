@@ -17,16 +17,26 @@
 
 package org.apache.linkis.ujes.jdbc;
 
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus;
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
+import org.apache.linkis.ujes.client.UJESClient;
+import org.apache.linkis.ujes.client.response.JobExecuteResult;
+import org.apache.linkis.ujes.client.response.JobInfoResult;
+import org.apache.linkis.ujes.client.response.ResultSetResult;
+
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /*
  * Notice:
@@ -141,6 +151,184 @@ public class LinkisSQLStatementTest {
     if (statement != null) {
       assertEquals(statement.getConnection(), conn);
     }
+  }
+
+  /**
+   * single query without next result set check point 1: getMoreResults returns false check point 2:
+   * default getMoreResults, use Statement.CLOSE_CURRENT_RESULT. The current result set is closed.
+   */
+  @Test
+  public void singleQueryWithNoMoreResult() {
+    Properties t = new Properties();
+    t.put("user", "hiveUser");
+    UJESClient ujesClient = Mockito.mock(UJESClient.class);
+    LinkisSQLConnection linkisSQLConnection = Mockito.spy(new LinkisSQLConnection(ujesClient, t));
+    LinkisSQLStatement linkisSQLStatement = new LinkisSQLStatement(linkisSQLConnection);
+    Mockito.when(ujesClient.resultSet(any())).thenReturn(new ResultSetResult());
+
+    JobExecuteResult jobExecuteResult = new JobExecuteResult();
+    Mockito.doReturn(jobExecuteResult).when(linkisSQLConnection).toSubmit(anyString());
+    JobInfoResult jobInfoResult = Mockito.spy(new JobInfoResult());
+    Mockito.when(ujesClient.getJobInfo(jobExecuteResult)).thenReturn(jobInfoResult);
+    Mockito.doReturn(ExecutionNodeStatus.Succeed.name()).when(jobInfoResult).getJobStatus();
+    Mockito.doReturn(new RequestPersistTask()).when(jobInfoResult).getRequestPersistTask();
+
+    Mockito.doReturn(new String[] {"path 1"}).when(jobInfoResult).getResultSetList(ujesClient);
+
+    linkisSQLStatement.execute("select 1");
+    UJESSQLResultSet resultSet = linkisSQLStatement.getResultSet();
+    assertNotNull(resultSet);
+    assertFalse(resultSet.isClosed());
+    // it will close current result set with default value 1
+    boolean moreResults = linkisSQLStatement.getMoreResults();
+    assertFalse(moreResults);
+    assertTrue(resultSet.isClosed());
+  }
+
+  /**
+   * multiple query without multiple result param, return one result check point 1: 2 sql executed.
+   * 1 result set
+   */
+  @Test
+  public void multiQueryWithNoMoreResult() {
+    Properties t = new Properties();
+    t.put("user", "hiveUser");
+    UJESClient ujesClient = Mockito.mock(UJESClient.class);
+    LinkisSQLConnection linkisSQLConnection = Mockito.spy(new LinkisSQLConnection(ujesClient, t));
+    LinkisSQLStatement linkisSQLStatement = new LinkisSQLStatement(linkisSQLConnection);
+    Mockito.when(ujesClient.resultSet(any())).thenReturn(new ResultSetResult());
+    JobExecuteResult jobExecuteResult = new JobExecuteResult();
+    Mockito.doReturn(jobExecuteResult).when(linkisSQLConnection).toSubmit(anyString());
+    JobInfoResult jobInfoResult = Mockito.spy(new JobInfoResult());
+    Mockito.when(ujesClient.getJobInfo(jobExecuteResult)).thenReturn(jobInfoResult);
+    Mockito.doReturn(ExecutionNodeStatus.Succeed.name()).when(jobInfoResult).getJobStatus();
+    Mockito.doReturn(new RequestPersistTask()).when(jobInfoResult).getRequestPersistTask();
+
+    Mockito.doReturn(new String[] {"path 1", "path 2"})
+        .when(jobInfoResult)
+        .getResultSetList(ujesClient);
+
+    linkisSQLStatement.execute("select 1;select 2;");
+    UJESSQLResultSet resultSet = linkisSQLStatement.getResultSet();
+    assertNotNull(resultSet);
+    assertFalse(resultSet.isClosed());
+    // it will close current result set with default value 1
+    boolean moreResults = linkisSQLStatement.getMoreResults();
+    assertFalse(moreResults);
+    assertTrue(resultSet.isClosed());
+  }
+
+  /**
+   * multiple query executed with multiple result param is Y check point 1: getMoreResults returns
+   * true check point 2: current result is closed check point 3: second getMoreResults returns false
+   */
+  @Test
+  public void multiQueryWithMoreResult() {
+    Properties t = new Properties();
+    t.put("user", "hiveUser");
+    t.put(UJESSQLDriverMain.ENABLE_MULTI_RESULT(), "Y");
+    UJESClient ujesClient = Mockito.mock(UJESClient.class);
+    LinkisSQLConnection linkisSQLConnection = Mockito.spy(new LinkisSQLConnection(ujesClient, t));
+    LinkisSQLStatement linkisSQLStatement = new LinkisSQLStatement(linkisSQLConnection);
+    Mockito.when(ujesClient.resultSet(any())).thenReturn(new ResultSetResult());
+
+    JobExecuteResult jobExecuteResult = new JobExecuteResult();
+    Mockito.doReturn(jobExecuteResult).when(linkisSQLConnection).toSubmit(anyString());
+    JobInfoResult jobInfoResult = Mockito.spy(new JobInfoResult());
+    Mockito.when(ujesClient.getJobInfo(jobExecuteResult)).thenReturn(jobInfoResult);
+    Mockito.doReturn(ExecutionNodeStatus.Succeed.name()).when(jobInfoResult).getJobStatus();
+    Mockito.doReturn(new RequestPersistTask()).when(jobInfoResult).getRequestPersistTask();
+
+    Mockito.doReturn(new String[] {"path 1", "path 2"})
+        .when(jobInfoResult)
+        .getResultSetList(ujesClient);
+
+    linkisSQLStatement.execute("select 1;select 2;");
+    UJESSQLResultSet resultSet = linkisSQLStatement.getResultSet();
+    assertNotNull(resultSet);
+    assertFalse(resultSet.isClosed());
+    // it will close current result set with default value 1
+    boolean moreResults = linkisSQLStatement.getMoreResults();
+    assertTrue(moreResults);
+    assertTrue(resultSet.isClosed());
+    moreResults = linkisSQLStatement.getMoreResults();
+    assertFalse(moreResults);
+  }
+
+  /**
+   * multiple query executed with multiple result param is Y, and use
+   * LinkisSQLStatement.KEEP_CURRENT_RESULT check point 1: getMoreResults returns true check point
+   * 2: current result is not close check point 3: second getMoreResults returns false
+   */
+  @Test
+  public void multiQueryWithMoreResultNotCloseCurrent() {
+    Properties t = new Properties();
+    t.put("user", "hiveUser");
+    t.put(UJESSQLDriverMain.ENABLE_MULTI_RESULT(), "Y");
+    UJESClient ujesClient = Mockito.mock(UJESClient.class);
+    LinkisSQLConnection linkisSQLConnection = Mockito.spy(new LinkisSQLConnection(ujesClient, t));
+    LinkisSQLStatement linkisSQLStatement = new LinkisSQLStatement(linkisSQLConnection);
+    Mockito.when(ujesClient.resultSet(any())).thenReturn(new ResultSetResult());
+
+    JobExecuteResult jobExecuteResult = new JobExecuteResult();
+    Mockito.doReturn(jobExecuteResult).when(linkisSQLConnection).toSubmit(anyString());
+    JobInfoResult jobInfoResult = Mockito.spy(new JobInfoResult());
+    Mockito.when(ujesClient.getJobInfo(jobExecuteResult)).thenReturn(jobInfoResult);
+    Mockito.doReturn(ExecutionNodeStatus.Succeed.name()).when(jobInfoResult).getJobStatus();
+    Mockito.doReturn(new RequestPersistTask()).when(jobInfoResult).getRequestPersistTask();
+
+    Mockito.doReturn(new String[] {"path 1", "path 2"})
+        .when(jobInfoResult)
+        .getResultSetList(ujesClient);
+
+    linkisSQLStatement.execute("select 1;select 2;");
+    UJESSQLResultSet resultSet = linkisSQLStatement.getResultSet();
+    assertNotNull(resultSet);
+    assertFalse(resultSet.isClosed());
+    // it will close current result set with default value 1
+    boolean moreResults = linkisSQLStatement.getMoreResults(LinkisSQLStatement.KEEP_CURRENT_RESULT);
+    assertTrue(moreResults);
+    assertFalse(resultSet.isClosed());
+  }
+
+  /**
+   * multiple query executed with multiple result param is Y, and use
+   * LinkisSQLStatement.CLOSE_ALL_RESULTS check point 1: getMoreResults returns true check point 2:
+   * current result is not close check point 3: second getMoreResults returns false check point 4:
+   * first result set is closed after second invoke getMoreResults
+   */
+  @Test
+  public void multiQueryWithMoreResultCloseAllOpenedCurrent() {
+    Properties t = new Properties();
+    t.put("user", "hiveUser");
+    t.put(UJESSQLDriverMain.ENABLE_MULTI_RESULT(), "Y");
+    UJESClient ujesClient = Mockito.mock(UJESClient.class);
+    LinkisSQLConnection linkisSQLConnection = Mockito.spy(new LinkisSQLConnection(ujesClient, t));
+    LinkisSQLStatement linkisSQLStatement = new LinkisSQLStatement(linkisSQLConnection);
+    Mockito.when(ujesClient.resultSet(any())).thenReturn(new ResultSetResult());
+
+    JobExecuteResult jobExecuteResult = new JobExecuteResult();
+    Mockito.doReturn(jobExecuteResult).when(linkisSQLConnection).toSubmit(anyString());
+    JobInfoResult jobInfoResult = Mockito.spy(new JobInfoResult());
+    Mockito.when(ujesClient.getJobInfo(jobExecuteResult)).thenReturn(jobInfoResult);
+    Mockito.doReturn(ExecutionNodeStatus.Succeed.name()).when(jobInfoResult).getJobStatus();
+    Mockito.doReturn(new RequestPersistTask()).when(jobInfoResult).getRequestPersistTask();
+
+    Mockito.doReturn(new String[] {"path 1", "path 2"})
+        .when(jobInfoResult)
+        .getResultSetList(ujesClient);
+
+    linkisSQLStatement.execute("select 1;select 2;");
+    UJESSQLResultSet resultSet = linkisSQLStatement.getResultSet();
+    assertNotNull(resultSet);
+    assertFalse(resultSet.isClosed());
+    // it will close current result set with default value 1
+    boolean moreResults = linkisSQLStatement.getMoreResults(Statement.KEEP_CURRENT_RESULT);
+    assertTrue(moreResults);
+    assertFalse(resultSet.isClosed());
+    moreResults = linkisSQLStatement.getMoreResults(Statement.CLOSE_ALL_RESULTS);
+    assertFalse(moreResults);
+    assertTrue(resultSet.isClosed());
   }
 
   @AfterAll

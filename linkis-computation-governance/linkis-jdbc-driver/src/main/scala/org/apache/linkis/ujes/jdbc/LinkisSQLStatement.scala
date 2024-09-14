@@ -37,6 +37,10 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
     with Logging {
 
   private var jobExecuteResult: JobExecuteResult = _
+
+  private val openedResultSets: util.ArrayList[UJESSQLResultSet] =
+    new util.ArrayList[UJESSQLResultSet]()
+
   private var resultSet: UJESSQLResultSet = _
   private var closed = false
   private var maxRows: Int = 0
@@ -190,7 +194,7 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   override def getUpdateCount: Int = throwWhenClosed(-1)
 
-  override def getMoreResults: Boolean = false
+  override def getMoreResults: Boolean = getMoreResults(Statement.CLOSE_CURRENT_RESULT)
 
   override def setFetchDirection(direction: Int): Unit =
     throwWhenClosed(if (direction != ResultSet.FETCH_FORWARD) {
@@ -230,7 +234,45 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   override def getConnection: Connection = throwWhenClosed(ujesSQLConnection)
 
-  override def getMoreResults(current: Int): Boolean = false
+  override def getMoreResults(current: Int): Boolean = {
+    if (this.resultSet == null) {
+      false
+    } else {
+      this.resultSet.getMetaData
+      val nextResultSet = this.resultSet.getNextResultSet
+      current match {
+        case Statement.CLOSE_CURRENT_RESULT =>
+          // 1 - CLOSE CURRENT RESULT SET
+          this.resultSet.close()
+          this.resultSet.clearNextResultSet
+        case Statement.KEEP_CURRENT_RESULT =>
+          // 2 - KEEP CURRENT RESULT SET
+          this.openedResultSets.add(this.resultSet)
+          this.resultSet.clearNextResultSet
+        case Statement.CLOSE_ALL_RESULTS =>
+          // 3 - CLOSE ALL RESULT SET
+          this.openedResultSets.add(this.resultSet)
+          closeAllOpenedResultSet()
+        case _ =>
+          throw new LinkisSQLException(
+            LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
+            "getMoreResults with current not in 1,2,3 is not supported, see Statement.getMoreResults"
+          )
+      }
+      this.resultSet = nextResultSet
+      this.resultSet != null
+    }
+  }
+
+  private def closeAllOpenedResultSet(): Any = {
+    val iterator = this.openedResultSets.iterator()
+    while (iterator.hasNext) {
+      val set = iterator.next()
+      if (!set.isClosed) {
+        set.close()
+      }
+    }
+  }
 
   override def getGeneratedKeys: ResultSet = throw new LinkisSQLException(
     LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
@@ -302,6 +344,7 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   /**
    * log[0] error log[1] warn log[2] info log[3] all (info + warn + error)
+   *
    * @return
    */
   def getAllLog(): Array[String] = {
@@ -316,6 +359,7 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   /**
    * log[0] error log[1] warn log[2] info log[3] all (info + warn + error)
+   *
    * @return
    */
   def getIncrementalLog(): util.List[String] = {

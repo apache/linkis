@@ -36,7 +36,7 @@ jobs:
           echo "rat_file=$rat_file"
           if [[ -n "$rat_file" ]];then  echo "check error!" && cat $rat_file && exit 123;else echo "check success!" ;fi
       - name: Upload the report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: license-check-report
           path: "**/target/rat.txt"

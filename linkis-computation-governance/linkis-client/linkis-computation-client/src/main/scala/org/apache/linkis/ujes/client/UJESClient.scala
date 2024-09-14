@@ -69,7 +69,10 @@ abstract class UJESClient extends Closeable with Logging {
    * @return
    */
   def progress(jobExecuteResult: JobExecuteResult): JobProgressResult =
-    Utils.tryCatch(executeJobExecIdAction(jobExecuteResult, JobServiceType.JobProgress)) { t =>
+    Utils.tryCatch(
+      executeJobExecIdAction(jobExecuteResult, JobServiceType.JobProgress)
+        .asInstanceOf[JobProgressResult]
+    ) { t =>
       logger.warn("Failed to get progress, return empty progress.", t)
       val result = new JobProgressResult
       result.setProgress(0)

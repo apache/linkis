@@ -50,6 +50,7 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
   static String PASSWORD = "password";
   static boolean TABLEAU_SERVER = false;
   static String FIXED_SESSION = "fixedSession";
+  static String ENABLE_MULTI_RESULT = "enableMultiResult";
 
   static String USE_SSL = "useSSL";
   static String VERSION = "version";

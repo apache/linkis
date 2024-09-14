@@ -78,6 +78,9 @@ class UJESSQLDriverMain extends Driver with Logging {
             case Array(USE_SSL, value) =>
               props.setProperty(USE_SSL, value)
               false
+            case Array(ENABLE_MULTI_RESULT, value) =>
+              props.setProperty(ENABLE_MULTI_RESULT, value)
+              false
             case Array(key, _) =>
               if (StringUtils.isBlank(key)) {
                 throw new LinkisSQLException(
@@ -141,6 +144,7 @@ object UJESSQLDriverMain {
   val PASSWORD = UJESSQLDriver.PASSWORD
   val TABLEAU_SERVER = UJESSQLDriver.TABLEAU_SERVER
   val FIXED_SESSION = UJESSQLDriver.FIXED_SESSION
+  val ENABLE_MULTI_RESULT = UJESSQLDriver.ENABLE_MULTI_RESULT
 
   val USE_SSL = UJESSQLDriver.USE_SSL
 

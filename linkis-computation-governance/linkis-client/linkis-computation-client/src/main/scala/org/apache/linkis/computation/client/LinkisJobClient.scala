@@ -17,10 +17,36 @@
 
 package org.apache.linkis.computation.client
 
-import org.apache.linkis.computation.client.interactive.InteractiveJob
-import org.apache.linkis.computation.client.once.OnceJob
+import org.apache.linkis.bml.client.BmlClientFactory
+import org.apache.linkis.computation.client.interactive.{InteractiveJob, InteractiveJobBuilder}
+import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob}
+import org.apache.linkis.computation.client.once.simple.{SimpleOnceJob, SimpleOnceJobBuilder}
+import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.ujes.client.UJESClientImpl
 
 import java.io.Closeable
+
+class LinkisJobClient(clientConfig: DWSClientConfig) extends Closeable {
+
+  private val ujseClient = new UJESClientImpl(clientConfig)
+
+  private lazy val linkisManagerCLient = LinkisManagerClient(ujseClient)
+
+  override def close(): Unit = {
+    if (null != linkisManagerCLient) {
+      linkisManagerCLient.close()
+    }
+  }
+
+  def onceJobBuilder(): SimpleOnceJobBuilder =
+    SimpleOnceJob.builder(SimpleOnceJobBuilder.getBmlClient(clientConfig), linkisManagerCLient)
+
+  def interactiveJobBuilder(): InteractiveJobBuilder = {
+    val builder = InteractiveJob.builder()
+    builder.setUJESClient(ujseClient)
+  }
+
+}
 
 /**
  * This class is only used to provide a unified entry for user to build a LinkisJob conveniently and

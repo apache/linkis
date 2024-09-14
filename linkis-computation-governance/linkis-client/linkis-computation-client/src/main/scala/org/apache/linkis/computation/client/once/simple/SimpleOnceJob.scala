@@ -17,13 +17,13 @@
 
 package org.apache.linkis.computation.client.once.simple
 
+import org.apache.linkis.bml.client.BmlClient
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.LinkisJobMetrics
 import org.apache.linkis.computation.client.job.AbstractSubmittableLinkisJob
 import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
 import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
-import org.apache.linkis.computation.client.once.result.CreateEngineConnResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import java.util.Locale
@@ -109,15 +109,13 @@ class SubmittableSimpleOnceJob(
     with AbstractSubmittableLinkisJob {
 
   private var ecmServiceInstance: ServiceInstance = _
-  private var createEngineConnResult: CreateEngineConnResult = _
 
   def getECMServiceInstance: ServiceInstance = ecmServiceInstance
-  def getCreateEngineConnResult: CreateEngineConnResult = createEngineConnResult
 
   override protected def doSubmit(): Unit = {
     logger.info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
-    createEngineConnResult = linkisManagerClient.createEngineConn(createEngineConnAction)
-    lastNodeInfo = createEngineConnResult.getNodeInfo
+    val nodeInfo = linkisManagerClient.createEngineConn(createEngineConnAction)
+    lastNodeInfo = nodeInfo.getNodeInfo
     serviceInstance = getServiceInstance(lastNodeInfo)
     ticketId = getTicketId(lastNodeInfo)
     ecmServiceInstance = getECMServiceInstance(lastNodeInfo)
@@ -159,6 +157,11 @@ object SimpleOnceJob {
   private val ENGINE_CONN_ID_REGEX = "(\\d+)_(\\d+)_(.+)".r
 
   def builder(): SimpleOnceJobBuilder = new SimpleOnceJobBuilder
+
+  def builder(
+      bmlClient: BmlClient,
+      linkisManagerClient: LinkisManagerClient
+  ): SimpleOnceJobBuilder = new SimpleOnceJobBuilder(bmlClient, linkisManagerClient)
 
   /**
    * Build a submitted SimpleOnceJob by id and user.

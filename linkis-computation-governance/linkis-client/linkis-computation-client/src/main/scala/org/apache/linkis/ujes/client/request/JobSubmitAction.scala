@@ -25,6 +25,8 @@ import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 
 import java.util
 
+import scala.collection.JavaConverters.mapAsScalaMapConverter
+
 class JobSubmitAction private () extends POSTAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("entrance", "submit")
 
@@ -51,6 +53,8 @@ object JobSubmitAction {
     private var params: util.Map[String, AnyRef] = _
 
     private var source: util.Map[String, AnyRef] = _
+
+    private var headers: util.Map[String, String] = _
 
     def addExecuteCode(executeCode: String): Builder = {
       if (null == executionContent) executionContent = new util.HashMap[String, AnyRef]()
@@ -129,6 +133,11 @@ object JobSubmitAction {
       this
     }
 
+    def setHeaders(headers: util.Map[String, String]): Builder = {
+      this.headers = headers
+      this
+    }
+
     def build(): JobSubmitAction = {
       val submitAction = new JobSubmitAction
       submitAction.setUser(user)
@@ -145,6 +154,11 @@ object JobSubmitAction {
 
       if (this.labels == null) this.labels = new util.HashMap[String, AnyRef]()
       submitAction.addRequestPayload(TaskConstant.LABELS, this.labels)
+
+      if (this.headers == null) this.headers = new util.HashMap[String, String]()
+      this.headers.asScala.foreach { case (k, v) =>
+        if (k != null && v != null) submitAction.addHeader(k, v)
+      }
       submitAction
     }
 

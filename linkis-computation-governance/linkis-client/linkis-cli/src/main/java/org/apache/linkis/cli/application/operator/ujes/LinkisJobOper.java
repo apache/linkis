@@ -103,6 +103,7 @@ public class LinkisJobOper implements JobOper {
               .setVariableMap(jobDesc.getParamVarsMap())
               .setLabels(jobDesc.getLabelMap())
               .setSource(jobDesc.getSourceMap())
+              .setHeaders(jobDesc.getHeaders())
               .build();
       logger.info("Request info to Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitAction));
 

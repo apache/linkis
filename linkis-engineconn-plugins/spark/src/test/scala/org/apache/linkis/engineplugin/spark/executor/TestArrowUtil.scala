@@ -17,17 +17,20 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.arrow.memory.RootAllocator
-import org.apache.arrow.vector.VectorSchemaRoot
-import org.apache.arrow.vector.ipc.ArrowStreamReader
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.DWCArgumentsParser
 import org.apache.linkis.engineplugin.spark.utils.ArrowUtils
+
+import org.apache.arrow.memory.RootAllocator
+import org.apache.arrow.vector.VectorSchemaRoot
+import org.apache.arrow.vector.ipc.ArrowStreamReader
 import org.apache.spark.sql.SparkSession
-import org.junit.jupiter.api.{Assertions, Test}
 
 import java.io.ByteArrayInputStream
+
 import scala.collection.mutable
+
+import org.junit.jupiter.api.{Assertions, Test}
 
 class TestArrowUtil {
 

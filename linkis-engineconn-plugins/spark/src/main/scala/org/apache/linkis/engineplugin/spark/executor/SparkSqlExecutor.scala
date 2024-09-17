@@ -18,12 +18,11 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
-import org.apache.linkis.engineplugin.spark.utils.{ArrowUtils, EngineUtils}
+import org.apache.linkis.engineplugin.spark.utils.{ArrowUtils, DirectPushCache, EngineUtils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.scheduler.executer._
@@ -32,18 +31,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.spark.sql.DataFrame
 
 import java.lang.reflect.InvocationTargetException
-import java.util.concurrent.TimeUnit
-
-import com.google.common.cache.{Cache, CacheBuilder}
 
 class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
-
-  private val resultSetIteratorCache: Cache[String, DataFrame] = CacheBuilder
-    .newBuilder()
-    .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
-    .maximumSize(EngineConnConstant.MAX_TASK_NUM)
-    .build()
 
   override def init(): Unit = {
 
@@ -57,34 +47,30 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   // Only used in the scenario of direct pushing, dataFrame won't be fetched at a time,
   // It will cache the lazy dataFrame in memory and return the result when client .
   private def submitResultSetIterator(taskId: String, df: DataFrame): Unit = {
-    if (resultSetIteratorCache.getIfPresent(taskId) == null) {
-      resultSetIteratorCache.put(taskId, df)
+    if (!DirectPushCache.isTaskCached(taskId)) {
+      DirectPushCache.submitExecuteResult(taskId, df)
     } else {
       logger.error(s"Task $taskId already exists in resultSet cache.")
     }
   }
 
   override def isFetchMethodOfDirectPush(taskId: String): Boolean = {
-    resultSetIteratorCache.getIfPresent(taskId) != null
+    DirectPushCache.isTaskCached(taskId)
   }
 
+  // This method is not idempotent. After fetching a result set of size fetchSize each time, the corresponding results will be removed from the cache.
   override def fetchMoreResultSet(taskId: String, fetchSize: Int): FetchResultResponse = {
-    val df = resultSetIteratorCache.getIfPresent(taskId)
-    if (df == null) {
-      throw new IllegalAccessException(s"Task $taskId not exists in resultSet cache.")
-    } else {
-      val batchDf = df.limit(fetchSize)
-      if (batchDf.count() < fetchSize) {
-        // All the data in df has been consumed.
+    val dataFrameResponse = DirectPushCache.fetchResultSetOfDataFrame(taskId, fetchSize)
+    if (dataFrameResponse.dataFrame != null) {
+      if (!dataFrameResponse.hasMoreData) {
         succeedTasks.increase()
-        resultSetIteratorCache.invalidate(taskId)
-        FetchResultResponse(hasMoreData = false, null)
-      } else {
-        // Update df with consumed one.
-        resultSetIteratorCache.put(taskId, df.except(batchDf))
-        FetchResultResponse(hasMoreData = true, ArrowUtils.toArrow(batchDf))
       }
+      FetchResultResponse(
+        hasMoreData = dataFrameResponse.hasMoreData,
+        ArrowUtils.toArrow(dataFrameResponse.dataFrame)
+      )
     }
+    FetchResultResponse(hasMoreData = dataFrameResponse.hasMoreData, null)
   }
 
   override protected def runCode(

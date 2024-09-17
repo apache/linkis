@@ -35,6 +35,8 @@ public class AMNodeMetrics implements NodeMetrics {
 
   private Date updateTime;
 
+  private String description;
+
   @Override
   public ServiceInstance getServiceInstance() {
     return serviceInstance;
@@ -88,5 +90,14 @@ public class AMNodeMetrics implements NodeMetrics {
 
   public void setUpdateTime(Date updateTime) {
     this.updateTime = updateTime;
+  }
+
+  @Override
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

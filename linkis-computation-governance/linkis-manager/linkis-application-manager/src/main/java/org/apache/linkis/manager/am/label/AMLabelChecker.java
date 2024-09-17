@@ -21,7 +21,6 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
-import org.apache.linkis.manager.service.common.label.LabelChecker;
 
 import org.springframework.stereotype.Component;
 
@@ -45,7 +44,6 @@ class AMLabelChecker implements LabelChecker {
 
   @Override
   public boolean checkCorrespondingLabel(List<Label<?>> labelList, Class... clazz) {
-    // TODO: 是否需要做子类的判断
     List<Class<?>> classes = Arrays.asList(clazz);
     return labelList.stream()
         .filter(Objects::nonNull)

@@ -121,11 +121,10 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       Sender
         .getSender(MANAGER_SERVICE_NAME)
         .send(
-          new EngineConnStatusCallbackToAM(
+          EngineConnStatusCallbackToAM(
             conn.getServiceInstance,
             NodeStatus.Failed,
-            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t),
-            true
+            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)
           )
         )
       conn.setStatus(NodeStatus.Failed)
@@ -147,12 +146,10 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       throw t
     }
     LoggerUtils.removeJobIdMDC()
-
     val label = LabelUtil.getEngingeConnRuntimeModeLabel(request.labels)
     val isYarnClusterMode: Boolean =
       if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
       else false
-
     val engineNode = new AMEngineNode()
     engineNode.setLabels(conn.getLabels)
     engineNode.setServiceInstance(conn.getServiceInstance)

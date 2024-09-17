@@ -17,22 +17,15 @@
 
 package org.apache.linkis.ecm.server.exception
 
-import org.apache.linkis.common.exception.{
-  ErrorException,
-  ExceptionLevel,
-  LinkisRuntimeException,
-  WarnException
-}
+import org.apache.linkis.common.exception.{ErrorException, WarnException}
 
-class ECMErrorException(errorCode: Int, desc: String)
-    extends LinkisRuntimeException(errorCode, desc) {
+class ECMErrorException(errorCode: Int, desc: String) extends ErrorException(errorCode, desc) {
 
   def this(errorCode: Int, desc: String, t: Throwable) {
     this(errorCode, desc)
     this.initCause(t)
   }
 
-  override def getLevel: ExceptionLevel = ExceptionLevel.ERROR
 }
 
 class ECMWarnException(errCode: Int, desc: String) extends WarnException(errCode, desc)

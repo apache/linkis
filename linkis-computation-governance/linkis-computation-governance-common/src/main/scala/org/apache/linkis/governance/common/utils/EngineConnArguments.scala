@@ -145,9 +145,13 @@ class DefaultEngineConnArgumentsParser extends EngineConnArgumentsParser {
     val options = ArrayBuffer[String]()
     def write(confMap: Map[String, String], optionType: String): Unit = confMap.foreach {
       case (key, value) =>
-        if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
+        var realValue = value
+        if (key.startsWith("label") && StringUtils.isEmpty(realValue)) {
+          realValue = "true"
+        }
+        if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(realValue)) {
           options += optionType
-          options += (key + "=" + value)
+          options += (key + "=" + realValue)
         }
     }
     write(engineConnArguments.getEngineConnConfMap, ENGINE_CONN_CONF)

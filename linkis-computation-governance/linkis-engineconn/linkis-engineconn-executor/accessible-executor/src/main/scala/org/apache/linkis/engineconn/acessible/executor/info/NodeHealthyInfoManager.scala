@@ -48,7 +48,7 @@ class DefaultNodeHealthyInfoManager extends NodeHealthyInfoManager with Logging 
     val nodeHealthyInfo = new NodeHealthyInfo
     nodeHealthyInfo.setMsg("")
 
-    /** If it is actively set by the manager, then the manager setting shall prevail */
+    /** 如果是manager主动设置的，则以manager设置的为准 */
     val newHealthy: NodeHealthy = if (this.setByManager) {
       this.healthy
     } else {

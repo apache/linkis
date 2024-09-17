@@ -18,6 +18,8 @@
 package org.apache.linkis.manager.am.manager;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.am.converter.MetricsConverter;
+import org.apache.linkis.manager.am.pointer.NodePointerBuilder;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.*;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity;
@@ -30,8 +32,6 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.rm.ResourceInfo;
 import org.apache.linkis.manager.rm.service.ResourceManager;
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -150,7 +150,7 @@ public class DefaultEMNodeManager implements EMNodeManager {
               .filter(metrics -> metrics.getServiceInstance().equals(emNode.getServiceInstance()))
               .findFirst();
       Optional<RMNode> optionRMNode =
-          resourceInfo.getResourceInfo().stream()
+          resourceInfo.resourceInfo().stream()
               .filter(rmNode -> rmNode.getServiceInstance().equals(emNode.getServiceInstance()))
               .findFirst();
 
@@ -171,7 +171,7 @@ public class DefaultEMNodeManager implements EMNodeManager {
     emNode.setOwner(node.getOwner());
     emNode.setServiceInstance(node.getServiceInstance());
     if (node instanceof PersistenceNodeEntity) {
-      emNode.setStartTime(((PersistenceNodeEntity) node).getStartTime());
+      emNode.setStartTime(node.getStartTime());
     }
     emNode.setMark(emNode.getMark());
     metricsConverter.fillMetricsToNode(emNode, nodeMetricManagerPersistence.getNodeMetrics(emNode));
@@ -197,7 +197,7 @@ public class DefaultEMNodeManager implements EMNodeManager {
   /**
    * 1. request engineManager to launch engine
    *
-   * @param engineBuildRequest
+   * @param engineConnLaunchRequest
    * @param emNode
    * @return
    */

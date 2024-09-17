@@ -25,4 +25,5 @@ import org.apache.linkis.protocol.message.RequestProtocol
  * @param pid
  */
 case class ResponseEngineConnPid(serviceInstance: ServiceInstance, pid: String, ticketId: String)
-    extends RequestProtocol
+    extends RetryableProtocol
+    with RequestProtocol

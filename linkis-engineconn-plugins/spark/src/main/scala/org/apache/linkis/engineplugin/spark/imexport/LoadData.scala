@@ -22,7 +22,6 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.imexport.util.{BackGroundServiceUtils, ImExportUtils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
-import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.storage.excel.XlsUtils
 
 import org.apache.commons.lang3.StringUtils
@@ -36,63 +35,53 @@ import java.util.Locale
 
 import scala.collection.JavaConverters._
 
+import org.json4s._
+import org.json4s.jackson.JsonMethods._
+
 /**
  */
 object LoadData {
+  implicit val formats = DefaultFormats
 
   def loadDataToTable(spark: SparkSession, source: String, destination: String): Unit = {
-    val src = BDPJettyServerHelper.gson.fromJson(source, classOf[Map[String, Any]])
-    val dst = BDPJettyServerHelper.gson.fromJson(destination, classOf[Map[String, Any]])
-    create_table_from_a_file(spark, src, dst)
+    create_table_from_a_file(spark, parse(source), parse(destination))
   }
 
   def loadDataToTableByFile(spark: SparkSession, destinationPath: String, source: String): Unit = {
     val destination = BackGroundServiceUtils.exchangeExecutionCode(destinationPath)
-    val src = BDPJettyServerHelper.gson.fromJson(source, classOf[Map[String, Any]])
-    val dst = BDPJettyServerHelper.gson.fromJson(destination, classOf[Map[String, Any]])
-    create_table_from_a_file(spark, src, dst)
+    create_table_from_a_file(spark, parse(source), parse(destination))
   }
 
-  def create_table_from_a_file(
-      spark: SparkSession,
-      source: Map[String, Any],
-      destination: Map[String, Any]
-  ): Unit = {
+  def create_table_from_a_file(spark: SparkSession, src: JValue, dest: JValue): Unit = {
+    val source = src.extract[Map[String, Any]]
+    val destination = dest.extract[Map[String, Any]]
+
     var path = getMapValue[String](source, "path")
     val pathType = getMapValue[String](source, "pathType", "share")
-    var hasHeader = Utils.tryCatch(getMapValue[Boolean](source, "hasHeader", false)) {
-      case e: Exception => false
-    }
+    var hasHeader = getMapValue[Boolean](source, "hasHeader", false)
     val sheetName = getMapValue[String](source, "sheet", "Sheet1")
+    val dateFormat = getMapValue[String](source, "dateFormat", "yyyy-MM-dd")
     val suffix = path.substring(path.lastIndexOf("."))
     val sheetNames = sheetName.split(",").toBuffer.asJava
-
     var fs: FileSystem = null
+
     val database = getMapValue[String](destination, "database")
     val tableName = getMapValue[String](destination, "tableName")
 
-    val importData = Utils.tryCatch(getMapValue[Boolean](destination, "importData", true)) {
-      case e: Exception => true
-    }
+    val importData = getMapValue[Boolean](destination, "importData", true)
     val isPartition = Utils.tryCatch {
       getMapValue[Boolean](destination, "isPartition", true)
     } { case e: Exception =>
       val flag = getMapValue[BigInt](destination, "isPartition", 0)
       if (flag == 1) true else false
     }
-    val isOverwrite =
-      Utils.tryCatch(getMapValue[Boolean](destination, "isOverwrite", false)) { case e: Exception =>
-        false
-      }
+    val isOverwrite = getMapValue[Boolean](destination, "isOverwrite", false)
     val partition = getMapValue[String](destination, "partition", "ds")
     val partitionValue = getMapValue[String](destination, "partitionValue", "1993-01-02")
 
-    val columns =
-      destination.get("columns").asInstanceOf[java.util.List[Map[String, Any]]].asScala.toList
-
+    val columns = (dest \ "columns").extract[List[Map[String, Any]]]
     val dateFormats =
       columns.map(_.get("dateFormat").get.toString).map(f => if (f isEmpty) "yyyy-MM-dd" else f)
-
     var isFirst = true
     val dateFormatsJson = new StringBuilder()
     dateFormats.foreach(f => {
@@ -213,6 +202,20 @@ object LoadData {
     IOUtils.closeStream(in)
     IOUtils.closeStream(out)
     hdfsPath
+  }
+
+  def getNodeValue[T](json: JValue, node: String, default: T = null.asInstanceOf[T])(implicit
+      m: Manifest[T]
+  ): T = {
+    json \ node match {
+      case JNothing => default
+      case value: JValue =>
+        if ("JString()".equals(value.toString)) default
+        else {
+          try value.extract[T]
+          catch { case t: Throwable => default }
+        }
+    }
   }
 
   def getMapValue[T](map: Map[String, Any], key: String, default: T = null.asInstanceOf[T]): T = {

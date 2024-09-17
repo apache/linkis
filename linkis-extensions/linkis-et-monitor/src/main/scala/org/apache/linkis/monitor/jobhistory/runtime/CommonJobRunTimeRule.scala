@@ -51,18 +51,21 @@ class CommonJobRunTimeRule(hitObserver: Observer)
       return false
     }
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
-    for (sd <- data.asScala) {
-      if (sd != null && sd.getData() != null) {
-        for (d <- sd.getData().asScala) {
-          d match {
+    for (dataList <- data.asScala) {
+      if (dataList != null && dataList.getData() != null) {
+        for (historyList <- dataList.getData().asScala) {
+          historyList match {
             case jobHistory: JobHistory =>
+              logger.info("CommonJobRunTimeRule JobHistory data : {}", jobHistory.getId)
               if (
                   Constants.FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())
                   && StringUtils.isNotBlank(jobHistory.getObserveInfo)
               ) {
                 alertData.add(jobHistory)
               } else {
-                logger.warn("jobHistory is not completely  ， taskid :" + d)
+                logger.warn(
+                  "CommonJobRunTimeRule jobHistory is not completely  ， taskid :" + jobHistory.getId
+                )
               }
             case _ =>
           }
@@ -71,7 +74,7 @@ class CommonJobRunTimeRule(hitObserver: Observer)
         logger.warn("Ignored null scanned data")
       }
     }
-    logger.info("hit " + alertData.size() + " data in one iteration")
+    logger.info("CommonJobRunTimeRule hit " + alertData.size() + " data will be alter")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
       true

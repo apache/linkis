@@ -340,7 +340,7 @@ public class TaskServiceImpl implements TaskService {
     FileSystem hadoopFs =
         (FileSystem)
             FSFactory.getFsByProxyUser(
-                firstDestPath, StorageConfiguration.HDFS_ROOT_USER.getValue());
+                firstDestPath, StorageConfiguration.HDFS_ROOT_USER().getValue());
     FileSystem anotherUserFs = (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, anotherUser);
     try {
       hadoopFs.init(null);
@@ -399,15 +399,18 @@ public class TaskServiceImpl implements TaskService {
    * @return 下一个版本号
    */
   private String getResourceLastVersion(String resourceId) {
-    String lastVersion = taskDao.getNewestVersion(resourceId);
-    if (StringUtils.isBlank(lastVersion)) {
+    String lastVersion = "";
+    if (StringUtils.isNotBlank(resourceId)) {
       lastVersion = versionDao.getNewestVersion(resourceId);
     }
     return lastVersion;
   }
 
   private String generateNewVersion(String version) {
-    int next = Integer.parseInt(version.substring(1, version.length())) + 1;
+    int next = 1;
+    if (StringUtils.isNotBlank(version)) {
+      next = Integer.parseInt(version.substring(1, version.length())) + 1;
+    }
     return Constant.VERSION_PREFIX + String.format(Constant.VERSION_FORMAT, next);
   }
 }

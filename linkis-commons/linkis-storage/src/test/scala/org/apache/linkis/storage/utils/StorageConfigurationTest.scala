@@ -26,7 +26,7 @@ class StorageConfigurationTest {
   def constTest(): Unit = {
 
     val storagerootuser = StorageConfiguration.STORAGE_ROOT_USER.getValue
-    val hdfsrootuser = StorageConfiguration.HDFS_ROOT_USER.getValue
+    val hdfsrootuser = StorageConfiguration.HDFS_ROOT_USER().getValue
     val localrootuser = StorageConfiguration.LOCAL_ROOT_USER.getValue
     val storageusergroup = StorageConfiguration.STORAGE_USER_GROUP.getValue
     val storagersfiletype = StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue
@@ -46,7 +46,6 @@ class StorageConfigurationTest {
     val doublefractionlen = StorageConfiguration.DOUBLE_FRACTION_LEN.getValue
     val hdfspathprefixcheckon = StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON.getValue
     val hdfspathprefixremove = StorageConfiguration.HDFS_PATH_PREFIX_REMOVE.getValue
-    val fscachedisable = StorageConfiguration.FS_CACHE_DISABLE.getValue
     val fschecksumdisbale = StorageConfiguration.FS_CHECKSUM_DISBALE.getValue
 
     Assertions.assertEquals("hadoop", storagerootuser)
@@ -62,8 +61,7 @@ class StorageConfigurationTest {
       storageresultsetclasses
     )
     Assertions.assertEquals(
-      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
-        "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem",
+      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem",
       storagebuildfsclasses
     )
     Assertions.assertTrue(issharenode)
@@ -77,7 +75,6 @@ class StorageConfigurationTest {
     Assertions.assertTrue(30 == doublefractionlen)
     Assertions.assertTrue(hdfspathprefixcheckon)
     Assertions.assertTrue(hdfspathprefixremove)
-    Assertions.assertFalse(fscachedisable)
     Assertions.assertFalse(fschecksumdisbale)
 
   }

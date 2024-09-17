@@ -21,6 +21,9 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 
 import org.apache.ibatis.annotations.*;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -29,6 +32,10 @@ import java.util.List;
 @Mapper
 public interface LockManagerMapper {
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 6,
+      backoff = @Backoff(delay = 10000))
   @Transactional(rollbackFor = Exception.class)
   int lock(PersistenceLock persistenceLock);
 

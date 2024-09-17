@@ -38,7 +38,7 @@ object Constants {
 
   val ALERT_PROPS_FILE_PATH = CommonVars.properties.getProperty(
     "linkis.alert.conf.file.path",
-    "linkis-et-monitor-file.properties"
+    "linkis-et-monitor-ims.properties"
   )
 
   val ALERT_IMS_URL = CommonVars.properties.getProperty(
@@ -47,7 +47,7 @@ object Constants {
   )
 
   val ALERT_SUB_SYSTEM_ID =
-    CommonVars.properties.getProperty("linkis.alert.sub_system_id", "10001")
+    CommonVars.properties.getProperty("linkis.alert.sub_system_id", "5435")
 
   val ALERT_DEFAULT_RECEIVERS = CommonVars.properties
     .getProperty("linkis.alert.receiver.default", "")
@@ -89,5 +89,8 @@ object Constants {
 
   val BML_TRASH_PATH_PREFIX: CommonVars[String] =
     CommonVars[String]("linkis.monitor.bml.trash.prefix.path", "hdfs:///tmp/linkis/trash/bml_trash")
+
+  val LINKIS_CLUSTER_NAME =
+    CommonVars.properties.getProperty("linkis.cluster.name", "")
 
 }

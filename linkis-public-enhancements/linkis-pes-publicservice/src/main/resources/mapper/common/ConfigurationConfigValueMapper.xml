@@ -20,12 +20,13 @@
 
     <update id="updateByKeyId"
             parameterType="org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigValue">
-        UPDATE linkis_ps_configuration_config_value
-        SET config_value = #{configValue.configValue}
-        WHERE config_key_id = #{configValue.configKeyId}
+        update linkis_ps_configuration_config_value
+        set config_value = #{configValue.configValue}
+        where config_key_id = #{configValue.configKeyId}
     </update>
     <delete id="deleteByKeyId" parameterType="java.lang.Long">
-        DELETE FROM linkis_ps_configuration_config_value
-        WHERE config_key_id = #{keyId}
+        delete
+        from linkis_ps_configuration_config_value
+        where config_key_id = #{keyId}
     </delete>
 </mapper>

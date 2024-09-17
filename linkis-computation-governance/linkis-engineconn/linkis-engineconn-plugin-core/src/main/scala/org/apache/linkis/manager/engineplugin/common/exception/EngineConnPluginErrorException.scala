@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.common.exception
 
-import org.apache.linkis.common.exception.{ErrorException, ExceptionLevel, LinkisRuntimeException}
+import org.apache.linkis.common.exception.ErrorException
 
-class EngineConnPluginErrorException(code: Int, msg: String)
-    extends LinkisRuntimeException(code, msg) {
-  override def getLevel: ExceptionLevel = ExceptionLevel.ERROR
-}
+class EngineConnPluginErrorException(code: Int, msg: String) extends ErrorException(code, msg) {}

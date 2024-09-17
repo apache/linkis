@@ -20,15 +20,14 @@ package org.apache.linkis.engineconnplugin.flink.operator
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
-import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary
-import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.constants.FlinkECConstant
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
 import org.apache.linkis.engineconnplugin.flink.operator.clientmanager.FlinkRestClientManager
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
 import org.apache.linkis.governance.common.constant.ec.ECConstants
-import org.apache.linkis.governance.common.exception.GovernanceErrorException
 import org.apache.linkis.manager.common.operator.Operator
 
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
@@ -42,13 +41,12 @@ class TriggerSavepointOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("doSavepoint")
 
-  @throws[GovernanceErrorException]
-  override def apply(params: util.Map[String, Object]): util.Map[String, Object] = {
+  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
     val rsMap = new mutable.HashMap[String, String]
 
-    val savepointPath = getAsThrow[String](params, FlinkECConstant.SAVAPOINT_PATH_KEY)
-    val appIdStr = getAsThrow[String](params, ECConstants.YARN_APPID_NAME_KEY)
-    val mode = getAsThrow[String](params, FlinkECConstant.SAVEPOINT_MODE_KEY)
+    val savepointPath = getAsThrow[String](FlinkECConstant.SAVAPOINT_PATH_KEY, params)
+    val appIdStr = getAsThrow[String](ECConstants.YARN_APPID_NAME_KEY, params)
+    val mode = getAsThrow[String](FlinkECConstant.SAVEPOINT_MODE_KEY, params)
 
     val appId = YarnUtil.retrieveApplicationId(appIdStr)
     val yarnClient = YarnUtil.getYarnClient()
@@ -79,18 +77,13 @@ class TriggerSavepointOperator extends Operator with Logging {
           rsMap.put(FlinkECConstant.RESULT_SAVEPOINT_KEY, writtenSavepoint)
         case executor =>
           throw new JobExecutionException(
-            FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorDesc + executor.getClass.getSimpleName
+            NOT_SUPPORT_SAVEPOTION.getErrorDesc + executor.getClass.getSimpleName
               + MessageFormat
-                .format(
-                  FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorDesc,
-                  executor.getClass.getSimpleName
-                )
+                .format(NOT_SUPPORT_SAVEPOTION.getErrorDesc, executor.getClass.getSimpleName)
           )
       }
     }
-    val map = new util.HashMap[String, Object]()
-    rsMap.foreach(entry => map.put(entry._1, entry._2))
-    map
+    rsMap.toMap
   }
 
 }

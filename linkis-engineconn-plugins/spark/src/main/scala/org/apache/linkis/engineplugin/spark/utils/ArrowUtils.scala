@@ -75,11 +75,10 @@ object ArrowUtils {
           val vector = new BitVector(field.name, allocator)
           vector.allocateNew(df.count().toInt)
           vector
-        case StringType =>
-          val vector = new VarCharVector(field.name, allocator)
+        case _ =>
+          val vector: VarCharVector = new VarCharVector(field.name, allocator)
           vector.allocateNew(df.count().toInt)
           vector
-        case _ => throw new IllegalArgumentException(s"Unsupported data type: ${field.dataType}")
       }
     }.toList
 

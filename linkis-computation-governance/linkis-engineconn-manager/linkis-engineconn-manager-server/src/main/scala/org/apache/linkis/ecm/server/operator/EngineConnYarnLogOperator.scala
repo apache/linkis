@@ -57,7 +57,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     } {}
   }
 
-  override def getLogPath(parameters: Map[String, Any]): File = {
+  override def getLogPath(implicit parameters: Map[String, Any]): File = {
     val applicationId = getAsThrow[String]("yarnApplicationId", parameters)
     val (ticketId, engineConnInstance, engineConnLogDir) = getEngineConnInfo(parameters)
     val rootLogPath = EngineConnYarnLogOperator.YARN_LOG_STORAGE_PATH.getValue match {

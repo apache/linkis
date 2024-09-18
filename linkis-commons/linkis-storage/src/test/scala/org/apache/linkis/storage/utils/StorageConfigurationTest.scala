@@ -26,7 +26,7 @@ class StorageConfigurationTest {
   def constTest(): Unit = {
 
     val storagerootuser = StorageConfiguration.STORAGE_ROOT_USER.getValue
-    val hdfsrootuser = StorageConfiguration.HDFS_ROOT_USER().getValue
+    val hdfsrootuser = StorageConfiguration.HDFS_ROOT_USER.getValue
     val localrootuser = StorageConfiguration.LOCAL_ROOT_USER.getValue
     val storageusergroup = StorageConfiguration.STORAGE_USER_GROUP.getValue
     val storagersfiletype = StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue

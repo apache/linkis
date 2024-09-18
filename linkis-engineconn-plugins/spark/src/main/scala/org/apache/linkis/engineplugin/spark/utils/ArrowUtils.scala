@@ -18,22 +18,12 @@
 package org.apache.linkis.engineplugin.spark.utils
 
 import org.apache.arrow.memory.RootAllocator
-import org.apache.arrow.vector.{
-  BigIntVector,
-  BitVector,
-  FieldVector,
-  Float8Vector,
-  IntVector,
-  VarCharVector,
-  VectorSchemaRoot
-}
-import org.apache.arrow.vector.ipc.{ArrowStreamReader, ArrowStreamWriter}
+import org.apache.arrow.vector._
+import org.apache.arrow.vector.ipc.ArrowStreamWriter
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.types.{BooleanType, DoubleType, IntegerType, LongType, StringType}
+import org.apache.spark.sql.types._
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
-
-import scala.jdk.CollectionConverters.asScalaBufferConverter
+import java.io.ByteArrayOutputStream
 
 object ArrowUtils {
 
@@ -111,37 +101,6 @@ object ArrowUtils {
     val root = new VectorSchemaRoot(javaFieldVectors)
 
     (root, fieldVectors)
-  }
-
-  /**
-   * Converts Arrow byte array results into a formatted string with line breaks.
-   */
-  def arrowToString(arrowBytes: Array[Byte]): String = {
-    val allocator = new RootAllocator(Long.MaxValue)
-    val byteArrayInputStream = new ByteArrayInputStream(arrowBytes)
-    val streamReader = new ArrowStreamReader(byteArrayInputStream, allocator)
-
-    val stringBuilder = new StringBuilder
-
-    try {
-      val root: VectorSchemaRoot = streamReader.getVectorSchemaRoot
-
-      while (streamReader.loadNextBatch()) {
-        for (i <- 0 until root.getRowCount) {
-          val row = root.getFieldVectors.asScala
-            .map { vector =>
-              vector.getObject(i).toString
-            }
-            .mkString(", ")
-          stringBuilder.append(row).append("\n")
-        }
-      }
-    } finally {
-      streamReader.close()
-      allocator.close()
-    }
-
-    stringBuilder.toString()
   }
 
 }

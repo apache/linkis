@@ -39,7 +39,7 @@ object WorkspaceClientConf {
   val tokenValue: String =
     CommonVars[String](
       "wds.linkis.filesystem.token.value",
-      "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl"
+      "LINKIS-AUTH"
     ).getValue
 
   val scriptFromBMLUrl: String = prefix + scriptFromBML

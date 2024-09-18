@@ -441,7 +441,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
       case ExecutionNodeStatus.Running =>
         if (
-            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled || newStatus == ExecutionNodeStatus.Ready
+            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
         ) {
           task.setStatus(newStatus)
         } else {

@@ -34,8 +34,6 @@ class ResourceDaoTest extends BaseDaoTest {
   void insertResource() {
     Resource resource = new Resource();
     resource.setResourceId("123");
-    resource.setPrivate(false);
-    resource.setExpire(false);
     resource.setResourceHeader("2");
     resource.setDownloadedFileName("testFileName");
     resource.setSystem("testSystem");

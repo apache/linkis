@@ -24,6 +24,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 
 import java.io.ByteArrayOutputStream
+import java.util
 
 object ArrowUtils {
 
@@ -93,11 +94,8 @@ object ArrowUtils {
       }
     }
 
-    val javaFieldVectors: java.lang.Iterable[FieldVector] =
-      fieldVectors
-        .map(_.asInstanceOf[FieldVector])
-        .iterator
-        .asInstanceOf[java.lang.Iterable[FieldVector]]
+    val javaFieldVectors: util.ArrayList[FieldVector] = new util.ArrayList[FieldVector]()
+    fieldVectors.foreach(javaFieldVectors.add)
     val root = new VectorSchemaRoot(javaFieldVectors)
 
     (root, fieldVectors)

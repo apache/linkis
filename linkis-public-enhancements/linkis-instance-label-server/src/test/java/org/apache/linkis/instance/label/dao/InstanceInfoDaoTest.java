@@ -34,7 +34,6 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
 
   void insert() {
     InstanceInfo instanceInfo = new InstanceInfo();
-    instanceInfo.setId(1);
     instanceInfo.setInstance("testInstance");
     instanceInfo.setApplicationName("testApplicationName");
     instanceInfoDao.insertOne(instanceInfo);

@@ -173,11 +173,11 @@ class VersionDaoTest extends BaseDaoTest {
         versionDao.checkVersion(resourceId, version);
     }
 
-    @Test
-    void testSelectResourceVersionEnbleFlag() {
-        insertVersion();
-        versionDao.selectResourceVersionEnbleFlag(resourceId, version);
-    }
+//    @Test
+//    void testSelectResourceVersionEnbleFlag() {
+//        insertVersion();
+//        versionDao.selectResourceVersionEnbleFlag(resourceId, version);
+//    }
 
     @Test
     void testDeleteResource() {

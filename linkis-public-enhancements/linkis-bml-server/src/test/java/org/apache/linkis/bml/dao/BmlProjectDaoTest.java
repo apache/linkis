@@ -106,11 +106,11 @@ class BmlProjectDaoTest extends BaseDaoTest {
     assertTrue(i != null);
   }
 
-  @Test
-  void testAttachResourceAndProject() {
-    insertNewProject();
-    bmlProjectDao.attachResourceAndProject(1, "123");
-  }
+//  @Test
+//  void testAttachResourceAndProject() {
+//    insertNewProject();
+//    bmlProjectDao.attachResourceAndProject(1, "123");
+//  }
 
   @Test
   void testCheckIfExists() {

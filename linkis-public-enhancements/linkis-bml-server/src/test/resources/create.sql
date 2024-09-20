@@ -128,6 +128,39 @@ CREATE TABLE   linkis_ps_resources_download_history   (
     downloader   varchar(50) NOT NULL COMMENT 'Downloader',
   PRIMARY KEY (  id  )
 );
+DROP TABLE IF EXISTS `linkis_ps_bml_resources_version`;
+CREATE TABLE if not exists `linkis_ps_bml_resources_version` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+  `resource_id` varchar(50) NOT NULL COMMENT 'Resource uuid',
+  `file_md5` varchar(32) NOT NULL COMMENT 'Md5 summary of the file',
+  `version` varchar(20) NOT NULL COMMENT 'Resource version (v plus five digits)',
+	`size` int(10) NOT NULL COMMENT 'File size',
+	`start_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+	`end_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+	`resource` varchar(2000) NOT NULL COMMENT 'Resource content (file information including path and file name)',
+	`description` varchar(2000) DEFAULT NULL COMMENT 'description',
+	`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Started time',
+	`end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Stoped time',
+	`client_ip` varchar(200) NOT NULL COMMENT 'Client ip',
+	`updator` varchar(50) DEFAULT NULL COMMENT 'updator',
+	`enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+	unique key `uniq_rid_version`(`resource_id`, `version`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+DROP TABLE IF EXISTS `linkis_ps_bml_project`;
+create table if not exists linkis_ps_bml_project(
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `system` varchar(64) not null default "dss",
+  `source` varchar(1024) default null,
+  `description` varchar(1024) default null,
+  `creator` varchar(128) not null,
+  `enabled` tinyint default 1,
+  `create_time` datetime DEFAULT now(),
+  unique key `uniq_name` (`name`),
+PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=COMPACT;
 
 insert ignore into  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time) values ( 1, 'creCreatorUser', 2, 'creatorTest', now());
 insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time)values('testName', 'testSy','test', 'descTest','creCreatorUser', 1, now());

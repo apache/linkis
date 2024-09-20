@@ -130,7 +130,7 @@ CREATE TABLE   linkis_ps_resources_download_history   (
 );
 
 DROP TABLE IF EXISTS linkis_ps_bml_resources_version;
-CREATE TABLE if not exists linkis_ps_bml_resources_version (
+CREATE TABLE linkis_ps_bml_resources_version (
   id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
   resource_id varchar(50) NOT NULL COMMENT 'Resource uuid',
   file_md5 varchar(32) NOT NULL COMMENT 'Md5 summary of the file',
@@ -148,8 +148,9 @@ CREATE TABLE if not exists linkis_ps_bml_resources_version (
   unique key uniq_rid_version(resource_id, version),
   PRIMARY KEY (id)
 );
+
 DROP TABLE IF EXISTS linkis_ps_bml_project;
-create table if not exists linkis_ps_bml_project(
+create table linkis_ps_bml_project(
   id int(10) NOT NULL AUTO_INCREMENT,
   name varchar(128) DEFAULT NULL,
   system varchar(64) not null default NULL,

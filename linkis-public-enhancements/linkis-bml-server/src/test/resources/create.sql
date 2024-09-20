@@ -152,7 +152,7 @@ DROP TABLE IF EXISTS `linkis_ps_bml_project`;
 create table if not exists linkis_ps_bml_project(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) DEFAULT NULL,
-  `system` varchar(64) not null default "dss",
+  `system` varchar(64) not null default NULL,
   `source` varchar(1024) default null,
   `description` varchar(1024) default null,
   `creator` varchar(128) not null,

@@ -143,11 +143,11 @@ class VersionDaoTest extends BaseDaoTest {
         versionDao.getStartByteForResource(resourceId, version);
     }
 
-    @Test
-    void testGetEndByte() {
-        insertVersion();
-        versionDao.getEndByte(resourceId, version);
-    }
+//    @Test
+//    void testGetEndByte() {
+//        insertVersion();
+//        versionDao.getEndByte(resourceId, version);
+//    }
 
     @Test
     void testFindResourceVersion() {

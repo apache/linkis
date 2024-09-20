@@ -17,8 +17,6 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.linkis.DataWorkCloudApplication
-import org.apache.linkis.common.conf.DWCArgumentsParser
 import org.apache.linkis.engineplugin.spark.utils.ArrowUtils
 
 import org.apache.arrow.memory.RootAllocator
@@ -28,34 +26,12 @@ import org.apache.spark.sql.SparkSession
 
 import java.io.ByteArrayInputStream
 
-import scala.collection.mutable
-
 import org.junit.jupiter.api.{Assertions, Test}
 
 class TestArrowUtil {
 
-  def initService(port: String): Unit = {
-    System.setProperty("wds.linkis.server.version", "v1")
-    System.setProperty(
-      "wds.linkis.engineconn.plugin.default.class",
-      "org.apache.linkis.engineplugin.spark.SparkEngineConnPlugin"
-    )
-    val map = new mutable.HashMap[String, String]()
-    map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
-    map.put("server.port", port)
-    map.put("spring.application.name", "SparkSqlExecutor")
-    map.put("eureka.client.register-with-eureka", "false")
-    map.put("eureka.client.fetch-registry", "false")
-    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
-  }
-
   @Test
-  def testToArrow: Unit = {
-    initService("26380")
-    val path = this.getClass.getResource("/").getPath
-    System.setProperty("HADOOP_CONF_DIR", path)
-    System.setProperty("wds.linkis.filesystem.hdfs.root.path", path)
-    System.setProperty("java.io.tmpdir", path)
+  def testToArrow(): Unit = {
     val sparkSession = SparkSession
       .builder()
       .master("local[1]")

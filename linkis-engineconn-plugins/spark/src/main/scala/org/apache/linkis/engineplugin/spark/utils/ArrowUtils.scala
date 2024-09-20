@@ -84,13 +84,10 @@ object ArrowUtils {
           case DoubleType => vector.asInstanceOf[Float8Vector].setSafe(i, row.getDouble(j))
           case BooleanType =>
             vector.asInstanceOf[BitVector].setSafe(i, if (row.getBoolean(j)) 1 else 0)
-          case StringType =>
-            vector.asInstanceOf[VarCharVector].setSafe(i, row.getString(j).getBytes)
           case _ =>
-            throw new IllegalArgumentException(
-              s"Unsupported data type: ${row.schema.fields(j).dataType}"
-            )
+            vector.asInstanceOf[VarCharVector].setSafe(i, row.getString(j).getBytes)
         }
+        vector.setValueCount(vector.getValueCount + 1)
       }
     }
 

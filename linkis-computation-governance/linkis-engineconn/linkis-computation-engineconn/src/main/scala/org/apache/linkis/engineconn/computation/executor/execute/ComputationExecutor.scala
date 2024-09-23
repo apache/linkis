@@ -234,15 +234,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         val code = codes(index)
         engineExecutionContext.setCurrentParagraph(index + 1)
 
-        response = Utils.tryCatch(if (isFetchMethodOfDirectPush(engineConnTask.getTaskId)) {
-          fetchMoreResultSet(
-            engineConnTask.getTaskId,
-            engineExecutionContext.getProperties
-              .getOrDefault(JobRequestConstants.DIRECT_PUSH_FETCH_SIZE, "100")
-              .toString
-              .toInt
-          )
-        } else if (incomplete.nonEmpty) {
+        response = Utils.tryCatch(if (incomplete.nonEmpty) {
           executeCompletely(engineExecutionContext, code, incomplete.toString())
         } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
@@ -256,8 +248,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
             return response
           case SuccessExecuteResponse() =>
             engineExecutionContext.appendStdout("\n")
-            incomplete.setLength(0)
-          case FetchResultResponse(_, _) =>
             incomplete.setLength(0)
           case e: OutputExecuteResponse =>
             incomplete.setLength(0)
@@ -287,11 +277,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         case s: SuccessExecuteResponse =>
           succeedTasks.increase()
           s
-        case s: FetchResultResponse =>
-          if (!s.hasMoreData) {
-            succeedTasks.increase()
-          }
-          s
         case incompleteExecuteResponse: IncompleteExecuteResponse =>
           ErrorExecuteResponse(
             s"The task cannot be an incomplete response ${incompleteExecuteResponse.message}",
@@ -304,16 +289,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       runningTasks.decrease()
       this.internalExecute = false
     }
-  }
-
-  // The following two methods need to implemented to support directly pushing task.
-  def isFetchMethodOfDirectPush(taskId: String): Boolean = false
-
-  def fetchMoreResultSet(taskId: String, fetchSize: Int): FetchResultResponse = {
-    throw new UnsupportedOperationException(
-      "Method fetchMoreResultSet() is not supported, it can only be used in " +
-        "the engine which support directly pushing task like spark and hive."
-    )
   }
 
   def execute(engineConnTask: EngineConnTask): ExecuteResponse = Utils.tryFinally {

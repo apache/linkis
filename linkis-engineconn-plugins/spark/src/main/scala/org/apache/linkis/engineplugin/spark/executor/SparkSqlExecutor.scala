@@ -54,25 +54,6 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     }
   }
 
-  override def isFetchMethodOfDirectPush(taskId: String): Boolean = {
-    DirectPushCache.isTaskCached(taskId)
-  }
-
-  // This method is not idempotent. After fetching a result set of size fetchSize each time, the corresponding results will be removed from the cache.
-  override def fetchMoreResultSet(taskId: String, fetchSize: Int): FetchResultResponse = {
-    val dataFrameResponse = DirectPushCache.fetchResultSetOfDataFrame(taskId, fetchSize)
-    if (dataFrameResponse.dataFrame != null) {
-      if (!dataFrameResponse.hasMoreData) {
-        succeedTasks.increase()
-      }
-      FetchResultResponse(
-        hasMoreData = dataFrameResponse.hasMoreData,
-        ArrowUtils.toArrow(dataFrameResponse.dataFrame)
-      )
-    }
-    FetchResultResponse(hasMoreData = dataFrameResponse.hasMoreData, null)
-  }
-
   override protected def runCode(
       executor: SparkEngineConnExecutor,
       code: String,

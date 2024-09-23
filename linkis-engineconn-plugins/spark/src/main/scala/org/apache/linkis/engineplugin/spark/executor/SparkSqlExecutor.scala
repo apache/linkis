@@ -118,7 +118,6 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
 
       if (engineExecutionContext.isEnableDirectPush) {
         submitResultSetIterator(lastTask.getTaskId, df)
-        ReadyForFetchResultResponse()
       } else {
         SQLSession.showDF(
           sparkEngineSession.sparkContext,
@@ -128,8 +127,8 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           SparkConfiguration.SHOW_DF_MAX_RES.getValue,
           engineExecutionContext
         )
-        SuccessExecuteResponse()
       }
+      SuccessExecuteResponse()
     } catch {
       case e: InvocationTargetException =>
         var cause = ExceptionUtils.getCause(e)

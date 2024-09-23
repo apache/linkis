@@ -257,8 +257,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           case SuccessExecuteResponse() =>
             engineExecutionContext.appendStdout("\n")
             incomplete.setLength(0)
-          case ReadyForFetchResultResponse() =>
-            incomplete.setLength(0)
           case FetchResultResponse(_, _) =>
             incomplete.setLength(0)
           case e: OutputExecuteResponse =>

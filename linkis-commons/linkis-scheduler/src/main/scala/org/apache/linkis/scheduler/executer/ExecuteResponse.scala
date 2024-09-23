@@ -21,8 +21,6 @@ trait ExecuteResponse
 trait CompletedExecuteResponse extends ExecuteResponse
 case class SuccessExecuteResponse() extends CompletedExecuteResponse
 
-case class ReadyForFetchResultResponse() extends ExecuteResponse
-
 case class FetchResultResponse(hasMoreData: Boolean, data: Array[Byte]) extends ExecuteResponse
 
 trait OutputExecuteResponse extends ExecuteResponse {

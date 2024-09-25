@@ -134,7 +134,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
             (ElasticSearchTableResponse) elasticSearchResponse;
         TableMetaData metaData = new TableMetaData(tableResponse.columns());
         ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-                engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
+            engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
         resultSetWriter.addMetaData(metaData);
         Arrays.asList(tableResponse.records())
             .forEach(
@@ -152,7 +152,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
       } else if (elasticSearchResponse instanceof ElasticSearchJsonResponse) {
         ElasticSearchJsonResponse jsonResponse = (ElasticSearchJsonResponse) elasticSearchResponse;
         ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-                engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE());
+            engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE());
         resultSetWriter.addMetaData(null);
         Arrays.stream(jsonResponse.value().split("\\n"))
             .forEach(

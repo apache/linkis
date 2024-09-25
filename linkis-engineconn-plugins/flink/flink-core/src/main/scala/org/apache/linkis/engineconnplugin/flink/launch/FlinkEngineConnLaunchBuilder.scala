@@ -24,7 +24,6 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-
 import org.apache.linkis.manager.engineplugin.common.launch.process.{
   Environment,
   JavaProcessEngineConnLaunchBuilder
@@ -42,6 +41,7 @@ import org.apache.linkis.manager.label.entity.engine.{EngineConnMode, UserCreato
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.util
+
 import scala.collection.JavaConverters._
 
 import com.google.common.collect.Lists
@@ -95,9 +95,10 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     }
     bmlResources
   }
+
   override def getEnvironment(implicit
-                              engineConnBuildRequest: EngineConnBuildRequest
-                             ): util.Map[String, String] = {
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): util.Map[String, String] = {
     val environment = new util.HashMap[String, String]
     addPathToClassPath(environment, variable(PWD))
     val linkisEnvironment = super.getEnvironment
@@ -109,8 +110,8 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   }
 
   override def getEnvironment(implicit
-                              engineConnBuildRequest: EngineConnBuildRequest
-                             ): util.Map[String, String] = {
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): util.Map[String, String] = {
     val environment = new util.HashMap[String, String]
     addPathToClassPath(environment, variable(PWD))
     val linkisEnvironment = super.getEnvironment

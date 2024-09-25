@@ -22,16 +22,13 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
-import org.apache.linkis.engineplugin.spark.utils.EngineUtils
+import org.apache.linkis.engineplugin.spark.utils.{ArrowUtils, DirectPushCache, EngineUtils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
+import org.apache.linkis.scheduler.executer._
 
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.spark.sql.DataFrame
 
 import java.lang.reflect.InvocationTargetException
 
@@ -46,6 +43,16 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override protected def getKind: Kind = SparkSQL()
+
+  // Only used in the scenario of direct pushing, dataFrame won't be fetched at a time,
+  // It will cache the lazy dataFrame in memory and return the result when client .
+  private def submitResultSetIterator(taskId: String, df: DataFrame): Unit = {
+    if (!DirectPushCache.isTaskCached(taskId)) {
+      DirectPushCache.submitExecuteResult(taskId, df)
+    } else {
+      logger.error(s"Task $taskId already exists in resultSet cache.")
+    }
+  }
 
   override protected def runCode(
       executor: SparkEngineConnExecutor,
@@ -89,14 +96,19 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           )
         )
       )
-      SQLSession.showDF(
-        sparkEngineSession.sparkContext,
-        jobGroup,
-        df,
-        null,
-        SparkConfiguration.SHOW_DF_MAX_RES.getValue,
-        engineExecutionContext
-      )
+
+      if (engineExecutionContext.isEnableDirectPush) {
+        submitResultSetIterator(lastTask.getTaskId, df)
+      } else {
+        SQLSession.showDF(
+          sparkEngineSession.sparkContext,
+          jobGroup,
+          df,
+          null,
+          SparkConfiguration.SHOW_DF_MAX_RES.getValue,
+          engineExecutionContext
+        )
+      }
       SuccessExecuteResponse()
     } catch {
       case e: InvocationTargetException =>

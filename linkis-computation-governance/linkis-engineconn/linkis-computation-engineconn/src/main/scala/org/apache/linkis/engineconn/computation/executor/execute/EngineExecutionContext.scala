@@ -68,6 +68,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   private var totalParagraph = 0
   private var currentParagraph = 0
+  private var enableDirectPush = false
 
   def getTotalParagraph: Int = totalParagraph
 
@@ -76,6 +77,11 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   def getCurrentParagraph: Int = currentParagraph
 
   def setCurrentParagraph(currentParagraph: Int): Unit = this.currentParagraph = currentParagraph
+
+  def setEnableDirectPush(enable: Boolean): Unit =
+    this.enableDirectPush = enable
+
+  def isEnableDirectPush: Boolean = enableDirectPush
 
   def pushProgress(progress: Float, progressInfo: Array[JobProgressInfo]): Unit =
     if (!executor.isInternalExecute) {

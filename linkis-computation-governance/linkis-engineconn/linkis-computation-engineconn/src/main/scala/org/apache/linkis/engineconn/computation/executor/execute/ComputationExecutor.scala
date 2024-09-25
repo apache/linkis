@@ -39,6 +39,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
@@ -267,12 +268,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
         val code = codes(index)
         engineExecutionContext.setCurrentParagraph(index + 1)
+
         response = Utils.tryCatch(if (incomplete.nonEmpty) {
           executeCompletely(engineExecutionContext, code, incomplete.toString())
         } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
         }
-        // info(s"Finished to execute task ${engineConnTask.getTaskId}")
+
         incomplete ++= code
         response match {
           case e: ErrorExecuteResponse =>
@@ -391,6 +393,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       engineExecutionContext.setStorePath(
         engineConnTask.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
       )
+    }
+    if (engineConnTask.getProperties.containsKey(JobRequestConstants.ENABLE_DIRECT_PUSH)) {
+      engineExecutionContext.setEnableDirectPush(
+        engineConnTask.getProperties.get(JobRequestConstants.ENABLE_DIRECT_PUSH).toString.toBoolean
+      )
+      logger.info(s"Enable direct push in engineTask ${engineConnTask.getTaskId}.")
     }
     logger.info(s"StorePath : ${engineExecutionContext.getStorePath.orNull}.")
     engineExecutionContext.setJobId(engineConnTask.getTaskId)

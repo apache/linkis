@@ -19,10 +19,7 @@ package org.apache.linkis.configuration.service.impl;
 
 import org.apache.linkis.configuration.dao.ConfigMapper;
 import org.apache.linkis.configuration.dao.LabelMapper;
-import org.apache.linkis.configuration.entity.ConfigKey;
-import org.apache.linkis.configuration.entity.ConfigKeyValue;
-import org.apache.linkis.configuration.entity.ConfigLabel;
-import org.apache.linkis.configuration.entity.ConfigValue;
+import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.ConfigKeyService;
 import org.apache.linkis.configuration.util.LabelEntityParser;
@@ -63,9 +60,8 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
   public ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
       throws ConfigurationException {
 
-    if (StringUtils.isBlank(configKeyValue.getConfigValue())
-        || StringUtils.isBlank(configKeyValue.getKey())) {
-      throw new ConfigurationException(KEY_OR_VALUE_CANNOT.getErrorDesc());
+    if (StringUtils.isBlank(configKeyValue.getKey())) {
+      throw new ConfigurationException(KEY_CANNOT_EMPTY.getErrorDesc());
     }
 
     LabelParameterParser.labelCheck(labelList);
@@ -164,6 +160,11 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
   }
 
   @Override
+  public List<ConfigKey> getConfigKeyList(String engineType) throws ConfigurationException {
+    return configMapper.selectKeyByEngineType(engineType);
+  }
+
+  @Override
   public List<ConfigValue> deleteConfigValue(String key, List<Label<?>> labelList)
       throws ConfigurationException {
     CombinedLabel combinedLabel = getCombinedLabel(labelList);
@@ -173,5 +174,38 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
     }
     logger.info("succeed to remove key: {} by label:{} ", key, combinedLabel.getStringValue());
     return configValues;
+  }
+
+  @Override
+  public List<ConfigKey> getConfigBykey(String engineType, String key, String language) {
+    List<ConfigKey> configkeyList;
+    if ("en".equals(language)) {
+      configkeyList = configMapper.getConfigEnBykey(engineType, key);
+    } else {
+      configkeyList = configMapper.getConfigBykey(engineType, key);
+    }
+    return configkeyList;
+  }
+
+  @Override
+  public void deleteConfigById(Integer id) {
+    configMapper.deleteConfigKey(id);
+  }
+
+  @Override
+  public ConfigKey saveConfigKey(ConfigKey configKey) {
+    configMapper.insertKeyByBase(configKey);
+    return null;
+  }
+
+  @Override
+  public List<ConfigUserValue> getUserConfigValue(
+      String engineType, String key, String creator, String user) {
+    return configMapper.getUserConfigValue(key, user, creator, engineType);
+  }
+
+  @Override
+  public void updateConfigKey(ConfigKey configKey) {
+    configMapper.updateConfigKey(configKey);
   }
 }

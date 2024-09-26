@@ -195,7 +195,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   }
 
   private def generateAndVerifyClusterLabel(labels: util.Map[String, Label[_]]): Unit = {
-    if (!Configuration.IS_MULTIPLE_YARN_CLUSTER.getValue.asInstanceOf[Boolean]) {
+    if (!Configuration.IS_MULTIPLE_YARN_CLUSTER) {
       return
     }
     var clusterLabel = labels

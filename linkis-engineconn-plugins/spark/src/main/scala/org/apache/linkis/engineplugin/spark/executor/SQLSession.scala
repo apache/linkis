@@ -113,14 +113,14 @@ object SQLSession extends Logging {
     // val columnsSet = dataFrame.schema
     val columns = columnsSet
       .map(c =>
-        new Column(
+        Column(
           c.name,
           DataType.toDataType(c.dataType.typeName.toLowerCase(Locale.getDefault())),
           c.getComment().orNull
         )
       )
       .toArray[Column]
-    columns.foreach(c => logger.info(s"c is ${c.getColumnName()}, comment is ${c.getComment()}"))
+    columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer =
@@ -135,7 +135,7 @@ object SQLSession extends Logging {
         val r: Array[Any] = columns.indices.map { i =>
           toHiveString((row(i), columnsSet.fields(i).dataType))
         }.toArray
-        writer.addRecord(new TableRecord(r.asInstanceOf[Array[AnyRef]]))
+        writer.addRecord(new TableRecord(r))
         index += 1
       }
     }) { t =>
@@ -146,11 +146,11 @@ object SQLSession extends Logging {
       )
     }
     val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    logger.info(s"Time taken: ${taken}, Fetched $index row(s).")
+    logger.info(s"Time taken: ${taken}, Fetched $index row(s)")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched ${columns.length} col(s) : $index row(s)"
     )
     engineExecutionContext.sendResultSet(writer)
   }

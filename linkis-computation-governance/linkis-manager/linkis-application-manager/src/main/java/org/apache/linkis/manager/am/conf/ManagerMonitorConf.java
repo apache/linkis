@@ -28,12 +28,6 @@ public class ManagerMonitorConf {
   public static final CommonVars<TimeType> NODE_HEARTBEAT_MAX_UPDATE_TIME =
       CommonVars.apply("wds.linkis.manager.am.node.heartbeat", new TimeType("12m"));
 
-  public static final CommonVars<TimeType> ENGINE_KILL_TIMEOUT =
-      CommonVars.apply("wds.linkis.manager.am.engine.kill.timeout", new TimeType("2m"));
-
-  public static final CommonVars<TimeType> EM_KILL_TIMEOUT =
-      CommonVars.apply("wds.linkis.manager.am.em.kill.timeout", new TimeType("2m"));
-
   public static final CommonVars<Integer> MANAGER_MONITOR_ASYNC_POLL_SIZE =
       CommonVars.apply("wds.linkis.manager.monitor.async.poll.size", 5);
 
@@ -42,4 +36,7 @@ public class ManagerMonitorConf {
 
   public static final CommonVars<TimeType> ECM_HEARTBEAT_MAX_UPDATE_TIME =
       CommonVars.apply("wds.linkis.manager.am.ecm.heartbeat", new TimeType("5m"));
+
+  public static final CommonVars<Boolean> ACROSS_QUEUES_RESOURCE_SHOW_SWITCH_ON =
+      CommonVars.apply("wds.linkis.manager.across.resource.show.switch.on", false);
 }

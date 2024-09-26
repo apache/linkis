@@ -27,6 +27,7 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetric
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.dao.NodeMetricManagerMapper;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 
 import java.util.ArrayList;
@@ -62,8 +63,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void addNodeMetrics(NodeMetrics nodeMetrics) {
-    // 直接插入 NodeMetric即可
+  public void addNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
     PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
     persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
     persistenceNodeMetrics.setHealthy(nodeMetrics.getHealthy());
@@ -72,7 +72,6 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
     persistenceNodeMetrics.setCreateTime(new Date());
     persistenceNodeMetrics.setUpdateTime(new Date());
-    // todo 异常信息后面统一处理
     nodeMetricManagerMapper.addNodeMetrics(persistenceNodeMetrics);
   }
 
@@ -107,6 +106,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       // ec node metircs report ignore update Shutingdown node (for case: asyn stop engine)
       PersistenceNodeMetrics oldMetrics =
           nodeMetricManagerMapper.getNodeMetricsByInstance(instance);
+
       boolean isECM =
           nodeMetrics
               .getServiceInstance()
@@ -116,8 +116,9 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
           && oldMetrics != null
           && NodeStatus.ShuttingDown.ordinal() <= oldMetrics.getStatus()) {
         logger.info(
-            "ignore update ShuttingDown status node:{} to status:{}",
+            "ignore update status node:{} from:{} to status:{}",
             instance,
+            NodeStatus.values()[oldMetrics.getStatus()].name(),
             NodeStatus.values()[nodeMetrics.getStatus()].name());
         persistenceNodeMetrics.setStatus(oldMetrics.getStatus());
       } else {
@@ -131,12 +132,12 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       persistenceNodeMetrics.setUpdateTime(new Date());
       nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
     } else {
-      // 其他情况都不处理，打印个告警日志
     }
   }
 
   @Override
-  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes) {
+  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes)
+      throws PersistenceErrorException {
     if (nodes == null || nodes.isEmpty()) return Collections.emptyList();
     List<NodeMetrics> nodeMetricsList = new ArrayList<>();
     List<String> instances = new ArrayList<>();
@@ -145,7 +146,6 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       instances.add(instance);
     }
 
-    // 根据  id 查 metric 信息
     List<PersistenceNodeMetrics> persistenceNodeMetricsList =
         nodeMetricManagerMapper.getNodeMetricsByInstances(instances);
 
@@ -162,7 +162,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public NodeMetrics getNodeMetrics(Node node) {
+  public NodeMetrics getNodeMetrics(Node node) throws PersistenceErrorException {
     PersistenceNodeMetrics persistenceNodeMetrics =
         nodeMetricManagerMapper.getNodeMetricsByInstance(node.getServiceInstance().getInstance());
     if (persistenceNodeMetrics == null) return null;
@@ -171,13 +171,13 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void deleteNodeMetrics(Node node) {
+  public void deleteNodeMetrics(Node node) throws PersistenceErrorException {
     String instance = node.getServiceInstance().getInstance();
     nodeMetricManagerMapper.deleteNodeMetricsByInstance(instance);
   }
 
   @Override
-  public List<NodeMetrics> getAllNodeMetrics() {
+  public List<NodeMetrics> getAllNodeMetrics() throws PersistenceErrorException {
     List<PersistenceNodeMetricsEntity> allNodeMetrics = nodeMetricManagerMapper.getAllNodeMetrics();
     List<NodeMetrics> persistenceNodeMetricsList = new ArrayList<>();
     for (PersistenceNodeMetricsEntity persistenceNodeMetricsEntity : allNodeMetrics) {
@@ -195,5 +195,12 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       persistenceNodeMetricsList.add(persistenceNodeMetrics);
     }
     return persistenceNodeMetricsList;
+  }
+
+  @Override
+  public void updateNodeMetricDescription(String description, String instance) {
+    PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
+    persistenceNodeMetrics.setDescription(description);
+    nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
   }
 }

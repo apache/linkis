@@ -21,12 +21,14 @@ import org.apache.linkis.common.exception.{ErrorException, WarnException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.conf.SchedulerConfiguration
 import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.Executor
 import org.apache.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
 import org.apache.linkis.scheduler.queue._
 
+import java.util
 import java.util.concurrent.{ExecutorService, Future}
 
 import scala.beans.BeanProperty
@@ -122,9 +124,10 @@ class FIFOUserConsumer(
     }
     var event: Option[SchedulerEvent] = getWaitForRetryEvent
     if (event.isEmpty) {
-      val completedNums = runningJobs.filter(job => job == null || job.isCompleted)
-      if (completedNums.length < 1) {
-        Utils.tryQuietly(Thread.sleep(1000))
+      val maxAllowRunningJobs = fifoGroup.getMaxAllowRunningJobs
+      val currentRunningJobs = runningJobs.count(e => e != null && !e.isCompleted)
+      if (maxAllowRunningJobs <= currentRunningJobs) {
+        Utils.tryQuietly(Thread.sleep(1000)) // TODO 还可以优化，通过实现JobListener进行优化
         return
       }
       while (event.isEmpty) {
@@ -176,6 +179,9 @@ class FIFOUserConsumer(
           totalDuration
         )
         job.consumerFuture = null
+        logger.info(
+          s"FIFOUserConsumer ${getGroup.getGroupName} running size ${getRunningSize} waiting size ${getWaitingSize}"
+        )
         executor.foreach { executor =>
           job.setExecutor(executor)
           job.future = executeService.submit(job)
@@ -207,6 +213,19 @@ class FIFOUserConsumer(
     runningJobs(index) = job
   }
 
+  protected def scanAllRetryJobsAndRemove(): util.List[Job] = {
+    val jobs = new util.ArrayList[Job]()
+    for (index <- runningJobs.indices) {
+      val job = runningJobs(index)
+      if (job != null && job.isJobCanRetry) {
+        jobs.add(job)
+        runningJobs(index) = null
+        logger.info(s"Job $job can retry, remove from runningJobs")
+      }
+    }
+    jobs
+  }
+
   override def shutdown(): Unit = {
     future.cancel(true)
     val waitEvents = queue.getWaitingEvents
@@ -217,6 +236,8 @@ class FIFOUserConsumer(
         case _ =>
       }
     }
+    // clear cache
+    queue.clearAll()
 
     this.runningJobs.foreach { job =>
       if (job != null && !job.isCompleted) {
@@ -236,6 +257,16 @@ class FIFOUserConsumer(
     logger.info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs
       .exists(job => job != null && !job.isCompleted)}")
     this.queue.peek.isEmpty && !this.runningJobs.exists(job => job != null && !job.isCompleted)
+  }
+
+  override def getMaxRunningEvents: Int = this.maxRunningJobsNum
+
+  override def getRunningSize: Int = {
+    runningJobs.count(job => job != null && !job.isCompleted)
+  }
+
+  override def getWaitingSize: Int = {
+    queue.waitingSize
   }
 
 }

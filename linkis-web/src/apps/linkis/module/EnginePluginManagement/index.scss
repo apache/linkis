@@ -17,26 +17,22 @@
 @import '@/common/style/variables.scss';
 
 .search-bar {
-  .search-item11 {
+  .search-item {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     font-size: $font-size-base;
-    .search-item {
-      display: flex;
-      justify-items: center;
-      .lable {
-        width: 180px;
-        // flex-basis: 130px;
-        text-align: right;
-      }
+
+    .lable {
+      min-width: 90px;
+      // flex-basis: 130px;
+      text-align: right;
     }
-    
   }
 
   .ivu-col {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
   }
 
 }

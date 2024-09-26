@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.udf.dao.UDFTreeDao">
+    <resultMap id="UDFTreeResultMap" type="org.apache.linkis.udf.entity.UDFTree">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="parent" property="parent" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="category" property="category" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="udf_Tree_List">
+        id, `parent`, `name`, `user_name`, `description`, `create_time`,`update_time`, `category`
+    </sql>
+
+    <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFTree">
+        INSERT INTO linkis_ps_udf_tree (
+        <include refid="udf_Tree_List"/>
+        ) VALUES (
+        #{id,jdbcType=BIGINT},#{parent,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
+        #{userName,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{category,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateTree" parameterType="org.apache.linkis.udf.entity.UDFTree">
+        UPDATE linkis_ps_udf_tree
+        SET parent = #{parent,jdbcType=BIGINT},
+        `name` = #{name,jdbcType=VARCHAR},
+        user_name = #{userName,jdbcType=VARCHAR},
+        description=#{description,jdbcType=VARCHAR},
+        update_time=#{updateTime,jdbcType=TIMESTAMP}
+        WHERE id = #{id,jdbcType=BIGINT} and user_name = #{userName,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteTree">
+        DELETE FROM linkis_ps_udf_tree
+        where id = #{arg0} and user_name=#{arg1}
+    </delete>
+
+    <select id="getTreeByIdAndCategory" resultMap="UDFTreeResultMap">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where id = #{arg0} and category = #{arg1}
+    </select>
+
+    <select id="getTreeByIdAndCategoryAndUserName" resultMap="UDFTreeResultMap">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where id = #{arg0} and category = #{arg1} and user_name=#{arg2}
+    </select>
+
+    <select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where 1=1
+        <if test="parent != null">
+            And parent = #{parent,jdbcType=BIGINT}
+        </if>
+        <if test="userName != null">
+            And user_name = #{userName,jdbcType=VARCHAR}
+        </if>
+        <if test="category != null">
+            And category = #{category,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="getTreeByNameAndUser" resultMap="UDFTreeResultMap">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where name=#{treeName} and user_name=#{userName} and category=#{category} and parent in
+        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+    </select>
+
+    <select id="getUserDirectory" resultType="java.lang.String">
+        select name from linkis_ps_udf_tree where user_name=#{userName} and category=#{category} and parent in
+        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+    </select>
+
+    <select id="getTreeById" resultType="org.apache.linkis.udf.entity.UDFTree">
+        select <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree where id=#{id}
+    </select>
+</mapper>

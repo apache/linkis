@@ -32,7 +32,6 @@ public class ResultFileWriter {
       String pathName, String fileName, String content, Boolean overWrite) {
 
     File dir = new File(pathName);
-    File file = new File(fileName);
 
     if (!dir.exists()) {
       try {
@@ -46,6 +45,8 @@ public class ResultFileWriter {
             e);
       }
     }
+
+    File file = new File(dir.getAbsolutePath() + File.separator + fileName);
 
     if (overWrite || !file.exists()) {
       try {

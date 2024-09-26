@@ -63,12 +63,13 @@ public interface TaskConstant {
   String JOB_MEMORY_PERCENT = "memoryPercent";
   String JOB_CORE_RGB = "coreRGB";
   String JOB_MEMORY_RGB = "memoryRGB";
-
+  String JOB_IS_REUSE = "isReuse";
   String JOB_ENGINECONN_MAP = "engineconnMap";
   String ENGINE_INSTANCE = "engineInstance";
   String TICKET_ID = "ticketId";
   String ENGINE_CONN_TASK_ID = "engineConnTaskId";
   String ENGINE_CONN_SUBMIT_TIME = "engineConnSubmitTime";
+  String FAILOVER_FLAG = "failoverFlag";
   String DEBUG_ENBALE = "debug.enable";
 
   String PARAMS_DATA_SOURCE = "dataSources";

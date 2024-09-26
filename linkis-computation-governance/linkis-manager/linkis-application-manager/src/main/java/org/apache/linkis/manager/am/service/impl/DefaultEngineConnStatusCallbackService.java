@@ -18,17 +18,17 @@
 package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.manager.am.conf.AMConfiguration;
+import org.apache.linkis.manager.am.converter.MetricsConverter;
 import org.apache.linkis.manager.am.service.EngineConnStatusCallbackService;
 import org.apache.linkis.manager.am.service.engine.EngineStopService;
-import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics;
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback;
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
 import org.apache.linkis.rpc.message.annotation.Receiver;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,29 +56,25 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
 
   @Autowired private EngineStopService engineStopService;
 
-  private static final String[] canRetryLogs =
-      AMConfiguration.AM_CAN_RETRY_LOGS.getValue().split(";");
+  private static final String[] canRetryLogs = AMConfiguration.AM_CAN_RETRY_LOGS.split(";");
 
   @Receiver
   public void dealEngineConnStatusCallback(EngineConnStatusCallback protocol) {
     logger.info(
         "EngineConnStatusCallbackServiceImpl handle engineConnStatus callback serviceInstance: [{}] status: [{}]",
-        protocol.getServiceInstance(),
-        protocol.getStatus());
-    if (!NodeStatus.isAvailable(protocol.getStatus())) {
+        protocol.serviceInstance(),
+        protocol.status());
+    if (!NodeStatus.isAvailable(protocol.status())) {
       dealEngineConnStatusCallbackToAM(
           new EngineConnStatusCallbackToAM(
-              protocol.getServiceInstance(),
-              protocol.getStatus(),
-              protocol.getInitErrorMsg(),
-              false));
+              protocol.serviceInstance(), protocol.status(), protocol.initErrorMsg(), false));
     }
   }
 
   @Receiver
   public void dealEngineConnStatusCallbackToAM(
       EngineConnStatusCallbackToAM engineConnStatusCallbackToAM) {
-    if (engineConnStatusCallbackToAM.getServiceInstance() == null) {
+    if (engineConnStatusCallbackToAM.serviceInstance() == null) {
       logger.warn("call back service instance is null");
     }
     logger.info(
@@ -87,7 +84,8 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
     AMNodeMetrics nodeMetrics = new AMNodeMetrics();
     Map<String, Object> heartBeatMsg = new HashMap<>();
     int initErrorMsgMaxByteNum = 60000;
-    String initErrorMsg = engineConnStatusCallbackToAM.getInitErrorMsg();
+
+    String initErrorMsg = engineConnStatusCallbackToAM.initErrorMsg();
     try {
       if (StringUtils.isNotBlank(initErrorMsg)
           && initErrorMsg.getBytes("utf-8").length >= initErrorMsgMaxByteNum) {
@@ -100,14 +98,19 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
 
     if (engineConnStatusCallbackToAM.canRetry()) {
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry());
-    } else if (matchRetryLog(engineConnStatusCallbackToAM.getInitErrorMsg())) {
-      logger.info("match canRetry log {}", engineConnStatusCallbackToAM.getServiceInstance());
+    } else if (matchRetryLog(engineConnStatusCallbackToAM.initErrorMsg())) {
+      logger.info("match canRetry log {}", engineConnStatusCallbackToAM.serviceInstance());
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry());
     }
 
-    nodeMetrics.setHeartBeatMsg(AMUtils.toJSONString(heartBeatMsg));
-    nodeMetrics.setServiceInstance(engineConnStatusCallbackToAM.getServiceInstance());
-    nodeMetrics.setStatus(metricsConverter.convertStatus(engineConnStatusCallbackToAM.getStatus()));
+    try {
+      nodeMetrics.setHeartBeatMsg(
+          BDPJettyServerHelper.jacksonJson().writeValueAsString(heartBeatMsg));
+    } catch (JsonProcessingException e) {
+      logger.warn("dealEngineConnStatusCallbackToAM writeValueAsString failed", e);
+    }
+    nodeMetrics.setServiceInstance(engineConnStatusCallbackToAM.serviceInstance());
+    nodeMetrics.setStatus(metricsConverter.convertStatus(engineConnStatusCallbackToAM.status()));
 
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics);
     logger.info("Finished to deal engineConnStatusCallbackToAM {}", engineConnStatusCallbackToAM);

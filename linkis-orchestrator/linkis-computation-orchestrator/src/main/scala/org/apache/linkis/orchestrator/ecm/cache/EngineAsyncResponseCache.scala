@@ -74,7 +74,7 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
     if (null != engineAsyncResponseEntity) {
       engineAsyncResponseEntity.engineAsyncResponse
     } else {
-      new EngineCreateError(id, "async info null", true)
+      EngineCreateError(id, "async info null", retry = true)
     }
   }
 
@@ -85,20 +85,20 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
       case t: TimeoutException =>
         put(
           id,
-          new EngineCreateError(
+          EngineCreateError(
             id,
             s"Asynchronous request engine timeout(请求引擎超时，可能是因为资源不足，您可以选择重试),async id $id",
-            true
+            retry = true
           )
         )
       case t: Throwable =>
-        put(id, new EngineCreateError(id, ExceptionUtils.getRootCauseStackTrace(t).mkString("\n")))
+        put(id, EngineCreateError(id, ExceptionUtils.getRootCauseStackTrace(t).mkString("\n")))
     }
     val engineAsyncResponseEntity = cacheMap.remove(id)
     if (null != engineAsyncResponseEntity) {
       engineAsyncResponseEntity.engineAsyncResponse
     } else {
-      new EngineCreateError(id, "async info null", true)
+      EngineCreateError(id, "async info null", retry = true)
     }
   }
 
@@ -136,9 +136,9 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
               val engineCreateSuccess =
                 engineAsyncResponseEntity.engineAsyncResponse.asInstanceOf[EngineCreateSuccess]
               logger.info(s"clear engineCreateSuccess, to unlock $engineCreateSuccess")
-              val requestManagerUnlock = new RequestManagerUnlock(
-                engineCreateSuccess.getEngineNode.getServiceInstance,
-                engineCreateSuccess.getEngineNode.getLock,
+              val requestManagerUnlock = RequestManagerUnlock(
+                engineCreateSuccess.engineNode.getServiceInstance,
+                engineCreateSuccess.engineNode.getLock,
                 Sender.getThisServiceInstance
               )
               getManagerSender.send(requestManagerUnlock)

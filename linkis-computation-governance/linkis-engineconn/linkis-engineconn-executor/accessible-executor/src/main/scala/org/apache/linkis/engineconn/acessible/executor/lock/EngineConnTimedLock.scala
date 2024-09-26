@@ -27,6 +27,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   ExecutorStatusChangedEvent,
   ExecutorUnLockEvent
 }
+import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.SensibleExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
@@ -43,6 +44,10 @@ class EngineConnTimedLock(private var timeout: Long)
   val releaseScheduler = new ScheduledThreadPoolExecutor(1)
   var releaseTask: ScheduledFuture[_] = null
   var lastLockTime: Long = 0
+
+  val idleTimeLockOut = AccessibleExecutorConfiguration.ENGINECONN_LOCK_CHECK_INTERVAL
+    .getValue(EngineConnObject.getEngineCreationContext.getOptions)
+    .toLong
 
   override def acquire(executor: AccessibleExecutor): Unit = {
     lock.acquire()
@@ -105,7 +110,9 @@ class EngineConnTimedLock(private var timeout: Long)
                         isAcquired() && NodeStatus.Idle == reportExecutor.getStatus && isExpired()
                     ) {
                       // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
-                      logger.info(s"Lock : [${lock.toString} was released due to timeout.")
+                      logger.info(
+                        s"Lock : [${lock.toString} was released due to timeout. idleTimeLockOut $idleTimeLockOut"
+                      )
                       release()
                     } else if (isAcquired() && NodeStatus.Busy == reportExecutor.getStatus) {
                       lastLockTime = System.currentTimeMillis()
@@ -116,7 +123,7 @@ class EngineConnTimedLock(private var timeout: Long)
             }
           },
           3000,
-          AccessibleExecutorConfiguration.ENGINECONN_LOCK_CHECK_INTERVAL.getValue.toLong,
+          idleTimeLockOut,
           TimeUnit.MILLISECONDS
         )
         logger.info("Add scheduled timeout task.")
@@ -131,7 +138,11 @@ class EngineConnTimedLock(private var timeout: Long)
   override def isExpired(): Boolean = {
     if (lastLockTime == 0) return false
     if (timeout <= 0) return false
-    System.currentTimeMillis() - lastLockTime > timeout
+    if (AccessibleExecutorConfiguration.ENGINECONN_ENABLED_LOCK_IDLE_TIME_OUT.getValue) {
+      System.currentTimeMillis() - lastLockTime > idleTimeLockOut
+    } else {
+      System.currentTimeMillis() - lastLockTime > timeout
+    }
   }
 
   override def numOfPending(): Int = {

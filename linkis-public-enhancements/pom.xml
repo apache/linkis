@@ -31,16 +31,15 @@
     <module>linkis-pes-common</module>
     <module>linkis-pes-client</module>
     <module>linkis-pes-rpc-client</module>
-    <module>linkis-pes-publicservice</module>
-    <module>linkis-bml</module>
-    <module>linkis-context-service</module>
-    <module>linkis-datasource/linkis-metadata</module>
+    <module>linkis-ps-common-lock</module>
+    <module>linkis-bml-server</module>
+    <module>linkis-cs-server</module>
     <module>linkis-datasource</module>
-    <module>linkis-udf/linkis-udf-service</module>
+    <module>linkis-udf-service</module>
     <module>linkis-jobhistory</module>
     <module>linkis-configuration</module>
-    <module>linkis-instance-label/linkis-instance-label-server</module>
-    <module>linkis-ps-common-lock</module>
+    <module>linkis-instance-label-server</module>
+    <module>linkis-pes-publicservice</module>
   </modules>
 
   <dependencies>

@@ -17,9 +17,10 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
-import org.apache.linkis.manager.am.util.LinkisUtils;
-import org.apache.linkis.manager.common.conf.RMConfiguration;
-import org.apache.linkis.manager.common.entity.resource.*;
+import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
+import org.apache.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.common.entity.resource.YarnResource;
 import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.common.exception.RMWarnException;
 import org.apache.linkis.manager.rm.external.domain.ExternalAppInfo;
@@ -29,11 +30,10 @@ import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 import org.apache.linkis.manager.rm.utils.RequestKerberosUrlUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
@@ -58,6 +58,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private final Map<String, String> rmAddressMap = new ConcurrentHashMap<>();
 
+  private static final HttpClient httpClient = HttpClients.createDefault();
+
   private String getAuthorizationStr(ExternalResourceProvider provider) {
     String user = (String) provider.getConfigMap().getOrDefault("user", "");
     String pwd = (String) provider.getConfigMap().getOrDefault("pwd", "");
@@ -74,20 +76,19 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
     String realQueueName = "root." + queueName;
 
-    return LinkisUtils.tryCatch(
-        () -> {
-          Pair<YarnResource, YarnResource> yarnResource =
-              getResources(rmWebAddress, realQueueName, queueName, provider);
-
-          CommonNodeResource nodeResource = new CommonNodeResource();
-          nodeResource.setMaxResource(yarnResource.getKey());
-          nodeResource.setUsedResource(yarnResource.getValue());
-          return nodeResource;
-        },
-        t -> {
-          throw new RMErrorException(
-              YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), t);
-        });
+    try {
+      YarnQueueInfo resources = getResources(rmWebAddress, realQueueName, queueName, provider);
+      CommonNodeResource nodeResource = new CommonNodeResource();
+      nodeResource.setMaxResource(resources.getMaxResource());
+      nodeResource.setUsedResource(resources.getUsedResource());
+      nodeResource.setMaxApps(resources.getMaxApps());
+      nodeResource.setNumPendingApps(resources.getNumPendingApps());
+      nodeResource.setNumActiveApps(resources.getNumActiveApps());
+      return nodeResource;
+    } catch (Exception e) {
+      throw new RMErrorException(
+          YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
+    }
   }
 
   public Optional<YarnResource> maxEffectiveHandle(
@@ -158,7 +159,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         && !queues.isNull()
         && !queues.isMissingNode()
         && queues.isArray()
-        && ((ArrayNode) queues).size() > 0) {
+        && queues.size() > 0) {
       return queues;
     } else {
       return resp.get("childQueues");
@@ -199,7 +200,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     return resp.path("queues").path("queue");
   }
 
-  public Pair<YarnResource, YarnResource> getResources(
+  public YarnQueueInfo getResources(
       String rmWebAddress,
       String realQueueName,
       String queueName,
@@ -211,21 +212,29 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       realQueueName = queueName;
       JsonNode childQueues = getChildQueuesOfCapacity(schedulerInfo);
       Optional<JsonNode> queue = getQueueOfCapacity(childQueues, realQueueName);
-      if (!queue.isPresent()) {
+      if (queue == null || !queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
             YARN_NOT_EXISTS_QUEUE.getErrorCode(),
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc(), queueName));
       }
-      return Pair.of(
+      JsonNode queueInfo = queue.get();
+      return new YarnQueueInfo(
           maxEffectiveHandle(queue, rmWebAddress, queueName, provider).get(),
-          getYarnResource(queue.map(node -> node.path("resourcesUsed")), queueName).get());
-
+          getYarnResource(queue.map(node -> node.path("resourcesUsed")), queueName).get(),
+          queueInfo.path("maxApps").asInt(),
+          queueInfo.path("numPendingApps").asInt(),
+          queueInfo.path("numActiveApps").asInt());
     } else if ("fairScheduler".equals(schedulerType)) {
-      JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
-      Optional<JsonNode> queue = getQueue(childQueues, realQueueName);
-      if (!queue.isPresent()) {
+      Optional<JsonNode> queue;
+      if ("root".equals(queueName)) {
+        queue = Optional.of(schedulerInfo.path("rootQueue"));
+      } else {
+        JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
+        queue = getQueue(childQueues, realQueueName);
+      }
+      if (queue != null || !queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
@@ -234,10 +243,19 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       }
       Optional<JsonNode> maxResources = queue.map(node -> node.path("maxResources"));
       Optional<JsonNode> usedResources = queue.map(node -> node.path("usedResources"));
-      return Pair.of(
+      JsonNode queueInfo = queue.get();
+      int numPendingApps = 0;
+      int numActiveApps = 0;
+      if (!"root".equals(queueName)) {
+        numPendingApps = queueInfo.path("numPendingApps").asInt();
+        numActiveApps = queueInfo.path("numActiveApps").asInt();
+      }
+      return new YarnQueueInfo(
           getYarnResource(maxResources, queueName).get(),
-          getYarnResource(usedResources, queueName).get());
-
+          getYarnResource(usedResources, queueName).get(),
+          queueInfo.path("maxApps").asInt(),
+          numPendingApps,
+          numActiveApps);
     } else {
       logger.debug(
           "only support fairScheduler or capacityScheduler, schedulerType: "
@@ -348,28 +366,22 @@ public class YarnResourceRequester implements ExternalResourceRequester {
             requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url, principalName);
         httpResponse = response;
       } else {
-        HttpResponse response = null;
         try {
-          CloseableHttpClient httpClient = HttpClients.createDefault();
-          response = httpClient.execute(httpGet);
+          httpResponse = httpClient.execute(httpGet);
         } catch (IOException e) {
           logger.warn("getResponseByUrl failed", e);
           throw new RMErrorException(
               YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
         }
-        httpResponse = response;
       }
     } else {
-      HttpResponse response = null;
       try {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        response = httpClient.execute(httpGet);
+        httpResponse = httpClient.execute(httpGet);
       } catch (IOException e) {
         logger.warn("getResponseByUrl failed", e);
         throw new RMErrorException(
             YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
       }
-      httpResponse = response;
     }
 
     String entityString = "";
@@ -388,12 +400,10 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       throw new RMErrorException(
           YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
     }
-
     return jsonNode;
   }
 
   public String getAndUpdateActiveRmWebAddress(ExternalResourceProvider provider) {
-    // todo check if it will stuck for many requests
     String haAddress = (String) provider.getConfigMap().get("rmWebAddress");
     String activeAddress = rmAddressMap.get(haAddress);
     if (StringUtils.isBlank(activeAddress)) {
@@ -407,8 +417,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
                     + rmAddressMap.size());
           }
           if (StringUtils.isNotBlank(haAddress)) {
-            String[] addresses =
-                haAddress.split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue());
+            String[] addresses = haAddress.split(";");
             for (String address : addresses) {
               try {
                 JsonNode response = getResponseByUrl("info", address, provider);

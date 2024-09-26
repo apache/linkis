@@ -47,7 +47,7 @@
     <loggers>
       <root level="INFO">
             <appender-ref ref="stderr"/>
-            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
             <appender-ref ref="Send"/>
         </root>
         <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">

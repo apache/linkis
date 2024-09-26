@@ -80,7 +80,7 @@ class FlinkSQLComputationExecutor(
     with FlinkExecutor {
 
   private var operation: JobOperation = _
-  private var clusterDescriptor: AbstractSessionClusterDescriptorAdapter = _
+  var clusterDescriptor: AbstractSessionClusterDescriptorAdapter = _
 
   override def init(): Unit = {
     setCodeParser(new SQLCodeParser)
@@ -234,6 +234,11 @@ class FlinkSQLComputationExecutor(
     flinkEngineConnContext.getExecutionContext.createClusterDescriptor().close()
     flinkEngineConnContext.getExecutionContext.getClusterClientFactory.close()
     super.close()
+  }
+
+  override def tryShutdown(): Boolean = {
+    Utils.tryAndWarn(close())
+    super.tryShutdown()
   }
 
 }

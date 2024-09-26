@@ -32,9 +32,7 @@ const { CancelToken } = axios;
 const removePending = (config: Record<string, any>) => {
     for (let p = 0; p < pending.length; p++) {
         const params = JSON.stringify(config.params);
-        // Cancel if it exists(如果存在则执行取消操作)
         if (pending[p].u === `${config.url}&${config.method}&${params}`) {
-            // pending[p].f();// perform cancellation(执行取消操作)
             pending.splice(p, 1); // remove record(移除记录)
         }
     }
@@ -99,7 +97,7 @@ instance.interceptors.response.use(
             (error.message && error.message.indexOf('timeout') >= 0) ||
             (error.request && error.request.status !== 200)
         ) {
-            for (const p in pending) {
+            for (let p = 0; p < pending.length; p++) {
                 if (
                     pending[p].u ===
                     `${cancelConfig.url}&${
@@ -112,10 +110,7 @@ instance.interceptors.response.use(
             // The error information returned by the background is returned first, followed by the interface return(优先返回后台返回的错误信息，其次是接口返回)
             return error.response || error;
         } else if (axios.Cancel) {
-            // If it is in pengding state, a prompt will pop up!(如果是pengding状态，弹出提示！)
-            return {
-                // data: { message: 'Interface requesting! please wait……' }(data: { message: '接口请求中！请稍后……' })
-            };
+            return {};
         } else {
             return error;
         }
@@ -137,7 +132,7 @@ interface API {
     instance: typeof instance;
     error: Record<
         string,
-        (res: Response, ...args: unknown[]) => unknown | void
+        Array<(res: Response, ...args: unknown[]) => unknown | void> | ((res: Response, ...args: unknown[]) => unknown | void)
     >;
     constructionOfResponse: {
         codePath: string;
@@ -176,9 +171,9 @@ const api: API = {
 
 const getData = function (data: any) {
     const _arr = ['codePath', 'messagePath', 'resultPath'];
-    const res = {};
+    const res: {[key: string]: any} = {};
     _arr.forEach((item) => {
-        const pathArray = api.constructionOfResponse[item].split('.');
+        const pathArray = (api.constructionOfResponse as {[key: string]: any})[item].split('.');
         let result =
             pathArray.length === 1 && pathArray[0] === '*'
                 ? data
@@ -221,9 +216,7 @@ const success = function (response: any) {
         } else if (util.isObject(response.data)) {
             data = response.data;
         } else {
-            throw new Error(
-                linkis_errorMsgTip || tt('message.common.exceptionTips'),
-            );
+            throw new Error(linkis_errorMsgTip);
         }
         const res: any = getData(data);
         const code = res.codePath;
@@ -234,15 +227,11 @@ const success = function (response: any) {
             sessionStorage.setItem('linkis.errorMsgTip', errorMsgTip);
         }
         if (code != api.constructionOfResponse.successCode) {
-            if (api.error[code]) {
+            if (typeof api.error[code] === 'function') {
                 api.error[code](response);
                 throw new Error('');
             } else {
-                throw new Error(
-                    message ||
-                        linkis_errorMsgTip ||
-                        t('message.common.exceptionTips'),
-                );
+                throw new Error(message || linkis_errorMsgTip);
             }
         }
         if (result) {
@@ -257,24 +246,23 @@ const success = function (response: any) {
                 window.console.log(response.data, '潜在性能问题大数据量', len);
             }
         }
-
         return result || {};
     }
 };
 
-const fail = function (error: any, t: (str: string) => string) {
+const fail = function (error: any) {
     let _message = '';
     const { response } = error;
-    if (response && api.error[response.status]) {
-        api.error[response.status].forEach((fn) => fn(response));
+    if (response && Array.isArray(api.error[response.status])) {
+        (api.error[response.status] as Array<(res: Response, ...args: unknown[]) => unknown | void>)
+            .forEach((fn) => fn(response));
     } else {
-        _message = t('message.common.exceptionTips');
         if (response && response.config)
             _message =
                 (sessionStorage.getItem('linkis.errorMsgTip') || '').replace(
                     /%s/g,
                     response.config.url,
-                ) || t('message.common.exceptionTips');
+                );
         if (response && response.data) {
             let data;
             if (util.isString(response.data)) {
@@ -292,7 +280,7 @@ const fail = function (error: any, t: (str: string) => string) {
     throw error;
 };
 
-const param = function (url, data, option) {
+const param = function (url: string | URL, data: any, option: any) {
     const method = 'post';
     if (util.isNull(url)) {
         return window.console.error('请传入URL');
@@ -353,9 +341,9 @@ const param = function (url, data, option) {
     return instance.request(option);
 };
 
-const action = function (url: string | URL, data, option) {
+const action = function (url: string | URL, data: any, option: any) {
     return param(url, data, option)
-        .then(success, fail)
+        ?.then(success, fail)
         .then((response: unknown) => response)
         .catch((error: Error) => {
             if (error.message) {
@@ -364,23 +352,25 @@ const action = function (url: string | URL, data, option) {
                 const result = error.message.match(urlReg);
                 result
                     ? FMessage.error({
-                          content: () => {
-                              const context = error.message.split(result[0]);
-                              return h('span', [
-                                  context[0],
-                                  h(
-                                      'a',
-                                      {
-                                          domProps: {
-                                              href: result?.[0],
-                                              target: '_blank',
-                                          },
-                                      },
-                                      result?.[0],
-                                  ),
-                                  context[1],
-                              ]);
-                          },
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        content: () => {
+                            const context = error.message.split(result[0]);
+                            return h('span', [
+                                context[0],
+                                h(
+                                    'a',
+                                    {
+                                        domProps: {
+                                            href: result?.[0],
+                                            target: '_blank',
+                                        },
+                                    },
+                                    result?.[0],
+                                ),
+                                context[1],
+                            ]);
+                        },
                       })
                     : FMessage.error({
                           duration: 1.5,
@@ -402,7 +392,7 @@ api.option = function (option: Record<string, any>) {
     }
     if (option.config && util.isObject(option.config)) {
         Object.keys(option.config).forEach((key) => {
-            instance.defaults[key] = option.config[key];
+            (instance.defaults as { [key: string]: any })[key] = option.config[key];
         });
     }
 };

@@ -94,12 +94,7 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
         log.info("file {} delete success", ecType);
       }
     } catch (Exception e) {
-      log.warn(
-          "deleteEnginePluginBML failed ecType:[{}] version:[{}] username:[{}]",
-          ecType,
-          version,
-          username,
-          e);
+      e.printStackTrace();
     }
   }
 

@@ -647,7 +647,7 @@ VALUES ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'driverClassName', '驱动类名(Driver class name)', 'Driver class name', 'com.mysql.jdbc.Driver', 'TEXT', NULL, '1', '驱动类名(Driver class name)', 'Driver class name', NULL, NULL, NULL, NULL,  now(), now()),
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'params', '连接参数(Connection params)', 'Connection params', NULL, 'TEXT', NULL, '0', '输入JSON格式(Input JSON format): {"param":"value"}', 'Input JSON format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now()),
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'username', '用户名(Username)', 'Username', NULL, 'TEXT', NULL, '1', '用户名(Username)', 'Username', '^[0-9A-Za-z_-]+$', NULL, NULL, NULL,  now(), now()),
-       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, '1', '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, '0', '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'doris'), 'instance', '实例名(instance)', 'Instance', NULL, 'TEXT', NULL, '1', '实例名(instance)', 'Instance', NULL, NULL, NULL, NULL,  now(), now());
 
 -- https://github.com/ClickHouse/clickhouse-jdbc/tree/master/clickhouse-jdbc

@@ -117,49 +117,27 @@ abstract class JavaProcessEngineConnLaunchBuilder
       addPathToClassPath(environment, variable(HIVE_CONF_DIR))
     }
     // first, add engineconn conf dirs.
-    addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME))
+    addPathToClassPath(environment, buildPath(Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME)))
     // then, add LINKIS_CONF_DIR conf dirs.
-    addPathToClassPath(environment, Seq(EnvConfiguration.LINKIS_CONF_DIR.getValue))
+    addPathToClassPath(environment, buildPath(Seq(EnvConfiguration.LINKIS_CONF_DIR.getValue)))
     // then, add engineconn libs.
-    addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*"))
+    addPathToClassPath(environment, buildPath(Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*")))
     // then, add public modules.
     if (!enablePublicModule) {
-      addPathToClassPath(environment, Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
+      addPathToClassPath(environment, buildPath(Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*")))
     }
     // finally, add the suitable properties key to classpath
-    engineConnBuildRequest.engineConnCreationDesc.properties.asScala.foreach { case (key, value) =>
-      if (
-          key
-            .startsWith("engineconn.classpath") || key.startsWith("wds.linkis.engineconn.classpath")
-      ) {
-        addPathToClassPath(environment, Seq(variable(PWD), new File(value).getName))
-      }
+    val taskClassPathFiles = EnvConfiguration.ENGINE_CONN_CLASSPATH_FILES.getValue(
+      engineConnBuildRequest.engineConnCreationDesc.properties
+    )
+    if (StringUtils.isNotBlank(taskClassPathFiles)) {
+      taskClassPathFiles
+        .split(",")
+        .filter(StringUtils.isNotBlank(_))
+        .foreach(file => addPathToClassPath(environment, buildPath(Seq(file))))
     }
-    getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
-    }
-    engineConnBuildRequest match {
-      case richer: RicherEngineConnBuildRequest =>
-        def addFiles(files: String): Unit = if (StringUtils.isNotBlank(files)) {
-          files
-            .split(",")
-            .foreach(file =>
-              addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
-            )
-        }
-
-        val configs: util.Map[String, String] =
-          richer.getStartupConfigs.asScala
-            .filter(_._2.isInstanceOf[String])
-            .map { case (k, v: String) =>
-              k -> v
-            }
-            .asJava
-        val jars: String = EnvConfiguration.ENGINE_CONN_JARS.getValue(configs)
-        addFiles(jars)
-        val files: String = EnvConfiguration.ENGINE_CONN_CLASSPATH_FILES.getValue(configs)
-        addFiles(files)
-      case _ =>
+    getExtraClassPathFile.filter(StringUtils.isNotBlank(_)).foreach { file: String =>
+      addPathToClassPath(environment, buildPath(Seq(new File(file).getName)))
     }
     environment
   }
@@ -198,7 +176,7 @@ abstract class JavaProcessEngineConnLaunchBuilder
     ) ++: engineConnResource.getOtherBmlResources.toList
   }.asJava
 
-  private implicit def buildPath(paths: Seq[String]): String =
+  private def buildPath(paths: Seq[String]): String =
     Paths.get(paths.head, paths.tail: _*).toFile.getPath
 
 }

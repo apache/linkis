@@ -23,6 +23,8 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,9 +57,17 @@ public class GatewayAuthTokenRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.GET)
   public Message list(
       HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
-    ModuleUserUtils.getOperationUser(
-        request, "Query list data of Gateway Auth Token,search name:" + searchName);
+
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Query list data of Gateway Auth Token,search name:" + searchName);
+
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+
     PageInfo pageList = gatewayAuthTokenService.getListByPage(searchName, currentPage, pageSize);
+
     return Message.ok("").data("list", pageList);
   }
 
@@ -65,8 +75,14 @@ public class GatewayAuthTokenRestfulApi {
   @ApiOperation(value = "get", notes = "Get a Gateway Auth Token Record by id", httpMethod = "GET")
   @RequestMapping(path = "/{id}", method = RequestMethod.GET)
   public Message get(HttpServletRequest request, @PathVariable("id") Long id) {
-    ModuleUserUtils.getOperationUser(
-        request, "Get a Gateway Auth Token Record,id:" + id.toString());
+
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Get a Gateway Auth Token Record,id:" + id.toString());
+
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     GatewayAuthTokenEntity gatewayAuthToken = gatewayAuthTokenService.getById(id);
     return Message.ok("").data("item", gatewayAuthToken);
   }
@@ -127,8 +143,57 @@ public class GatewayAuthTokenRestfulApi {
       httpMethod = "DELETE")
   @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
   public Message remove(HttpServletRequest request, @PathVariable("id") Long id) {
-    ModuleUserUtils.getOperationUser(request, "Remove a Gateway Auth Token Record,id:" + id);
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Try to remove gateway auto token record with id:" + id);
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = gatewayAuthTokenService.removeById(id);
     return Message.ok("").data("result", result);
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "checkName"),
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "token")
+  })
+  @ApiOperation(value = "Check", notes = "Check the incoming token", httpMethod = "GET")
+  @RequestMapping(path = "/check", method = RequestMethod.GET)
+  public Message checkAuth(HttpServletRequest request, String token, String checkName) {
+    ModuleUserUtils.getOperationUser(
+        request, "Try to check auth token with checkName:" + checkName);
+    Boolean checkResult = false;
+    // 参数校验
+    if (StringUtils.isBlank(checkName)) {
+      return Message.error(" checkName can not be empty [用户名不能为空]");
+    }
+    if (StringUtils.isBlank(checkName)) {
+      return Message.error(" token can not be empty [token不能为空]");
+    }
+    // query token
+    GatewayAuthTokenEntity authToken = gatewayAuthTokenService.getEntityByToken(token);
+    if (null != authToken) {
+      // token expired
+      Long elapseDay = authToken.getElapseDay();
+      Date createTime = authToken.getCreateTime();
+      if (elapseDay != -1
+          && System.currentTimeMillis() > (createTime.getTime() + elapseDay * 24 * 3600 * 1000)) {
+        return Message.error("Token is not valid or stale(" + token + " 令牌已过期)!")
+            .data("result", checkResult);
+      }
+      // token check
+      String legalUsers = authToken.getLegalUsers();
+      if (StringUtils.isNotBlank(legalUsers)) {
+        if (legalUsers.equals("*") || legalUsers.contains(checkName)) {
+          checkResult = true;
+        } else {
+          return Message.error("Illegal TokenUser for Token(Token非法用户: " + checkName + ")!")
+              .data("result", checkResult);
+        }
+      }
+    } else {
+      return Message.error("Invalid Token(数据库中未配置的无效令牌)");
+    }
+    return Message.ok().data("result", checkResult);
   }
 }

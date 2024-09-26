@@ -1,6 +1,6 @@
 {
     "name": "linkis",
-    "version": "1.4.0",
+    "version": "1.6.0",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "@form-create/iview": "2.5.27",
-        "axios": "0.21.4",
+        "axios": "1.7.4",
         "babel-polyfill": "6.26.0",
         "core-js": "3.27.2",
         "dexie": "3.2.3",
@@ -51,7 +51,8 @@
         "vue-router": "3.4.8",
         "vuedraggable": "2.24.3",
         "vuescroll": "4.16.1",
-        "worker-loader": "3.0.8"
+        "worker-loader": "3.0.8",
+        "echarts": "^5.1.1"
     },
     "devDependencies": {
         "@intlify/vue-i18n-loader": "1.0.0",

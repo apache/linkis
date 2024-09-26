@@ -34,6 +34,11 @@ public class JDBCEngineConnConstant {
       "wds.linkis.jdbc.auth.kerberos.proxy.enable";
   public static final String JDBC_PROXY_USER_PROPERTY = "wds.linkis.jdbc.proxy.user.property";
   public static final String JDBC_PROXY_USER = "wds.linkis.jdbc.proxy.user";
+
+  public static final String JDBC_CONNECTION_TIMEOUT = "wds.linkis.jdbc.connection.timeout";
+
+  public static final String JDBC_SOCKET_TIMEOUT = "wds.linkis.jdbc.socket.timeout";
+
   public static final String JDBC_SCRIPTS_EXEC_USER = "execUser";
   public static final String JDBC_ENGINE_RUN_TIME_DS = "wds.linkis.engine.runtime.datasource";
   public static final String JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID =

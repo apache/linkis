@@ -49,8 +49,10 @@ public interface ResourceManagerPersistence {
   /**
    * @param labels
    * @return
+   * @throws PersistenceErrorException
    */
-  List<PersistenceResource> getResourceByLabels(List<? extends Label> labels);
+  List<PersistenceResource> getResourceByLabels(List<? extends Label> labels)
+      throws PersistenceErrorException;
 
   /**
    * 根据用户获取资源
@@ -59,7 +61,7 @@ public interface ResourceManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<PersistenceResource> getResourceByUser(String user);
+  List<PersistenceResource> getResourceByUser(String user) throws PersistenceErrorException;
 
   /**
    * 根据serviceinstance 和资源类型获取 资源

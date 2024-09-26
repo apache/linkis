@@ -34,11 +34,11 @@ import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import org.apache.linkis.storage.resultset.ResultSetWriterFactory
+import org.apache.linkis.storage.resultset.ResultSetWriter
 
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -76,7 +76,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = RandomStringUtils.randomAlphanumeric(256)
+  private lazy val py4jToken: String = SecureRandomStringUtils.randomAlphanumeric(256)
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()
@@ -102,7 +102,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def init(): Unit = {
     setCodeParser(new PythonCodeParser)
     super.init()
-    logger.info("spark sql executor start")
+    logger.info("spark python executor start")
   }
 
   override def killTask(taskID: String): Unit = {
@@ -113,7 +113,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   override def close: Unit = {
-    logger.info("python executor ready to close")
+
+    logger.info(s"To remove pyspark executor")
+    Utils.tryAndError(
+      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
+    )
+    logger.info(s"Finished remove pyspark executor")
+
+    logger.info("To kill pyspark process")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
@@ -126,18 +133,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
           logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
           GovernanceUtils.killProcess(String.valueOf(p), s"kill pyspark process,pid: $pid", false)
         })
-        if (pid.isEmpty) {
-          process.destroy()
-          process = null
-        }
+
+        Utils.tryQuietly(process.destroy())
+        process = null
+        logger.info("Finished kill pyspark process")
       }("process close failed")
     }
-    logger.info(s"To delete python executor")
-    Utils.tryAndError(
-      ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray)
-    )
-    logger.info(s"Finished to kill python")
-    logger.info("python executor Finished to close")
+
+    logger.info("python executor finished to close")
   }
 
   override def getKind: Kind = PySpark()
@@ -314,7 +317,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val outStr = lineOutputStream.toString()
     if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
-        ResultSetWriterFactory
+        ResultSetWriter
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""
@@ -433,9 +436,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def printLog(log: Any): Unit = {
     logger.info(log.toString)
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }

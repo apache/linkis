@@ -21,24 +21,35 @@ import org.apache.linkis.jobhistory.entity.JobHistory;
 
 import org.apache.ibatis.annotations.Param;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface JobHistoryMapper {
 
   List<JobHistory> selectJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void insertJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void updateJobHistory(JobHistory jobReq);
 
   List<JobHistory> searchWithIdOrderAsc(
-      @Param("id") Long id,
-      @Param("umUser") String username,
-      @Param("status") List<String> status,
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
-      @Param("engineType") String engineType);
+      @Param("startId") Long startId,
+      @Param("status") List<String> status);
 
   List<JobHistory> search(
       @Param("id") Long id,
@@ -48,7 +59,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   List<JobHistory> searchWithUserCreator(
       @Param("id") Long id,
@@ -60,7 +73,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   List<JobHistory> searchWithCreatorOnly(
       @Param("id") Long id,
@@ -72,7 +87,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   Integer countUndoneTaskNoCreator(
       @Param("umUser") String username,
@@ -108,4 +125,54 @@ public interface JobHistoryMapper {
 
   void updateJobHistoryCancelById(
       @Param("idList") List<Long> idList, @Param("errorDesc") String errorDesc);
+
+  List<JobHistory> selectJobHistoryByTaskidList(
+      @Param("idList") List<String> idList, @Param("umUser") String username);
+
+  List<JobHistory> selectJobHistoryNoCode(JobHistory jobReq);
+
+  /**
+   * query wait for failover job
+   *
+   * <p>Sql example: SELECT a.* FROM linkis_ps_job_history_group_history a where (a.instances = ''
+   * or a.instances is null or a.instances not in ('192.168.1.123:9104','192.168.1.124:9104') or
+   * EXISTS ( select 1 from ( select '192.168.1.123:9104' as instances, 1697775054098 as
+   * registryTime union all select '192.168.1.124:9104' as instances, 1666239054098 as registryTime
+   * ) b where a.instances = b.instances and a.created_time < FROM_UNIXTIME(b.registryTime/1000) ) )
+   * and status in ('Inited','Running','Scheduled','WaitForRetry') and a.created_time >=
+   * FROM_UNIXTIME(1666239054098/1000) limit 10
+   *
+   * @param instancesMap
+   * @param statusList
+   * @param startTimestamp
+   * @param limit
+   * @return
+   */
+  List<JobHistory> selectFailoverJobHistory(
+      @Param("instancesMap") Map<String, Long> instancesMap,
+      @Param("statusList") List<String> statusList,
+      @Param("startTimestamp") Long startTimestamp,
+      @Param("limit") Integer limit);
+
+  List<JobHistory> taskDurationTopN(
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("umUser") String username,
+      @Param("engineType") String engineType);
+
+  List<JobHistory> taskDurationTopNWithUserCreator(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("userCreatorValue") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
+
+  List<JobHistory> taskDurationTopNWithCreatorOnly(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("creator") String userCreator,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 }

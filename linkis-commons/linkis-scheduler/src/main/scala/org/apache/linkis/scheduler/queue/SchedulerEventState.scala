@@ -38,4 +38,8 @@ object SchedulerEventState extends Enumeration {
     SchedulerEventState.withName(jobState)
   )
 
+  def isInitedByStr(jobState: String): Boolean = SchedulerEventState.withName(jobState) == Inited
+
+  def isRunningByStr(jobState: String): Boolean = isRunning(SchedulerEventState.withName(jobState))
+
 }

@@ -66,5 +66,11 @@ public class LabelKeyConstant {
 
   public static final String ENGINGE_CONN_RUNTIME_MODE_KEY = "engingeConnRuntimeMode";
 
+  public static final String TEMPLATE_CONF_KEY = "ec.conf.templateId";
+
+  public static final String TEMPLATE_CONF_NAME_KEY = "ec.resource.name";
+
   public static final String MANAGER_KEY = "manager";
+
+  public static final String DRIVER_TASK_KEY = "taskId";
 }

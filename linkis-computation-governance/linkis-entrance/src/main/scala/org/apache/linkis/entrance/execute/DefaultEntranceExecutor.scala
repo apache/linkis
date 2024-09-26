@@ -261,6 +261,15 @@ class DefaultEntranceExecutor(id: Long)
     true
   }
 
+  def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
+    val asyncReturn = getEngineExecuteAsyncReturn
+    if (asyncReturn.isDefined) {
+      asyncReturn.get.getOrchestrationFuture()
+    } else {
+      None
+    }
+  }
+
   override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
 
     val entranceExecuteRequest: EntranceExecuteRequest = request match {
@@ -282,7 +291,10 @@ class DefaultEntranceExecutor(id: Long)
       val msg = s"JobRequest (${entranceExecuteRequest.jobId()}) was submitted to Orchestrator."
       logger.info(msg)
       entranceExecuteRequest.getJob.getLogListener.foreach(
-        _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateInfo(msg))
+        _.onLogUpdate(
+          entranceExecuteRequest.getJob,
+          LogUtils.generateInfo(msg + "(您的任务已经提交给Orchestrator进行编排执行)")
+        )
       )
 
       if (entranceExecuteRequest.getJob.getJobRequest.getMetrics == null) {

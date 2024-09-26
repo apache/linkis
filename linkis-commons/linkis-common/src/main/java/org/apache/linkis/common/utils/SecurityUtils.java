@@ -79,6 +79,9 @@ public abstract class SecurityUtils {
 
   private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
 
+  private static final String BLACKLIST_REGEX =
+      "autodeserialize|allowloadlocalinfile|allowurlinlocalinfile|allowloadlocalinfileinpath";
+
   /**
    * check mysql connection params
    *
@@ -118,6 +121,10 @@ public abstract class SecurityUtils {
 
     // 3. Check params. Mainly vulnerability parameters. Note the url encoding
     checkParams(extraParams);
+
+    // 4. Check url security, especially for the possibility of malicious characters appearing on
+    // the host
+    checkUrlIsSafe(url);
   }
 
   /** @param url */
@@ -283,6 +290,35 @@ public abstract class SecurityUtils {
     }
   }
 
+  /**
+   * check url is safe
+   *
+   * @param url
+   */
+  public static void checkUrlIsSafe(String url) {
+    try {
+      String lowercaseURL = url.toLowerCase();
+
+      Pattern pattern = Pattern.compile(BLACKLIST_REGEX);
+      Matcher matcher = pattern.matcher(lowercaseURL);
+
+      StringBuilder foundKeywords = new StringBuilder();
+      while (matcher.find()) {
+        if (foundKeywords.length() > 0) {
+          foundKeywords.append(", ");
+        }
+        foundKeywords.append(matcher.group());
+      }
+
+      if (foundKeywords.length() > 0) {
+        throw new LinkisSecurityException(
+            35000, "url contains blacklisted characters: " + foundKeywords);
+      }
+    } catch (Exception e) {
+      throw new LinkisSecurityException(35000, "error occurred during url security check: " + e);
+    }
+  }
+
   private static Map<String, Object> parseMysqlUrlParamsToMap(String paramsUrl) {
     if (StringUtils.isBlank(paramsUrl)) {
       return new LinkedHashMap<>();
@@ -319,5 +355,41 @@ public abstract class SecurityUtils {
   private static boolean isNotSecurity(String key, String value, String param) {
     return key.toLowerCase().contains(param.toLowerCase())
         || value.toLowerCase().contains(param.toLowerCase());
+  }
+
+  /**
+   * allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false
+   *
+   * @return
+   */
+  public static Properties getMysqlSecurityParams() {
+    Properties properties = new Properties();
+    properties.setProperty("allowLoadLocalInfile", "false");
+    properties.setProperty("autoDeserialize", "false");
+    properties.setProperty("allowLocalInfile", "false");
+    properties.setProperty("allowUrlInLocalInfile", "false");
+    return properties;
+  }
+
+  /**
+   * Check if the path has a relative path
+   *
+   * @param path
+   * @return
+   */
+  public static boolean containsRelativePath(String path) {
+    if (path.startsWith("./")
+        || path.contains("/./")
+        || path.startsWith("../")
+        || path.contains("/../")) {
+      return true;
+    }
+    if (path.startsWith(".\\")
+        || path.contains("\\.\\")
+        || path.startsWith("..\\")
+        || path.contains("\\..\\")) {
+      return true;
+    }
+    return false;
   }
 }

@@ -160,7 +160,7 @@ abstract class EntranceJob extends Job {
           getLogListener.foreach(
             _.onLogUpdate(
               this,
-              LogUtils.generateInfo("Your job is Scheduled. Please wait it to run.")
+              LogUtils.generateInfo("Your job is Scheduled. Please wait it to run.(您的任务已经调度运行中)")
             )
           )
         case WaitForRetry =>
@@ -174,7 +174,8 @@ abstract class EntranceJob extends Job {
           getLogListener.foreach(
             _.onLogUpdate(
               this,
-              LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")
+              LogUtils
+                .generateInfo("Your job is Running now. Please wait it to complete.(您的任务已经在运行中)")
             )
           )
           getJobRequest.getMetrics.put(

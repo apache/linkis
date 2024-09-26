@@ -67,13 +67,17 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 
   override def doUserRequest(gatewayContext: GatewayContext): Unit = {
     val path = gatewayContext.getRequest.getRequestURI.replace(userRegex, "")
+    if (StringUtils.isNotBlank(path) && path.startsWith("sso-login")) {
+      ssoLogin(gatewayContext)
+      return
+    }
     val message = path match {
       case "register" => register(gatewayContext)
       case "login" =>
         Utils.tryCatch {
           val loginUser = GatewaySSOUtils.getLoginUsername(gatewayContext)
           Message
-            .ok(loginUser + "Already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
+            .ok(loginUser + " already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
             .data("userName", loginUser)
         }(_ => login(gatewayContext))
       case "token-login" =>
@@ -108,6 +112,13 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     } else {
       Message.error("Validation failed")
     }
+  }
+
+  def ssoLogin(gatewayContext: GatewayContext): Unit = {
+    val message = Message.ok("succeed")
+    gatewayContext.getResponse.write(message)
+    gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
+    gatewayContext.getResponse.sendResponse()
   }
 
   def login(gatewayContext: GatewayContext): Message = {
@@ -146,6 +157,9 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     Message
       .ok("get baseinfo success(获取成功)！")
       .data("resultSetExportEnable", GatewayConfiguration.IS_DOWNLOAD.getValue)
+      .data("linkisClusterName", GatewayConfiguration.LINKIS_CLUSTER_NAME.getValue)
+      .data("engineLogOnlyAdminEnable", GatewayConfiguration.ENGINE_LOG_ONLY_ADMIN.getValue)
+
   }
 
   def publicKey(gatewayContext: GatewayContext): Message = {

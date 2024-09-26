@@ -28,6 +28,7 @@ import org.apache.linkis.governance.common.entity.job.{
 }
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
@@ -255,6 +256,17 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
+  override def getJobHistoryByIdAndNameNoCode(
+      jobId: java.lang.Long,
+      userName: String
+  ): JobHistory = {
+    val jobReq = new JobHistory
+    jobReq.setId(jobId)
+    jobReq.setSubmitUser(userName)
+    val jobHistoryList = jobHistoryMapper.selectJobHistoryNoCode(jobReq)
+    if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
+  }
+
   override def search(
       jobId: lang.Long,
       username: String,
@@ -264,7 +276,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       eDate: Date,
       engineType: String,
       startJobId: lang.Long,
-      instance: String
+      instance: String,
+      departmentId: String,
+      engineInstance: String
   ): util.List[JobHistory] = {
 
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
@@ -277,7 +291,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId,
+        engineInstance
       )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
@@ -291,7 +307,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId,
+        engineInstance
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -312,7 +330,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         eDate,
         engineType,
         startJobId,
-        instance
+        instance,
+        departmentId,
+        engineInstance
       )
     }
     result
@@ -334,7 +354,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null), {
+      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
@@ -353,10 +373,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       startJobId: lang.Long
   ): Integer = {
     val cacheKey =
-      if (StringUtils.isNoneBlank(username, creator, engineType)) ""
-      else {
+      if (StringUtils.isNoneBlank(username, creator, engineType)) {
         s"${username}_${creator}_${engineType}"
-      }
+      } else ""
     if (StringUtils.isBlank(cacheKey)) {
       getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
     } else {
@@ -449,7 +468,18 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     val eDate = new Date(System.currentTimeMillis)
     val sDate = DateUtils.addDays(eDate, -1)
     val jobHistoryList =
-      jobHistoryMapper.search(null, null, statusList, sDate, eDate, null, null, request.instance)
+      jobHistoryMapper.search(
+        null,
+        null,
+        statusList,
+        sDate,
+        eDate,
+        null,
+        null,
+        request.instance,
+        null,
+        null
+      )
     val idlist = jobHistoryList.asScala.map(_.getId).asJava
     logger.info("Tasks id will be canceled ids :{}", idlist)
     // Modify task status
@@ -461,6 +491,53 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         .asScala
         .foreach(idlist => jobHistoryMapper.updateJobHistoryCancelById(idlist, errorMsg))
     }
+  }
+
+  override def searchByTasks(
+      taskidList: util.List[String],
+      username: String
+  ): util.List[JobHistory] = {
+    jobHistoryMapper.selectJobHistoryByTaskidList(taskidList, username)
+  }
+
+  override def taskDurationTopN(
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): util.List[JobHistory] = {
+    val result = if (StringUtils.isBlank(creator)) {
+      jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
+    } else if (StringUtils.isBlank(username)) {
+      val fakeLabel = new UserCreatorLabel
+      jobHistoryMapper.taskDurationTopNWithCreatorOnly(
+        username,
+        fakeLabel.getLabelKey,
+        creator,
+        sDate,
+        eDate,
+        engineType
+      )
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
+        logger.info("input user or creator is not correct", t)
+        throw t
+      }
+      jobHistoryMapper.taskDurationTopNWithUserCreator(
+        username,
+        fakeLabel.getLabelKey,
+        userCreator,
+        sDate,
+        eDate,
+        engineType
+      )
+    }
+    result
   }
 
 }

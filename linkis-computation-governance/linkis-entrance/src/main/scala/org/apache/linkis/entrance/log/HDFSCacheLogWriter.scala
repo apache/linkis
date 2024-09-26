@@ -37,11 +37,15 @@ import java.util
 class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user: String)
     extends LogWriter(charset) {
 
-  if (StringUtils.isBlank(logPath))
+  if (StringUtils.isBlank(logPath)) {
     throw new EntranceErrorException(LOGPATH_NOT_NULL.getErrorCode, LOGPATH_NOT_NULL.getErrorDesc)
+  }
 
-  protected var fileSystem =
+  protected var fileSystem = if (EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
+    FSFactory.getFs(new FsPath(logPath)).asInstanceOf[FileSystem]
+  } else {
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+  }
 
   override protected var outputStream: OutputStream = null
 
@@ -55,7 +59,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   private def init(): Unit = {
     fileSystem.init(new util.HashMap[String, String]())
-    FileSystemUtils.createNewFileWithFileSystem(fileSystem, new FsPath(logPath), user, true)
+    FileSystemUtils.createNewFileAndSetOwnerWithFileSystem(
+      fileSystem,
+      new FsPath(logPath),
+      user,
+      true
+    )
   }
 
   @throws[IOException]
@@ -91,13 +100,15 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
   def getCache: Option[Cache] = Some(sharedCache)
 
   private def cache(msg: String): Unit = {
+    if (sharedCache.cachedLogs == null) {
+      return
+    }
     WRITE_LOCKER synchronized {
-      val removed = sharedCache.cachedLogs.add(msg)
+      val isNextOneEmpty = sharedCache.cachedLogs.isNextOneEmpty
       val currentTime = new Date(System.currentTimeMillis())
-      if (removed != null || currentTime.after(pushTime)) {
+      if (isNextOneEmpty == false || currentTime.after(pushTime)) {
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
-        if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
         sharedCache.cachedLogs.fakeClear()
         writeToFile(sb.toString())
@@ -105,17 +116,17 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
           currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue
         )
       }
+      sharedCache.cachedLogs.add(msg)
     }
   }
 
   private def writeToFile(msg: String): Unit = WRITE_LOCKER synchronized {
-    val log =
-      if (!firstWrite) "\n" + msg
-      else {
-        logger.info(s"$toString write first one line log")
-        firstWrite = false
-        msg
-      }
+    val log = msg
+    if (firstWrite) {
+      logger.info(s"$toString write first one line log")
+      firstWrite = false
+      msg
+    }
     Utils.tryAndWarnMsg {
       getOutputStream.write(log.getBytes(charset))
     }(s"$toString error when write query log to outputStream.")
@@ -133,10 +144,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   override def flush(): Unit = {
     val sb = new StringBuilder
-    sharedCache.cachedLogs.toList
-      .filter(_ != null)
-      .foreach(sb.append(_).append("\n"))
-    sharedCache.cachedLogs.clear()
+    if (sharedCache.cachedLogs != null) {
+      sharedCache.cachedLogs.toList
+        .filter(_ != null)
+        .foreach(sb.append(_).append("\n"))
+      sharedCache.cachedLogs.clear()
+    }
     writeToFile(sb.toString())
   }
 
@@ -146,6 +159,7 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
       fileSystem.close()
       fileSystem = null
     }(s"$toString Error encounters when closing fileSystem")
+    sharedCache.clearCachedLogs()
   }
 
   override def toString: String = logPath

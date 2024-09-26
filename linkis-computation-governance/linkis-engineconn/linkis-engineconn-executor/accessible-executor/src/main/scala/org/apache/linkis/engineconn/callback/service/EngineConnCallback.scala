@@ -35,7 +35,7 @@ abstract class AbstractEngineConnStartUpCallback() extends EngineConnCallback wi
   def callback(protocol: RequestProtocol): Unit = {
     protocol match {
       case protocol: EngineConnStatusCallback =>
-        if (protocol.getStatus().equals(NodeStatus.Failed)) {
+        if (protocol.status.equals(NodeStatus.Failed)) {
           logger.error(s"EngineConn Start Failed protocol will send to LM: ${protocol}")
         } else {
           logger.info(s"protocol will send to lm: ${protocol}")

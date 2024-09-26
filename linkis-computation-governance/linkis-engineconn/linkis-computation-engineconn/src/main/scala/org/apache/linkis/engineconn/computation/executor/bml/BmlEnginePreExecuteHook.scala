@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.computation.executor.bml
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
@@ -62,7 +63,7 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging {
   ): String = {
     val props = engineExecutionContext.getProperties
     if (null != props && props.containsKey(GovernanceConstant.TASK_RESOURCES_STR)) {
-      val workDir = ComputationEngineUtils.getCurrentWorkDir
+//      val workDir = ComputationEngineUtils.getCurrentWorkDir
       val jobId = engineExecutionContext.getJobId
       props.get(GovernanceConstant.TASK_RESOURCES_STR) match {
         case resources: util.List[Object] =>
@@ -71,9 +72,9 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging {
               val fileName = resource.get(GovernanceConstant.TASK_RESOURCE_FILE_NAME_STR).toString
               val resourceId = resource.get(GovernanceConstant.TASK_RESOURCE_ID_STR).toString
               val version = resource.get(GovernanceConstant.TASK_RESOURCE_VERSION_STR).toString
-              val fullPath =
-                if (workDir.endsWith(seperator)) pathType + workDir + fileName
-                else pathType + workDir + seperator + fileName
+              val fullPath = fileName
+//                if (workDir.endsWith(seperator)) pathType + workDir + fileName
+//                else pathType + workDir + seperator + fileName
               val response = Utils.tryCatch {
                 bmlClient.downloadShareResource(processUser, resourceId, version, fullPath, true)
               } {

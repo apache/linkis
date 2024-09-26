@@ -57,8 +57,7 @@ class DefaultManagerService extends ManagerService with Logging {
       logger.info("engineType labels is empty, Not reported")
       return
     }
-    val labelReportRequest =
-      new LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
+    val labelReportRequest = LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
     getManagerSender.send(labelReportRequest)
   }
 
@@ -76,6 +75,9 @@ class DefaultManagerService extends ManagerService with Logging {
 
   override def heartbeatReport(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     getManagerSender.send(nodeHeartbeatMsg)
+    if (nodeHeartbeatMsg != null && nodeHeartbeatMsg.getHealthyInfo != null) {
+      logger.info("report engine healthy status: {}", nodeHeartbeatMsg.getHealthyInfo)
+    }
     logger.info(
       "success to send engine heartbeat report to {},status: {},msg: {}",
       Array(

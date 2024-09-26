@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -223,9 +224,11 @@ class HiveEngineConcurrentConnExecutor(
             var compileRet = -1
             Utils.tryCatch {
               compileRet = driver.compile(realCode)
-              logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+              logger.info(
+                s"driver compile realCode : \n ${realCode} \n finished, status : ${compileRet}"
+              )
               if (0 != compileRet) {
-                logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+                logger.warn(s"compile realCode : \n ${realCode} \n error status : ${compileRet}")
                 throw HiveQueryFailedException(
                   COMPILE_HIVE_QUERY_ERROR.getErrorCode,
                   COMPILE_HIVE_QUERY_ERROR.getErrorDesc
@@ -344,7 +347,7 @@ class HiveEngineConcurrentConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf[Array[AnyRef]]))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
       }
       rows += result.size
       result.clear()
@@ -476,8 +479,6 @@ class HiveEngineConcurrentConnExecutor(
     cleanup(taskID)
     super.killTask(taskID)
   }
-
-  override def getConcurrentLimit: Int = HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_LIMIT
 
   override def killAll(): Unit = {
     val iterator = driverCache.entrySet().iterator()

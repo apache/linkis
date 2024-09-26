@@ -35,6 +35,8 @@ object EngineType extends Enumeration with Logging {
 
   val REPL = Value("repl")
 
+  val DORIS = Value("doris")
+
   val SHELL = Value("shell")
 
   val JDBC = Value("jdbc")
@@ -69,6 +71,8 @@ object EngineType extends Enumeration with Logging {
 
   val IMPALA = Value("impala")
 
+  val JOBSERVER = Value("jobserver")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>
@@ -98,6 +102,7 @@ object EngineType extends Enumeration with Logging {
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
     case _ if NEBULA.toString.equalsIgnoreCase(str) => NEBULA
     case _ if REPL.toString.equalsIgnoreCase(str) => REPL
+    case _ if DORIS.toString.equalsIgnoreCase(str) => DORIS
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
     case _ if APPCONN.toString.equals(str) => APPCONN
     case _ if SQOOP.toString.equalsIgnoreCase(str) => SQOOP

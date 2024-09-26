@@ -66,8 +66,8 @@ const docCookies = {
     },
     setItem: function (
         sKey: string,
-        sValue: string,
-        vEnd?: boolean,
+        sValue: string | boolean,
+        vEnd?: number | string | Date | boolean,
         sPath?: string,
         sDomain?: string,
         bSecure?: string,
@@ -88,7 +88,7 @@ const docCookies = {
                     sExpires = '; expires=' + vEnd;
                     break;
                 case Date:
-                    sExpires = '; expires=' + vEnd.toUTCString();
+                    sExpires = '; expires=' + (vEnd as Date).toUTCString();
                     break;
             }
         }
@@ -135,7 +135,7 @@ const docCookies = {
 };
 
 export const storageManager = {
-    set: function (key: string, value: string, storage: string) {
+    set: function (key: string, value: string | boolean, storage: string) {
         try {
             window[storage].setItem(key, JSON.stringify(value));
         } catch (e) {
@@ -162,7 +162,7 @@ export const storageManager = {
 };
 
 export const cookieManager = {
-    set: function (key: string, value: string, expired: boolean) {
+    set: function (key: string, value: string | boolean, expired: number | string | Date | boolean) {
         if (expired) docCookies.setItem(key, value, expired);
         else docCookies.setItem(key, value);
     },
@@ -182,7 +182,7 @@ export const cookieManager = {
 export default {
     set: function (
         key: string,
-        value: string,
+        value: string | boolean,
         category = SESSION,
         expired = false,
     ) {

@@ -18,7 +18,9 @@
 package org.apache.linkis.manager.am.conf;
 
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.governance.common.protocol.conf.*;
+import org.apache.linkis.governance.common.protocol.conf.RequestQueryEngineConfigWithGlobalConfig;
+import org.apache.linkis.governance.common.protocol.conf.RequestQueryGlobalConfig;
+import org.apache.linkis.governance.common.protocol.conf.ResponseQueryConfig;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.protocol.CacheableProtocol;

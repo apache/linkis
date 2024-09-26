@@ -108,4 +108,19 @@ object GatewayConfiguration {
 
   val IS_DOWNLOAD = CommonVars("linkis.web.result.set.export.enable", true)
 
+  val LINKIS_CLUSTER_NAME = CommonVars("linkis.cluster.name", "")
+
+  val ENGINE_LOG_ONLY_ADMIN = CommonVars("linkis.engine.log.only.admin", false)
+
+  val ENGINECONN_MANAGER_SPRING_NAME =
+    CommonVars("wds.linkis.engineconnmanager.name", "linkis-cg-engineconnmanager")
+
+  val ACCESS_CONTROL_ENABLED = CommonVars("linkis.client.access.control.enable", false)
+
+  val ACCESS_CONTROL_URL = CommonVars("linkis.client.access.control.url", "")
+
+  val ACCESS_CONTROL_IP = CommonVars("linkis.client.access.control.ip", "")
+
+  val ACCESS_CONTROL_USER_ENABLED = CommonVars("linkis.client.access.control.user.enable", false)
+
 }

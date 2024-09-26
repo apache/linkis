@@ -164,6 +164,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
     cliHeartbeatMonitor.unRegisterIfCliJob(job);
     updateJobStatus(job);
+    job.clear();
   }
 
   private void updateJobStatus(Job job) {
@@ -190,7 +191,7 @@ public class QueryPersistenceManager extends PersistenceManager {
       createPersistenceEngine().updateIfNeeded(jobRequest);
     } catch (ErrorException e) {
       entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());
-      logger.error("update job status failed, reason: ", e);
+      throw e;
     }
   }
 

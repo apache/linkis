@@ -71,6 +71,43 @@ import org.apache.commons.lang3.StringUtils;
 }
 ```
 
+#### 1.3. Multiple methods
+
+```text
+import org.apache.commons.lang3.StringUtils;
+
+    public void sayHello() {
+        System.out.println("hello");
+        System.out.println(StringUtils.isEmpty("hello"));
+    }
+    public void sayHi() {
+        System.out.println("hi");
+        System.out.println(StringUtils.isEmpty("hi"));
+    }
+```
+
+```json
+{
+  "executionContent":{
+    "code":"import org.apache.commons.lang3.StringUtils;\n\n    public void sayHello() {\n        System.out.println(\"hello\");\n        System.out.println(StringUtils.isEmpty(\"hello\"));\n    }\n     public void sayHi() {\n        System.out.println(\"hi\");\n        System.out.println(StringUtils.isEmpty(\"hi\"));\n    }",
+    "runType":"repl"
+  },
+  "params":{
+    "configuration":{
+      "runtime":{
+        "linkis.repl.type":"java",
+        "linkis.repl.method.name":"sayHi"
+      }
+    }
+  },
+  "labels":{
+    "engineType":"repl-1",
+    "userCreator":"linkis-IDE"
+  }
+}
+```
+
+
 ### 2. Submitting scala tasks with Restful API
 
 ```text

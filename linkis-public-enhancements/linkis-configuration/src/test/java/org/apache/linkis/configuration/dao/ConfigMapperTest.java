@@ -88,11 +88,6 @@ public class ConfigMapperTest extends BaseDaoTest {
     assertEquals(7, configKeyValueList.size());
   }
 
-  /**
-   * When using the h2 library for testing,if the function(on conflict) is not supported,an error
-   * will be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
-   * conflict）会报错，pg实体库不会报错
-   */
   @Test
   void testInsertValue() {
     ConfigValue result = insertConfigValue();
@@ -160,12 +155,6 @@ public class ConfigMapperTest extends BaseDaoTest {
   }
 
   @Test
-  void testInsertCreator() {
-    // mapper方法没有对应的实现类
-    //        configMapper.insertCreator("tom");
-  }
-
-  @Test
   void testGetCategory() {
     List<CategoryLabel> categoryLabelList = configMapper.getCategory();
     assertEquals(3, categoryLabelList.size());
@@ -208,6 +197,7 @@ public class ConfigMapperTest extends BaseDaoTest {
   void testInsertKey() {
     ConfigKey configKey = new ConfigKey();
     configKey.setKey("wds.linkis.rm.instance.max.max");
+    configKey.setBoundaryType(3);
     configMapper.insertKey(configKey);
     ConfigKey result = configMapper.selectKeyByKeyID(8L);
     //        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());

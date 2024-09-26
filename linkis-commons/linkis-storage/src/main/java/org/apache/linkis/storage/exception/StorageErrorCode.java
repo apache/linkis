@@ -21,9 +21,13 @@ public enum StorageErrorCode {
 
   /** */
   FS_NOT_INIT(53001, "please init first"),
-
   INCONSISTENT_DATA(53001, "Inconsistent row data read,read %s,need rowLen %s"),
-  FS_OOM(53002, "OOM occurred while reading the file");
+  FS_OOM(53002, "OOM occurred while reading the file"),
+  FS_ERROR(53003, "Failed to operation fs"),
+
+  READ_PARQUET_FAILED(53004, "Failed to read parquet file"),
+
+  READ_ORC_FAILED(53005, "Failed to read orc file");
 
   StorageErrorCode(int errorCode, String message) {
     this.code = errorCode;

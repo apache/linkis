@@ -62,41 +62,36 @@ class InstanceLabelClient extends Logging {
 
   def getLabelFromInstance(serviceInstance: ServiceInstance): util.List[Label[_]] = {
     val request = new InsLabelQueryRequest(serviceInstance)
-    Utils.tryAndError {
-      getSender().ask(request) match {
+    Utils.tryAndWarn {
+      val respObj = getSender().ask(request)
+      respObj match {
         case resp: InsLabelQueryResponse =>
           val labelList = new util.ArrayList[Label[_]]()
           resp.getLabelList.asScala.foreach(pair =>
             labelList.add(labelBuilderFactory.createLabel[Label[_]](pair.getKey, pair.getValue))
           )
           labelList
-        case o =>
-          logger.error(s"Invalid response ${BDPJettyServerHelper.gson
-            .toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+        case _ =>
+          logger.warn(s"Invalid resp :$respObj from request : $request")
           new util.ArrayList[Label[_]]
       }
     }
   }
 
   def getInstanceFromLabel(labels: util.List[Label[_]]): util.List[ServiceInstance] = {
-    Utils.tryAndError {
+    Utils.tryAndWarn {
       val request = new LabelInsQueryRequest()
       val labelMap = LabelUtils.labelsToMap(labels)
       request.setLabels(labelMap.asInstanceOf[util.HashMap[String, Object]])
-      Sender.getSender(PUBLIC_SERVICE_APPLICATION_NAME.getValue).ask(request) match {
+      val respObj = getSender().ask(request)
+      respObj match {
         case resp: LabelInsQueryResponse =>
           if (null == resp.getInsList || resp.getInsList.isEmpty) {
             return new util.ArrayList[ServiceInstance]()
           }
-          if (resp.getInsList.size() != 1) {
-            logger.warn(
-              s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one."
-            )
-          }
           resp.getInsList
-        case o =>
-          logger.error(s"Invalid resp : ${JsonUtils.jackson
-            .writeValueAsString(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+        case _ =>
+          logger.warn(s"Invalid resp :$respObj from request : $request")
           new util.ArrayList[ServiceInstance]()
       }
     }

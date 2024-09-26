@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.acessible.executor.execution
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatServiceHolder
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.execution.EngineConnExecution
@@ -40,6 +41,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
+import java.util.Random
 import java.util.concurrent.TimeUnit
 
 class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
@@ -73,6 +75,9 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     reportUsedResource(executor, engineCreationContext)
     reportLabel(executor)
     executorStatusChecker
+    if (AccessibleExecutorConfiguration.ENGINECONN_AUTO_EXIT) {
+      ecAutoExit()
+    }
     afterReportToLinkisManager(executor, engineCreationContext, engineConn)
   }
 
@@ -140,6 +145,39 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     )
   }
 
+  /**
+   * EC auto exit only support concurrent executor
+   */
+  private def ecAutoExit(): Unit = {
+    logger.info(s"ec auto exit start ${System.currentTimeMillis()}")
+    Utils.defaultScheduler.schedule(
+      new Runnable {
+        override def run(): Unit = Utils.tryAndWarn {
+          ExecutorManager.getInstance.getReportExecutor match {
+            case executor: ConcurrentExecutor =>
+              val rand = new Random
+              val minute = rand.nextInt(5) + 1
+              Thread.sleep(minute * 60000L)
+              if (executor.hasTaskRunning()) {
+                ExecutorHeartbeatServiceHolder
+                  .getDefaultHeartbeatService()
+                  .setSelfUnhealthy(s"EC running time exceed max time")
+              } else {
+                logger.warn(
+                  s"Executor has no task running ${executor.getId}, will be to shutdown ec"
+                )
+                executor.tryShutdown()
+              }
+            case _ =>
+              logger.warn(s"Executor is not a ConcurrentExecutor, do noting")
+          }
+        }
+      },
+      AccessibleExecutorConfiguration.ENGINECONN_AUTO_EXIT_DAYS,
+      TimeUnit.DAYS
+    )
+  }
+
   def requestManagerReleaseExecutor(msg: String, nodeStatus: NodeStatus): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(
       Sender.getThisServiceInstance,
@@ -204,7 +242,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     case resourceExecutor: ResourceExecutor =>
       ManagerService.getManagerService
         .reportUsedResource(
-          new ResourceUsedProtocol(
+          ResourceUsedProtocol(
             Sender.getThisServiceInstance,
             resourceExecutor.getCurrentNodeResource(),
             engineCreationContext.getTicketId

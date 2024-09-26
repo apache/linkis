@@ -28,7 +28,7 @@ public class KerberosUtilsTest {
   public void getKerberosRefreshIntervalTest() {
 
     Long refreshInterval = KerberosUtils.getKerberosRefreshInterval();
-    Assertions.assertTrue(86400000L == refreshInterval.longValue());
+    Assertions.assertTrue(43200L == refreshInterval.longValue());
   }
 
   @Test

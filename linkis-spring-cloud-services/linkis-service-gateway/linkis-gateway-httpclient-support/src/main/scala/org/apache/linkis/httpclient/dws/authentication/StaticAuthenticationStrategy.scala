@@ -101,12 +101,28 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
   override def isTimeout(authentication: Authentication): Boolean =
     System.currentTimeMillis() - authentication.getLastAccessTime >= serverSessionTimeout
 
+  /**
+   * Forced login needs to consider the situation of multiple calls at the same time. If there are
+   * simultaneous calls, it should not be updated. request time < last creatTime and last createTime
+   *   - currentTime < 1s
+   * @param requestAction
+   * @param serverUrl
+   * @return
+   */
   override def enforceLogin(requestAction: Action, serverUrl: String): Authentication = {
     val key = getKey(requestAction, serverUrl)
     if (key == null) return null
+    val requestTime = System.currentTimeMillis()
     key.intern() synchronized {
-      val authentication = tryLogin(requestAction, serverUrl)
-      putSession(key, authentication)
+      var authentication = getAuthenticationActionByKey(key)
+      if (
+          authentication == null || (authentication.getCreateTime < requestTime && (System
+            .currentTimeMillis() - authentication.getCreateTime) > 1000)
+      ) {
+        authentication = tryLogin(requestAction, serverUrl)
+        putSession(key, authentication)
+        logger.info(s"$key try enforceLogin")
+      }
       authentication
     }
   }

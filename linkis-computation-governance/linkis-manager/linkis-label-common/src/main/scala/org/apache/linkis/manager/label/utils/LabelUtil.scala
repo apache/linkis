@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.label.utils
 
 import org.apache.linkis.manager.label.constant.LabelValueConstant
-import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.{Label, TenantLabel}
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineConnModeLabel,
@@ -32,6 +32,8 @@ import org.apache.linkis.manager.label.entity.entrance.{
   LoadBalanceLabel
 }
 import org.apache.linkis.manager.label.entity.route.RouteLabel
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 
@@ -80,6 +82,20 @@ object LabelUtil {
 
   def getCodeTypeLabel(labels: util.List[Label[_]]): CodeLanguageLabel = {
     getLabelFromList[CodeLanguageLabel](labels)
+  }
+
+  def getTenantValue(labels: util.List[Label[_]]): String = {
+    if (null == labels) return ""
+    val tentantLabel = getTenantLabel(labels)
+    if (null != tentantLabel) {
+      tentantLabel.getTenant
+    } else {
+      ""
+    }
+  }
+
+  def getTenantLabel(labels: util.List[Label[_]]): TenantLabel = {
+    getLabelFromList[TenantLabel](labels)
   }
 
   def getEngingeConnRuntimeModeLabel(labels: util.List[Label[_]]): EngingeConnRuntimeModeLabel = {
@@ -143,6 +159,25 @@ object LabelUtil {
       else false
     }
     isYarnClusterMode
+  }
+
+  def getFromLabelStr(labelStr: String, key: String): String = {
+    //  hadoop-IDE,hive-2.3.3  or hadoop-IDE  or hive-2.3.3
+    if (StringUtils.isNotBlank(labelStr)) {
+      val labelArray = labelStr.split(",")
+      (labelArray.length, key.toLowerCase()) match {
+        case (1, "user") => labelStr.split("-")(0)
+        case (1, "creator") => labelStr.split("-")(1)
+        case (1, "engine") => labelStr.split("-")(0)
+        case (1, "version") => labelStr.split("-")(1)
+        case (2, "user") => labelArray(0).split("-")(0)
+        case (2, "creator") => labelArray(0).split("-")(1)
+        case (2, "engine") => labelArray(1).split("-")(0)
+        case (2, "version") => labelArray(1).split("-")(1)
+      }
+    } else {
+      ""
+    }
   }
 
 }

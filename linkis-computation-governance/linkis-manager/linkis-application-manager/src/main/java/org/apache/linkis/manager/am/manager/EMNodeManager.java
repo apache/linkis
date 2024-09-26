@@ -20,6 +20,7 @@ package org.apache.linkis.manager.am.manager;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
@@ -32,11 +33,11 @@ public interface EMNodeManager {
 
   void emRegister(EMNode emNode);
 
-  List listEngines(EMNode emNode);
+  List<EngineNode> listEngines(EMNode emNode);
 
-  List listUserEngines(EMNode emNode, String user);
+  List<EngineNode> listUserEngines(EMNode emNode, String user);
 
-  List listUserNodes(String user);
+  List<Node> listUserNodes(String user);
 
   /**
    * Get detailed em information from the persistence

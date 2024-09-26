@@ -20,6 +20,8 @@ package org.apache.linkis.filesystem.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
+import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
 import org.apache.linkis.filesystem.entity.LogLevel;
@@ -29,24 +31,27 @@ import org.apache.linkis.filesystem.service.FsService;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.utils.UserGroupUtils;
 import org.apache.linkis.filesystem.validator.PathValidator$;
+import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.csv.CSVFsWriter;
 import org.apache.linkis.storage.domain.FsPathListWithError;
-import org.apache.linkis.storage.excel.ExcelFsWriter;
-import org.apache.linkis.storage.excel.ExcelStorageReader;
-import org.apache.linkis.storage.excel.StorageMultiExcelWriter;
+import org.apache.linkis.storage.excel.*;
+import org.apache.linkis.storage.exception.ColLengthExceedException;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
+import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +63,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -88,14 +94,13 @@ public class FsRestfulApi {
    * @param userName
    * @return
    */
-  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+  private boolean checkIsUsersDirectory(String requestPath, String userName, Boolean withAdmin) {
+    // 配置文件默认关闭检查，withadmin默认true，特殊情况传false 开启权限检查（
+    // The configuration file defaults to disable checking, with admin defaulting to true, and in
+    // special cases, false is passed to enable permission checking）
     boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
-    if (!ownerCheck) {
+    if (!ownerCheck && withAdmin) {
       LOGGER.debug("not check filesystem owner.");
-      return true;
-    }
-    if (requestPath.contains(WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue()))
-        || Configuration.isAdmin(userName)) {
       return true;
     }
     requestPath = requestPath.toLowerCase().trim() + "/";
@@ -106,7 +111,11 @@ public class FsRestfulApi {
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (Configuration.isJobHistoryAdmin(userName)) {
+    // 管理员修改其他用户文件目录时，会导致用户无法使用文件，故此优化管理员不能修改(When administrators modify the file directory of other
+    // users,
+    // it will cause users to be unable to use the file, so the optimization administrator cannot
+    // modify it)
+    if (withAdmin && Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
@@ -115,6 +124,10 @@ public class FsRestfulApi {
     LOGGER.debug("enginconnPath:" + enginconnPath);
     LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
+  }
+
+  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+    return checkIsUsersDirectory(requestPath, userName, true);
   }
 
   @ApiOperation(value = "getUserRootPath", notes = "get user root path", response = Message.class)
@@ -132,9 +145,9 @@ public class FsRestfulApi {
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
     String path;
     String returnType;
-    if (StorageUtils.HDFS.equalsIgnoreCase(pathType)) {
+    if (StorageUtils.HDFS().equalsIgnoreCase(pathType)) {
       path = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
-      returnType = StorageUtils.HDFS.toUpperCase();
+      returnType = StorageUtils.HDFS().toUpperCase();
     } else {
       path = localUserRootPath + userName;
       returnType = LOCAL_RETURN_TYPE;
@@ -233,7 +246,7 @@ public class FsRestfulApi {
       PathValidator$.MODULE$.validate(oldDest, userName);
       PathValidator$.MODULE$.validate(newDest, userName);
     }
-    if (!checkIsUsersDirectory(newDest, userName)) {
+    if (!checkIsUsersDirectory(newDest, userName, false)) {
       throw WorkspaceExceptionManager.createException(80010, userName, newDest);
     }
     if (StringUtils.isEmpty(oldDest)) {
@@ -314,6 +327,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "upload " + path);
+    LoggerUtils.setJobIdMDC("uploadThread_" + userName);
+    LOGGER.info("userName {} start to upload File {}", userName, path);
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
@@ -329,6 +344,9 @@ public class FsRestfulApi {
         IOUtils.copy(is, outputStream);
       }
     }
+    LOGGER.info("userName {} Finished to upload File {}", userName, path);
+    LoggerUtils.removeJobIdMDC();
+
     return Message.ok();
   }
 
@@ -379,7 +397,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     if (!fileSystem.exists(fsPath)) {
       return Message.ok().data("dirFileTrees", null);
     }
@@ -392,14 +410,23 @@ public class FsRestfulApi {
     }
     dirFileTree.setName(new File(path).getName());
     dirFileTree.setChildren(new ArrayList<>());
+    Set<String> fileNameSet = new HashSet<>();
+    fileNameSet.add(dirFileTree.getPath().trim());
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        dirFileTreeChildren.setPath(children.getSchemaPath());
+
+        dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
+        if (fileNameSet.contains(dirFileTreeChildren.getPath().trim())) {
+          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getPath());
+          continue;
+        } else {
+          fileNameSet.add(dirFileTreeChildren.getPath().trim());
+        }
         if (!children.isdir()) {
           dirFileTreeChildren.setIsLeaf(true);
           dirFileTreeChildren.getProperties().put("size", String.valueOf(children.getLength()));
@@ -430,6 +457,8 @@ public class FsRestfulApi {
       String charset = json.get("charset");
       String path = json.get("path");
       String userName = ModuleUserUtils.getOperationUser(req, "download " + path);
+      LoggerUtils.setJobIdMDC("downloadThread_" + userName);
+      LOGGER.info("userName {} start to download File {}", userName, path);
       if (StringUtils.isEmpty(path)) {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
@@ -442,7 +471,7 @@ public class FsRestfulApi {
       FsPath fsPath = new FsPath(path);
       // TODO: 2018/11/29 Judging the directory, the directory cannot be
       // downloaded(判断目录,目录不能下载)
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
         throw WorkspaceExceptionManager.createException(80011, path);
       }
@@ -457,6 +486,7 @@ public class FsRestfulApi {
       while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
         outputStream.write(buffer, 0, bytesRead);
       }
+      LOGGER.info("userName {} Finished to download File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("download failed", e);
       response.reset();
@@ -466,6 +496,8 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
+
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -513,7 +545,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "fileInfo " + path);
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80012);
@@ -521,8 +553,8 @@ public class FsRestfulApi {
     FileSource fileSource = null;
     try {
       Message message = Message.ok();
-      fileSource = FileSource.create(fsPath, fileSystem);
-      Pair<Integer, Integer>[] fileInfo = fileSource.getFileInfo(pageSize);
+      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
+      Pair<Object, Object>[] fileInfo = fileSource.getFileInfo(pageSize);
       IOUtils.closeQuietly(fileSource);
       if (null != fileInfo && fileInfo.length > 0) {
         message.data("path", path);
@@ -539,20 +571,44 @@ public class FsRestfulApi {
     }
   }
 
+  /**
+   * Opens a file method. This method opens a file based on user requests and returns metadata and
+   * content of the file.
+   *
+   * @param req The HttpServletRequest object used to retrieve request information.
+   * @param path The file path, an optional parameter indicating the path of the file to be opened.
+   * @param page The requested page number, with a default value of 1.
+   * @param pageSize The number of rows per page, defaulting to 5000.
+   * @param nullValue A string representing a null value, defaulting to an empty string. If
+   *     specified, replaces null values with this string in query results.
+   * @param enableLimit A string indicating whether query limitations should be enabled, with a
+   *     default value of an empty string. If enabled, sets query limitations.
+   * @return A Message object containing file metadata, content, and related messages.
+   * @throws IOException Thrown if there's an I/O error.
+   * @throws WorkSpaceException Thrown if the file fails to open.
+   */
   @ApiOperation(value = "openFile", notes = "open file", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
     @ApiImplicitParam(name = "page", required = true, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer", defaultValue = "5000"),
+    @ApiImplicitParam(name = "nullValue", required = false, dataType = "String", defaultValue = ""),
+    @ApiImplicitParam(
+        name = "enableLimit",
+        required = false,
+        dataType = "String",
+        defaultValue = ""),
+    @ApiImplicitParam(name = "columnIndices", required = false, dataType = "array"),
+    @ApiImplicitParam(
+        name = "columnPageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "500"),
     @ApiImplicitParam(
         name = "pageSize",
         required = true,
         dataType = "Integer",
-        defaultValue = "5000"),
-    @ApiImplicitParam(
-        name = "charset",
-        required = true,
-        dataType = "String",
-        defaultValue = "utf-8")
+        defaultValue = "5000")
   })
   @RequestMapping(path = "/openFile", method = RequestMethod.GET)
   public Message openFile(
@@ -560,48 +616,159 @@ public class FsRestfulApi {
       @RequestParam(value = "path", required = false) String path,
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
-      @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
-      @RequestParam(value = "limitBytes", defaultValue = "0") Long limitBytes,
-      @RequestParam(value = "limitColumnLength", defaultValue = "0") Integer limitColumnLength)
+      @RequestParam(value = "nullValue", defaultValue = "") String nullValue,
+      @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit,
+      @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
+      @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
+          Integer columnPageSize)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
+
+    if (columnPage < 1 || columnPageSize < 1 || columnPageSize > 500) {
+      throw WorkspaceExceptionManager.createException(80036, path);
+    }
+
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
+    LoggerUtils.setJobIdMDC("openFileThread_" + userName);
+    LOGGER.info("userName {} start to open File {}", userName, path);
+    Long startTime = System.currentTimeMillis();
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80012);
     }
+
+    int[] columnIndices = null;
     FileSource fileSource = null;
     try {
-      fileSource = FileSource.create(fsPath, fileSystem);
-      if (FileSource.isResultSet(fsPath.getPath())) {
+      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
+      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
+        nullValue = "";
+      }
+      if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
+        if (!StringUtils.isEmpty(nullValue)) {
+          fileSource.addParams("nullValue", nullValue);
+        }
+        if (pageSize > FILESYSTEM_RESULTSET_ROW_LIMIT.getValue()) {
+          throw WorkspaceExceptionManager.createException(
+              80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
+        }
+
+        if (StringUtils.isNotBlank(enableLimit)) {
+          LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
+          LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
+          // 组装列索引
+          columnIndices = genColumnIndices(columnPage, columnPageSize);
+          LinkisStorageConf.columnIndicesThreadLocal().set(columnIndices);
+        }
+
         fileSource = fileSource.page(page, pageSize);
+      } else if (fileSystem.getLength(fsPath)
+          > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+        // Increase file size limit, making it easy to OOM without limitation
+        throw WorkspaceExceptionManager.createException(80032);
       }
-      if (limitBytes > 0) {
-        fileSource = fileSource.limitBytes(Math.min(limitBytes, FILESYSTEM_LIMIT_BYTES.getValue()));
+
+      try {
+        Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+        LOGGER.info(
+            "Finished to open File {}, taken {} ms", path, System.currentTimeMillis() - startTime);
+        IOUtils.closeQuietly(fileSource);
+        Object metaMap = result.getFirst();
+        Map[] newMap = null;
+        try {
+          if (metaMap instanceof Map[]) {
+            Map[] realMap = (Map[]) metaMap;
+            int realSize = realMap.length;
+
+            // 判断列索引在实际列数范围内
+            if ((columnPage - 1) * columnPageSize > realSize) {
+              throw WorkspaceExceptionManager.createException(80036, path);
+            }
+
+            message.data("totalColumn", realSize);
+            if (realSize > FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()) {
+              message.data("column_limit_display", true);
+              message.data(
+                  "zh_msg",
+                  "全量结果集超过"
+                      + FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()
+                      + "列，页面提供500列数据预览，如需查看完整结果集，请使用结果集导出功能");
+              message.data(
+                  "en_msg",
+                  "Because your result set is large, to view the full result set, use the Result set Export feature.");
+            }
+            if (columnIndices == null || columnIndices.length >= realSize) {
+              newMap = realMap;
+            } else {
+              int realLength =
+                  (columnPage * columnPageSize) > realSize
+                      ? realSize - (columnPage - 1) * columnPageSize
+                      : columnPageSize;
+              newMap = new Map[realLength];
+              for (int i = 0; i < realLength; i++) {
+                newMap[i] = realMap[columnIndices[i]];
+              }
+            }
+          }
+        } catch (Exception e) {
+          LOGGER.info("Failed to set flag", e);
+        }
+
+        message
+            .data("metadata", newMap == null ? metaMap : newMap)
+            .data("fileContent", result.getSecond());
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("totalLine", fileSource.getTotalLine());
+        return message.data("page", page).data("totalPage", 0);
+      } catch (ColLengthExceedException e) {
+        LOGGER.info("Failed to open file {}", path, e);
+        message.data("type", fileSource.getFileSplits()[0].type());
+        message.data("display_prohibited", true);
+        message.data(
+            "zh_msg",
+            MessageFormat.format(
+                "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或使用字符串截取函数（substring、substr）截取相关字符即可前端展示数据内容",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
+        message.data(
+            "en_msg",
+            MessageFormat.format(
+                "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
+                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
+        return message;
       }
-      if (limitColumnLength > 0) {
-        fileSource =
-            fileSource.limitColumnLength(
-                Math.min(limitColumnLength, FILESYSTEM_LIMIT_COLUMN_LENGTH.getValue()));
-      }
-      Pair<Object, List<String[]>> result = fileSource.collect()[0];
-      IOUtils.closeQuietly(fileSource);
-      message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
-      message.data("type", fileSource.getFileSplits()[0].getType());
-      message.data("totalLine", fileSource.getTotalLine());
-      return message.data("page", page).data("totalPage", 0);
     } finally {
+      // 移除标识
+      if (StringUtils.isNotBlank(enableLimit)) {
+        LinkisStorageConf.enableLimitThreadLocal().remove();
+      }
+      LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);
     }
+  }
+
+  /**
+   * 组装获取列索引
+   *
+   * @param columnPage default 1
+   * @param columnPageSize
+   * @return
+   */
+  private int[] genColumnIndices(Integer columnPage, Integer columnPageSize) {
+    int[] indexArray = new int[columnPageSize];
+    for (int i = 0; i < columnPageSize; i++) {
+      indexArray[i] = (columnPage - 1) * columnPageSize + i;
+    }
+    return indexArray;
   }
 
   /**
@@ -623,6 +790,8 @@ public class FsRestfulApi {
       throws IOException, WorkSpaceException {
     String path = (String) json.get("path");
     String userName = ModuleUserUtils.getOperationUser(req, "saveScript " + path);
+    LoggerUtils.setJobIdMDC("saveScriptThread_" + userName);
+    LOGGER.info("userName {} start to saveScript File {}", userName, path);
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
@@ -655,6 +824,9 @@ public class FsRestfulApi {
         }
         scriptFsWriter.addRecord(new ScriptRecord(split[i]));
       }
+      LOGGER.info("userName {} Finished to saveScript File {}", userName, path);
+      LoggerUtils.removeJobIdMDC();
+
       return Message.ok();
     }
   }
@@ -711,7 +883,8 @@ public class FsRestfulApi {
       @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
       @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
       @RequestParam(value = "limit", defaultValue = "0") Integer limit,
-      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
+      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat,
+      @RequestParam(value = "keepNewline", defaultValue = "false") Boolean keepNewline)
       throws WorkSpaceException, IOException {
     ServletOutputStream outputStream = null;
     FsWriter fsWriter = null;
@@ -728,8 +901,10 @@ public class FsRestfulApi {
         charset);
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
+      LoggerUtils.setJobIdMDC("resultsetToExcelThread_" + userName);
+      LOGGER.info("userName {} start to resultsetToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
       Integer csvDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue();
       Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
@@ -754,12 +929,13 @@ public class FsRestfulApi {
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-      fileSource = FileSource.create(fsPath, fileSystem).addParams("nullValue", nullValue);
+      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem).addParams("nullValue", nullValue);
       switch (outputFileType) {
         case "csv":
-          if (FileSource.isTableResultSet(fileSource)) {
+          if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
             fsWriter =
-                CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
+                CSVFsWriter.getCSVFSWriter(
+                    charset, csvSeparator, quoteRetouchEnable, outputStream, keepNewline);
           } else {
             fsWriter =
                 ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);
@@ -770,7 +946,7 @@ public class FsRestfulApi {
           }
           break;
         case "xlsx":
-          if (!FileSource.isTableResultSet(fileSource)) {
+          if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
             throw WorkspaceExceptionManager.createException(80024);
           }
           fsWriter =
@@ -786,6 +962,7 @@ public class FsRestfulApi {
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
+      LOGGER.info("userName {} Finished to resultsetToExcel File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("output failed", e);
       response.reset();
@@ -795,6 +972,7 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -840,8 +1018,10 @@ public class FsRestfulApi {
     FileSource fileSource = null;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetsToExcel " + path);
+      LoggerUtils.setJobIdMDC("resultsetsToExcelThread_" + userName);
+      LOGGER.info("userName {} start to resultsetsToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       if (StringUtils.isEmpty(path)) {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
@@ -853,7 +1033,12 @@ public class FsRestfulApi {
       if (fsPathListWithError == null) {
         throw WorkspaceExceptionManager.createException(80029);
       }
-      FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
+
+      List<FsPath> fsPathList = fsPathListWithError.getFsPaths();
+      // sort asc by _num.dolphin of num
+      ResultSetUtils.sortByNameNum(fsPathList);
+      FsPath[] fsPaths = fsPathList.toArray(new FsPath[] {});
+
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
       Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
       if (limit > 0) {
@@ -867,9 +1052,12 @@ public class FsRestfulApi {
       response.setCharacterEncoding(StandardCharsets.UTF_8.name());
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
-      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-      fileSource = FileSource.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
-      if (!FileSource.isTableResultSet(fileSource)) {
+      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
+        nullValue = "";
+      }
+      fileSource =
+          FileSource$.MODULE$.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
+      if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
         throw WorkspaceExceptionManager.createException(80024);
       }
       fsWriter = new StorageMultiExcelWriter(outputStream, autoFormat);
@@ -879,6 +1067,7 @@ public class FsRestfulApi {
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
+      LOGGER.info("userName {} Finished to resultsetsToExcel File {}", userName, path);
     } catch (Exception e) {
       LOGGER.error("output failed", e);
       response.reset();
@@ -888,6 +1077,7 @@ public class FsRestfulApi {
       writer.append("error(错误):" + e.getMessage());
       writer.flush();
     } finally {
+      LoggerUtils.removeJobIdMDC();
       if (outputStream != null) {
         outputStream.flush();
       }
@@ -936,13 +1126,15 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "formate " + path);
+    LoggerUtils.setJobIdMDC("formateThread_" + userName);
+    LOGGER.info("userName {} start to formate File {}", userName, path);
     if (!checkIsUsersDirectory(path, userName)) {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
     Map<String, Object> res = new HashMap<String, Object>();
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     try (InputStream in = fileSystem.read(fsPath)) {
       if (".xlsx".equalsIgnoreCase(suffix) || ".xls".equalsIgnoreCase(suffix)) {
         List<List<String>> info;
@@ -952,7 +1144,10 @@ public class FsRestfulApi {
         res.put("sheetName", info.get(0));
       } else {
         String[][] column = null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in, encoding));
+        // fix csv file with utf-8 with bom chart[&#xFEFF]
+        BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
+
         String header = reader.readLine();
         if (StringUtils.isEmpty(header)) {
           throw WorkspaceExceptionManager.createException(80016);
@@ -980,8 +1175,111 @@ public class FsRestfulApi {
         }
         res.put("columnName", column[0]);
         res.put("columnType", column[1]);
+        LOGGER.info("userName {} Finished to formate File {}", userName, path);
+        LoggerUtils.removeJobIdMDC();
       }
       return Message.ok().data("formate", res);
+    }
+  }
+
+  @ApiOperation(value = "getSheetInfo", notes = "getSheetInfo", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+    @ApiImplicitParam(
+        name = "encoding",
+        required = true,
+        dataType = "String",
+        defaultValue = "utf-8"),
+    @ApiImplicitParam(
+        name = "fieldDelimiter",
+        required = true,
+        dataType = "String",
+        defaultValue = ","),
+    @ApiImplicitParam(
+        name = "hasHeader",
+        required = true,
+        defaultValue = "false",
+        dataType = "Boolean"),
+    @ApiImplicitParam(name = "quote", required = true, dataType = "String", defaultValue = "\""),
+    @ApiImplicitParam(
+        name = "escapeQuotes",
+        required = true,
+        dataType = "Boolean",
+        defaultValue = "false")
+  })
+  @RequestMapping(path = "getSheetInfo", method = RequestMethod.GET)
+  public Message getSheetInfo(
+      HttpServletRequest req,
+      @RequestParam(value = "path", required = false) String path,
+      @RequestParam(value = "encoding", defaultValue = "utf-8") String encoding,
+      @RequestParam(value = "fieldDelimiter", defaultValue = ",") String fieldDelimiter,
+      @RequestParam(value = "hasHeader", defaultValue = "false") Boolean hasHeader,
+      @RequestParam(value = "quote", defaultValue = "\"") String quote,
+      @RequestParam(value = "escapeQuotes", defaultValue = "false") Boolean escapeQuotes)
+      throws Exception {
+    if (StringUtils.isEmpty(path)) {
+      throw WorkspaceExceptionManager.createException(80004, path);
+    }
+    String userName = ModuleUserUtils.getOperationUser(req, "getSheetInfo " + path);
+    LoggerUtils.setJobIdMDC("getSheetInfoThread_" + userName);
+    LOGGER.info("userName {} start to getSheetInfo File {}", userName, path);
+    if (!checkIsUsersDirectory(path, userName)) {
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
+    }
+    String suffix = path.substring(path.lastIndexOf("."));
+    FsPath fsPath = new FsPath(path);
+    Map<String, List<Map<String, String>>> sheetInfo;
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
+    try (InputStream in = fileSystem.read(fsPath)) {
+      if (".xlsx".equalsIgnoreCase(suffix)) {
+        sheetInfo = XlsxUtils.getAllSheetInfo(in, null, hasHeader);
+      } else if (".xls".equalsIgnoreCase(suffix)) {
+        sheetInfo = XlsUtils.getSheetsInfo(in, hasHeader);
+      } else if (".csv".equalsIgnoreCase(suffix)) {
+        List<Map<String, String>> csvMapList = new ArrayList<>();
+        String[][] column = null;
+        // fix csv file with utf-8 with bom chart[&#xFEFF]
+        BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
+        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
+
+        String header = reader.readLine();
+        if (StringUtils.isEmpty(header)) {
+          throw WorkspaceExceptionManager.createException(80016);
+        }
+        String[] line = header.split(fieldDelimiter, -1);
+        int colNum = line.length;
+        column = new String[2][colNum];
+        if (hasHeader) {
+          for (int i = 0; i < colNum; i++) {
+            HashMap<String, String> csvMap = new HashMap<>();
+            column[0][i] = line[i];
+            if (escapeQuotes) {
+              try {
+                csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
+              } catch (StringIndexOutOfBoundsException e) {
+                throw WorkspaceExceptionManager.createException(80017);
+              }
+            } else {
+              csvMap.put(column[0][i], "string");
+            }
+            csvMapList.add(csvMap);
+          }
+        } else {
+          for (int i = 0; i < colNum; i++) {
+            HashMap<String, String> csvMap = new HashMap<>();
+            csvMap.put("col_" + (i + 1), "string");
+            csvMapList.add(csvMap);
+          }
+        }
+        sheetInfo = new HashMap<>(1);
+        sheetInfo.put("sheet_csv", csvMapList);
+        LOGGER.info("userName {} Finished to getSheetInfo File {}", userName, path);
+        LoggerUtils.removeJobIdMDC();
+      } else {
+        LoggerUtils.removeJobIdMDC();
+        throw WorkspaceExceptionManager.createException(80004, path);
+      }
+      return Message.ok().data("sheetInfo", sheetInfo);
     }
   }
 
@@ -1000,6 +1298,8 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
+    LoggerUtils.setJobIdMDC("openLogThread_" + userName);
+    LOGGER.info("userName {} start to openLog File {}", userName, path);
     if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
@@ -1007,23 +1307,29 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }
+    if (fileSystem.getLength(fsPath)
+        > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
+      throw WorkspaceExceptionManager.createException(80033, path);
+    }
     try (FileSource fileSource =
-        FileSource.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
-      Pair<Object, List<String[]>> collect = fileSource.collect()[0];
+        FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
+      Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
       StringBuilder[] log =
           Arrays.stream(new StringBuilder[4])
               .map(f -> new StringBuilder())
               .toArray(StringBuilder[]::new);
-      List<String[]> snd = collect.getSecond();
+      ArrayList<String[]> snd = collect.getSecond();
       LogLevel start = new LogLevel(LogLevel.Type.ALL);
       snd.stream()
           .map(f -> f[0])
           .forEach(
               s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
+      LOGGER.info("userName {} Finished to openLog File {}", userName, path);
+      LoggerUtils.removeJobIdMDC();
       return Message.ok()
           .data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
     }
@@ -1042,5 +1348,176 @@ public class FsRestfulApi {
       deleteAllFiles(fileSystem, path);
     }
     fileSystem.delete(fsPath);
+  }
+
+  @ApiOperation(value = "chmod", notes = "file permission chmod", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "filepath", required = true, dataType = "String", value = "filepath"),
+    @ApiImplicitParam(
+        name = "isRecursion",
+        required = false,
+        dataType = "String",
+        value = "isRecursion"),
+    @ApiImplicitParam(
+        name = "filePermission",
+        required = true,
+        dataType = "String",
+        value = "filePermission"),
+  })
+  @RequestMapping(path = "/chmod", method = RequestMethod.GET)
+  public Message chmod(
+      HttpServletRequest req,
+      @RequestParam(value = "filepath", required = true) String filePath,
+      @RequestParam(value = "isRecursion", required = false, defaultValue = "true")
+          Boolean isRecursion,
+      @RequestParam(value = "filePermission", required = true) String filePermission)
+      throws WorkSpaceException, IOException {
+    String userName = ModuleUserUtils.getOperationUser(req, "chmod " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, filePath));
+    }
+    if (StringUtils.isEmpty(filePermission)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, filePermission));
+    }
+    if (!filePath.startsWith("file://") && !filePath.startsWith("hdfs://")) {
+      filePath = "file://" + filePath;
+    }
+    if (!checkIsUsersDirectory(filePath, userName, false)) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
+    } else {
+      // Prohibit users from modifying their own unreadable content
+      if (checkFilePermissions(filePermission)) {
+        FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
+        Stack<FsPath> dirsToChmod = new Stack<>();
+        dirsToChmod.push(new FsPath(filePath));
+        if (isRecursion) {
+          traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
+        }
+        while (!dirsToChmod.empty()) {
+          fileSystem.setPermission(dirsToChmod.pop(), filePermission);
+        }
+        return Message.ok();
+      } else {
+        return Message.error(MessageFormat.format(FILE_PERMISSION_ERROR, filePermission));
+      }
+    }
+  }
+
+  @ApiOperation(value = "encrypt-path", notes = "encrypt file path", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "Path")
+  })
+  @RequestMapping(path = "/encrypt-path", method = RequestMethod.GET)
+  public Message encryptPath(
+      HttpServletRequest req, @RequestParam(value = "filePath", required = false) String filePath)
+      throws WorkSpaceException, IOException {
+    String username = ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
+    }
+    if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
+    }
+    FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
+    String fileMD5Str = fs.checkSum(new FsPath(filePath));
+    return Message.ok().data("data", fileMD5Str);
+  }
+
+  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
+    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+  })
+  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
+  public Message pythonUpload(
+      HttpServletRequest req,
+      @RequestParam("file") MultipartFile file,
+      @RequestParam(value = "fileName", required = false) String fileName)
+      throws WorkSpaceException, IOException {
+
+    // 获取登录用户
+    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
+
+    // 校验文件名称
+    if (StringUtils.isBlank(fileName)) {
+      return Message.error("文件名称不能为空");
+    }
+    // 获取文件名称
+    String fileNameSuffix = fileName.substring(0, fileName.lastIndexOf("."));
+    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
+    }
+
+    // 校验文件类型
+    if (!file.getOriginalFilename().endsWith(".py")
+        && !file.getOriginalFilename().endsWith(".zip")) {
+      return Message.error("仅支持.py和.zip格式模块文件");
+    }
+
+    // 校验文件大小
+    if (file.getSize() > 50 * 1024 * 1024) {
+      return Message.error("限制最大单个文件50M");
+    }
+
+    // 定义目录路径
+    String path = "hdfs:///appcom/linkis/udf/" + username;
+    FsPath fsPath = new FsPath(path);
+
+    // 获取文件系统实例
+    FileSystem fileSystem = fsService.getFileSystem(username, fsPath);
+
+    // 确认目录是否存在，不存在则创建新目录
+    if (!fileSystem.exists(fsPath)) {
+      try {
+        fileSystem.mkdirs(fsPath);
+        fileSystem.setPermission(fsPath, "770");
+      } catch (IOException e) {
+        return Message.error("创建目录失败：" + e.getMessage());
+      }
+    }
+
+    // 构建新的文件路径
+    String newPath = fsPath.getPath() + "/" + file.getOriginalFilename();
+    FsPath fsPathNew = new FsPath(newPath);
+
+    // 上传文件
+    try (InputStream is = file.getInputStream();
+        OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
+      IOUtils.copy(is, outputStream);
+    } catch (IOException e) {
+      return Message.error("文件上传失败：" + e.getMessage());
+    }
+    // 返回成功消息并包含文件地址
+    return Message.ok().data("filePath", newPath);
+  }
+  /**
+   * *
+   *
+   * @param filePermission: 700,744 Prohibit users from modifying their own unreadable content
+   */
+  private static boolean checkFilePermissions(String filePermission) {
+    boolean result = false;
+    if (StringUtils.isNumeric(filePermission)) {
+      char[] ps = filePermission.toCharArray();
+      int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
+      if (ownerPermissions >= 4) {
+        result = true;
+      }
+    }
+    return result;
+  }
+
+  private static void traverseFolder(
+      FsPath fsPath, FileSystem fileSystem, Stack<FsPath> dirsToChmod) throws IOException {
+    List<FsPath> list = fileSystem.list(fsPath);
+    if (list == null) {
+      return;
+    }
+    for (FsPath path : list) {
+      if (path.isdir()) {
+        traverseFolder(path, fileSystem, dirsToChmod);
+      }
+      dirsToChmod.push(path);
+    }
   }
 }

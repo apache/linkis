@@ -19,12 +19,17 @@ package org.apache.linkis.common.utils
 
 import org.apache.linkis.common.conf.CommonVars
 
+import org.apache.commons.codec.binary.Hex
 import org.apache.commons.lang3.StringUtils
 
 import javax.naming.Context
 import javax.naming.ldap.InitialLdapContext
 
+import java.nio.charset.StandardCharsets
 import java.util.Hashtable
+import java.util.concurrent.TimeUnit
+
+import com.google.common.cache.{Cache, CacheBuilder, RemovalListener, RemovalNotification}
 
 object LDAPUtils extends Logging {
 
@@ -38,7 +43,33 @@ object LDAPUtils extends Logging {
   val baseDN = CommonVars("wds.linkis.ldap.proxy.baseDN", "").getValue
   val userNameFormat = CommonVars("wds.linkis.ldap.proxy.userNameFormat", "").getValue
 
+  private val storeUser: Cache[String, String] = CacheBuilder
+    .newBuilder()
+    .maximumSize(1000)
+    .expireAfterWrite(60, TimeUnit.MINUTES)
+    .removalListener(new RemovalListener[String, String] {
+
+      override def onRemoval(removalNotification: RemovalNotification[String, String]): Unit = {
+        logger.info(s"store user remove key: ${removalNotification.getKey}")
+      }
+
+    })
+    .build()
+
   def login(userID: String, password: String): Unit = {
+
+    val saltPwd = storeUser.getIfPresent(userID)
+    if (StringUtils.isNotBlank(saltPwd)) {
+      Utils.tryAndWarn {
+        if (
+            saltPwd.equalsIgnoreCase(Hex.encodeHexString(password.getBytes(StandardCharsets.UTF_8)))
+        ) {
+          logger.info(s"user $userID login success for storeUser")
+          return
+        }
+      }
+    }
+
     val env = new Hashtable[String, String]()
     val bindDN =
       if (StringUtils.isBlank(userNameFormat)) userID
@@ -53,6 +84,9 @@ object LDAPUtils extends Logging {
     env.put(Context.SECURITY_CREDENTIALS, bindPassword)
 
     new InitialLdapContext(env, null)
+    Utils.tryAndWarn {
+      storeUser.put(userID, Hex.encodeHexString(password.getBytes(StandardCharsets.UTF_8)))
+    }
     logger.info(s"user $userID login success.")
 
   }

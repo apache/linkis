@@ -199,7 +199,7 @@
     <commons-cli.version>1.3.1</commons-cli.version>
     <jline.version>3.9.0</jline.version>
 
-    <bouncycastle.version>1.70</bouncycastle.version>
+    <bouncycastle.version>1.78.1</bouncycastle.version>
 
     <!-- java byte code modification -->
     <javassist.version>3.27.0-GA</javassist.version>
@@ -1226,12 +1226,12 @@
       <!-- crypto -->
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcprov-jdk15on</artifactId>
+        <artifactId>bcprov-jdk18on</artifactId>
         <version>${bouncycastle.version}</version>
       </dependency>
       <dependency>
         <groupId>org.bouncycastle</groupId>
-        <artifactId>bcpkix-jdk15on</artifactId>
+        <artifactId>bcpkix-jdk18on</artifactId>
         <version>${bouncycastle.version}</version>
       </dependency>
 

@@ -21,6 +21,10 @@ import org.apache.linkis.jobhistory.entity.JobHistory;
 
 import org.apache.ibatis.annotations.Param;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +33,16 @@ public interface JobHistoryMapper {
 
   List<JobHistory> selectJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void insertJobHistory(JobHistory jobReq);
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   void updateJobHistory(JobHistory jobReq);
 
   List<JobHistory> searchWithIdOrderAsc(
@@ -47,7 +59,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   List<JobHistory> searchWithUserCreator(
       @Param("id") Long id,
@@ -59,7 +73,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   List<JobHistory> searchWithCreatorOnly(
       @Param("id") Long id,
@@ -71,7 +87,9 @@ public interface JobHistoryMapper {
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
       @Param("startId") Long startId,
-      @Param("instances") String instances);
+      @Param("instances") String instances,
+      @Param("departmentId") String departmentId,
+      @Param("engineInstance") String engineInstance);
 
   Integer countUndoneTaskNoCreator(
       @Param("umUser") String username,
@@ -107,6 +125,11 @@ public interface JobHistoryMapper {
 
   void updateJobHistoryCancelById(
       @Param("idList") List<Long> idList, @Param("errorDesc") String errorDesc);
+
+  List<JobHistory> selectJobHistoryByTaskidList(
+      @Param("idList") List<String> idList, @Param("umUser") String username);
+
+  List<JobHistory> selectJobHistoryNoCode(JobHistory jobReq);
 
   /**
    * query wait for failover job

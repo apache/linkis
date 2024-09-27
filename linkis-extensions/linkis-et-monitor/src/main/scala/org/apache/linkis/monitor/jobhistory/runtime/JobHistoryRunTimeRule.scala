@@ -47,11 +47,12 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
       return false
     }
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
-    for (sd <- data.asScala) {
-      if (sd != null && sd.getData() != null) {
-        for (d <- sd.getData().asScala) {
-          d match {
+    for (dataList <- data.asScala) {
+      if (dataList != null && dataList.getData() != null) {
+        for (historyList <- dataList.getData().asScala) {
+          historyList match {
             case jobHistory: JobHistory =>
+              logger.info("JobHistoryRunTimeRule JobHistory data : {}", jobHistory.getId)
               if (Constants.FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())) {
                 val parmsMap: util.Map[String, scala.AnyRef] = BDPJettyServerHelper.gson.fromJson(
                   jobHistory.getParams,
@@ -66,10 +67,6 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
                 ) {
                   alertData.add(jobHistory)
                 }
-              } else {
-                logger.warn(
-                  "Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName
-                )
               }
               scanRuleList.put("jobHistoryId", jobHistory.getId)
             case _ =>
@@ -79,7 +76,7 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
         logger.warn("Ignored null scanned data")
       }
     }
-    logger.info("hit " + alertData.size() + " data in one iteration")
+    logger.info("JobHistoryRunTimeRule hit " + alertData.size() + " data will be alter")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
       true

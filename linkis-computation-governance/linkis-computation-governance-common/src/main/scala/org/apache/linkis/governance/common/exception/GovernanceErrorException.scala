@@ -17,15 +17,14 @@
 
 package org.apache.linkis.governance.common.exception
 
-import org.apache.linkis.common.exception.{ExceptionLevel, LinkisRuntimeException}
+import org.apache.linkis.common.exception.ErrorException
 
 class GovernanceErrorException(errorCode: Int, errorMsg: String)
-    extends LinkisRuntimeException(errorCode, errorMsg) {
+    extends ErrorException(errorCode, errorMsg) {
 
   def this(errorCode: Int, errorMsg: String, cause: Throwable) = {
     this(errorCode, errorMsg)
     initCause(cause)
   }
 
-  override def getLevel: ExceptionLevel = ExceptionLevel.ERROR
 }

@@ -44,6 +44,8 @@ public class PooledImsAlertSenderTest {
 
     Set<String> receivers = new HashSet<>();
     receivers.add("shangda, johnnwang");
+    Set<String> eccReceivers = new HashSet<>();
+    eccReceivers.add("jack");
     ImsAlertDesc desc =
         new ImsAlertDesc(
             "5435",
@@ -55,6 +57,7 @@ public class PooledImsAlertSenderTest {
             0,
             ways,
             receivers,
+            eccReceivers,
             3,
             12);
 

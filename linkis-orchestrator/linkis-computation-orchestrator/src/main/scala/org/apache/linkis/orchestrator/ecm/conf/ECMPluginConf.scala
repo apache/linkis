@@ -40,6 +40,8 @@ object ECMPluginConf {
 
   val ECM_MARK_CACHE_ERROR_CODE = 12005
 
+  val ECM_CREATE_ENGINE_ERROR_CODE = 12006
+
   val DEFAULT_LOADBALANCE_CAPACITY =
     CommonVars("wds.linkis.orchestrator.ecm.loadbalance.capacity.default", 3)
 

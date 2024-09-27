@@ -36,6 +36,7 @@ import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.constant.AMConstant;
+import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
 import org.apache.linkis.manager.common.entity.node.EMNode;
@@ -52,6 +53,7 @@ import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,8 +70,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import scala.annotation.meta.param;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -92,6 +92,7 @@ public class EngineRestfulApi {
 
   @Autowired private EngineInfoService engineInfoService;
 
+  @Autowired private EngineAskEngineService engineAskService;
   @Autowired private EngineCreateService engineCreateService;
 
   @Autowired private EngineNodeManager engineNodeManager;
@@ -184,7 +185,7 @@ public class EngineRestfulApi {
       return Message.ok("reuse engineConn ended.").data("engine", retEngineNode);
     }
 
-    String engineAskAsyncId = AMUtils.getAsyncId();
+    String engineAskAsyncId = EngineAskEngineService$.MODULE$.getAsyncId();
     Callable<Object> createECTask =
         new Callable() {
           @Override
@@ -195,7 +196,7 @@ public class EngineRestfulApi {
                 taskId,
                 engineAskAsyncId,
                 engineAskRequest.getCreateService());
-            // 如果原来的labels含engineInstance ，先去掉
+            // remove engineInstance label if exists
             engineAskRequest.getLabels().remove("engineInstance");
             EngineCreateRequest engineCreateRequest = new EngineCreateRequest();
             engineCreateRequest.setLabels(engineAskRequest.getLabels());
@@ -211,7 +212,7 @@ public class EngineRestfulApi {
               } else {
                 timeout = engineCreateRequest.getTimeout();
               }
-              // useEngine 需要加上超时
+              // useEngine need to add timeout
               EngineNode createEngineNode = engineNodeManager.useEngine(createNode, timeout);
               if (null == createEngineNode) {
                 throw new LinkisRetryException(
@@ -269,7 +270,7 @@ public class EngineRestfulApi {
     retEngineNode.put(AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
     retEngineNode.put(
         AMConstant.EC_ASYNC_START_FAIL_MSG_KEY,
-        "Got null response for asyId : " + askAsyncResponse.getId());
+        "Got null response for asyId : " + askAsyncResponse.id());
     retEngineNode.put(ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
   }
 
@@ -389,9 +390,6 @@ public class EngineRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
     logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
     EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
-    if (null == engineNode) {
-      return Message.ok("EC has exited");
-    }
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error("You have no permission to kill EngineConn " + serviceInstance);
     }
@@ -456,6 +454,7 @@ public class EngineRestfulApi {
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");
       String engineInstance = engineParam.get("engineInstance");
+      logger.info("try to kill engine with engineInstance:{}", engineInstance);
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
       engineStopService.stopEngine(stopEngineRequest, sender);
@@ -479,7 +478,8 @@ public class EngineRestfulApi {
     // check special token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        return Message.error("Token  has no permission to asyn kill engines.");
+        logger.warn("Token {} has no permission to asyn kill engines.", token);
+        return Message.error("Token:" + token + " has no permission to asyn kill engines.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User {} has no permission to asyn kill engines.", username);
@@ -607,7 +607,8 @@ public class EngineRestfulApi {
     @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:12295"),
     @ApiImplicitParam(name = "labels", dataType = "List", required = false, value = "labels"),
     @ApiImplicitParam(name = "labelKey", dataType = "String", example = "engineInstance"),
-    @ApiImplicitParam(name = "stringValue", dataType = "String", example = "linkis-cg:12295")
+    @ApiImplicitParam(name = "stringValue", dataType = "String", example = "linkis-cg:12295"),
+    @ApiImplicitParam(name = "nodeHealthy", dataType = "String", example = "UnHealthy")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
@@ -619,6 +620,7 @@ public class EngineRestfulApi {
           210003, "Only admin can modify engineConn information(只有管理员才能修改引擎信息).");
     }
     ServiceInstance serviceInstance = getServiceInstance(jsonNode);
+
     JsonNode labels = jsonNode.get("labels");
     Set<String> labelKeySet = new HashSet<>();
     if (labels != null) {
@@ -642,7 +644,51 @@ public class EngineRestfulApi {
       nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
       logger.info("success to update label of instance: " + serviceInstance.getInstance());
     }
+
+    // 修改引擎健康状态，只支持 Healthy和 UnHealthy
+    String healthyKey = "Healthy";
+    String unHealthyKey = "UnHealthy";
+    JsonNode nodeHealthy = jsonNode.get("nodeHealthy");
+    if (nodeHealthy != null && healthyKey.equals(nodeHealthy.asText())) {
+      engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.Healthy);
+    } else if (nodeHealthy != null && unHealthyKey.equals(nodeHealthy.asText())) {
+      engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.UnHealthy);
+    }
     return Message.ok("success to update engine information(更新引擎信息成功)");
+  }
+
+  @ApiOperation(
+      value = "batchSetEngineToUnHealthy",
+      notes = "batch set engine to unHealthy",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "instances",
+        dataType = "String",
+        example =
+            "[{\"instance\":\"bdplinkis1001:38701\",\"engineType\":\"spark\",\"applicationName\":\"linkis-cg-engineconn\"}]")
+  })
+  @ApiOperationSupport(ignoreParameters = {"jsonNode"})
+  @RequestMapping(path = "/batchSetEngineToUnHealthy", method = RequestMethod.POST)
+  public Message batchSetEngineToUnHealthy(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+      throws AMErrorException {
+    String username = ModuleUserUtils.getOperationUser(req, "batchSetEngineToUnHealthy");
+    if (Configuration.isNotAdmin(username)) {
+      throw new AMErrorException(
+          210003, "Only admin can modify engineConn healthy info(只有管理员才能修改引擎健康信息).");
+    }
+
+    JsonNode instances = jsonNode.get("instances");
+    if (instances != null) {
+      Iterator<JsonNode> iterator = instances.iterator();
+      while (iterator.hasNext()) {
+        JsonNode instanceNode = iterator.next();
+        ServiceInstance serviceInstance = getServiceInstance(instanceNode);
+        engineInfoService.updateEngineHealthyStatus(serviceInstance, NodeHealthy.UnHealthy);
+      }
+    }
+    logger.info("success to batch update engine status to UnHealthy.");
+    return Message.ok("success to update engine information(批量更新引擎健康信息成功)");
   }
 
   @ApiOperation(
@@ -685,8 +731,47 @@ public class EngineRestfulApi {
         engineOperateService.executeOperation(engineNode, engineOperateRequest);
     return Message.ok()
         .data("result", engineOperateResponse.getResult())
-        .data("errorMsg", engineOperateResponse.getErrorMsg())
+        .data("errorMsg", engineOperateResponse.errorMsg())
         .data("isError", engineOperateResponse.isError());
+  }
+
+  @ApiOperation(
+      value = "kill egineconns of a ecm",
+      notes = "Kill engine after updating configuration",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "creator", dataType = "String", required = true, example = "IDE"),
+    @ApiImplicitParam(
+        name = "engineType",
+        dataType = "String",
+        required = true,
+        example = "hive-2.3.3"),
+  })
+  @ApiOperationSupport(ignoreParameters = {"param"})
+  @RequestMapping(path = "/rm/killEngineByUpdateConfig", method = RequestMethod.POST)
+  public Message killEngineByUpdateConfig(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+      throws AMErrorException {
+    String userName = ModuleUserUtils.getOperationUser(req);
+    String jvmUser = StorageUtils.getJvmUser();
+    if (jvmUser.equals(userName)) {
+      return Message.error(
+          jvmUser + " users do not support this feature (" + jvmUser + " 用户不支持此功能)");
+    }
+    JsonNode creator = jsonNode.get("creator");
+    if (null == creator || StringUtils.isBlank(creator.textValue())) {
+      return Message.error("instance is null in the parameters of the request(请求参数中【creator】为空)");
+    }
+    String creatorStr = Configuration.getGlobalCreator(creator.textValue());
+    String engineType = "";
+    if (null != jsonNode.get("engineType")) {
+      engineType = jsonNode.get("engineType").textValue();
+    }
+    if (StringUtils.isNotBlank(engineType)
+        && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
+      return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
+    }
+    engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
+    return Message.ok("Kill engineConn succeed");
   }
 
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {

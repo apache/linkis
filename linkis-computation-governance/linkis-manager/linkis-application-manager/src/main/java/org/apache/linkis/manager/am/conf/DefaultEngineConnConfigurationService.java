@@ -17,10 +17,12 @@
 
 package org.apache.linkis.manager.am.conf;
 
-import org.apache.linkis.manager.am.util.LinkisUtils;
+import org.apache.linkis.common.utils.LinkisUtils;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ import scala.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Component
 class DefaultEngineConnConfigurationService implements EngineConnConfigurationService {
 
   private static final Logger logger =

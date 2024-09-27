@@ -66,8 +66,7 @@ class ECTaskEntranceMonitorService
       logger.info("registering new task: " + event.taskId)
       eCTaskEntranceMonitor.register(event.task, event.executor)
     } else if (
-        fromStatus == ExecutionNodeStatus.Running &&
-        (toStatus == ExecutionNodeStatus.Succeed || toStatus == ExecutionNodeStatus.Failed || toStatus == ExecutionNodeStatus.Cancelled || toStatus == ExecutionNodeStatus.Timeout)
+        !ExecutionNodeStatus.isCompleted(fromStatus) && ExecutionNodeStatus.isCompleted(toStatus)
     ) {
       logger.info("unRegistering task: " + event.taskId)
       eCTaskEntranceMonitor.unregister(event.task.getTaskId)

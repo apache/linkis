@@ -17,13 +17,13 @@
 
 package org.apache.linkis.manager.am.locker;
 
+import org.apache.linkis.manager.am.pointer.NodePointerBuilder;
 import org.apache.linkis.manager.common.entity.node.AMEngineNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.protocol.RequestEngineLock;
 import org.apache.linkis.manager.common.protocol.RequestEngineUnlock;
 import org.apache.linkis.manager.common.protocol.RequestManagerUnlock;
 import org.apache.linkis.manager.common.protocol.engine.EngineLockType;
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,14 +58,14 @@ public class DefaultEngineNodeLocker implements EngineNodeLocker {
       logger.info(
           String.format(
               "client%s Start to unlock engine %s",
-              requestManagerUnlock.getClientInstance(), requestManagerUnlock.getEngineInstance()));
+              requestManagerUnlock.clientInstance(), requestManagerUnlock.engineInstance()));
       AMEngineNode engineNode = new AMEngineNode();
-      engineNode.setServiceInstance(requestManagerUnlock.getEngineInstance());
-      releaseLock(engineNode, requestManagerUnlock.getLock());
+      engineNode.setServiceInstance(requestManagerUnlock.engineInstance());
+      releaseLock(engineNode, requestManagerUnlock.lock());
       logger.info(
           String.format(
               "client%s Finished to unlock engine %s",
-              requestManagerUnlock.getClientInstance(), requestManagerUnlock.getEngineInstance()));
+              requestManagerUnlock.clientInstance(), requestManagerUnlock.engineInstance()));
     } catch (Exception e) {
       logger.error("release lock failed", e);
     }

@@ -102,7 +102,8 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     if (executor.isDefined && !isCanceled) {
       val requestTask = toRequestTask
       val codeExecutor = executor.get
-      val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
+      val isReuse = codeExecutor.getEngineConnExecutor.isReuse()
+      val msg = if (isReuse) {
         s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       } else {
         s"Succeed to create new ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
@@ -137,6 +138,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
           )
           infoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, engineConnExecId)
           infoMap.put(TaskConstant.JOB_SUBMIT_TO_EC_TIME, new Date(System.currentTimeMillis))
+          infoMap.put(TaskConstant.JOB_IS_REUSE, isReuse.toString)
           if (getPhysicalContext.exists(TaskConstant.JOB_REQUEST_EC_TIME)) {
             infoMap.put(
               TaskConstant.JOB_REQUEST_EC_TIME,
@@ -156,7 +158,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             TaskLogEvent(
               this,
               LogUtils.generateInfo(
-                s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}"
+                s"Task submit to ec(任务已经提交给引擎执行): ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}"
               )
             )
           )

@@ -37,28 +37,6 @@ object SparkKind {
   val SPARK_DATA_CALC_TYPE = "spark_data_calc"
   val SPARKMLSQL_TYPE = "mlsql"
   val FUNCTION_MDQ_TYPE = "function.mdq"
-
-  def getCodeKind(code: String): Kind = {
-    getKind(Kind.getKind(code))
-  }
-
-  def getSessionKind(code: String): Kind with Product with Serializable = {
-    val kindStr = Kind.getKindString(code)
-    if (kindStr.indexOf("@") == 0) getKind(kindStr.substring(1)) else SparkMix()
-  }
-
-  private def getKind(kindStr: String): Kind with Product with Serializable = {
-    kindStr match {
-      case SPARKSCALA_TYPE | SCALA_LAN => SparkScala()
-      case PYSPARK_TYPE | PYTHON_LAN | PYTHON_END => PySpark()
-      case SPARKR_TYPE | R_LAN => SparkR()
-      case SPARKMIX_TYPE | MIX_TYPE => SparkMix()
-      case SQL_LAN | SPARKSQL_TYPE => SparkSQL()
-      case SPARKMLSQL_TYPE | ML_LAN => SparkMLSQL()
-      case _ => throw new RuntimeException("Unknown code kind: " + kindStr)
-    }
-  }
-
 }
 
 case class SparkScala() extends Kind {

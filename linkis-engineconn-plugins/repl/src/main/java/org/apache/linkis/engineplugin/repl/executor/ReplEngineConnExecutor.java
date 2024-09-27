@@ -161,9 +161,9 @@ public class ReplEngineConnExecutor extends ConcurrentComputationExecutor {
     System.setOut(oldStream);
     engineExecutorContext.appendStdout(message);
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE);
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE());
     try {
-      resultSetWriter.addMetaData(new LineMetaData());
+      resultSetWriter.addMetaData(new LineMetaData(null));
       resultSetWriter.addRecord(new LineRecord(message));
     } catch (IOException e) {
       logger.error("Failed to get the task result");

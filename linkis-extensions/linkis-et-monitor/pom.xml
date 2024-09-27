@@ -75,7 +75,16 @@
       <artifactId>linkis-computation-client</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>de.codecentric</groupId>
+      <artifactId>spring-boot-admin-starter-server</artifactId>
+      <version>2.7.16</version>
+    </dependency>
 
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -27,6 +27,7 @@ import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.script.writer.StorageScriptFsWriter;
 import org.apache.linkis.storage.source.FileSource;
+import org.apache.linkis.storage.source.FileSource$;
 
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
@@ -84,8 +85,8 @@ public class BMLFsRestfulApi {
                 "openScriptFromBML,resourceId:{0},fileName:{1}", resourceId, fileName));
     Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
     InputStream inputStream = (InputStream) query.get("stream");
-    try (FileSource fileSource = FileSource.create(new FsPath(fileName), inputStream)) {
-      Pair<Object, List<String[]>> collect = fileSource.collect()[0];
+    try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
+      Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
       Message message;
       try {
         message =
@@ -133,8 +134,8 @@ public class BMLFsRestfulApi {
     }
     Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
     InputStream inputStream = (InputStream) query.get("stream");
-    try (FileSource fileSource = FileSource.create(new FsPath(fileName), inputStream)) {
-      Pair<Object, List<String[]>> collect = fileSource.collect()[0];
+    try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
+      Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
       Message message;
       try {
         message = new Gson().fromJson(collect.getSecond().get(0)[0], Message.class);
@@ -186,7 +187,7 @@ public class BMLFsRestfulApi {
     Variable[] v = VariableParser.getVariables(params);
     List<Variable> variableList =
         Arrays.stream(v)
-            .filter(var -> !StringUtils.isEmpty(var.getValue()))
+            .filter(var -> !StringUtils.isEmpty(var.value()))
             .collect(Collectors.toList());
     writer.addMetaData(new ScriptMetaData(variableList.toArray(new Variable[0])));
     writer.addRecord(new ScriptRecord(scriptContent));

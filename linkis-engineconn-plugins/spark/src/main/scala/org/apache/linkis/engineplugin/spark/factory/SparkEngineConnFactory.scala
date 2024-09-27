@@ -208,6 +208,10 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         SparkConfiguration.MAPRED_OUTPUT_COMPRESSION_CODEC.getValue(options)
       )
     }
+    sc.getConf.getAllWithPrefix("spark.hadoop.").foreach { kv =>
+      logger.info(s"spark.hadoop.params: $kv")
+      sqlContext.setConf(kv._1, kv._2)
+    }
     SparkEngineSession(sc, sqlContext, sparkSession, outputDir)
   }
 

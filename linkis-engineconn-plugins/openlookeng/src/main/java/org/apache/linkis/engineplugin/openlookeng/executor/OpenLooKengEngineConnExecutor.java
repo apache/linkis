@@ -305,7 +305,7 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     int columnCount = 0;
     int rows = 0;
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE);
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
     try {
       QueryStatusInfo results = null;
       if (statement.isRunning()) {

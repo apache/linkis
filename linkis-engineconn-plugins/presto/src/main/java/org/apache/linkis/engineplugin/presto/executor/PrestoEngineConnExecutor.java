@@ -325,7 +325,7 @@ public class PrestoEngineConnExecutor extends ConcurrentComputationExecutor {
     int columnCount = 0;
     int rows = 0;
     ResultSetWriter resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE);
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
     try {
       QueryStatusInfo results = null;
       if (statement.isRunning()) {

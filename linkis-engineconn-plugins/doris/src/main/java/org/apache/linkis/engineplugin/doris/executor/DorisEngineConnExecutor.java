@@ -249,9 +249,9 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
 
     engineExecutorContext.appendStdout(resultMessageStringBuilder.toString());
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE);
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE());
     try {
-      resultSetWriter.addMetaData(new LineMetaData());
+      resultSetWriter.addMetaData(new LineMetaData(null));
       resultSetWriter.addRecord(new LineRecord(resultMessageStringBuilder.toString()));
     } catch (IOException e) {
       logger.error("Failed to get the task result");

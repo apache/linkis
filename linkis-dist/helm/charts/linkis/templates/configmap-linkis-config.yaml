@@ -281,6 +281,7 @@ data:
     spring.spring.servlet.multipart.max-request-size=500MB
     # note:value of zero means Jetty will never write to disk.
     spring.spring.servlet.multipart.file-size-threshold=50MB
+    spring.spring.main.allow-circular-references=true
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false

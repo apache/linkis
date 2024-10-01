@@ -249,7 +249,7 @@ class PythonEngineHook extends PythonModuleLoadEngineConnHook {
       val fileName: String = new java.io.File(path).getName
       val destPath: String = tmpDir + fileName
       val config: Configuration = HDFSUtils.getConfiguration(HadoopConf.HADOOP_ROOT_USER.getValue)
-      val fs: FileSystem = HDFSUtils.getHDFSUserFileSystem(user, config)
+      val fs: FileSystem = HDFSUtils.getHDFSUserFileSystem(user, null, config)
       fs.copyToLocalFile(new Path(path), new Path("file://" + destPath))
       if (fileName.endsWith("zip")) {
         tmpDir += fileName

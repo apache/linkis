@@ -66,7 +66,10 @@ object HDFSUtils extends Logging {
             .foreach { hdfsFileSystemContainer =>
               val locker = hdfsFileSystemContainer.getUser + LOCKER_SUFFIX
               locker.intern() synchronized {
-                if (hdfsFileSystemContainer.canRemove()) {
+                if (
+                    hdfsFileSystemContainer.canRemove() && !HadoopConf.HDFS_ENABLE_NOT_CLOSE_USERS
+                      .contains(hdfsFileSystemContainer.getUser)
+                ) {
                   fileSystemCache.remove(hdfsFileSystemContainer.getUser)
                   IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
                   logger.info(

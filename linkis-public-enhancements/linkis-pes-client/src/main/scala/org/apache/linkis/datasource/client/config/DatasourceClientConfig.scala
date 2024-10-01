@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.config
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 
 object DatasourceClientConfig {
 
@@ -34,7 +35,7 @@ object DatasourceClientConfig {
     CommonVars[String]("wds.linkis.server.dsm.auth.token.key", "Token-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.server.dsm.auth.token.value", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+    CommonVars[String]("wds.linkis.server.dsm.auth.token.value", LINKIS_TOKEN.getValue)
 
   val DATA_SOURCE_SERVICE_CLIENT_NAME: CommonVars[String] =
     CommonVars[String]("wds.linkis.server.dsm.client.name", "DataSource-Client")

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.python.executor
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
@@ -31,6 +32,10 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
+  PYTHON_VERSION_KEY,
+  SPARK_PYTHON_VERSION_KEY
+}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.label.entity.Label
@@ -61,7 +66,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
   private def getPyVersion(): String = {
     if (null != EngineConnServer.getEngineCreationContext.getOptions) {
       EngineConnServer.getEngineCreationContext.getOptions
-        .getOrDefault("python.version", "python")
+        .getOrDefault(PYTHON_VERSION_KEY, "python")
     } else {
       PythonEngineConfiguration.PYTHON_VERSION.getValue
     }
@@ -72,13 +77,13 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       code: String
   ): ExecuteResponse = {
     val pythonVersion = engineExecutionContext.getProperties
-      .getOrDefault("python.version", pythonDefaultVersion)
+      .getOrDefault(PYTHON_VERSION_KEY, pythonDefaultVersion)
       .toString
       .toLowerCase()
     logger.info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
-    System.getProperties.put("python.version", pythonVersion)
+    System.getProperties.put(PYTHON_VERSION_KEY, pythonVersion)
     logger.info(
-      s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}"
+      s" System getProperties python.version = > ${System.getProperties.getProperty(PYTHON_VERSION_KEY)}"
     )
     // System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     pythonSession.lazyInitGateway()
@@ -89,6 +94,11 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       logger.info("Python executor reset new engineExecutorContext!")
     }
     engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
+    if (this.engineExecutionContext.getCurrentParagraph == 1) {
+      engineExecutionContext.appendStdout(
+        LogUtils.generateInfo(s"Your Python Version is:\n$pythonVersion")
+      )
+    }
     pythonSession.execute(code)
 //    lineOutputStream.flush()
     SuccessExecuteResponse()

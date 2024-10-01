@@ -24,6 +24,7 @@ case class ImsAlertPropFileData(
     @JsonProperty("alert_info") alertInfo: String,
     @JsonProperty("alert_way") alertWays: String,
     @JsonProperty("alert_reciver") alertReceivers: String,
+    @JsonProperty("ecc_reciver") eccReceivers: String,
     @JsonProperty("alert_level") alertLevel: String,
     @JsonProperty("alert_obj") alertObj: String,
     @JsonProperty("can_recover") canRecover: String

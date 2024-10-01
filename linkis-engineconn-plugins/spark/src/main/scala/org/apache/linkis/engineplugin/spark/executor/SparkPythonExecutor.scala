@@ -33,6 +33,7 @@ import org.apache.linkis.engineplugin.spark.imexport.CsvRelation
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.governance.common.utils.GovernanceUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.SPARK_PYTHON_VERSION_KEY
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.resultset.ResultSetWriter
 
@@ -148,10 +149,10 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private def initGateway = {
     //  If the python version set by the user is obtained from the front end as python3, the environment variable of python3 is taken; otherwise, the default is python2
     logger.info(
-      s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}"
+      s"spark.python.version => ${engineCreationContext.getOptions.get(SPARK_PYTHON_VERSION_KEY)}"
     )
     val userDefinePythonVersion = engineCreationContext.getOptions
-      .getOrDefault("spark.python.version", "python")
+      .getOrDefault(SPARK_PYTHON_VERSION_KEY, "python")
       .toString
       .toLowerCase()
     val sparkPythonVersion =

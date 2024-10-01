@@ -27,7 +27,7 @@
   <artifactId>linkis-metadata-query-service-jdbc</artifactId>
 
   <properties>
-    <clickhouse.version>0.3.2-patch11</clickhouse.version>
+    <clickhouse.version>0.4.6</clickhouse.version>
   </properties>
 
   <dependencies>

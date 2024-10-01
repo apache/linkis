@@ -18,6 +18,7 @@
 package org.apache.linkis.bml.conf
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 
 object BmlConfiguration {
 
@@ -35,7 +36,7 @@ object BmlConfiguration {
     CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.value", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+    CommonVars[String]("wds.linkis.bml.auth.token.value", LINKIS_TOKEN.getValue)
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =
     CommonVars[Int]("wds.linkis.bml.connection.max.size", 10)

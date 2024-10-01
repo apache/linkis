@@ -132,7 +132,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
       }
       statement.setFetchSize(outputPrintLimit)
-      statement.setMaxRows(outputPrintLimit)
 
       val monitor = ProgressMonitor.attachMonitor(statement)
       if (monitor != null) {
@@ -269,9 +268,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
       resultSetWriter.addMetaData(metaData)
-      var count = 0
       Utils.tryCatch({
-        while (count < outputPrintLimit && resultSet.next()) {
+        while (resultSet.next()) {
           val r: Array[Any] = columns.indices.map { i =>
             val data = resultSet.getObject(i + 1) match {
               case value: Array[Byte] =>
@@ -282,7 +280,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             data
           }.toArray
           resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[Any]]))
-          count += 1
         }
       }) { case e: Exception =>
         return ErrorExecuteResponse("query jdbc failed", e)

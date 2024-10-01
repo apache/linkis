@@ -628,7 +628,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
 
-    if (columnPage < 1 || columnPageSize < 1 || columnPageSize > 500) {
+    if (columnPage < 0 || columnPageSize < 0 || columnPageSize > 500) {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
@@ -662,7 +662,7 @@ public class FsRestfulApi {
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
 
-        if (StringUtils.isNotBlank(enableLimit)) {
+        if (StringUtils.isNotBlank(enableLimit) && "true".equals(enableLimit)) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
           // 组装列索引

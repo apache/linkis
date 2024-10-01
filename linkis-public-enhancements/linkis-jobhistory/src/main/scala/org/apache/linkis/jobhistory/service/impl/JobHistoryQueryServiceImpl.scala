@@ -384,7 +384,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         cacheKey,
         new Callable[Integer] {
           override def call(): Integer = {
-            getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
+            try {
+              getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
+            } catch {
+              case e: Exception =>
+                logger.error("Failed to get count undone tasks", e)
+                0
+            }
           }
         }
       )
@@ -399,7 +405,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       engineType: String,
       startJobId: lang.Long
   ): Integer = {
-    logger.info("Get count undone Tasks {}, {}, {}", username, creator, engineType)
+    logger.info("Get count undone Tasks {}, {}, {}, {}", username, creator, engineType, startJobId)
     val statusList: util.List[String] = new util.ArrayList[String]()
     statusList.add(TaskStatus.Running.toString)
     statusList.add(TaskStatus.Inited.toString)

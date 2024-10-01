@@ -729,7 +729,7 @@
           "dateRange": "时间范围",
           "engineType": "引擎类型",
           "placeholder": {
-              "executionCode": "请输入执行代码",
+              "executionCode": "请输入执行代码，不支持特殊字符如',`。可以使用%和_作通配符：%代表任意字符，_代表单字符",
               "dateRange": "时间范围",
               "status": "状态"
           },

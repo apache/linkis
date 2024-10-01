@@ -19,12 +19,13 @@ package org.apache.linkis.udf.api.rpc
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.rpc.{Receiver, Sender}
+import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.udf.entity.{PythonModuleInfo, PythonModuleInfoVO}
 import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
 
 import java.{lang, util}
+
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.concurrent.duration.Duration
 import scala.tools.nsc.interactive.Logger
@@ -76,7 +77,9 @@ class UdfReceiver extends Receiver with Logging {
         new ResponseUdfs(udfs)
       case RequestPythonModuleProtocol(userName, engineType) =>
         val instance: ServiceInstance = RPCUtils.getServiceInstanceFromSender(sender)
-        logger.info(s"RequestPythonModuleProtocol: userName: $userName, engineType: $engineType, sendInstance: $instance .")
+        logger.info(
+          s"RequestPythonModuleProtocol: userName: $userName, engineType: $engineType, sendInstance: $instance ."
+        )
         // 获取Python模块路径列表
         var list = new java.util.ArrayList[String]()
         list.add(engineType)

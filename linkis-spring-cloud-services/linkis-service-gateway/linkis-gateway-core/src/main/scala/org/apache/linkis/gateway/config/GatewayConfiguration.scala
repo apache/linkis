@@ -18,6 +18,7 @@
 package org.apache.linkis.gateway.config
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 
 object GatewayConfiguration {
 
@@ -71,7 +72,7 @@ object GatewayConfiguration {
   val AUTH_IP_FILE = CommonVars("wds.linkis.gateway.auth.file", "auth.txt")
 
   val DEFAULT_GATEWAY_ACCESS_TOKEN =
-    CommonVars("wds.linkis.gateway.access.token", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+    CommonVars("wds.linkis.gateway.access.token", LINKIS_TOKEN.getValue)
 
   val CONTROL_WORKSPACE_ID_LIST = CommonVars("wds.linkis.gateway.control.workspace.ids", "224")
 

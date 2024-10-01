@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.7.0-wds</revision>
+    <revision>1.9.0-wds</revision>
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
@@ -115,8 +115,8 @@
     <zookeeper.version>3.8.4</zookeeper.version>
     <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
     <curator.version>2.7.1</curator.version>
-    <guava.version>30.0-jre</guava.version>
-    <netty.version>4.1.100.Final</netty.version>
+    <guava.version>33.2.1-jre</guava.version>
+    <netty.version>4.1.108.Final</netty.version>
 
     <!-- This is the same as the kubernetes-client version referenced in spark3.2.1 -->
     <kubernetes-client.version>5.4.1</kubernetes-client.version>
@@ -169,8 +169,8 @@
 
     <!-- spring -->
     <spring-framework.version>5.3.34</spring-framework.version>
-    <spring-security.version>5.7.8</spring-security.version>
-    <spring.boot.version>2.7.11</spring.boot.version>
+    <spring-security.version>5.7.11</spring-security.version>
+    <spring.boot.version>2.7.12</spring.boot.version>
     <spring-netflix.version>3.1.7</spring-netflix.version>
     <spring-cloud.version>2021.0.8</spring-cloud.version>
     <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>

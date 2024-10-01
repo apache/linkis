@@ -18,6 +18,7 @@
 package org.apache.linkis.computation.client.once.simple
 
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
+import org.apache.linkis.common.conf.Configuration.LINKIS_TOKEN
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.LinkisJobBuilder
 import org.apache.linkis.computation.client.LinkisJobBuilder.clientConfig
@@ -171,7 +172,7 @@ object SimpleOnceJobBuilder {
           ) // We think 90s is enough, if SocketTimeoutException is throw, just set a new clientConfig to modify it.
           .setAuthenticationStrategy(new TokenAuthenticationStrategy())
           .setAuthTokenKey(TokenAuthenticationStrategy.TOKEN_KEY)
-          .setAuthTokenValue("LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+          .setAuthTokenValue(LINKIS_TOKEN.getValue)
           .setDWSVersion(clientConfig.getDWSVersion)
           .build()
         bmlClient = BmlClientFactory.createBmlClient(newClientConfig)

@@ -10,7 +10,7 @@
         "precommit": "lint-staged",
         "preinstall": "wnpm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
         "buildSubModule": "cd src/apps/PythonModule && npm run build:prod && cd ../../..",
-        "installAll": "wnpm install && cd src/apps/PythonModule && wnpm install && cd ../../.."
+        "installAll": "wnpm install && cd src/apps/PythonModule && wnpm install --legacy-peer-deps && cd ../../.."
     },
     "husky": {
         "hooks": {

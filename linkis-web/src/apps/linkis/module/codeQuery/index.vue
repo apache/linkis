@@ -77,12 +77,12 @@
           type="primary"
           @click="keywordSearch"
           style="margin-right: 10px;"
-        >{{ $t('message.linkis.codeQuery.keyword') }}</Button>
-        <Button
+        >{{ $t('message.linkis.codeQuery.search') }}</Button>
+        <!-- <Button
           type="primary"
           @click="fullSearch"
           style="margin-right: 10px;"
-        >{{ $t('message.linkis.codeQuery.fullMatch') }}</Button>
+        >{{ $t('message.linkis.codeQuery.fullMatch') }}</Button> -->
         <Button
           type="warning"
           @click="reset"
@@ -231,7 +231,7 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.check(params.row.id)
+                    this.check(params.row.executionCode)
                   }
                 }
               }, this.$t('message.linkis.codeQuery.check'))
@@ -250,17 +250,17 @@ export default {
           width: 990,
           ellipsis: true,
           align: 'center',
-          render: (h, params) => {
-            return h('span', {
-              props: {
-                type: 'text',
-                size: 'small'
-              },
-              domProps: {
-                innerHTML: params.row.executionCode
-              }
-            })
-          }
+          // render: (h, params) => {
+          //   return h('span', {
+          //     props: {
+          //       type: 'text',
+          //       size: 'small'
+          //     },
+          //     domProps: {
+          //       innerHTML: params.row.executionCode
+          //     }
+          //   })
+          // }
         },
         {
           title: this.$t('message.linkis.codeQuery.status'),
@@ -319,14 +319,18 @@ export default {
       }
     },
     async reset() {
+      const end = new Date(new Date().toLocaleDateString())
+      const start = new Date(new Date().toLocaleDateString())
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
+      end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
       this.searchBar = {
         executionCode: "",
-        shortcut: [],
+        shortcut: [start, end],
         status: "",
       };
       this.searchParams = {
         executionCode: "",
-        shortcut: [],
+        shortcut: [start, end],
         status: "",
       };
       this.beforeSearch = true;
@@ -335,6 +339,19 @@ export default {
     async changePage(val) {
       this.page.pageNow = val;
       await this.search();
+    },
+    convertTableData(data) {
+      const tableFormatData = [];
+      for(let i = 0; i< data.length;i++) {
+        const item = data[i];
+        const tableItem = {
+          id: item[0],
+          executionCode: item[1],
+          status: item[2],
+        }
+        tableFormatData.push(tableItem);
+      }
+      return tableFormatData;
     },
     async search() {
       try {
@@ -374,17 +391,15 @@ export default {
         }
 
         const res = await api.fetch(`/jobhistory/es/search`, params, 'get');
-        this.tableData = res.tasks.content
+        this.tableData = this.convertTableData(res.data.fileContent) 
         this.page.totalPage = res.tasks.totalElements
         this.tableLoading = false
       } catch (err) {
         this.tableLoading = false
       }
     },
-    check(id) {
-      const query = {
-        id
-      }
+    check(code) {
+      localStorage.setItem('queryCodeResult', code);
       // set storage
       sessionStorage.setItem('code-search', JSON.stringify(this.searchParams));
       sessionStorage.setItem('code-use-cache', true);
@@ -393,7 +408,6 @@ export default {
 
       this.$router.push({
         path: '/console/codeDetail',
-        query
       })
     },
     colorGetter(status) {
@@ -427,8 +441,21 @@ export default {
     }
     next();
   },
+  beforeRouteLeave(to, from, next) {
+    if(to.name !== 'codeDetail') {
+      this.reset();
+      this.tableData = [];
+    }
+    next();
+  },
   mounted() {
-
+    
+    const end = new Date(new Date().toLocaleDateString())
+    const start = new Date(new Date().toLocaleDateString())
+    start.setTime(start.getTime() - 3600 * 1000 * 24 * 2)
+    end.setTime(end.getTime() - 3600 * 1000 * 24 * 1)
+    this.searchBar.shortcut = [start, end];
+    this.searchParams.shortcut = [start, end];
     if(sessionStorage.getItem('code-use-cache') === 'true') {
       this.searchParams = JSON.parse(sessionStorage.getItem('code-search'));
       this.searchBar = JSON.parse(sessionStorage.getItem('code-search'));

@@ -31,9 +31,11 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.*;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
@@ -72,6 +74,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
   @Autowired private NodePointerBuilder nodePointerBuilder;
 
   @Autowired private ResourceManager resourceManager;
+
+  @Autowired private NodeManagerMapper nodeManagerMapper;
 
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
@@ -223,6 +227,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     if (scoreServiceInstances == null || scoreServiceInstances.length == 0) {
       return null;
     }
+    List<String> instances = new ArrayList<String>();
     List<ScoreServiceInstance> scoreServiceInstancesList = Arrays.asList(scoreServiceInstances);
     EngineNode[] engineNodes =
         scoreServiceInstancesList.stream()
@@ -231,6 +236,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
                   AMEngineNode engineNode = new AMEngineNode();
                   engineNode.setScore(scoreServiceInstance.getScore());
                   engineNode.setServiceInstance(scoreServiceInstance.getServiceInstance());
+                  instances.add(scoreServiceInstance.getServiceInstance().getInstance());
                   return engineNode;
                 })
             .toArray(EngineNode[]::new);
@@ -252,6 +258,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       List<NodeMetrics> nodeMetrics =
           nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
 
+      List<PersistenceNode> persistenceNodes = nodeManagerMapper.getNodesByInstances(instances);
+
       for (EngineNode engineNode : engineNodes) {
         Optional<NodeMetrics> optionMetrics =
             nodeMetrics.stream()
@@ -269,6 +277,12 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
         optionMetrics.ifPresent(metrics -> metricsConverter.fillMetricsToNode(engineNode, metrics));
         optionRMNode.ifPresent(rmNode -> engineNode.setNodeResource(rmNode.getNodeResource()));
+
+        persistenceNodes.stream()
+            .filter(
+                node -> node.getInstance().equals(engineNode.getServiceInstance().getInstance()))
+            .findFirst()
+            .ifPresent(persistenceNode -> engineNode.setParams(persistenceNode.getParams()));
       }
     } catch (Exception e) {
       LinkisRetryException linkisRetryException =

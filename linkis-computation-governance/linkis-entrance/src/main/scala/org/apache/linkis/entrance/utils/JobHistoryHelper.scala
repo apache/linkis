@@ -135,16 +135,16 @@ object JobHistoryHelper extends Logging {
    * @param retryWhenUpdateFail
    */
   def updateAllConsumeQueueTask(
-                                 taskIdList: util.List[Long],
-                                 retryWhenUpdateFail: Boolean = false
-                               ): Unit = {
+      taskIdList: util.List[Long],
+      retryWhenUpdateFail: Boolean = false
+  ): Unit = {
 
     if (taskIdList.isEmpty) return
 
     val updateTaskIds = new util.ArrayList[Long]()
 
     if (
-      EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
+        EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
         taskIdList.size() > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue
     ) {
       for (i <- 0 until EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {

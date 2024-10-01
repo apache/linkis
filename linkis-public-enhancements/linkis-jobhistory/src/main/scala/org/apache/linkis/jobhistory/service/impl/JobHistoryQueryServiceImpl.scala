@@ -507,12 +507,12 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def taskDurationTopN(
-                                 sDate: Date,
-                                 eDate: Date,
-                                 username: String,
-                                 creator: String,
-                                 engineType: String
-                               ): util.List[JobHistory] = {
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): util.List[JobHistory] = {
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
     } else if (StringUtils.isBlank(username)) {

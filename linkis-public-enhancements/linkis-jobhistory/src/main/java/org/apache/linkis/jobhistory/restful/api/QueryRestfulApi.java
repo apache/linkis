@@ -557,30 +557,30 @@ public class QueryRestfulApi {
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "listDurationTop", notes = "listDurationTop", response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
-          @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
-          @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
-          @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-          @ApiImplicitParam(
-                  name = "proxyUser",
-                  required = false,
-                  dataType = "String",
-                  value = "proxyUser"),
-          @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-          @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+    @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
+    @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
+    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "proxyUser",
+        required = false,
+        dataType = "String",
+        value = "proxyUser"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
   })
   @RequestMapping(path = "/listDurationTop", method = RequestMethod.GET)
   public Message listDurationTop(
-          HttpServletRequest req,
-          @RequestParam(value = "startDate", required = false) Long startDate,
-          @RequestParam(value = "endDate", required = false) Long endDate,
-          @RequestParam(value = "executeApplicationName", required = false)
+      HttpServletRequest req,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "executeApplicationName", required = false)
           String executeApplicationName,
-          @RequestParam(value = "creator", required = false) String creator,
-          @RequestParam(value = "proxyUser", required = false) String proxyUser,
-          @RequestParam(value = "pageNow", required = false) Integer pageNow,
-          @RequestParam(value = "pageSize", required = false) Integer pageSize)
-          throws QueryException {
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize)
+      throws QueryException {
     if (org.springframework.util.StringUtils.isEmpty(pageNow)) {
       pageNow = 1;
     }
@@ -628,8 +628,8 @@ public class QueryRestfulApi {
     PageHelper.startPage(pageNow, pageSize);
     try {
       queryTasks =
-              jobHistoryQueryService.taskDurationTopN(
-                      sDate, eDate, proxyUser, creator, executeApplicationName);
+          jobHistoryQueryService.taskDurationTopN(
+              sDate, eDate, proxyUser, creator, executeApplicationName);
     } finally {
       PageHelper.clearPage();
     }

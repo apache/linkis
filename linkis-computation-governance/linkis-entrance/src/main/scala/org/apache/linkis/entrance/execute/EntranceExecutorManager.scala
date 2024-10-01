@@ -29,6 +29,7 @@ import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
 
 import java.util.Date
 import java.util.concurrent.atomic.AtomicLong
+
 import scala.concurrent.duration.Duration
 
 abstract class EntranceExecutorManager(groupFactory: GroupFactory)

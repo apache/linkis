@@ -189,7 +189,7 @@
     <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
-    <commons-io.version>2.11.0</commons-io.version>
+    <commons-io.version>2.14.0</commons-io.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-compress.version>1.26.1</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>

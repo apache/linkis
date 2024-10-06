@@ -104,7 +104,7 @@
   <properties>
     <revision>1.6.0</revision>
 
-    <zookeeper.version>3.9.3</zookeeper.version>
+    <zookeeper.version>3.9.2</zookeeper.version>
     <curator.version>4.2.0</curator.version>
     <hadoop.version>3.3.4</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
@@ -1190,6 +1190,14 @@
           <exclusion>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.slf4j</groupId>

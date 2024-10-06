@@ -47,9 +47,9 @@ aws-java-sdk-s3-1.12.261.jar
 batik-css-1.7.jar
 batik-ext-1.7.jar
 batik-util-1.7.jar
-bcpkix-jdk15on-1.70.jar
-bcprov-jdk15on-1.70.jar
-bcutil-jdk15on-1.70.jar
+bcpkix-jdk18on-1.78.1.jar
+bcprov-jdk18on-1.78.1.jar
+bcutil-jdk18on-1.78.1.jar
 bonecp-0.8.0.RELEASE.jar
 bootstrap-0.191.jar
 brave-5.13.9.jar

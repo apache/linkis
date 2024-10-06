@@ -482,7 +482,7 @@ jta-1.1.jar
 jts-core-1.16.1.jar
 jul-to-slf4j-1.7.36.jar
 junit-4.13.2.jar
-kafka-clients-2.7.0.jar
+kafka-clients-2.7.2.jar
 kafka-clients-3.1.2.jar
 kerb-admin-1.0.1.jar
 kerb-client-1.0.1.jar

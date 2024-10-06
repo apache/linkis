@@ -683,7 +683,7 @@ See licenses/ for text of these licenses.
     (MIT License) JUL to SLF4J bridge (org.slf4j:jul-to-slf4j:1.7.16 - http://www.slf4j.org)
     (MIT License) SLF4J API Module (org.slf4j:slf4j-api:1.7.30 - http://www.slf4j.org)
     (MIT License) pagehelper 5 (com.github.pagehelper:pagehelper:5.3.1 - https://github.com/pagehelper/Mybatis-PageHelper)
-    (MIT License) bcprov-jdk15on (org.bouncycastle:bcprov-jdk15on:1.64 - https://www.bouncycastle.org/java.html)
+    (MIT License) bcprov-jdk18on (org.bouncycastle:bcprov-jdk18on:1.78.1 - https://www.bouncycastle.org/java.html)
     (MIT License) oshi-core (com.github.oshi:oshi-core:5.3.4 - https://github.com/oshi/oshi)
     (CUP Parser Generator Copyright Notice, License, and Disclaimer) CUP Parser Generator for Java (edu.princeton.cup:java-cup:10k - http://www.cs.princeton.edu/~appel/modern/java/CUP/)
     (MIT License) scopt:a command line options parsing library (com.github.scopt:scopt_2.11:4.0.1 - https://github.com/scopt/scopt)

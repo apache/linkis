@@ -258,7 +258,7 @@ hadoop-yarn-server-nodemanager-2.5.1.jar
 hadoop-yarn-server-nodemanager-2.7.4.jar
 hamcrest-2.2.jar
 hamcrest-core-2.2.jar
-hazelcast-5.3.0.jar
+hazelcast-5.3.5.jar
 hbase-annotations-1.2.0.jar
 hbase-annotations-1.4.3.jar
 hbase-asyncfs-2.5.3.jar

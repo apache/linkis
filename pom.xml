@@ -104,7 +104,7 @@
   <properties>
     <revision>1.6.0</revision>
 
-    <zookeeper.version>3.5.9</zookeeper.version>
+    <zookeeper.version>3.8.4</zookeeper.version>
     <curator.version>4.2.0</curator.version>
     <hadoop.version>3.3.4</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>

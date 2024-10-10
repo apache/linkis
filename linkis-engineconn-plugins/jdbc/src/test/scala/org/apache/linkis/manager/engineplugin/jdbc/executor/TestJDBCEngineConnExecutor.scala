@@ -65,6 +65,11 @@ class TestJDBCEngineConnExecutor {
 
   @Test
   def testExecuteLine: Unit = {
+    System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty(
+      "wds.linkis.engineconn.plugin.default.class",
+      "org.apache.linkis.manager.engineplugin.jdbc.JDBCEngineConnPlugin"
+    )
     val engineconnCconf = "--engineconn-conf"
     val array = Array(
       engineconnCconf,

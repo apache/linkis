@@ -19,11 +19,10 @@ package org.apache.linkis.udf.dao;
 
 import org.apache.linkis.udf.entity.PythonModuleInfo;
 
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +36,7 @@ public class PythonModuleInfoMapperTest {
   private PythonModuleInfoMapper pythonModuleInfoMapper; // PythonModuleInfoMapper 的模拟对象
 
   /** 在每个测试方法执行前执行，用于初始化测试环境。 */
-  @BeforeTestClass
+  @BeforeEach
   public void setUp() {
     pythonModuleInfoMapper = mock(PythonModuleInfoMapper.class);
   }

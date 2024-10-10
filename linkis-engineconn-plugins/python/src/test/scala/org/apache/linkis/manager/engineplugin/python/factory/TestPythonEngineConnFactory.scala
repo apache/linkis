@@ -28,6 +28,11 @@ class TestPythonEngineConnFactory {
 
   @Test
   def testCreateExecutor: Unit = {
+    System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty(
+      "wds.linkis.engineconn.plugin.default.class",
+      "org.apache.linkis.manager.engineplugin.python.PythonEngineConnPlugin"
+    )
     System.setProperty("pythonVersion", "python")
     val engineConnFactory: PythonEngineConnFactory = new PythonEngineConnFactory
     val engineCreationContext: EngineCreationContext = new DefaultEngineCreationContext

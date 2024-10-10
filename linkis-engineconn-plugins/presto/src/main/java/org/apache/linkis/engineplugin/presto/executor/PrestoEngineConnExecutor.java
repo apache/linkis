@@ -48,7 +48,7 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
-import org.apache.linkis.storage.resultset.ResultSetFactory;
+import org.apache.linkis.storage.resultset.ResultSetFactory$;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 
@@ -325,7 +325,7 @@ public class PrestoEngineConnExecutor extends ConcurrentComputationExecutor {
     int columnCount = 0;
     int rows = 0;
     ResultSetWriter resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
+        engineExecutorContext.createResultSetWriter(ResultSetFactory$.MODULE$.TABLE_TYPE());
     try {
       QueryStatusInfo results = null;
       if (statement.isRunning()) {

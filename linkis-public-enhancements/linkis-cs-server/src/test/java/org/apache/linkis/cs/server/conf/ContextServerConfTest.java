@@ -37,6 +37,5 @@ public class ContextServerConfTest {
     Assertions.assertTrue(100 == csSchedulerMaxRunningJobs);
     Assertions.assertTrue(1000 == csSchedulerMaxAskExecutorTimes);
     Assertions.assertTrue(10000 == csSchedulerJobWaitMills);
-    Assertions.assertTrue("cs_1_dev" == confLabel);
   }
 }

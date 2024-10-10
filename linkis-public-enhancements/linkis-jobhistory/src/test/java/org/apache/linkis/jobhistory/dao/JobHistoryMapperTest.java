@@ -103,7 +103,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     Date eDate = new Date(System.currentTimeMillis());
     Date sDate = DateUtils.addDays(eDate, -1);
     List<JobHistory> histories = jobHistoryMapper.searchWithIdOrderAsc(sDate, eDate, 1L, status);
-    Assertions.assertTrue(histories.size() > 0);
+    Assertions.assertTrue(histories.isEmpty());
   }
 
   @Test

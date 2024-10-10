@@ -43,7 +43,7 @@ import org.apache.linkis.scheduler.executer.AliasOutputExecuteResponse;
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse;
 import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.storage.LineRecord;
-import org.apache.linkis.storage.resultset.ResultSetFactory;
+import org.apache.linkis.storage.resultset.ResultSetFactory$;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 
 import org.apache.commons.collections.MapUtils;
@@ -134,7 +134,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
             (ElasticSearchTableResponse) elasticSearchResponse;
         TableMetaData metaData = new TableMetaData(tableResponse.columns());
         ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-            engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE());
+            engineExecutorContext.createResultSetWriter(ResultSetFactory$.MODULE$.TABLE_TYPE());
         resultSetWriter.addMetaData(metaData);
         Arrays.asList(tableResponse.records())
             .forEach(
@@ -152,7 +152,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
       } else if (elasticSearchResponse instanceof ElasticSearchJsonResponse) {
         ElasticSearchJsonResponse jsonResponse = (ElasticSearchJsonResponse) elasticSearchResponse;
         ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-            engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE());
+            engineExecutorContext.createResultSetWriter(ResultSetFactory$.MODULE$.TABLE_TYPE());
         resultSetWriter.addMetaData(null);
         Arrays.stream(jsonResponse.value().split("\\n"))
             .forEach(

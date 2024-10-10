@@ -91,3 +91,19 @@ CREATE TABLE IF NOT EXISTS linkis_ps_udf_manager (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `linkis_ps_python_module_info`;
+CREATE TABLE `linkis_ps_python_module_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `name` varchar(255) NOT NULL COMMENT 'python模块名称',
+  `description` text COMMENT 'python模块描述',
+  `path` varchar(255) NOT NULL COMMENT 'hdfs路径',
+  `engine_type` varchar(50) NOT NULL COMMENT '引擎类型，python/spark/all',
+  `create_user` varchar(50) NOT NULL COMMENT '创建用户',
+  `update_user` varchar(50) NOT NULL COMMENT '修改用户',
+  `is_load` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否加载，0-未加载，1-已加载',
+  `is_expire` tinyint(1) DEFAULT NULL COMMENT '是否过期，0-未过期，1-已过期）',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Python模块包信息表';

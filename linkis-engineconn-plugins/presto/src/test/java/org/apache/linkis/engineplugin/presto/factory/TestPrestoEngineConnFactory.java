@@ -30,6 +30,10 @@ public class TestPrestoEngineConnFactory {
 
   @Test
   public void testNewExecutor() {
+    System.setProperty("wds.linkis.server.version", "v1");
+    System.setProperty(
+        "wds.linkis.engineconn.plugin.default.class",
+        "org.apache.linkis.engineplugin.presto.PrestoEngineConnPlugin");
     System.setProperty("prestoVersion", "presto");
     PrestoEngineConnFactory engineConnFactory = new PrestoEngineConnFactory();
     EngineCreationContext engineCreationContext = new DefaultEngineCreationContext();

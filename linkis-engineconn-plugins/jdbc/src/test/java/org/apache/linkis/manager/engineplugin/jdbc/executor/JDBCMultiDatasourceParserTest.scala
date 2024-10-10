@@ -28,7 +28,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConsta
 
 class JDBCMultiDatasourceParserTest {
 
-  val dbType = "mysql"
+  val dbType = "starrocks"
   val dbConnParams: util.Map[String, Object] = new util.HashMap[String, Object]()
   val datasource: DataSource = new DataSource()
 
@@ -60,10 +60,10 @@ class JDBCMultiDatasourceParserTest {
   @DisplayName("testCreateJdbcUrl")
   def testCreateJdbcUrl(): Unit = {
     val url1 = JDBCMultiDatasourceParser.createJdbcUrl(dbType, dbConnParams)
-    assertTrue(url1 != null && "jdbc:mysql://localhost:3306/dbName?useSSL=false".equals(url1))
+    assertTrue(url1 != null && "jdbc:starrocks://localhost:3306/dbName?useSSL=false".equals(url1))
     dbConnParams.put(JDBCEngineConnConstant.DS_JDBC_DB_NAME, "")
     val url2 = JDBCMultiDatasourceParser.createJdbcUrl(dbType, dbConnParams)
-    assertTrue(url2 != null && "jdbc:mysql://localhost:3306?useSSL=false".equals(url2))
+    assertTrue(url2 != null && "jdbc:starrocks://localhost:3306?useSSL=false".equals(url2))
     dbConnParams.put(JDBCEngineConnConstant.DS_JDBC_HOST, "")
     try {
       JDBCMultiDatasourceParser.createJdbcUrl(dbType, dbConnParams)

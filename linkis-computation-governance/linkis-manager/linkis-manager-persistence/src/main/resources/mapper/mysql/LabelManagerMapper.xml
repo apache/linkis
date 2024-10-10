@@ -250,6 +250,10 @@
         AND B.ticketId = #{ticketId}
     </delete>
 
+    <delete id="deleteInstance">
+        DELETE FROM linkis_cg_manager_label_service_instance WHERE service_instance = #{instance}
+    </delete>
+
     <delete id="deleteLabelIdsAndInstance">
         DELETE FROM linkis_cg_manager_label_service_instance WHERE service_instance = #{instance} AND label_id IN
         <foreach collection='labelIds' item='labelId' index='index'  open='(' separator=',' close=')'>

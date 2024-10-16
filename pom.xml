@@ -164,7 +164,7 @@
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
     <netty.version>4.1.86.Final</netty.version>
-    <jetty.version>9.4.48.v20220622</jetty.version>
+    <jetty.version>9.4.56.v20240826</jetty.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpmime.version>${httpclient.version}</httpmime.version>
 

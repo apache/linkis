@@ -1,5 +1,5 @@
 <h2 align="center">
-  Apache Linkis Web
+  Apache Linkis Web Next
 </h2>
 
 <p align="center">
@@ -56,7 +56,28 @@
 
  Linkis builds a layer of computation middleware between upper applications and underlying engines. By using standard interfaces such as REST/WS/JDBC provided by Linkis, the upper applications can easily access the underlying engines such as MySQL/Spark/Hive/Presto/Flink, etc., and achieve the intercommunication of user resources like unified variables, scripts, UDFs, functions and resource files at the same time.
 
-Linkis Web provides a management system for easy management of user resources.
+ Linkis Web provides a web management system to facilitate the management of user resources. However, the original Linkis Web project was developed using Vue2 and related technologies, but Vue2 has stopped maintenance and lacks community support. In addition, the file structure of the project itself is unclear, the module division is unreasonable, the component library used is also lacking maintenance, and the user experience of the interactive interface needs to be optimized.
+
+ As mentioned above, still iterating on the original project may leave various difficult problems. Therefore, we finally considered refactoring the project under the Linkis Web Next project, upgrading the core technology stack from Vue2 + Webpack to Vue3 + Vite, obtaining more community support, greatly improving the project starting and building rate, and solving various historical problems. Besides, using the internally maintained open-source UI component library Fes-Design, the problems can be promptly fed back and repaired.
+
+The modules that have been refactored are as follows:
+
+| The modules that have been refactored
+| ---------------------------------------
+| Login Page
+| Nav Bar
+| Side Bar
+| Global History Management
+| Parameter Config
+| Global Variables
+| Microservice Management
+| Resource Management
+| ECM Management
+| Base Data Management (SubModule Error Management)
+| Data Source Management (SubModule Data Source Access Permissions)
+| UDF Function Management (SubModule UDF User Management)
+
+Sub-modules in Base Data Management, Data Source Management, and UDF Function Management will still need to be refactored in the future.
 
 # Start
 
@@ -69,46 +90,6 @@ npm run dev
 # build 
 npm run build
 ```
-
-# File Structure
-
-> ├── README.md
-> ├── README_CN.md
-> ├── index.html
-> ├── node_modules
-> ├── package-lock.json
-> ├── package.json
-> ├── pom.xml
-> ├── public
-> │   ├── favicon.ico`
-> │   ├── sidebar
-> │   └── vite.svg
-> ├── release-docs
-> │   ├── LICENSE
-> │   ├── NOTICE
-> │   └── licenses
-> ├── src
-> │   ├── App.vue
-> │   ├── assets
-> │   ├── components
-> │   ├── config
-> │   ├── dss
-> │   ├── env.d.ts
-> │   ├── helper
-> │   ├── index.d.ts
-> │   ├── layout.vue
-> │   ├── locales
-> │   ├── main.ts
-> │   ├── pages
-> │   ├── router
-> │   ├── scriptis
-> │   ├── service
-> │   ├── style
-> │   ├── util
-> │   └── vite-env.d.ts
-> ├── tsconfig.json
-> ├── tsconfig.node.json
-> └── vite.config.ts
 
 # Contributing
 

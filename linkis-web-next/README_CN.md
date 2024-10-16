@@ -1,5 +1,5 @@
 <h2 align="center">
-  Apache Linkis Web
+  Apache Linkis Web Next
 </h2>
 
 <p align="center">
@@ -56,7 +56,28 @@
 Linkis 在上层应用程序和底层引擎之间构建了一层计算中间件。通过使用 Linkis 提供的 REST/WebSocket/JDBC 等标准接口，
 上层应用可以方便地连接访问 MySQL/Spark/Hive/Presto/Flink 等底层引擎，同时实现变量、脚本、函数和资源文件等用户资源的跨上层应用互通。  
 
-Linkis Web 提供了一个可视化的后台管理系统，便于对用户资源进行管理。
+Linkis Web 提供了一个可视化的后台管理系统，便于对用户资源进行管理。然而，原有的 Linkis Web 项目使用了 Vue2 及相关技术进行开发，而 Vue2 已停止维护，缺乏社区生态支持，并且项目本身文件结构不清晰，模块划分不合理，所使用的组件库也缺乏维护，并且交互界面的用户体验也有待优化。
+
+在此背景下，选择在原有的项目上继续进行迭代可能留下各种难以解决的问题。所以最终考虑在 Linkis Web Next 子项目下重构该项目，将核心技术栈从 Vue2 + Webpack 升级到 Vue3 + Vite，获得更多的社区生态支持并大大提高项目启动和构建速率，同时解决各种历史遗留问题。再使用内部长期维护的开源组件库 Fes-Design，就能使组件库支持的问题能够得到及时的反馈和修复，保障项目迭代的顺利进行。
+
+当前已重构完成的模块如下所示：
+
+| 已重构完成模块
+| ---------------------------------------
+| Login Page
+| Nav Bar
+| Side Bar
+| Global History Management
+| Parameter Config
+| Global Variables
+| Microservice Management
+| Resource Management
+| ECM Management
+| Base Data Management (SubModule Error Management)
+| Data Source Management (SubModule Data Source Access Permissions)
+| UDF Function Management (SubModule UDF User Management)
+
+后续仍需继续重构Base Data Management、Data Source Management、UDF Function Management中的子模块。
 
 # 启动
 
@@ -69,46 +90,6 @@ npm run dev
 # 打包构建
 npm run build
 ```
-
-# 文件结构
-
-> ├── README.md
-> ├── README_CN.md
-> ├── index.html
-> ├── node_modules
-> ├── package-lock.json
-> ├── package.json
-> ├── pom.xml
-> ├── public
-> │   ├── favicon.ico`
-> │   ├── sidebar
-> │   └── vite.svg
-> ├── release-docs
-> │   ├── LICENSE
-> │   ├── NOTICE
-> │   └── licenses
-> ├── src
-> │   ├── App.vue
-> │   ├── assets
-> │   ├── components
-> │   ├── config
-> │   ├── dss
-> │   ├── env.d.ts
-> │   ├── helper
-> │   ├── index.d.ts
-> │   ├── layout.vue
-> │   ├── locales
-> │   ├── main.ts
-> │   ├── pages
-> │   ├── router
-> │   ├── scriptis
-> │   ├── service
-> │   ├── style
-> │   ├── util
-> │   └── vite-env.d.ts
-> ├── tsconfig.json
-> ├── tsconfig.node.json
-> └── vite.config.ts
 
 # 贡献
 

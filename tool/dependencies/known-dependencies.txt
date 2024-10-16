@@ -469,7 +469,7 @@ jruby-complete-9.3.4.0.jar
 json-0.191.jar
 json-0.193.jar
 json-1.8.jar
-json-path-2.7.0.jar
+json-path-2.9.0.jar
 json-smart-2.4.10.jar
 jsp-2.1-6.1.14.jar
 jsp-api-2.1-6.1.14.jar

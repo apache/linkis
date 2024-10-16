@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 30
     if: (github.repository == 'apache/linkis')
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           use-quiet-mode: 'no'

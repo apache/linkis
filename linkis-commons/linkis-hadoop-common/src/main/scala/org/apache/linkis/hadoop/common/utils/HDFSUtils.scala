@@ -155,11 +155,11 @@ object HDFSUtils extends Logging {
           hdfsFileSystemContainer.updateLastAccessTime
           hdfsFileSystemContainer.getFileSystem
         } else {
-          getHDFSUserFileSystem(userName, label, getConfiguration(userName, label))
+          getHDFSUserFileSystem(userName, label, getConfigurationByLabel(userName, label))
         }
       }
     } else {
-      getHDFSUserFileSystem(userName, label, getConfiguration(userName, label))
+      getHDFSUserFileSystem(userName, label, getConfigurationByLabel(userName, label))
     }
   }
 

@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.service
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.LogListener
 import org.apache.linkis.engineconn.acessible.executor.listener.event._
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
@@ -34,7 +34,6 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   ConcurrentComputationExecutor
 }
-import org.apache.linkis.engineconn.computation.executor.hook.ExecutorLabelsRestHook
 import org.apache.linkis.engineconn.computation.executor.listener.{
   ResultSetListener,
   TaskProgressListener,
@@ -50,7 +49,6 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
@@ -60,13 +58,12 @@ import org.apache.linkis.governance.common.exception.engineconn.{
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.hadoop.common.utils.KerberosUtils
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
   ResponseTaskYarnResource
 }
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
@@ -223,6 +220,21 @@ class TaskExecutionServiceImpl
         System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
         logger.info(s"Received job with id ${jobId}.")
       }
+
+      // only sql can use udf check
+      val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
+      if (
+          ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue && StringUtils.isNotBlank(
+            udfNames
+          )
+      ) {
+        System.getProperties.put(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, udfNames)
+        val codeType: String = LabelUtil.getCodeType(requestTask.getLabels)
+        val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+        System.getProperties.put(ComputationExecutorConf.CODE_TYPE, languageType)
+        logger.info(s"add spacial udf check with job id ${jobId}.")
+      }
+
       val task = new CommonEngineConnTask(taskId, retryAble)
       task.setCode(requestTask.getCode)
       task.setProperties(requestTask.getProperties)

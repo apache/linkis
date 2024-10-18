@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.factory
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineplugin.spark.client.context.{ExecutionContext, SparkConfig}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
@@ -32,6 +33,7 @@ import org.apache.linkis.engineplugin.spark.exception.{
   SparkCreateFileException,
   SparkSessionNullException
 }
+import org.apache.linkis.engineplugin.spark.extension.SparkUDFCheckRule
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
   ExecutorFactory,
@@ -253,8 +255,14 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (SparkConfiguration.LINKIS_SPARK_ETL_SUPPORT_HUDI.getValue) {
       conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     }
-
     val builder = SparkSession.builder.config(conf)
+
+    if (ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue) {
+      builder.withExtensions(extension => {
+        extension.injectOptimizerRule(SparkUDFCheckRule)
+      })
+    }
+
     builder.enableHiveSupport().getOrCreate()
   }
 

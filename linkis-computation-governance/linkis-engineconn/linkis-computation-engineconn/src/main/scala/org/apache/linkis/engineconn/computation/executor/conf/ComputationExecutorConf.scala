@@ -136,4 +136,14 @@ object ComputationExecutorConf {
   val CLOSE_RS_OUTPUT_WHEN_RESET_BY_DEFAULT_ENABLED =
     CommonVars("linkis.ec.rs.close.when.reset.enabled", true).getValue
 
+  val SPECIAL_UDF_CHECK_ENABLED =
+    CommonVars("linkis.ec.spacial.udf.check.enabled", false)
+
+  val SPECIAL_UDF_NAMES =
+    CommonVars("linkis.ec.spacial.udf.check.names", "")
+
+  val ONLY_SQL_USE_UDF_KEY = "load.only.sql.use.udf"
+
+  val CODE_TYPE = "codeType"
+
 }

@@ -142,7 +142,7 @@ class HiveEngineConnExecutor(
     readResByObject = engineExecutorContext.getProperties.getOrDefault(
       JobRequestConstants.LINKIS_HIVE_EC_READ_RESULT_BY_OBJECT,
       false
-    )
+    ).asInstanceOf[Boolean]
     if (readResByObject) {
       hiveConf.set(
         "list.sink.output.formatter",

@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.starrocks;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
@@ -216,7 +217,8 @@ public class SqlConnection implements Closeable {
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
-    return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
+    return DriverManager.getConnection(
+        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
   }
 
   /** Connect message */

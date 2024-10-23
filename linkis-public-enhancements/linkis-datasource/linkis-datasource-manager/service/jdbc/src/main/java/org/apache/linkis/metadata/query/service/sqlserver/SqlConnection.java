@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.sqlserver;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
@@ -150,7 +151,8 @@ public class SqlConnection extends AbstractSqlConnection {
               .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
-    return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
+    return DriverManager.getConnection(
+        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
   }
 
   public String getSqlConnectUrl() {

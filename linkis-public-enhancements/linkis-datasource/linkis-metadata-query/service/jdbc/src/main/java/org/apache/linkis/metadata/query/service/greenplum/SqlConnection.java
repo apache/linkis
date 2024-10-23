@@ -15,40 +15,36 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service.mysql;
+package org.apache.linkis.metadata.query.service.greenplum;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.AESUtils;
-import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SqlConnection implements Closeable {
-
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
   private static final CommonVars<String> SQL_DRIVER_CLASS =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.driver", "com.mysql.jdbc.Driver");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.greenplum.driver", "com.pivotal.jdbc.GreenplumDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:mysql://%s:%s/%s");
-
-  private static final CommonVars<Integer> SQL_CONNECT_TIMEOUT =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.connect.timeout", 3000);
-
-  private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
-
-  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
-      CommonVars.apply("linkis.mysql.strong.security.enable", false);
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.greenplum.url",
+          "jdbc:pivotal:greenplum://%s:%s;DatabaseName=%s");
 
   private Connection conn;
 
@@ -62,34 +58,14 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    // Handle mysql security vulnerabilities
-    validateParams(extraParams);
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
+    if (Strings.isBlank(database)) {
+      database = "";
+    }
     conn = getDBConnection(connectMessage, database);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
-  }
-
-  /**
-   * Handle mysql security vulnerabilities
-   *
-   * @param extraParams
-   */
-  private void validateParams(Map<String, Object> extraParams) {
-    if (extraParams == null) {
-      return;
-    }
-
-    // security check
-    // SecurityUtils.checkJdbcSecurity(extraParams);
-
-    // append force params
-    SecurityUtils.appendMysqlForceParams(extraParams);
-
-    // print extraParams
-    String logStr = SecurityUtils.parseParamsMapToMysqlParamUrl(extraParams);
-    LOG.info("mysql metadata url extraParams: {}", logStr);
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -98,7 +74,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs = stmt.executeQuery("SHOW DATABASES");
+      rs = stmt.executeQuery("select datname from pg_database");
       while (rs.next()) {
         dataBaseName.add(rs.getString(1));
       }
@@ -108,13 +84,17 @@ public class SqlConnection implements Closeable {
     return dataBaseName;
   }
 
-  public List<String> getAllTables(String database) throws SQLException {
+  public List<String> getAllTables(String schemaname) throws SQLException {
     List<String> tableNames = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs = stmt.executeQuery("SHOW TABLES FROM `" + database + "`");
+      rs =
+          stmt.executeQuery(
+              "SELECT tablename FROM pg_tables where schemaname = '" + schemaname + "'");
+      //            rs = stmt.executeQuery("SELECT table_name FROM
+      // information_schema.tables");
       while (rs.next()) {
         tableNames.add(rs.getString(1));
       }
@@ -124,15 +104,16 @@ public class SqlConnection implements Closeable {
     }
   }
 
-  public List<MetaColumnInfo> getColumns(String database, String table)
+  public List<MetaColumnInfo> getColumns(String schemaname, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    String columnSql = "SELECT * FROM `" + database + "`.`" + table + "` WHERE 1 = 2";
+    String columnSql = "SELECT * FROM " + schemaname + "." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
-    ResultSetMetaData meta = null;
+    ResultSetMetaData meta;
     try {
-      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
+      List<String> primaryKeys =
+          getPrimaryKeys(/*getDBConnection(connectMessage, schemaname),  */ table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -161,21 +142,22 @@ public class SqlConnection implements Closeable {
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+  private List<String> getPrimaryKeys(
+      /*Connection connection, */ String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
-    try {
-      DatabaseMetaData dbMeta = connection.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
-      while (rs.next()) {
-        primaryKeys.add(rs.getString("column_name"));
-      }
-      return primaryKeys;
-    } finally {
-      if (null != rs) {
-        closeResource(connection, null, rs);
-      }
+    //        try {
+    DatabaseMetaData dbMeta = conn.getMetaData();
+    rs = dbMeta.getPrimaryKeys(null, null, table);
+    while (rs.next()) {
+      primaryKeys.add(rs.getString("column_name"));
     }
+    return primaryKeys;
+    /*}finally{
+        if(null != rs){
+            closeResource(connection, null, rs);
+        }
+    }*/
   }
 
   /**
@@ -252,8 +234,6 @@ public class SqlConnection implements Closeable {
       this.username = username;
       this.password = password;
       this.extraParams = extraParams;
-      this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
-      this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
     }
   }
 }

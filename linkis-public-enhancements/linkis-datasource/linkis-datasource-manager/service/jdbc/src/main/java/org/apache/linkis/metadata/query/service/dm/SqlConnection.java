@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.dm;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
@@ -175,7 +176,7 @@ public class SqlConnection extends AbstractSqlConnection {
     try {
       Properties prop = new Properties();
       prop.put("user", connectMessage.username);
-      prop.put("password", connectMessage.password);
+      prop.put("password", AESUtils.isDecryptByConf(connectMessage.password));
       prop.put("remarksReporting", "true");
       return DriverManager.getConnection(url, prop);
     } catch (Exception e) {

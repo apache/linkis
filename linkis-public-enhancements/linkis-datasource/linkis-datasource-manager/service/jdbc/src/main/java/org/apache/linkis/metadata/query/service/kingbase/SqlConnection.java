@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.kingbase;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
@@ -144,7 +145,8 @@ public class SqlConnection extends AbstractSqlConnection {
       url += "?" + extraParamString;
     }
     try {
-      return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
+      return DriverManager.getConnection(
+          url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
     } catch (Exception e) {
       e.printStackTrace();
       throw e;

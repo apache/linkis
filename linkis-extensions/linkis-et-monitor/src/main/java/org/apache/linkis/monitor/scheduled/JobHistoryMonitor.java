@@ -27,7 +27,8 @@ import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrCodeRule;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrorCodeAlertSender;
 import org.apache.linkis.monitor.jobhistory.index.JobIndexRule;
 import org.apache.linkis.monitor.jobhistory.index.JobIndexSender;
-import org.apache.linkis.monitor.jobhistory.jobtime.*;
+import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedAlertSender;
+import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedRule;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsAlertSender;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsRule;
 import org.apache.linkis.monitor.jobhistory.runtime.CommonJobRunTimeRule;
@@ -74,7 +75,7 @@ public class JobHistoryMonitor {
   @Scheduled(cron = "${linkis.monitor.jobHistory.finished.cron}")
   public void jobHistoryFinishedScan() {
     logger.info("Start scan jobHistoryFinishedScan");
-    long intervalMs = 20 * 60 * 1000L;
+    long intervalMs = 20 * 60 * 1000;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;
@@ -97,7 +98,7 @@ public class JobHistoryMonitor {
       logger.info("Get JobHistoryId from cache ID:" + id);
     }
     List<DataFetcher> fetchers =
-        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "finished_job");
+        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "updated_time");
     if (fetchers.isEmpty()) {
       logger.warn("generated 0 dataFetchers, plz check input");
       return;
@@ -168,14 +169,6 @@ public class JobHistoryMonitor {
     } catch (Exception e) {
       logger.warn("CommonJobRunTimeRule Scan Error msg: " + e.getMessage());
     }
-    // 新增失败任务分析扫描
-    try {
-      JobHistoryAnalyzeRule jobHistoryAnalyzeRule =
-              new JobHistoryAnalyzeRule(new JobHistoryAnalyzeAlertSender());
-      scanner.addScanRule(jobHistoryAnalyzeRule);
-    } catch (Exception e) {
-      logger.warn("JobHistoryAnalyzeRule Scan Error msg: " + e.getMessage());
-    }
     // 执行任务扫描
     JobMonitorUtils.run(scanner, fetchers, true);
 
@@ -183,7 +176,7 @@ public class JobHistoryMonitor {
     JobIndexRule jobIndexRule = new JobIndexRule(new JobIndexSender());
     scannerIndex.addScanRule(jobIndexRule);
     List<DataFetcher> createFetcher =
-        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "");
+        JobMonitorUtils.generateFetchersfortime(startTime, endTime, id, "department");
     JobMonitorUtils.run(scannerIndex, createFetcher, true);
   }
 
@@ -200,7 +193,7 @@ public class JobHistoryMonitor {
     AnomalyScanner scanner = new DefaultScanner();
     boolean shouldStart = false;
     List<DataFetcher> fetchers =
-        JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "unfinished_job");
+        JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "created_time");
     if (fetchers.isEmpty()) {
       logger.warn("generated 0 dataFetchers, plz check input");
       return;
@@ -211,61 +204,18 @@ public class JobHistoryMonitor {
       logger.info("[INFO] Loaded 0 alerts jobtime alert-rule from alert properties file.");
     } else {
       logger.info(
-          "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
-          jobTimeAlerts.size());
+              "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
+              jobTimeAlerts.size());
       shouldStart = true;
       JobMonitorUtils.addIntervalToImsAlerts(jobTimeAlerts, realIntervals);
       JobTimeExceedRule jobTimeExceedRule =
-          new JobTimeExceedRule(
-              jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
-      scanner.addScanRule(jobTimeExceedRule);
-    }
-    JobMonitorUtils.run(scanner, fetchers, shouldStart);
-  }
-
-  /** * 每10分钟扫描一次,扫描两个小时之内的任务，告警要求：管理台配置告警相关参数 */
-  @Scheduled(cron = "${linkis.monitor.jdbc.timeout.alert.cron:0 0/10 0 * * ?}")
-  public void jdbcUnfinishedAlertScan() {
-    long id =
-        Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedAlertScan"))
-            .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
-    long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
-    long endTime = System.currentTimeMillis();
-    long startTime = endTime - intervalMs;
-    AnomalyScanner scanner = new DefaultScanner();
-    List<DataFetcher> fetchers =
-        JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "");
-    if (fetchers.isEmpty()) {
-      logger.warn("jdbcUnfinishedScan generated 0 dataFetchers, plz check input");
-      return;
+              new JobTimeExceedRule(
+                      jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
+            scanner.addScanRule(jobTimeExceedRule);
     }
     StarrocksTimeExceedRule starrocksTimeExceedRule =
-        new StarrocksTimeExceedRule(new StarrocksTimeExceedAlertSender());
+        new StarrocksTimeExceedRule(new StarrocksTimeExceedAlterSender());
     scanner.addScanRule(starrocksTimeExceedRule);
-    JobMonitorUtils.run(scanner, fetchers, true);
-  }
-
-  /** * 每10分钟扫描一次,扫描两个小时之内的任务，满足要求触发kill kill要求：数据源配置kill参数 */
-  @Scheduled(cron = "${linkis.monitor.jdbc.timeout.kill.cron:0 0/10 0 * * ?}")
-  public void jdbcUnfinishedKillScan() {
-    long id =
-            Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedKillScan"))
-                    .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
-    long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
-    long endTime = System.currentTimeMillis();
-    long startTime = endTime - intervalMs;
-    AnomalyScanner scanner = new DefaultScanner();
-    List<DataFetcher> fetchers =
-            JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "");
-    if (fetchers.isEmpty()) {
-      logger.warn("jdbcUnfinishedScan generated 0 dataFetchers, plz check input");
-      return;
-    }
-    StarrocksTimeKillRule starrocksTimeKillRule =
-            new StarrocksTimeKillRule(new StarrocksTimeKillAlertSender());
-    scanner.addScanRule(starrocksTimeKillRule);
-    JobMonitorUtils.run(scanner, fetchers, true);
+    JobMonitorUtils.run(scanner, fetchers, shouldStart);
   }
 }

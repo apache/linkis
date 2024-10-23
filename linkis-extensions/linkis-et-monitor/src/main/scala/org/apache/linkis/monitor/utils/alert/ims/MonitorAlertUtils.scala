@@ -141,14 +141,25 @@ object MonitorAlertUtils extends Logging {
         val subSystemId = repaceParams.getOrDefault("subSystemId", Constants.ALERT_SUB_SYSTEM_ID)
         val alertTitle = "集群[" + Constants.LINKIS_CLUSTER_NAME + "]" + repaceParams
           .getOrDefault("title", data.alertTitle)
-        val alertLevel =
-          if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
-            ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
-          } else {
+        val alertLevel = {
+          if (
+              repaceParams.containsKey("$alterLevel") && StringUtils.isNumeric(
+                repaceParams.get("$alterLevel")
+              )
+          ) {
             ImsAlertLevel.withName(
-              repaceParams.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString)
+              repaceParams.getOrDefault("monitorLevel", repaceParams.get("$alterLevel"))
             )
+          } else {
+            if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
+              ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
+            } else {
+              ImsAlertLevel.withName(
+                repaceParams.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString)
+              )
+            }
           }
+        }
 
         val alertDesc = Utils.tryAndWarn(
           ImsAlertDesc(

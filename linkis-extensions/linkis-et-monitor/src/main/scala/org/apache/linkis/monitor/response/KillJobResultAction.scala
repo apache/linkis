@@ -15,8 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.request
+package org.apache.linkis.monitor.response
 
-import org.apache.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-trait MonitorResourceAction extends DWSHttpAction with UserAction
+import java.util
+
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/killJobs")
+class KillJobResultAction extends DWSResult {
+
+  @BeanProperty
+  var messages: util.ArrayList[util.Map[String, AnyRef]] = _
+
+}

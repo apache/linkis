@@ -37,8 +37,6 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     extends AbstractScanRule(event = new StarrocksTimeExceedHitEvent, observer = hitObserver)
     with Logging {
 
-  private val scanRuleList = CacheUtils.cacheBuilder
-
   /**
    * if data match the pattern, return true and trigger observer should call isMatched()
    *
@@ -54,39 +52,53 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (scannedData <- data.asScala) {
       if (scannedData != null && scannedData.getData() != null) {
-        var taskMinID = 0L;
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
               val status = job.getStatus.toUpperCase(Locale.getDefault)
               val engineType = job.getEngineType.toUpperCase(Locale.getDefault)
-              if (
-                  Constants.UNFINISHED_JOB_STATUS
-                    .contains(status) && engineType.equals(
-                    Constants.JDBC_ENGINE.toUpperCase(Locale.getDefault)
-                  )
-              ) {
+              if (Constants.UNFINISHED_JOB_STATUS.contains(status) && engineType.equals("JDBC")) {
                 // 获取job所使用的数据源类型
                 val datasourceConfMap = getDatasourceConf(job)
-                logger.info("starock  datasourceConfMap: {}", datasourceConfMap)
-                // 计算任务执行时间
-                val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
-                // 获取告警配置
-                val timeValue =
-                  HttpsUntils.getJDBCConf(job.getSubmitUser, Constants.JDBC_ALERT_TIME)
-                logger.info("starock  timeValue: {},elapse   {}", timeValue, elapse)
-                if (StringUtils.isNotBlank(timeValue)) {
-                  val timeoutInSeconds = timeValue.toDouble
-                  val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
-                  if (elapse > timeoutInMillis) {
+                val datasourceTypeMap = MapUtils.getMap(
+                  datasourceConfMap,
+                  "dataSourceType",
+                  new util.HashMap[String, String]()
+                )
+                val jobDatasourceType =
+                  MapUtils.getString(datasourceTypeMap, "name", "").toLowerCase()
+                // 获取管理台配置需要使用的数据源类型（默认starrocks）
+                var datasourceType = HttpsUntils
+                  .getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alter.datasource.type")
+                  .toLowerCase()
+                if (StringUtils.isBlank(datasourceType)) datasourceType = "starrocks"
+                if (datasourceType.contains(jobDatasourceType)) {
+                  // 计算任务执行时间
+                  val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
+                  // 获取告警配置
+                  val timeValue =
+                    HttpsUntils.getJDBCConf(
+                      job.getSubmitUser,
+                      "linkis.jdbc.task.timeout.alter.time"
+                    )
+                  if (StringUtils.isNotBlank(timeValue) && elapse > timeValue.toLong * 60 * 1000) {
                     // 发送告警
                     alertData.add(job)
                   }
+                  // 获取超时kill配置信息
+                  if (StringUtils.isNotBlank(job.getParams)) {
+                    val connectParamsMap = MapUtils.getMap(
+                      datasourceConfMap,
+                      "connectParams",
+                      new util.HashMap[AnyRef, AnyRef]
+                    )
+                    val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                    if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
+                      // 触发kill任务
+                      HttpsUntils.killJob(job)
+                    }
+                  }
                 }
-              }
-              if (taskMinID == 0L || taskMinID > job.getId) {
-                taskMinID = job.getId
-                scanRuleList.put("jdbcUnfinishedAlertScan", taskMinID)
               }
             case _ =>
               logger.warn(
@@ -116,13 +128,8 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
       MapUtils.getMap(parmMap, "configuration", new util.HashMap[String, String]())
     val runtimeMap =
       MapUtils.getMap(configurationMap, "runtime", new util.HashMap[String, String]())
-    val datasourceName = MapUtils.getString(runtimeMap, Constants.JOB_DATASOURCE_CONF, "")
+    val datasourceName = MapUtils.getString(runtimeMap, "wds.linkis.engine.runtime.datasource", "")
     // 获取datasource信息
-    if (StringUtils.isNotBlank(datasourceName)) {
-      HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
-    } else {
-      new util.HashMap[String, String]()
-    }
+    HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
   }
-
 }

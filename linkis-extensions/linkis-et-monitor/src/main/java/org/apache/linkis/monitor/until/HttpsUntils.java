@@ -19,15 +19,12 @@ package org.apache.linkis.monitor.until;
 
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.datasource.client.response.GetInfoPublishedByDataSourceNameResult;
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.monitor.client.MonitorHTTPClient;
 import org.apache.linkis.monitor.config.MonitorConfig;
-import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.entity.IndexEntity;
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
 import org.apache.linkis.monitor.request.*;
-import org.apache.linkis.monitor.response.AnalyzeJobResultAction;
 import org.apache.linkis.monitor.response.EntranceTaskResult;
 import org.apache.linkis.monitor.response.KeyvalueResult;
 import org.apache.linkis.monitor.response.KillJobResultAction;
@@ -35,8 +32,8 @@ import org.apache.linkis.protocol.utils.ZuulEntranceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.ujes.client.response.EmsListResult;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -49,7 +46,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -60,9 +56,10 @@ public class HttpsUntils {
 
   public static final String localHost = Utils.getLocalHostname();
 
-  public static Map<String, Object> getEmsResourceList() throws IOException {
+  public static Map<String, Object> getEmsResourceList(String url, Map<String, Object> properties)
+      throws IOException {
     MonitorHTTPClient client = ClientSingleton.getInstance();
-    EmsListAction build = EmsListAction.newBuilder().setUser(Constants.ADMIN_USER()).build();
+    EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
     EmsListResult result = client.list(build);
     return result.getResultMap();
   }
@@ -85,10 +82,8 @@ public class HttpsUntils {
     RequestConfig requestConfig = RequestConfig.DEFAULT;
     StringEntity entity =
         new StringEntity(
-            json,
-            ContentType.create(
-                ContentType.APPLICATION_JSON.getMimeType(), StandardCharsets.UTF_8.toString()));
-    entity.setContentEncoding(StandardCharsets.UTF_8.toString());
+            json, ContentType.create(ContentType.APPLICATION_JSON.getMimeType(), "UTF-8"));
+    entity.setContentEncoding("UTF-8");
 
     HttpPost httpPost = new HttpPost(MonitorConfig.ECM_TASK_IMURL.getValue());
     httpPost.setConfig(requestConfig);
@@ -96,8 +91,7 @@ public class HttpsUntils {
 
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse execute = httpClient.execute(httpPost);
-    String responseStr =
-        EntityUtils.toString(execute.getEntity(), StandardCharsets.UTF_8.toString());
+    String responseStr = EntityUtils.toString(execute.getEntity(), "UTF-8");
     Map<String, String> map = BDPJettyServerHelper.gson().fromJson(responseStr, Map.class);
     logger.info("send index response :{}", map);
     Assert.isTrue(!"0".equals(map.get("resultCode")), map.get("resultMsg"));
@@ -108,33 +102,26 @@ public class HttpsUntils {
     KeyvalueAction build =
         KeyvalueAction.newBuilder()
             .setVersion("4")
-            .setEngineType(Constants.JDBC_ENGINE())
+            .setEngineType("jdbc")
             .setCreator("IDE")
             .setConfigKey(conf)
             .setUser(user)
             .build();
     KeyvalueResult result = client.getConfKeyValue(build);
     Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
-    ArrayList arrayList = (ArrayList) data.get("configValues");
-    if (CollectionUtils.isNotEmpty(arrayList)) {
-      String json = BDPJettyServerHelper.gson().toJson(arrayList.get(0));
-      Map map = BDPJettyServerHelper.gson().fromJson(json, Map.class);
-      return MapUtils.getString(map, "configValue", "");
-    } else {
-      return "";
-    }
+    Map configValues = MapUtils.getMap(data, "configValues", new HashMap<>());
+    return MapUtils.getString(configValues, "configValue", "");
   }
 
   public static Map getDatasourceConf(String user, String datasourceName) {
     MonitorHTTPClient client = ClientSingleton.getInstance();
     DataSourceParamsAction dataSourceParamsAction =
         DataSourceParamsAction.builder()
-            .setSystem(Constants.ALERT_SUB_SYSTEM_ID())
+            .setSystem("5435")
             .setDataSourceName(datasourceName)
             .setUser(user)
             .build();
-    GetInfoPublishedByDataSourceNameResult result =
-        client.getInfoByDataSourceInfo(dataSourceParamsAction);
+    GetInfoPublishedByDataSourceNameResult result = client.getInfoByDataSourceInfo(dataSourceParamsAction);
     Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
     Map datasourceInfoMap = MapUtils.getMap(data, "info", new HashMap<>());
     return datasourceInfoMap;
@@ -142,12 +129,9 @@ public class HttpsUntils {
 
   public static void killJob(JobHistory jobHistory) {
     MonitorHTTPClient client = ClientSingleton.getInstance();
-    String[] split = jobHistory.getInstances().split(Constants.SPLIT_DELIMITER());
+    String[] split = jobHistory.getInstances().split(";");
     String execID =
-        ZuulEntranceUtils.generateExecID(
-            jobHistory.getJobReqId(),
-            GovernanceCommonConf.ENTRANCE_SERVICE_NAME().getValue(),
-            split);
+        ZuulEntranceUtils.generateExecID(jobHistory.getJobReqId(), "linkis-cg-entrance", split);
     KillJobAction killJobAction =
         KillJobAction.builder()
             .setIdList(Collections.singletonList(execID))
@@ -157,16 +141,5 @@ public class HttpsUntils {
             .build();
     KillJobResultAction killJobResultAction = client.killJob(killJobAction);
     Map data = MapUtils.getMap(killJobResultAction.getResultMap(), "data", new HashMap<>());
-  }
-
-  public static void analyzeJob(JobHistory jobHistory) {
-    MonitorHTTPClient client = ClientSingleton.getInstance();
-
-    AnalyzeJobAction analyzeJobAction =
-        AnalyzeJobAction.newBuilder()
-            .setTaskID(String.valueOf(jobHistory.getId()))
-            .setUser(Constants.ADMIN_USER())
-            .build();
-    AnalyzeJobResultAction analyzeJobResultAction = client.analyzeJob(analyzeJobAction);
   }
 }

@@ -17,30 +17,13 @@
 
 package org.apache.linkis.monitor.client
 
-import org.apache.linkis.datasource.client.response.{
-  GetConnectParamsByDataSourceNameResult,
-  GetInfoByDataSourceNameResult,
-  GetInfoPublishedByDataSourceNameResult
-}
+import org.apache.linkis.datasource.client.response.{GetConnectParamsByDataSourceNameResult, GetInfoByDataSourceNameResult, GetInfoPublishedByDataSourceNameResult}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.{
-  AnalyzeJobAction,
-  DataSourceParamsAction,
-  EmsListAction,
-  EntranceTaskAction,
-  KeyvalueAction,
-  KillJobAction,
-  MonitorAction
-}
-import org.apache.linkis.monitor.response.{
-  AnalyzeJobResultAction,
-  EntranceTaskResult,
-  KeyvalueResult,
-  KillJobResultAction
-}
+import org.apache.linkis.monitor.request.{DataSourceParamsAction, EmsListAction, EntranceTaskAction, KeyvalueAction, KillJobAction, MonitorAction}
+import org.apache.linkis.monitor.response.{EntranceTaskResult, KeyvalueResult, KillJobResultAction}
 import org.apache.linkis.ujes.client.response.EmsListResult
 
 import java.io.Closeable
@@ -70,10 +53,6 @@ abstract class MonitorHTTPClient extends Closeable {
 
   def killJob(killJobAction: KillJobAction): KillJobResultAction = {
     executeJob(killJobAction).asInstanceOf[KillJobResultAction]
-  }
-
-  def analyzeJob(analyzeJobAction: AnalyzeJobAction): AnalyzeJobResultAction = {
-    executeJob(analyzeJobAction).asInstanceOf[AnalyzeJobResultAction]
   }
 
 }

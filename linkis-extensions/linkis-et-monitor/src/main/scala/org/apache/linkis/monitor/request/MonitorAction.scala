@@ -15,24 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.request
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
+import org.apache.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.httpclient.request.UserAction
 
-class MonitorHTTPClientClientImpl(clientConfig: DWSClientConfig) extends MonitorHTTPClient {
-
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
-
-  override protected[client] def executeJob(ujesJobAction: MonitorAction): Result =
-    ujesJobAction match {
-
-      case action: Action => dwsHttpClient.execute(action)
-
-    }
-
-  override def close(): Unit = dwsHttpClient.close()
-}
+trait MonitorAction extends DWSHttpAction with UserAction

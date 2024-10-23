@@ -36,6 +36,13 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Log retrieval logic:
+ * 1. LogRetriever polls to obtain real-time logs, and if the task is completed, it retrieves persistent logs
+ * 2. Organized by org.apache.inkis.cli.application. interactor.job. com LogRetriever # sendLogFin decides whether to continue polling logs
+ * 3. getNextLogLine is the FromLine returned by the log interface
+ * 4. The return of persistent logs is OpenLogResult2
+ */
 public class LogRetriever {
   private static final Logger logger = LoggerFactory.getLogger(LogRetriever.class);
 
@@ -98,7 +105,8 @@ public class LogRetriever {
     int nextLogIdx;
     boolean hasNext = true;
     int retryCnt = 0;
-    final int MAX_RETRY = 12; // continues fails for 90s, then exit thread
+    // continues fails for 90s, then exit thread
+    final int MAX_RETRY = 12;
     try {
       while (hasNext) {
         curLogIdx = data.getNextLogLineIdx() == null ? 0 : data.getNextLogLineIdx();
@@ -116,7 +124,7 @@ public class LogRetriever {
                 e);
             break;
           }
-          CliUtils.doSleepQuietly(500l + 500l * retryCnt); // maybe server problem. sleep longer
+          CliUtils.doSleepQuietly(500L + 500L * retryCnt);
           continue;
         }
         retryCnt = 0;
@@ -129,7 +137,7 @@ public class LogRetriever {
         if (curLogIdx >= nextLogIdx) {
           String msg =
               MessageFormat.format(
-                  "Retrieving log, hasNext={0}, nextLogIdx={1}", hasNext, nextLogIdx);
+                  "Retrieving log, curLogIdx={}, hasNext={0}, nextLogIdx={1}", curLogIdx, hasNext, nextLogIdx);
           logger.info(msg);
         }
         CliUtils.doSleepQuietly(CliConstants.JOB_QUERY_SLEEP_MILLS);
@@ -144,37 +152,16 @@ public class LogRetriever {
   private void queryJobLogFromLine(LogData data, int fromLine) throws LinkisClientRuntimeException {
 
     LinkisOperResultAdapter jobInfoResult =
-        linkisJobOperator.queryJobInfo(data.getUser(), data.getJobID());
+            linkisJobOperator.queryJobInfo(data.getUser(), data.getJobID());
     data.updateLog(jobInfoResult);
     if (!jobInfoResult.getJobStatus().isJobFinishedState()) {
-      try {
-        data.updateLog(
-            linkisJobOperator.queryRunTimeLogFromLine(
-                data.getUser(), data.getJobID(), data.getExecID(), fromLine));
-      } catch (Exception e) {
-        // job is finished while we start query log(but request is not send).
-        // then probably server cache is gone and we got a exception here.
-        // however we cannot know if this happens based on the exception message
-        logger.warn(
-            "Caught exception when querying runtime-log. Probably server-side has close stream. Will try openLog api if Job is completed.",
-            e);
-        if (jobInfoResult.getJobStatus().isJobFinishedState()) {
-          CliUtils.doSleepQuietly(500l);
-          data.updateLog(
-              linkisJobOperator.queryPersistedLogFromLine(
-                  data.getLogPath(), data.getUser(), data.getJobID(), fromLine));
-        }
-      }
+      data.updateLog(
+              linkisJobOperator.queryRunTimeLogFromLine(
+                      data.getUser(), data.getJobID(), data.getExecID(), fromLine));
     } else {
-      try {
-        data.updateLog(
-            linkisJobOperator.queryPersistedLogFromLine(
-                data.getLogPath(), data.getUser(), data.getJobID(), fromLine));
-      } catch (Exception e) {
-        logger.error("Cannot get persisted-inc-log:", e);
-        // and yes sometimes server may not be able to prepare persisted-log
-        throw e;
-      }
+      data.updateLog(
+              linkisJobOperator.queryPersistedLogFromLine(
+                      data.getLogPath(), data.getUser(), data.getJobID(), fromLine));
     }
   }
 

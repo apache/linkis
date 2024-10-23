@@ -126,13 +126,13 @@ public class InteractiveJob implements Job {
 
     // get log while running
     LogRetriever logRetriever =
-        new LogRetriever(
-            jobInfoResult.getUser(),
-            jobInfoResult.getJobID(),
-            jobInfoResult.getStrongerExecId(),
-            true,
-            oper,
-            new LogPresenter());
+            new LogRetriever(
+                    jobInfoResult.getUser(),
+                    jobInfoResult.getJobID(),
+                    submitResult.getStrongerExecId(),
+                    true,
+                    oper,
+                    new LogPresenter());
     // async because we need to query job status
     logRetriever.retrieveLogAsync();
 
@@ -156,7 +156,7 @@ public class InteractiveJob implements Job {
         new ResultRetriever(
             jobInfoResult.getUser(),
             jobInfoResult.getJobID(),
-            jobInfoResult.getStrongerExecId(),
+            submitResult.getStrongerExecId(),
             oper,
             presenter);
 

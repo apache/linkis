@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.department.dao;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
+import org.apache.linkis.monitor.department.entity.UserDepartmentInfo;
 
-class MonitorHTTPClientClientImpl(clientConfig: DWSClientConfig) extends MonitorHTTPClient {
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+import java.util.List;
 
-  override protected[client] def executeJob(ujesJobAction: MonitorAction): Result =
-    ujesJobAction match {
+@Mapper
+public interface UserDepartmentInfoMapper {
 
-      case action: Action => dwsHttpClient.execute(action)
+  void insertUser(UserDepartmentInfo user);
 
-    }
+  int batchInsertUsers(@Param("userDepartmentInfos") List<UserDepartmentInfo> userDepartmentInfos);
 
-  override def close(): Unit = dwsHttpClient.close()
+  void updateUser(UserDepartmentInfo user);
+
+  UserDepartmentInfo selectUser(@Param("userName") String userName);
+
+  void deleteUser();
+
+  List<UserDepartmentInfo> selectAllUsers();
 }

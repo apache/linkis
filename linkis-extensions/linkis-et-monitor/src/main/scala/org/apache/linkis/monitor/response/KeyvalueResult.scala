@@ -15,12 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.request
+package org.apache.linkis.monitor.response
 
-trait UserAction extends org.apache.linkis.httpclient.request.UserAction {
-  private var user: String = _
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-  override def setUser(user: String): Unit = this.user = user
+import java.util
 
-  override def getUser: String = user
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/configuration/keyvalue")
+class KeyvalueResult extends DWSResult {
+
+  @BeanProperty
+  var configValues: util.ArrayList[util.Map[String, AnyRef]] = _
+
+  @BeanProperty
+  var totalPage: Int = _
+
 }

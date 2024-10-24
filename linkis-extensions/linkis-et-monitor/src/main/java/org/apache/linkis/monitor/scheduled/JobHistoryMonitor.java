@@ -29,6 +29,8 @@ import org.apache.linkis.monitor.jobhistory.index.JobIndexRule;
 import org.apache.linkis.monitor.jobhistory.index.JobIndexSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedAlertSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedRule;
+import org.apache.linkis.monitor.jobhistory.jobtime.StarrocksTimeExceedAlterSender;
+import org.apache.linkis.monitor.jobhistory.jobtime.StarrocksTimeExceedRule;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsAlertSender;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsRule;
 import org.apache.linkis.monitor.jobhistory.runtime.CommonJobRunTimeRule;
@@ -204,15 +206,18 @@ public class JobHistoryMonitor {
       logger.info("[INFO] Loaded 0 alerts jobtime alert-rule from alert properties file.");
     } else {
       logger.info(
-          "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
-          jobTimeAlerts.size());
+              "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
+              jobTimeAlerts.size());
       shouldStart = true;
       JobMonitorUtils.addIntervalToImsAlerts(jobTimeAlerts, realIntervals);
       JobTimeExceedRule jobTimeExceedRule =
-          new JobTimeExceedRule(
-              jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
-      scanner.addScanRule(jobTimeExceedRule);
+              new JobTimeExceedRule(
+                      jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
+            scanner.addScanRule(jobTimeExceedRule);
     }
+    StarrocksTimeExceedRule starrocksTimeExceedRule =
+        new StarrocksTimeExceedRule(new StarrocksTimeExceedAlterSender());
+    scanner.addScanRule(starrocksTimeExceedRule);
     JobMonitorUtils.run(scanner, fetchers, shouldStart);
   }
 }

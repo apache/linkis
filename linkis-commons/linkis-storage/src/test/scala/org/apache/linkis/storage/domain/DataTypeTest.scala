@@ -72,7 +72,7 @@ class DataTypeTest {
   @DisplayName("decimalTest")
   def decimalTest(): Unit = {
     val dateType = DataType.toDataType("decimal(10, 8)")
-    Assertions.assertTrue(dateType.typeName.equals("decimal"))
+    Assertions.assertTrue(dateType.typeName.equals("decimal(10, 8)"))
   }
 
 }

@@ -392,6 +392,8 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: LinkisSQLConnection)
             StringUtils.isNotBlank(tableNamePattern) && tableNamePattern.equalsIgnoreCase(tableName)
         ) {
           resultTables.add(resultTable)
+        } else {
+          resultTables.add(resultTable)
         }
       }
     }

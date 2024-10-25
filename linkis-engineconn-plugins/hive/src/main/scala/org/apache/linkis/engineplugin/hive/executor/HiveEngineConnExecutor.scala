@@ -140,7 +140,7 @@ class HiveEngineConnExecutor(
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    readResByObject = MapUtils.getBooleanValue(
+    readResByObject = MapUtils.getBoolean(
       engineExecutorContext.getProperties,
       JobRequestConstants.LINKIS_HIVE_EC_READ_RESULT_BY_OBJECT,
       false

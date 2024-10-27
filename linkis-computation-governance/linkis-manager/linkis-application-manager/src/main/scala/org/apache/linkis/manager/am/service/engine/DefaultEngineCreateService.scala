@@ -26,7 +26,7 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
-import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
+import org.apache.linkis.manager.am.label.{EngineReuseLabelChooser, LabelChecker}
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -49,7 +49,7 @@ import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
-import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
+import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper

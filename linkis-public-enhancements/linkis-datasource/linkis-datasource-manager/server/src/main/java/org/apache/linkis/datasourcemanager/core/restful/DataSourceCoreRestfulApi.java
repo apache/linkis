@@ -190,6 +190,8 @@ public class DataSourceCoreRestfulApi {
                     AESUtils.encrypt(
                         connectParams.get("password").toString(),
                         AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            // 标记密码已经加密
+            dataSource.getConnectParams().put("isEncrypt", "1");
           }
           insertDataSource(dataSource);
           return Message.ok().data("insertId", dataSource.getId());
@@ -270,6 +272,19 @@ public class DataSourceCoreRestfulApi {
           dataSource.setKeyDefinitions(keyDefinitionList);
 
           Map<String, Object> connectParams = dataSource.getConnectParams();
+
+          if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+            dataSource
+                .getConnectParams()
+                .replace(
+                    "password",
+                    AESUtils.encrypt(
+                        connectParams.get("password").toString(),
+                        AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            // 标记密码已经加密
+            dataSource.getConnectParams().put("isEncrypt", "1");
+          }
+
           // add default value filed
           keyDefinitionList.forEach(
               keyDefinition -> {

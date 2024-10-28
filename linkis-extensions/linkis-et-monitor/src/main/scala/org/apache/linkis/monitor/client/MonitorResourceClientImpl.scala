@@ -21,6 +21,7 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.httpclient.request.Action
 import org.apache.linkis.httpclient.response.Result
+import org.apache.linkis.monitor.request.MonitorAction
 
 class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
 

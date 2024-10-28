@@ -139,6 +139,9 @@ object ComputationExecutorConf {
   val SPECIAL_UDF_CHECK_ENABLED =
     CommonVars("linkis.ec.spacial.udf.check.enabled", false)
 
+  val SPECIAL_UDF_CHECK_ENABLED =
+    CommonVars("linkis.ec.spacial.udf.check.by.regex.enabled", false)
+
   val SPECIAL_UDF_NAMES =
     CommonVars("linkis.ec.spacial.udf.check.names", "")
 

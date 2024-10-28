@@ -39,4 +39,6 @@ public class EngineConnExecutorErrorCode {
   public static final int INIT_EXECUTOR_FAILED = 40106;
 
   public static final int INVALID_APPLICATION_ID = 40107;
+
+  public static final int ILLEGAL_USE_UDF_FUNCTION = 40108;
 }

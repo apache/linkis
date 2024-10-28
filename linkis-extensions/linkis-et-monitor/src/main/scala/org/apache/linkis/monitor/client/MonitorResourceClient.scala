@@ -21,7 +21,7 @@ import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.EmsListAction
+import org.apache.linkis.monitor.request.{EmsListAction, MonitorAction}
 import org.apache.linkis.ujes.client.response.EmsListResult
 
 import java.io.Closeable

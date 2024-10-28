@@ -206,14 +206,14 @@ public class JobHistoryMonitor {
       logger.info("[INFO] Loaded 0 alerts jobtime alert-rule from alert properties file.");
     } else {
       logger.info(
-              "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
-              jobTimeAlerts.size());
+          "[INFO] Loaded {} alerts jobtime alert-rules from alert properties file.",
+          jobTimeAlerts.size());
       shouldStart = true;
       JobMonitorUtils.addIntervalToImsAlerts(jobTimeAlerts, realIntervals);
       JobTimeExceedRule jobTimeExceedRule =
-              new JobTimeExceedRule(
-                      jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
-            scanner.addScanRule(jobTimeExceedRule);
+          new JobTimeExceedRule(
+              jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
+      scanner.addScanRule(jobTimeExceedRule);
     }
     StarrocksTimeExceedRule starrocksTimeExceedRule =
         new StarrocksTimeExceedRule(new StarrocksTimeExceedAlterSender());

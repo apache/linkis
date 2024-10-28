@@ -132,4 +132,5 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     // 获取datasource信息
     HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
   }
+
 }

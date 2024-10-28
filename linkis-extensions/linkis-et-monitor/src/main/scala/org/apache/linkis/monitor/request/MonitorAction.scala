@@ -18,6 +18,6 @@
 package org.apache.linkis.monitor.request
 
 import org.apache.linkis.httpclient.dws.request.DWSHttpAction
-import org.apache.linkis.httpclient.request.UserAction
+import org.apache.linkis.ujes.client.request.UserAction
 
 trait MonitorAction extends DWSHttpAction with UserAction

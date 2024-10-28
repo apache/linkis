@@ -1098,7 +1098,7 @@ public class UDFRestfulApi {
       pythonModuleInfo.setEngineType(engineType);
       pythonModuleInfo.setCreateUser(username);
       pythonModuleInfo.setIsLoad(isLoad);
-      pythonModuleInfo.setIsExpire(0);
+      pythonModuleInfo.setIsExpire(isExpire);
       List<PythonModuleInfo> pythonList = pythonModuleInfoService.getByConditions(pythonModuleInfo);
       PageInfo<PythonModuleInfo> pageInfo = new PageInfo<>(pythonList);
       // 封装返回结果
@@ -1203,13 +1203,12 @@ public class UDFRestfulApi {
     if (pythonModuleInfo.getIsExpire() == null) {
       return Message.error("是否过期：不能为空");
     }
-    if (org.apache.commons.lang3.StringUtils.isNotBlank(pythonModuleInfo.getPythonModule())) {
+    if (org.apache.commons.lang3.StringUtils.isBlank(pythonModuleInfo.getPythonModule())) {
       // 使用正则表达式进行校验
       Matcher matcher =
-          Pattern.compile("^[a-zA-Z][a-zA-Z0-9,_.-]{0,200}$")
-              .matcher(pythonModuleInfo.getPythonModule());
+          Pattern.compile("^[a-zA-Z0-9,]+$").matcher(pythonModuleInfo.getPythonModule());
       if (!matcher.matches()) {
-        return Message.error("模块名称：只允许英文、数字和英文逗号,点,下划线,横线组成，且长度不超过200个字符");
+        return Message.error("模块名称：只允许英文、数字和英文逗号");
       }
     }
     String path = pythonModuleInfo.getPath();
@@ -1293,14 +1292,14 @@ public class UDFRestfulApi {
     if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
       return Message.error("参数fileName不能为空");
     }
-    String fileNameWithoutExtension = fileName.split("\\.")[0];
-    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_-]{0,49}$")) {
-      return Message.error("只支持数字字母下划线，中划线，且以字母开头，长度最大50");
+    String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+      return Message.error("只支持数字字母下划线，且以字母开头，长度最大50");
     }
-    String fileNameWithoutVersion = fileNameWithoutExtension.split("-")[0];
+
     // 封装PythonModuleInfo对象并查询数据库
     PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
-    pythonModuleInfo.setName(fileNameWithoutVersion);
+    pythonModuleInfo.setName(fileNameWithoutExtension);
     pythonModuleInfo.setCreateUser(userName);
     PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
 

@@ -22,12 +22,12 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.common.utils.ResultSetUtils;
-import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
 import org.apache.linkis.filesystem.entity.LogLevel;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 import org.apache.linkis.filesystem.service.FsService;
+import org.apache.linkis.filesystem.util.FilesystemUtils;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.utils.UserGroupUtils;
 import org.apache.linkis.filesystem.validator.PathValidator$;
@@ -62,6 +62,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
@@ -98,7 +99,7 @@ public class FsRestfulApi {
     // 配置文件默认关闭检查，withadmin默认true，特殊情况传false 开启权限检查（
     // The configuration file defaults to disable checking, with admin defaulting to true, and in
     // special cases, false is passed to enable permission checking）
-    boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
+    boolean ownerCheck = FILESYSTEM_PATH_CHECK_OWNER.getValue();
     if (!ownerCheck && withAdmin) {
       LOGGER.debug("not check filesystem owner.");
       return true;
@@ -482,7 +483,7 @@ public class FsRestfulApi {
       byte[] buffer = new byte[1024];
       int bytesRead = 0;
       response.setCharacterEncoding(charset);
-      java.nio.file.Path source = Paths.get(fsPath.getPath());
+      Path source = Paths.get(fsPath.getPath());
       response.addHeader("Content-Type", Files.probeContentType(source));
       response.addHeader("Content-Disposition", "attachment;filename=" + new File(path).getName());
       outputStream = response.getOutputStream();
@@ -631,7 +632,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
 
-    if (columnPage < 1 || columnPageSize < 1 || columnPageSize > 500) {
+    if (columnPage < 0 || columnPageSize < 0 || columnPageSize > 500) {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
@@ -665,7 +666,7 @@ public class FsRestfulApi {
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
 
-        if (StringUtils.isNotBlank(enableLimit)) {
+        if (StringUtils.isNotBlank(enableLimit) && "true".equals(enableLimit)) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
           // 组装列索引
@@ -1447,19 +1448,26 @@ public class FsRestfulApi {
     }
     // 获取文件名称
     String fileNameSuffix = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
       return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
     }
 
     // 校验文件类型
     if (!file.getOriginalFilename().endsWith(".py")
-        && !file.getOriginalFilename().endsWith(".zip")) {
-      return Message.error("仅支持.py和.zip格式模块文件");
+        && !file.getOriginalFilename().endsWith(".zip")
+        && !file.getOriginalFilename().endsWith(".tar.gz")) {
+      return Message.error("仅支持.py和.zip和.tar.gz格式模块文件");
     }
 
     // 校验文件大小
     if (file.getSize() > 50 * 1024 * 1024) {
       return Message.error("限制最大单个文件50M");
+    }
+
+    // tar.gz包依赖检查
+    String errorMsg = FilesystemUtils.checkModuleFile(file, username);
+    if (StringUtils.isNotBlank(errorMsg)) {
+      return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);
     }
 
     // 定义目录路径
@@ -1481,18 +1489,39 @@ public class FsRestfulApi {
 
     // 构建新的文件路径
     String newPath = fsPath.getPath() + "/" + file.getOriginalFilename();
-    FsPath fsPathNew = new FsPath(newPath);
-
-    // 上传文件
-    try (InputStream is = file.getInputStream();
-        OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
-      IOUtils.copy(is, outputStream);
-    } catch (IOException e) {
-      return Message.error("文件上传失败：" + e.getMessage());
+    // 上传文件,tar包需要单独解压处理
+    if (!file.getOriginalFilename().endsWith(".tar.gz")) {
+      FsPath fsPathNew = new FsPath(newPath);
+      try (InputStream is = file.getInputStream();
+          OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
+        IOUtils.copy(is, outputStream);
+      } catch (IOException e) {
+        return Message.error("文件上传失败：" + e.getMessage());
+      }
+    } else {
+      InputStream is = null;
+      OutputStream outputStream = null;
+      try {
+        String packageName = FilesystemUtils.findPackageName(file.getInputStream());
+        if (StringUtils.isBlank(packageName)) {
+          return Message.error("文件上传失败：PKG-INFO 文件不存在");
+        }
+        is = FilesystemUtils.getZipInputStreamByTarInputStream(file, packageName);
+        newPath = fsPath.getPath() + FsPath.SEPARATOR + packageName + FsPath.CUR_DIR + "zip";
+        FsPath fsPathNew = new FsPath(newPath);
+        outputStream = fileSystem.write(fsPathNew, true);
+        IOUtils.copy(is, outputStream);
+      } catch (IOException e) {
+        return Message.error("文件上传失败：" + e.getMessage());
+      } finally {
+        outputStream.close();
+        is.close();
+      }
     }
     // 返回成功消息并包含文件地址
     return Message.ok().data("filePath", newPath);
   }
+
 
   /**
    * *

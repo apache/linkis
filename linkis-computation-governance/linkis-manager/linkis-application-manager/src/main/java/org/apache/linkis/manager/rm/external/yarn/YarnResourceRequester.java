@@ -234,7 +234,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
         queue = getQueue(childQueues, realQueueName);
       }
-      if (queue != null || !queue.isPresent()) {
+      if (queue == null || !queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(

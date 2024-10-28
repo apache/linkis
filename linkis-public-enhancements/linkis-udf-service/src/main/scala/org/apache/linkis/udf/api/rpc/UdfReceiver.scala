@@ -24,6 +24,10 @@ import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.udf.entity.{PythonModuleInfo, PythonModuleInfoVO}
 import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
 
+import org.apache.commons.beanutils.BeanUtils
+import org.apache.hadoop.hdfs.protocol.RollingUpgradeInfo.Bean
+import org.apache.htrace.fasterxml.jackson.databind.util.BeanUtil
+
 import java.{lang, util}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -93,6 +97,17 @@ class UdfReceiver extends Receiver with Logging {
           voList.add(vo)
         })
         new ResponsePythonModuleProtocol(voList)
+      case RequestPythonInfo(pythonModule: String, username: String) =>
+        var pythonModuleInfo = new PythonModuleInfo
+        pythonModuleInfo.setCreateUser(username)
+        pythonModuleInfo.setName(pythonModule)
+        pythonModuleInfo.setIsLoad(1)
+        pythonModuleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo)
+        var pythonModuleInfoVO = new PythonModuleInfoVO
+        if (null != pythonModuleInfo) {
+          BeanUtils.copyProperties(pythonModuleInfoVO, pythonModuleInfo)
+        }
+        new ResponsePythonInfo(pythonModuleInfoVO)
       case _ =>
     }
   }

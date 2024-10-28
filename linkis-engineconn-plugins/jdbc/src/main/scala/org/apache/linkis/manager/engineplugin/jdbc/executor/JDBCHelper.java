@@ -146,7 +146,7 @@ public class JDBCHelper {
                 retVal = BinaryType.typeName();
                 break;
             case Types.DECIMAL:
-                retVal = DecimalType.typeName();
+                retVal = DecimalType.toDataType(String.valueOf(type)).toString();
                 break;
             case Types.ARRAY:
                 retVal = ArrayType.typeName();

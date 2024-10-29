@@ -47,7 +47,7 @@
 
     <sql id="jobhistory_query">
         job.`id`,job.`job_req_id`,job.`submit_user`,job.`execute_user`,job.`labels`,job.`params`,job.`status`,job.`error_code`,job.`created_time`,
-        job.`updated_time`,job.`instances`,job.`observe_info`,org.`org_id`,org.`org_name`
+        job.`updated_time`,job.`instances`,job.`engine_type`,job.`observe_info`,org.`org_id`,org.`org_name`
     </sql>
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"

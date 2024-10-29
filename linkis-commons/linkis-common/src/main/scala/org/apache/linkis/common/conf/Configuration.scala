@@ -65,6 +65,9 @@ object Configuration extends Logging {
 
   val JOB_HISTORY_DEPARTMENT_ADMIN = CommonVars("wds.linkis.jobhistory.department.admin", "hadoop")
 
+  val JOB_RESULT_DEPARTMENT_LIMIT =
+    CommonVars("linkis.jobhistory.result.limit.department", "")
+
   // Only the specified token has permission to call some api
   val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
 
@@ -155,6 +158,11 @@ object Configuration extends Logging {
         Configuration.GLOBAL_CONF_CHN_EN_NAME =>
       GLOBAL_CONF_SYMBOL
     case _ => creator
+  }
+
+  def canResultSetByDepartment(departmentId: String): Boolean = {
+    val jobResultLimit = JOB_RESULT_DEPARTMENT_LIMIT.getHotValue.split(",")
+    !jobResultLimit.exists(departmentId.equalsIgnoreCase)
   }
 
 }

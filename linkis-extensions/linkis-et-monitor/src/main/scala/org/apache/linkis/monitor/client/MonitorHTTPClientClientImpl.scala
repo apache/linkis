@@ -21,14 +21,14 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.httpclient.request.Action
 import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorResourceAction
+import org.apache.linkis.monitor.request.MonitorAction
 
 class MonitorHTTPClientClientImpl(clientConfig: DWSClientConfig) extends MonitorHTTPClient {
 
   private val dwsHttpClient =
     new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
 
-  override protected[client] def executeJob(ujesJobAction: MonitorResourceAction): Result =
+  override protected[client] def executeJob(ujesJobAction: MonitorAction): Result =
     ujesJobAction match {
 
       case action: Action => dwsHttpClient.execute(action)

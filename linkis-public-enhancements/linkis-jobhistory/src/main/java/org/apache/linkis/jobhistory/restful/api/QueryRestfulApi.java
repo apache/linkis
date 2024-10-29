@@ -85,10 +85,12 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
+    String departmentId = JobhistoryUtils.getDepartmentByuser(username);
     return Message.ok()
         .data("admin", Configuration.isAdmin(username))
         .data("historyAdmin", Configuration.isJobHistoryAdmin(username))
         .data("deptAdmin", Configuration.isDepartmentAdmin(username))
+        .data("canResultSet", Configuration.canResultSetByDepartment(departmentId))
         .data("errorMsgTip", Configuration.ERROR_MSG_TIP().getValue());
   }
 

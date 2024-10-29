@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -1089,7 +1091,7 @@ public class UDFRestfulApi {
       pythonModuleInfo.setEngineType(engineType);
       pythonModuleInfo.setCreateUser(username);
       pythonModuleInfo.setIsLoad(isLoad);
-      pythonModuleInfo.setIsExpire(isExpire);
+      pythonModuleInfo.setIsExpire(0);
       List<PythonModuleInfo> pythonList = pythonModuleInfoService.getByConditions(pythonModuleInfo);
       PageInfo<PythonModuleInfo> pageInfo = new PageInfo<>(pythonList);
       // 封装返回结果
@@ -1194,6 +1196,15 @@ public class UDFRestfulApi {
     if (pythonModuleInfo.getIsExpire() == null) {
       return Message.error("是否过期：不能为空");
     }
+    if (org.apache.commons.lang3.StringUtils.isNotBlank(pythonModuleInfo.getPythonModule())) {
+      // 使用正则表达式进行校验
+      Matcher matcher =
+          Pattern.compile("^[a-zA-Z][a-zA-Z0-9,_.-]{0,49}$")
+              .matcher(pythonModuleInfo.getPythonModule());
+      if (!matcher.matches()) {
+        return Message.error("模块名称：只允许英文、数字和英文逗号");
+      }
+    }
     String path = pythonModuleInfo.getPath();
     String fileName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
     if (!pythonModuleInfo.getName().equals(fileName)) {
@@ -1276,7 +1287,7 @@ public class UDFRestfulApi {
       return Message.error("参数fileName不能为空");
     }
     String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
       return Message.error("只支持数字字母下划线，且以字母开头，长度最大50");
     }
 

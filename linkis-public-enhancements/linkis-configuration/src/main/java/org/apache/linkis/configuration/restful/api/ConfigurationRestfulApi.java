@@ -17,6 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -308,6 +309,23 @@ public class ConfigurationRestfulApi {
             && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
           sparkConf = configKeyValue.getConfigValue().trim();
           configKeyValue.setConfigValue(sparkConf);
+        }
+        if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+            && (configKeyValue.getKey().equals("linkis.nebula.password")
+                || configKeyValue.getKey().equals("wds.linkis.jdbc.password"))
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          List<ConfigKeyValue> configByLabelIds =
+              configurationService.getConfigByLabelId(configKeyValue.getConfigLabelId(), null);
+          for (ConfigKeyValue configByLabelId : configByLabelIds) {
+            if ((configByLabelId.getKey().equals("linkis.nebula.password")
+                    || configByLabelId.getKey().equals("wds.linkis.jdbc.password"))
+                && !configByLabelId.getConfigValue().equals(configKeyValue.getConfigValue())) {
+              configKeyValue.setConfigValue(
+                  AESUtils.encrypt(
+                      configKeyValue.getConfigValue(),
+                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            }
+          }
         }
       }
     }

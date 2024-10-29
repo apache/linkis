@@ -81,9 +81,13 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                       job.getSubmitUser,
                       "linkis.jdbc.task.timeout.alter.time"
                     )
-                  if (StringUtils.isNotBlank(timeValue) && elapse > timeValue.toLong * 60 * 1000) {
-                    // 发送告警
-                    alertData.add(job)
+                  if (StringUtils.isNotBlank(timeValue)) {
+                    val timeoutInSeconds = timeValue.toDouble
+                    val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                    if (elapse > timeoutInMillis) {
+                      // 发送告警
+                      alertData.add(job)
+                    }
                   }
                   // 获取超时kill配置信息
                   if (StringUtils.isNotBlank(job.getParams)) {
@@ -94,8 +98,14 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     )
                     val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
                     if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
-                      // 触发kill任务
-                      HttpsUntils.killJob(job)
+                      if (StringUtils.isNotBlank(killTime)) {
+                        val timeoutInSeconds = timeValue.toDouble
+                        val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                        if (elapse > timeoutInMillis) {
+                          // 触发kill任务
+                          HttpsUntils.killJob(job)
+                        }
+                      }
                     }
                   }
                 }
@@ -132,4 +142,5 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     // 获取datasource信息
     HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
   }
+
 }

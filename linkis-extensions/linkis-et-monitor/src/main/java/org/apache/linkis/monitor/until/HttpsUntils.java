@@ -54,19 +54,89 @@ import org.slf4j.LoggerFactory;
 public class HttpsUntils {
   private static final Logger logger = LoggerFactory.getLogger(HttpsUntils.class);
 
+  public static DWSClientConfig dwsClientConfig = createClientConfig(null, null);
+  //        IOUtils.closeQuietly(client);
+  public static MonitorHTTPClient client = new MonitorHTTPClientClientImpl(dwsClientConfig);
   public static final String localHost = Utils.getLocalHostname();
 
-  public static Map<String, Object> getEmsResourceList(String url, Map<String, Object> properties)
+  public static Map<String, Object> sendHttp(String url, Map<String, Object> properties)
       throws IOException {
-    MonitorHTTPClient client = ClientSingleton.getInstance();
+    if (null == dwsClientConfig) {
+      dwsClientConfig = createClientConfig(url, properties);
+    }
+    if (null == client) {
+      client = new MonitorHTTPClientClientImpl(dwsClientConfig);
+    }
     EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
     EmsListResult result = client.list(build);
     return result.getResultMap();
   }
 
+  public static DWSClientConfig createClientConfig(String url, Map<String, Object> properties) {
+    String realUrl = "";
+    if (StringUtils.isBlank(url)) {
+      realUrl = Configuration.getGateWayURL();
+    } else {
+      realUrl = url;
+    }
+    Map<String, Object> parms = new HashMap<>();
+    if (MapUtils.isNotEmpty(properties)) {
+      parms = properties;
+    }
+    int maxConnection =
+        (int)
+            parms.getOrDefault(
+                BmlConfiguration.CONNECTION_MAX_SIZE_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_MAX_SIZE().getValue());
+    int connectTimeout =
+        (int)
+            parms.getOrDefault(
+                BmlConfiguration.CONNECTION_TIMEOUT_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_TIMEOUT().getValue());
+    int readTimeout =
+        (int)
+            parms.getOrDefault(
+                BmlConfiguration.CONNECTION_READ_TIMEOUT_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_READ_TIMEOUT().getValue());
+    String tokenKey =
+        (String)
+            parms.getOrDefault(
+                BmlConfiguration.AUTH_TOKEN_KEY_SHORT_NAME(),
+                BmlConfiguration.AUTH_TOKEN_KEY().getValue());
+    String tokenValue =
+        (String)
+            parms.getOrDefault(
+                BmlConfiguration.AUTH_TOKEN_VALUE_SHORT_NAME(),
+                BmlConfiguration.AUTH_TOKEN_VALUE().getValue());
+
+    DWSClientConfig clientConfig =
+        ((DWSClientConfigBuilder)
+                (DWSClientConfigBuilder.newBuilder()
+                    .addServerUrl(realUrl)
+                    .connectionTimeout(connectTimeout)
+                    .discoveryEnabled(false)
+                    .discoveryFrequency(1, TimeUnit.MINUTES)
+                    .loadbalancerEnabled(false)
+                    .maxConnectionSize(maxConnection)
+                    .retryEnabled(false)
+                    .readTimeout(readTimeout)
+                    .setAuthenticationStrategy(new TokenAuthenticationStrategy())
+                    .setAuthTokenKey(tokenKey)
+                    .setAuthTokenValue(tokenValue)))
+            .setDWSVersion("v1")
+            .build();
+
+    return clientConfig;
+  }
+
   public static Map<String, Object> getEntranceTask(String url, String user, String Instance)
       throws IOException {
-    MonitorHTTPClient client = ClientSingleton.getInstance();
+    if (null == dwsClientConfig) {
+      dwsClientConfig = createClientConfig(null, null);
+    }
+    if (null == client) {
+      client = new MonitorHTTPClientClientImpl(dwsClientConfig);
+    }
     EntranceTaskAction build =
         EntranceTaskAction.newBuilder().setUser(user).setInstance(Instance).build();
     EntranceTaskResult result = client.entranList(build);

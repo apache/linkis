@@ -79,6 +79,7 @@ object Constants {
   val BML_CLEAR_IM = "bml.clear.monitor.im."
   val THREAD_TIME_OUT_IM = "thread.monitor.timeout.im."
   val JOB_RESULT_IM = "jobhistory.result.monitor.im."
+  val DEPARTMENT_USER_IM = "department.user.sync.im."
 
   val BML_VERSION_MAX_NUM: CommonVars[Int] =
     CommonVars[Int]("linkis.monitor.bml.cleaner.version.max.num", 50)

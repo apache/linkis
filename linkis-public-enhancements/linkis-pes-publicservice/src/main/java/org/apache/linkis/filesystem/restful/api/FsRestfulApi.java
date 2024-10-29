@@ -1390,12 +1390,12 @@ public class FsRestfulApi {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     } else {
       // Prohibit users from modifying their own unreadable content
-      if (checkFilePermissions(filePermission)) {
+      if (FilesystemUtils.checkFilePermissions(filePermission)) {
         FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
         Stack<FsPath> dirsToChmod = new Stack<>();
         dirsToChmod.push(new FsPath(filePath));
         if (isRecursion) {
-          traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
+          FilesystemUtils.traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
         }
         while (!dirsToChmod.empty()) {
           fileSystem.setPermission(dirsToChmod.pop(), filePermission);

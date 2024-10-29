@@ -15,8 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.jobhistory.jobtime
+package org.apache.linkis.monitor.department.dao;
 
-import org.apache.linkis.monitor.core.ob.SingleObserverEvent
+import org.apache.linkis.monitor.department.entity.UserDepartmentInfo;
 
-class StarrocksTimeExceedHitEvent extends SingleObserverEvent
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+@Mapper
+public interface UserDepartmentInfoMapper {
+
+  void insertUser(UserDepartmentInfo user);
+
+  int batchInsertUsers(@Param("userDepartmentInfos") List<UserDepartmentInfo> userDepartmentInfos);
+
+  void updateUser(UserDepartmentInfo user);
+
+  UserDepartmentInfo selectUser(@Param("userName") String userName);
+
+  void deleteUser();
+
+  List<UserDepartmentInfo> selectAllUsers();
+}

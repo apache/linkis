@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import java.io.Closeable;
@@ -73,7 +74,9 @@ public class MongoDbConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, Exception {
-    connectMessage = new ConnectMessage(host, port, username, password, database, extraParams);
+    connectMessage =
+        new ConnectMessage(
+            host, port, username, AESUtils.isDecryptByConf(password), database, extraParams);
     conn = getDBConnection(connectMessage, database);
   }
 

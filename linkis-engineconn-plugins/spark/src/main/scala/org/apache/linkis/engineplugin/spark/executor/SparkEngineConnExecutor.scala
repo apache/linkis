@@ -18,8 +18,9 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -41,6 +42,10 @@ import org.apache.linkis.engineplugin.spark.extension.{
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.common.exception.engineconn.{
+  EngineConnExecutorErrorCode,
+  EngineConnExecutorErrorException
+}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
@@ -48,6 +53,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 
@@ -121,6 +127,26 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       engineExecutorContext.appendStdout(
         LogUtils.generateInfo(EngineConnConstant.YARN_LOG_URL + yarnUrl + s"${sc.applicationId}")
       )
+    }
+
+    // 正则匹配校验
+    if (ComputationExecutorConf.SPECIAL_UDF_CHECK_BY_REGEX_ENABLED.getValue) {
+      val codeType: String = LabelUtil.getCodeType(engineExecutorContext.getLabels.toList.asJava)
+      val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+      if (!CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL.equals(languageType)) {
+        val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
+        if (StringUtils.isNotBlank(udfNames)) {
+          val funcNames: Array[String] = udfNames.split(",")
+          funcNames.foreach(funcName => {
+            if (code.contains(funcName)) {
+              throw new EngineConnExecutorErrorException(
+                EngineConnExecutorErrorCode.ILLEGAL_USE_UDF_FUNCTION,
+                "非法使用UDF函数，特殊加解密UDF函数只能在sql脚本使用"
+              )
+            }
+          })
+        }
+      }
     }
 
     // Pre-execution hook

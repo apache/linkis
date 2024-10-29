@@ -15,30 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.exception.engineconn;
+package org.apache.linkis.engineplugin.spark.extension
 
-/**
- * ErrorCode of Engine start with 40000
- *
- * <p>
- */
-public class EngineConnExecutorErrorCode {
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import org.apache.spark.sql.catalyst.rules.Rule
 
-  public static final int INVALID_ENGINE_TYPE = 40100;
+case class SparkUDFCheckRule(sparkSession: SparkSession) extends Rule[LogicalPlan] {
 
-  public static final int INVALID_METHOD = 40101;
+  override def apply(plan: LogicalPlan): LogicalPlan = {
+    plan
+  }
 
-  public static final int INVALID_PARAMS = 40102;
-
-  public static final int INVALID_LOCK = 40103;
-
-  public static final int INVALID_TASK = 40104;
-
-  public static final int SEND_TO_ENTRANCE_ERROR = 40105;
-
-  public static final int INIT_EXECUTOR_FAILED = 40106;
-
-  public static final int INVALID_APPLICATION_ID = 40107;
-
-  public static final int ILLEGAL_USE_UDF_FUNCTION = 40108;
 }

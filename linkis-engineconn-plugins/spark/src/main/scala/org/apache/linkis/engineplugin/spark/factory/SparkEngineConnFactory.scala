@@ -28,24 +28,19 @@ import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
 import org.apache.linkis.engineplugin.spark.context.{EnvironmentContext, SparkEngineConnContext}
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
-import org.apache.linkis.engineplugin.spark.exception.{
-  SparkCreateFileException,
-  SparkSessionNullException
-}
+import org.apache.linkis.engineplugin.spark.exception.{SparkCreateFileException, SparkSessionNullException}
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.server.JMap
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineplugin.spark.extension.SparkUDFCheckRule
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{SparkSession, SQLContext}
+import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
 
 import java.io.File
@@ -213,6 +208,13 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     conf.set("spark.scheduler.mode", "FAIR")
 
     val builder = SparkSession.builder.config(conf)
+
+    if (ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue) {
+      builder.withExtensions(extension => {
+        extension.injectOptimizerRule(SparkUDFCheckRule)
+      })
+    }
+
     builder.enableHiveSupport().getOrCreate()
   }
 

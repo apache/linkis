@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.service
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.LogListener
 import org.apache.linkis.engineconn.acessible.executor.listener.event._
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
@@ -26,25 +26,12 @@ import org.apache.linkis.engineconn.acessible.executor.service.LockService
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.async.AsyncConcurrentComputationExecutor
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
-import org.apache.linkis.engineconn.computation.executor.entity.{
-  CommonEngineConnTask,
-  EngineConnTask
-}
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
-  ConcurrentComputationExecutor
-}
+import org.apache.linkis.engineconn.computation.executor.entity.{CommonEngineConnTask, EngineConnTask}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, ConcurrentComputationExecutor}
 import org.apache.linkis.engineconn.computation.executor.hook.ExecutorLabelsRestHook
-import org.apache.linkis.engineconn.computation.executor.listener.{
-  ResultSetListener,
-  TaskProgressListener,
-  TaskStatusListener
-}
+import org.apache.linkis.engineconn.computation.executor.listener.{ResultSetListener, TaskProgressListener, TaskStatusListener}
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
-import org.apache.linkis.engineconn.computation.executor.utlis.{
-  ComputationEngineConstant,
-  ComputationEngineUtils
-}
+import org.apache.linkis.engineconn.computation.executor.utlis.{ComputationEngineConstant, ComputationEngineUtils}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
@@ -53,18 +40,12 @@ import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.apache.linkis.governance.common.exception.engineconn.{
-  EngineConnExecutorErrorCode,
-  EngineConnExecutorErrorException
-}
+import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.hadoop.common.utils.KerberosUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.resource.{
-  ResponseTaskRunningInfo,
-  ResponseTaskYarnResource
-}
+import org.apache.linkis.manager.common.protocol.resource.{ResponseTaskRunningInfo, ResponseTaskYarnResource}
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.constants.TaskConstant
@@ -72,30 +53,21 @@ import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  IncompleteExecuteResponse,
-  SubmitResponse
-}
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SubmitResponse}
 import org.apache.linkis.server.BDPJettyServerHelper
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
-
 import java.util
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
-
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContextExecutorService
-
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 @Component
 class TaskExecutionServiceImpl
@@ -223,6 +195,21 @@ class TaskExecutionServiceImpl
         System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
         logger.info(s"Received job with id ${jobId}.")
       }
+
+      // only sql can use udf check
+      val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
+      if (
+        ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue && StringUtils.isNotBlank(
+          udfNames
+        )
+      ) {
+        System.getProperties.put(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, udfNames)
+        val codeType: String = LabelUtil.getCodeType(requestTask.getLabels)
+        val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+        System.getProperties.put(ComputationExecutorConf.CODE_TYPE, languageType)
+        logger.info(s"add spacial udf check with job id ${jobId}.")
+      }
+
       val task = new CommonEngineConnTask(taskId, retryAble)
       task.setCode(requestTask.getCode)
       task.setProperties(requestTask.getProperties)

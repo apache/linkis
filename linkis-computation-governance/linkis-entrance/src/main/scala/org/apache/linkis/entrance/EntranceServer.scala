@@ -189,6 +189,10 @@ abstract class EntranceServer extends Logging {
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(jobRequest)
       LoggerUtils.removeJobIdMDC()
       job
     } { t =>

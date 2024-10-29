@@ -79,6 +79,18 @@
       <groupId>de.codecentric</groupId>
       <artifactId>spring-boot-admin-starter-server</artifactId>
       <version>2.7.16</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.projectreactor.netty</groupId>
+          <artifactId>reactor-netty-http</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-http</artifactId>
+      <version>1.1.13</version>
     </dependency>
 
     <dependency>

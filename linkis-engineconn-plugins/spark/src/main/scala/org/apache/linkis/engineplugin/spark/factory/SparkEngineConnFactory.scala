@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.factory
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineplugin.spark.client.context.{ExecutionContext, SparkConfig}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
@@ -28,19 +29,25 @@ import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
 import org.apache.linkis.engineplugin.spark.context.{EnvironmentContext, SparkEngineConnContext}
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
-import org.apache.linkis.engineplugin.spark.exception.{SparkCreateFileException, SparkSessionNullException}
+import org.apache.linkis.engineplugin.spark.exception.{
+  SparkCreateFileException,
+  SparkSessionNullException
+}
+import org.apache.linkis.engineplugin.spark.extension.SparkUDFCheckRule
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
+import org.apache.linkis.manager.engineplugin.common.creation.{
+  ExecutorFactory,
+  MultiExecutorEngineConnFactory
+}
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.server.JMap
+
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
-import org.apache.linkis.engineplugin.spark.extension.SparkUDFCheckRule
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{SQLContext, SparkSession}
+import org.apache.spark.sql.{SparkSession, SQLContext}
 import org.apache.spark.util.SparkUtils
 
 import java.io.File

@@ -37,11 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Log retrieval logic:
- * 1. LogRetriever polls to obtain real-time logs, and if the task is completed, it retrieves persistent logs
- * 2. Organized by org.apache.inkis.cli.application. interactor.job. com LogRetriever # sendLogFin decides whether to continue polling logs
- * 3. getNextLogLine is the FromLine returned by the log interface
- * 4. The return of persistent logs is OpenLogResult2
+ * Log retrieval logic: 1. LogRetriever polls to obtain real-time logs, and if the task is
+ * completed, it retrieves persistent logs 2. Organized by org.apache.inkis.cli.application.
+ * interactor.job. com LogRetriever # sendLogFin decides whether to continue polling logs 3.
+ * getNextLogLine is the FromLine returned by the log interface 4. The return of persistent logs is
+ * OpenLogResult2
  */
 public class LogRetriever {
   private static final Logger logger = LoggerFactory.getLogger(LogRetriever.class);
@@ -137,7 +137,8 @@ public class LogRetriever {
         if (curLogIdx >= nextLogIdx) {
           String msg =
               MessageFormat.format(
-                  "Retrieving log, curLogIdx={}, hasNext={0}, nextLogIdx={1}", curLogIdx, hasNext, nextLogIdx);
+                  "Retrieving log, curLogIdx={}, hasNext={0}, nextLogIdx={1}",
+                  curLogIdx, hasNext, nextLogIdx);
           logger.info(msg);
         }
         CliUtils.doSleepQuietly(CliConstants.JOB_QUERY_SLEEP_MILLS);
@@ -152,16 +153,16 @@ public class LogRetriever {
   private void queryJobLogFromLine(LogData data, int fromLine) throws LinkisClientRuntimeException {
 
     LinkisOperResultAdapter jobInfoResult =
-            linkisJobOperator.queryJobInfo(data.getUser(), data.getJobID());
+        linkisJobOperator.queryJobInfo(data.getUser(), data.getJobID());
     data.updateLog(jobInfoResult);
     if (!jobInfoResult.getJobStatus().isJobFinishedState()) {
       data.updateLog(
-              linkisJobOperator.queryRunTimeLogFromLine(
-                      data.getUser(), data.getJobID(), data.getExecID(), fromLine));
+          linkisJobOperator.queryRunTimeLogFromLine(
+              data.getUser(), data.getJobID(), data.getExecID(), fromLine));
     } else {
       data.updateLog(
-              linkisJobOperator.queryPersistedLogFromLine(
-                      data.getLogPath(), data.getUser(), data.getJobID(), fromLine));
+          linkisJobOperator.queryPersistedLogFromLine(
+              data.getLogPath(), data.getUser(), data.getJobID(), fromLine));
     }
   }
 

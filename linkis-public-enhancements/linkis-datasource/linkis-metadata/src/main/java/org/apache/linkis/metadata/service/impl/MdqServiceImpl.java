@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.service.impl;
 
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import org.apache.linkis.metadata.domain.mdq.Tunple;
@@ -383,14 +384,27 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private String getTableSize(String tableLocation) throws IOException {
-    String tableSize = "0B";
-    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
-      FileStatus tableFile = getFileStatus(tableLocation);
-      tableSize =
-          ByteTimeUtils.bytesToString(
-              getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
+    try {
+      String tableSize = "0B";
+      if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
+        FileStatus tableFile = getFileStatus(tableLocation);
+        tableSize =
+            ByteTimeUtils.bytesToString(
+                getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
+      }
+      return tableSize;
+    } catch (IOException e) {
+      String message = e.getMessage();
+      String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+      if (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
+          || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)) {
+        logger.info("Failed to get tableSize, retry", e);
+        resetRootHdfs();
+        return getTableSize(tableLocation);
+      } else {
+        throw e;
+      }
     }
-    return tableSize;
   }
 
   private static volatile FileSystem rootHdfs = null;
@@ -401,9 +415,8 @@ public class MdqServiceImpl implements MdqService {
     } catch (IOException e) {
       String message = e.getMessage();
       String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-      if ((message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))
-          || (rootCauseMessage != null
-              && rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
+      if (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
+          || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)) {
         logger.info("Failed to getFileStatus, retry", e);
         resetRootHdfs();
         return getFileStatus(location);
@@ -430,6 +443,7 @@ public class MdqServiceImpl implements MdqService {
       synchronized (this) {
         if (rootHdfs == null) {
           rootHdfs = HDFSUtils.getHDFSRootUserFileSystem();
+          KerberosUtils.startKerberosRefreshThread();
         }
       }
     }

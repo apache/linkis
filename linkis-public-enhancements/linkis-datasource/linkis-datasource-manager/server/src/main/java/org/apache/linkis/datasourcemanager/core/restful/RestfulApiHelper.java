@@ -32,8 +32,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** Helper of restful api entrance */
 public class RestfulApiHelper {
+
+  private static final Logger logger = LoggerFactory.getLogger(RestfulApiHelper.class);
   /**
    * If is administrator
    *
@@ -70,9 +75,11 @@ public class RestfulApiHelper {
             if (null != password) {
               String passwordStr = String.valueOf(password);
               if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-                passwordStr =
-                    AESUtils.encrypt(passwordStr, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
-                connectParams.put("isEncrypt", "1");
+                if (!connectParams.containsKey("isEncrypt")) {
+                  passwordStr =
+                      AESUtils.encrypt(passwordStr, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+                  connectParams.put("isEncrypt", "1");
+                }
               } else {
                 passwordStr = CryptoUtils.object2String(passwordStr);
               }
@@ -100,7 +107,7 @@ public class RestfulApiHelper {
                 passwordStr =
                     AESUtils.decrypt(passwordStr, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
               } else {
-                passwordStr = CryptoUtils.object2String(passwordStr);
+                passwordStr = String.valueOf(CryptoUtils.string2Object(passwordStr));
               }
               connectParams.put(keyDefinition.getKey(), passwordStr);
             }
@@ -126,26 +133,6 @@ public class RestfulApiHelper {
       return Message.error(failMessage, e);
     }
   }
-
-  //    /**
-  //     * @param tryOperation operate function
-  //     * @param failMessage message
-  //     */
-  //    public static Message doAndResponse(
-  //            TryOperation tryOperation, String method, String failMessage) {
-  //        try {
-  //            Message message = tryOperation.operateAndGetMessage();
-  //            return setMethod(message, method);
-  //        } catch (ParameterValidateException e) {
-  //            return setMethod(Message.error(e.getMessage()), method);
-  //        } catch (ConstraintViolationException e) {
-  //            return new BeanValidationExceptionMapper().toResponse(e);
-  //        } catch (WarnException e) {
-  //            return setMethod(Message.warn(e.getMessage()), method);
-  //        } catch (Exception e) {
-  //            return setMethod(Message.error(failMessage, e), method);
-  //        }
-  //    }
 
   private static Message setMethod(Message message, String method) {
     message.setMethod(method);

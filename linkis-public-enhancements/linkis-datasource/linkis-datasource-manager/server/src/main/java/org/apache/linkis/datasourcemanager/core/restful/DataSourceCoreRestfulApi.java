@@ -389,9 +389,7 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -427,9 +425,8 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
+
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -464,9 +461,8 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
+
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -510,9 +506,7 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -550,7 +544,7 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue() && null != versions) {
+          if (null != versions) {
             versions.forEach(
                 version -> {
                   RestfulApiHelper.decryptPasswordKey(
@@ -700,9 +694,7 @@ public class DataSourceCoreRestfulApi {
           Map<String, Object> connectParams = dataSource.getConnectParams();
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
           return Message.ok().data("connectParams", connectParams);
         },
         "Fail to connect data source[连接数据源失败]");
@@ -738,9 +730,7 @@ public class DataSourceCoreRestfulApi {
 
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
-          }
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
           return Message.ok().data("connectParams", connectParams);
         },
         "Fail to connect data source[连接数据源失败]");

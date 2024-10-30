@@ -205,7 +205,7 @@ public class FilesystemUtils {
                       Utils.exec(
                           (new String[] {
                             "python",
-                            Configuration.getLinkisHome() + "/admin/" + "check_python_module.py",
+                            Configuration.getLinkisHome() + "/admin/" + "check_modules.py",
                             module
                           }));
                   return !Boolean.parseBoolean(exec);

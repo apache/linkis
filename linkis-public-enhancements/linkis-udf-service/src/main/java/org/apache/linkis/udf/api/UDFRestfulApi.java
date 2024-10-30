@@ -1286,9 +1286,9 @@ public class UDFRestfulApi {
     if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
       return Message.error("参数fileName不能为空");
     }
-    String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
-      return Message.error("只支持数字字母下划线，且以字母开头，长度最大50");
+    String fileNameWithoutExtension = fileName.split("\\.")[0];
+    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_-]{0,49}$")) {
+      return Message.error("只支持数字字母下划线，中划线，且以字母开头，长度最大50");
     }
 
     // 封装PythonModuleInfo对象并查询数据库

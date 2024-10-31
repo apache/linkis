@@ -217,6 +217,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val builder = SparkSession.builder.config(conf)
 
     if (ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue) {
+      logger.info("inject special udf check rule.")
       builder.withExtensions(extension => {
         extension.injectOptimizerRule(SparkUDFCheckRule)
       })

@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -84,36 +85,24 @@ public class FilesystemUtils {
    * @throws IOException 如果文件读取失败。
    */
   public static String findPackageName(InputStream inputStream) throws IOException {
+    int findPkgInfo = 0;
     try (TarArchiveInputStream tarInput =
         new TarArchiveInputStream(new GzipCompressorInputStream(inputStream))) {
       TarArchiveEntry entry;
       while ((entry = tarInput.getNextTarEntry()) != null) {
         if (entry.getName().endsWith("PKG-INFO")) {
-          return readPackageName(tarInput);
+          findPkgInfo = 1;
+          String pkgInfoContent = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
+          return pkgInfoContent.split("Name: ")[1].split("\n")[0].trim();
         }
       }
     } catch (Exception e) {
       throw WorkspaceExceptionManager.createException(80039, e.getMessage());
     }
-    return null;
-  }
-
-  /**
-   * 从 tar.gz 文件中读取包名。
-   *
-   * @param tarInputStream tar.gz 文件的输入流。
-   * @return 包名。
-   * @throws IOException 如果文件读取失败。
-   */
-  private static String readPackageName(TarArchiveInputStream tarInputStream) throws IOException {
-    StringBuilder content = new StringBuilder();
-    byte[] buffer = new byte[1024];
-    int length;
-    while ((length = tarInputStream.read(buffer)) != -1) {
-      content.append(new String(buffer, 0, length));
+    if (findPkgInfo == 0) {
+      throw WorkspaceExceptionManager.createException(80040, "PKG-INFO");
     }
-    String pkgInfoContent = content.toString();
-    return pkgInfoContent.split("Name: ")[1].split("\n")[0].trim();
+    return null;
   }
 
   /**
@@ -129,8 +118,14 @@ public class FilesystemUtils {
         new TarArchiveInputStream(new GzipCompressorInputStream(inputStream))) {
       TarArchiveEntry entry;
       while ((entry = tarInput.getNextTarEntry()) != null) {
-        if (entry.isDirectory() && entry.getName().endsWith("/" + folder + "/")) {
+        if (entry.isDirectory()
+            && entry.getName().endsWith(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
           return entry.getName();
+        }
+        if (entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
+          String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
+          int delimiterIndex = entry.getName().indexOf(delimiter);
+          return entry.getName().substring(0, delimiterIndex + delimiter.length());
         }
       }
     } catch (Exception e) {
@@ -157,7 +152,8 @@ public class FilesystemUtils {
     try {
       TarArchiveEntry entry;
       while ((entry = tarInput.getNextTarEntry()) != null) {
-        if (!entry.isDirectory() && entry.getName().contains("/" + folder + "/")) {
+        if (!entry.isDirectory()
+            && entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
           // \dist\py_mysql-1.0.tar\py_mysql-1.0\py_mysql\lib\__init__.py
           ZipEntry zipEntry = new ZipEntry(entry.getName().substring(rootPath.length()));
           zos.putNextEntry(zipEntry);
@@ -232,6 +228,7 @@ public class FilesystemUtils {
     List<String> modules = new ArrayList<>();
     String originalFilename = file.getOriginalFilename();
     if (StringUtils.isNotBlank(originalFilename) && originalFilename.endsWith(".tar.gz")) {
+      int findSetup = 0;
       // 读取 setup.py 文件的内容，并使用正则表达式提取 install_requires 字段。
       // 解析 install_requires 字段中的依赖包信息
       try (TarArchiveInputStream tarInput =
@@ -239,18 +236,17 @@ public class FilesystemUtils {
         TarArchiveEntry entry;
         while ((entry = tarInput.getNextTarEntry()) != null) {
           if (entry.getName().endsWith("setup.py")) {
-            StringBuilder content = new StringBuilder();
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = tarInput.read(buffer)) != -1) {
-              content.append(new String(buffer, 0, length));
-            }
-            modules = extractDependencies(content.toString());
+            findSetup = 1;
+            String content = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
+            modules = extractDependencies(content);
             break;
           }
         }
       } catch (Exception e) {
         throw WorkspaceExceptionManager.createException(80039, e.getMessage());
+      }
+      if (findSetup == 0) {
+        throw WorkspaceExceptionManager.createException(80040, "setup.py");
       }
     }
     return modules;

@@ -1444,8 +1444,7 @@ public class FsRestfulApi {
       return Message.error("文件名称不能为空");
     }
     // 获取文件名称
-    String fileNameSuffix = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
+    if (!fileName.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
       return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
     }
 
@@ -1485,7 +1484,7 @@ public class FsRestfulApi {
     }
 
     // 构建新的文件路径
-    String newPath = fsPath.getPath() + "/" + file.getOriginalFilename();
+    String newPath = fsPath.getPath() + FsPath.SEPARATOR + file.getOriginalFilename();
     // 上传文件,tar包需要单独解压处理
     if (!file.getOriginalFilename().endsWith(".tar.gz")) {
       FsPath fsPathNew = new FsPath(newPath);
@@ -1504,15 +1503,19 @@ public class FsRestfulApi {
           return Message.error("文件上传失败：PKG-INFO 文件不存在");
         }
         is = FilesystemUtils.getZipInputStreamByTarInputStream(file, packageName);
-        newPath = fsPath.getPath() + FsPath.SEPARATOR + packageName + FsPath.CUR_DIR + "zip";
+        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName.replace(".tar.gz", ".zip");
         FsPath fsPathNew = new FsPath(newPath);
         outputStream = fileSystem.write(fsPathNew, true);
         IOUtils.copy(is, outputStream);
-      } catch (IOException e) {
+      } catch (Exception e) {
         return Message.error("文件上传失败：" + e.getMessage());
       } finally {
-        outputStream.close();
-        is.close();
+        if (outputStream != null) {
+          IOUtils.closeQuietly(outputStream);
+        }
+        if (is != null) {
+          IOUtils.closeQuietly(is);
+        }
       }
     }
     // 返回成功消息并包含文件地址

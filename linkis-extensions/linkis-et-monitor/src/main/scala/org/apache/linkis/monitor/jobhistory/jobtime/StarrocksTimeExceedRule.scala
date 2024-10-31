@@ -69,7 +69,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                   MapUtils.getString(datasourceTypeMap, "name", "").toLowerCase()
                 // 获取管理台配置需要使用的数据源类型（默认starrocks）
                 var datasourceType = HttpsUntils
-                  .getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alter.datasource.type")
+                  .getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alert.datasource.type")
                   .toLowerCase()
                 if (StringUtils.isBlank(datasourceType)) datasourceType = "starrocks"
                 if (datasourceType.contains(jobDatasourceType)) {
@@ -79,7 +79,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                   val timeValue =
                     HttpsUntils.getJDBCConf(
                       job.getSubmitUser,
-                      "linkis.jdbc.task.timeout.alter.time"
+                      "linkis.jdbc.task.timeout.alert.time"
                     )
                   if (StringUtils.isNotBlank(timeValue)) {
                     val timeoutInSeconds = timeValue.toDouble

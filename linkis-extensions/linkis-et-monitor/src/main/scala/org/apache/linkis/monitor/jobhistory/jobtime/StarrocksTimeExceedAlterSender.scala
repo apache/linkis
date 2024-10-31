@@ -58,11 +58,11 @@ class StarrocksTimeExceedAlterSender extends Observer with Logging {
       } else {
         val jobHistory = a.asInstanceOf[JobHistory]
         val timeValue =
-          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alter.time")
+          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alert.time")
         val userValue =
-          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alter.user")
+          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alert.user")
         var levelValue =
-          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alter.level")
+          HttpsUntils.getJDBCConf(jobHistory.getSubmitUser, "linkis.jdbc.task.timeout.alert.level")
         if (StringUtils.isNotBlank(timeValue) && StringUtils.isNotBlank(userValue)) {
           val replaceParm: util.HashMap[String, String] = new util.HashMap[String, String]
           replaceParm.put("$id", String.valueOf(jobHistory.getId))

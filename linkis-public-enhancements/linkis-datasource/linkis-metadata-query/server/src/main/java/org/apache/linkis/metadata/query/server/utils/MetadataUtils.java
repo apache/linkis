@@ -160,8 +160,7 @@ public class MetadataUtils {
         classNameList.add(className);
       }
     } else if (url.endsWith(JAR_SUF_NAME)) {
-      try {
-        JarFile jarFile = new JarFile(new File(url));
+      try (JarFile jarFile = new JarFile(new File(url))) {
         Enumeration<JarEntry> en = jarFile.entries();
         while (en.hasMoreElements()) {
           String name = en.nextElement().getName();

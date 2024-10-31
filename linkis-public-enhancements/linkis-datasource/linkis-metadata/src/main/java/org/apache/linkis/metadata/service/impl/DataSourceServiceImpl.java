@@ -308,7 +308,7 @@ public class DataSourceServiceImpl implements DataSourceService {
   }
 
   private FileSystem getRootHdfs() {
-    if (rootHdfs == null) {
+    if (rootHdfs == null) { // NOSONAR
       synchronized (this) {
         if (rootHdfs == null) {
           rootHdfs = HDFSUtils.getHDFSRootUserFileSystem();

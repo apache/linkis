@@ -23,6 +23,7 @@ import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class LoadBalanceLabel extends GenericLabel implements JobStrategyLabel {
 
@@ -78,5 +79,10 @@ public class LoadBalanceLabel extends GenericLabel implements JobStrategyLabel {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(value);
   }
 }

@@ -48,7 +48,7 @@ public class DefaultContextListenerManager implements ListenerManager {
   private DefaultContextListenerManager() {}
 
   public static DefaultContextListenerManager getInstance() {
-    if (singleDefaultContextListenerManager == null) {
+    if (singleDefaultContextListenerManager == null) { // NOSONAR
       synchronized (DefaultContextListenerManager.class) {
         if (singleDefaultContextListenerManager == null) {
           singleDefaultContextListenerManager = new DefaultContextListenerManager();

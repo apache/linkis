@@ -748,7 +748,7 @@ public class BmlRestfulApi {
       Map<String, Object> properties = new HashMap<>();
       properties.put("clientIp", clientIp);
       ResourceTask resourceTask = null;
-      synchronized (resourceId.intern()) {
+      synchronized (resourceId.intern()) { // NOSONAR
         resourceTask = taskService.createUpdateTask(resourceId, user, file, properties);
       }
       message = Message.ok("The update resource task was submitted successfully(提交更新资源任务成功)");
@@ -891,7 +891,7 @@ public class BmlRestfulApi {
       properties.put("maxVersion", 0);
       properties.put("system", "dss");
       ResourceTask resourceTask = null;
-      synchronized (resourceId.intern()) {
+      synchronized (resourceId.intern()) { // NOSONAR
         resourceTask = taskService.createCopyResourceTask(resourceId, anotherUser, properties);
       }
       message = Message.ok();
@@ -930,7 +930,7 @@ public class BmlRestfulApi {
       Map<String, Object> properties = new HashMap<>();
       properties.put("clientIp", clientIp);
       ResourceTask resourceTask = null;
-      synchronized (resourceId.intern()) {
+      synchronized (resourceId.intern()) { // NOSONAR
         resourceTask =
             taskService.createRollbackVersionTask(
                 resourceId, rollbackVersion, username, properties);

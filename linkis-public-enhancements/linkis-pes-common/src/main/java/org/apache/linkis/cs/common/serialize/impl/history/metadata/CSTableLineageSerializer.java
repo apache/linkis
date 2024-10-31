@@ -64,6 +64,6 @@ public class CSTableLineageSerializer extends AbstractSerializer<CSTableLineageH
 
   @Override
   public boolean accepts(Object obj) {
-    return null != obj && obj.getClass().getName().equals(CSTableLineageHistory.class.getName());
+    return null != obj && obj.getClass().isAssignableFrom(CSTableLineageHistory.class);
   }
 }

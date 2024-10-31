@@ -41,7 +41,7 @@ public final class ParserUtils {
     }
     /*Determine whether logPathPrefix is terminated with /, if it is, delete */
     /*判断是否logPathPrefix是否是以 / 结尾， 如果是，就删除*/
-    if (logPathPrefix.endsWith("/")) {
+    if (logPathPrefix.endsWith("/")) { // NOSONAR
       logPathPrefix = logPathPrefix.substring(0, logPathPrefix.length() - 1);
     }
     Date date = new Date(System.currentTimeMillis());

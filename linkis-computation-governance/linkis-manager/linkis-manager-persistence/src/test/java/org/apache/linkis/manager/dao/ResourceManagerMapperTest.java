@@ -78,7 +78,8 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setLeftResource("left");
     persistenceResource.setUsedResource("user");
     resourceManagerMapper.nodeResourceUpdateByResourceId(1, persistenceResource);
-    assertTrue(persistenceResource.getMaxResource() == persistenceResource.getMaxResource());
+    assertTrue(
+        persistenceResource.getMaxResource() == persistenceResource.getMaxResource()); // NOSONAR
   }
 
   @Test

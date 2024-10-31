@@ -365,7 +365,7 @@ public class ByteTimeUtils {
       if (d < 0) {
         throw new IllegalArgumentException("Negative size value. Size must be positive: " + d);
       }
-      return d * multiplier;
+      return (double) d * multiplier;
     }
 
     public long toKiB(long d) {

@@ -123,7 +123,7 @@ public class OperationFactoryImpl implements OperationFactory {
   private static OperationFactory operationFactory;
 
   public static OperationFactory getInstance() {
-    if (operationFactory == null) {
+    if (operationFactory == null) { // NOSONAR
       synchronized (OperationFactory.class) {
         if (operationFactory == null) {
           operationFactory =

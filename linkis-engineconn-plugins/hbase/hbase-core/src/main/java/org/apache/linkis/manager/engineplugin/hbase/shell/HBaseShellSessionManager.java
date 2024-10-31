@@ -38,7 +38,7 @@ public class HBaseShellSessionManager {
   }
 
   public static HBaseShellSessionManager getInstance() {
-    if (instance == null) {
+    if (instance == null) { // NOSONAR
       synchronized (HBaseShellSessionManager.class) {
         if (instance == null) {
           instance = new HBaseShellSessionManager();

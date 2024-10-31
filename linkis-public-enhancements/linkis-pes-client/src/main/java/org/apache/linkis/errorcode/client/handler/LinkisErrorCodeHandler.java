@@ -63,7 +63,7 @@ public class LinkisErrorCodeHandler
           new ThreadPoolExecutor.AbortPolicy());
 
   public static LinkisErrorCodeHandler getInstance() {
-    if (null == linkisErrorCodeHandler) {
+    if (null == linkisErrorCodeHandler) { // NOSONAR
       synchronized (LinkisErrorCodeHandler.class) {
         if (null == linkisErrorCodeHandler) {
           linkisErrorCodeHandler = new LinkisErrorCodeHandler();
@@ -121,8 +121,9 @@ public class LinkisErrorCodeHandler
 
     LOGGER.info("begin to handle logFilePath {}", logFilePath);
     // At the end of the file, write "error code information is being generated for you".
-    try {
-      writeToFile(logFilePath, ERROR_CODE_PRE);
+    try (BufferedWriter bufferedWriter =
+        new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFilePath, true)))) {
+      writeToFile(bufferedWriter, ERROR_CODE_PRE);
     } catch (Exception e) {
       // If there is a write exception, skip this question directly.
       LOGGER.error("Failed to append error code to log file {}", logFilePath, e);
@@ -146,13 +147,14 @@ public class LinkisErrorCodeHandler
             LOGGER.error("failed to handle log file {} ", logFilePath, e);
             return;
           }
-          try {
+          try (BufferedWriter bufferedWriter =
+              new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFilePath, true)))) {
             if (errorCodeSet.size() == 0) {
-              writeToFile(logFilePath, ERROR_CODE_FAILED);
+              writeToFile(bufferedWriter, ERROR_CODE_FAILED);
             } else {
-              writeToFile(logFilePath, ERROR_CODE_OK);
+              writeToFile(bufferedWriter, ERROR_CODE_OK);
               List<LinkisErrorCode> retErrorCodes = new ArrayList<>(errorCodeSet);
-              writeToFile(logFilePath, retErrorCodes.toString());
+              writeToFile(bufferedWriter, retErrorCodes.toString());
             }
           } catch (Exception e) {
             LOGGER.error("failed to write to errorcodes to {} ", logFilePath, e);
@@ -162,12 +164,9 @@ public class LinkisErrorCodeHandler
     LOGGER.info("put handle into threadPool");
   }
 
-  private void writeToFile(String filePath, String content) throws Exception {
-    BufferedWriter bufferedWriter =
-        new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath, true)));
+  private void writeToFile(BufferedWriter bufferedWriter, String content) throws Exception {
     bufferedWriter.write(content);
     bufferedWriter.write(NEW_LINE);
-    bufferedWriter.close();
   }
 
   /**

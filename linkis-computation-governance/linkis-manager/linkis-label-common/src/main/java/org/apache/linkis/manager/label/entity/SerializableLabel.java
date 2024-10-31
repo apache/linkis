@@ -146,6 +146,11 @@ public abstract class SerializableLabel<T> implements Label<T> {
   }
 
   @Override
+  public int hashCode() {
+    return Objects.hash(value, stringValue);
+  }
+
+  @Override
   public Boolean isEmpty() {
     return null == getValue();
   }

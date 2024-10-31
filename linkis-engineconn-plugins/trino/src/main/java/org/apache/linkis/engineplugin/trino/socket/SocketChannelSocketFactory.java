@@ -30,12 +30,12 @@ public class SocketChannelSocketFactory extends SocketFactory {
 
   @Override
   public Socket createSocket() throws IOException {
-    return SocketChannel.open().socket();
+    return SocketChannel.open().socket(); // NOSONAR
   }
 
   @Override
   public Socket createSocket(String host, int port) throws IOException {
-    return SocketChannel.open(new InetSocketAddress(host, port)).socket();
+    return SocketChannel.open(new InetSocketAddress(host, port)).socket(); // NOSONAR
   }
 
   @Override
@@ -46,7 +46,7 @@ public class SocketChannelSocketFactory extends SocketFactory {
 
   @Override
   public Socket createSocket(InetAddress address, int port) throws IOException {
-    return SocketChannel.open(new InetSocketAddress(address, port)).socket();
+    return SocketChannel.open(new InetSocketAddress(address, port)).socket(); // NOSONAR
   }
 
   @Override

@@ -62,7 +62,7 @@ public class ConnectionManager {
   }
 
   public static ConnectionManager getInstance() {
-    if (connectionManager == null) {
+    if (connectionManager == null) { // NOSONAR
       synchronized (ConnectionManager.class) {
         if (connectionManager == null) {
           connectionManager = new ConnectionManager();

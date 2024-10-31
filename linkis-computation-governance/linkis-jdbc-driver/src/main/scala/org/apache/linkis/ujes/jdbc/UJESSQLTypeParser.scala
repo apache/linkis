@@ -71,24 +71,4 @@ object UJESSQLTypeParser {
     }
   }
 
-  def parserFromMetaData(dataType: Int): String = {
-    dataType match {
-      case Types.CHAR => "string"
-      case Types.SMALLINT => "short"
-      case Types.INTEGER => "int"
-      case Types.BIGINT => "long"
-      case Types.FLOAT => "float"
-      case Types.DOUBLE => "double"
-      case Types.BOOLEAN => "boolean"
-      case Types.TINYINT => "byte"
-      case Types.CHAR => "char"
-      case Types.TIMESTAMP => "timestamp"
-      case Types.DECIMAL => "decimal"
-      case Types.VARCHAR => "varchar"
-      case Types.NVARCHAR => "string"
-      case Types.DATE => "date"
-      case _ => throw new LinkisSQLException(LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
-    }
-  }
-
 }

@@ -203,7 +203,16 @@
           <groupId>com.google.inject</groupId>
           <artifactId>guice</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jettison</groupId>
+          <artifactId>jettison</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
+      <version>${jettision.version}</version>
     </dependency>
 
     <dependency>

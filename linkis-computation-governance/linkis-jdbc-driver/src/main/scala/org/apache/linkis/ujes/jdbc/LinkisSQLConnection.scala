@@ -137,11 +137,12 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       }
     }
     if (StringUtils.isNotBlank(engineVersion)) {
-      EngineTypeLabelCreator.registerVersion(engineType, engineVersion)
+      val label = EngineTypeLabelCreator.createEngineTypeLabel(engineType)
+      label.setVersion(engineVersion)
+      label
+    } else {
+      EngineTypeLabelCreator.createEngineTypeLabel(engineType)
     }
-
-    EngineTypeLabelCreator.createEngineTypeLabel(engineType)
-
   }
 
   private[jdbc] def throwWhenClosed[T](op: => T): T =

@@ -43,7 +43,7 @@ public class CSResourceService implements ResourceService {
   private CSResourceService() {}
 
   public static CSResourceService getInstance() {
-    if (null == csResourceService) {
+    if (null == csResourceService) { // NOSONAR
       synchronized (CSResourceService.class) {
         if (null == csResourceService) {
           csResourceService = new CSResourceService();

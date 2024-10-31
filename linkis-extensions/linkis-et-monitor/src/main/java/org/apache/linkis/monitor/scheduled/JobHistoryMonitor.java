@@ -77,7 +77,7 @@ public class JobHistoryMonitor {
   @Scheduled(cron = "${linkis.monitor.jobHistory.finished.cron}")
   public void jobHistoryFinishedScan() {
     logger.info("Start scan jobHistoryFinishedScan");
-    long intervalMs = 20 * 60 * 1000;
+    long intervalMs = 20 * 60 * 1000L;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;

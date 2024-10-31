@@ -49,7 +49,7 @@ class TestHDFSCacheLogWriter {
     file.mkdirs();
 
     File logfile = new File(logPath);
-    logfile.createNewFile();
+    logfile.createNewFile(); // NOSONAR
 
     HDFSCacheLogWriter logWriter =
         new HDFSCacheLogWriter(
@@ -96,7 +96,7 @@ class TestHDFSCacheLogWriter {
     file.mkdirs();
 
     File logfile = new File(logPath);
-    logfile.createNewFile();
+    logfile.createNewFile(); // NOSONAR
 
     HDFSCacheLogWriter logWriter =
         new HDFSCacheLogWriter(
@@ -116,7 +116,7 @@ class TestHDFSCacheLogWriter {
 
     logWriter.write(msg);
 
-    Thread.sleep(4 * 1000);
+    Thread.sleep(4 * 1000); // NOSONAR
 
     logWriter.write(msg);
 

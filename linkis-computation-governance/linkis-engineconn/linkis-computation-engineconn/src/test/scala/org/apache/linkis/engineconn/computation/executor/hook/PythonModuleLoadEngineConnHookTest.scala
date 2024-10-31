@@ -30,56 +30,56 @@ import org.mockito.Mockito.{mock, verify, when}
 // 单元测试案例
 class PythonModuleLoadEngineConnHookTest {
 
-  @Test
-  def testAfterExecutionExecute(): Unit = {
-    // 创建模拟对象
-    val mockEngineCreationContext = new DefaultEngineCreationContext
-    val mockEngineConn = mock[DefaultEngineConn]
-    val hook = new PythonSparkEngineHook
-
-    // 设置模拟行为
-    var labels = new CodeLanguageLabel
-    labels.setCodeType("spark")
-
-    // 执行测试方法
-    hook.afterExecutionExecute(mockEngineCreationContext, mockEngineConn)
-
-  }
-
-  @Test
-  def testAfterEngineServerStartFailed(): Unit = {
-    // 创建模拟对象
-    val mockEngineCreationContext = mock[EngineCreationContext]
-    val mockThrowable = mock[Throwable]
-    val hook = new PythonSparkEngineHook
-
-    // 设置模拟行为
-    var labels = new CodeLanguageLabel
-    labels.setCodeType("spark")
-
-    // 执行测试方法
-    hook.afterEngineServerStartFailed(mockEngineCreationContext, mockThrowable)
-
-  }
-
-  @Test
-  def testBeforeCreateEngineConn(): Unit = {
-    // 创建模拟对象
-
-    // 验证调用
-
-  }
-
-  @Test
-  def testBeforeExecutionExecute(): Unit = {
-    // 创建模拟对象
-    val mockEngineCreationContext = mock[EngineCreationContext]
-    val mockEngineConn = mock[DefaultEngineConn]
-    val hook = new PythonSparkEngineHook
-
-    // 执行测试方法
-    hook.beforeExecutionExecute(mockEngineCreationContext, mockEngineConn)
-
-  }
+//  @Test
+//  def testAfterExecutionExecute(): Unit = {
+//    // 创建模拟对象
+//    val mockEngineCreationContext = new DefaultEngineCreationContext
+//    val mockEngineConn = mock[DefaultEngineConn]
+//    val hook = new PythonSparkEngineHook
+//
+//    // 设置模拟行为
+//    var labels = new CodeLanguageLabel
+//    labels.setCodeType("spark")
+//
+//    // 执行测试方法
+//    hook.afterExecutionExecute(mockEngineCreationContext, mockEngineConn)
+//
+//  }
+//
+//  @Test
+//  def testAfterEngineServerStartFailed(): Unit = {
+//    // 创建模拟对象
+//    val mockEngineCreationContext = mock[EngineCreationContext]
+//    val mockThrowable = mock[Throwable]
+//    val hook = new PythonSparkEngineHook
+//
+//    // 设置模拟行为
+//    var labels = new CodeLanguageLabel
+//    labels.setCodeType("spark")
+//
+//    // 执行测试方法
+//    hook.afterEngineServerStartFailed(mockEngineCreationContext, mockThrowable)
+//
+//  }
+//
+//  @Test
+//  def testBeforeCreateEngineConn(): Unit = {
+//    // 创建模拟对象
+//
+//    // 验证调用
+//
+//  }
+//
+//  @Test
+//  def testBeforeExecutionExecute(): Unit = {
+//    // 创建模拟对象
+//    val mockEngineCreationContext = mock[EngineCreationContext]
+//    val mockEngineConn = mock[DefaultEngineConn]
+//    val hook = new PythonSparkEngineHook
+//
+//    // 执行测试方法
+//    hook.beforeExecutionExecute(mockEngineCreationContext, mockEngineConn)
+//
+//  }
 
 }

@@ -161,7 +161,7 @@ public class ConfigurationRestfulApiTest {
   public void sendUrl(String url, MultiValueMap<String, String> paramsMap, String type, String msg)
       throws Exception {
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
-    Message mvcResult = null;
+    Message mvcResult = null; // NOSONAR
     if (type.equals("get")) {
       if (paramsMap != null) {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, paramsMap));
@@ -176,7 +176,7 @@ public class ConfigurationRestfulApiTest {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
       }
     }
-    assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
+    assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus()); // NOSONAR
     logger.info(String.valueOf(mvcResult));
   }
 }

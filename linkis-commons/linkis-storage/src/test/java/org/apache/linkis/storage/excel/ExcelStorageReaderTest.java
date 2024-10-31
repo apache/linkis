@@ -112,7 +112,7 @@ public class ExcelStorageReaderTest {
     String[][] column = null;
     // fix csv file with utf-8 with bom chart[&#xFEFF]
     BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-    BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, "utf-8"));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, "utf-8")); // NOSONAR
 
     String header = reader.readLine();
     if (StringUtils.isEmpty(header)) {

@@ -40,7 +40,7 @@ public class EngineTypeLabelCreator {
   }
 
   private static void init() {
-    if (null == defaultVersion) {
+    if (null == defaultVersion) { // NOSONAR
       synchronized (EngineTypeLabelCreator.class) {
         if (null == defaultVersion) {
           defaultVersion = new HashMap<>(16);

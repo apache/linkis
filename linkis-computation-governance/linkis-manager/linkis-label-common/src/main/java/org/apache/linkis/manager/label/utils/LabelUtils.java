@@ -28,13 +28,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -124,6 +118,11 @@ public class LabelUtils {
     @Override
     public int compareTo(MethodWrapper o) {
       return this.order - o.order;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(methodName, order);
     }
 
     @Override

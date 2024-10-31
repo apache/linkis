@@ -57,7 +57,6 @@ public class CSTableMetadataHistorySerializer
 
   @Override
   public boolean accepts(Object obj) {
-    return null != obj
-        && obj.getClass().getName().equals(CSTableMetadataContextHistory.class.getName());
+    return null != obj && obj.getClass().isAssignableFrom(CSTableMetadataContextHistory.class);
   }
 }

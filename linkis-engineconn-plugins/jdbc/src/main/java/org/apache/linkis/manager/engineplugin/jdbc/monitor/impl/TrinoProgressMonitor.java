@@ -26,7 +26,7 @@ import io.trino.jdbc.QueryStats;
 import io.trino.jdbc.TrinoStatement;
 
 public class TrinoProgressMonitor extends ProgressMonitor<QueryStats> {
-  private volatile Runnable callback;
+  private volatile Runnable callback; // NOSONAR
   private volatile double sqlProgress = 0.0;
   private volatile int completedSplits = 0;
   private volatile int totalSplits = 0;
@@ -58,7 +58,7 @@ public class TrinoProgressMonitor extends ProgressMonitor<QueryStats> {
 
   @Override
   public float getSqlProgress() {
-    return Double.valueOf(sqlProgress).floatValue();
+    return Double.valueOf(sqlProgress).floatValue(); // NOSONAR
   }
 
   @Override

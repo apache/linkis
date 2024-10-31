@@ -210,7 +210,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
           realRd = rd;
         }
       }
-      String uri = realRd.getUri().toString();
+      String uri = realRd.getUri().toString(); // NOSONAR
       if (uri != null) {
         uri =
             uri

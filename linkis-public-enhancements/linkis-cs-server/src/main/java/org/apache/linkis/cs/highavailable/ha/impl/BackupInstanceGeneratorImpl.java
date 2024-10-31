@@ -44,6 +44,8 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
 
   @Autowired private ContextHAChecker contextHAChecker;
 
+  private Random random = new Random();
+
   @Override
   public String getBackupInstance(String haIDKey) throws CSErrorException {
 
@@ -88,6 +90,6 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
   private int getBackupInstanceIndex(List<ServiceInstance> instanceList) {
 
     // todo refactor according to load-balance
-    return new Random().nextInt(instanceList.size());
+    return random.nextInt(instanceList.size());
   }
 }

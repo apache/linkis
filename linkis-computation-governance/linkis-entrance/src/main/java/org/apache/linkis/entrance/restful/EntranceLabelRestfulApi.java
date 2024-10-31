@@ -87,7 +87,7 @@ public class EntranceLabelRestfulApi {
     insLabelRefreshRequest.setLabels(labels);
     insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().refreshLabelsToInstance(insLabelRefreshRequest);
-    synchronized (offlineFlag) {
+    synchronized (offlineFlag) { // NOSONAR
       offlineFlag = true;
     }
     logger.info("Finished to modify the routelabel of entry to offline");
@@ -105,7 +105,7 @@ public class EntranceLabelRestfulApi {
     InsLabelRemoveRequest insLabelRemoveRequest = new InsLabelRemoveRequest();
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().removeLabelsFromInstance(insLabelRemoveRequest);
-    synchronized (offlineFlag) {
+    synchronized (offlineFlag) { // NOSONAR
       offlineFlag = false;
     }
     logger.info("Finished to backonline");

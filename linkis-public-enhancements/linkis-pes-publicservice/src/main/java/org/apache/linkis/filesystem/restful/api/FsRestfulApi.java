@@ -959,7 +959,7 @@ public class FsRestfulApi {
           }
           break;
         default:
-          WorkspaceExceptionManager.createException(80015);
+          throw WorkspaceExceptionManager.createException(80015);
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
@@ -1147,31 +1147,31 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            }
-            column[1][i] = "string";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = "col_" + (i + 1);
-            column[1][i] = "string";
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              }
+              column[1][i] = "string";
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = "col_" + (i + 1);
+              column[1][i] = "string";
+            }
           }
         }
         res.put("columnName", column[0]);
@@ -1241,35 +1241,35 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            } else {
-              csvMap.put(column[0][i], "string");
-            }
-            csvMapList.add(csvMap);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            csvMap.put("col_" + (i + 1), "string");
-            csvMapList.add(csvMap);
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              } else {
+                csvMap.put(column[0][i], "string");
+              }
+              csvMapList.add(csvMap);
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              csvMap.put("col_" + (i + 1), "string");
+              csvMapList.add(csvMap);
+            }
           }
         }
         sheetInfo = new HashMap<>(1);

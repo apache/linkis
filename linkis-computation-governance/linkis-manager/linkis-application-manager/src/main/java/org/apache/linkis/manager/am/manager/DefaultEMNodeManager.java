@@ -17,29 +17,43 @@
 
 package org.apache.linkis.manager.am.manager;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
-import org.apache.linkis.manager.common.entity.node.*;
+import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.EMNode;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.node.Node;
+import org.apache.linkis.manager.common.entity.node.RMNode;
+import org.apache.linkis.manager.common.entity.node.ScoreServiceInstance;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
+import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;
 import org.apache.linkis.manager.exception.NodeInstanceDuplicateException;
+import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
+import org.apache.linkis.manager.persistence.impl.DefaultLabelManagerPersistence;
 import org.apache.linkis.manager.rm.ResourceInfo;
 import org.apache.linkis.manager.rm.service.ResourceManager;
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class DefaultEMNodeManager implements EMNodeManager {
@@ -48,6 +62,8 @@ public class DefaultEMNodeManager implements EMNodeManager {
   @Autowired private NodeManagerPersistence nodeManagerPersistence;
 
   @Autowired private NodeMetricManagerPersistence nodeMetricManagerPersistence;
+
+  @Autowired private LabelManagerPersistence labelManagerPersistence;
 
   @Autowired private MetricsConverter metricsConverter;
 
@@ -189,6 +205,33 @@ public class DefaultEMNodeManager implements EMNodeManager {
     logger.info("Finished to clear emNode instance(" + emNode.getServiceInstance() + ") info ");
     nodeMetricManagerPersistence.deleteNodeMetrics(emNode);
     logger.info("Finished to clear emNode(" + emNode.getServiceInstance() + ") metrics info");
+
+    {
+      // 查询linkis_cg_manager_label表，获取labelId
+      String labelKey = "emInstance";
+      String instance = emNode.getServiceInstance().getInstance();
+      LabelManagerMapper labelManagerMapper =
+          ((DefaultLabelManagerPersistence) labelManagerPersistence).getLabelManagerMapper();
+      List<Integer> labelIds =
+          labelManagerMapper.listLabelBySQLPattern("%" + instance + "%", labelKey).stream()
+              .map(PersistenceLabel::getId)
+              .collect(Collectors.toList());
+      if (CollectionUtils.isNotEmpty(labelIds)) {
+        // 根据instance删除linkis_cg_manager_label_service_instance
+        labelManagerMapper.deleteInstance(instance);
+
+        for (Integer labelId : labelIds) {
+          // 根据labelId删除linkis_cg_manager_linkis_resources
+          labelManagerMapper.deleteResourceByLabelIdInDirect(labelId);
+
+          // 根据labelId删除linkis_cg_manager_label_resource
+          labelManagerMapper.deleteResourceByLabelId(labelId);
+
+          // 根据labelId删除linkis_cg_manager_label
+          labelManagerMapper.deleteLabel(labelId);
+        }
+      }
+    }
   }
 
   @Override

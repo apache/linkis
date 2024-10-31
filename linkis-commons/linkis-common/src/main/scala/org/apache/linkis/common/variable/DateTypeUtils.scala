@@ -78,7 +78,7 @@ object DateTypeUtils {
     val dateFormat = dateFormatLocal.get()
     val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
-    cal.add(Calendar.DATE, -1)
+//    cal.add(Calendar.DATE, -1)
     if (std) {
       dateFormat_std.format(cal.getTime)
     } else {

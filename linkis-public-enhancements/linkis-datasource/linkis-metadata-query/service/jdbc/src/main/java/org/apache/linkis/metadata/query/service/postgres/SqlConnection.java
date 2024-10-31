@@ -17,20 +17,22 @@
 
 package org.apache.linkis.metadata.query.service.postgres;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
-
-import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SqlConnection extends AbstractSqlConnection {
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
@@ -106,6 +108,7 @@ public class SqlConnection extends AbstractSqlConnection {
               .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
+    LOG.info("jdbc connection url: {}", url);
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 

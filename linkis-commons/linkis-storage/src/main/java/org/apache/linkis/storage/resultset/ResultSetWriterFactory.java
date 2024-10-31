@@ -22,13 +22,12 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResultSetWriterFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetWriterFactory.class);
@@ -51,28 +50,25 @@ public class ResultSetWriterFactory {
   public static Record[] getRecordByWriter(
       org.apache.linkis.common.io.resultset.ResultSetWriter<? extends MetaData, ? extends Record>
           writer,
-      long limit) {
+      long limit)
+      throws IOException {
     String res = writer.toString();
     return getRecordByRes(res, limit);
   }
 
-  public static Record[] getRecordByRes(String res, long limit) {
+  public static Record[] getRecordByRes(String res, long limit) throws IOException {
     ResultSetReader reader = ResultSetReaderFactory.getResultSetReader(res);
     int count = 0;
     List<Record> records = new ArrayList<>();
-    try {
-      reader.getMetaData();
-      while (reader.hasNext() && count < limit) {
-        records.add(reader.getRecord());
-        count++;
-      }
-    } catch (IOException e) {
-      logger.warn("ResultSetWriter getRecordByRes failed", e);
+    reader.getMetaData();
+    while (reader.hasNext() && count < limit) {
+      records.add(reader.getRecord());
+      count++;
     }
     return records.toArray(new Record[0]);
   }
 
-  public static Record getLastRecordByRes(String res) {
+  public static Record getLastRecordByRes(String res) throws IOException {
     ResultSetReader reader = ResultSetReaderFactory.getResultSetReader(res);
     Record record = null;
     try {

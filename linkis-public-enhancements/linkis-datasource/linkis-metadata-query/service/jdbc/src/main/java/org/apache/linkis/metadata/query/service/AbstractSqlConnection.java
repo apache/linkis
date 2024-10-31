@@ -17,23 +17,27 @@
 
 package org.apache.linkis.metadata.query.service;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSqlConnection implements Closeable {
 
@@ -100,11 +104,29 @@ public abstract class AbstractSqlConnection implements Closeable {
    * @throws SQLException
    */
   public List<String> getPrimaryKeys(String table) throws SQLException {
+    return getPrimaryKeys(null, null, table);
+  }
+
+  /**
+   * Get primary keys // * @param connection connection
+   *
+   * @param catalog a catalog name; must match the catalog name as it is stored in the database; ""
+   *     retrieves those without a catalog; <code>null</code> means that the catalog name should not
+   *     be used to narrow the search
+   * @param schema a schema name; must match the schema name as it is stored in the database; ""
+   *     retrieves those without a schema; <code>null</code> means that the schema name should not
+   *     be used to narrow the search
+   * @param table table name
+   * @return
+   * @throws SQLException
+   */
+  public List<String> getPrimaryKeys(String catalog, String schema, String table)
+      throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
       DatabaseMetaData dbMeta = conn.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
+      rs = dbMeta.getPrimaryKeys(catalog, schema, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
       }

@@ -1290,10 +1290,10 @@ public class UDFRestfulApi {
     if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_-]{0,49}$")) {
       return Message.error("只支持数字字母下划线，中划线，且以字母开头，长度最大50");
     }
-
+    String fileNameWithoutVersion = fileNameWithoutExtension.split("-")[0];
     // 封装PythonModuleInfo对象并查询数据库
     PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
-    pythonModuleInfo.setName(fileNameWithoutExtension);
+    pythonModuleInfo.setName(fileNameWithoutVersion);
     pythonModuleInfo.setCreateUser(userName);
     PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
 

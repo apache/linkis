@@ -570,6 +570,22 @@ public class ConfigurationRestfulApi {
         return Message.error(e.getMessage());
       }
     }
+    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+        && (configKeyValue.getKey().equals("linkis.nebula.password")
+            || configKeyValue.getKey().equals("wds.linkis.jdbc.password"))
+        && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+      List<ConfigUserValue> userConfigValue =
+          configKeyService.getUserConfigValue(engineType, configKeyValue.getKey(), creator, user);
+      for (ConfigUserValue configUserValue : userConfigValue) {
+        if ((configUserValue.getKey().equals("linkis.nebula.password")
+                || configUserValue.getKey().equals("wds.linkis.jdbc.password"))
+            && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
+          configKeyValue.setConfigValue(
+              AESUtils.encrypt(
+                  configKeyValue.getConfigValue(), AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+        }
+      }
+    }
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);
     return message.data("configValue", configValue);

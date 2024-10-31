@@ -45,6 +45,7 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -1461,9 +1462,15 @@ public class FsRestfulApi {
     }
 
     // tar.gz包依赖检查
-    String errorMsg = FilesystemUtils.checkModuleFile(file, username);
-    if (StringUtils.isNotBlank(errorMsg)) {
-      return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);
+    // 获取install_requires中的python模块
+    List<String> pythonModules = FilesystemUtils.getInstallRequestPythonModules(file);
+    String dependencies = "";
+    if (CollectionUtils.isNotEmpty(pythonModules)) {
+      dependencies = String.join(",", pythonModules);
+      String errorMsg = FilesystemUtils.checkModuleFile(pythonModules, username);
+      if (StringUtils.isNotBlank(errorMsg)) {
+        return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);
+      }
     }
 
     // 定义目录路径
@@ -1499,11 +1506,12 @@ public class FsRestfulApi {
       OutputStream outputStream = null;
       try {
         String packageName = FilesystemUtils.findPackageName(file.getInputStream());
+        fileName = packageName + FsPath.CUR_DIR + "zip";
         if (StringUtils.isBlank(packageName)) {
           return Message.error("文件上传失败：PKG-INFO 文件不存在");
         }
         is = FilesystemUtils.getZipInputStreamByTarInputStream(file, packageName);
-        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName.replace(".tar.gz", ".zip");
+        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName;
         FsPath fsPathNew = new FsPath(newPath);
         outputStream = fileSystem.write(fsPathNew, true);
         IOUtils.copy(is, outputStream);
@@ -1519,6 +1527,9 @@ public class FsRestfulApi {
       }
     }
     // 返回成功消息并包含文件地址
-    return Message.ok().data("filePath", newPath);
+    return Message.ok()
+        .data("filePath", newPath)
+        .data("dependencies", dependencies)
+        .data("fileName", fileName);
   }
 }

@@ -184,13 +184,12 @@ public class FilesystemUtils {
    * * 检查python环境中模块是否存在，使用程序调用脚本实现 脚本保存在admin文件夹中，脚本名为check_python_module.py
    * 脚本执行存在返回ture，不存在返回false
    *
-   * @param file 传入需要检查的模块列表
+   * @param pythonModules 传入需要检查的模块列表
    * @param username
    * @return 返回不存在的模块列表
    */
-  public static String checkModuleFile(MultipartFile file, String username) throws IOException {
-    // 获取install_requires中的python模块
-    List<String> pythonModules = getInstallRequestPythonModules(file);
+  public static String checkModuleFile(List<String> pythonModules, String username)
+      throws IOException {
     StringJoiner joiner = new StringJoiner(",");
     // 检查机器上pyhton环境中模块是否存在
     List<String> notExistModules =

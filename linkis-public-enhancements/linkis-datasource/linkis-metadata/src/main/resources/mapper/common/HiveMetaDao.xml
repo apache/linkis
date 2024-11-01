@@ -213,7 +213,7 @@
         inner join TBLS ON `PARTITION_KEYS`.TBL_ID = TBLS.TBL_ID
         inner join `DBS` ON TBLS.DB_ID=`DBS`.DB_ID
         where TBLS.TBL_NAME = #{tableName,jdbcType=VARCHAR}
-        and `DBS`.NAME =#{dbName,jdbcType=VARCHAR};
+        and `DBS`.NAME =#{dbName,jdbcType=VARCHAR} order by integer_idx;
     </select>
 
     <select id="getTableComment" resultType="java.lang.String">

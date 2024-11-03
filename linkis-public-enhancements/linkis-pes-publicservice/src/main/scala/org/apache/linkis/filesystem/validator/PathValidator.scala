@@ -98,12 +98,6 @@ class PathValidator extends Logging {
     if (path.contains("../")) {
       throw new WorkSpaceException(80026, "Relative path not allowed")
     }
-    if (!(path.contains(userLocalRootPath)) && !(path.contains(userHdfsRootPath))) {
-      throw new WorkSpaceException(
-        80027,
-        "The path needs to be within the user's own workspace path"
-      )
-    }
   }
 
   def validate(args: Array[Object], paramNames: Array[String]): Unit = {

@@ -67,6 +67,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -1469,7 +1470,7 @@ public class FsRestfulApi {
     List<String> pythonModules = FilesystemUtils.getInstallRequestPythonModules(file);
     String dependencies = "";
     if (CollectionUtils.isNotEmpty(pythonModules)) {
-      dependencies = String.join(",", pythonModules);
+      dependencies = pythonModules.stream().distinct().collect(Collectors.joining(","));
       String errorMsg = FilesystemUtils.checkModuleFile(pythonModules, username);
       if (StringUtils.isNotBlank(errorMsg)) {
         return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);

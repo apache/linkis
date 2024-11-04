@@ -40,14 +40,7 @@ case class SparkUDFCheckRule(sparkSession: SparkSession) extends Rule[LogicalPla
   private def containsSpecificFunction(
       logicalPlan: LogicalPlan,
       functionName: Array[String]
-  ): Boolean = {
-    logicalPlan.collect {
-      case e
-          if sparkSession.catalog
-            .functionExists(e.toString()) && e.toString.contains(functionName) =>
-        true
-    }.nonEmpty
-  }
+  ): Boolean = logicalPlan.toString.contains(functionName)
 
   override def apply(plan: LogicalPlan): LogicalPlan = {
     // 从系统属性中获取代码类型

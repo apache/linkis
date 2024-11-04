@@ -93,7 +93,7 @@ class TestJDBCEngineConnExecutor {
       engineconnCconf,
       "wds.linkis.jdbc.password=123456",
       engineconnCconf,
-      "wds.linkis.jdbc.connect.url=jdbc:mysql://10.30.23.40:3306/davinci",
+      "wds.linkis.jdbc.connect.url=jdbc:mysql://127.0.0.1:3306/davinci",
       engineconnCconf,
       "wds.linkis.rm.client.core.max=10",
       engineconnCconf,

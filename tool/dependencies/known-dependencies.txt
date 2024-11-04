@@ -38,6 +38,7 @@ aspectjweaver-1.9.7.jar
 attoparser-2.0.5.RELEASE.jar
 audience-annotations-0.13.0.jar
 audience-annotations-0.5.0.jar
+audience-annotations-0.12.0.jar
 automaton-1.11-8.jar
 avatica-1.11.0.jar
 avro-1.7.7.jar

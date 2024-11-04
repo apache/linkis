@@ -69,7 +69,7 @@ object GatewayConfiguration {
   val ENABLE_GATEWAY_AUTH = CommonVars("wds.linkis.enable.gateway.auth", false)
 
   val AUTH_IP_FILE = CommonVars("wds.linkis.gateway.auth.file", "auth.txt")
-  val DEFAULT_GATEWAY_ACCESS_TOKEN = CommonVars("wds.linkis.gateway.access.token", "WS-AUTH")
+  val DEFAULT_GATEWAY_ACCESS_TOKEN = CommonVars("wds.linkis.gateway.access.token", "LINKIS-AUTH")
 
   val CONTROL_WORKSPACE_ID_LIST = CommonVars("wds.linkis.gateway.control.workspace.ids", "224")
 

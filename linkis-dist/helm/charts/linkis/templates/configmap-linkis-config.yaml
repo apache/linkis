@@ -319,8 +319,6 @@ data:
     springfox.documentation.swagger-ui.enabled=false
 
   linkis-cg-linkismanager.properties: |
-    ##restful
-    wds.linkis.server.restful.scan.packages=org.apache.linkis.manager.am.restful,org.apache.linkis.resourcemanager.restful
     ##mybatis
     wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=
@@ -344,8 +342,6 @@ data:
 
 
   linkis-cg-engineconnmanager.properties: |
-    ##restful
-    wds.linkis.server.restful.scan.packages=org.apache.linkis.em.restful
     wds.linkis.engineconn.root.dir={{ .Values.linkis.locations.runtimeDir }}/appcom
 
     ##Spring

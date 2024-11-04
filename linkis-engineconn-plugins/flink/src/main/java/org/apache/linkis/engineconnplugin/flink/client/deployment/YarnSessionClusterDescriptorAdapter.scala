@@ -33,8 +33,7 @@ class YarnSessionClusterDescriptorAdapter(executionContext: ExecutionContext) ex
     clusterClient = clusterClientProvider.getClusterClient
     clusterID = clusterClient.getClusterId
     val appReport = yarnClient.getApplicationReport(clusterClient.getClusterId)
-    super.webInterfaceUrl = appReport.getTrackingUrl
-//    webInterfaceUrl = clusterClient.getWebInterfaceURL
+    webInterfaceUrl = appReport.getTrackingUrl
     bindApplicationId()
   }
 

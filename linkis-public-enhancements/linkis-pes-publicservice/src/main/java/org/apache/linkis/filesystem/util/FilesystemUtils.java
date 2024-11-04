@@ -37,10 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -120,12 +117,12 @@ public class FilesystemUtils {
       while ((entry = tarInput.getNextTarEntry()) != null) {
         if (entry.isDirectory()
             && entry.getName().endsWith(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
-          return entry.getName();
+          return entry.getName().replace(folder + FsPath.SEPARATOR, "");
         }
         if (entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
           String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
           int delimiterIndex = entry.getName().indexOf(delimiter);
-          return entry.getName().substring(0, delimiterIndex + delimiter.length());
+          return entry.getName().substring(0, delimiterIndex);
         }
       }
     } catch (Exception e) {
@@ -199,7 +196,7 @@ public class FilesystemUtils {
                   String exec =
                       Utils.exec(
                           (new String[] {
-                            "python",
+                            "python3",
                             Configuration.getLinkisHome() + "/admin/" + "check_modules.py",
                             module
                           }));
@@ -234,7 +231,7 @@ public class FilesystemUtils {
           new TarArchiveInputStream(new GzipCompressorInputStream(file.getInputStream()))) {
         TarArchiveEntry entry;
         while ((entry = tarInput.getNextTarEntry()) != null) {
-          if (entry.getName().endsWith("setup.py")) {
+          if (entry.getName().endsWith("setup.py") || entry.getName().endsWith("pyproject.toml")) {
             findSetup = 1;
             String content = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
             modules = extractDependencies(content);
@@ -245,30 +242,48 @@ public class FilesystemUtils {
         throw WorkspaceExceptionManager.createException(80039, e.getMessage());
       }
       if (findSetup == 0) {
-        throw WorkspaceExceptionManager.createException(80040, "setup.py");
+        throw WorkspaceExceptionManager.createException(80040, "setup.py  or pyproject.toml");
       }
     }
     return modules;
   }
 
   public static List<String> extractDependencies(String content) {
+    String trim =
+        content
+            .replaceAll("#.*?\\n", "")
+            .replaceAll("\\n", "")
+            .replaceAll("'", "")
+            .replaceAll(" ", "")
+            .trim();
     List<String> modules = new ArrayList<>();
-    Pattern pattern = Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL);
-    Matcher matcher = pattern.matcher(content);
-    if (matcher.find()) {
-      String requirements = matcher.group(1);
-      String[] packages = requirements.split(",");
-      for (String pkg : packages) {
-        pkg = pkg.replaceAll("#.*?\\n", "").replaceAll("\\n", "").replaceAll("'", "").trim();
-        for (String operator : OPERATORS) {
-          if (pkg.contains(operator)) {
-            String[] parts = pkg.split(operator);
-            pkg = parts[0].trim();
-          }
+    String moduleStr = "";
+    Matcher setupMatcher =
+        Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+    if (setupMatcher.find()) {
+      moduleStr = setupMatcher.group(1);
+    }
+    Matcher pyprojectMatcher =
+        Pattern.compile("dependencies=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+    if (pyprojectMatcher.find()) {
+      moduleStr = pyprojectMatcher.group(1);
+    }
+    String[] packages = moduleStr.split(",");
+    for (String pkg : packages) {
+      pkg =
+          pkg.replaceAll("#.*?\\n", "")
+              .replaceAll("\\n", "")
+              .replaceAll("'", "")
+              .replace("\"", "")
+              .trim();
+      for (String operator : OPERATORS) {
+        if (pkg.contains(operator)) {
+          String[] parts = pkg.split(operator);
+          pkg = parts[0].trim();
         }
-        if (StringUtils.isNotBlank(pkg)) {
-          modules.add(pkg);
-        }
+      }
+      if (StringUtils.isNotBlank(pkg)) {
+        modules.add(pkg);
       }
     }
     return modules;

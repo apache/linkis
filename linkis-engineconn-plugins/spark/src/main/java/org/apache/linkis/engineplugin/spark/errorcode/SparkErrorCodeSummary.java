@@ -66,6 +66,7 @@ public enum SparkErrorCodeSummary implements LinkisErrorCode {
       43032, "The application start failed, since yarn applicationId is null."),
 
   NOT_SUPPORT_METHOD(43040, "Not support method for requestExpectedResource."),
+  NOT_SUPPORT_FUNCTION(43050, "NoT support spacial udf in non-SQL script."),
   ;
 
   /** (errorCode)错误码 */

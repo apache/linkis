@@ -15,28 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.department.dao;
+package org.apache.linkis.engineplugin.spark.exception
 
-import org.apache.linkis.monitor.department.entity.UserDepartmentInfo;
+import org.apache.linkis.common.exception.ErrorException
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-@Mapper
-public interface UserDepartmentInfoMapper {
-
-  void insertUser(UserDepartmentInfo user);
-  @Transactional(rollbackFor = Exception.class)
-  int batchInsertUsers(@Param("userDepartmentInfos") List<UserDepartmentInfo> userDepartmentInfos);
-
-  void updateUser(UserDepartmentInfo user);
-
-  UserDepartmentInfo selectUser(@Param("userName") String userName);
-  @Transactional(rollbackFor = Exception.class)
-  void deleteUser();
-
-  List<UserDepartmentInfo> selectAllUsers();
-}
+/**
+ */
+class RuleCheckFailedException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {}

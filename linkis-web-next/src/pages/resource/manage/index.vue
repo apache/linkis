@@ -54,7 +54,7 @@
         </FFormItem>
         <FFormItem>
             <div class="btns">
-                <FButton type="primary" @click="search">
+                <FButton type="primary" @click="() => { search() }">
                     {{ t('message.linkis.find') }}
                 </FButton>
                 <FButton type="danger" @click="handleReset">

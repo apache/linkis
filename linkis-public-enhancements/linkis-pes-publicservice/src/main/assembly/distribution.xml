@@ -115,8 +115,8 @@
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
                 <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
-                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
-                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk18on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk18on:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
                 <exclude>org.eclipse.jetty:jetty-continuation:jar</exclude>
                 <exclude>org.eclipse.jetty:jetty-http:jar</exclude>

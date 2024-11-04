@@ -43,8 +43,8 @@
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>com.netflix.archaius:archaius-core:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
-                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
-                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk18on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk18on:jar</exclude>
                 <exclude>org.checkerframework:checker-qual:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
                 <exclude>commons-configuration:commons-configuration:jar</exclude>

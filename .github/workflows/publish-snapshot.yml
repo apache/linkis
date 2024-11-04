@@ -32,13 +32,13 @@ jobs:
           - dev-1.6.0
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: ${{ matrix.branch }}
       - name: Setup JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 8
 
       - name: Get Version

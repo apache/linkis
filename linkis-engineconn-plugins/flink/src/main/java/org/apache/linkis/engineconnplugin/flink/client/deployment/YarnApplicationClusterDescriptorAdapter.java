@@ -26,6 +26,8 @@ import org.apache.flink.client.deployment.application.ApplicationConfiguration;
 import org.apache.flink.client.program.ClusterClientProvider;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.api.records.ApplicationReport;
+import org.apache.hadoop.yarn.client.api.YarnClient;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -45,13 +47,16 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
             .getClusterClientFactory()
             .getClusterSpecification(this.executionContext.getFlinkConfig());
     YarnClusterDescriptor clusterDescriptor = this.executionContext.createClusterDescriptor();
+    YarnClient yarnClient = clusterDescriptor.getYarnClient();
     try {
       ClusterClientProvider<ApplicationId> clusterClientProvider =
           clusterDescriptor.deployApplicationCluster(
               clusterSpecification, applicationConfiguration);
       clusterClient = clusterClientProvider.getClusterClient();
       super.clusterID = clusterClient.getClusterId();
-      super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
+      ApplicationReport appReport = yarnClient.getApplicationReport(clusterClient.getClusterId());
+      super.webInterfaceUrl = appReport.getTrackingUrl();
+      //      super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
     } catch (Exception e) {
       throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
     }

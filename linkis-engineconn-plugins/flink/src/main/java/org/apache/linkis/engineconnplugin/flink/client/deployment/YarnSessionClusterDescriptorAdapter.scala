@@ -19,6 +19,8 @@ package org.apache.linkis.engineconnplugin.flink.client.deployment
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.flink.api.common.JobID
+import org.apache.hadoop.yarn.api.records.ApplicationReport
+import org.apache.hadoop.yarn.client.api.YarnClient
 
 
 class YarnSessionClusterDescriptorAdapter(executionContext: ExecutionContext) extends YarnPerJobClusterDescriptorAdapter(executionContext) {
@@ -27,9 +29,11 @@ class YarnSessionClusterDescriptorAdapter(executionContext: ExecutionContext) ex
     val clusterSpecification = this.executionContext.getClusterClientFactory.getClusterSpecification(this.executionContext.getFlinkConfig)
     val clusterDescriptor = this.executionContext.createClusterDescriptor
     val clusterClientProvider = clusterDescriptor.deploySessionCluster(clusterSpecification)
+    val yarnClient = clusterDescriptor.getYarnClient
     clusterClient = clusterClientProvider.getClusterClient
     clusterID = clusterClient.getClusterId
-    webInterfaceUrl = clusterClient.getWebInterfaceURL
+    val appReport = yarnClient.getApplicationReport(clusterClient.getClusterId)
+    webInterfaceUrl = appReport.getTrackingUrl
     bindApplicationId()
   }
 

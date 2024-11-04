@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.extension
 
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.SparkSession
@@ -56,7 +57,6 @@ case class SparkUDFCheckRule(sparkSession: SparkSession) extends Rule[LogicalPla
     // 从系统属性中获取udf函数名
     val udfNames: String = System.getProperty(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, "")
     logger.info("SparkUDFCheckRule udfNames: {}", udfNames)
-
     if ("sql".equals(codeType) || StringUtils.isBlank(udfNames)) {
       // 如果是 SQL 类型，直接返回原始计划
       plan

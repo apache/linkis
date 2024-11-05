@@ -47,12 +47,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
 import java.nio.file.attribute.UserPrincipalLookupService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +108,7 @@ public class LocalFileSystem extends FileSystem {
     if (group != null) {
       setGroup(dest, group);
     }
-    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP.getValue());
+    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP().getValue());
     return true;
   }
 
@@ -136,7 +131,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
-    LOG.info("Set group with path:" + dest.getPath() + "and group:" + user);
+    LOG.info("Set group with path:" + dest.getPath() + " and group:" + group);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;
@@ -262,9 +257,17 @@ public class LocalFileSystem extends FileSystem {
     LOG.info("Try to list path:" + path.getPath() + " with error msg");
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
+      Set<String> fileNameSet = new HashSet<>();
+      fileNameSet.add(path.getPath().trim());
       String message = "";
       for (File f : files) {
         try {
+          if (fileNameSet.contains(f.getPath())) {
+            LOG.info("File {} is duplicate", f.getPath());
+            continue;
+          } else {
+            fileNameSet.add(f.getParent().trim());
+          }
           rtn.add(get(f.getPath()));
         } catch (Throwable e) {
           LOG.warn("Failed to list path:", e);
@@ -289,15 +292,15 @@ public class LocalFileSystem extends FileSystem {
 
     if (MapUtils.isNotEmpty(properties)) {
       this.properties = properties;
-      if (properties.containsKey(StorageConfiguration.PROXY_USER.key())) {
-        user = StorageConfiguration.PROXY_USER.getValue(properties);
+      if (properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
+        user = StorageConfiguration.PROXY_USER().getValue(properties);
       }
-      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
     } else {
       this.properties = new HashMap<String, String>();
     }
     if (FsPath.WINDOWS) {
-      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
     }
     if (StringUtils.isEmpty(group)) {
       String groupInfo;
@@ -320,7 +323,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public String rootUserName() {
-    return StorageConfiguration.LOCAL_ROOT_USER.getValue();
+    return StorageConfiguration.LOCAL_ROOT_USER().getValue();
   }
 
   @Override
@@ -423,7 +426,7 @@ public class LocalFileSystem extends FileSystem {
   }
 
   @Override
-  public boolean canRead(FsPath fsPath, String s) throws IOException {
+  public boolean canRead(FsPath dest, String user) throws IOException {
     return false;
   }
 
@@ -493,5 +496,17 @@ public class LocalFileSystem extends FileSystem {
   private String getOwner(String path) throws IOException {
     PosixFileAttributes attr = Files.readAttributes(Paths.get(path), PosixFileAttributes.class);
     return attr.owner().getName();
+  }
+
+  @Override
+  public long getLength(FsPath dest) throws IOException {
+    String path = dest.getPath();
+    LOG.info("Get file length with path:" + path);
+    return new File(path).length();
+  }
+
+  @Override
+  public String checkSum(FsPath dest) {
+    return null;
   }
 }

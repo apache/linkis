@@ -124,21 +124,5 @@ public abstract class Resource {
 
   public abstract int compare(Resource r);
 
-  public Resource add(Resource r, float rate) {
-    return this.add(r.multiplied(rate));
-  }
-
-  public Resource minus(Resource r, float rate) {
-    return this.minus(r.multiplied(rate));
-  }
-
-  public Resource divide(Resource r, int rate) {
-    return this.divide(rate).divide(r);
-  }
-
-  public Resource multiplied(double rate) {
-    return this.multiplied((float) rate);
-  }
-
   public abstract String toJson();
 }

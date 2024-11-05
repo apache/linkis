@@ -43,7 +43,7 @@ public class ResourceUtils {
     try {
       json = mapper.writeValueAsString(entity);
     } catch (JsonProcessingException e) {
-      logger.error("to json string met with exception", e);
+      logger.warn("to json string met with exception", e);
     }
 
     return json;
@@ -53,7 +53,7 @@ public class ResourceUtils {
     try {
       return mapper.readValue(json, valueTypeRef);
     } catch (JsonProcessingException e) {
-      logger.error("json parse met with exception", e);
+      logger.warn("json parse met with exception", e);
     }
 
     return null;
@@ -63,7 +63,7 @@ public class ResourceUtils {
     try {
       return mapper.readValue(json, type);
     } catch (JsonProcessingException e) {
-      logger.error("json parse met with exception", e);
+      logger.warn("json parse met with exception", e);
     }
 
     return null;
@@ -97,8 +97,8 @@ public class ResourceUtils {
       }
     } catch (JsonProcessingException e) {
       logger.warn("ResourceUtils deserializeResource failed", e);
+      return null;
     }
-    return null;
   }
 
   public static String serializeResource(Resource resource) {
@@ -106,8 +106,8 @@ public class ResourceUtils {
       return mapper.writeValueAsString(resource);
     } catch (JsonProcessingException e) {
       logger.warn("ResourceUtils deserializeResource failed", e);
+      return null;
     }
-    return null;
   }
 
   public static PersistenceResource toPersistenceResource(NodeResource nodeResource) {
@@ -137,7 +137,9 @@ public class ResourceUtils {
 
   public static CommonNodeResource fromPersistenceResource(
       PersistenceResource persistenceResource) {
-    if (persistenceResource == null) return null;
+    if (persistenceResource == null) {
+      return null;
+    }
     CommonNodeResource nodeResource = new CommonNodeResource();
     ResourceType resourceType = ResourceType.valueOf(persistenceResource.getResourceType());
     nodeResource.setId(persistenceResource.getId());
@@ -177,7 +179,9 @@ public class ResourceUtils {
 
   public static UserResource fromPersistenceResourceAndUser(
       PersistenceResource persistenceResource) {
-    if (persistenceResource == null) return null;
+    if (persistenceResource == null) {
+      return null;
+    }
     UserResource nodeResource = new UserResource();
     nodeResource.setId(persistenceResource.getId());
     ResourceType resourceType = ResourceType.valueOf(persistenceResource.getResourceType());
@@ -241,7 +245,9 @@ public class ResourceUtils {
   }
 
   public static NodeResource convertTo(NodeResource nodeResource, ResourceType resourceType) {
-    if (nodeResource.getResourceType().equals(resourceType)) return nodeResource;
+    if (nodeResource.getResourceType().equals(resourceType)) {
+      return nodeResource;
+    }
     if (resourceType.equals(ResourceType.LoadInstance)) {
       if (nodeResource.getResourceType().equals(ResourceType.DriverAndYarn)) {
         nodeResource.setResourceType(resourceType);
@@ -288,8 +294,12 @@ public class ResourceUtils {
    * @return
    */
   public static float getLoadInstanceResourceRate(Resource leftResource, Resource maxResource) {
-    if (null == leftResource) return 0;
-    if (null == maxResource) return 1;
+    if (null == leftResource) {
+      return 0;
+    }
+    if (null == maxResource) {
+      return 1;
+    }
     if (leftResource instanceof LoadInstanceResource) {
       if (maxResource instanceof LoadInstanceResource) {
         LoadInstanceResource leftLoadInstanceResource = (LoadInstanceResource) leftResource;

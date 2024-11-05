@@ -98,4 +98,17 @@ public class CommonLockMapperTest extends BaseDaoTest {
     List<CommonLock> locks = commonLockMapper.getAll();
     Assertions.assertTrue(locks.size() == 2);
   }
+
+  @Test
+  @DisplayName("getLockByHostTest")
+  public void getLockByHostTest() {
+    String lockObject = "hadoop-warehouse3";
+    CommonLock commonLock = new CommonLock();
+    commonLock.setLockObject(lockObject);
+    commonLock.setLocker("test");
+    commonLockMapper.lock(commonLock, -1L);
+    CommonLock lock =
+        commonLockMapper.getLockByLocker(commonLock.getLockObject(), commonLock.getLocker());
+    Assertions.assertTrue(lock != null);
+  }
 }

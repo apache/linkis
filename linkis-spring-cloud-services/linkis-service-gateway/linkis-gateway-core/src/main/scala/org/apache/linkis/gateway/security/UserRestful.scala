@@ -67,6 +67,10 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 
   override def doUserRequest(gatewayContext: GatewayContext): Unit = {
     val path = gatewayContext.getRequest.getRequestURI.replace(userRegex, "")
+    if (StringUtils.isNotBlank(path) && path.startsWith("sso-login")) {
+      ssoLogin(gatewayContext)
+      return
+    }
     val message = path match {
       case "register" => register(gatewayContext)
       case "login" =>
@@ -110,6 +114,13 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     }
   }
 
+  def ssoLogin(gatewayContext: GatewayContext): Unit = {
+    val message = Message.ok("succeed")
+    gatewayContext.getResponse.write(message)
+    gatewayContext.getResponse.setStatus(Message.messageToHttpStatus(message))
+    gatewayContext.getResponse.sendResponse()
+  }
+
   def login(gatewayContext: GatewayContext): Message = {
     val message = tryLogin(gatewayContext)
     message
@@ -147,6 +158,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
       .ok("get baseinfo success(获取成功)！")
       .data("resultSetExportEnable", GatewayConfiguration.IS_DOWNLOAD.getValue)
       .data("linkisClusterName", GatewayConfiguration.LINKIS_CLUSTER_NAME.getValue)
+      .data("engineLogOnlyAdminEnable", GatewayConfiguration.ENGINE_LOG_ONLY_ADMIN.getValue)
 
   }
 

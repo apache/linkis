@@ -819,11 +819,11 @@ public class UDFServiceImpl implements UDFService {
   }
 
   @Override
-  public List<UDFInfoVo> getUDFInfoByIds(String username, Long[] ids, String category) {
+  public List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) {
     if (ids == null || ids.length == 0) {
       return new ArrayList<>(0);
     }
-    return udfDao.getUDFInfoByIds(username, ids, categoryToCodes.get(category));
+    return udfDao.getUDFInfoByIds(ids, categoryToCodes.get(category));
   }
 
   /**

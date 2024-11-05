@@ -81,12 +81,12 @@ class EngineConnTimedLockService extends LockService with Logging {
   @throws[EngineConnExecutorErrorException]
   override def tryLock(requestEngineLock: RequestEngineLock): Option[String] = synchronized {
     if (null != engineConnLock && engineConnLock.isAcquired()) return None
-    this.lockType = requestEngineLock.getLockType
+    this.lockType = requestEngineLock.lockType
     lockType match {
       case EngineLockType.Always =>
         timedLock(-1)
       case EngineLockType.Timed =>
-        timedLock(requestEngineLock.getTimeout)
+        timedLock(requestEngineLock.timeout)
       case o: Any =>
         logger.error("Invalid lockType : " + BDPJettyServerHelper.gson.toJson(o))
         return Some(null)
@@ -172,11 +172,11 @@ class EngineConnTimedLockService extends LockService with Logging {
 
   @Receiver
   override def requestUnLock(requestEngineUnlock: RequestEngineUnlock): ResponseEngineUnlock = {
-    if (StringUtils.isBlank(requestEngineUnlock.getLock)) {
+    if (StringUtils.isBlank(requestEngineUnlock.lock)) {
       logger.error("Invalid requestEngineUnlock: ")
-      new ResponseEngineUnlock(false)
+      ResponseEngineUnlock(false)
     } else {
-      new ResponseEngineUnlock(unlock(requestEngineUnlock.getLock))
+      ResponseEngineUnlock(unlock(requestEngineUnlock.lock))
     }
   }
 
@@ -221,7 +221,7 @@ class EngineConnConcurrentLockService extends LockService {
 
   @Receiver
   override def requestUnLock(requestEngineUnlock: RequestEngineUnlock): ResponseEngineUnlock =
-    new ResponseEngineUnlock(true)
+    ResponseEngineUnlock(true)
 
   override def onAddLock(addLockEvent: ExecutorLockEvent): Unit = {}
 

@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -95,13 +95,13 @@ export default {
     linkTo(type) {
       let url = "";
       if (type === "book") {
-        url = `https://github.com/WeBankFinTech/DataSphereStudio/blob/master/docs/zh_CN/ch3/DSS_User_Manual.md`;
+        url = `https://linkis.apache.org/`;
       } else if (type === "github") {
-        url = `https://github.com/WeBankFinTech/DataSphereStudio`;
+        url = `https://linkis.apache.org/`;
       } else if (type === "freedback") {
-        url = "https://wj.qq.com/s2/4943071/c037/ ";
+        url = "https://linkis.apache.org/";
         if (localStorage.getItem("locale") === "en") {
-          url = "https://wj.qq.com/s2/4943706/5a8b";
+          url = "https://linkis.apache.org/";
         }
       }
       util.windowOpen(url);

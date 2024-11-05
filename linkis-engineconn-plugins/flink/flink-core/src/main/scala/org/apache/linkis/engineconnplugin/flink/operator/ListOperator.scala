@@ -21,15 +21,15 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.constant.ec.ECConstants
-import org.apache.linkis.governance.common.exception.GovernanceErrorException
 import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.common.operator.Operator
-import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.hadoop.yarn.api.records.{FinalApplicationStatus, YarnApplicationState}
 
 import java.util
 
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable
 
 class ListOperator extends Operator with Logging {
@@ -38,8 +38,7 @@ class ListOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("list")
 
-  @throws[GovernanceErrorException]
-  override def apply(params: util.Map[String, Object]): util.Map[String, Object] = {
+  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
 
     val applicationTypeSet = new util.HashSet[String]()
     var appStateSet = util.EnumSet.of[YarnApplicationState](YarnApplicationState.RUNNING)
@@ -49,12 +48,12 @@ class ListOperator extends Operator with Logging {
       val appTypeList = params
         .getOrElse(ECConstants.YARN_APP_TYPE_LIST_KEY, new util.ArrayList[String]())
         .asInstanceOf[util.List[String]]
-      appTypeList.foreach(applicationTypeSet.add)
+      appTypeList.asScala.foreach(applicationTypeSet.add)
       val appStateList = params
         .getOrElse(ECConstants.YARN_APP_STATE_LIST_KEY, new util.ArrayList[String]())
         .asInstanceOf[util.List[String]]
       val appStateArray = new util.HashSet[YarnApplicationState]
-      appStateList.foreach(e => appStateArray.add(YarnApplicationState.valueOf(e)))
+      appStateList.asScala.foreach(e => appStateArray.add(YarnApplicationState.valueOf(e)))
       if (!appStateArray.isEmpty) {
         appStateSet = util.EnumSet.copyOf(appStateArray)
       }
@@ -72,7 +71,7 @@ class ListOperator extends Operator with Logging {
       val appTypeStr = json.writeValueAsString(applicationTypeSet)
       val appStateStr = json.writeValueAsString(appStateSet)
       val rsAppList = new util.ArrayList[util.Map[String, String]]()
-      appList.foreach(report => {
+      appList.asScala.foreach(report => {
         if (report.getName.contains(appName)) {
           val tmpMap = new util.HashMap[String, String]()
           tmpMap.put(ECConstants.YARN_APP_NAME_KEY, report.getName)
@@ -107,9 +106,7 @@ class ListOperator extends Operator with Logging {
       throw e
     }
 
-    val map = new util.HashMap[String, Object]()
-    rsMap.foreach(e => map.put(e._1, e._2))
-    map
+    rsMap.toMap[String, String]
   }
 
 }

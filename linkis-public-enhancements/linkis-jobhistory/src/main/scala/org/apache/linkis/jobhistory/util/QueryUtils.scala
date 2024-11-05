@@ -18,10 +18,10 @@
 package org.apache.linkis.jobhistory.util
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration.IS_VIEW_FS_ENV
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
-import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -30,10 +30,9 @@ import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
-import java.io.{InputStream, OutputStream}
+import java.io.{BufferedReader, InputStream, InputStreamReader, OutputStream}
 import java.text.SimpleDateFormat
-import java.util
-import java.util.{Arrays, Date}
+import java.util.Date
 import java.util.regex.Pattern
 
 object QueryUtils extends Logging {
@@ -44,7 +43,6 @@ object QueryUtils extends Logging {
   private val CODE_STORE_PREFIX_VIEW_FS =
     CommonVars("wds.linkis.query.store.prefix.viewfs", "hdfs:///apps-data/")
 
-  private val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
   private val CODE_STORE_SUFFIX = CommonVars("wds.linkis.query.store.suffix", "")
   private val CODE_STORE_LENGTH = CommonVars("wds.linkis.query.code.store.length", 50000)
   private val CHARSET = "utf-8"
@@ -110,34 +108,44 @@ object QueryUtils extends Logging {
       return
     }
     val codePath = queryTask.getExecutionCode
-    val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
-    val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
-    val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
-    val position = infos(0).toInt
-    var lengthLeft = infos(1).toInt
-    val tub = new Array[Byte](1024)
     val executionCode: StringBuilder = new StringBuilder
-    val fsPath: FsPath = new FsPath(path)
-    val fileSystem =
-      FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
-    fileSystem.init(null)
-    var is: InputStream = null
-    if (!fileSystem.exists(fsPath)) return
-    Utils.tryFinally {
-      is = fileSystem.read(fsPath)
-      if (position > 0) is.skip(position)
-      breakable {
-        while (lengthLeft > 0) {
-          val readed = is.read(tub)
-          val useful = Math.min(readed, lengthLeft)
-          if (useful < 0) break()
-          lengthLeft -= useful
-          executionCode.append(new String(tub, 0, useful, CHARSET))
+    if (codePath.split(CODE_SPLIT).length >= 2) {
+      val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
+      val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
+      val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
+      val position = infos(0).toInt
+      var lengthLeft = infos(1).toInt
+      val tub = new Array[Char](1024)
+      val fsPath: FsPath = new FsPath(path)
+      val fileSystem =
+        FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
+      fileSystem.init(null)
+      var is: InputStream = null
+      var bufferedReader: BufferedReader = null
+      if (!fileSystem.exists(fsPath)) return
+      Utils.tryFinally {
+        is = fileSystem.read(fsPath)
+        bufferedReader = new BufferedReader(new InputStreamReader(is, CHARSET))
+        if (position > 0) bufferedReader.skip(position)
+        breakable {
+          while (lengthLeft > 0) {
+            val readed = bufferedReader.read(tub)
+            val useful = Math.min(readed, lengthLeft)
+            if (useful < 0) break()
+            lengthLeft -= useful
+            val usefulChars = new Array[Char](useful)
+            System.arraycopy(tub, 0, usefulChars, 0, useful)
+            executionCode.append(new String(usefulChars))
+          }
         }
+      } {
+        IOUtils.closeQuietly(bufferedReader)
+        if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
       }
-    } {
-      IOUtils.closeQuietly(is)
-      if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
+    } else {
+      logger.error(
+        s"Can't read executionCode from HDFS, jobId:${queryTask.getId},error codePath:$codePath "
+      )
     }
     queryTask.setExecutionCode(executionCode.toString())
   }

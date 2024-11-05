@@ -15,6 +15,8 @@
 
 import sys, getopt, traceback, json, re
 import os
+import socket
+import signal
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 zipPaths = sys.argv[4]
 paths = zipPaths.split(':')
@@ -96,6 +98,12 @@ errorOutput = ErrorLogger()
 sys.stdout = linkisOutput
 sys.stderr = errorOutput
 
+serverPort = int(sys.argv[1])
+
+def handler_stop_signals(sig, frame):
+  sys.exit("Got signal : " + str(sig))
+
+signal.signal(signal.SIGINT, handler_stop_signals)
 try:
     client = GatewayClient(port=int(sys.argv[1]),
                            gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
@@ -231,14 +239,23 @@ class UDF(object):
 udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized(os.getpid())
 
-def java_watchdog_thread(sleep=10):
+def is_port_in_use(host, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.settimeout(1)
+        s.connect((host, port))
+        s.close()
+        return True
+    except (socket.timeout, socket.error):
+        s.close()
+        return False
+
+def java_watchdog_thread():
     while True :
-        time.sleep(sleep)
-        try:
-            intp.getKind()
-        except Exception as e:
-            # Failed to detect java daemon, now exit python process
-            #just exit thread see https://stackoverflow.com/questions/905189/why-does-sys-exit-not-exit-when-called-inside-a-thread-in-python
+        if is_port_in_use("127.0.0.1", serverPort):
+            time.sleep(10)
+        else:
+            print("server exit,python exit")
             os._exit(1)
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
 watchdog_thread.daemon = True

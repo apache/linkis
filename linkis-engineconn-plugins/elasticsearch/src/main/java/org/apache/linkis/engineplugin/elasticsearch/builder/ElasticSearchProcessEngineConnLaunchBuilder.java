@@ -26,6 +26,6 @@ public class ElasticSearchProcessEngineConnLaunchBuilder
 
   @Override
   public String getEngineStartUser(UserCreatorLabel label) {
-    return StorageConfiguration.HDFS_ROOT_USER.getValue();
+    return StorageConfiguration.HDFS_ROOT_USER().getValue();
   }
 }

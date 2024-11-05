@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -39,5 +40,12 @@ public class GatewayAuthTokenServiceImpl
     List<GatewayAuthTokenEntity> listByPage = this.getBaseMapper().getListByPage(searchName);
     PageInfo pageInfo = new PageInfo(listByPage);
     return pageInfo;
+  }
+
+  @Override
+  public GatewayAuthTokenEntity getEntityByToken(String token) {
+    QueryWrapper<GatewayAuthTokenEntity> queryWrapper = new QueryWrapper<>();
+    queryWrapper.eq("token_name", token);
+    return this.getBaseMapper().selectOne(queryWrapper);
   }
 }

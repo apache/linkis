@@ -25,7 +25,7 @@ class DataTypeTest {
   @DisplayName("constTest")
   def constTest(): Unit = {
 
-    val nullvalue = DataType.NULL_VALUE
+    val nullvalue = Dolphin.NULL
     val lowcasenullvalue = DataType.LOWCASE_NULL_VALUE
 
     Assertions.assertEquals("NULL", nullvalue)
@@ -58,6 +58,21 @@ class DataTypeTest {
     val str = DataType.valueToString("123")
     Assertions.assertNotNull(str)
 
+  }
+
+  @Test
+  @DisplayName("toValueTest")
+  def toValueTest(): Unit = {
+    val dateType = DataType.toDataType("double")
+    val str = DataType.toValue(dateType, "NaN")
+    Assertions.assertNotNull(str)
+  }
+
+  @Test
+  @DisplayName("decimalTest")
+  def decimalTest(): Unit = {
+    val dateType = DataType.toDataType("decimal(10, 8)")
+    Assertions.assertTrue(dateType.typeName.equals("decimal"))
   }
 
 }

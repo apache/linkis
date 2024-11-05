@@ -19,7 +19,8 @@
 <mapper namespace="org.apache.linkis.basedatamanager.server.dao.ConfigurationKeyEngineRelationMapper">
 
     <delete id="deleteByKeyId" parameterType="java.lang.Long">
-        DELETE FROM linkis_ps_configuration_key_engine_relation
-        WHERE config_key_id = #{keyId}
+        delete
+        from linkis_ps_configuration_key_engine_relation
+        where config_key_id = #{keyId}
     </delete>
 </mapper>

@@ -23,20 +23,8 @@ import org.apache.linkis.common.conf.TimeType;
 
 public class RMConfiguration {
 
-  public static final CommonVars<String> RM_APPLICATION_NAME =
-      CommonVars.apply("wds.linkis.rm.application.name", "ResourceManager");
-
   public static final CommonVars<Long> RM_WAIT_EVENT_TIME_OUT =
       CommonVars.apply("wds.linkis.rm.wait.event.time.out", 1000 * 60 * 12L);
-
-  public static final CommonVars<Long> RM_REGISTER_INTERVAL_TIME =
-      CommonVars.apply("wds.linkis.rm.register.interval.time", 1000 * 60 * 2L);
-
-  public static final CommonVars<TimeType> NODE_HEARTBEAT_INTERVAL =
-      CommonVars.apply("wds.linkis.manager.am.node.heartbeat", new TimeType("3m"));
-
-  public static final CommonVars<TimeType> NODE_HEARTBEAT_MAX_UPDATE_TIME =
-      CommonVars.apply("wds.linkis.manager.am.node.heartbeat", new TimeType("5m"));
 
   public static final CommonVars<TimeType> LOCK_RELEASE_TIMEOUT =
       CommonVars.apply("wds.linkis.manager.rm.lock.release.timeout", new TimeType("5m"));
@@ -72,42 +60,8 @@ public class RMConfiguration {
   public static final CommonVars<String> USER_AVAILABLE_KUBERNETES_INSTANCE_NAMESPACE =
       CommonVars.apply("wds.linkis.rm.kubernetes.namespace", "default");
 
-  public static final CommonVars<Long> USER_MODULE_WAIT_USED =
-      CommonVars.apply("wds.linkis.rm.user.module.wait.used", 60 * 10L);
-  public static final CommonVars<Long> USER_MODULE_WAIT_RELEASE =
-      CommonVars.apply("wds.linkis.rm.user.module.wait.used", -1L);
-
-  //
-  public static final CommonVars<Long> RM_COMPLETED_SCAN_INTERVAL =
-      CommonVars.apply("wds.linkis.rm.module.completed.scan.interval", 10000L);
-
   public static final CommonVars<Long> RM_ENGINE_SCAN_INTERVAL =
       CommonVars.apply("wds.linkis.rm.engine.scan.interval", 120000L);
-  public static final CommonVars<Long> RM_ENGINE_RELEASE_THRESHOLD =
-      CommonVars.apply("wds.linkis.rm.engine.release.threshold", 120000L);
-
-  // configuration
-
-  public static final CommonVars<String> ALERT_SUB_SYSTEM_ID =
-      CommonVars.apply("wds.linkis.rm.alert.system.id", "5136");
-  public static final CommonVars<String> ALERT_DEFAULT_UM =
-      CommonVars.apply("wds.linkis.rm.alert.default.um", "hadoop");
-  public static final CommonVars<String> ALERT_IMS_URL =
-      CommonVars.apply("wds.linkis.rm.alert.ims.url", "127.0.0.1");
-  public static final CommonVars<Long> ALERT_DUPLICATION_INTERVAL =
-      CommonVars.apply("wds.linkis.rm.alert.duplication.interval", 1200L);
-
-  public static final CommonVars<String> ALERT_CONTACT_GROUP =
-      CommonVars.apply("wds.linkis.rm.alert.contact.group", "q01/hadoop,q02/hadoop");
-
-  public static final CommonVars<String> ALERT_DEFAULT_CONTACT =
-      CommonVars.apply("wds.linkis.rm.alert.default.contact", "hadoop");
-  public static final CommonVars<Boolean> ALERT_ENABLED =
-      CommonVars.apply("wds.linkis.rm.alert.enabled", false);
-
-  // publics service
-  public static final CommonVars<String> HIVE_ENGINE_MAINTAIN_TIME_STR =
-      CommonVars.apply("wds.linkis.hive.maintain.time.key", "wds.linkis.hive.maintain.time");
 
   public static final CommonVars<String> DEFAULT_YARN_CLUSTER_NAME =
       CommonVars.apply("wds.linkis.rm.default.yarn.cluster.name", "default");
@@ -119,7 +73,4 @@ public class RMConfiguration {
       CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.type", "K8S");
   public static final CommonVars<Integer> EXTERNAL_RETRY_NUM =
       CommonVars.apply("wds.linkis.rm.external.retry.num", 3);
-
-  public static final CommonVars<String> DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER =
-      CommonVars.apply("wds.linkis.rm.default.yarn.webaddress.delimiter", ";");
 }

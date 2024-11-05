@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconn.core.util
 
-import com.google.gson.{Gson, GsonBuilder, ToNumberPolicy}
+import com.google.gson.{GsonBuilder, ToNumberPolicy}
 
 object EngineConnUtils {
 

@@ -18,6 +18,7 @@
 package org.apache.linkis.monitor.jobhistory.jobtime
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.config.MonitorConfig
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
@@ -26,7 +27,7 @@ import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.until.CacheUtils
 
 import java.util
-import java.util.Locale
+import java.util.{Locale, Optional}
 
 import scala.collection.JavaConverters._
 
@@ -72,6 +73,7 @@ class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (sd <- data.asScala) {
       if (sd != null && sd.getData() != null) {
+        var idLong = 0L
         for (d <- sd.getData().asScala) {
           if (d.isInstanceOf[JobHistory]) {
             val jobHistory = d.asInstanceOf[JobHistory]
@@ -82,9 +84,22 @@ class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
                 alertData.add(d.asInstanceOf[JobHistory])
               }
             }
-            scanRuleList.put("jobhistoryScan", jobHistory.getId)
+            if (idLong == 0L || jobHistory.getId < idLong) {
+              idLong = jobHistory.getId
+            }
           } else {
             logger.warn("Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName)
+          }
+        }
+        if (idLong > 0L) {
+          val id = Optional
+            .ofNullable(CacheUtils.cacheBuilder.getIfPresent("jobhistoryScan"))
+            .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue)
+          if (id == 0) {
+            scanRuleList.put("jobhistoryScan", idLong)
+          }
+          if (id > idLong) {
+            scanRuleList.put("jobhistoryScan", idLong)
           }
         }
       } else {

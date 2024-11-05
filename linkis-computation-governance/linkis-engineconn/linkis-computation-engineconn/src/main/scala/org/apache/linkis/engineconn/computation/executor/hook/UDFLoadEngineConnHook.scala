@@ -103,7 +103,17 @@ abstract class UDFLoad extends Logging {
     }
     logger.info("all udfs: ")
 
+    // 判断是否加载了特殊udf
+    val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
     udfInfos.foreach { l =>
+      if (
+          ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue && StringUtils.isNotBlank(
+            udfNames
+          ) && udfNames.split(",").exists(l.getUdfName.contains)
+      ) {
+        logger.info(s"add spacial udf check for job with udfNames: {}", udfNames)
+        System.getProperties.put(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, udfNames)
+      }
       logger.info(
         s"udfName:${l.getUdfName}, bml_resource_id:${l.getBmlResourceId}, bml_id:${l.getId}\n"
       )

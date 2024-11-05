@@ -29,7 +29,16 @@ import java.util.List;
 
 import scala.collection.Seq;
 
+/** 解析Spark sql执行计划工具类 */
 public class PlanParseUtil {
+
+  /**
+   * 将执行计划转换为多叉树
+   *
+   * @param logicalPlan 逻辑计划
+   * @param level 多叉树层级
+   * @return 转换后的多叉树
+   */
   private static MultiTreeNode convert(LogicalPlan logicalPlan, int level) {
     if (logicalPlan == null) {
       return null;
@@ -128,16 +137,32 @@ public class PlanParseUtil {
   }
 
   /**
-   * 检测是否使用任意一个udf
+   * 检测执行计划查询字段中是否使用了给定udf中的一个
    *
-   * @param logicalPlan
-   * @param udfNames
-   * @return
+   * @param logicalPlan 逻辑计划
+   * @param udfNames 待检查的udf函数名
+   * @return 检查结果，包含一个则为true
    */
   public static boolean checkUdf(LogicalPlan logicalPlan, String[] udfNames) {
     if (udfNames == null || udfNames.length == 0) {
       return false;
     }
+
+    // 处理 limit
+    if (logicalPlan instanceof GlobalLimit) {
+      GlobalLimit gl = (GlobalLimit) logicalPlan;
+      logicalPlan = gl.child();
+      if (logicalPlan instanceof LocalLimit) {
+        LocalLimit ll = (LocalLimit) logicalPlan;
+        logicalPlan = ll.child();
+      }
+    }
+    // 处理 order by
+    if (logicalPlan instanceof Sort) {
+      Sort sort = (Sort) logicalPlan;
+      logicalPlan = sort.child();
+    }
+
     MultiTreeNode root = convert(logicalPlan, 0);
     for (String udfName : udfNames) {
       if (containsUdf(root, udfName)) {
@@ -148,11 +173,11 @@ public class PlanParseUtil {
   }
 
   /**
-   * 检测是否使用某个个udf
+   * 检测执行计划中是否使用给定的udf
    *
-   * @param multiTreeNode
-   * @param udfName
-   * @return
+   * @param multiTreeNode 逻辑计划转换后的多叉树
+   * @param udfName 待检查udf名
+   * @return 检查结果
    */
   public static boolean containsUdf(MultiTreeNode multiTreeNode, String udfName) {
     if (multiTreeNode == null) {

@@ -23,7 +23,7 @@ import org.apache.linkis.monitor.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.utils.alert.AlertDesc
-import org.apache.linkis.monitor.utils.alert.ims.{PooledImsAlertUtils, UserLabelAlertUtils}
+import org.apache.linkis.monitor.utils.alert.ims.{MonitorAlertUtils, PooledImsAlertUtils}
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
@@ -60,8 +60,10 @@ class JobHistoryLabelsAlertSender() extends Observer with Logging {
     for (str <- toSend.distinct) {
       val labelsMap: util.Map[String, String] =
         BDPJettyServerHelper.gson.fromJson(str, classOf[java.util.Map[String, String]])
+      val replaceParams: util.HashMap[String, String] = new util.HashMap[String, String]
+      replaceParams.put("$userCreator", labelsMap.get("userCreator"))
       val alerts: util.Map[String, AlertDesc] =
-        UserLabelAlertUtils.getAlerts(Constants.USER_LABEL_MONITOR, labelsMap.get("userCreator"))
+        MonitorAlertUtils.getAlerts(Constants.USER_LABEL_MONITOR, replaceParams)
       PooledImsAlertUtils.addAlert(alerts.get("12010"));
     }
   }

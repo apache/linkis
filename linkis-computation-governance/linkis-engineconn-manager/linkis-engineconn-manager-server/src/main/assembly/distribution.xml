@@ -244,9 +244,6 @@
                 <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
                 <exclude>org.slf4j:slf4j-api:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-actuator:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-actuator-autoconfigure:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-autoconfigure:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-actuator:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-aop:jar</exclude>

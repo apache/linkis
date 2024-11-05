@@ -23,10 +23,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.github.pjfanning.xlsx.StreamingReader;
 
@@ -72,6 +71,56 @@ public class XlsxUtils {
       }
       res.add(sheetNames);
       res.add(values);
+      return res;
+    } finally {
+      if (inputStream != null) {
+        inputStream.close();
+      }
+    }
+  }
+
+  public static Map<String, List<Map<String, String>>> getAllSheetInfo(
+      InputStream inputStream, File file, Boolean hasHeader) throws IOException {
+    try {
+      Workbook wb = null;
+      if (inputStream != null) {
+        wb =
+            StreamingReader.builder()
+                // number of rows to keep in memory (defaults to 10)
+                .rowCacheSize(2)
+                .open(inputStream);
+      } else {
+        wb =
+            StreamingReader.builder()
+                // number of rows to keep in memory (defaults to 10)
+                .rowCacheSize(2)
+                .open(file);
+      }
+      Map<String, List<Map<String, String>>> res = new LinkedHashMap<>(wb.getNumberOfSheets());
+      for (Sheet sheet : wb) {
+        Iterator<Row> iterator = sheet.iterator();
+        Row row = null;
+        while (iterator.hasNext() && row == null) {
+          row = iterator.next();
+        }
+        List<Map<String, String>> rowList = new ArrayList<>();
+        if (row == null) {
+          res.put(sheet.getSheetName(), rowList);
+          continue;
+        }
+        int cellIdx = 0;
+        for (Cell cell : row) {
+          Map<String, String> item = new LinkedHashMap<>();
+          if (hasHeader) {
+            item.put(cell.getStringCellValue(), "string");
+          } else {
+            item.put("col_" + (cellIdx + 1), "string");
+          }
+          cellIdx++;
+          rowList.add(item);
+        }
+        res.put(sheet.getSheetName(), rowList);
+      }
       return res;
     } finally {
       if (inputStream != null) {

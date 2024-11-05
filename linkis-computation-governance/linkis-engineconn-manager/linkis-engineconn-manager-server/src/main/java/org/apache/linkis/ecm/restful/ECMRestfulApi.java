@@ -152,7 +152,7 @@ public class ECMRestfulApi {
           outputStream.write(buffer, 0, bytesRead);
         }
       } catch (IOException e) {
-        logger.warn("Download EngineLog Failed Msg :", e);
+        logger.error("Download EngineLog Failed Msg :", e);
         response.reset();
         response.setCharacterEncoding(Consts.UTF_8.toString());
         response.setContentType("text/plain; charset=utf-8");

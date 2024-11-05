@@ -34,14 +34,27 @@ public interface ECResourceInfoService {
   void deleteECResourceInfoRecord(Integer id);
 
   List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
+      String instance,
+      Date endDate,
+      Date startDate,
+      String username,
+      String engineType,
+      String status);
 
   /**
    * @param creatorUserList engineconn creator list
    * @param engineTypeList engineconn type list
    * @param statusStrList engineconn status string list
+   * @param queueName
+   * @param ecInstancesList
+   * @param isCrossCluster
    * @return
    */
   List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList);
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName,
+      List<String> ecInstancesList,
+      Boolean isCrossCluster);
 }

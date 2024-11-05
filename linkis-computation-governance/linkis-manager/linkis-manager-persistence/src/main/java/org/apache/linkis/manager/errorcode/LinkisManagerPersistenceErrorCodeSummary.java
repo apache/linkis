@@ -23,7 +23,9 @@ public enum LinkisManagerPersistenceErrorCodeSummary implements LinkisErrorCode 
   BEANUTILS_POPULATE_FAILED(10000, "beanutils populate failed (beanutils 填充失败)"),
   NODE_INSTANCE_ALREADY_EXISTS(41001, "Node instance already exists(Node实例已存在)"),
   NODE_INSTANCE_DOES_NOT_EXIST(41002, "Node instance does not exist(Node实例不存在)"),
-  THE_EMNODE_IS_NULL(410002, "The emNode:{0} is null (emNode:{0} 为空)");
+  THE_EMNODE_IS_NULL(410002, "The emNode:{0} is null (emNode:{0} 为空)"),
+  NODE_INFO_DUPLICATE(
+      41003, "engine instance name is exist, request of created engine will be retry");
 
   /** (errorCode)错误码 */
   private final int errorCode;

@@ -133,6 +133,7 @@ public class AcrossClusterRuleRestfulApi {
     @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "username", dataType = "String", value = "username"),
     @ApiImplicitParam(name = "clusterName", dataType = "String", value = "clusterName"),
+    @ApiImplicitParam(name = "isValid", dataType = "String", value = "isValid"),
     @ApiImplicitParam(name = "pageNow", dataType = "Integer", value = "pageNow"),
     @ApiImplicitParam(name = "pageSize", dataType = "Integer", value = "pageSize"),
   })
@@ -142,6 +143,7 @@ public class AcrossClusterRuleRestfulApi {
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "username", required = false) String username,
       @RequestParam(value = "clusterName", required = false) String clusterName,
+      @RequestParam(value = "isValid", required = false) String isValid,
       @RequestParam(value = "pageNow", required = false) Integer pageNow,
       @RequestParam(value = "pageSize", required = false) Integer pageSize) {
     String operationUser =
@@ -158,13 +160,14 @@ public class AcrossClusterRuleRestfulApi {
     if (StringUtils.isBlank(username)) username = null;
     if (StringUtils.isBlank(creator)) creator = null;
     if (StringUtils.isBlank(clusterName)) clusterName = null;
+    if (StringUtils.isBlank(isValid)) isValid = null;
     if (null == pageNow) pageNow = 1;
     if (null == pageSize) pageSize = 20;
     Map<String, Object> resultMap = null;
     try {
       resultMap =
           acrossClusterRuleService.queryAcrossClusterRuleList(
-              creator, username, clusterName, pageNow, pageSize);
+              creator, username, clusterName, pageNow, pageSize, isValid);
     } catch (Exception e) {
       log.info("query acrossClusterRule List failed: ", e);
       return Message.error("query acrossClusterRule List failed");

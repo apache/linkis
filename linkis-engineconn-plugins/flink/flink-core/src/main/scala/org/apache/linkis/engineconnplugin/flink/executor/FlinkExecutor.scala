@@ -150,7 +150,7 @@ object FlinkExecutor {
         data.asScala.foreach { row =>
           val record =
             (0 until row.getArity).map(row.getField).map(FlinkValueFormatUtil.formatValue).toArray
-          resultSetWriter.addRecord(new TableRecord(record.asInstanceOf[Array[AnyRef]]))
+          resultSetWriter.addRecord(new TableRecord(record.asInstanceOf[Array[Any]]))
         }
       case _ =>
     }

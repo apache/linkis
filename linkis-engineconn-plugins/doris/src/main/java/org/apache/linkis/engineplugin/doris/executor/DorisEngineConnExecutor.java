@@ -49,7 +49,7 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse;
 import org.apache.linkis.storage.LineMetaData;
 import org.apache.linkis.storage.LineRecord;
-import org.apache.linkis.storage.resultset.ResultSetFactory;
+import org.apache.linkis.storage.resultset.ResultSetFactory$;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.MapUtils;
@@ -249,9 +249,9 @@ public class DorisEngineConnExecutor extends ConcurrentComputationExecutor {
 
     engineExecutorContext.appendStdout(resultMessageStringBuilder.toString());
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE);
+        engineExecutorContext.createResultSetWriter(ResultSetFactory$.MODULE$.TEXT_TYPE());
     try {
-      resultSetWriter.addMetaData(new LineMetaData());
+      resultSetWriter.addMetaData(new LineMetaData(null));
       resultSetWriter.addRecord(new LineRecord(resultMessageStringBuilder.toString()));
     } catch (IOException e) {
       logger.error("Failed to get the task result");

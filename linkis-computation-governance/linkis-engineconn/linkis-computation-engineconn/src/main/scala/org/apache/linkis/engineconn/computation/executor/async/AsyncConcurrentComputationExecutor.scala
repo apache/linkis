@@ -20,7 +20,10 @@ package org.apache.linkis.engineconn.computation.executor.async
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskResponseErrorEvent
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -29,13 +32,16 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 }
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
 import org.apache.linkis.engineconn.executor.listener.{
   EngineConnSyncListenerBus,
   ExecutorListenerBusContext
 }
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.listener.JobListener
@@ -47,6 +53,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+
+import DataWorkCloudApplication.getApplicationContext
 
 abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000)
     extends ComputationExecutor(outputPrintLimit)
@@ -97,9 +105,6 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
       })
     } { e =>
       logger.info("failed to do with hook", e)
-      engineExecutionContext.appendStdout(
-        LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getStackTrace(e)}")
-      )
     }
     if (hookedCode.length > 100) {
       logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
@@ -207,6 +212,7 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         s"Executor is busy but still got new task ! Running task num : ${getRunningTask}"
       )
     }
+    runningTasks.increase()
     if (getRunningTask >= getConcurrentLimit) synchronized {
       if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
         logger.info(
@@ -215,13 +221,25 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         transition(NodeStatus.Busy)
       }
     }
-    runningTasks.increase()
   }
 
   override def onJobCompleted(job: Job): Unit = {
+
     runningTasks.decrease()
     job match {
       case asyncEngineConnJob: AsyncEngineConnJob =>
+        val jobId = JobUtils.getJobIdFromMap(asyncEngineConnJob.getEngineConnTask.getProperties)
+        LoggerUtils.setJobIdMDC(jobId)
+
+        if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
+          if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
+            logger.info(
+              s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
+            )
+            transition(NodeStatus.Unlock)
+          }
+        }
+
         job.getState match {
           case Succeed =>
             succeedTasks.increase()
@@ -241,22 +259,42 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
         }
         removeJob(asyncEngineConnJob.getEngineConnTask.getTaskId)
         clearTaskCache(asyncEngineConnJob.getEngineConnTask.getTaskId)
-
+        // execute once should try to shutdown
+        if (
+            asyncEngineConnJob.getEngineConnTask.getLables.exists(_.isInstanceOf[ExecuteOnceLabel])
+        ) {
+          if (!hasTaskRunning()) {
+            logger.warn(
+              s"engineConnTask(${asyncEngineConnJob.getEngineConnTask.getTaskId}) is execute once, now to mark engine to Finished"
+            )
+            ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+          }
+        }
+        // unhealthy node should try to shutdown
+        if (!hasTaskRunning() && currentEngineIsUnHealthy()) {
+          logger.info(
+            s"engineConnTask(${asyncEngineConnJob.getEngineConnTask.getTaskId}) is unHealthy, now to mark engine to Finished"
+          )
+          ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+        }
+        LoggerUtils.setJobIdMDC(jobId)
       case _ =>
     }
 
-    if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
-      if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
-        logger.info(
-          s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
-        )
-        transition(NodeStatus.Unlock)
-      }
-    }
   }
 
   override def hasTaskRunning(): Boolean = {
     getRunningTask > 0
+  }
+
+  override def transition(toStatus: NodeStatus): Unit = {
+    if (getRunningTask >= getConcurrentLimit && NodeStatus.Unlock == toStatus) {
+      logger.info(
+        s"running task($getRunningTask) > concurrent limit:$getConcurrentLimit, can not to mark EC to Unlock"
+      )
+      return
+    }
+    super.transition(toStatus)
   }
 
 }

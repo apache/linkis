@@ -66,4 +66,7 @@ object EngineConnExecutorConfiguration {
   val DEFAULT_EXECUTOR_NAME =
     CommonVars("wds.linkis.engineconn.executor.default.name", "ComputationExecutor")
 
+  val LINKIS_RES_DEFAULT_ENABLED =
+    CommonVars("wds.linkis.engineconn.res.default.enabled", true).getValue
+
 }

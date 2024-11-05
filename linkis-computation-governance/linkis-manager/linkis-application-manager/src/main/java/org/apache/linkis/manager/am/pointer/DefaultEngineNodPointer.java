@@ -24,7 +24,6 @@ import org.apache.linkis.manager.common.protocol.RequestEngineUnlock;
 import org.apache.linkis.manager.common.protocol.ResponseEngineLock;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
-import org.apache.linkis.manager.service.common.pointer.EngineNodePointer;
 
 import java.util.Optional;
 
@@ -50,14 +49,11 @@ public class DefaultEngineNodPointer extends AbstractNodePointer implements Engi
     Object result = getSender().ask(requestEngineLock);
     if (result instanceof ResponseEngineLock) {
       ResponseEngineLock responseEngineLock = (ResponseEngineLock) result;
-      if (responseEngineLock.getLockStatus()) {
-        return Optional.of(responseEngineLock.getLock());
+      if (responseEngineLock.lockStatus()) {
+        return Optional.of(responseEngineLock.lock());
       } else {
         logger.info(
-            "Failed to get locker,"
-                + node.getServiceInstance()
-                + ": "
-                + responseEngineLock.getMsg());
+            "Failed to get locker," + node.getServiceInstance() + ": " + responseEngineLock.msg());
         return Optional.empty();
       }
     } else {

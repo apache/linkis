@@ -85,32 +85,18 @@ class PathValidator extends Logging {
   }
 
   def checkPath(path: String, username: String): Unit = {
-    // unchecked hdfs,oss,s3
-    if (
-        (path.contains(StorageUtils.HDFS_SCHEMA)) || (path
-          .contains(StorageUtils.OSS_SCHEMA)) || (path.contains(StorageUtils.S3_SCHEMA))
-    ) {
-      return
-    }
-
     // 校验path的逻辑
     val userLocalRootPath: String = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue) +
       username
     var userHdfsRootPath: String =
       WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue) +
         username + HDFS_USER_ROOT_PATH_SUFFIX.getValue
-    if (!(path.contains(StorageUtils.FILE_SCHEMA))) {
+    if (!(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))) {
       throw new WorkSpaceException(80025, "the path should contain schema")
     }
     userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath, File.separatorChar)
     if (path.contains("../")) {
       throw new WorkSpaceException(80026, "Relative path not allowed")
-    }
-    if (!(path.contains(userLocalRootPath)) && !(path.contains(userHdfsRootPath))) {
-      throw new WorkSpaceException(
-        80027,
-        "The path needs to be within the user's own workspace path"
-      )
     }
   }
 

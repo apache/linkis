@@ -69,11 +69,7 @@ data:
     ## Token-Code=Token-User
     ## eg:TEST-AUTH=hadoop,root,user01
     ### http request with header { Token-Code:TEST-AUTH,Token-User:user01 }
-    QML-AUTH=*
-    BML-AUTH=*
-    WS-AUTH=*
-    dss-AUTH=*
-    QUALITIS-AUTH=*
+    LINKIS-AUTH=*
 
   application-linkis.yml: |
     debug: {{ .Values.linkis.featureGates.testMode }}
@@ -216,7 +212,7 @@ data:
     wds.linkis.client.common.gatewayUrl={{- include "linkis.gateway.url" . }}
     wds.linkis.client.common.authStrategy=token
     wds.linkis.client.common.tokenKey=Validation-Code
-    wds.linkis.client.common.tokenValue=BML-AUTH
+    wds.linkis.client.common.tokenValue=LINKIS-AUTH
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
@@ -281,6 +277,7 @@ data:
     spring.spring.servlet.multipart.max-request-size=500MB
     # note:value of zero means Jetty will never write to disk.
     spring.spring.servlet.multipart.file-size-threshold=50MB
+    spring.spring.main.allow-circular-references=true
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false
@@ -318,12 +315,10 @@ data:
     springfox.documentation.swagger-ui.enabled=false
 
   linkis-cg-linkismanager.properties: |
-    ##restful
-    wds.linkis.server.restful.scan.packages=org.apache.linkis.manager.am.restful,org.apache.linkis.resourcemanager.restful
     ##mybatis
     wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=
-    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao,org.apache.linkis.engineplugin.server.dao
+    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao,org.apache.linkis.publicservice.common.lock.dao,org.apache.linkis.engineplugin.server.dao
 
     linkis.engineConn.plugin.cache.expire-in-seconds=100000
     wds.linkis.engineconn.dist.load.enable=true
@@ -343,8 +338,6 @@ data:
 
 
   linkis-cg-engineconnmanager.properties: |
-    ##restful
-    wds.linkis.server.restful.scan.packages=org.apache.linkis.em.restful
     wds.linkis.engineconn.root.dir={{ .Values.linkis.locations.runtimeDir }}/appcom
 
     ##Spring

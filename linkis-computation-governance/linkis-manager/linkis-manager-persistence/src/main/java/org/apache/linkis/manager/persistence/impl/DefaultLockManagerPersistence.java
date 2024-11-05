@@ -24,6 +24,10 @@ import org.apache.linkis.manager.util.PersistenceManagerConf;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Date;
 import java.util.List;
 
@@ -66,27 +70,21 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
     String syncLocker = persistenceLock.getLockObject().intern();
     synchronized (syncLocker) {
       // insert lock The order is determined by the id auto-incrementing number
-      do {
-        lockManagerMapper.lock(persistenceLock);
-      } while (persistenceLock.getId() < 0);
+      lockManagerMapper.lock(persistenceLock);
     }
-    boolean isLocked = isAcquireLock(persistenceLock);
+    boolean isLocked = false;
     while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
       try {
-        if (PersistenceManagerConf.Distributed_lock_request_sync_enabled) {
-          synchronized (syncLocker) {
-            syncLocker.wait(PersistenceManagerConf.Distributed_lock_request_interval);
-            isLocked = isAcquireLock(persistenceLock);
-            if (isLocked) {
-              syncLocker.notifyAll();
-            }
-          }
-        } else {
-          Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval);
+        synchronized (syncLocker) {
           isLocked = isAcquireLock(persistenceLock);
+          if (isLocked) {
+            syncLocker.notifyAll();
+          } else {
+            syncLocker.wait(PersistenceManagerConf.Distributed_lock_request_interval);
+          }
         }
       } catch (Exception e) {
-        logger.info("lock waiting failed", e);
+        logger.info("lock waiting failed, can be retry", e);
       }
     }
     if (!isLocked) {
@@ -107,6 +105,10 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
     }
   }
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   @Override
   public void unlock(PersistenceLock persistenceLock) {
     if (persistenceLock.getId() > 0) {

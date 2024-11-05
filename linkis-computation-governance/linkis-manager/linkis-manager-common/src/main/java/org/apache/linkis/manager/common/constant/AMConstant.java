@@ -62,4 +62,10 @@ public class AMConstant {
   public static final String EC_ASYNC_START_FAIL_MSG_KEY = "failMsg";
 
   public static final String EC_METRICS_KEY = "ecMetrics";
+
+  public static final String TARGET_CLUSTER_RETRY = "targetClusterRetry";
+
+  public static final String ORIGIN_CLUSTER_RETRY = "originClusterRetry";
+
+  public static final String ORIGIN_CLUSTER_RETRY_DES = "origin cluster retry";
 }

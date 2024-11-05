@@ -28,7 +28,7 @@ import org.apache.linkis.engineplugin.elasticsearch.executor.client.{
 }
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
-import org.apache.linkis.storage.domain.DataType.{DoubleType, StringType}
+import org.apache.linkis.storage.domain.DataType._
 import org.apache.linkis.storage.resultset.table.TableRecord
 
 import org.apache.http.entity.ContentType
@@ -125,7 +125,7 @@ class ResponseHandlerImpl extends ResponseHandler {
                   }
                 }
               })
-            records += new TableRecord(lineValues.toArray.asInstanceOf[Array[AnyRef]])
+            records += new TableRecord(lineValues.toArray)
           }
           case _ =>
         }
@@ -150,7 +150,7 @@ class ResponseHandlerImpl extends ResponseHandler {
           case row: ArrayNode => {
             val lineValues = new ArrayBuffer[Any]()
             row.asScala.foreach(node => lineValues += getNodeValue(node))
-            records += new TableRecord(lineValues.toArray.asInstanceOf[Array[AnyRef]])
+            records += new TableRecord(lineValues.toArray)
           }
           case _ =>
         }

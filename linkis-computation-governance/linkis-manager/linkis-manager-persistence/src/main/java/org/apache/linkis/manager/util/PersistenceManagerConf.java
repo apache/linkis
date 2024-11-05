@@ -23,9 +23,4 @@ public class PersistenceManagerConf {
 
   public static final Integer Distributed_lock_request_interval =
       CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 500).getValue();
-
-  public static final Boolean Distributed_lock_request_sync_enabled =
-      CommonVars$.MODULE$
-          .apply("linkis.master.distributed.lock.request.sync.enabled", true)
-          .getValue();
 }

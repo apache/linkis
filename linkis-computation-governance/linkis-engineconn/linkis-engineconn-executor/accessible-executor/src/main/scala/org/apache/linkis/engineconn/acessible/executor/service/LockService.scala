@@ -49,15 +49,14 @@ trait LockService extends ExecutorLockListener with Logging {
         // Engine can be locked
         if (!StringUtils.isBlank(lockStr)) {
           // lock success
-          response =
-            new ResponseEngineLock(true, lockStr, s"Lock for ${requestEngineLock.getTimeout} ms")
+          response = ResponseEngineLock(true, lockStr, s"Lock for ${requestEngineLock.timeout} ms")
         } else {
           // lock failed
-          response = new ResponseEngineLock(false, lockStr, "lock str is blank")
+          response = ResponseEngineLock(false, lockStr, "lock str is blank")
         }
       case None =>
         // Engine is busy
-        response = new ResponseEngineLock(false, null, "Engine is busy.")
+        response = ResponseEngineLock(false, null, "Engine is busy.")
     }
     logger.info(
       "RequestLock : " + BDPJettyServerHelper.gson.toJson(

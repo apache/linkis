@@ -46,10 +46,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   /**
    * key: execTaskID value: ExecutionTask in running
    */
-  private val execTaskToExecutionTask: mutable.Map[String, ExecutionTask] =
-    new mutable.HashMap[String, ExecutionTask]()
-
-  private val execTaskToExecutionTaskWriteLock = new Array[Byte](0)
+  private val execTaskToExecutionTask: util.Map[String, ExecutionTask] =
+    new util.concurrent.ConcurrentHashMap[String, ExecutionTask]()
 
   /**
    * key: ExecutionTaskID value: Array ExecTaskRunner in running
@@ -81,10 +79,11 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
         OrchestratorConfiguration.EXECUTION_TASK_MAX_PARALLELISM.getValue,
         task
       )
+
       executionTasks.add(executionTask)
-      execTaskToExecutionTaskWriteLock synchronized {
-        execTaskToExecutionTask.put(task.getId, executionTask)
-      }
+
+      execTaskToExecutionTask.put(task.getId, executionTask)
+
       logger.info(
         s"submit execTask ${task.getIDInfo()} to taskManager get executionTask ${executionTask.getId}"
       )
@@ -102,7 +101,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   }
 
   override def getRunningTask(task: ExecTask): Array[ExecTaskRunner] = {
-    val executionTask = execTaskToExecutionTask.getOrElse(task.getId, null)
+    val executionTask = execTaskToExecutionTask.get(task.getId)
     if (null != executionTask) {
       executionTaskToRunningExecTask
         .get(executionTask.getId)
@@ -116,15 +115,17 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   override def getCompletedTasks(executionTaskId: String): Array[ExecTaskRunner] =
     executionTaskToCompletedExecTask.get(executionTaskId).map(_.toArray).getOrElse(Array.empty)
 
-  override def getCompletedTasks(task: ExecTask): Array[ExecTaskRunner] = execTaskToExecutionTask
-    .get(task.getId)
-    .map(executionTask =>
+  override def getCompletedTasks(task: ExecTask): Array[ExecTaskRunner] = {
+    val executionTask = execTaskToExecutionTask.get(task.getId)
+    if (null != executionTask) {
       executionTaskToCompletedExecTask
         .get(executionTask.getId)
         .map(_.toArray)
         .getOrElse(Array.empty)
-    )
-    .getOrElse(Array.empty)
+    } else {
+      Array.empty
+    }
+  }
 
   def getRunnableExecutionTasks: Array[ExecutionTask] = getSuitableExecutionTasks.filter {
     executionTask =>
@@ -181,8 +182,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
         val execTask = userTaskRunner.taskRunner.task
         val executionTask =
           execTaskToExecutionTask.get(execTask.getPhysicalContext.getRootTask.getId)
-        if (executionTask.isDefined) {
-          val executionTaskId = executionTask.get.getId
+        if (null != executionTask) {
+          val executionTaskId = executionTask.getId
           executionTaskToRunningExecTask synchronized {
             val runningExecTaskRunner =
               if (!executionTaskToRunningExecTask.contains(executionTaskId)) {
@@ -194,7 +195,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
                   userRunningNumber.addNumber(astContext.getExecuteUser, astContext.getLabels)
                 logger.info(
                   s"user key ${userRunningNumber.getKey(astContext.getLabels, astContext.getExecuteUser)}, " +
-                    s"executionTaskId $executionTaskId to addNumber: ${oldNumber + 1}"
+                    s"executionTaskId $executionTaskId to addNumber: ${oldNumber + 1}, maxRunning:${maxRunning}"
                 )
                 taskRunnerBuffer
               } else {
@@ -250,7 +251,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
     logger.info(s"${task.task.getIDInfo()} task completed, now remove from taskManager")
     val rootTask = task.task.getPhysicalContext.getRootTask
     val astContext = rootTask.getTaskDesc.getOrigin.getASTOrchestration.getASTContext
-    execTaskToExecutionTask.get(rootTask.getId).foreach { executionTask =>
+    val executionTask = execTaskToExecutionTask.get(rootTask.getId)
+    if (null != executionTask) {
       // put completed execTasks to completed collections
       executionTaskToCompletedExecTask synchronized {
         val completedRunners = executionTaskToCompletedExecTask
@@ -385,9 +387,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
     // from executionTask to remove executionTask
     executionTasks.remove(executionTask)
     // from execTaskToExecutionTask to remove root execTask
-    execTaskToExecutionTaskWriteLock synchronized {
-      execTaskToExecutionTask.remove(task.getId)
-    }
+    execTaskToExecutionTask.remove(task.getId)
     // from executionTaskToCompletedExecTask to remove executionTask
     executionTaskToCompletedExecTask synchronized {
       executionTaskToCompletedExecTask.remove(executionTask.getId)
@@ -406,9 +406,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   override def onRootTaskResponseEvent(rootTaskResponseEvent: RootTaskResponseEvent): Unit = {
     logger.info(s"received rootTaskResponseEvent ${rootTaskResponseEvent.execTask.getIDInfo()}")
     val rootTask = rootTaskResponseEvent.execTask
-    val maybeTask = execTaskToExecutionTask.get(rootTask.getId)
-    if (maybeTask.isDefined) {
-      val executionTask = maybeTask.get
+    val executionTask = execTaskToExecutionTask.get(rootTask.getId)
+    if (null != executionTask) {
       rootTaskResponseEvent.taskResponse match {
         case failedTaskResponse: FailedTaskResponse =>
           markExecutionTaskCompleted(executionTask, failedTaskResponse)
@@ -428,7 +427,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
     )
     clearExecutionTask(executionTask)
     executionTask.getRootExecTask.getPhysicalContext.broadcastSyncEvent(
-      ExecutionTaskCompletedEvent(executionTask.getId, taskResponse)
+      ExecutionTaskCompletedEvent(executionTask.getId, executionTask, taskResponse)
     )
     logger.info(
       s"Finished to mark executionTask(${executionTask.getId}) rootExecTask ${executionTask.getRootExecTask.getIDInfo()} to  Completed."

@@ -42,10 +42,8 @@ INSERT INTO `linkis_mg_gateway_auth_token`(
   `elapse_day`,
   `update_by`
 ) VALUES
-('QML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
+('LINKIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
 ('BML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
 ('WS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
 ('dss-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('QUALITIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('VALIDATOR-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('LINKISCLI-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+('QUALITIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'));

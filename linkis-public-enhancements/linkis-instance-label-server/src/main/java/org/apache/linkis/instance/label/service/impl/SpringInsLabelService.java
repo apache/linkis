@@ -20,14 +20,12 @@ package org.apache.linkis.instance.label.service.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
 import org.apache.linkis.instance.label.service.InsLabelAccessService;
-import org.apache.linkis.instance.label.service.annotation.AdapterMode;
 import org.apache.linkis.manager.label.entity.Label;
 
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import java.util.List;
 
-@AdapterMode
 public class SpringInsLabelService implements InsLabelAccessService {
 
   public SpringInsLabelService(DiscoveryClient discoveryClient) {}

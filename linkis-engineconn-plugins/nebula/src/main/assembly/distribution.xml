@@ -62,7 +62,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>plugin/${nebula.version}</outputDirectory>
+            <outputDirectory>plugin/3.0.0</outputDirectory>
         </fileSet>
 
     </fileSets>

@@ -30,8 +30,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.stereotype.Service
 
-import java.util
-
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 @Service
@@ -42,36 +40,25 @@ class DefaultOperateService extends OperateService with Logging {
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
     var response: EngineOperateResponse = null
-    val parameters = {
-      val map = new util.HashMap[String, Object]()
-      engineOperateRequest.getParameters.asScala.foreach(entry => map.put(entry._1, entry._2))
-      map
-    }
-    val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
-      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.getParameters}.", t)
-      response = new EngineOperateResponse(
-        new util.HashMap[String, Object](),
-        true,
-        ExceptionUtils.getRootCauseMessage(t)
-      )
+
+    val parameters = engineOperateRequest.parameters.asScala.toMap
+    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
+      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
+      response = EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
       doPostHook(engineOperateRequest, response)
       return response
     }
     logger.info(
-      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.getParameters}."
+      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      response = new EngineOperateResponse(
-        new util.HashMap[String, Object](),
-        true,
-        ExceptionUtils.getRootCauseMessage(t)
-      )
+      response = EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
       doPostHook(engineOperateRequest, response)
       return response
     }
     logger.info(s"End to execute operator ${operator.getClass.getSimpleName}.")
-    response = new EngineOperateResponse(result)
+    response = EngineOperateResponse(result)
     doPostHook(engineOperateRequest, response)
     response
   }

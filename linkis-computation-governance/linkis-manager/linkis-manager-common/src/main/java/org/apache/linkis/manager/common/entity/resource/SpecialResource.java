@@ -35,9 +35,7 @@ public class SpecialResource extends Resource {
   private final Map<String, Object> resources;
 
   public SpecialResource(Map<String, Object> resources) {
-    this.resources =
-        resources.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    this.resources = resources;
   }
 
   public Map<String, Object> getResources() {

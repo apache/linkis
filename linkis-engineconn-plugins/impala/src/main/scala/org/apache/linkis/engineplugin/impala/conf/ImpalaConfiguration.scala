@@ -32,7 +32,7 @@ object ImpalaConfiguration {
     CommonVars[Boolean]("linkis.impala.user.isolation.mode", false)
 
   val IMPALA_ENGINE_USER =
-    CommonVars("linkis.impala.engine.user", StorageConfiguration.HDFS_ROOT_USER.getValue)
+    CommonVars("linkis.impala.engine.user", StorageConfiguration.HDFS_ROOT_USER().getValue)
 
   val IMPALA_SERVERS = CommonVars[String]("linkis.impala.servers", "127.0.0.1:21050")
   val IMPALA_MAX_CONNECTIONS = CommonVars[Int]("linkis.impala.maxConnections", 10)

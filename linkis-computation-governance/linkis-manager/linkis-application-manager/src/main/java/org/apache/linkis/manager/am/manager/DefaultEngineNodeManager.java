@@ -20,11 +20,12 @@ package org.apache.linkis.manager.am.manager;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
+import org.apache.linkis.manager.am.converter.MetricsConverter;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.locker.EngineNodeLocker;
-import org.apache.linkis.manager.am.utils.DefaultRetryHandler;
-import org.apache.linkis.manager.am.utils.RetryHandler;
+import org.apache.linkis.manager.am.pointer.EngineNodePointer;
+import org.apache.linkis.manager.am.pointer.NodePointerBuilder;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
@@ -41,11 +42,12 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.rm.ResourceInfo;
 import org.apache.linkis.manager.rm.service.ResourceManager;
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
-import org.apache.linkis.manager.service.common.pointer.EngineNodePointer;
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.UndeclaredThrowableException;
@@ -104,9 +106,12 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     return nodes;
   }
 
+  @Retryable(
+      value = {feign.RetryableException.class, UndeclaredThrowableException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   @Override
   public EngineNode getEngineNodeInfo(EngineNode engineNode) {
-    /** Change the EngineNode to correspond to real-time requests?（修改为实时请求对应的EngineNode) */
     EngineNodePointer engine = nodePointerBuilder.buildEngineNodePointer(engineNode);
     NodeHeartbeatMsg heartMsg = engine.getNodeHeartbeatMsg();
     engineNode.setNodeHealthyInfo(heartMsg.getHealthyInfo());
@@ -155,7 +160,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
   @Override
   public EngineNode reuseEngine(EngineNode engineNode) {
     EngineNode node = getEngineNodeInfo(engineNode);
-    if (!NodeStatus.isAvailable(node.getNodeStatus())) {
+    if (node == null || !NodeStatus.isAvailable(node.getNodeStatus())) {
       return null;
     }
     if (!NodeStatus.isLocked(node.getNodeStatus())) {
@@ -183,22 +188,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
    */
   @Override
   public EngineNode useEngine(EngineNode engineNode, long timeout) {
-    RetryHandler<EngineNode> retryHandler = new DefaultRetryHandler<EngineNode>();
-    retryHandler.addRetryException(feign.RetryableException.class);
-    retryHandler.addRetryException(UndeclaredThrowableException.class);
     // wait until engine to be available
-    EngineNode node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
-    long retryEndTime = System.currentTimeMillis() + 60 * 1000;
-    while ((node == null || !NodeStatus.isAvailable(node.getNodeStatus()))
-        && System.currentTimeMillis() < retryEndTime) {
-      node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
-      try {
-        Thread.sleep(5 * 1000);
-      } catch (InterruptedException e) {
-        // ignore
-      }
-    }
-
+    EngineNode node = getEngineNodeInfo(engineNode);
     if (node == null || !NodeStatus.isAvailable(node.getNodeStatus())) {
       return null;
     }
@@ -216,8 +207,13 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     }
   }
 
+  @Override
+  public EngineNode useEngine(EngineNode engineNode) {
+    return useEngine(engineNode, AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue());
+  }
+
   /**
-   * Get detailed engine information from the persistence //TODO 是否增加owner到node
+   * Get detailed engine information from the persistence
    *
    * @param scoreServiceInstances
    * @return
@@ -227,8 +223,9 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     if (scoreServiceInstances == null || scoreServiceInstances.length == 0) {
       return null;
     }
+    List<ScoreServiceInstance> scoreServiceInstancesList = Arrays.asList(scoreServiceInstances);
     EngineNode[] engineNodes =
-        Arrays.stream(scoreServiceInstances)
+        scoreServiceInstancesList.stream()
             .map(
                 scoreServiceInstance -> {
                   AMEngineNode engineNode = new AMEngineNode();
@@ -237,42 +234,48 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
                   return engineNode;
                 })
             .toArray(EngineNode[]::new);
-    // 1. add nodeMetrics 2 add RM info
-    ServiceInstance[] serviceInstances =
-        Arrays.stream(scoreServiceInstances)
+
+    List<ServiceInstance> serviceInstancesList =
+        scoreServiceInstancesList.stream()
             .map(ScoreServiceInstance::getServiceInstance)
-            .toArray(ServiceInstance[]::new);
-    ResourceInfo resourceInfo = resourceManager.getResourceInfo(serviceInstances);
+            .collect(Collectors.toList());
 
-    List<NodeMetrics> nodeMetrics =
-        nodeMetricManagerPersistence.getNodeMetrics(
-            Arrays.stream(engineNodes).collect(Collectors.toList()));
-    Arrays.stream(engineNodes)
-        .forEach(
-            engineNode -> {
-              Optional<NodeMetrics> optionMetrics =
-                  nodeMetrics.stream()
-                      .filter(
-                          nodeMetric ->
-                              nodeMetric
-                                  .getServiceInstance()
-                                  .equals(engineNode.getServiceInstance()))
-                      .findFirst();
+    try {
+      ResourceInfo resourceInfo =
+          resourceManager.getResourceInfo(serviceInstancesList.toArray(new ServiceInstance[0]));
 
-              Optional<RMNode> optionRMNode =
-                  resourceInfo.getResourceInfo().stream()
-                      .filter(
-                          resourceNode ->
-                              resourceNode
-                                  .getServiceInstance()
-                                  .equals(engineNode.getServiceInstance()))
-                      .findFirst();
+      if (serviceInstancesList.isEmpty()) {
+        throw new LinkisRetryException(
+            AMConstant.ENGINE_ERROR_CODE, "Service instances cannot be empty.");
+      }
 
-              optionMetrics.ifPresent(
-                  metrics -> metricsConverter.fillMetricsToNode(engineNode, metrics));
-              optionRMNode.ifPresent(
-                  rmNode -> engineNode.setNodeResource(rmNode.getNodeResource()));
-            });
+      List<NodeMetrics> nodeMetrics =
+          nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
+
+      for (EngineNode engineNode : engineNodes) {
+        Optional<NodeMetrics> optionMetrics =
+            nodeMetrics.stream()
+                .filter(
+                    nodeMetric ->
+                        nodeMetric.getServiceInstance().equals(engineNode.getServiceInstance()))
+                .findFirst();
+
+        Optional<RMNode> optionRMNode =
+            resourceInfo.resourceInfo().stream()
+                .filter(
+                    resourceNode ->
+                        resourceNode.getServiceInstance().equals(engineNode.getServiceInstance()))
+                .findFirst();
+
+        optionMetrics.ifPresent(metrics -> metricsConverter.fillMetricsToNode(engineNode, metrics));
+        optionRMNode.ifPresent(rmNode -> engineNode.setNodeResource(rmNode.getNodeResource()));
+      }
+    } catch (Exception e) {
+      LinkisRetryException linkisRetryException =
+          new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "Failed to process data.");
+      linkisRetryException.initCause(e);
+      throw linkisRetryException;
+    }
     return engineNodes;
   }
 
@@ -349,13 +352,15 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
           AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
           AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
     }
-
+    NodeMetrics nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode);
     if (engineNode.getNodeStatus() == null) {
-      NodeMetrics nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode);
-      if (Objects.nonNull(nodeMetric) && Objects.nonNull(nodeMetric.getStatus())) {
+      if (null != nodeMetric && null != nodeMetric.getStatus()) {
         engineNode.setNodeStatus(NodeStatus.values()[nodeMetric.getStatus()]);
       } else {
         engineNode.setNodeStatus(NodeStatus.Starting);
+      }
+      if (null != nodeMetric && StringUtils.isNotBlank(nodeMetric.getHeartBeatMsg())) {
+        engineNode.setEcMetrics(nodeMetric.getHeartBeatMsg());
       }
     }
     return engineNode;

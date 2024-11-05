@@ -99,7 +99,8 @@ class JobTimeExceedAlertSender(alerts: util.Map[String, AlertDesc]) extends Obse
         val receiver = new util.HashSet[String]()
         receiver.add(jobHistory.getSubmitUser)
         receiver.add(jobHistory.getExecuteUser)
-        receiver.addAll(alert.alertReceivers)
+//        Only the submitUser can receive notifications
+//        receiver.addAll(alert.alertReceivers)
         val ImsAlertDesc =
           alert.copy(alertInfo = newInfo, alertReceivers = receiver, numHit = newNumHit)
         PooledImsAlertUtils.addAlert(ImsAlertDesc)

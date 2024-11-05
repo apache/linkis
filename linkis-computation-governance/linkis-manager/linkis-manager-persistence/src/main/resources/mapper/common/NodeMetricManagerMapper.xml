@@ -21,6 +21,7 @@
 <mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
 
 
+    <!-- 获取 -->
     <resultMap id="PersistenceNodeMetrics"
           type="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">
          <id column="instance" property="instance"/>
@@ -30,6 +31,7 @@
          <id column="healthy_status" property="healthy"/>
          <id column="update_time" property="updateTime"/>
          <id column="create_time" property="createTime"/>
+         <id column="description" property="description"/>
    </resultMap>
 
 
@@ -64,14 +66,15 @@
     </select>
 
     <update id="updateNodeMetrics">
-        UPDATE linkis_cg_manager_service_instance_metrics
-        <set>
+         update linkis_cg_manager_service_instance_metrics
+        <trim prefix='set' suffixOverrides=','>
         <if test='nodeMetrics.status != null'>instance_status = #{nodeMetrics.status},</if>
         <if test='nodeMetrics.overLoad != null'> overload = #{nodeMetrics.overLoad},</if>
         <if test='nodeMetrics.heartBeatMsg != null'>  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
         <if test='nodeMetrics.healthy != null'>  healthy_status=#{nodeMetrics.healthy}, </if>
         <if test='nodeMetrics.updateTime != null'>  update_time=#{nodeMetrics.updateTime},</if>
-        </set> WHERE instance = #{instance}
+        <if test='nodeMetrics.description != null'>  description=#{nodeMetrics.description},</if>
+        </trim> where instance = #{instance}
     </update>
 
     <delete id="deleteNodeMetrics">

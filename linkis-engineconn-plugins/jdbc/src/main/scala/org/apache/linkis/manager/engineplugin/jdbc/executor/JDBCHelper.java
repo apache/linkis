@@ -104,61 +104,61 @@ public class JDBCHelper {
         Integer intObj;
         switch (type) {
             case Types.NULL:
-                retVal = DataType.NullType.getTypeName();
+                retVal = NullType.typeName();
                 break;
             case Types.VARCHAR:
-                retVal = DataType.StringType.getTypeName();
+                retVal = StringType.typeName();
                 break;
             case Types.BOOLEAN:
-                retVal = DataType.BooleanType.getTypeName();
+                retVal = BooleanType.typeName();
                 break;
             case Types.TINYINT:
-                retVal = DataType.TinyIntType.getTypeName();
+                retVal = TinyIntType.typeName();
                 break;
             case Types.SMALLINT:
-                retVal = DataType.ShortIntType.getTypeName();
+                retVal = ShortIntType.typeName();
                 break;
             case Types.INTEGER:
-                retVal = DataType.IntType.getTypeName();
+                retVal = IntType.typeName();
                 break;
             case Types.LONGNVARCHAR:
-                retVal = DataType.LongType.getTypeName();
+                retVal = LongType.typeName();
                 break;
             case Types.LONGVARCHAR:
-                retVal = DataType.StringType.getTypeName();
+                retVal = StringType.typeName();
                 break;
             case Types.FLOAT:
-                retVal = DataType.FloatType.getTypeName();
+                retVal = FloatType.typeName();
                 break;
             case Types.DOUBLE:
-                retVal = DataType.DoubleType.getTypeName();
+                retVal = DoubleType.typeName();
                 break;
             case Types.CHAR:
-                retVal = DataType.CharType.getTypeName();
+                retVal = CharType.typeName();
                 break;
             case Types.DATE:
-                retVal = DataType.DateType.getTypeName();
+                retVal = DateType.typeName();
                 break;
             case Types.TIMESTAMP:
-                retVal = DataType.TimestampType.getTypeName();
+                retVal = TimestampType.typeName();
                 break;
             case Types.BINARY:
-                retVal = DataType.BinaryType.getTypeName();
+                retVal = BinaryType.typeName();
                 break;
             case Types.DECIMAL:
-                retVal = DataType.DecimalType.getTypeName();
+                retVal = DecimalType.typeName();
                 break;
             case Types.ARRAY:
-                retVal = DataType.ArrayType.getTypeName();
+                retVal = ArrayType.typeName();
                 break;
             case Types.STRUCT:
-                retVal = DataType.StructType.getTypeName();
+                retVal = StructType.typeName();
                 break;
             case Types.BIGINT:
-                retVal = DataType.LongType.getTypeName();
+                retVal = LongType.typeName();
                 break;
             case Types.REAL:
-                retVal = DataType.DoubleType.getTypeName();
+                retVal = DoubleType.typeName();
                 break;
             default:
                 break;

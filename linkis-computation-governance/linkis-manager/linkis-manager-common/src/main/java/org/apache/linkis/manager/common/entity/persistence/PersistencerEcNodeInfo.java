@@ -22,9 +22,9 @@ public class PersistencerEcNodeInfo extends PersistenceNode {
 
   private Integer instanceStatus;
 
-  private String heartbeatMsg;
-
   private String engineType;
+
+  private String heartbeatMsg;
 
   public Integer getInstanceStatus() {
     return instanceStatus;

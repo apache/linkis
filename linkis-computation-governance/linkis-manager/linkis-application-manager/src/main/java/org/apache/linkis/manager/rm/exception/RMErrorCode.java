@@ -45,35 +45,29 @@ public enum RMErrorCode implements LinkisErrorCode {
 
   QUEUE_MEMORY_INSUFFICIENT(
       12002,
-      "Insufficient queue memory resources, reduce the executor memory(queue内存资源不足，减少executor内存)"),
+      "Insufficient queue memory resources, reduce the executor memory(全局队列内存不足，建议减少引擎执行内存或增加队列最大内存，参数配置-全局参数-wds.linkis.rm.yarnqueue.memory.max)"),
 
   QUEUE_CPU_INSUFFICIENT(
       12001,
-      "Queue CPU resources are insufficient, reduce the number of executors.(队列CPU资源不足，建议调小执行器个数)"),
+      "Queue CPU resources are insufficient, reduce the number of executors.(全局队列cpu不足，建议增加队列最大cpu，参数配置-全局参数-wds.linkis.rm.yarnqueue.cores.max)"),
 
   QUEUE_INSTANCES_INSUFFICIENT(
       12003,
       "Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)"),
 
-  CLUSTER_QUEUE_MEMORY_INSUFFICIENT(12010, "Insufficient cluster queue memory(集群队列内存不足)"),
+  CLUSTER_QUEUE_MEMORY_INSUFFICIENT(
+      12010,
+      "Insufficient cluster queue memory(集群队列内存不足，建议减少引擎执行内存或增加集群队列最大内存，参数配置-应用-spark：spark.executor.memory)"),
 
-  CLUSTER_QUEUE_CPU_INSUFFICIENT(12011, "Insufficient cluster queue cpu(集群队列cpu不足)"),
+  CLUSTER_QUEUE_CPU_INSUFFICIENT(
+      12011,
+      "Insufficient cluster queue cpu(集群队列cpu不足，建议增加集群队列最大cpu，参数配置-应用-spark：spark.executor.cores)"),
 
-  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance(集群队列实例不足)"),
+  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(
+      12012,
+      "Insufficient cluster queue instance(集群队列实例不足，建议增加集群队列最大实例数，参数配置-全局参数-wds.linkis.rm.yarnqueue.instance.max)"),
 
-  NAMESPACE_MEMORY_INSUFFICIENT(12100, "Insufficient cluster namespace memory(命名空间内存不足)"),
-
-  NAMESPACE_CPU_INSUFFICIENT(12101, "Insufficient cluster namespace cpu(命名空间cpu不足)"),
-
-  NAMESPACE_MISMATCHED(12102, "Mismatched namespace(命名空间不匹配，建议配置对应命名空间的资源)"),
-
-  KUBERNETES_NAMESPACE_MEMORY_INSUFFICIENT(
-      12110, "Insufficient cluster namespace memory(K8S集群命名空间内存不足)"),
-
-  KUBERNETES_NAMESPACE_CPU_INSUFFICIENT(
-      12111, "Insufficient cluster namespace cpu(K8S集群命名空间cpu不足)"),
-
-  KUBERNETES_UNKNOWN_RESOURCE_TYPE(12112, "Unsupported resource type(不支持的资源类型)"),
+  ACROSS_CLUSTER_RULE_FAILED(12013, "across cluster rule failed(跨集群规则失败)"),
 
   ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
 

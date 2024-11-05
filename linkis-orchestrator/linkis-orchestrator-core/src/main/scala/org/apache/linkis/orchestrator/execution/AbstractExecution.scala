@@ -35,14 +35,6 @@ abstract class AbstractExecution extends Execution with Logging {
   val taskManager: TaskManager
   val taskConsumer: TaskConsumer
 
-  // TODO 容器清理
-  protected val execTaskToExecutionTasks =
-    new util.concurrent.ConcurrentHashMap[ExecTask, ExecutionTask]()
-
-  def getAllExecutionTasks(): Array[ExecutionTask]
-
-  def getExecutionTask(execTask: ExecTask): ExecutionTask = execTaskToExecutionTasks.get(execTask)
-
   def start(): Unit = {
     logger.info("execution start")
     taskScheduler.start()
@@ -52,8 +44,6 @@ abstract class AbstractExecution extends Execution with Logging {
 
   override def execute(rootExecTask: ExecTask): TaskResponse = {
     val executionTask = taskManager.putExecTask(rootExecTask)
-    execTaskToExecutionTasks.put(rootExecTask, executionTask)
-    executionTask.notifyMe(new ExecutionClearListener(rootExecTask))
     executionTask.waitForCompleted()
     executionTask.getResponse
   }
@@ -66,8 +56,6 @@ abstract class AbstractExecution extends Execution with Logging {
       )
     }
     val executionTask = taskManager.putExecTask(rootExecTask)
-    execTaskToExecutionTasks.put(rootExecTask, executionTask)
-    executionTask.notifyMe(new ExecutionClearListener(rootExecTask))
     new AsyncTaskResponse {
       override def notifyMe(listener: NotifyListener): Unit = executionTask.notifyMe(listener)
 
@@ -76,20 +64,6 @@ abstract class AbstractExecution extends Execution with Logging {
         executionTask.getResponse
       }
     }
-  }
-
-  class ExecutionClearListener(rootExecTask: ExecTask) extends NotifyListener {
-
-    override def apply(taskResponse: TaskResponse): Unit = taskResponse match {
-      case t: CompletedTaskResponse =>
-        logger.info(
-          s"${rootExecTask.getIDInfo()} completed, Now to remove from execTaskToExecutionTasks"
-        )
-        execTaskToExecutionTasks.remove(rootExecTask)
-
-      case _ =>
-    }
-
   }
 
 }

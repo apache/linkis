@@ -22,9 +22,7 @@ import org.apache.linkis.orchestrator.execution._
 import org.apache.linkis.orchestrator.listener.{OrchestratorAsyncEvent, OrchestratorSyncEvent}
 import org.apache.linkis.orchestrator.listener.execution.{
   ExecutionTaskCompletedEvent,
-  ExecutionTaskCompletedListener,
-  ExecutionTaskStatusEvent,
-  ExecutionTaskStatusListener
+  ExecutionTaskCompletedListener
 }
 import org.apache.linkis.orchestrator.listener.task.{
   KillRootExecTaskEvent,
@@ -40,17 +38,10 @@ class ExecutionImpl(
     override val taskManager: TaskManager,
     override val taskConsumer: TaskConsumer
 ) extends AbstractExecution
-    with ExecutionTaskStatusListener
     with ExecutionTaskCompletedListener
     with OrchestrationKillListener {
 
-  override def getAllExecutionTasks(): Array[ExecutionTask] = {
-    execTaskToExecutionTasks.values().asScala.toArray
-  }
-
   override def onSyncEvent(event: OrchestratorSyncEvent): Unit = event match {
-    case executionTaskStatusEvent: ExecutionTaskStatusEvent =>
-      onStatusUpdate(executionTaskStatusEvent)
     case executionTaskCompletedEvent: ExecutionTaskCompletedEvent =>
       onExecutionTaskCompletedEvent(executionTaskCompletedEvent)
     case killRootExecTaskEvent: KillRootExecTaskEvent =>
@@ -58,24 +49,14 @@ class ExecutionImpl(
     case _ =>
   }
 
-  override def onStatusUpdate(executionTaskStatusEvent: ExecutionTaskStatusEvent): Unit = {
-    getAllExecutionTasks()
-      .find(_.getId.equals(executionTaskStatusEvent.executionTaskId))
-      .foreach { executionTask =>
-        executionTask.transientStatus(executionTaskStatusEvent.status)
-      }
-  }
-
   override def onEventError(event: Event, t: Throwable): Unit = {}
 
   override def onExecutionTaskCompletedEvent(
       executionTaskCompletedEvent: ExecutionTaskCompletedEvent
   ): Unit = {
-    getAllExecutionTasks()
-      .find(_.getId.equals(executionTaskCompletedEvent.executionTaskId))
-      .foreach { executionTask =>
-        executionTask.markCompleted(executionTaskCompletedEvent.taskResponse)
-      }
+    executionTaskCompletedEvent.executionTask.markCompleted(
+      executionTaskCompletedEvent.taskResponse
+    )
   }
 
   override def onKillRootExecTaskEvent(killRootExecTaskEvent: KillRootExecTaskEvent): Unit = {

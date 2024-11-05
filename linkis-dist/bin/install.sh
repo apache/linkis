@@ -124,27 +124,16 @@ cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 
-RANDOM_BML_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_LINKIS_CLI_TEST_TOKEN="LINKIS_CLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_BML_TOKEN="LINKIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_WS_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_DSM_TOKEN="DSM-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_QML_TOKEN="QML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_DSS_TOKEN="DSS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_QUALITIS_TOKEN="QUALITIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_VALIDATOR_TOKEN="VALIDATOR-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_LINKISCLI_TOKEN="LINKISCLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 if [ $DEBUG_MODE != "true" ];then
-  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
-  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/admin/configuration_helper.sh
-  sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#QML-AUTH#$RANDOM_QML_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#DSS-AUTH#$RANDOM_DSS_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#QUALITIS-AUTH#$RANDOM_QUALITIS_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#VALIDATOR-AUTH#$RANDOM_VALIDATOR_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#LINKISCLI-AUTH#$RANDOM_LINKISCLI_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
+  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/admin/configuration_helper.sh
 fi
 
 echo "======= Step 3: Create necessary directory =========="
@@ -231,15 +220,12 @@ if [[ 'postgresql' = "$dbType" ]];then
   dml_file_name=linkis_dml_pg.sql
 fi
 if [ $DEBUG_MODE != "true" ];then
-  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#QML-AUTH#$RANDOM_QML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#DSS-AUTH#$RANDOM_DSS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#QUALITIS-AUTH#$RANDOM_QUALITIS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#VALIDATOR-AUTH#$RANDOM_VALIDATOR_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#LINKISCLI-AUTH#$RANDOM_LINKISCLI_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
 fi
 
 

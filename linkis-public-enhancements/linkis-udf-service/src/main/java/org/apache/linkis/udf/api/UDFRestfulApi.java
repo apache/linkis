@@ -17,11 +17,14 @@
 
 package org.apache.linkis.udf.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.udf.entity.PythonModuleInfo;
 import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
 import org.apache.linkis.udf.excepiton.UDFException;
+import org.apache.linkis.udf.service.PythonModuleInfoService;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.utils.ConstantVar;
@@ -39,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,6 +53,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.google.common.collect.Lists;
@@ -73,6 +78,7 @@ public class UDFRestfulApi {
   @Autowired private UDFService udfService;
 
   @Autowired private UDFTreeService udfTreeService;
+  @Autowired private PythonModuleInfoService pythonModuleInfoService;
 
   ObjectMapper mapper = new ObjectMapper();
 
@@ -1012,5 +1018,279 @@ public class UDFRestfulApi {
       message = Message.error(e.getMessage());
     }
     return message;
+  }
+
+  /**
+   * Python物料查询
+   *
+   * @param name python模块名称
+   * @param engineType 引擎类型(all,spark,python)
+   * @param username 用户名
+   * @param isLoad 是否加载（0-未加载，1-已加载）
+   * @param isExpire 是否过期（0-未过期，1-已过期）
+   * @param pageNow 页码
+   * @param pageSize 每页展示数据条数
+   */
+  @RequestMapping(path = "/python-list", method = RequestMethod.GET)
+  @ApiOperation(value = "查询Python模块列表", notes = "根据条件查询Python模块信息")
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "name", value = "Python模块名称", required = false, dataType = "String"),
+    @ApiImplicitParam(
+        name = "engineType",
+        value = "引擎类型（all, spark, python）",
+        required = false,
+        dataType = "String"),
+    @ApiImplicitParam(name = "username", value = "用户名", required = false, dataType = "String"),
+    @ApiImplicitParam(
+        name = "isLoad",
+        value = "是否加载（0-未加载，1-已加载）",
+        required = false,
+        dataType = "Integer"),
+    @ApiImplicitParam(
+        name = "isExpire",
+        value = "是否过期（0-未过期，1-已过期）",
+        required = false,
+        dataType = "Integer"),
+    @ApiImplicitParam(name = "pageNow", value = "页码", required = false, dataType = "Integer"),
+    @ApiImplicitParam(name = "pageSize", value = "每页展示数据条数", required = false, dataType = "Integer")
+  })
+  public Message pythonList(
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "username", required = false) String username,
+      @RequestParam(value = "isLoad", required = false) Integer isLoad,
+      @RequestParam(value = "isExpire", required = false) Integer isExpire,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize,
+      HttpServletRequest req) {
+
+    // 获取登录用户
+    String user = ModuleUserUtils.getOperationUser(req, "pythonList");
+
+    // 参数校验
+    if (org.apache.commons.lang3.StringUtils.isBlank(name)) name = null;
+    if (org.apache.commons.lang3.StringUtils.isBlank(engineType)) engineType = null;
+    if (pageNow == null) pageNow = 1;
+    if (pageSize == null) pageSize = 10;
+
+    // 根据管理员权限设置username
+    if (Configuration.isAdmin(user)) {
+      if (username == null) username = null;
+    } else {
+      username = user;
+    }
+
+    // 分页设置
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      // 执行数据库查询
+      PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
+      pythonModuleInfo.setName(name);
+      pythonModuleInfo.setEngineType(engineType);
+      pythonModuleInfo.setCreateUser(username);
+      pythonModuleInfo.setIsLoad(isLoad);
+      pythonModuleInfo.setIsExpire(isExpire);
+      List<PythonModuleInfo> pythonList = pythonModuleInfoService.getByConditions(pythonModuleInfo);
+      PageInfo<PythonModuleInfo> pageInfo = new PageInfo<>(pythonList);
+      // 封装返回结果
+      return Message.ok().data("pythonList", pythonList).data("totalPage", pageInfo.getTotal());
+    } finally {
+      // 关闭分页
+      PageHelper.clearPage();
+    }
+  }
+
+  /**
+   * Python物料删除
+   *
+   * @param id id
+   * @param isExpire 0-未过期，1-已过期
+   */
+  @RequestMapping(path = "/python-delete", method = RequestMethod.GET)
+  @ApiOperation(value = "删除Python模块", notes = "根据模块ID删除Python模块,管理员可以删除任何模块，普通用户只能删除自己创建的模块")
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "id", value = "模块ID", required = true, dataType = "Long"),
+    @ApiImplicitParam(
+        name = "isExpire",
+        value = "模块是否过期（0：未过期，1：已过期）",
+        required = true,
+        dataType = "int")
+  })
+  public Message pythonDelete(
+      @RequestParam(value = "id", required = false) Long id,
+      @RequestParam(value = "isExpire", required = false) int isExpire,
+      HttpServletRequest req,
+      HttpServletResponse resp) {
+    // 打印审计日志并获取登录用户
+    String user = ModuleUserUtils.getOperationUser(req, "pythonDelete");
+
+    // 参数校验
+    if (id == null) {
+      return Message.error("Invalid parameters: id is null");
+    }
+    if (isExpire != 0 && isExpire != 1) {
+      return Message.error("Invalid parameters: isExpire must be 0 or 1");
+    }
+    PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
+    pythonModuleInfo.setId(id);
+    // 根据id查询Python模块信息
+    PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
+    if (moduleInfo == null) {
+      return Message.ok(); // 如果不存在则直接返回成功
+    }
+
+    // 判断是否是管理员
+    if (!Configuration.isAdmin(user)) {
+      // 如果不是管理员，检查创建用户是否与当前用户一致
+      if (!moduleInfo.getCreateUser().equals(user)) {
+        return Message.error("无权删除他人Python模块");
+      }
+    }
+
+    // 更新Python模块信息
+    moduleInfo.setIsExpire(1);
+    moduleInfo.setUpdateUser(user);
+    moduleInfo.setUpdateTime(new Date());
+    // 修改数据库中的模块名称和文件名称
+    String newName = moduleInfo.getName() + "_" + System.currentTimeMillis();
+    String newPath = moduleInfo.getPath() + "_" + System.currentTimeMillis();
+    moduleInfo.setPath(newPath);
+    moduleInfo.setName(newName);
+    pythonModuleInfoService.updatePythonModuleInfo(moduleInfo);
+    return Message.ok();
+  }
+
+  /** Python物料新增/更新 */
+  @ApiOperation(value = "Python物料新增/更新", notes = "根据传入的Python物料信息新增或更新")
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "Python物料新增/更新Request",
+        value = "Python物料新增/更新请求体",
+        required = false,
+        dataType = "PythonModuleInfo")
+  })
+  @RequestMapping(value = "/python-save", method = RequestMethod.POST)
+  public Message request(
+      @Nullable @RequestBody PythonModuleInfo pythonModuleInfo,
+      HttpServletRequest httpReq,
+      HttpServletResponse httpResp) {
+
+    // 获取登录用户
+    String userName = ModuleUserUtils.getOperationUser(httpReq, "pythonSave");
+
+    // 入参校验
+    if (org.apache.commons.lang3.StringUtils.isBlank(pythonModuleInfo.getName())) {
+      return Message.error("模块名称：不能为空");
+    }
+    if (org.apache.commons.lang3.StringUtils.isBlank(pythonModuleInfo.getPath())) {
+      return Message.error("模块物料：不能为空");
+    }
+    if (org.apache.commons.lang3.StringUtils.isBlank(pythonModuleInfo.getEngineType())) {
+      return Message.error("引擎类型：不能为空");
+    }
+    if (pythonModuleInfo.getIsLoad() == null) {
+      return Message.error("是否加载：不能为空");
+    }
+    if (pythonModuleInfo.getIsExpire() == null) {
+      return Message.error("是否过期：不能为空");
+    }
+    String path = pythonModuleInfo.getPath();
+    String fileName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
+    if (!pythonModuleInfo.getName().equals(fileName)) {
+      return Message.error("模块名称与物料文件名称必须一样");
+    }
+    // 根据id判断是插入还是更新
+    if (pythonModuleInfo.getId() == null) {
+      Integer newExpire = pythonModuleInfo.getIsExpire();
+      pythonModuleInfo.setCreateUser(userName);
+      // 查询未过期的
+      pythonModuleInfo.setIsExpire(0);
+      PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
+      // 插入逻辑
+      if (moduleInfo != null) {
+        return Message.error("模块" + moduleInfo.getName() + "已存在");
+      }
+      pythonModuleInfo.setCreateTime(new Date());
+      pythonModuleInfo.setUpdateTime(new Date());
+      pythonModuleInfo.setIsExpire(newExpire);
+      pythonModuleInfo.setUpdateUser(userName);
+      pythonModuleInfoService.insertPythonModuleInfo(pythonModuleInfo);
+      return Message.ok().data("id", pythonModuleInfo.getId());
+    } else {
+      PythonModuleInfo pythonModuleTmp = new PythonModuleInfo();
+      pythonModuleTmp.setId(pythonModuleInfo.getId());
+      PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleTmp);
+      // 更新逻辑
+      if (moduleInfo == null) {
+        return Message.error("未找到该Python模块");
+      }
+      if (!Configuration.isAdmin(userName) && !userName.equals(moduleInfo.getCreateUser())) {
+        return Message.error("无权编辑他人Python模块");
+      }
+      if (moduleInfo.getIsExpire() != 0) {
+        return Message.error("当前模块已过期，不允许进行修改操作");
+      }
+      // 如果模块过期，则修改数据库中的模块名称和文件名称
+      if (pythonModuleInfo.getIsExpire() == 1) {
+        // 修改数据库中的模块名称和文件名称
+        String newName = moduleInfo.getName() + "_" + System.currentTimeMillis();
+        String newPath = moduleInfo.getPath() + "_" + System.currentTimeMillis();
+        pythonModuleInfo.setPath(newPath);
+        pythonModuleInfo.setName(newName);
+      }
+      pythonModuleInfo.setUpdateUser(userName);
+      pythonModuleInfo.setUpdateTime(new Date());
+      pythonModuleInfoService.updatePythonModuleInfo(pythonModuleInfo);
+    }
+    return Message.ok();
+  }
+
+  /**
+   * python文件是否存在查询
+   *
+   * @param fileName 文件名称
+   */
+  @RequestMapping(path = "/python-file-exist", method = RequestMethod.GET)
+  @ApiOperation(value = "查询Python文件是否存在", notes = "根据用户名和文件名查询Python模块信息，如果存在则返回true，否则返回false")
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "fileName",
+        value = "Python文件名",
+        required = true,
+        dataType = "string",
+        paramType = "query"),
+    @ApiImplicitParam(
+        name = "Authorization",
+        value = "Bearer token",
+        required = true,
+        dataType = "string",
+        paramType = "header")
+  })
+  public Message pythonFileExist(
+      @RequestParam(value = "fileName", required = false) String fileName, HttpServletRequest req) {
+    // 审计日志打印并获取登录用户
+    String userName = ModuleUserUtils.getOperationUser(req, "pythonFileExist");
+
+    // 参数校验
+    if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
+      return Message.error("参数fileName不能为空");
+    }
+    String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
+      return Message.error("只支持数字字母下划线，且以字母开头，长度最大50");
+    }
+
+    // 封装PythonModuleInfo对象并查询数据库
+    PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
+    pythonModuleInfo.setName(fileNameWithoutExtension);
+    pythonModuleInfo.setCreateUser(userName);
+    PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
+
+    // 根据查询结果返回相应信息
+    if (moduleInfo == null) {
+      return Message.ok().data("result", true);
+    } else {
+      return Message.error("模块" + fileName + "已存在，如需重新上传请先删除旧的模块");
+    }
   }
 }

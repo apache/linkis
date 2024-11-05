@@ -37,6 +37,8 @@ public class PersistenceNodeMetrics implements NodeMetrics {
 
   private ServiceInstance serviceInstance;
 
+  private String description;
+
   public String getInstance() {
     return instance;
   }
@@ -108,5 +110,14 @@ public class PersistenceNodeMetrics implements NodeMetrics {
 
   public void setCreateTime(Date createTime) {
     this.createTime = createTime;
+  }
+
+  @Override
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

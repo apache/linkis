@@ -46,7 +46,8 @@ public interface AcrossClusterRuleMapper {
   List<AcrossClusterRule> queryAcrossClusterRuleList(
       @Param("username") String username,
       @Param("creator") String creator,
-      @Param("clusterName") String clusterName);
+      @Param("clusterName") String clusterName,
+      @Param("isValid") String isValid);
 
   void validAcrossClusterRule(
       @Param("isValid") String isValid, @Param("id") Long id, @Param("username") String username);

@@ -57,7 +57,7 @@ class SparkSubmitOnceExecutor(
     val extConf = SPARK_APP_CONF.getValue(options)
     val confMap = new util.HashMap[String, String]()
     if (StringUtils.isNotBlank(extConf)) {
-      for (conf <- extConf.split("\n")) {
+      for (conf <- extConf.split(",")) {
         if (StringUtils.isNotBlank(conf)) {
           val pair = conf.trim.split("=")
           if (pair.length == 2) {

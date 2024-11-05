@@ -29,10 +29,13 @@ import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.hook.EngineConnHook
+import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
+import org.apache.linkis.manager.label.constant.LabelValueConstant
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
 
@@ -60,7 +63,15 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val newMap = map.++(parser.getSpringConfMap)
     newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
+    val context = EngineConnObject.getEngineCreationContext
 
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(context.getLabels())
+    if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) {
+      logger.info("cluster mode call back will be invoke in beforeExecutionExecute")
+    } else {
+      val engineConnPidCallBack = new EngineConnIdentifierCallback()
+      Utils.tryAndError(engineConnPidCallBack.callback())
+    }
     logger.info("<--------------------SpringBoot App init succeed-------------------->")
   }
 
@@ -68,8 +79,14 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
   ): Unit = {
-    val engineConnIdentifierCallback = new EngineConnIdentifierCallback()
-    Utils.tryAndError(engineConnIdentifierCallback.callback())
+    val context = EngineConnObject.getEngineCreationContext
+
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(context.getLabels())
+    if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) {
+      logger.info("cluster mode call back be invoke")
+      val engineConnPidCallBack = new EngineConnIdentifierCallback()
+      Utils.tryAndError(engineConnPidCallBack.callback())
+    }
   }
 
   override def afterExecutionExecute(
@@ -85,7 +102,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val prefixMsg = Sender.getThisServiceInstance + s": log dir: ${EngineConnConf.getLogDir},"
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        new EngineConnStatusCallback(
+        EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           NodeStatus.Failed,
@@ -125,7 +142,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val engineConnAfterStartCallback = new EngineConnAfterStartCallback
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        new EngineConnStatusCallback(
+        EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           getNodeStatusOfStartSuccess(engineCreationContext, engineConn),

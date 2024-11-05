@@ -18,7 +18,7 @@
 package org.apache.linkis.orchestrator.listener.execution
 
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.apache.linkis.orchestrator.execution.CompletedTaskResponse
+import org.apache.linkis.orchestrator.execution.{CompletedTaskResponse, ExecutionTask}
 import org.apache.linkis.orchestrator.listener.OrchestratorSyncEvent
 
 /**
@@ -29,10 +29,9 @@ trait ExecutionTaskEvent {
 
 }
 
-case class ExecutionTaskStatusEvent(executionTaskId: String, status: ExecutionNodeStatus)
-    extends ExecutionTaskEvent
-    with OrchestratorSyncEvent
-
-case class ExecutionTaskCompletedEvent(executionTaskId: String, taskResponse: CompletedTaskResponse)
-    extends ExecutionTaskEvent
+case class ExecutionTaskCompletedEvent(
+    executionTaskId: String,
+    executionTask: ExecutionTask,
+    taskResponse: CompletedTaskResponse
+) extends ExecutionTaskEvent
     with OrchestratorSyncEvent

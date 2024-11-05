@@ -24,6 +24,8 @@ import org.apache.linkis.entrance.interceptor.exception.LogPathCreateException
 import org.apache.linkis.entrance.parser.ParserUtils
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
+import org.apache.commons.lang3.exception.ExceptionUtils
+
 /**
  * Description:Log path generation interceptor, used to set the path log of the task(日志路径生成拦截器,
  * 用于设置task的路径日志)
@@ -41,14 +43,14 @@ class LogPathCreateInterceptor extends EntranceInterceptor with Logging {
           case e: ErrorException =>
             val exception: LogPathCreateException = LogPathCreateException(
               20075,
-              "Failed to get logPath(获取logPath失败)，reason: " + e.getMessage
+              "Failed to get logPath(获取logPath失败)，reason msg: " + e.getMessage
             )
             exception.initCause(e)
             exception
           case t: Throwable =>
             val exception: LogPathCreateException = LogPathCreateException(
               20075,
-              "Failed to get logPath(获取logPath失败), reason: " + t.getCause
+              "Failed to get logPath(获取logPath失败), reason: " + ExceptionUtils.getStackTrace(t)
             )
             exception.initCause(t)
             exception

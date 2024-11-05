@@ -17,12 +17,10 @@
 
 package org.apache.linkis.manager.am.pointer;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.protocol.node.*;
 import org.apache.linkis.manager.label.entity.Label;
-import org.apache.linkis.manager.service.common.pointer.NodePointer;
 import org.apache.linkis.rpc.Sender;
 
 public abstract class AbstractNodePointer implements NodePointer {
@@ -39,12 +37,8 @@ public abstract class AbstractNodePointer implements NodePointer {
   @Override
   public NodeStatus getNodeStatus() {
     Sender sender = getSender();
-    try {
-      ResponseNodeStatus responseStatus = (ResponseNodeStatus) sender.ask(new RequestNodeStatus());
-      return responseStatus.getNodeStatus();
-    } catch (WarnException e) {
-      throw e;
-    }
+    ResponseNodeStatus responseStatus = (ResponseNodeStatus) sender.ask(new RequestNodeStatus());
+    return responseStatus.getNodeStatus();
   }
 
   /**
@@ -55,12 +49,8 @@ public abstract class AbstractNodePointer implements NodePointer {
   @Override
   public NodeHeartbeatMsg getNodeHeartbeatMsg() {
     Sender sender = getSender();
-    try {
-      NodeHeartbeatMsg heartbeatMsg = (NodeHeartbeatMsg) sender.ask(new NodeHeartbeatRequest());
-      return heartbeatMsg;
-    } catch (WarnException e) {
-      throw e;
-    }
+    NodeHeartbeatMsg heartbeatMsg = (NodeHeartbeatMsg) sender.ask(new NodeHeartbeatRequest());
+    return heartbeatMsg;
   }
 
   /**

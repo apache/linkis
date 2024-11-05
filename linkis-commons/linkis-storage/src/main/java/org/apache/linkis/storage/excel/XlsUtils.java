@@ -21,12 +21,17 @@ import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +66,7 @@ public class XlsUtils {
       throws Exception {
     String hdfsPath =
         "/tmp/" + StorageUtils.getJvmUser() + "/" + System.currentTimeMillis() + ".csv";
-    LOG.info("The excel to csv with hdfsPath:" + hdfsPath);
+    LOG.info("The excel to csv with hdfs path:" + hdfsPath);
     ExcelXlsReader xlsReader = new ExcelXlsReader();
     RowToCsvDeal rowToCsvDeal = new RowToCsvDeal();
     OutputStream out = null;
@@ -80,5 +85,45 @@ public class XlsUtils {
       xlsReader.close();
     }
     return hdfsPath;
+  }
+
+  public static Map<String, List<Map<String, String>>> getSheetsInfo(
+      InputStream inputStream, Boolean hasHeader) {
+    // use xls file
+    Workbook workbook = null;
+    try {
+      // 压缩膨胀比率，处理excel行或者列过多的情况，不能设置再小了，会导致内存过大
+      ZipSecureFile.setMinInflateRatio(0.005);
+      workbook = new HSSFWorkbook(inputStream);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    } finally {
+      // 使用完最后需要还原
+      ZipSecureFile.setMinInflateRatio(0.01);
+    }
+    Map<String, List<Map<String, String>>> res = new LinkedHashMap<>(workbook.getNumberOfSheets());
+    // foreach Sheet
+    for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+      Sheet sheet = workbook.getSheetAt(i);
+
+      List<Map<String, String>> rowList = new ArrayList<>();
+
+      // get first row as column name
+      Row headerRow = sheet.getRow(0);
+
+      // foreach column
+      for (int j = 0; j < headerRow.getPhysicalNumberOfCells(); j++) {
+        Map<String, String> sheetMap = new LinkedHashMap<>();
+        Cell cell = headerRow.getCell(j);
+        if (hasHeader) {
+          sheetMap.put(cell.getStringCellValue(), "string");
+        } else {
+          sheetMap.put("col_" + (j + 1), "string");
+        }
+        rowList.add(sheetMap);
+      }
+      res.put(sheet.getSheetName(), rowList);
+    }
+    return res;
   }
 }

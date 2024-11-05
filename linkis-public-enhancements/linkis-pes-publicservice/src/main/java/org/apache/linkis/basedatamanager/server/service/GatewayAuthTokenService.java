@@ -28,4 +28,6 @@ import com.github.pagehelper.PageInfo;
  */
 public interface GatewayAuthTokenService extends IService<GatewayAuthTokenEntity> {
   PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize);
+
+  GatewayAuthTokenEntity getEntityByToken(String token);
 }

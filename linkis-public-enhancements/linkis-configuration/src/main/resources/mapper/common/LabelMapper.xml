@@ -39,21 +39,21 @@
     </sql>
 
     <select id="getLabelById" resultMap="LabelMap">
-        SELECT <include refid="Label_Column_List"/>
-        FROM linkis_cg_manager_label
-        WHERE id = #{id}
+        select <include refid="Label_Column_List"/>
+        from linkis_cg_manager_label
+        where id = #{id}
     </select>
 
     <select id="getLabelByKeyValue" resultMap="LabelMap">
-        SELECT <include refid="Label_Column_List"/>
-        FROM linkis_cg_manager_label
-        WHERE label_key = #{labelKey} and label_value = #{stringValue}
+        select <include refid="Label_Column_List"/>
+        from linkis_cg_manager_label
+        where label_key = #{labelKey} and label_value = #{stringValue}
     </select>
 
     <select id="selectUserCreatorEngineTypeLabelList" resultMap="LabelMap">
-        SELECT <include refid="Label_Column_List"/>
-        FROM linkis_cg_manager_label
-        WHERE label_key ="combined_userCreator_engineType"
+        select <include refid="Label_Column_List"/>
+        from linkis_cg_manager_label
+        where label_key ="combined_userCreator_engineType"
         and label_value  in
         <foreach collection="itemList" index="index" item="item" separator="," open="(" close=")">
             #{item}

@@ -88,7 +88,8 @@ public class CleanerServiceImpl implements CleanerService {
       logger.info("need cleaned resource count:{}", needCleanResources.size());
       fs =
           (FileSystem)
-              FSFactory.getFs(StorageUtils.HDFS, StorageConfiguration.HDFS_ROOT_USER.getValue());
+              FSFactory.getFs(
+                  StorageUtils.HDFS(), StorageConfiguration.HDFS_ROOT_USER().getValue());
       for (CleanResourceVo resourceVo : needCleanResources) {
         String minVersion =
             versionDao.getMinKeepVersion(

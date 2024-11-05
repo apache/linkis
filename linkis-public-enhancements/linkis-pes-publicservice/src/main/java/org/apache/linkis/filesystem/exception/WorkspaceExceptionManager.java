@@ -71,6 +71,24 @@ public class WorkspaceExceptionManager {
           put("80029", "Empty dir(空目录)!");
           put("80030", "Creating user path: {0} failed(创建用户路径:{0}失败)");
           put("80031", "User: {0} not initialized(用户:{0}未初始化)");
+          put(
+              "80032",
+              "The file size exceeds 30M and page viewing is currently not supported. Please download to view or view in a shared directory(文件大小超过30M，暂不支持页面查看。请下载查看或在共享目录中查看)");
+          put(
+              "80033",
+              "The log file exceeds 30MB and is too large and cannot be opened, path : {0} (日志文件超过30M，文件太大暂不支持打开查看，文件地址：{0})");
+          put(
+              "80034",
+              "The result set exceeds {0} rows and page viewing is currently not supported. Please download to view or view in the shared directory(结果集行数超过{0}行，暂不支持页面查看。请下载查看或在共享目录中查看)");
+          put(
+              "80035",
+              "Parameter error, column index order is incorrect, please pass parameters in ascending order (参数错误，列索引顺序不正确或范围错误，请传入非复数并按升序传参)");
+          put(
+              "80036",
+              "Parameter error, page size is incorrect, please pass in a number within [1-500] (分页参数错误，页码从1开始，页大小需在[1-500]范围内，获取的列索引需在实际结果集列数范围内)");
+          put(
+              "80037",
+              "Parameter error, page size is incorrect, please pass in a number within [1-500] (参数错误，列筛选最多支持筛选50列)");
         }
       };
 

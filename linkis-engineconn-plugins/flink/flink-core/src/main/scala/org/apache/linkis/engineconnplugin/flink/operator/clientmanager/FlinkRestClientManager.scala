@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.operator.clientmanager
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
-import org.apache.linkis.engineconnplugin.flink.executor.interceptor.FlinkManagerConcurrentExecutor
+import org.apache.linkis.engineconnplugin.flink.executor.FlinkManagerConcurrentExecutor
 import org.apache.linkis.engineconnplugin.flink.factory.FlinkManagerExecutorFactory
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
@@ -30,7 +30,13 @@ import org.apache.hadoop.yarn.api.records.{ApplicationId, FinalApplicationStatus
 
 import java.util.concurrent.TimeUnit
 
-import com.google.common.cache._
+import com.google.common.cache.{
+  CacheBuilder,
+  CacheLoader,
+  LoadingCache,
+  RemovalListener,
+  RemovalNotification
+}
 
 object FlinkRestClientManager extends Logging {
 
@@ -87,5 +93,14 @@ object FlinkRestClientManager extends Logging {
 
   def setFlinkRestClient(appIdStr: String, client: RestClusterClient[ApplicationId]): Unit =
     restclientCache.put(appIdStr, client)
+
+  def removeFlinkRestClient(appidStr: String, client: RestClusterClient[ApplicationId]): Unit = {
+    Utils.tryAndWarn {
+      if (null != client) {
+        client.close()
+      }
+    }
+    restclientCache.invalidate(appidStr)
+  }
 
 }

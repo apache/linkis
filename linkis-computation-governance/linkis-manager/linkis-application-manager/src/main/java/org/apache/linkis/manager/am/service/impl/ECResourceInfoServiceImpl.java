@@ -19,7 +19,10 @@ package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.manager.am.restful.EMRestfulApi;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
+import org.apache.linkis.manager.am.service.em.EMInfoService;
 import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
+import org.apache.linkis.manager.am.utils.AMUtils;
+import org.apache.linkis.manager.am.vo.EMNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
@@ -28,12 +31,15 @@ import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,6 +67,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
   @Autowired private NodeLabelService nodeLabelService;
+
+  @Autowired private EMInfoService emInfoService;
 
   @Override
   public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
@@ -94,14 +102,24 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType) {
+      String instance,
+      Date endDate,
+      Date startDate,
+      String username,
+      String engineType,
+      String status) {
     return ecResourceRecordMapper.getECResourceInfoHistory(
-        username, instance, endDate, startDate, engineType);
+        username, instance, endDate, startDate, engineType, status);
   }
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList) {
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName,
+      List<String> ecInstancesList,
+      Boolean isCrossCluster) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -113,16 +131,12 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
     // get engine conn info list filter by creator user list /instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
-        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList);
+        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList, ecInstancesList);
 
     // map k:v---> instanceName：PersistencerEcNodeInfo
     Map<String, PersistencerEcNodeInfo> persistencerEcNodeInfoMap =
         ecNodesInfo.stream()
-            .collect(
-                Collectors.toMap(
-                    PersistencerEcNodeInfo::getInstance,
-                    item -> item,
-                    (existingValue, newValue) -> newValue));
+            .collect(Collectors.toMap(PersistencerEcNodeInfo::getInstance, item -> item));
 
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());
@@ -147,8 +161,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
                       json.writeValueAsString(ecNodeinfo),
                       new TypeReference<Map<String, Object>>() {});
 
-              Integer intStatus = ecNodeinfo.getInstanceStatus();
-              item.put("instanceStatus", NodeStatus.values()[intStatus].name());
+              Integer instanceStatus = ecNodeinfo.getInstanceStatus();
+              item.put("instanceStatus", NodeStatus.values()[instanceStatus].name());
 
               String usedResourceStr = latestRecord.getUsedResource();
               /*
@@ -156,18 +170,62 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               ->
               {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
                */
-
+              long lastUnlockTimestamp = 0L;
+              if (NodeStatus.values()[instanceStatus].name().equals(NodeStatus.Unlock.name())) {
+                String heartbeatMsg = ecNodeinfo.getHeartbeatMsg();
+                Map<String, Object> heartbeatMap = new HashMap<>();
+                if (StringUtils.isNotBlank(heartbeatMsg)) {
+                  heartbeatMap =
+                      BDPJettyServerHelper.gson()
+                          .fromJson(heartbeatMsg, new HashMap<>().getClass());
+                }
+                Object lastUnlockTimestampObject =
+                    heartbeatMap.getOrDefault("lastUnlockTimestamp", 0);
+                BigDecimal lastUnlockTimestampBigDecimal =
+                    new BigDecimal(String.valueOf(lastUnlockTimestampObject));
+                lastUnlockTimestamp = lastUnlockTimestampBigDecimal.longValue();
+              }
+              item.put("lastUnlockTimestamp", lastUnlockTimestamp);
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
               item.put("ecmInstance", latestRecord.getEcmInstance());
               String engineType = latestRecord.getEngineType();
               item.put("engineType", engineType);
-              resultList.add(item);
+              if (StringUtils.isNotBlank(queueName)) {
+                Map<String, Object> usedResourceMap =
+                    ECResourceInfoUtils.getStringToMap(usedResourceStr);
+                Map yarn = MapUtils.getMap(usedResourceMap, "yarn", new HashMap<String, Object>());
+                String queueNameStr = String.valueOf(yarn.getOrDefault("queueName", ""));
+                if (StringUtils.isNotBlank(queueNameStr) && queueName.equals(queueNameStr)) {
+                  resultList.add(item);
+                }
+              } else {
+                resultList.add(item);
+              }
             } catch (JsonProcessingException e) {
               logger.error("Fail to process the ec node info: [{}]", ecNodeinfo, e);
             }
           }
         });
-
+    if (null != isCrossCluster) {
+      List<Map<String, Object>> resultListByCluster = new ArrayList<>();
+      List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
+      Map<String, EMNodeVo> clusterMap =
+          emNodeVos.stream()
+              .filter(
+                  s -> s.getLabels().stream().anyMatch(d -> d.getLabelKey().equals("yarnCluster")))
+              .collect((Collectors.toMap(EMNodeVo::getInstance, item -> item)));
+      for (Map<String, Object> stringObjectMap : resultList) {
+        if (isCrossCluster
+            && clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+          resultListByCluster.add(stringObjectMap);
+        } else if (!isCrossCluster
+            && !clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+          resultListByCluster.add(stringObjectMap);
+        }
+      }
+      resultList.clear();
+      resultList.addAll(resultListByCluster);
+    }
     return resultList;
   }
 }

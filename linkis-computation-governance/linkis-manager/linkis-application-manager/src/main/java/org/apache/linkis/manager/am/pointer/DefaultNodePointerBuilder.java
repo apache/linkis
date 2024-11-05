@@ -19,9 +19,6 @@ package org.apache.linkis.manager.am.pointer;
 
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
-import org.apache.linkis.manager.service.common.pointer.EMNodPointer;
-import org.apache.linkis.manager.service.common.pointer.EngineNodePointer;
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder;
 
 import org.springframework.stereotype.Component;
 

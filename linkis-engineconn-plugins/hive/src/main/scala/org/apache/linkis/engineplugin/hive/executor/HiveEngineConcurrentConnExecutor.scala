@@ -347,7 +347,7 @@ class HiveEngineConcurrentConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf[Array[AnyRef]]))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
       }
       rows += result.size
       result.clear()
@@ -479,8 +479,6 @@ class HiveEngineConcurrentConnExecutor(
     cleanup(taskID)
     super.killTask(taskID)
   }
-
-  override def getConcurrentLimit: Int = HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_LIMIT
 
   override def killAll(): Unit = {
     val iterator = driverCache.entrySet().iterator()

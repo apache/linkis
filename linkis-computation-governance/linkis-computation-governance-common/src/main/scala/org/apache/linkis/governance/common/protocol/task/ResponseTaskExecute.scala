@@ -24,8 +24,6 @@ import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
 
-case class ResponseTaskExecute(execId: String)
-
 case class ResponseTaskProgress(
     execId: String,
     progress: Float,
@@ -39,31 +37,6 @@ case class EngineConcurrentInfo(
     pendingTasks: Int,
     succeedTasks: Int,
     failedTasks: Int
-)
-
-case class EngineOverloadInfo(maxMemory: Long, usedMemory: Long, systemCPUUsed: Float)
-
-case class ResponseEngineStatusChanged(
-    instance: String,
-    fromStatus: ExecutionNodeStatus,
-    toStatus: ExecutionNodeStatus,
-    overload: EngineOverloadInfo,
-    concurrent: EngineConcurrentInfo
-) extends BroadcastProtocol
-
-case class ResponseEngineInfo(
-    createEntranceInstance: String,
-    creator: String,
-    user: String,
-    properties: util.Map[String, String]
-)
-
-case class ResponseEngineStatus(
-    instance: String,
-    status: ExecutionNodeStatus,
-    overload: EngineOverloadInfo,
-    concurrent: EngineConcurrentInfo,
-    engineInfo: ResponseEngineInfo
 )
 
 case class ResponseTaskLog(execId: String, log: String) extends RequestProtocol

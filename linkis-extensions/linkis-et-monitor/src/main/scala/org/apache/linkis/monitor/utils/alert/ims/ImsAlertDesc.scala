@@ -20,6 +20,8 @@ package org.apache.linkis.monitor.utils.alert.ims
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.utils.ScanUtils
 import org.apache.linkis.monitor.utils.alert.AlertDesc
+import org.apache.linkis.monitor.utils.alert.ims.ImsAlertLevel.ImsAlertLevel
+import org.apache.linkis.monitor.utils.alert.ims.ImsAlertWay.ImsAlertWay
 
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
@@ -28,9 +30,6 @@ import java.util
 import java.util.HashSet
 
 import scala.collection.JavaConverters._
-
-import ImsAlertLevel.ImsAlertLevel
-import ImsAlertWay.ImsAlertWay
 
 case class ImsAlertDesc(
     var subSystemId: String,
@@ -42,6 +41,7 @@ case class ImsAlertDesc(
     canRecover: Int = 0, // 默认0，为1时，需要有对应的恢复告警
     alertWays: util.Set[ImsAlertWay] = new HashSet[ImsAlertWay],
     var alertReceivers: util.Set[String] = new HashSet[String],
+    var eccReceivers: util.Set[String] = new HashSet[String],
     var numHit: Int = 0,
     var hitIntervalMs: Long = 0L
 ) extends AlertDesc {
@@ -67,6 +67,10 @@ case class ImsAlertDesc(
       sb.append("&alert_reciver=")
       sb.append(alertReceivers.asScala.mkString(","))
     }
+    if (eccReceivers != null && eccReceivers.size() > 0) {
+      sb.append("&ecc_receiver=")
+      sb.append(eccReceivers.asScala.mkString(","))
+    }
     if (alertIp != null) {
       sb.append("&alert_ip=").append(alertIp)
 
@@ -90,6 +94,9 @@ case class ImsAlertDesc(
     if (alertReceivers != null && alertReceivers.size > 0) {
       map += "alert_reciver" -> alertReceivers.asScala.mkString(",")
     }
+    if (eccReceivers != null && eccReceivers.size > 0) {
+      map += "ecc_receiver" -> eccReceivers.asScala.mkString(",")
+    }
     map.toMap
   }
 
@@ -103,6 +110,7 @@ case class ImsAlertDesc(
       ) + "[freq_info] hit " + numHit + " time(s) within " + hitIntervalMs / 1000 / 60 + " mins",
       alertWays.asScala.map(_.toString).mkString(","),
       params(4).asInstanceOf[util.Set[String]].asScala.mkString(","),
+      params(5).asInstanceOf[util.Set[String]].asScala.mkString(","),
       alertLevel.toString,
       params(2).asInstanceOf[String],
       canRecover.toString
@@ -143,12 +151,26 @@ case class ImsAlertDesc(
       }
     val newAlertReceivers =
       if (CollectionUtils.isNotEmpty(alertReceivers) && alertReceivers.size > 15) {
-        alertReceivers.asScala.take(15)
+        alertReceivers.asScala.take(15).asJava
       } else {
         alertReceivers
       }
 
-    Array(subSystemId, newAlertTitle, newAlertObj, newAlertInfo, newAlertReceivers)
+    val newEccAlertReceivers =
+      if (CollectionUtils.isNotEmpty(eccReceivers) && eccReceivers.size > 3) {
+        eccReceivers.asScala.take(3).asJava
+      } else {
+        eccReceivers
+      }
+
+    Array(
+      subSystemId,
+      newAlertTitle,
+      newAlertObj,
+      newAlertInfo,
+      newAlertReceivers,
+      newEccAlertReceivers
+    )
   }
 
 }

@@ -38,8 +38,6 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static scala.collection.JavaConverters.*;
-
 @Component
 public class MultiUserEngineReuseLabelChooser implements EngineReuseLabelChooser {
   private static final Logger logger =

@@ -23,13 +23,9 @@ import org.apache.linkis.engineconnplugin.flink.operator.clientmanager.FlinkRest
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
 import org.apache.linkis.governance.common.constant.ec.ECConstants
-import org.apache.linkis.governance.common.exception.GovernanceErrorException
 import org.apache.linkis.manager.common.operator.Operator
-import org.apache.linkis.server.toScalaMap
 
 import org.apache.hadoop.yarn.api.records.{ApplicationId, FinalApplicationStatus}
-
-import java.util
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.mutable
@@ -38,8 +34,7 @@ class KillOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("kill")
 
-  @throws[GovernanceErrorException]
-  override def apply(params: util.Map[String, Object]): util.Map[String, Object] = {
+  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
 
     val rsMap = new mutable.HashMap[String, String]
     val appIdStr = params.getOrElse(ECConstants.YARN_APPID_NAME_KEY, "").asInstanceOf[String]
@@ -73,20 +68,27 @@ class KillOperator extends Operator with Logging {
         val rs = YarnUtil.triggerSavepoint(appIdStr, checkPointPath, restClient)
         rsMap.put(FlinkECConstant.MSG_KEY, rs)
       }
-      val jobs = restClient.listJobs().get()
-      if (null == jobs || jobs.isEmpty) {
-        val msg = s"App : ${appIdStr} have no jobs, but is not ended."
-        throw logAndException(msg)
+      var msg = ""
+      Utils.tryCatch {
+        val jobs = restClient.listJobs().get()
+        if (null == jobs || jobs.isEmpty) {
+          val msg = s"App : ${appIdStr} have no jobs, but is not ended."
+          throw logAndException(msg)
+        }
+        msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
+        jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
+      } { case e: Exception =>
+        logger.error(
+          s"Error on killing jobs of appid : ${appIdStr}, will kill it by yarn, because : ${e.getMessage}",
+          e
+        )
+        YarnUtil.getYarnClient().killApplication(appId)
+        FlinkRestClientManager.removeFlinkRestClient(appIdStr, restClient)
       }
-      val msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
-      jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
       rsMap += (FlinkECConstant.MSG_KEY -> msg)
     }
 
     rsMap.toMap[String, String]
-    val map = new util.HashMap[String, Object]()
-    rsMap.foreach(entry => map.put(entry._1, entry._2))
-    map
   }
 
 }

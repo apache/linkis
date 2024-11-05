@@ -35,7 +35,7 @@ object BmlConfiguration {
     CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.value", "BML-AUTH")
+    CommonVars[String]("wds.linkis.bml.auth.token.value", "LINKIS-AUTH")
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =
     CommonVars[Int]("wds.linkis.bml.connection.max.size", 10)

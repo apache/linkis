@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 @Deprecated
 object JobObserveActionTest extends App {
 
-  val bmlToken = CommonVars("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue
+  val bmlToken = CommonVars("wds.linkis.bml.auth.token.value", "LINKIS-AUTH").getValue
 
   val clientConfig = DWSClientConfigBuilder.newBuilder()
     .addServerUrl("127.0.0.1:9001") // Change to test gateway address

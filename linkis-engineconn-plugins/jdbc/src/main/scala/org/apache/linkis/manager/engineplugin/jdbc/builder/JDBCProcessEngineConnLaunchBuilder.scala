@@ -24,7 +24,7 @@ import org.apache.linkis.storage.utils.StorageConfiguration
 class JDBCProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
 //  override def getEngineStartUser(label: UserCreatorLabel): String = {
-//    StorageConfiguration.HDFS_ROOT_USER.getValue
+//    StorageConfiguration.HDFS_ROOT_USER().getValue
 //  }
 
 }

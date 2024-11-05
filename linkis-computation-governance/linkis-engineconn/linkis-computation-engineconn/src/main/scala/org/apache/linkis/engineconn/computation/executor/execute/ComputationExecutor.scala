@@ -21,14 +21,17 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
+import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   TaskLogUpdateEvent,
   TaskResponseErrorEvent,
   TaskStatusChangedEvent
 }
+import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteException
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
@@ -41,7 +44,7 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineType,
@@ -61,6 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import scala.collection.JavaConverters._
 
+import DataWorkCloudApplication.getApplicationContext
 import com.google.common.cache.{Cache, CacheBuilder}
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
@@ -71,6 +75,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   private val listenerBusContext = ExecutorListenerBusContext.getExecutorListenerBusContext()
 
+  //  private val taskMap: util.Map[String, EngineConnTask] = new ConcurrentHashMap[String, EngineConnTask](8)
   private val taskCache: Cache[String, EngineConnTask] = CacheBuilder
     .newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
@@ -85,13 +90,21 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   protected val runningTasks: Count = new Count
 
+  protected val pendingTasks: Count = new Count
+
   protected val succeedTasks: Count = new Count
 
   protected val failedTasks: Count = new Count
 
   protected var lastTask: EngineConnTask = _
 
-  private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
+  private val MAX_TASK_EXECUTE_NUM = if (null != EngineConnObject.getEngineCreationContext) {
+    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
+      EngineConnObject.getEngineCreationContext.getOptions
+    )
+  } else {
+    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
+  }
 
   private val CLOSE_LOCKER = new Object
 
@@ -157,6 +170,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     super.close()
   }
 
+  //  override def getName: String = ComputationExecutorConf.DEFAULT_COMPUTATION_NAME
+
   protected def ensureOp[A](f: => A): A = if (!isEngineInitialized) {
     f
   } else ensureIdle(f)
@@ -167,6 +182,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
   ): Unit = {
+    Utils.tryAndWarn {
+      ComputationExecutorHook.getComputationExecutorHooks.foreach { hook =>
+        hook.afterExecutorExecute(engineConnTask, executeResponse)
+      }
+    }
     val executorNumber = getSucceedNum + getFailedNum
     if (
         MAX_TASK_EXECUTE_NUM > 0 && runningTasks
@@ -175,6 +195,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       logger.error(s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. ")
       ExecutorManager.getInstance.getReportExecutor.tryShutdown()
     }
+
+    // unhealthy node should try to shutdown
+    if (runningTasks.getCount() == 0 && currentEngineIsUnHealthy) {
+      logger.info("no task running and ECNode is unHealthy, now to mark engine to Finished.")
+      ExecutorManager.getInstance.getReportExecutor.tryShutdown()
+    }
+
   }
 
   def toExecuteTask(
@@ -195,7 +222,15 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           hookedCode =
             hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
         })
-      }(e => logger.info("failed to do with hook", e))
+      } { e =>
+        e match {
+          case hookExecuteException: HookExecuteException =>
+            failedTasks.increase()
+            logger.error("failed to do with hook", e)
+            return ErrorExecuteResponse("hook execute failed task will be failed", e)
+          case _ => logger.info("failed to do with hook", e)
+        }
+      }
       if (hookedCode.length > 100) {
         logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
       } else {
@@ -316,6 +351,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
     Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
+    // lastTask = null
     response
   } {
     LoggerUtils.removeJobIdMDC()
@@ -394,7 +430,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       // skip log jobId because it corresponding jobid when the ec created
       if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
-        sb.append(s"${key}=${value.toString}\n")
+        sb.append(s"${key}=${value}\n")
       }
     })
 

@@ -43,7 +43,12 @@ public interface AcrossClusterRuleService {
   void insertAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
   Map<String, Object> queryAcrossClusterRuleList(
-      String creator, String username, String clusterName, Integer pageNow, Integer pageSize)
+      String creator,
+      String username,
+      String clusterName,
+      Integer pageNow,
+      Integer pageSize,
+      String isValid)
       throws Exception;
 
   void validAcrossClusterRule(Long id, String isValid, String username) throws Exception;

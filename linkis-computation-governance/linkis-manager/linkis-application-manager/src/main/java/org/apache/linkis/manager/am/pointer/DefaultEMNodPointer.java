@@ -27,7 +27,6 @@ import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;
-import org.apache.linkis.manager.service.common.pointer.EMNodPointer;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.slf4j.Logger;
@@ -73,28 +72,39 @@ public class DefaultEMNodPointer extends AbstractNodePointer implements EMNodPoi
 
   @Override
   public void stopEngine(EngineStopRequest engineStopRequest) {
-    Object result = getSender().ask(engineStopRequest);
-    if (result instanceof EngineStopResponse) {
-      EngineStopResponse engineStopResponse = (EngineStopResponse) result;
-      if (!engineStopResponse.getStopStatus()) {
-        logger.info(
-            "Kill engine : "
-                + engineStopRequest.getServiceInstance().toString()
-                + " failed, because "
-                + engineStopResponse.getMsg()
-                + " . Will ask engine to suicide.");
+    try {
+      Object result = getSender().ask(engineStopRequest);
+      if (result instanceof EngineStopResponse) {
+        EngineStopResponse engineStopResponse = (EngineStopResponse) result;
+        if (!engineStopResponse.getStopStatus()) {
+          logger.info(
+              "Kill engine : "
+                  + engineStopRequest.getServiceInstance().toString()
+                  + " failed, because "
+                  + engineStopResponse.getMsg()
+                  + " . Will ask engine to suicide.");
+        } else {
+          logger.info(
+              "Succeed to kill engine " + engineStopRequest.getServiceInstance().toString() + ".");
+        }
       } else {
-        logger.info(
-            "Succeed to kill engine " + engineStopRequest.getServiceInstance().toString() + ".");
+        logger.warn(
+            "Ask em : "
+                + getNode().getServiceInstance().toString()
+                + " to kill engine : "
+                + engineStopRequest.getServiceInstance().toString()
+                + " failed, response is : "
+                + BDPJettyServerHelper.gson().toJson(result)
+                + ".");
       }
-    } else {
+    } catch (Exception e) {
       logger.warn(
           "Ask em : "
               + getNode().getServiceInstance().toString()
               + " to kill engine : "
               + engineStopRequest.getServiceInstance().toString()
-              + " failed, response is : "
-              + BDPJettyServerHelper.gson().toJson(result)
+              + " failed, exception is : "
+              + e.getMessage()
               + ".");
     }
   }

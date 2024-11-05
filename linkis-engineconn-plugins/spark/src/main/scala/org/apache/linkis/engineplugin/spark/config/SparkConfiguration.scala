@@ -86,6 +86,9 @@ object SparkConfiguration extends Logging {
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
 
+  val SPARK_SCALA_KILL_COLSE_THREAD_ENABLE =
+    CommonVars[Boolean]("linkis.spark.scala.kill.close.thread.enable", true)
+
   val SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH = CommonVars[String](
     "linkis.spark.python.mix.pyshell.path",
     "/appcom/Install/linkis/mix_pyspark.py"
@@ -153,7 +156,7 @@ object SparkConfiguration extends Logging {
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
   val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "python3")
+    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
 
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)

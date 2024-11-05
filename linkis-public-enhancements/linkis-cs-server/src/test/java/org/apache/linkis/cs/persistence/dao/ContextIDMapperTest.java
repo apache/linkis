@@ -40,6 +40,7 @@ public class ContextIDMapperTest extends BaseDaoTest {
     persistenceContextID.setUpdateTime(new Date());
     persistenceContextID.setApplication("application-1");
     persistenceContextID.setBackupInstance("1");
+    persistenceContextID.setContextId("1");
     persistenceContextID.setExpireTime(new Date());
     persistenceContextID.setSource("source");
     persistenceContextID.setUser("hadoop");
@@ -53,8 +54,7 @@ public class ContextIDMapperTest extends BaseDaoTest {
 
     PersistenceContextID contextID = createPersistenceContextID();
     contextIDMapper.createContextID(contextID);
-    PersistenceContextID persistenceContextID =
-        contextIDMapper.getContextID(contextID.getContextId());
+    PersistenceContextID persistenceContextID = contextIDMapper.getContextID("1");
     Assertions.assertNotNull(persistenceContextID);
   }
 
@@ -64,9 +64,8 @@ public class ContextIDMapperTest extends BaseDaoTest {
 
     PersistenceContextID contextID = createPersistenceContextID();
     contextIDMapper.createContextID(contextID);
-    contextIDMapper.deleteContextID(contextID.getContextId());
-    PersistenceContextID persistenceContextID =
-        contextIDMapper.getContextID(contextID.getContextId());
+    contextIDMapper.deleteContextID("1");
+    PersistenceContextID persistenceContextID = contextIDMapper.getContextID("1");
     Assertions.assertNull(persistenceContextID);
   }
 
@@ -78,8 +77,7 @@ public class ContextIDMapperTest extends BaseDaoTest {
     contextIDMapper.createContextID(contextID);
     contextID.setUser(newName);
     contextIDMapper.updateContextID(contextID);
-    PersistenceContextID persistenceContextID =
-        contextIDMapper.getContextID(contextID.getContextId());
+    PersistenceContextID persistenceContextID = contextIDMapper.getContextID("1");
     Assertions.assertEquals(newName, persistenceContextID.getUser());
   }
 

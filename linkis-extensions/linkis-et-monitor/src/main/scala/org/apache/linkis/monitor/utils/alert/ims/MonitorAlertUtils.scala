@@ -130,10 +130,14 @@ object MonitorAlertUtils extends Logging {
               }
             })
           } else {
-            set.add(repaceParams.get("$eccAlertUser"))
+            repaceParams.get("$eccAlertUser").split(",").map(r => set.add(r))
           }
           if (StringUtils.isNotBlank(repaceParams.get("eccReceiver"))) {
-            repaceParams.get("eccReceiver").split(",").map(r => set.add(r))
+            repaceParams
+              .get("eccReceiver")
+              .replace("$eccAlertUser", "")
+              .split(",")
+              .map(r => set.add(r))
           }
           set
         }

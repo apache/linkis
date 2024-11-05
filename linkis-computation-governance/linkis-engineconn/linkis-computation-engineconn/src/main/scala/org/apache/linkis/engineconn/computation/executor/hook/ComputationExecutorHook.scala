@@ -19,7 +19,9 @@ package org.apache.linkis.engineconn.computation.executor.hook
 
 import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import scala.collection.JavaConverters.asScalaSetConverter
 import scala.collection.mutable.ArrayBuffer
@@ -35,6 +37,11 @@ trait ComputationExecutorHook {
       engineCreationContext: EngineCreationContext,
       codeBeforeHook: String
   ): String = codeBeforeHook
+
+  def afterExecutorExecute(
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {}
 
 }
 

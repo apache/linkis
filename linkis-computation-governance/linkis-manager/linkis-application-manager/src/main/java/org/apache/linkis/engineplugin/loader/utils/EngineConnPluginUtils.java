@@ -93,7 +93,7 @@ public class EngineConnPluginUtils {
         parentFile.listFiles(
             (file) -> {
               String name = file.getName();
-              return !file.isHidden()
+              return !name.startsWith(".")
                   && (file.isDirectory()
                       || name.endsWith(JAR_SUF_NAME)
                       || name.endsWith(CLASS_SUF_NAME));

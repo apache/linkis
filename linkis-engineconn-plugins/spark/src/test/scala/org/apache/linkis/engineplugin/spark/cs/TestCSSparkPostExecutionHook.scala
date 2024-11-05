@@ -33,6 +33,11 @@ class TestCSSparkPostExecutionHook {
 
   @Test
   def testCreateContext: Unit = {
+    System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty(
+      "wds.linkis.engineconn.plugin.default.class",
+      "org.apache.linkis.engineplugin.spark.SparkEngineConnPlugin"
+    )
     val hook = new CSSparkPostExecutionHook
     val hookPre = new CSSparkPreExecutionHook
     val engineFactory = new SparkEngineConnFactory

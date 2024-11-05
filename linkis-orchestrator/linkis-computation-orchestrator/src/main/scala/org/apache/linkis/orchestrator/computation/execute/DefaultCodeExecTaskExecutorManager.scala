@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
 class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager with Logging {
@@ -127,8 +128,10 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     execTask.getPhysicalContext.pushLog(
       TaskLogEvent(
         execTask,
-        LogUtils.generateInfo(s"Background is starting a new engine for you,execId ${execTask
-          .getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")
+        LogUtils.generateInfo(
+          "Background is starting a new engine for you(您的任务正在请求引擎中，请耐心等待)" + s", execId ${execTask
+            .getIDInfo()} mark id is ${mark.getMarkId()}"
+        )
       )
     )
     val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark, execTask)

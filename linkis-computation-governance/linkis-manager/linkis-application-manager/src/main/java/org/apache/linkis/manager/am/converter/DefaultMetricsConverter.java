@@ -23,7 +23,6 @@ import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo;
 import org.apache.linkis.manager.common.entity.metrics.NodeTaskInfo;
 import org.apache.linkis.manager.common.entity.node.AMNode;
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +54,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
           return taskInfo;
         }
       } catch (IOException e) {
-        logger.error("parse task info failed", e);
+        logger.warn("parse task info failed", e);
       }
     }
     return null;
@@ -68,7 +67,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
       try {
         return BDPJettyServerHelper.jacksonJson().readValue(healthyInfo, NodeHealthyInfo.class);
       } catch (IOException e) {
-        logger.error("parse healthy info failed", e);
+        logger.warn("parse healthy info failed", e);
       }
     }
     return null;
@@ -81,7 +80,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
       try {
         return BDPJettyServerHelper.jacksonJson().readValue(overLoad, NodeOverLoadInfo.class);
       } catch (IOException e) {
-        logger.error("parse over load info failed", e);
+        logger.warn("parse over load info failed", e);
       }
     }
     return null;
@@ -97,7 +96,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
     try {
       return BDPJettyServerHelper.jacksonJson().writeValueAsString(nodeTaskInfo);
     } catch (JsonProcessingException e) {
-      logger.error("convert task info failed", e);
+      logger.warn("convert task info failed", e);
     }
     return null;
   }
@@ -107,7 +106,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
     try {
       return BDPJettyServerHelper.jacksonJson().writeValueAsString(nodeHealthyInfo);
     } catch (JsonProcessingException e) {
-      logger.error("convert healthy info failed", e);
+      logger.warn("convert healthy info failed", e);
     }
     return null;
   }
@@ -117,7 +116,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
     try {
       return BDPJettyServerHelper.jacksonJson().writeValueAsString(nodeOverLoadInfo);
     } catch (JsonProcessingException e) {
-      logger.error("convert over load info failed", e);
+      logger.warn("convert over load info failed", e);
     }
     return null;
   }
@@ -129,7 +128,9 @@ public class DefaultMetricsConverter implements MetricsConverter {
 
   @Override
   public AMNode fillMetricsToNode(AMNode amNode, NodeMetrics metrics) {
-    if (metrics == null) return amNode;
+    if (metrics == null) {
+      return amNode;
+    }
     amNode.setNodeStatus(parseStatus(metrics));
     amNode.setNodeTaskInfo(parseTaskInfo(metrics));
     amNode.setNodeHealthyInfo(parseHealthyInfo(metrics));

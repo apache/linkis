@@ -34,7 +34,7 @@ import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import org.apache.linkis.storage.resultset.ResultSetWriterFactory
+import org.apache.linkis.storage.resultset.ResultSetWriter
 
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
@@ -317,7 +317,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val outStr = lineOutputStream.toString()
     if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
-        ResultSetWriterFactory
+        ResultSetWriter
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""
@@ -436,9 +436,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def printLog(log: Any): Unit = {
     logger.info(log.toString)
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }

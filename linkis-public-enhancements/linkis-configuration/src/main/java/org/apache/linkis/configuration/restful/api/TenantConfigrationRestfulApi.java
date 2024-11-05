@@ -26,7 +26,7 @@ import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -386,5 +386,12 @@ public class TenantConfigrationRestfulApi {
   @RequestMapping(path = "/query-department", method = RequestMethod.GET)
   public Message queryDepartmentList() {
     return Message.ok().data("departmentList", tenantConfigService.queryDepartmentList());
+  }
+
+  @RequestMapping(path = "/query-user-department", method = RequestMethod.GET)
+  public Message queryDepartmentList(
+      HttpServletRequest req, @RequestParam(value = "username") String username) {
+    ModuleUserUtils.getOperationUser(req, "query department of " + username);
+    return Message.ok().data("department", tenantConfigService.getDepartmentByUser(username));
   }
 }

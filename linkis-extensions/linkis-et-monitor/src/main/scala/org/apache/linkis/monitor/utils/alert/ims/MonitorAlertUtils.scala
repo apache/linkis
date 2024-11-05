@@ -17,7 +17,7 @@
 
 package org.apache.linkis.monitor.utils.alert.ims
 
-import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.utils.alert.AlertDesc
@@ -26,7 +26,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-import java.io.{BufferedReader, File, FileInputStream, InputStream, InputStreamReader}
+import java.io._
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Properties
@@ -82,7 +82,7 @@ object MonitorAlertUtils extends Logging {
 
   def getAlerts(prefix: String, params: util.Map[String, String]): util.Map[String, AlertDesc] = {
     val ret = new util.HashMap[String, AlertDesc]()
-
+    val repaceParams = Option(params).getOrElse(new util.HashMap[String, String]())
     for ((k: String, v: String) <- properties) {
       if (ret.containsKey(k)) {
         logger.warn("found duplicate key in alert properties, accept only the first one")
@@ -92,10 +92,10 @@ object MonitorAlertUtils extends Logging {
           new StringBuilder().append(data.alertInfo).toString().getBytes(),
           "utf-8"
         ).replace("$name", data.alertReceivers)
-        val interator = params.keySet.iterator
+        val interator = repaceParams.keySet.iterator
         while (interator.hasNext) {
           val key = interator.next
-          val value = params.get(key)
+          val value = repaceParams.get(key)
           alertInfo = alertInfo.replace(key, value)
         }
         val receivers = {
@@ -103,28 +103,51 @@ object MonitorAlertUtils extends Logging {
           if (StringUtils.isNotBlank(data.alertReceivers)) {
             data.alertReceivers.split(",").map(r => set.add(r))
           }
-          if (!params.containsKey("$alteruser")) {
+          if (!repaceParams.containsKey("$alteruser")) {
             Constants.ALERT_DEFAULT_RECEIVERS.foreach(e => {
               if (StringUtils.isNotBlank(e)) {
                 set.add(e)
               }
             })
           } else {
-            set.add(params.get("$alteruser"))
+            set.add(repaceParams.get("$alteruser"))
           }
-          if (StringUtils.isNotBlank(params.get("receiver"))) {
-            params.get("receiver").split(",").map(r => set.add(r))
+          if (StringUtils.isNotBlank(repaceParams.get("receiver"))) {
+            repaceParams.get("receiver").split(",").map(r => set.add(r))
           }
           set
         }
 
-        val subSystemId = params.getOrDefault("subSystemId", Constants.ALERT_SUB_SYSTEM_ID)
-        val alertTitle = params.getOrDefault("title", data.alertTitle)
-        val alertLevel =
-          if (StringUtils.isNotBlank(data.alertLevel)) {
-            ImsAlertLevel.withName(params.getOrDefault("monitorLevel", data.alertLevel))
+        val eccReceivers = {
+          val set: util.Set[String] = new util.HashSet[String]
+          if (StringUtils.isNotBlank(data.eccReceivers)) {
+            data.eccReceivers.split(",").map(r => set.add(r))
+          }
+          if (!repaceParams.containsKey("$eccAlertUser")) {
+            Constants.ECC_DEFAULT_RECEIVERS.foreach(e => {
+              if (StringUtils.isNotBlank(e)) {
+                set.add(e)
+              }
+            })
           } else {
-            ImsAlertLevel.withName(params.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString))
+            set.add(repaceParams.get("$eccAlertUser"))
+          }
+          if (StringUtils.isNotBlank(repaceParams.get("eccReceiver"))) {
+            repaceParams.get("eccReceiver").split(",").map(r => set.add(r))
+          }
+          set
+        }
+
+        val subSystemId = repaceParams.getOrDefault("subSystemId", Constants.ALERT_SUB_SYSTEM_ID)
+        val alertTitle = "集群[" + Constants.LINKIS_CLUSTER_NAME + "]" + repaceParams
+          .getOrDefault("title", data.alertTitle)
+        val alertLevel =
+          if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
+            ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
+          } else {
+            ImsAlertLevel.withName(
+              repaceParams.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString)
+            )
           }
 
         val alertDesc = Utils.tryAndWarn(
@@ -144,7 +167,8 @@ object MonitorAlertUtils extends Logging {
               }
               set
             },
-            receivers
+            receivers,
+            eccReceivers
           )
         )
         val realK = StringUtils.substringAfter(k, prefix)

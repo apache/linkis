@@ -26,8 +26,11 @@ import org.springframework.context.annotation.{ComponentScan, Configuration}
 
 import javax.annotation.PostConstruct
 
+import de.codecentric.boot.admin.server.config.EnableAdminServer
+
 @Configuration
-@ComponentScan(Array("org.apache.linkis.monitor.scan", "org.apache.linkis.mybatis"))
+@ComponentScan(Array("org.apache.linkis.monitor", "org.apache.linkis.mybatis"))
+@EnableAdminServer
 class LinkisJobHistoryScanSpringConfiguration {
 
   @Autowired

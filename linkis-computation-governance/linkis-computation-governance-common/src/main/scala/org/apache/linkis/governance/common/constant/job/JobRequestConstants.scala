@@ -17,11 +17,6 @@
 
 package org.apache.linkis.governance.common.constant.job
 
-/**
- * @date
- *   2021/3/17
- * @description
- */
 object JobRequestConstants {
 
   val JOB_ID = "jobId"

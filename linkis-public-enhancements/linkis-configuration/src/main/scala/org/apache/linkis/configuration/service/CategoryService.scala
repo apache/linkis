@@ -113,7 +113,9 @@ class CategoryService extends Logging {
     if (!"en".equals(language)) {
       categoryLabelTreeList.asScala
         .filter(_.getCategoryId == 1)
-        .foreach(_.setCategoryName(Configuration.GLOBAL_CONF_CHN_NAME))
+        .foreach(
+          _.setCategoryName(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_NAME)
+        )
     }
     categoryLabelTreeList
   }
@@ -211,7 +213,8 @@ class CategoryService extends Logging {
       )
     }
     val creator = categoryList.getCategoryName match {
-      case Configuration.GLOBAL_CONF_CHN_NAME | Configuration.GLOBAL_CONF_CHN_OLDNAME =>
+      case org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_NAME |
+          org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_OLDNAME =>
         throw new ConfigurationException(
           "Global setting do not allow the configuration of engines to be added(全局设置不允许添加引擎配置!)"
         )

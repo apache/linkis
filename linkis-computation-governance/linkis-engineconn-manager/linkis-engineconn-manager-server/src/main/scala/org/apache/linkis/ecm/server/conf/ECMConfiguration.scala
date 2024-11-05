@@ -20,7 +20,6 @@ package org.apache.linkis.ecm.server.conf
 import org.apache.linkis.common.conf.{CommonVars, TimeType}
 import org.apache.linkis.common.utils.ByteTimeUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.manager.common.conf.RMConfiguration
 
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -116,16 +115,8 @@ object ECMConfiguration {
   val ECM_PROCESS_SCRIPT_KILL: Boolean =
     CommonVars[Boolean]("wds.linkis.ecm.script.kill.engineconn", true).getValue
 
-  val ECM_YARN_CLUSTER_NAME: String =
-    CommonVars(
-      "wds.linkis.ecm.yarn.cluster.name",
-      RMConfiguration.DEFAULT_YARN_CLUSTER_NAME.getValue
-    ).getValue
-
-  val ECM_YARN_CLUSTER_TYPE: String =
-    CommonVars(
-      "wds.linkis.ecm.yarn.cluster.type",
-      RMConfiguration.DEFAULT_YARN_TYPE.getValue
-    ).getValue
-
+  val EC_CAN_RETRY_EXIT_CODES: Array[Int] =
+    CommonVars[String]("linkis.ecm.can.retry.exit.codes", "143").getValue
+      .split(",")
+      .map(_.toInt);
 }

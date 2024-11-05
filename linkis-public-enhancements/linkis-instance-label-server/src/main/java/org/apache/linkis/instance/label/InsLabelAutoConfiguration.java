@@ -22,12 +22,10 @@ import org.apache.linkis.instance.label.service.InsLabelServiceAdapter;
 import org.apache.linkis.instance.label.service.annotation.AdapterMode;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelServiceAdapter;
-import org.apache.linkis.instance.label.service.impl.SpringInsLabelService;
 import org.apache.linkis.mybatis.DataSourceConfig;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -71,12 +69,12 @@ public class InsLabelAutoConfiguration {
   }
 
   /** Configuration in environment */
-  public static class SpringClientConfiguration {
+  /*public static class SpringClientConfiguration {
     @ConditionalOnMissingBean({SpringInsLabelService.class})
     @Bean
     @Scope("prototype")
     public SpringInsLabelService springInsLabelService(DiscoveryClient discoveryClient) {
       return new SpringInsLabelService(discoveryClient);
     }
-  }
+  }*/
 }

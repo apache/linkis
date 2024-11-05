@@ -377,7 +377,7 @@ class HiveEngineConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf[Array[AnyRef]]))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
       }
       rows += result.size
       result.clear()
@@ -416,11 +416,7 @@ class HiveEngineConnExecutor(
 
     val columns = results.asScala
       .map(result =>
-        new Column(
-          result.getName,
-          DataType.toDataType(result.getType.toLowerCase()),
-          result.getComment
-        )
+        Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)
@@ -608,9 +604,6 @@ class HiveEngineConnExecutor(
         HadoopJobExecHelper.killRunningJobs()
         Utils.tryQuietly(HiveInterruptUtils.interrupt())
         Utils.tryAndWarn(driver.close())
-        if (null != thread) {
-          Utils.tryAndWarn(thread.interrupt())
-        }
       case "tez" =>
         Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
         driver.close()

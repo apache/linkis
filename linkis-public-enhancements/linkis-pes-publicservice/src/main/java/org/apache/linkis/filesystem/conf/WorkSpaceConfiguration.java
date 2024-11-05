@@ -58,15 +58,20 @@ public class WorkSpaceConfiguration {
       CommonVars$.MODULE$.apply(
           "linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
 
+  public static final CommonVars<String> FILESYSTEM_FILE_CHECK_SIZE =
+      CommonVars$.MODULE$.apply("linkis.filesystem.file.size.limit", "30M");
+
   public static final CommonVars<Boolean> ENABLE_USER_GROUP =
       CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 
-  // default 63M
-  public static final CommonVars<Long> FILESYSTEM_LIMIT_BYTES =
-      CommonVars$.MODULE$.apply("linkis.filesystem.limit.bytes", 66060288L);
+  public static final CommonVars<Integer> FILESYSTEM_RESULTSET_ROW_LIMIT =
+      CommonVars$.MODULE$.apply("linkis.filesystem.resultset.row.limit", 100000);
 
-  public static final CommonVars<Integer> FILESYSTEM_LIMIT_COLUMN_LENGTH =
-      CommonVars$.MODULE$.apply("linkis.filesystem.limit.column.length", 2000);
+  public static final CommonVars<Integer> FILESYSTEM_RESULT_SET_COLUMN_LIMIT =
+      CommonVars$.MODULE$.apply("linkis.filesystem.result.set.column.limit", 10000);
+
+  public static final CommonVars<Boolean> FILESYSTEM_JVM_USER_SWITCH =
+      CommonVars$.MODULE$.apply("linkis.filesystem.jvm.user.switch", true);
 
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(

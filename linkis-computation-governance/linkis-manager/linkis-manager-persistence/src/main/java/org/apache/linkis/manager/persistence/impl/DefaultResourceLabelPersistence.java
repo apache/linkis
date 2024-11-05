@@ -31,6 +31,10 @@ import org.apache.linkis.manager.util.PersistenceUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +124,10 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
     }
   }
 
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
   @Override
   public List<PersistenceResource> getResourceByLabel(PersistenceLabel label) {
     // label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
@@ -145,7 +153,7 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
 
   @Override
   // @Transactional(rollbackFor = Throwable.class)
-  public void removeResourceByLabel(PersistenceLabel label) {
+  public void removeResourceByLabel(PersistenceLabel label) throws PersistenceErrorException {
     // label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
     int labelId = label.getId();
     if (labelId <= 0) {
@@ -153,7 +161,8 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
           labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
       if (labelByKeyValue == null) {
         throw new PersistenceErrorException(
-            210001, "label not found, this label may be removed already.");
+            210001,
+            "label not found, this label may be removed already: " + label.getStringValue());
       }
       labelId = labelByKeyValue.getId();
     }
@@ -180,9 +189,7 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
       Map<String, Map<String, String>> keyValueMaps =
           blankIds.stream()
               .map(PersistenceUtils::entryToTunple)
-              .collect(
-                  Collectors.toMap(
-                      Tunple::getKey, Tunple::getValue, (existingValue, newValue) -> newValue));
+              .collect(Collectors.toMap(Tunple::getKey, Tunple::getValue));
       // labelManagerMapper.batchDeleteResourceByLabelKeyValuesMaps(keyValueMaps);
     }
   }

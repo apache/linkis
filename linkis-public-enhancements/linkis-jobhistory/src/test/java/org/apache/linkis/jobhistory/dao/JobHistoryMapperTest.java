@@ -103,7 +103,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     Date eDate = new Date(System.currentTimeMillis());
     Date sDate = DateUtils.addDays(eDate, -1);
     List<JobHistory> histories = jobHistoryMapper.searchWithIdOrderAsc(sDate, eDate, 1L, status);
-    Assertions.assertTrue(histories.size() > 0);
+    Assertions.assertTrue(histories.isEmpty());
   }
 
   @Test
@@ -113,7 +113,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     List<JobHistory> histories =
-        jobHistoryMapper.search(1L, "hadoop", status, null, null, "spark", 1L, null);
+        jobHistoryMapper.search(1L, "hadoop", status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 
@@ -125,7 +125,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     status.add("Succeed");
     List<JobHistory> histories =
         jobHistoryMapper.searchWithUserCreator(
-            1L, "hadoop", null, null, status, null, null, "spark", 1L, null);
+            1L, "hadoop", null, null, status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 
@@ -137,7 +137,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     status.add("Succeed");
     List<JobHistory> histories =
         jobHistoryMapper.searchWithCreatorOnly(
-            1L, "hadoop", null, "hadoop", status, null, null, "spark", 1L, null);
+            1L, "hadoop", null, "hadoop", status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 

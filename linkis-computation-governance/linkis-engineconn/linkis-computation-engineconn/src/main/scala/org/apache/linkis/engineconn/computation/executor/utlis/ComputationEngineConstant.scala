@@ -27,4 +27,6 @@ object ComputationEngineConstant {
 
   def CS_HOOK_ORDER: Int = -1
 
+  val TASK_EXECUTION_THREAD = "TaskExecution-Thread-"
+
 }

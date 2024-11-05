@@ -17,12 +17,13 @@
 
 package org.apache.linkis.engineplugin.loader.loaders;
 
+import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.engineplugin.loader.EngineConnPluginLoaderConf;
 import org.apache.linkis.engineplugin.loader.classloader.EngineConnPluginClassLoader;
 import org.apache.linkis.engineplugin.loader.loaders.resource.LocalEngineConnPluginResourceLoader;
 import org.apache.linkis.engineplugin.loader.loaders.resource.PluginResource;
 import org.apache.linkis.engineplugin.loader.utils.EngineConnPluginUtils;
-import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.engineplugin.loader.utils.ExceptionHelper;
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginLoadException;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginNotFoundException;
@@ -57,16 +58,17 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
 
   private static final String PLUGIN_DIR = "plugin";
 
-  public DefaultEngineConnPluginLoader() {
+  public DefaultEngineConnPluginLoader() throws ErrorException {
     // Check store path (is necessary)
-    String storePath = EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH.getValue();
+    String storePath = EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH().getValue();
     LOG.info("DefaultEngineConnPluginLoader, storePath:" + storePath);
     if (StringUtils.isBlank(storePath)) {
-      throw new AMErrorException(
+      ExceptionHelper.dealErrorException(
           70061,
           "You should defined ["
-              + EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH.key()
-              + "] in properties file");
+              + EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH().key()
+              + "] in properties file",
+          null);
     }
     // The path can be uri
     try {
@@ -78,14 +80,17 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
     } catch (URISyntaxException e) {
       // Ignore
     } catch (IllegalArgumentException e) {
-      throw new AMErrorException(
+      ExceptionHelper.dealErrorException(
           70061,
-          "You should defined ["
-              + EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH.key()
-              + "] in properties file");
+          "The value:["
+              + storePath
+              + "] of ["
+              + EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH().key()
+              + "] is incorrect",
+          e);
     }
     this.rootStorePath = storePath;
-    this.pluginPropsName = EngineConnPluginLoaderConf.ENGINE_PLUGIN_PROPERTIES_NAME.getValue();
+    this.pluginPropsName = EngineConnPluginLoaderConf.ENGINE_PLUGIN_PROPERTIES_NAME().getValue();
     // Prepare inner loaders
     //        resourceLoaders.add(new BmlEngineConnPluginResourceLoader());
     resourceLoaders.add(new LocalEngineConnPluginResourceLoader());

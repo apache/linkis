@@ -113,6 +113,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
               )
           }
         }
+        //        LaunchConstants.addPathToClassPath(pel.environment, udfDir + File.separator + "*")
         val udfJars = fileNameSet.map(udfDir + File.separator + _)
         pel.environment.put(Environment.UDF_JARS.toString, udfJars.mkString(","));
     }

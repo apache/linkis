@@ -65,5 +65,7 @@ public interface EngineNodeManager {
 
   EngineNode useEngine(EngineNode engineNode, long timeout);
 
+  EngineNode useEngine(EngineNode engineNode);
+
   EngineOperateResponse executeOperation(EngineNode engineNode, EngineOperateRequest request);
 }

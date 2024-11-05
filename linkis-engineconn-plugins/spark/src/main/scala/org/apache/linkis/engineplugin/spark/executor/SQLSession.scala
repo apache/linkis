@@ -113,7 +113,7 @@ object SQLSession extends Logging {
     // val columnsSet = dataFrame.schema
     val columns = columnsSet
       .map(c =>
-        new Column(
+        Column(
           c.name,
           DataType.toDataType(c.dataType.typeName.toLowerCase(Locale.getDefault())),
           c.getComment().orNull
@@ -135,7 +135,7 @@ object SQLSession extends Logging {
         val r: Array[Any] = columns.indices.map { i =>
           toHiveString((row(i), columnsSet.fields(i).dataType))
         }.toArray
-        writer.addRecord(new TableRecord(r.asInstanceOf[Array[AnyRef]]))
+        writer.addRecord(new TableRecord(r))
         index += 1
       }
     }) { t =>

@@ -33,6 +33,11 @@ class TestCSSparkHelper {
 
   @Test
   def testCSSparkHelper: Unit = {
+    System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty(
+      "wds.linkis.engineconn.plugin.default.class",
+      "org.apache.linkis.engineplugin.spark.SparkEngineConnPlugin"
+    )
     val engineFactory = new SparkEngineConnFactory
     val sparkConf: SparkConf = new SparkConf(true)
     val sparkSession = SparkSession

@@ -29,7 +29,6 @@ import org.apache.linkis.manager.common.entity.resource.{
   LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.io.conf.IOEngineConnConfiguration
 import org.apache.linkis.manager.engineplugin.io.domain.FSInfo
@@ -68,7 +67,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
   val fsIdCount = new AtomicLong()
 
   val FS_ID_LIMIT = IOEngineConnConfiguration.IO_FS_ID_LIMIT.getValue
-  // TODO 去掉ArrayBuffer:其中key为用户，value为用户申请到的FS数组
+  // The key is the user, and the value is the FS array applied by the user
   private val userFSInfos = new util.HashMap[String, ArrayBuffer[FSInfo]]()
 
   private val fsProxyService = new FsProxyService
@@ -109,25 +108,24 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
 
   }
 
-  // todo ①use concurrent lock; ② when task num up to limit , status change to busy, otherwise idle.
   override def executeLine(
       engineExecutionContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
     val method = MethodEntitySerializer.deserializer(code)
-    val methodName = method.getMethodName()
+    val methodName = method.methodName
     val jobID = engineExecutionContext.getJobId.get
     logger.info(
-      s"jobID($jobID):creator ${method.getCreatorUser} proxy user: ${method.getProxyUser} to execute a method: ${method.getMethodName}.,fsId=${method.getId}"
+      s"jobID($jobID):creator ${method.creatorUser} proxy user: ${method.proxyUser} to execute a method: ${method.methodName}.,fsId=${method.id}"
     )
     val executeResponse = methodName match {
       case "init" =>
         val fsId: Long = if (!existsUserFS(method)) {
           createUserFS(method)
         } else {
-          method.getId
+          method.id
         }
-        logger.info(s"jobID($jobID),user(${method.getProxyUser}) execute init and fsID($fsId)")
+        logger.info(s"jobID($jobID),user(${method.proxyUser}) execute init and fsID($fsId)")
         AliasOutputExecuteResponse(
           fsId.toString,
           StorageUtils.serializerStringToResult(fsId.toString)
@@ -135,25 +133,25 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       case "close" => closeUserFS(method); SuccessExecuteResponse()
       case "read" =>
         val fs = getUserFS(method)
-        AliasOutputExecuteResponse(method.getId.toString, IOHelp.read(fs, method))
+        AliasOutputExecuteResponse(method.id.toString, IOHelp.read(fs, method))
       case "available" =>
         val fs = getUserFS(method)
-        if (method.getParams == null || method.getParams.length != 2) {
+        if (method.params == null || method.params.length != 2) {
           throw new StorageErrorException(
             PARAMETER_CALLS.getErrorCode,
             PARAMETER_CALLS.getErrorDesc
           )
         }
         val dest = MethodEntitySerializer.deserializerToJavaObject(
-          method.getParams()(0).asInstanceOf[String],
+          method.params(0).asInstanceOf[String],
           classOf[FsPath]
         )
         val position =
-          if (method.getParams()(1).toString.toInt < 0) 0 else method.getParams()(1).toString.toInt
+          if (method.params(1).toString.toInt < 0) 0 else method.params(1).toString.toInt
         val inputStream = fs.read(dest)
         Utils.tryFinally(
           AliasOutputExecuteResponse(
-            method.getId.toString,
+            method.id.toString,
             StorageUtils.serializerStringToResult((inputStream.available() - position).toString)
           )
         )(IOUtils.closeQuietly(inputStream))
@@ -163,7 +161,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         SuccessExecuteResponse()
       case "renameTo" =>
         val fs = getUserFS(method)
-        if (method.getParams == null || method.getParams.length != 2) {
+        if (method.params == null || method.params.length != 2) {
           throw new StorageErrorException(
             PARAMETER_CALLS.getErrorCode,
             PARAMETER_CALLS.getErrorDesc
@@ -171,15 +169,15 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         }
         fs.renameTo(
           MethodEntitySerializer
-            .deserializerToJavaObject(method.getParams()(0).asInstanceOf[String], classOf[FsPath]),
+            .deserializerToJavaObject(method.params(0).asInstanceOf[String], classOf[FsPath]),
           MethodEntitySerializer.deserializerToJavaObject(
-            method.getParams()(1).asInstanceOf[String],
+            method.params(1).asInstanceOf[String],
             classOf[FsPath]
           )
         )
         SuccessExecuteResponse()
       case "list" =>
-        if (method.getParams == null || method.getParams.length != 1) {
+        if (method.params == null || method.params.length != 1) {
           throw new StorageErrorException(
             PARAMETER_CALLS.getErrorCode,
             PARAMETER_CALLS.getErrorDesc
@@ -187,17 +185,17 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         }
         val fs = getUserFS(method)
         val dest = MethodEntitySerializer.deserializerToJavaObject(
-          method.getParams()(0).asInstanceOf[String],
+          method.params(0).asInstanceOf[String],
           classOf[FsPath]
         )
         AliasOutputExecuteResponse(
-          method.getId.toString,
+          method.id.toString,
           StorageUtils.serializerStringToResult(
             MethodEntitySerializer.serializerJavaObject(fs.list(dest))
           )
         )
       case "listPathWithError" =>
-        if (method.getParams == null || method.getParams.length != 1) {
+        if (method.params == null || method.params.length != 1) {
           throw new StorageErrorException(
             PARAMETER_CALLS.getErrorCode,
             PARAMETER_CALLS.getErrorDesc
@@ -205,11 +203,11 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         }
         val fs = getUserFS(method).asInstanceOf[FileSystem]
         val dest = MethodEntitySerializer.deserializerToJavaObject(
-          method.getParams()(0).asInstanceOf[String],
+          method.params(0).asInstanceOf[String],
           classOf[FsPath]
         )
         AliasOutputExecuteResponse(
-          method.getId.toString,
+          method.id.toString,
           StorageUtils.serializerStringToResult(
             MethodEntitySerializer.serializerJavaObject(fs.listPathWithError(dest))
           )
@@ -220,7 +218,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         invokeMethod(method, classOf[FsPath], jobID)
     }
     logger.info(
-      s"jobID($jobID):creator ${method.getCreatorUser} proxy user: ${method.getProxyUser} finished to  execute a method: ${method.getMethodName}.,fsId=${method.getId}"
+      s"jobID($jobID):creator ${method.creatorUser} proxy user: ${method.proxyUser} finished to  execute a method: ${method.methodName}.,fsId=${method.id}"
     )
     executeResponse
   }
@@ -270,21 +268,21 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
   }
 
   private def existsUserFS(methodEntity: MethodEntity): Boolean = {
-    val proxyUser = methodEntity.getProxyUser
+    val proxyUser = methodEntity.proxyUser
     if (!userFSInfos.containsKey(proxyUser)) return false
     userFSInfos.get(proxyUser).synchronized {
       val userFsInfo =
-        userFSInfos.get(proxyUser).find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
+        userFSInfos.get(proxyUser).find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
       userFsInfo.foreach(_.lastAccessTime = System.currentTimeMillis())
       userFsInfo.isDefined
     }
   }
 
   protected def getUserFS(methodEntity: MethodEntity): Fs = {
-    val fsType = methodEntity.getFsType
-    val proxyUser = methodEntity.getProxyUser
+    val fsType = methodEntity.fsType
+    val proxyUser = methodEntity.proxyUser
     if (!userFSInfos.containsKey(proxyUser)) {
-      if (methodEntity.getId != -1) {
+      if (methodEntity.id != -1) {
         createUserFS(methodEntity)
       } else {
         throw new StorageErrorException(
@@ -297,7 +295,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     userFSInfos.get(proxyUser) synchronized {
       val userFsInfoOption = userFSInfos
         .get(proxyUser)
-        .find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
+        .find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
       if (userFsInfoOption.isDefined) {
         val userFsInfo = userFsInfoOption.get
         userFsInfo.lastAccessTime = System.currentTimeMillis()
@@ -305,7 +303,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       }
     }
     if (null == fs) {
-      if (methodEntity.getId != -1) {
+      if (methodEntity.id != -1) {
         createUserFS(methodEntity)
         getUserFS(methodEntity)
       } else {
@@ -321,14 +319,12 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
 
   private def createUserFS(methodEntity: MethodEntity): Long = {
     logger.info(
-      s"Creator ${methodEntity.getCreatorUser} for user ${methodEntity.getProxyUser} init fs：$methodEntity"
+      s"Creator ${methodEntity.creatorUser} for user ${methodEntity.proxyUser} init fs $methodEntity"
     )
-    var fsId = methodEntity.getId
-    val properties = methodEntity.getParams()(0).asInstanceOf[Map[String, String]]
-    val proxyUser = methodEntity.getProxyUser
-    if (
-        !fsProxyService.canProxyUser(methodEntity.getCreatorUser, proxyUser, methodEntity.getFsType)
-    ) {
+    var fsId = methodEntity.id
+    val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
+    val proxyUser = methodEntity.proxyUser
+    if (!fsProxyService.canProxyUser(methodEntity.creatorUser, proxyUser, methodEntity.fsType)) {
       throw new StorageErrorException(
         FS_CAN_NOT_PROXY_TO.getErrorCode,
         s"FS Can not proxy to：$proxyUser"
@@ -343,28 +339,28 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     }
     val userFsInfo = userFSInfos.get(proxyUser)
     userFsInfo synchronized {
-      if (!userFsInfo.exists(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)) {
-        val fs = FSFactory.getFs(methodEntity.getFsType)
+      if (!userFsInfo.exists(fsInfo => fsInfo != null && fsInfo.id == fsId)) {
+        val fs = FSFactory.getFs(methodEntity.fsType)
         fs.init(properties.asJava)
         fsId = if (fsId == -1) getFSId() else fsId
         userFsInfo += new FSInfo(fsId, fs)
       }
     }
     logger.info(
-      s"Creator ${methodEntity.getCreatorUser}for user ${methodEntity.getProxyUser} end init fs fsId=$fsId"
+      s"Creator ${methodEntity.creatorUser} for user ${methodEntity.proxyUser} end init fs fsId=$fsId"
     )
     fsId
   }
 
   private def closeUserFS(methodEntity: MethodEntity): Unit = {
     logger.info(
-      s"Creator ${methodEntity.getCreatorUser}为用户${methodEntity.getProxyUser} close FS：$methodEntity"
+      s"Creator ${methodEntity.creatorUser} for user ${methodEntity.proxyUser} close FS：$methodEntity"
     )
-    val proxyUser = methodEntity.getProxyUser
+    val proxyUser = methodEntity.proxyUser
     if (!userFSInfos.containsKey(proxyUser)) return
     val userFsInfo = userFSInfos.get(proxyUser)
     userFsInfo synchronized {
-      val fsInfo = userFsInfo.find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
+      val fsInfo = userFsInfo.find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
       if (fsInfo.isDefined) {
         Utils.tryFinally(fsInfo.get.fs.close()) {
           userFsInfo -= fsInfo.get
@@ -383,8 +379,8 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       jobID: String
   ): AliasOutputExecuteResponse = {
     val fs = getUserFS(method)
-    val methodName = method.getMethodName
-    val parameterSize = if (method.getParams == null) 0 else method.getParams.length
+    val methodName = method.methodName
+    val parameterSize = if (method.params == null) 0 else method.params.length
     val realMethod = fs.getClass.getMethods
       .filter(_.getName == methodName)
       .find(_.getGenericParameterTypes.length == parameterSize)
@@ -395,25 +391,22 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       )
     }
     if (parameterSize > 0) {
-      method.getParams()(0) = MethodEntitySerializer.deserializerToJavaObject(
-        method.getParams()(0).asInstanceOf[String],
+      method.params(0) = MethodEntitySerializer.deserializerToJavaObject(
+        method.params(0).asInstanceOf[String],
         methodParamType
       )
     }
     val res = MethodEntitySerializer.serializerJavaObject(
-      ReflectionUtils.invoke(fs, realMethod.get, method.getParams)
+      ReflectionUtils.invoke(fs, realMethod.get, method.params)
     )
     if ("exists" == methodName) {
       logger.info(
-        s"jobID($jobID),user(${method.getProxyUser}) execute exists get res($res) and input code($method)"
+        s"jobID($jobID),user(${method.proxyUser}) execute exists get res($res) and input code($method)"
       )
     }
 
-    AliasOutputExecuteResponse(method.getId.toString, StorageUtils.serializerStringToResult(res))
+    AliasOutputExecuteResponse(method.id.toString, StorageUtils.serializerStringToResult(res))
   }
-
-  override def getConcurrentLimit(): Int =
-    IOEngineConnConfiguration.IO_FILE_CONCURRENT_LIMIT.getValue
 
   override def killTask(taskID: String): Unit = {
     logger.warn(s"Kill job : ${taskID}")

@@ -57,6 +57,7 @@ public class EntranceTaskMonitor {
 
   private static final String ENTRANCE_RUNNING_TASK = "entrance_running_task";
   private static final String ENTRANCE_QUEUED_TASK = "entrance_queued_task";
+  private static final String ENTRANCE_TOTAL_TASK = "entrance_total_task";
 
   @Scheduled(cron = "${linkis.monitor.entrance.task.cron}")
   public void entranceTask() throws IOException {
@@ -153,38 +154,52 @@ public class EntranceTaskMonitor {
   }
 
   public static void resourceSendToIms() {
-    ServiceInstance[] instances =
+    // 获取entrance信息
+    ServiceInstance[] entranceServiceInstances =
         Sender.getInstances(GovernanceCommonConf.ENTRANCE_SERVICE_NAME().getValue());
-    if (null != instances) {
-      for (ServiceInstance instance : instances) {
-        String serviceInstance = instance.getInstance();
+    if (null != entranceServiceInstances) {
+      for (ServiceInstance instance : entranceServiceInstances) {
+        String entranceService = instance.getInstance();
         try {
-          Map<String, Object> instanceData =
-              MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", serviceInstance), "data");
-          int runningNumber = 0;
-          int queuedNumber = 0;
-          if (instanceData.containsKey("runningNumber")) {
-            runningNumber = (int) instanceData.get("runningNumber");
+          // 通过serviceInstance 获取entrance中任务数量信息
+          Map<String, Object> entranceData =
+              MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", entranceService), "data");
+          int runningTaskNumber = 0;
+          int queuedTaskNumber = 0;
+          int totalTaskNumber = 0;
+          // 获取entrance运行中任务数量
+          if (entranceData.containsKey("runningNumber")) {
+            runningTaskNumber = (int) entranceData.get("runningNumber");
           }
-          if (instanceData.containsKey("queuedNumber")) {
-            queuedNumber = (int) instanceData.get("queuedNumber");
+          // 获取entrance排队中任务数量
+          if (entranceData.containsKey("queuedNumber")) {
+            queuedTaskNumber = (int) entranceData.get("queuedNumber");
           }
+          // 计算总数
+          totalTaskNumber = runningTaskNumber + queuedTaskNumber;
           logger.info("ResourceMonitor send index ");
           List<IndexEntity> list = new ArrayList<>();
           list.add(
               new IndexEntity(
-                  serviceInstance,
+                  entranceService,
                   "entrance",
                   ENTRANCE_RUNNING_TASK,
                   HttpsUntils.localHost,
-                  String.valueOf(runningNumber)));
+                  String.valueOf(runningTaskNumber)));
           list.add(
               new IndexEntity(
-                  serviceInstance,
+                  entranceService,
                   "entrance",
                   ENTRANCE_QUEUED_TASK,
                   HttpsUntils.localHost,
-                  String.valueOf(queuedNumber)));
+                  String.valueOf(queuedTaskNumber)));
+          list.add(
+              new IndexEntity(
+                  entranceService,
+                  "entrance",
+                  ENTRANCE_TOTAL_TASK,
+                  HttpsUntils.localHost,
+                  String.valueOf(totalTaskNumber)));
           HttpsUntils.sendIndex(list);
         } catch (IOException e) {
           logger.warn("failed to send EcmResource index :" + e);

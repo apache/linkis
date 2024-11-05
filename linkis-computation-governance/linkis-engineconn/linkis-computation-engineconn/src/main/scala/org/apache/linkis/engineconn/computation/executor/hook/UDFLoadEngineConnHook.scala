@@ -42,7 +42,6 @@ import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
-import java.nio.charset.StandardCharsets
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ArrayBuffer
@@ -119,7 +118,7 @@ abstract class UDFLoad extends Logging {
     logger.info("read file: " + path)
     val file = new File(path)
     if (file.exists()) {
-      FileUtils.readFileToString(file, StandardCharsets.UTF_8)
+      FileUtils.readFileToString(file)
     } else {
       logger.info("udf file: [" + path + "] doesn't exist, ignore it.")
       ""

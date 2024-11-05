@@ -60,8 +60,7 @@ public class ContextHistoryMapperTest extends BaseDaoTest {
     contextID.setContextId("1");
     PersistenceContextHistory history = createPersistenceContextHistory();
     contextHistoryMapper.createHistory(history);
-    PersistenceContextHistory contextHistory =
-        contextHistoryMapper.getHistory(contextID, Long.valueOf(String.valueOf(history.getId())));
+    PersistenceContextHistory contextHistory = contextHistoryMapper.getHistory(contextID, 3L);
     Assertions.assertNotNull(contextHistory);
   }
 
@@ -121,8 +120,7 @@ public class ContextHistoryMapperTest extends BaseDaoTest {
     history.setKeyword(keyWord);
     contextHistoryMapper.updateHistory(contextID, history);
 
-    PersistenceContextHistory contextHistory =
-        contextHistoryMapper.getHistory(contextID, Long.valueOf(String.valueOf(history.getId())));
+    PersistenceContextHistory contextHistory = contextHistoryMapper.getHistory(contextID, 3L);
     Assertions.assertEquals(keyWord, contextHistory.getKeyword());
   }
 

@@ -29,7 +29,7 @@ import org.apache.linkis.configuration.util.ClientUtil;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -252,5 +252,11 @@ public class TenantConfigServiceImpl implements TenantConfigService {
                     department -> department,
                     (existing, replacement) -> existing))
             .values());
+  }
+
+  @Override
+  public DepartmentVo getDepartmentByUser(String user) {
+
+    return departmentMapper.getDepartmentByUser(user);
   }
 }

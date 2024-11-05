@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -31,13 +31,13 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.{BooleanUtils, StringUtils}
 
 import org.springframework.beans.BeanUtils
 
 import java.text.SimpleDateFormat
 import java.util
-import java.util.Date
+import java.util.{Date, Map}
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
@@ -274,6 +274,34 @@ object TaskConversions extends Logging {
     ) {
       createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_IS_REUSE) && metrics
+          .get(TaskConstant.JOB_IS_REUSE) != null
+    ) {
+
+      taskVO.setIsReuse(BooleanUtils.toBoolean(metrics.get(TaskConstant.JOB_IS_REUSE).toString))
+
+    }
+
+    var requestStartTime: Date = null
+    var requestEndTime: Date = null
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+          .get(TaskConstant.JOB_SUBMIT_TIME) != null
+    ) {
+      requestStartTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
+      taskVO.setRequestStartTime(requestStartTime)
+    }
+    if (
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SCHEDULE_TIME) && metrics
+          .get(TaskConstant.JOB_SCHEDULE_TIME) != null
+    ) {
+      requestEndTime = dealString2Date(metrics.get(TaskConstant.JOB_SCHEDULE_TIME).toString)
+      taskVO.setRequestEndTime(requestEndTime)
+    }
+    if (null != requestStartTime && null != requestEndTime) {
+      taskVO.setRequestSpendTime(requestEndTime.getTime - requestStartTime.getTime)
+    }
     if (null != createTime) {
       if (isJobFinished(job.getStatus)) {
         if (null != completeTime) {
@@ -287,7 +315,7 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+    if (null != metrics && metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
       taskVO.setEngineInstance(metrics.get(TaskConstant.ENGINE_INSTANCE).toString)
     } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
       taskVO.setCanRetry(true)
@@ -316,6 +344,7 @@ object TaskConversions extends Logging {
       }
     }
     taskVO.setObserveInfo(job.getObserveInfo)
+    taskVO.setMetrics(job.getMetrics)
     taskVO
   }
 
@@ -340,6 +369,32 @@ object TaskConversions extends Logging {
       logger.warn("String to Date deserialization failed.")
       null
     }
+  }
+
+  def dateFomat(date: Date): String = {
+    if (null != date) {
+      val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+      dateFormat.format(date)
+    } else {
+      ""
+    }
+  }
+
+  def getJobRuntime(metricsMap: util.Map[String, String]): String = {
+    var runTime = ""
+    if (metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)) {
+      val completeTime = dealString2Date(
+        metricsMap.get(TaskConstant.JOB_COMPLETE_TIME).toString
+      ).getTime
+      val submitTime = dealString2Date(
+        metricsMap.get(TaskConstant.JOB_SUBMIT_TIME).toString
+      ).getTime
+      runTime = ByteTimeUtils.msDurationToString(completeTime - submitTime)
+    } else {
+      runTime =
+        "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)"
+    }
+    runTime
   }
 
 }

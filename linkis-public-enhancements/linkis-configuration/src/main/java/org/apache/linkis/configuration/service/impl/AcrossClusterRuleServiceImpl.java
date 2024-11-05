@@ -106,7 +106,12 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
 
   @Override
   public Map<String, Object> queryAcrossClusterRuleList(
-      String creator, String username, String clusterName, Integer pageNow, Integer pageSize) {
+      String creator,
+      String username,
+      String clusterName,
+      Integer pageNow,
+      Integer pageSize,
+      String isValid) {
     Map<String, Object> result = new HashMap<>(2);
     List<AcrossClusterRule> acrossClusterRules = null;
     if (Objects.isNull(pageNow)) {
@@ -118,7 +123,8 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     PageHelper.startPage(pageNow, pageSize);
 
     try {
-      acrossClusterRules = ruleMapper.queryAcrossClusterRuleList(username, creator, clusterName);
+      acrossClusterRules =
+          ruleMapper.queryAcrossClusterRuleList(username, creator, clusterName, isValid);
     } finally {
       PageHelper.clearPage();
     }

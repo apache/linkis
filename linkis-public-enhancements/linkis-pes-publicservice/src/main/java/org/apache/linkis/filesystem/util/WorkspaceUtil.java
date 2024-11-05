@@ -44,6 +44,10 @@ public class WorkspaceUtil {
           + "\\.\\d{3}\\s*ERROR(.*)";
   public static String allReg = "(.*?)";
 
+  public static String filePathReg = "^[a-zA-Z0-9-\\d_.:/]+$";
+
+  public static Pattern filePathRegexPattern = Pattern.compile(filePathReg);
+
   public static List<LogLevel.Type> logReg = new ArrayList<>();
 
   public static List<Integer> logMatch(String code, LogLevel logLevel) {

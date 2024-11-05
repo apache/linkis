@@ -163,7 +163,7 @@ object EngineConnMonitor extends Logging {
       case NodeExistStatus.UnExist =>
         logger.warn("Engine {} is Failed, now go to clear its task.", status._1)
         killTask(unActivityExecutors.get(status._1))
-      case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
+      case NodeExistStatus.Unknown =>
         val engineConnExecutor = unActivityExecutors.getOrDefault(status._1, null)
         if (null != engineConnExecutor) {
           Utils.tryCatch {
@@ -188,6 +188,7 @@ object EngineConnMonitor extends Logging {
             killTask(unActivityExecutors.get(status._1))
           }
         }
+      case _ =>
     }
   }
 

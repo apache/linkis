@@ -92,7 +92,16 @@
           <groupId>io.projectreactor.netty</groupId>
           <artifactId>reactor-netty</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>io.projectreactor.netty</groupId>
+          <artifactId>reactor-netty-http</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-http</artifactId>
+      <version>${reactor-netty-http.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -148,7 +148,16 @@
           <groupId>com.github.joshelser</groupId>
           <artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>io.airlift</groupId>
+          <artifactId>aircompressor</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.airlift</groupId>
+      <artifactId>aircompressor</artifactId>
+      <version>${aircompressor.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.hive</groupId>

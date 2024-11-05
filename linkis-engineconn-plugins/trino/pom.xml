@@ -67,6 +67,17 @@
       <groupId>io.trino</groupId>
       <artifactId>trino-client</artifactId>
       <version>${trino.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.squareup.okio</groupId>
+          <artifactId>okio</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>${okio.version}</version>
     </dependency>
   </dependencies>
 

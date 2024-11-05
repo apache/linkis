@@ -69,6 +69,17 @@
       <groupId>com.facebook.presto</groupId>
       <artifactId>presto-client</artifactId>
       <version>${presto.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.squareup.okio</groupId>
+          <artifactId>okio</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okio</groupId>
+      <artifactId>okio</artifactId>
+      <version>${okio.version}</version>
     </dependency>
     <dependency>
       <groupId>com.facebook.presto</groupId>

@@ -32,6 +32,7 @@ import org.apache.linkis.protocol.utils.ZuulEntranceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.ujes.client.response.EmsListResult;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -108,10 +109,14 @@ public class HttpsUntils {
             .build();
     KeyvalueResult result = client.getConfKeyValue(build);
     Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
-    ArrayList arrayList =
-        BDPJettyServerHelper.gson().fromJson(data.get("configValues").toString(), ArrayList.class);
-    Map map = BDPJettyServerHelper.gson().fromJson(arrayList.get(0).toString(), Map.class);
-    return MapUtils.getString(map, "configValue", "");
+    ArrayList arrayList = (ArrayList) data.get("configValues");
+    if (CollectionUtils.isNotEmpty(arrayList)) {
+      String json = BDPJettyServerHelper.gson().toJson(arrayList.get(0));
+      Map map = BDPJettyServerHelper.gson().fromJson(json, Map.class);
+      return MapUtils.getString(map, "configValue", "");
+    } else {
+      return "";
+    }
   }
 
   public static Map getDatasourceConf(String user, String datasourceName) {

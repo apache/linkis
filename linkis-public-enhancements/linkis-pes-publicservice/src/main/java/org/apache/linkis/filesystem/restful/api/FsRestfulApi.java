@@ -1510,6 +1510,9 @@ public class FsRestfulApi {
       OutputStream outputStream = null;
       try {
         String packageName = FilesystemUtils.findPackageName(file.getInputStream());
+        if (FilesystemUtils.checkModuleIsExistEnv(packageName)) {
+          return Message.error("python3环境中已存在模块：" + packageName + "请勿重复上传");
+        }
         fileName = packageName + FsPath.CUR_DIR + "zip";
         if (StringUtils.isBlank(packageName)) {
           return Message.error("文件上传失败：PKG-INFO 文件不存在");

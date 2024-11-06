@@ -90,7 +90,7 @@ public class FilesystemUtils {
         if (entry.getName().endsWith("PKG-INFO")) {
           findPkgInfo = 1;
           String pkgInfoContent = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
-          return pkgInfoContent.split("Name: ")[1].split("\n")[0].trim();
+          return pkgInfoContent.split("Name: ")[1].split("\n")[0].trim().toLowerCase();
         }
       }
     } catch (Exception e) {
@@ -190,19 +190,7 @@ public class FilesystemUtils {
     StringJoiner joiner = new StringJoiner(",");
     // 检查机器上pyhton环境中模块是否存在
     List<String> notExistModules =
-        pythonModules.stream()
-            .filter(
-                module -> {
-                  String exec =
-                      Utils.exec(
-                          (new String[] {
-                            "python3",
-                            Configuration.getLinkisHome() + "/admin/" + "check_modules.py",
-                            module
-                          }));
-                  return !Boolean.parseBoolean(exec);
-                })
-            .collect(Collectors.toList());
+        pythonModules.stream().filter(s -> !checkModuleIsExistEnv(s)).collect(Collectors.toList());
     // 查询数据库中包是否存在
     notExistModules.forEach(
         module -> {
@@ -218,6 +206,15 @@ public class FilesystemUtils {
           }
         });
     return joiner.toString();
+  }
+
+  public static Boolean checkModuleIsExistEnv(String module) {
+    String exec =
+        Utils.exec(
+            (new String[] {
+              "python3", Configuration.getLinkisHome() + "/admin/" + "check_modules.py", module
+            }));
+    return Boolean.parseBoolean(exec);
   }
 
   public static List<String> getInstallRequestPythonModules(MultipartFile file) throws IOException {

@@ -46,6 +46,7 @@ import org.apache.spark.sql.execution.datasources.csv.UDF
 
 import java.io._
 import java.net.InetAddress
+import java.security.SecureRandom
 import java.util
 
 import scala.collection.JavaConverters._
@@ -76,7 +77,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = SecureRandomStringUtils.randomAlphanumeric(256)
+
+  private lazy val py4jToken: String = if (SparkConfiguration.LINKIS_PYSPARK_USE_SECURE_RANDOM) {
+    SecureRandomStringUtils.randomAlphanumeric(256)
+  } else {
+    SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
+  }
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()
@@ -152,7 +158,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
     val userDefinePythonVersion = engineCreationContext.getOptions
       .getOrDefault("spark.python.version", "python")
-      .toString
       .toLowerCase()
     val sparkPythonVersion =
       if (

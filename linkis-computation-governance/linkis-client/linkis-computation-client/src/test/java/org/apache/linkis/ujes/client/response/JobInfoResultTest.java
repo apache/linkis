@@ -29,10 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 class JobInfoResultTest {
 
-  /**
-   * verify single path returns
-   * check point 1: return one path
-   */
+  /** verify single path returns check point 1: return one path */
   @Test
   void shouldReturnResultSetWithOrder() {
     String[] toBeReturned = new String[] {"hdfs://hdfs/path/test/mockFile_1.dolphi"};
@@ -41,10 +38,7 @@ class JobInfoResultTest {
     assertEquals("hdfs://hdfs/path/test/mockFile_1.dolphi", setList[0]);
   }
 
-  /**
-   * verify empty path set
-   * check point 1: return empty path
-   */
+  /** verify empty path set check point 1: return empty path */
   @Test
   void shouldReturnEmptyResultSet() {
     String[] toBeReturned = new String[] {};
@@ -53,9 +47,8 @@ class JobInfoResultTest {
   }
 
   /**
-   * verify multiple result set, sorted by file name with numbers
-   * check point 1: sort asc
-   * check point 2: sort by number, not ascii
+   * verify multiple result set, sorted by file name with numbers check point 1: sort asc check
+   * point 2: sort by number, not ascii
    */
   @Test
   void shouldReturnMultiResultSetWithOrder() {

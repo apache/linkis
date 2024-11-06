@@ -778,8 +778,9 @@ public class DataSourceCoreRestfulApi {
           // Get definitions
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
-
+          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
+          }
           // For connecting, also need to handle the parameters
           for (DataSourceParamsHook hook : dataSourceParamsHooks) {
             hook.beforePersist(connectParams, keyDefinitionList);
@@ -980,7 +981,9 @@ public class DataSourceCoreRestfulApi {
         (k, v) -> {
           if (v instanceof String) {
             connectParams.put(k, v.toString().trim());
-            logger.info("connectParams put key:{} with value:{}", k, v.toString().trim());
+            if (!k.equals("password")) {
+              logger.info("connectParams put key:{} with value:{}", k, v.toString().trim());
+            }
           }
         });
   }

@@ -21,6 +21,7 @@ import org.apache.linkis.monitor.department.entity.UserDepartmentInfo;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,12 +30,14 @@ import java.util.List;
 public interface UserDepartmentInfoMapper {
 
   void insertUser(UserDepartmentInfo user);
+
   @Transactional(rollbackFor = Exception.class)
   int batchInsertUsers(@Param("userDepartmentInfos") List<UserDepartmentInfo> userDepartmentInfos);
 
   void updateUser(UserDepartmentInfo user);
 
   UserDepartmentInfo selectUser(@Param("userName") String userName);
+
   @Transactional(rollbackFor = Exception.class)
   void deleteUser();
 

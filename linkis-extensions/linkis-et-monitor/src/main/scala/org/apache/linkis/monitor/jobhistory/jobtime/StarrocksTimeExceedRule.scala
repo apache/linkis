@@ -60,55 +60,39 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
               if (Constants.UNFINISHED_JOB_STATUS.contains(status) && engineType.equals("JDBC")) {
                 // 获取job所使用的数据源类型
                 val datasourceConfMap = getDatasourceConf(job)
-                val datasourceTypeMap = MapUtils.getMap(
-                  datasourceConfMap,
-                  "dataSourceType",
-                  new util.HashMap[String, String]()
-                )
-                val jobDatasourceType =
-                  MapUtils.getString(datasourceTypeMap, "name", "").toLowerCase()
-                // 获取管理台配置需要使用的数据源类型（默认starrocks）
-                var datasourceType = HttpsUntils
-                  .getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alert.datasource.type")
-                  .toLowerCase()
-                if (StringUtils.isBlank(datasourceType)) datasourceType = "starrocks"
-                if (datasourceType.contains(jobDatasourceType)) {
-                  // 计算任务执行时间
-                  val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
-                  // 获取告警配置
-                  val timeValue =
-                    HttpsUntils.getJDBCConf(
-                      job.getSubmitUser,
-                      "linkis.jdbc.task.timeout.alert.time"
-                    )
-                  if (StringUtils.isNotBlank(timeValue)) {
-                    val timeoutInSeconds = timeValue.toDouble
-                    val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
-                    if (elapse > timeoutInMillis) {
-                      // 发送告警
-                      alertData.add(job)
-                    }
+                // 计算任务执行时间
+                val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
+                // 获取告警配置
+                val timeValue =
+                  HttpsUntils.getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alert.time")
+                if (StringUtils.isNotBlank(timeValue)) {
+                  val timeoutInSeconds = timeValue.toDouble
+                  val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                  if (elapse > timeoutInMillis) {
+                    // 发送告警
+                    alertData.add(job)
                   }
-                  // 获取超时kill配置信息
-                  if (StringUtils.isNotBlank(job.getParams)) {
-                    val connectParamsMap = MapUtils.getMap(
-                      datasourceConfMap,
-                      "connectParams",
-                      new util.HashMap[AnyRef, AnyRef]
-                    )
-                    val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
-                    if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
-                      if (StringUtils.isNotBlank(killTime)) {
-                        val timeoutInSeconds = timeValue.toDouble
-                        val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
-                        if (elapse > timeoutInMillis) {
-                          // 触发kill任务
-                          HttpsUntils.killJob(job)
-                        }
+                }
+                // 获取超时kill配置信息
+                if (StringUtils.isNotBlank(job.getParams)) {
+                  val connectParamsMap = MapUtils.getMap(
+                    datasourceConfMap,
+                    "connectParams",
+                    new util.HashMap[AnyRef, AnyRef]
+                  )
+                  val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                  if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
+                    if (StringUtils.isNotBlank(killTime)) {
+                      val timeoutInSeconds = timeValue.toDouble
+                      val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                      if (elapse > timeoutInMillis) {
+                        // 触发kill任务
+                        HttpsUntils.killJob(job)
                       }
                     }
                   }
                 }
+//                }
               }
             case _ =>
               logger.warn(
@@ -140,7 +124,11 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
       MapUtils.getMap(configurationMap, "runtime", new util.HashMap[String, String]())
     val datasourceName = MapUtils.getString(runtimeMap, "wds.linkis.engine.runtime.datasource", "")
     // 获取datasource信息
-    HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
+    if (StringUtils.isNotBlank(datasourceName)) {
+      HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
+    } else {
+      new util.HashMap[String, String]()
+    }
   }
 
 }

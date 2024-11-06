@@ -121,7 +121,7 @@ object MonitorAlertUtils extends Logging {
         val eccReceivers = {
           val set: util.Set[String] = new util.HashSet[String]
           if (StringUtils.isNotBlank(data.eccReceivers)) {
-            data.eccReceivers.split(",").map(r => set.add(r))
+            data.eccReceivers.replace("$eccAlertUser", "").trim.split(",").map(r => set.add(r))
           }
           if (!repaceParams.containsKey("$eccAlertUser")) {
             Constants.ECC_DEFAULT_RECEIVERS.foreach(e => {
@@ -136,6 +136,7 @@ object MonitorAlertUtils extends Logging {
             repaceParams
               .get("eccReceiver")
               .replace("$eccAlertUser", "")
+              .trim
               .split(",")
               .map(r => set.add(r))
           }

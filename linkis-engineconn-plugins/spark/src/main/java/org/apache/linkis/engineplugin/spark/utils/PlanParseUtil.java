@@ -208,6 +208,9 @@ public class PlanParseUtil {
         NamedExpression next = it.next();
         if (next instanceof Alias) {
           Alias alias = (Alias) next;
+          if (alias.name().contains(udfName)) {
+            return true;
+          }
           Expression child = alias.child();
           if (child instanceof ScalaUDF) {
             ScalaUDF su = (ScalaUDF) child;

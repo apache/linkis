@@ -227,12 +227,10 @@ class TaskExecutionServiceImpl
       }
 
       // only sql can use udf check, udfName set in UDFLoad
-      if (ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue) {
-        val codeType: String = LabelUtil.getCodeType(requestTask.getLabels)
-        val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
-        System.getProperties.put(ComputationExecutorConf.CODE_TYPE, languageType)
-        logger.info(s"add spacial udf check for job ${jobId} with codeType: {}", languageType)
-      }
+      val codeType: String = LabelUtil.getCodeType(requestTask.getLabels)
+      val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+      System.getProperties.put(ComputationExecutorConf.CODE_TYPE, languageType)
+      logger.info(s"add spacial udf check for job ${jobId} with codeType: {}", languageType)
 
       val task = new CommonEngineConnTask(taskId, retryAble)
       task.setCode(requestTask.getCode)

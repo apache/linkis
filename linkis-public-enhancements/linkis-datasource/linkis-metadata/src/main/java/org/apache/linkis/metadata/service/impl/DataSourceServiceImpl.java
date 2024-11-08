@@ -309,8 +309,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   private FileSystem getRootHdfs() {
     if (rootHdfs == null) { // NOSONAR
-      synchronized (this) {
-        if (rootHdfs == null) {
+      synchronized (this) { // NOSONAR
+        if (rootHdfs == null) { // NOSONAR
           rootHdfs = HDFSUtils.getHDFSRootUserFileSystem();
           KerberosUtils.startKerberosRefreshThread();
         }

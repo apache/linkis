@@ -39,8 +39,8 @@ public class CSNodeServiceImpl implements CSNodeService {
 
   public static CSNodeService getInstance() {
     if (null == csNodeService) { // NOSONAR
-      synchronized (CSNodeServiceImpl.class) {
-        if (null == csNodeService) {
+      synchronized (CSNodeServiceImpl.class) { // NOSONAR
+        if (null == csNodeService) { // NOSONAR
           csNodeService = new CSNodeServiceImpl();
         }
       }

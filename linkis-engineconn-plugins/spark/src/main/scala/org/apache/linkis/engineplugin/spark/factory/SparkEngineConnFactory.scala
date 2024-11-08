@@ -255,11 +255,11 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       output
     }(t => {
       logger.warn("create spark repl classdir failed", t)
-      throw new SparkCreateFileException(
+      throw new SparkCreateFileException( // NOSONAR
         SPARK_CREATE_EXCEPTION.getErrorCode,
         SPARK_CREATE_EXCEPTION.getErrorDesc,
         t
-      ) // NOSONAR
+      )
       null
     })
   }

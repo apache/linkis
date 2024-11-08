@@ -35,14 +35,14 @@ import org.slf4j.LoggerFactory;
 public class HBaseShellCommands {
   private static final Logger LOG = LoggerFactory.getLogger(HBaseShellCommands.class);
   private static final String COMMANDS_PATH = "hbase-ruby/shell/commands/";
-  private static volatile Set<String> commandsSet;
+  private static volatile Set<String> commandsSet; // NOSONAR
 
   private HBaseShellCommands() {}
 
   public static Set<String> getAllCommands() throws IOException {
-    if (commandsSet == null) {
-      synchronized (HBaseShellCommands.class) {
-        if (commandsSet == null) {
+    if (commandsSet == null) { // NOSONAR
+      synchronized (HBaseShellCommands.class) { // NOSONAR
+        if (commandsSet == null) { // NOSONAR
           Set<String> sortedSet = new TreeSet<>();
           URL commandFilesUrl =
               HBaseShellCommands.class.getClassLoader().getResource(COMMANDS_PATH);

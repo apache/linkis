@@ -41,7 +41,7 @@ public class ClientSingleton {
   public static synchronized MonitorHTTPClient getInstance() {
     if (instance == null) {
       if (dwsClientConfig == null) {
-        dwsClientConfig = createClientConfig(null, null);
+        dwsClientConfig = createClientConfig(null, null); // NOSONAR
       }
       instance = new MonitorHTTPClientClientImpl(dwsClientConfig);
     }
@@ -61,7 +61,7 @@ public class ClientSingleton {
     }
     int maxConnection =
         (int)
-            parms.getOrDefault(
+            parms.getOrDefault( // NOSONAR
                 BmlConfiguration.CONNECTION_MAX_SIZE_SHORT_NAME(),
                 BmlConfiguration.CONNECTION_MAX_SIZE().getValue());
     int connectTimeout =

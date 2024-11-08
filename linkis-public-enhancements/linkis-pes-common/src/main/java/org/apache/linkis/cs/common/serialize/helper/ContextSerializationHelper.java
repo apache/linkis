@@ -72,8 +72,8 @@ public class ContextSerializationHelper extends AbstractSerializationHelper {
 
   public static ContextSerializationHelper getInstance() {
     if (contextSerializationHelper == null) { // NOSONAR
-      synchronized (ContextSerializationHelper.class) {
-        if (contextSerializationHelper == null) {
+      synchronized (ContextSerializationHelper.class) { // NOSONAR
+        if (contextSerializationHelper == null) { // NOSONAR
           contextSerializationHelper = new ContextSerializationHelper();
           try {
             contextSerializationHelper.init();

@@ -64,7 +64,7 @@ object OrchestratorConfiguration {
     CommonVars("wds.linkis.orchestrator.task.scheduler.retry.wait.time", 100000)
 
   val TASK_SCHEDULER_THREAD_POOL =
-    CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 200)
+    CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 400)
 
   val ORCHESTRATOR_EXECUTION_FACTORY = CommonVars(
     "wds.linkis.orchestrator.execution.factory.class",

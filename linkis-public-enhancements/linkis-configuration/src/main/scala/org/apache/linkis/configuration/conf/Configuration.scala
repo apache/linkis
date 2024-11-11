@@ -41,11 +41,15 @@ object Configuration {
   val USE_USER_DEFAULE_VALUE =
     CommonVars.apply("wds.linkis.configuration.use.user.default.value", true).getValue
 
+  val JDBC_PASSWORD_CONF = "wds.linkis.jdbc.password"
+
+  val NEBULA_PASSWORD_CONF = "linkis.nebula.password"
+
   val CONFIGURATION_AES_CONF: List[String] =
     CommonVars
       .apply(
         "linkis.configuration.password.aes.conf",
-        "linkis.nebula.password,wds.linkis.jdbc.password"
+        JDBC_PASSWORD_CONF + "," + NEBULA_PASSWORD_CONF
       )
       .getValue
       .split(",")

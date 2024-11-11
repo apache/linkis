@@ -46,9 +46,10 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class UdfUtils {
   private static final Logger logger = LoggerFactory.getLogger(UdfUtils.class);
@@ -175,20 +176,29 @@ public class UdfUtils {
 
   public static Boolean checkModuleIsExistEnv(String module) {
     // 获取整个pip list
-    if (CollectionUtils.isEmpty(moduleSet)) {
-      String piplist = Utils.exec((new String[] {"pip", "list", "--format=legacy"}));
-      String[] split = piplist.split("\\n");
-      moduleSet.addAll(Arrays.asList(split));
+    try {
+      if (CollectionUtils.isEmpty(moduleSet)) {
+        String piplist = Utils.exec((new String[] {"pip3", "list", "--format=legacy"}));
+        String[] split = piplist.split("\\n");
+        moduleSet.addAll(Arrays.asList(split));
+      }
+      if (moduleSet.stream().anyMatch(s -> s.startsWith(module))) {
+        return true;
+      }
+    } catch (Exception e) {
+      logger.info("get pip3 list error", e);
     }
-    if (moduleSet.stream().anyMatch(s -> s.startsWith(module))) {
-      return true;
+    try {
+      String exec =
+          Utils.exec(
+              (new String[] {
+                "python3", Configuration.getLinkisHome() + "/admin/" + "check_modules.py", module
+              }));
+      return Boolean.parseBoolean(exec);
+    } catch (Exception e) {
+      logger.info("get python3 env check error", e);
+      return false;
     }
-    String exec =
-        Utils.exec(
-            (new String[] {
-              "python3", Configuration.getLinkisHome() + "/admin/" + "check_modules.py", module
-            }));
-    return Boolean.parseBoolean(exec);
   }
 
   public static List<String> getInstallRequestPythonModules(MultipartFile file) throws IOException {

@@ -61,6 +61,15 @@
       )
     </foreach>
   </insert>
+  <update id="updateConfigValue"  parameterType="org.apache.linkis.configuration.entity.TemplateConfigKey">
+    UPDATE linkis_ps_configuration_template_config_key
+    <set>
+      <if test="configValue != null">
+        config_value = #{configValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
 
   <select id="selectListByTemplateUuid" resultMap="BaseResultMap">
     select
@@ -156,6 +165,12 @@
         select t.key_id from linkis_ps_configuration_template_config_key t
         where t.template_uuid = #{templateUuid,jdbcType=VARCHAR}
       )
+  </select>
+  <select id="selectListByKeyId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from linkis_ps_configuration_template_config_key
+    where key_id  = #{keyId}
   </select>
 
 </mapper>

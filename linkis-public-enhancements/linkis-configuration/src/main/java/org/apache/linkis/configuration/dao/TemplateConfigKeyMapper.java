@@ -46,4 +46,8 @@ public interface TemplateConfigKeyMapper {
       @Param("templateName") String templateName);
 
   List<String> selectEngineTypeByTemplateUuid(@Param("templateUuid") String templateUuid);
+
+  List<TemplateConfigKey> selectListByKeyId(@Param("keyId") Long keyId);
+
+  void updateConfigValue(TemplateConfigKey confKey);
 }

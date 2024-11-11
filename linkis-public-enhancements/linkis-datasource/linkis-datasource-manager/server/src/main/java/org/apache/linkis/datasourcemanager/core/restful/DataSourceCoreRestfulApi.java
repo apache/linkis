@@ -948,7 +948,7 @@ public class DataSourceCoreRestfulApi {
       Map datasourceParmMap =
           BDPJettyServerHelper.gson()
               .fromJson(dataSourceInfoBrief.getParameter().toString(), Map.class);
-      if (!datasourceParmMap.get("isEncrypt").equals("1") && isEncrypt.equals("1")) {
+      if (!datasourceParmMap.getOrDefault("isEncrypt", "0").equals("1") && isEncrypt.equals("1")) {
         datasourceParmMap.put(
             AESUtils.PASSWORD,
             AESUtils.encrypt(
@@ -958,7 +958,7 @@ public class DataSourceCoreRestfulApi {
         dataSourceInfoBrief.setParameter(BDPJettyServerHelper.gson().toJson(datasourceParmMap));
         dataSourceInfoService.updateDataSourceInfo(dataSourceInfoBrief);
       }
-      if (datasourceParmMap.get("isEncrypt").equals("1") && isEncrypt.equals("0")) {
+      if (datasourceParmMap.getOrDefault("isEncrypt", "0").equals("1") && isEncrypt.equals("0")) {
         datasourceParmMap.put(
             AESUtils.PASSWORD,
             AESUtils.decrypt(
@@ -983,7 +983,8 @@ public class DataSourceCoreRestfulApi {
               && datasourceVersion.getParameter().contains(AESUtils.PASSWORD)) {
             Map datasourceVersionMap =
                 BDPJettyServerHelper.gson().fromJson(datasourceVersion.getParameter(), Map.class);
-            if (!datasourceVersionMap.get("isEncrypt").equals("1") && isEncrypt.equals("1")) {
+            if (!datasourceVersionMap.getOrDefault("isEncrypt", "0").equals("1")
+                && isEncrypt.equals("1")) {
               try {
                 Object password =
                     CryptoUtils.string2Object(
@@ -1005,7 +1006,8 @@ public class DataSourceCoreRestfulApi {
               }
             }
             // 解密
-            if (datasourceVersionMap.get("isEncrypt").equals("1") && isEncrypt.equals("0")) {
+            if (datasourceVersionMap.getOrDefault("isEncrypt", "0").equals("1")
+                && isEncrypt.equals("0")) {
               try {
                 String password = datasourceVersionMap.get(AESUtils.PASSWORD).toString();
                 String decryptPassword =

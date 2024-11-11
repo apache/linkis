@@ -99,4 +99,18 @@ object Constants {
   val LINKIS_CLUSTER_NAME =
     CommonVars.properties.getProperty("linkis.cluster.name", "")
 
+  val ADMIN_USER = "hadoop"
+
+  val SPLIT_DELIMITER = ";"
+
+  val JDBC_ALERT_TIME = "linkis.jdbc.task.timeout.alert.time"
+
+  val JDBC_ALERT_USER = "linkis.jdbc.task.timeout.alert.user"
+
+  val JDBC_ALERT_LEVEL = "linkis.jdbc.task.timeout.alert.level"
+
+  val JOB_DATASOURCE_CONF = "wds.linkis.engine.runtime.datasource"
+
+  val JDBC_ENGINE = "jdbc"
+
 }

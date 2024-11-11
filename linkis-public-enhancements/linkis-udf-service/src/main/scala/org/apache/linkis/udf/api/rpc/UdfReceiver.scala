@@ -95,17 +95,6 @@ class UdfReceiver extends Receiver with Logging {
           voList.add(vo)
         })
         new ResponsePythonModuleProtocol(voList)
-      case RequestPythonInfo(pythonModule: String, username: String) =>
-        var pythonModuleInfo = new PythonModuleInfo
-        pythonModuleInfo.setCreateUser(username)
-        pythonModuleInfo.setName(pythonModule)
-        pythonModuleInfo.setIsLoad(1)
-        pythonModuleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo)
-        var pythonModuleInfoVO = new PythonModuleInfoVO
-        if (null != pythonModuleInfo) {
-          BeanUtils.copyProperties(pythonModuleInfoVO, pythonModuleInfo)
-        }
-        new ResponsePythonInfo(pythonModuleInfoVO)
       case _ =>
     }
   }

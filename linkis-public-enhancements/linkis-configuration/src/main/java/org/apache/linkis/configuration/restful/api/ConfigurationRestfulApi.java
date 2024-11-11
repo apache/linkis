@@ -295,6 +295,16 @@ public class ConfigurationRestfulApi {
       creator = "*";
     }
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
+    String engine = null;
+    String version = null;
+    if (engineType != null) {
+      String[] tmpString = engineType.split("-");
+      if (tmpString.length != 2) {
+        throw new ConfigurationException(INCORRECT_FIXED_SUCH.getErrorDesc());
+      }
+      engine = tmpString[0];
+      version = tmpString[1];
+    }
     ArrayList<ConfigValue> createList = new ArrayList<>();
     ArrayList<ConfigValue> updateList = new ArrayList<>();
     ArrayList<List<ConfigKeyValue>> chekList = new ArrayList<>();
@@ -311,15 +321,14 @@ public class ConfigurationRestfulApi {
           configKeyValue.setConfigValue(sparkConf);
         }
         if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
-            && (configKeyValue.getKey().equals("linkis.nebula.password")
-                || configKeyValue.getKey().equals("wds.linkis.jdbc.password"))
+            && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
             && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
-          List<ConfigKeyValue> configByLabelIds =
-              configurationService.getConfigByLabelId(configKeyValue.getConfigLabelId(), null);
-          for (ConfigKeyValue configByLabelId : configByLabelIds) {
-            if ((configByLabelId.getKey().equals("linkis.nebula.password")
-                    || configByLabelId.getKey().equals("wds.linkis.jdbc.password"))
-                && !configByLabelId.getConfigValue().equals(configKeyValue.getConfigValue())) {
+          List<ConfigUserValue> userConfigValue =
+              configKeyService.getUserConfigValue(
+                  engine, configKeyValue.getKey(), creator, username);
+          for (ConfigUserValue configUserValue : userConfigValue) {
+            if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+                && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
               configKeyValue.setConfigValue(
                   AESUtils.encrypt(
                       configKeyValue.getConfigValue(),
@@ -351,16 +360,6 @@ public class ConfigurationRestfulApi {
       for (ConfigKeyValue setting : settings) {
         configurationService.updateUserValue(setting, userLabelId, createList, updateList);
       }
-    }
-    String engine = null;
-    String version = null;
-    if (engineType != null) {
-      String[] tmpString = engineType.split("-");
-      if (tmpString.length != 2) {
-        throw new ConfigurationException(INCORRECT_FIXED_SUCH.getErrorDesc());
-      }
-      engine = tmpString[0];
-      version = tmpString[1];
     }
     configurationService.updateUserValue(createList, updateList);
     // TODO: Add a refresh cache interface later
@@ -586,14 +585,12 @@ public class ConfigurationRestfulApi {
       }
     }
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
-        && (configKeyValue.getKey().equals("linkis.nebula.password")
-            || configKeyValue.getKey().equals("wds.linkis.jdbc.password"))
+        && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
         && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
       List<ConfigUserValue> userConfigValue =
           configKeyService.getUserConfigValue(engineType, configKeyValue.getKey(), creator, user);
       for (ConfigUserValue configUserValue : userConfigValue) {
-        if ((configUserValue.getKey().equals("linkis.nebula.password")
-                || configUserValue.getKey().equals("wds.linkis.jdbc.password"))
+        if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
             && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
           configKeyValue.setConfigValue(
               AESUtils.encrypt(

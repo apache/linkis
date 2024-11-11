@@ -152,6 +152,7 @@ public class FilesystemUtils {
         if (!entry.isDirectory()
             && entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
           // \dist\py_mysql-1.0.tar\py_mysql-1.0\py_mysql\lib\__init__.py
+          assert rootPath != null;
           ZipEntry zipEntry = new ZipEntry(entry.getName().substring(rootPath.length()));
           zos.putNextEntry(zipEntry);
           IOUtils.copy(tarInput, zos);

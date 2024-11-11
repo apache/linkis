@@ -239,10 +239,7 @@ class ConfigurationService extends Logging {
           "config key is null, please check again!(配置信息为空，请重新检查key值)"
         )
       }
-      if (
-          (!key.getKey
-            .equals("wds.linkis.jdbc.password")) && (!key.getKey.equals("linkis.nebula.password"))
-      ) {
+      if (!Configuration.CONFIGURATION_AES_CONF.contains(key.getKey)) {
         logger.info(
           s"parameter ${key.getKey} value ${setting.getConfigValue} is not empty, enter checksum...(参数${key.getKey} 值${setting.getConfigValue}不为空，进入校验...)"
         )

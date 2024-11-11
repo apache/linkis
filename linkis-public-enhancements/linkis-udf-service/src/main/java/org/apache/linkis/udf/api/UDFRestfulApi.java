@@ -1367,7 +1367,7 @@ public class UDFRestfulApi {
                 pythonModuleInfo.setName(pythonModule);
                 pythonModuleInfo.setIsLoad(1);
                 pythonModuleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
-                if (org.apache.commons.lang3.StringUtils.isBlank(pythonModuleInfo.getName())) {
+                if (null == pythonModuleInfo) {
                   notExistModulesStr.add(pythonModule);
                 }
               });

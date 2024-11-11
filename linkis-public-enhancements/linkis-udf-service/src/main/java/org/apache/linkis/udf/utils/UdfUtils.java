@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.udf.conf.Constants;
 import org.apache.linkis.udf.exception.UdfException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -36,14 +37,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class UdfUtils {
+
+  private static Set<String> moduleSet = new HashSet<>();
 
   /**
    * 从 tar.gz 文件中查找PKG-INFO文件，并获取其需要打包的文件夹名称
@@ -163,7 +165,14 @@ public class UdfUtils {
 
   public static Boolean checkModuleIsExistEnv(String module) {
     // 获取整个pip list
-//    String piplist = Utils.exec((new String[] {"pip list"}));
+    if (CollectionUtils.isEmpty(moduleSet)) {
+      String piplist = Utils.exec((new String[] {"pip", "list", "--format=legacy"}));
+      String[] split = piplist.split("\\n");
+      moduleSet.addAll(Arrays.asList(split));
+    }
+    if (moduleSet.stream().anyMatch(s -> s.startsWith(module))) {
+      return true;
+    }
     String exec =
         Utils.exec(
             (new String[] {

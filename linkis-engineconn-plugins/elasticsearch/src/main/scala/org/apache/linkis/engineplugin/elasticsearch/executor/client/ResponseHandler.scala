@@ -55,7 +55,7 @@ object ResponseHandler {
     case JsonNodeType.BINARY => BinaryType
     case JsonNodeType.BOOLEAN => BooleanType
     case JsonNodeType.NULL => NullType
-    case JsonNodeType.NUMBER => DecimalType("decimal", 3)
+    case JsonNodeType.NUMBER => DecimalType
     case JsonNodeType.OBJECT => StructType
     case JsonNodeType.POJO => StructType
     case JsonNodeType.STRING => StringType
@@ -66,7 +66,7 @@ object ResponseHandler {
   def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase(Locale.getDefault) match {
     case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" |
         "scaled_float" =>
-      DecimalType("decimal", 3)
+      DecimalType
     case "text" | "keyword" => StringType
     case "date" => DateType
     case "binary" => BinaryType

@@ -36,9 +36,11 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JobhistoryUtils {
-
+  private static final Logger logger = LoggerFactory.getLogger(JobhistoryUtils.class);
   public static String headersStr =
       "任务ID,来源,查询语句,状态,已耗时,关键信息,是否复用,申请开始时间,申请结束时间,申请耗时,应用/引擎,用户,创建时间";
   public static String headersEnStr =
@@ -129,12 +131,16 @@ public class JobhistoryUtils {
 
   public static String getDepartmentByuser(String username) {
     String departmentId = "";
-    Object responseObject = sender.ask(new DepartmentRequest(username));
-    if (responseObject instanceof DepartmentResponse) {
-      DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
-      if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
-        departmentId = departmentResponse.departmentId();
+    try {
+      Object responseObject = sender.ask(new DepartmentRequest(username));
+      if (responseObject instanceof DepartmentResponse) {
+        DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
+        if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
+          departmentId = departmentResponse.departmentId();
+        }
       }
+    } catch (Exception e) {
+      logger.warn("get user {} departmentId  error: {}", username, e);
     }
     return departmentId;
   }

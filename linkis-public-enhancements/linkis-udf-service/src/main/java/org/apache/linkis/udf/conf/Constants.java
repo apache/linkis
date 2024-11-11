@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.udf.api.rpc
+package org.apache.linkis.udf.conf;
 
-import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
-
-trait PythonModuleProtocol
-
-case class RequestPythonModuleProtocol(userName: String, engineType: String)
-    extends RetryableProtocol
-    with CacheableProtocol
-    with PythonModuleProtocol
-    with UdfProtocol
+public class Constants {
+  public static final String FILE_EXTENSION_PY = ".py";
+  public static final String FILE_EXTENSION_ZIP = ".zip";
+  public static final String FILE_EXTENSION_TAR_GZ = ".tar.gz";
+  public static final String FILE_PERMISSION = "770";
+  public static final String DELIMITER_COMMA = ",";
+  public static final String HDFS_PATH_UDF = "hdfs:///appcom/linkis/udf/";
+  public static final int MAX_FILE_SIZE_MB = 50 * 1024 * 1024;
+  public static final String[] OPERATORS = {"==", ">=", "<=", ">", "<", "~="};
+}

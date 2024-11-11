@@ -17,6 +17,8 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import org.apache.linkis.common.utils.AESUtils;
+import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.dao.ConfigKeyLimitForUserMapper;
 import org.apache.linkis.configuration.dao.ConfigMapper;
 import org.apache.linkis.configuration.dao.LabelMapper;
@@ -35,6 +37,7 @@ import org.apache.linkis.governance.common.protocol.conf.TemplateConfResponse;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,6 +177,26 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       templateConfigKey.setTemplateName(templateName);
       templateConfigKey.setTemplateUuid(templateUid);
       templateConfigKey.setKeyId(keyId);
+      if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+          && Configuration.CONFIGURATION_AES_CONF().contains(key)
+          && StringUtils.isNotBlank(configValue)) {
+        List<TemplateConfigKey> oldList =
+            templateConfigKeyMapper.selectListByTemplateUuid(templateUid);
+        if (CollectionUtils.isEmpty(oldList)) {
+          // 代表新增数据
+          configValue =
+              AESUtils.encrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+        } else {
+          // 代表更新数据
+          for (TemplateConfigKey configKey : oldList) {
+            if (configKey.getKeyId().equals(keyId)
+                && !configKey.getConfigValue().equals(configValue)) {
+              configValue =
+                  AESUtils.encrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+            }
+          }
+        }
+      }
       templateConfigKey.setConfigValue(configValue);
       templateConfigKey.setMaxValue(maxValue);
       templateConfigKey.setCreateBy(operator);

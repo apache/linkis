@@ -77,7 +77,7 @@ object DolphinToSpark {
     case wds.BigIntType => LongType
     case wds.FloatType => FloatType
     case wds.DoubleType => DoubleType
-    case wds.DecimalType(dataType, 3) => DecimalType(bigDecimalPrecision, bigDecimalScale)
+    case wds.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
     case wds.DateType => DateType
     // case wds.TimestampType => TimestampType
     case wds.BinaryType => BinaryType

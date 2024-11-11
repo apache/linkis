@@ -55,16 +55,19 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
-              val status = job.getStatus.toUpperCase(Locale.getDefault)
-              val engineType = job.getEngineType.toUpperCase(Locale.getDefault)
-              if (Constants.UNFINISHED_JOB_STATUS.contains(status) && engineType.equals("JDBC")) {
+              val status = job.getStatus.toLowerCase(Locale.getDefault)
+              val engineType = job.getEngineType.toLowerCase(Locale.getDefault)
+              if (
+                  Constants.UNFINISHED_JOB_STATUS
+                    .contains(status) && engineType.equals(Constants.JDBC_ENGINE)
+              ) {
                 // 获取job所使用的数据源类型
                 val datasourceConfMap = getDatasourceConf(job)
                 // 计算任务执行时间
                 val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
                 // 获取告警配置
                 val timeValue =
-                  HttpsUntils.getJDBCConf(job.getSubmitUser, "linkis.jdbc.task.timeout.alert.time")
+                  HttpsUntils.getJDBCConf(job.getSubmitUser, Constants.JDBC_ALERT_TIME)
                 if (StringUtils.isNotBlank(timeValue)) {
                   val timeoutInSeconds = timeValue.toDouble
                   val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
@@ -122,7 +125,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
       MapUtils.getMap(parmMap, "configuration", new util.HashMap[String, String]())
     val runtimeMap =
       MapUtils.getMap(configurationMap, "runtime", new util.HashMap[String, String]())
-    val datasourceName = MapUtils.getString(runtimeMap, "wds.linkis.engine.runtime.datasource", "")
+    val datasourceName = MapUtils.getString(runtimeMap, Constants.JOB_DATASOURCE_CONF, "")
     // 获取datasource信息
     if (StringUtils.isNotBlank(datasourceName)) {
       HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)

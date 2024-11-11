@@ -19,8 +19,10 @@ package org.apache.linkis.monitor.until;
 
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.datasource.client.response.GetInfoPublishedByDataSourceNameResult;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.monitor.client.MonitorHTTPClient;
 import org.apache.linkis.monitor.config.MonitorConfig;
+import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.entity.IndexEntity;
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
@@ -46,6 +48,7 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -56,10 +59,9 @@ public class HttpsUntils {
 
   public static final String localHost = Utils.getLocalHostname();
 
-  public static Map<String, Object> getEmsResourceList(String url, Map<String, Object> properties)
-      throws IOException {
+  public static Map<String, Object> getEmsResourceList() throws IOException {
     MonitorHTTPClient client = ClientSingleton.getInstance();
-    EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
+    EmsListAction build = EmsListAction.newBuilder().setUser(Constants.ADMIN_USER()).build();
     EmsListResult result = client.list(build);
     return result.getResultMap();
   }
@@ -82,8 +84,10 @@ public class HttpsUntils {
     RequestConfig requestConfig = RequestConfig.DEFAULT;
     StringEntity entity =
         new StringEntity(
-            json, ContentType.create(ContentType.APPLICATION_JSON.getMimeType(), "UTF-8"));
-    entity.setContentEncoding("UTF-8");
+            json,
+            ContentType.create(
+                ContentType.APPLICATION_JSON.getMimeType(), StandardCharsets.UTF_8.toString()));
+    entity.setContentEncoding(StandardCharsets.UTF_8.toString());
 
     HttpPost httpPost = new HttpPost(MonitorConfig.ECM_TASK_IMURL.getValue());
     httpPost.setConfig(requestConfig);
@@ -91,7 +95,8 @@ public class HttpsUntils {
 
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse execute = httpClient.execute(httpPost);
-    String responseStr = EntityUtils.toString(execute.getEntity(), "UTF-8");
+    String responseStr =
+        EntityUtils.toString(execute.getEntity(), StandardCharsets.UTF_8.toString());
     Map<String, String> map = BDPJettyServerHelper.gson().fromJson(responseStr, Map.class);
     logger.info("send index response :{}", map);
     Assert.isTrue(!"0".equals(map.get("resultCode")), map.get("resultMsg"));
@@ -102,7 +107,7 @@ public class HttpsUntils {
     KeyvalueAction build =
         KeyvalueAction.newBuilder()
             .setVersion("4")
-            .setEngineType("jdbc")
+            .setEngineType(Constants.JDBC_ENGINE())
             .setCreator("IDE")
             .setConfigKey(conf)
             .setUser(user)
@@ -123,7 +128,7 @@ public class HttpsUntils {
     MonitorHTTPClient client = ClientSingleton.getInstance();
     DataSourceParamsAction dataSourceParamsAction =
         DataSourceParamsAction.builder()
-            .setSystem("5435")
+            .setSystem(Constants.ALERT_SUB_SYSTEM_ID())
             .setDataSourceName(datasourceName)
             .setUser(user)
             .build();
@@ -136,9 +141,12 @@ public class HttpsUntils {
 
   public static void killJob(JobHistory jobHistory) {
     MonitorHTTPClient client = ClientSingleton.getInstance();
-    String[] split = jobHistory.getInstances().split(";");
+    String[] split = jobHistory.getInstances().split(Constants.SPLIT_DELIMITER());
     String execID =
-        ZuulEntranceUtils.generateExecID(jobHistory.getJobReqId(), "linkis-cg-entrance", split);
+        ZuulEntranceUtils.generateExecID(
+            jobHistory.getJobReqId(),
+            GovernanceCommonConf.ENTRANCE_SERVICE_NAME().getValue(),
+            split);
     KillJobAction killJobAction =
         KillJobAction.builder()
             .setIdList(Collections.singletonList(execID))

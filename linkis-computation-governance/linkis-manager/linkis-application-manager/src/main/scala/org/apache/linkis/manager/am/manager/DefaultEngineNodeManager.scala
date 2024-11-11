@@ -237,7 +237,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
           node != null && instance != null && node.getInstance.equals(instance)
         }
       maybeNode.foreach { node =>
-        engineNode.setParams(persistenceNode.getParams)
+        engineNode.setParams(node.getParams)
       }
       engineNode
     }

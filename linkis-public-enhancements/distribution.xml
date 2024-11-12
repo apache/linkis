@@ -290,7 +290,7 @@
     <fileSets>
         <fileSet>
             <directory>
-                ./linkis-datasource/linkis-datasource-manager/server/target/out/lib/service
+                ./linkis-datasource/linkis-datasource-manager/server/target/out/service
             </directory>
             <outputDirectory>
                     lib/metadataquery-service

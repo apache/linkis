@@ -156,7 +156,7 @@ object SparkConfiguration extends Logging {
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
   val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
+    CommonVars[String]("pyspark.python3.path", "python3")
 
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
@@ -181,6 +181,9 @@ object SparkConfiguration extends Logging {
   val SPARK_ONCE_YARN_RESTFUL_URL = CommonVars[String]("linkis.spark.once.yarn.restful.url", "")
 
   val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
+
+  val LINKIS_PYSPARK_USE_SECURE_RANDOM =
+    CommonVars[Boolean]("linkis.pyspark.use.secure.random", false).getValue
 
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue

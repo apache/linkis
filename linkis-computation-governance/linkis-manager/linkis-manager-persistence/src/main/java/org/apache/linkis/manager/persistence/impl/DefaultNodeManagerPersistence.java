@@ -109,6 +109,10 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         node.getOwner()); // The creator is not given when inserting records in rm, so you need to
     // set this value(rm中插入记录的时候并未给出creator，所以需要set这个值)
     persistenceNode.setUpdator(node.getOwner());
+    String mappingPorts = node.getServiceInstance().getMappingPorts();
+    persistenceNode.setMappingPorts(mappingPorts);
+    String mappingHost = node.getServiceInstance().getMappingHost();
+    persistenceNode.setMappingHost(mappingHost);
     try {
       nodeManagerMapper.updateNodeInstance(serviceInstance.getInstance(), persistenceNode);
       nodeManagerMapper.updateNodeRelation(
@@ -277,6 +281,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       ServiceInstance emServiceInstance = new ServiceInstance();
       emServiceInstance.setApplicationName(emName);
       emServiceInstance.setInstance(emInstance);
+      emServiceInstance.setMappingPorts(String.valueOf(emNode.getMappingPorts()));
+      emServiceInstance.setMappingHost(String.valueOf(emNode.getMappingHost()));
       AMEMNode amemNode = new AMEMNode();
       amemNode.setMark(emNode.getMark());
       amemNode.setOwner(emNode.getOwner());
@@ -331,6 +337,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       ServiceInstance engineServiceInstance = new ServiceInstance();
       engineServiceInstance.setInstance(engineNode.getInstance());
       engineServiceInstance.setApplicationName(engineNode.getName());
+      engineServiceInstance.setMappingPorts(String.valueOf(engineNode.getMappingPorts()));
+      engineServiceInstance.setMappingHost(String.valueOf(engineNode.getMappingHost()));
       amEngineNode.setServiceInstance(engineServiceInstance);
       amEngineNode.setOwner(engineNode.getOwner());
       amEngineNode.setMark(engineNode.getMark());

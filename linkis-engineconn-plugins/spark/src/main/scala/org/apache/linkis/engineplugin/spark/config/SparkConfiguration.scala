@@ -185,6 +185,20 @@ object SparkConfiguration extends Logging {
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
 
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST =
+    CommonVars("linkis.engine.containerization.mapping.host", "")
+
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS =
+    CommonVars("linkis.engine.containerization.mapping.ports", "")
+
+  val SPARK_DRIVER_HOST = CommonVars[String]("spark.driver.host", "")
+
+  val SPARK_DRIVER_PORT = CommonVars[String]("spark.driver.port", "")
+
+  val SPARK_DRIVER_BIND_ADDRESS = CommonVars[String]("spark.driver.bindAddress", "0.0.0.0")
+
+  val SPARK_DRIVER_BLOCK_MANAGER_PORT = CommonVars[String]("spark.driver.blockManager.port", "")
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

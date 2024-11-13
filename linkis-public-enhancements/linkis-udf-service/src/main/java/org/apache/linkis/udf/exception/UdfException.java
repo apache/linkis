@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.udf.api.rpc
+package org.apache.linkis.udf.exception;
 
-import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
+import org.apache.linkis.common.exception.ErrorException;
 
-trait PythonModuleProtocol
+public class UdfException extends ErrorException {
+  public UdfException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-case class RequestPythonModuleProtocol(userName: String, engineType: String)
-    extends RetryableProtocol
-    with CacheableProtocol
-    with PythonModuleProtocol
-    with UdfProtocol
+  public UdfException(int errCode, String desc, Exception e) {
+    super(errCode, desc + " " + e.getMessage());
+    this.initCause(e);
+  }
+}

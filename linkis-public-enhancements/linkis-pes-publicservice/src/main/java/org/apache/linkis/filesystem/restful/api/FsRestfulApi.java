@@ -45,7 +45,6 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +66,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -1424,116 +1422,5 @@ public class FsRestfulApi {
     FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
     String fileMD5Str = fs.checkSum(new FsPath(filePath));
     return Message.ok().data("data", fileMD5Str);
-  }
-
-  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
-    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
-  })
-  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
-  public Message pythonUpload(
-      HttpServletRequest req,
-      @RequestParam("file") MultipartFile file,
-      @RequestParam(value = "fileName", required = false) String fileName)
-      throws WorkSpaceException, IOException {
-
-    // 获取登录用户
-    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
-
-    // 校验文件名称
-    if (StringUtils.isBlank(fileName)) {
-      return Message.error("文件名称不能为空");
-    }
-    // 获取文件名称
-    if (!fileName.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
-      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
-    }
-
-    // 校验文件类型
-    if (!file.getOriginalFilename().endsWith(".py")
-        && !file.getOriginalFilename().endsWith(".zip")
-        && !file.getOriginalFilename().endsWith(".tar.gz")) {
-      return Message.error("仅支持.py和.zip和.tar.gz格式模块文件");
-    }
-
-    // 校验文件大小
-    if (file.getSize() > 50 * 1024 * 1024) {
-      return Message.error("限制最大单个文件50M");
-    }
-
-    // tar.gz包依赖检查
-    // 获取install_requires中的python模块
-    List<String> pythonModules = FilesystemUtils.getInstallRequestPythonModules(file);
-    String dependencies = "";
-    if (CollectionUtils.isNotEmpty(pythonModules)) {
-      dependencies = pythonModules.stream().distinct().collect(Collectors.joining(","));
-      String errorMsg = FilesystemUtils.checkModuleFile(pythonModules, username);
-      if (StringUtils.isNotBlank(errorMsg)) {
-        return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);
-      }
-    }
-
-    // 定义目录路径
-    String path = "hdfs:///appcom/linkis/udf/" + username;
-    FsPath fsPath = new FsPath(path);
-
-    // 获取文件系统实例
-    FileSystem fileSystem = fsService.getFileSystem(username, fsPath);
-
-    // 确认目录是否存在，不存在则创建新目录
-    if (!fileSystem.exists(fsPath)) {
-      try {
-        fileSystem.mkdirs(fsPath);
-        fileSystem.setPermission(fsPath, "770");
-      } catch (IOException e) {
-        return Message.error("创建目录失败：" + e.getMessage());
-      }
-    }
-
-    // 构建新的文件路径
-    String newPath = fsPath.getPath() + FsPath.SEPARATOR + file.getOriginalFilename();
-    // 上传文件,tar包需要单独解压处理
-    if (!file.getOriginalFilename().endsWith(".tar.gz")) {
-      FsPath fsPathNew = new FsPath(newPath);
-      try (InputStream is = file.getInputStream();
-          OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
-        IOUtils.copy(is, outputStream);
-      } catch (IOException e) {
-        return Message.error("文件上传失败：" + e.getMessage());
-      }
-    } else {
-      InputStream is = null;
-      OutputStream outputStream = null;
-      try {
-        String packageName = FilesystemUtils.findPackageName(file.getInputStream());
-        if (FilesystemUtils.checkModuleIsExistEnv(packageName)) {
-          return Message.error("python3环境中已存在模块：" + packageName + "请勿重复上传");
-        }
-        fileName = packageName + FsPath.CUR_DIR + "zip";
-        if (StringUtils.isBlank(packageName)) {
-          return Message.error("文件上传失败：PKG-INFO 文件不存在");
-        }
-        is = FilesystemUtils.getZipInputStreamByTarInputStream(file, packageName);
-        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName;
-        FsPath fsPathNew = new FsPath(newPath);
-        outputStream = fileSystem.write(fsPathNew, true);
-        IOUtils.copy(is, outputStream);
-      } catch (Exception e) {
-        return Message.error("文件上传失败：" + e.getMessage());
-      } finally {
-        if (outputStream != null) {
-          IOUtils.closeQuietly(outputStream);
-        }
-        if (is != null) {
-          IOUtils.closeQuietly(is);
-        }
-      }
-    }
-    // 返回成功消息并包含文件地址
-    return Message.ok()
-        .data("filePath", newPath)
-        .data("dependencies", dependencies)
-        .data("fileName", fileName);
   }
 }

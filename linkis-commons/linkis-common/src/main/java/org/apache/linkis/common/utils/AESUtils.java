@@ -48,8 +48,16 @@ public class AESUtils {
   /** 默认的加密算法 */
   private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
 
+  public static final String PASSWORD = "password";
+
+  public static final String IS_ENCRYPT = "isEncrypt";
+
+  public static final String DECRYPT = "0";
+
+  public static final String ENCRYPT = "1";
+
   public static final CommonVars<String> LINKIS_DATASOURCE_AES_KEY =
-      CommonVars.apply("linkis.datasource.aes.secretkey", "--aeskey");
+      CommonVars.apply("linkis.datasource.aes.secretkey", "");
 
   public static final CommonVars<Boolean> LINKIS_DATASOURCE_AES_SWITCH =
       CommonVars.apply("linkis.datasource.aes.switch", false);

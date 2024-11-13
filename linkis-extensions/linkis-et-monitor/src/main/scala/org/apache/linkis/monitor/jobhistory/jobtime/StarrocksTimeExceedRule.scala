@@ -55,19 +55,23 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
-              val status = job.getStatus.toLowerCase(Locale.getDefault)
-              val engineType = job.getEngineType.toLowerCase(Locale.getDefault)
+              val status = job.getStatus.toUpperCase(Locale.getDefault)
+              val engineType = job.getEngineType.toUpperCase(Locale.getDefault)
               if (
                   Constants.UNFINISHED_JOB_STATUS
-                    .contains(status) && engineType.equals(Constants.JDBC_ENGINE)
+                    .contains(status) && engineType.equals(
+                    Constants.JDBC_ENGINE.toUpperCase(Locale.getDefault)
+                  )
               ) {
                 // 获取job所使用的数据源类型
                 val datasourceConfMap = getDatasourceConf(job)
+                logger.info("starock  datasourceConfMap: {}", datasourceConfMap)
                 // 计算任务执行时间
                 val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
                 // 获取告警配置
                 val timeValue =
                   HttpsUntils.getJDBCConf(job.getSubmitUser, Constants.JDBC_ALERT_TIME)
+                logger.info("starock  timeValue: {},elapse   {}", timeValue, elapse)
                 if (StringUtils.isNotBlank(timeValue)) {
                   val timeoutInSeconds = timeValue.toDouble
                   val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
@@ -84,6 +88,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     new util.HashMap[AnyRef, AnyRef]
                   )
                   val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                  logger.info("starock  killTime: {}", killTime)
                   if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
                     if (StringUtils.isNotBlank(killTime)) {
                       val timeoutInSeconds = timeValue.toDouble

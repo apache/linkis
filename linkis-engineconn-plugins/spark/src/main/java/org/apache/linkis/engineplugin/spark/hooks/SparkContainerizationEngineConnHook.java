@@ -74,13 +74,9 @@ public class SparkContainerizationEngineConnHook implements EngineConnHook {
 
   @Override
   public void afterEngineServerStartFailed(
-      EngineCreationContext engineCreationContext, Throwable throwable) {
-    EngineConnHook.super.afterEngineServerStartFailed(engineCreationContext, throwable);
-  }
+      EngineCreationContext engineCreationContext, Throwable throwable) {}
 
   @Override
   public void afterEngineServerStartSuccess(
-      EngineCreationContext engineCreationContext, EngineConn engineConn) {
-    EngineConnHook.super.afterEngineServerStartSuccess(engineCreationContext, engineConn);
-  }
+      EngineCreationContext engineCreationContext, EngineConn engineConn) {}
 }

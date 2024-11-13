@@ -128,8 +128,10 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     }
 
     // 正则匹配校验
+    val ready = EngineConnObject.isReady
+    val jobId: String = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val udfNames: String = System.getProperty(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, "")
-    if (StringUtils.isNotBlank(udfNames)) {
+    if (ready && StringUtils.isNotBlank(udfNames) && StringUtils.isNotBlank(jobId)) {
       val codeType: String = LabelUtil.getCodeType(engineExecutorContext.getLabels.toList.asJava)
       val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
       if (!CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL.equals(languageType)) {
@@ -173,7 +175,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       case _ => Kind.getRealCode(preCode)
     }
     logger.info(s"Ready to run code with kind $kind.")
-    val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {
       jobId
     } else {

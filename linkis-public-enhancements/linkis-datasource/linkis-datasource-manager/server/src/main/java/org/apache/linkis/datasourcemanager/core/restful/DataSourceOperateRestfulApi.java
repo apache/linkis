@@ -118,7 +118,7 @@ public class DataSourceOperateRestfulApi {
       }
     }
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
-        && !dataSource.getConnectParams().containsKey("isEncrypt")
+        && !dataSource.getConnectParams().containsKey(AESUtils.IS_ENCRYPT)
         && dataSource.getConnectParams().containsKey("password")) {
       String password = dataSource.getConnectParams().get("password").toString();
       String encrypt = AESUtils.encrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());

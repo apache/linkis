@@ -17,6 +17,8 @@
 
 package org.apache.linkis.udf.conf;
 
+import org.apache.linkis.common.conf.CommonVars;
+
 public class Constants {
   public static final String FILE_EXTENSION_PY = ".py";
   public static final String FILE_EXTENSION_ZIP = ".zip";
@@ -26,4 +28,9 @@ public class Constants {
   public static final String HDFS_PATH_UDF = "hdfs:///appcom/linkis/udf/";
   public static final int MAX_FILE_SIZE_MB = 50 * 1024 * 1024;
   public static final String[] OPERATORS = {"==", ">=", "<=", ">", "<", "~="};
+
+  public static final CommonVars<String> PYTHON_COMMAND =
+      CommonVars.apply("linkis.execution.command.python.version", "python3");
+  public static final CommonVars<String> PYTHON_PATH =
+      CommonVars.apply("linkis.python3.path", "/appcom/Install/anaconda3/bin/python");
 }

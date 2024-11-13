@@ -192,7 +192,7 @@ public class DataSourceCoreRestfulApi {
                         connectParams.get(AESUtils.PASSWORD).toString(),
                         AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
             // 标记密码已经加密
-            dataSource.getConnectParams().put("isEncrypt", "1");
+            dataSource.getConnectParams().put(AESUtils.IS_ENCRYPT, AESUtils.ENCRYPT);
           }
           insertDataSource(dataSource);
           return Message.ok().data("insertId", dataSource.getId());
@@ -284,7 +284,7 @@ public class DataSourceCoreRestfulApi {
                         connectParams.get(AESUtils.PASSWORD).toString(),
                         AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
             // 标记密码已经加密
-            dataSource.getConnectParams().put("isEncrypt", "1");
+            dataSource.getConnectParams().put(AESUtils.IS_ENCRYPT, AESUtils.ENCRYPT);
           }
 
           // add default value filed
@@ -948,23 +948,29 @@ public class DataSourceCoreRestfulApi {
       Map datasourceParmMap =
           BDPJettyServerHelper.gson()
               .fromJson(dataSourceInfoBrief.getParameter().toString(), Map.class);
-      if (!datasourceParmMap.getOrDefault("isEncrypt", "0").equals("1") && isEncrypt.equals("1")) {
+      if (!datasourceParmMap
+              .getOrDefault(AESUtils.IS_ENCRYPT, AESUtils.DECRYPT)
+              .equals(AESUtils.ENCRYPT)
+          && isEncrypt.equals(AESUtils.ENCRYPT)) {
         datasourceParmMap.put(
             AESUtils.PASSWORD,
             AESUtils.encrypt(
                 datasourceParmMap.get(AESUtils.PASSWORD).toString(),
                 AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
-        datasourceParmMap.put("isEncrypt", "1");
+        datasourceParmMap.put(AESUtils.IS_ENCRYPT, AESUtils.ENCRYPT);
         dataSourceInfoBrief.setParameter(BDPJettyServerHelper.gson().toJson(datasourceParmMap));
         dataSourceInfoService.updateDataSourceInfo(dataSourceInfoBrief);
       }
-      if (datasourceParmMap.getOrDefault("isEncrypt", "0").equals("1") && isEncrypt.equals("0")) {
+      if (datasourceParmMap
+              .getOrDefault(AESUtils.IS_ENCRYPT, AESUtils.DECRYPT)
+              .equals(AESUtils.ENCRYPT)
+          && isEncrypt.equals(AESUtils.DECRYPT)) {
         datasourceParmMap.put(
             AESUtils.PASSWORD,
             AESUtils.decrypt(
                 datasourceParmMap.get(AESUtils.PASSWORD).toString(),
                 AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
-        datasourceParmMap.remove("isEncrypt");
+        datasourceParmMap.remove(AESUtils.IS_ENCRYPT);
         dataSourceInfoBrief.setParameter(BDPJettyServerHelper.gson().toJson(datasourceParmMap));
         dataSourceInfoService.updateDataSourceInfo(dataSourceInfoBrief);
       }
@@ -983,8 +989,10 @@ public class DataSourceCoreRestfulApi {
               && datasourceVersion.getParameter().contains(AESUtils.PASSWORD)) {
             Map datasourceVersionMap =
                 BDPJettyServerHelper.gson().fromJson(datasourceVersion.getParameter(), Map.class);
-            if (!datasourceVersionMap.getOrDefault("isEncrypt", "0").equals("1")
-                && isEncrypt.equals("1")) {
+            if (!datasourceVersionMap
+                    .getOrDefault(AESUtils.IS_ENCRYPT, AESUtils.DECRYPT)
+                    .equals(AESUtils.ENCRYPT)
+                && isEncrypt.equals(AESUtils.ENCRYPT)) {
               try {
                 Object password =
                     CryptoUtils.string2Object(
@@ -993,7 +1001,7 @@ public class DataSourceCoreRestfulApi {
                     AESUtils.PASSWORD,
                     AESUtils.encrypt(
                         password.toString(), AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
-                datasourceVersionMap.put("isEncrypt", "1");
+                datasourceVersionMap.put(AESUtils.IS_ENCRYPT, AESUtils.ENCRYPT);
                 datasourceVersion.setParameter(
                     BDPJettyServerHelper.gson().toJson(datasourceVersionMap));
                 dataSourceVersionDao.updateByDatasourceVersion(datasourceVersion);
@@ -1006,15 +1014,17 @@ public class DataSourceCoreRestfulApi {
               }
             }
             // 解密
-            if (datasourceVersionMap.getOrDefault("isEncrypt", "0").equals("1")
-                && isEncrypt.equals("0")) {
+            if (datasourceVersionMap
+                    .getOrDefault(AESUtils.IS_ENCRYPT, AESUtils.DECRYPT)
+                    .equals(AESUtils.ENCRYPT)
+                && isEncrypt.equals(AESUtils.DECRYPT)) {
               try {
                 String password = datasourceVersionMap.get(AESUtils.PASSWORD).toString();
                 String decryptPassword =
                     AESUtils.decrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
                 datasourceVersionMap.put(
                     AESUtils.PASSWORD, CryptoUtils.object2String(decryptPassword));
-                datasourceVersionMap.remove("isEncrypt");
+                datasourceVersionMap.remove(AESUtils.IS_ENCRYPT);
                 datasourceVersion.setParameter(
                     BDPJettyServerHelper.gson().toJson(datasourceVersionMap));
                 dataSourceVersionDao.updateByDatasourceVersion(datasourceVersion);

@@ -50,6 +50,9 @@ public class UdfUtils {
   private static final Logger logger = LoggerFactory.getLogger(UdfUtils.class);
   private static Set<String> moduleSet = new HashSet<>();
 
+  private static final String setuppyFileName = "setup.py";
+  private static final String pyprojecttomlFileName = "pyproject.toml";
+
   /**
    * 从 tar.gz 文件中查找PKG-INFO文件，并获取其需要打包的文件夹名称
    *
@@ -184,7 +187,10 @@ public class UdfUtils {
       String exec =
           Utils.exec(
               (new String[] {
-                "python3", Configuration.getLinkisHome() + "/admin/" + "check_modules.py", module
+                Constants.PYTHON_COMMAND.getValue(),
+                Configuration.getLinkisHome() + "/admin/" + "check_modules.py",
+                Constants.PYTHON_PATH.getValue(),
+                module
               }));
       return Boolean.parseBoolean(exec);
     } catch (Exception e) {
@@ -205,10 +211,11 @@ public class UdfUtils {
           new TarArchiveInputStream(new GzipCompressorInputStream(file.getInputStream()))) {
         TarArchiveEntry entry;
         while ((entry = tarInput.getNextTarEntry()) != null) {
-          if (entry.getName().endsWith("setup.py") || entry.getName().endsWith("pyproject.toml")) {
+          if (entry.getName().endsWith(setuppyFileName)
+              || entry.getName().endsWith(pyprojecttomlFileName)) {
             findSetup = 1;
             String content = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
-            modules = extractDependencies(content);
+            modules = extractDependencies(content, entry.getName());
             break;
           }
         }
@@ -224,7 +231,7 @@ public class UdfUtils {
     return modules;
   }
 
-  public static List<String> extractDependencies(String content) {
+  public static List<String> extractDependencies(String content, String name) {
     String trim =
         content
             .replaceAll("#.*?\\n", "")
@@ -234,15 +241,19 @@ public class UdfUtils {
             .trim();
     List<String> modules = new ArrayList<>();
     String moduleStr = "";
-    Matcher setupMatcher =
-        Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
-    if (setupMatcher.find()) {
-      moduleStr = setupMatcher.group(1);
+    if (name.endsWith(setuppyFileName)) {
+      Matcher setupMatcher =
+          Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+      if (setupMatcher.find()) {
+        moduleStr = setupMatcher.group(1);
+      }
     }
-    Matcher pyprojectMatcher =
-        Pattern.compile("dependencies=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
-    if (pyprojectMatcher.find()) {
-      moduleStr = pyprojectMatcher.group(1);
+    if (name.endsWith(pyprojecttomlFileName)) {
+      Matcher pyprojectMatcher =
+          Pattern.compile("dependencies=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+      if (pyprojectMatcher.find()) {
+        moduleStr = pyprojectMatcher.group(1);
+      }
     }
     String[] packages = moduleStr.split(",");
     for (String pkg : packages) {
@@ -259,7 +270,7 @@ public class UdfUtils {
         }
       }
       if (StringUtils.isNotBlank(pkg)) {
-        modules.add(pkg);
+        modules.add(pkg.toLowerCase());
       }
     }
     return modules;

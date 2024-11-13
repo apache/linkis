@@ -75,10 +75,10 @@ public class RestfulApiHelper {
             if (null != password) {
               String passwordStr = String.valueOf(password);
               if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-                if (!connectParams.containsKey("isEncrypt")) {
+                if (!connectParams.containsKey(AESUtils.IS_ENCRYPT)) {
                   passwordStr =
                       AESUtils.encrypt(passwordStr, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
-                  connectParams.put("isEncrypt", "1");
+                  connectParams.put(AESUtils.IS_ENCRYPT, AESUtils.ENCRYPT);
                 }
               } else {
                 passwordStr = CryptoUtils.object2String(passwordStr);

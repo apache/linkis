@@ -50,6 +50,12 @@ public class AESUtils {
 
   public static final String PASSWORD = "password";
 
+  public static final String IS_ENCRYPT = "isEncrypt";
+
+  public static final String DECRYPT = "0";
+
+  public static final String ENCRYPT = "1";
+
   public static final CommonVars<String> LINKIS_DATASOURCE_AES_KEY =
       CommonVars.apply("linkis.datasource.aes.secretkey", "");
 

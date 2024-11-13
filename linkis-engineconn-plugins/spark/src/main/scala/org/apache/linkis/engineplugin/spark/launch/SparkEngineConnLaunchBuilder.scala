@@ -18,30 +18,24 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.utils.JsonUtils
-import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
-  SPARK_CONF_DIR_ENV,
-  SPARK_HOME_ENV
-}
-import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{SPARK_CONF_DIR_ENV, SPARK_HOME_ENV}
+import org.apache.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, USER}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{USER, variable}
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.addPathToClassPath
-import org.apache.linkis.manager.label.entity.engine.{
-  EngineConnMode,
-  EngineConnModeLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineConnMode, EngineConnModeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.util
-
 import scala.collection.JavaConverters.asScalaBufferConverter
-
 import com.google.common.collect.Lists
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.storage.utils.StorageUtils
 
 class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -167,5 +161,57 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   } else {
     Lists.newArrayList("JarUDFLoadECMHook")
   }
+
+  private def putSparkMeasureParams(
+                                     properties: util.Map[String, String],
+                                     userName: String,
+                                     ticketId: String
+                                   ): Unit = {
+    val flightRecorderType =
+      SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_TYPE.getValue(properties)
+    val sparkMeasureOutput =
+      SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(properties)
+
+    if (StringUtils.isNotBlank(flightRecorderType)) {
+      if ("stage".equals(flightRecorderType)) {
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_KEY,
+          SparkConfiguration.SPARKMEASURE_FLIGHT_STAGE_CLASS
+        )
+      } else if ("task".equals(flightRecorderType)) {
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_KEY,
+          SparkConfiguration.SPARKMEASURE_FLIGHT_TASK_CLASS
+        )
+      }
+      val fsPath = FsPath.getFsPath(
+        new FsPath(sparkMeasureOutput).getSchemaPath,
+        userName,
+        "flight_" + flightRecorderType,
+        ticketId
+      )
+      if (StorageUtils.HDFS == fsPath.getFsType) {
+        val outputPath = StorageUtils.HDFS_SCHEMA + fsPath.getPath
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_KEY,
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON_HADOOP
+        )
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FILENAME_KEY,
+          outputPath
+        )
+      } else {
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_KEY,
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON
+        )
+        properties.put(
+          SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FILENAME_KEY,
+          fsPath.getPath
+        )
+      }
+    }
+  }
+
 
 }

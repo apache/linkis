@@ -188,6 +188,29 @@ object SparkConfiguration extends Logging {
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
 
+  val SPARKMEASURE_TYPE = "linkis.sparkmeasure.type"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_TYPE =
+    CommonVars[String]("linkis.sparkmeasure.flight.recorder.type", "")
+
+  val SPARKMEASURE_OUTPUT_PREFIX =
+    CommonVars[String]("linkis.sparkmeasure.output.prefix", "/appcom/sparkmeasure")
+
+  val SPARKMEASURE_FLIGHT_STAGE_CLASS =
+    "ch.cern.sparkmeasure.FlightRecorderStageMetrics"
+
+  val SPARKMEASURE_FLIGHT_TASK_CLASS = "ch.cern.sparkmeasure.FlightRecorderTaskMetrics"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_KEY = "spark.extraListeners"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_KEY = "spark.sparkmeasure.outputFormat"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON = "json"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON_HADOOP = "json_to_hadoop"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FILENAME_KEY = "spark.sparkmeasure.outputFilename"
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

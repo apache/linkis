@@ -26,13 +26,16 @@ import org.apache.linkis.engineplugin.spark.utils.{ArrowUtils, DirectPushCache, 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.scheduler.executer._
-
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.engineplugin.spark.sparkmeasure.SparkSqlMeasure
 import org.apache.spark.sql.DataFrame
 
 import java.lang.reflect.InvocationTargetException
+import java.util
+import java.util.Date
 
-class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
+class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long, options: util.Map[String, String])
     extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
 
   override def init(): Unit = {
@@ -83,7 +86,21 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
         .setContextClassLoader(sparkEngineSession.sparkSession.sharedState.jarClassLoader)
       val extensions =
         org.apache.linkis.engineplugin.spark.extension.SparkSqlExtension.getSparkSqlExtensions()
-      val df = sparkEngineSession.sqlContext.sql(code)
+      val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
+      val sparkMeasureType = engineExecutionContext.getProperties
+        .getOrDefault(SparkConfiguration.SPARKMEASURE_TYPE, "stage")
+        .toString
+      val outputPath = FsPath.getFsPath(
+        outputPrefix,
+        options.get("user"),
+        sparkMeasureType,
+        engineExecutionContext.getProperties.get("jobId").toString,
+        new Date().getTime.toString
+      )
+      val sparkMeasure =
+        new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath)
+
+      val df = sparkMeasure.generatorMetrics()
 
       Utils.tryQuietly(
         extensions.foreach(

@@ -194,10 +194,7 @@ object SparkConfiguration extends Logging {
     CommonVars[String]("linkis.sparkmeasure.flight.recorder.type", "")
 
   val SPARKMEASURE_OUTPUT_PREFIX =
-    CommonVars[String](
-      "linkis.sparkmeasure.output.prefix",
-      "/Users/zhangyuyao/Software/servers/linkis160/sparkmeasure"
-    )
+    CommonVars[String]("linkis.sparkmeasure.output.prefix", "/appcom/sparkmeasure")
 
   val SPARKMEASURE_FLIGHT_STAGE_CLASS =
     "ch.cern.sparkmeasure.FlightRecorderStageMetrics"

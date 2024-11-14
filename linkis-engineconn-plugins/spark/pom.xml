@@ -438,6 +438,32 @@
       <groupId>ch.cern.sparkmeasure</groupId>
       <artifactId>spark-measure_2.12</artifactId>
       <version>0.24</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.xerial.snappy</groupId>
+          <artifactId>snappy-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.retrofit2</groupId>
+          <artifactId>retrofit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.msgpack</groupId>
+          <artifactId>msgpack-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.moshi</groupId>
+          <artifactId>moshi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.influxdb</groupId>
+          <artifactId>influxdb-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.retrofit2</groupId>
+          <artifactId>converter-moshi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

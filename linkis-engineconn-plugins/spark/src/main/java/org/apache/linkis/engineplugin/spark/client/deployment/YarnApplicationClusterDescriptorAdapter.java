@@ -70,8 +70,8 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     addSparkArg(sparkLauncher, "--keytab", sparkConfig.getKeytab());
     addSparkArg(sparkLauncher, "--queue", sparkConfig.getQueue());
     sparkConfig
-            .getConf()
-            .forEach((key, value) -> addSparkArg(sparkLauncher, "--conf", key + "=" + value));
+        .getConf()
+        .forEach((key, value) -> addSparkArg(sparkLauncher, "--conf", key + "=" + value));
     sparkLauncher.setAppResource(sparkConfig.getAppResource());
     sparkLauncher.setMainClass(mainClass);
     Arrays.stream(args.split("\\s+"))

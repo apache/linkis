@@ -188,13 +188,16 @@ object SparkConfiguration extends Logging {
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
 
-  val SPARKMEASURE_TYPE = "linkis.sparkmeasure.type"
+  val SPARKMEASURE_AGGREGATE_TYPE = "linkis.sparkmeasure.aggregate.type"
 
   val SPARKMEASURE_FLIGHT_RECORDER_TYPE =
     CommonVars[String]("linkis.sparkmeasure.flight.recorder.type", "")
 
   val SPARKMEASURE_OUTPUT_PREFIX =
-    CommonVars[String]("linkis.sparkmeasure.output.prefix", "/appcom/sparkmeasure")
+    CommonVars[String](
+      "linkis.sparkmeasure.output.prefix",
+      "/Users/zhangyuyao/Software/servers/linkis160/sparkmeasure"
+    )
 
   val SPARKMEASURE_FLIGHT_STAGE_CLASS =
     "ch.cern.sparkmeasure.FlightRecorderStageMetrics"

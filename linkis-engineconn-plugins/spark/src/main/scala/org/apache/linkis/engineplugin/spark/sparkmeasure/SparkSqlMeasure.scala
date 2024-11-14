@@ -20,11 +20,13 @@ package org.apache.linkis.engineplugin.spark.sparkmeasure
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.FSFactory
+
 import org.apache.commons.collections4.MapUtils
 import org.apache.commons.io.IOUtils
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import java.util
+
 import ch.cern.sparkmeasure.{StageMetrics, TaskMetrics}
 import com.fasterxml.jackson.databind.ObjectMapper
 
@@ -79,6 +81,7 @@ class SparkSqlMeasure(
       val mapper = new ObjectMapper()
       val bytes = mapper.writeValueAsBytes(retMap)
       val fs = FSFactory.getFs(outputPath)
+      if (!fs.exists(outputPath.getParent)) fs.mkdirs(outputPath.getParent)
       val out = fs.write(outputPath, true)
       out.write(bytes)
       IOUtils.close(out)

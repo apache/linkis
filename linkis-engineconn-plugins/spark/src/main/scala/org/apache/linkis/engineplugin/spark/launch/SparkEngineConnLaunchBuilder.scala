@@ -17,33 +17,49 @@
 
 package org.apache.linkis.engineplugin.spark.launch
 
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.JsonUtils
-import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{SPARK_CONF_DIR_ENV, SPARK_HOME_ENV}
 import org.apache.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
+  SPARK_CONF_DIR_ENV,
+  SPARK_HOME_ENV
+}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{USER, variable}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, USER}
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.addPathToClassPath
-import org.apache.linkis.manager.label.entity.engine.{EngineConnMode, EngineConnModeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineConnMode,
+  EngineConnModeLabel,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.utils.StorageUtils
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
+
 import scala.collection.JavaConverters.asScalaBufferConverter
+
 import com.google.common.collect.Lists
-import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.storage.utils.StorageUtils
 
 class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
   override protected def getCommands(implicit
       engineConnBuildRequest: EngineConnBuildRequest
   ): Array[String] = {
+    val properties = engineConnBuildRequest.engineConnCreationDesc.properties
+    putSparkMeasureParams(
+      properties,
+      getUser(engineConnBuildRequest),
+      getTicketId(engineConnBuildRequest)
+    )
     if (isOnceMode) {
-      val properties = engineConnBuildRequest.engineConnCreationDesc.properties
       properties.put(
         EnvConfiguration.ENGINE_CONN_MEMORY.key,
         SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY.getValue(properties)
@@ -62,6 +78,17 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   def isOnceMode: Boolean = {
     val engineConnMode = LabelUtil.getEngineConnMode(engineConnBuildRequest.labels)
     EngineConnMode.toEngineConnMode(engineConnMode) == EngineConnMode.Once
+  }
+
+  private def getUser(engineConnBuildRequest: EngineConnBuildRequest): String = {
+    engineConnBuildRequest.labels.asScala
+      .find(_.isInstanceOf[UserCreatorLabel])
+      .map { case label: UserCreatorLabel => label.getUser }
+      .get
+  }
+
+  private def getTicketId(engineConnBuildRequest: EngineConnBuildRequest): String = {
+    engineConnBuildRequest.ticketId
   }
 
   override def getEnvironment(implicit
@@ -163,10 +190,10 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   }
 
   private def putSparkMeasureParams(
-                                     properties: util.Map[String, String],
-                                     userName: String,
-                                     ticketId: String
-                                   ): Unit = {
+      properties: util.Map[String, String],
+      userName: String,
+      ticketId: String
+  ): Unit = {
     val flightRecorderType =
       SparkConfiguration.SPARKMEASURE_FLIGHT_RECORDER_TYPE.getValue(properties)
     val sparkMeasureOutput =
@@ -190,6 +217,8 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
         "flight_" + flightRecorderType,
         ticketId
       )
+      val fs = FSFactory.getFs(fsPath)
+      if (!fs.exists(fsPath.getParent)) fs.mkdirs(fsPath.getParent)
       if (StorageUtils.HDFS == fsPath.getFsType) {
         val outputPath = StorageUtils.HDFS_SCHEMA + fsPath.getPath
         properties.put(
@@ -212,6 +241,5 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
       }
     }
   }
-
 
 }

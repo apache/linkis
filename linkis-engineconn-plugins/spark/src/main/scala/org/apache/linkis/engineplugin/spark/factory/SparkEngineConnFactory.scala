@@ -146,7 +146,8 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       SPARK_DRIVER_BLOCK_MANAGER_PORT.key,
       SPARK_DRIVER_BLOCK_MANAGER_PORT.getValue(options)
     )
-    sparkConfig.setConf(conf)
+
+    sparkConfig.addAllConf(conf)
 
     logger.info(s"spark_info: ${sparkConfig}")
     sparkConfig

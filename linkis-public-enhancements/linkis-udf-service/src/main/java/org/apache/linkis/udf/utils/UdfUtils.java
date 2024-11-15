@@ -189,6 +189,9 @@ public class UdfUtils {
       logger.info("get pip3 list error", e);
     }
     try {
+      if (module == null || !module.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
+        throw new IllegalArgumentException("Invalid module name: " + module);
+      }
       String exec =
           Utils.exec(
               (new String[] {

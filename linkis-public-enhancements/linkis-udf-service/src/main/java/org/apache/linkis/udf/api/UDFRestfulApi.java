@@ -1205,10 +1205,10 @@ public class UDFRestfulApi {
     if (org.apache.commons.lang3.StringUtils.isNotBlank(pythonModuleInfo.getPythonModule())) {
       // 使用正则表达式进行校验
       Matcher matcher =
-          Pattern.compile("^[a-zA-Z][a-zA-Z0-9,_.-]{0,49}$")
+          Pattern.compile("^[a-zA-Z][a-zA-Z0-9,_.-]{0,200}$")
               .matcher(pythonModuleInfo.getPythonModule());
       if (!matcher.matches()) {
-        return Message.error("模块名称：只允许英文、数字和英文逗号");
+        return Message.error("模块名称：只允许英文、数字和英文逗号,点,下划线,横线组成，且长度不超过200个字符");
       }
     }
     String path = pythonModuleInfo.getPath();

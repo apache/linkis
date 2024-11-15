@@ -56,21 +56,44 @@ public class UserDepartmentInfoSync {
   @Scheduled(cron = "${linkis.monitor.org.user.sync.cron:0 0 0 1/7 * ?}")
   public static void DepartmentInfoSync() {
     // 获取linkis_org_user_sync信息
+    // 收集异常用户
+    List<UserDepartmentInfo> alterList = new ArrayList<>();
     int pageNum = 1; // 初始pageNum
     while (true) {
+      List<UserDepartmentInfo> departSyncList = null;
       PageHelper.startPage(pageNum, pagesize);
-      List<UserDepartmentInfo> departSyncList = userDepartmentInfoMapper.selectAllUsers();
+      try {
+        departSyncList = userDepartmentInfoMapper.selectAllUsers();
+      } finally {
+        PageHelper.clearPage();
+      }
       PageInfo<UserDepartmentInfo> pageInfo = new PageInfo<>(departSyncList);
-      if (pageInfo.getList().isEmpty()) {
+      // 处理 departSyncList 中的数据
+      processDepartSyncList(pageInfo.getList(), alterList);
+      if (!pageInfo.isHasNextPage()) {
         break; // 没有更多记录，退出循环
       }
-      // 处理 departSyncList 中的数据
-      processDepartSyncList(pageInfo.getList());
       pageNum++;
+    }
+    // 统计异常名称，然后发送告警
+    String usernames =
+        alterList.stream()
+            .filter(s -> StringUtils.isNotBlank(s.getUserName()))
+            .map(UserDepartmentInfo::getUserName)
+            .limit(5)
+            .collect(Collectors.joining(","));
+    if (StringUtils.isNotBlank(usernames)) {
+      HashMap<String, String> replaceParm = new HashMap<>();
+      replaceParm.put("$user", usernames);
+      replaceParm.put("$count", String.valueOf(alterList.size()));
+      Map<String, AlertDesc> ecmResourceAlerts =
+          MonitorAlertUtils.getAlerts(Constants.DEPARTMENT_USER_IM(), replaceParm);
+      PooledImsAlertUtils.addAlert(ecmResourceAlerts.get("12019"));
     }
   }
 
-  private static void processDepartSyncList(List<UserDepartmentInfo> departSyncList) {
+  private static void processDepartSyncList(
+      List<UserDepartmentInfo> departSyncList, List<UserDepartmentInfo> alterList) {
     if (CollectionUtils.isEmpty(departSyncList)) {
       logger.info("No user department info to sync");
       // 并且发送告警通知
@@ -78,7 +101,7 @@ public class UserDepartmentInfoSync {
     } else {
       logger.info("Start to sync user department info");
       // 收集异常用户
-      List<UserDepartmentInfo> alterList =
+      List<UserDepartmentInfo> errorUserList =
           departSyncList.stream()
               .filter(
                   userDepartmentInfo ->
@@ -95,24 +118,11 @@ public class UserDepartmentInfoSync {
                           && StringUtils.isNotBlank(userDepartmentInfo.getOrgId())
                           && StringUtils.isNotBlank(userDepartmentInfo.getOrgName()))
               .collect(Collectors.toList());
-      if (!CollectionUtils.isEmpty(alterList)) {
-        // 统计异常名称，然后发送告警
-        String usernames =
-            alterList.stream()
-                .filter(s -> StringUtils.isNotBlank(s.getUserName()))
-                .map(UserDepartmentInfo::getUserName)
-                .limit(5)
-                .collect(Collectors.joining(","));
-        if (StringUtils.isNotBlank(usernames)) {
-          HashMap<String, String> replaceParm = new HashMap<>();
-          replaceParm.put("$user", usernames);
-          replaceParm.put("$count", String.valueOf(alterList.size()));
-          Map<String, AlertDesc> ecmResourceAlerts =
-              MonitorAlertUtils.getAlerts(Constants.DEPARTMENT_USER_IM(), replaceParm);
-          PooledImsAlertUtils.addAlert(ecmResourceAlerts.get("12019"));
-        }
+      if (!CollectionUtils.isEmpty(errorUserList)) {
+        alterList.addAll(errorUserList);
       }
       if (!CollectionUtils.isEmpty(syncList)) {
+        // 同步用户
         List<UserDepartmentInfo> insertList = new ArrayList<>();
         syncList.forEach(
             departSyncInfo -> {

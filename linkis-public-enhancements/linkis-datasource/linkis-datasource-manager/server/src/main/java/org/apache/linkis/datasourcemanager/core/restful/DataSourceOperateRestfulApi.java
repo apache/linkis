@@ -130,6 +130,11 @@ public class DataSourceOperateRestfulApi {
         dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
     dataSource.setKeyDefinitions(keyDefinitionList);
     Map<String, Object> connectParams = dataSource.getConnectParams();
+    if (connectParams.containsKey("appid")
+        && connectParams.containsKey("mkPrivate")
+        && connectParams.containsKey("objectid")) {
+      connectParams.put("passwordManager", "1");
+    }
     parameterValidator.validate(keyDefinitionList, connectParams);
     // For connecting, also need to handle the parameters
     for (DataSourceParamsHook hook : dataSourceParamsHooks) {

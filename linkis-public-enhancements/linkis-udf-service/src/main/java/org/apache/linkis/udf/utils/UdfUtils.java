@@ -153,20 +153,21 @@ public class UdfUtils {
   public static InputStream getZipInputStreamByTarInputStream(
       MultipartFile file, String packageName) throws IOException {
     String rootPath = getRootPath(file.getInputStream(), packageName);
-    if (StringUtils.isBlank(rootPath)) {
+    if (StringUtils.isNotBlank(packageName) && StringUtils.isNotBlank(rootPath)) {
+      return createZipFile(file.getInputStream(), packageName, rootPath);
+    } else {
       throw new UdfException(
-          80038,
-          "The name directory "
-              + packageName
-              + " specified by PKG-INFO does not exist. Please confirm that the "
-              + packageName
-              + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
-              + packageName
-              + "不存在，请确认包中PKG-INFO指定"
-              + packageName
-              + "和实际文件夹名称一致)");
+              80038,
+              "The name directory "
+                      + packageName
+                      + " specified by PKG-INFO does not exist. Please confirm that the "
+                      + packageName
+                      + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
+                      + packageName
+                      + "不存在，请确认包中PKG-INFO指定"
+                      + packageName
+                      + "和实际文件夹名称一致)");
     }
-    return createZipFile(file.getInputStream(), packageName, rootPath);
   }
 
   public static Boolean checkModuleIsExistEnv(String module) {

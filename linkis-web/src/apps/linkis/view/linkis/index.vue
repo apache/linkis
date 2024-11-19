@@ -429,6 +429,7 @@ export default {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
     await api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin
+      sessionStorage.setItem('canResultSet', res.canResultSet)
       storage.set('isLogAdmin', res.admin, 'session')
     })
     this.isLogAdmin = storage.get('isLogAdmin', 'session');

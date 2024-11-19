@@ -51,10 +51,11 @@ export default defineComponent({
       id: 'apiPythonuploadFilesystem',
       query(params) {
         return letgoRequest(
-          '/api/rest_j/v1/filesystem/python-upload',
+          '/api/rest_j/v1/udf/python-upload',
           params,
           {
-            method: 'POST'
+            method: 'POST',
+            timeout: 60000
           },
         );
       },
@@ -204,7 +205,7 @@ export default defineComponent({
                 _label={$t('moduleName')}
                 placeholder={$t('moduleNamePlaceholder')}
                 v-model={$$.pythonModuleName}
-                span={5}
+                span={6}
                 style={{
                   width: '260px',
                 }}
@@ -214,7 +215,7 @@ export default defineComponent({
                 _label={$t('userName')}
                 placeholder={$t('userNamePlaceholder')}
                 v-model={$$.userName}
-                span={5}
+                span={6}
                 style={{
                   width: '260px',
                 }}
@@ -223,7 +224,7 @@ export default defineComponent({
               <WSelect
                 _label={$t('engineType')}
                 labelWidth={`60px`}
-                span={5}
+                span={6}
                 style={{
                   width: '260px',
                 }}
@@ -247,7 +248,7 @@ export default defineComponent({
                   }
                 ]}
               />
-              <WSelect
+              {/* <WSelect
                 _label={$t('isExpire')}
                 labelWidth={60}
                 span={5}
@@ -269,11 +270,11 @@ export default defineComponent({
                     label: $t('all'),
                   }
                 ]}
-              />
+              /> */}
               <WSelect
                 _label={$t('isLoaded')}
                 labelWidth={60}
-                span={5}
+                span={6}
                 style={{
                   width: '260px',
                 }}
@@ -308,7 +309,7 @@ export default defineComponent({
                         $$.pythonModuleName,
                         $$.userName,
                         $$.engineType,
-                        $$.isExpired,
+                        // $$.isExpired,
                         $$.isLoaded,
                         $$.currentPage,
                         $$.pageSize,
@@ -423,6 +424,12 @@ export default defineComponent({
                     },
                   ]}
                 />
+                <WInput
+                  _label={$t('pythonModule')}
+                  v-model={$$.selectedModule.pythonModule}
+                  placeholder={$$.getDep ? $t('noDeps') : $t('placeholderPyModules')}
+                  disabled
+                />
                 <WUpload
                   v-model:fileList={$$.selectedModule.fileList}
                   _label={$t('moduleResource')}
@@ -447,7 +454,7 @@ export default defineComponent({
                           <FText
                             type={'default'}
                             style={{
-                              width: '200px',
+                              width: '210px',
                             }}
                           >
                             {$t('onlyPyAndZip')}
@@ -463,7 +470,7 @@ export default defineComponent({
                       if($$.selectedModule.name && $$.selectedModule.path) {
                         return (
                           <div>
-                            <FText type={'default'}>{$$.selectedModule.name + '.' + $$.selectedModule.path?.split('.')[1] || ''}</FText>
+                            <FText type={'default'}>{$$.selectedModule?.path?.split('/')[$$.selectedModule?.path?.split('/').length - 1] || ''}</FText>
                           </div>
                         );
                       }
@@ -474,7 +481,7 @@ export default defineComponent({
                     }
                   }}
                   beforeUpload={(...args) => $$.validateModuleFile(...args)}
-                  accept={['.zip', '.py']}
+                  accept={['.zip', '.py', '.tar.gz']}
                   httpRequest={(...args) => $$.handleUploadHttpRequest(...args)}
                 >
                   <FButton 
@@ -482,6 +489,7 @@ export default defineComponent({
                     v-slots={{
                       icon: () => <UploadOutlined />
                     }}
+                    loading={$$.isUploading}
                   >
                     {$t('uploadFile')}
                   </FButton>
@@ -507,7 +515,7 @@ export default defineComponent({
                     },
                   ]}
                 />
-                <WRadioGroup
+                {/* <WRadioGroup
                   _label={$t('isExpire')}
                   v-model={$$.selectedModule.isExpire}
                   rules={[
@@ -527,7 +535,7 @@ export default defineComponent({
                       label: $t('no'),
                     },
                   ]}
-                />
+                /> */}
                 <WInput
                   _label={$t('moduleDescription')}
                   v-model={$$.selectedModule.description}
@@ -598,6 +606,12 @@ export default defineComponent({
                     },
                   ]}
                 />
+                <WInput
+                  _label={$t('pythonModule')}
+                  v-model={$$.selectedModule.pythonModule}
+                  placeholder={$$.getDep ? $t('noDeps') : $t('placeholderPyModules')}
+                  disabled
+                />
                 <WUpload
                   v-model:fileList={$$.selectedModule.fileList}
                   _label={$t('moduleResource')}
@@ -622,7 +636,7 @@ export default defineComponent({
                           <FText
                             type={'default'}
                             style={{
-                              width: '200px',
+                              width: '210px',
                             }}
                           >
                             {$t('onlyPyAndZip')}
@@ -638,7 +652,7 @@ export default defineComponent({
                       if($$.selectedModule.name && $$.selectedModule.path) {
                         return (
                           <div>
-                            <FText type={'default'}>{$$.selectedModule.name + '.' + $$.selectedModule.path?.split('.')[1] || ''}</FText>
+                            <FText type={'default'}>{$$.selectedModule?.path?.split('/')[$$.selectedModule?.path?.split('/').length - 1] || ''}</FText>
                           </div>
                         );
                       }
@@ -649,7 +663,7 @@ export default defineComponent({
                     }
                   }}
                   beforeUpload={(...args) => $$.validateModuleFile(...args)}
-                  accept={['.zip', '.py']}
+                  accept={['.zip', '.py', '.tar.gz']}
                   httpRequest={(...args) => $$.handleUploadHttpRequest(...args)}
                 >
                   <FButton 
@@ -657,6 +671,7 @@ export default defineComponent({
                     v-slots={{
                       icon: () => <UploadOutlined />
                     }}
+                    loading={$$.isUploading}
                   >
                     {$t('uploadFile')}
                   </FButton>
@@ -682,7 +697,7 @@ export default defineComponent({
                     },
                   ]}
                 />
-                <WRadioGroup
+                {/* <WRadioGroup
                   _label={$t('isExpire')}
                   v-model={$$.selectedModule.isExpire}
                   rules={[
@@ -702,7 +717,7 @@ export default defineComponent({
                       label: $t('no'),
                     },
                   ]}
-                />
+                /> */}
                 <WInput
                   _label={$t('moduleDescription')}
                   v-model={$$.selectedModule.description}
@@ -738,8 +753,14 @@ export default defineComponent({
               getContainer={() => document.body}
               v-slots={{
                 title: () => {
-                  return(<h1>{$t('useTutorial')}</h1>)
-                }
+                  return(
+                    <div style={{display: 'flex', width: '732px', justifyContent: 'space-between', alignItems: 'center'}}>
+                      <h1>{$t('useTutorial')}</h1>
+                      <FButton onClick={() => $$.openNewTab()}>{$t('fullScreen')}</FButton>
+                    </div>
+                  )
+                },
+
               }}
               onUpdate:show={[
                 () => {
@@ -754,7 +775,10 @@ export default defineComponent({
               ]}
             >
               <div style={{padding: '0px 20px'}}>
-                <h2 style="color: #333;">1. 首先你需要准备好对应的模块物料，支持.py文件和.zip文件</h2>
+                <div style="background-color: #f9eda6; font-weight: bold; padding: 10px; border: 1px solid #ffeeba;">
+    注意事项：当前linkis支持的python版本为2.7.13和3.6.4两个版本，用户上传的python文件或模块必须兼容对应的python版本才能正常使用。
+                </div>
+                <h2 style="color: #333;">1. 首先你需要准备好对应的模块物料，支持.py文件, tar.gz文件, .zip文件</h2>
                 <p>a. 对于py 文件你的模块名一定要和文件名一致，如hello_world.py 模块名就是hello_world,您可以在里面定义你的python方法和class等，如下：</p>
                 <pre style="background-color: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto;">
                   <code><span style={{ color: '#999' }}>#文件名一定是 hello_world.py<br /></span>
@@ -823,28 +847,42 @@ df_transformed.show()
                         : 'Python';
                   },
                 },
-                {
-                  prop: 'status',
-                  label: $t('status'),
-                  formatter: ({
-                    row,
-                    column,
-                    rowIndex,
-                    coloumIndex,
-                    cellValue,
-                  }) => {
-                    return row.isExpire === 0
-                      ? $t('normal')
-                      : $t('expire');
-                  },
-                },
+                // {
+                //   prop: 'status',
+                //   label: $t('status'),
+                //   formatter: ({
+                //     row,
+                //     column,
+                //     rowIndex,
+                //     coloumIndex,
+                //     cellValue,
+                //   }) => {
+                //     return row.isExpire === 0
+                //       ? $t('normal')
+                //       : $t('expire');
+                //   },
+                // },
                 {
                   prop: 'path',
                   label: $t('pathInfo'),
                 },
                 {
+                  prop: 'pythonModule',
+                  label: $t('pythonModule'),
+                  formatter: ({row, column ,rowIndex, columnIndex, cellValue}) => {
+                    if(!row.pythonModule) {
+                      return '- -'
+                    }
+                  }
+                },
+                {
                   prop: 'description',
                   label: $t('moduleDescription'),
+                  formatter: ({row, column, rowIndex, columnIndex, cellValue}) => {
+                    if(!row.description) {
+                      return '- -'
+                    }
+                  }
                 },
                 {
                   prop: 'createTime',

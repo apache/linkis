@@ -17,7 +17,7 @@
 
 <template>
   <div class="global-history">
-    <Tabs @on-click="onClickTabs">
+    <Tabs v-model="tabName" @on-click="onClickTabs">
       <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
       <TabPane name="code" :label="$t('message.linkis.executionCode')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
@@ -110,6 +110,7 @@ export default {
       param: {},
       yarnAddress: '',
       logTimer: null,
+      preName: 'log',
     }
   },
   created() {
@@ -154,7 +155,22 @@ export default {
     },
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
     async onClickTabs(name) {
+      const canResultSet = sessionStorage.getItem('canResultSet');
+      if(name === 'result' && canResultSet === 'false') {
+        try {
+          setTimeout(() => {
+            this.tabName = this.preName;
+          }, 0);
+          window.open(`http://${window.location.host}/#/results?parentPath=${this.jobhistoryTask.resultLocation}&taskId=${this.$route.query.taskID}&fileName=example.${this.jobhistoryTask.runType}`, '_blank')
+          
+          return;
+        } catch (error) {
+          window.console.error(error)
+        }
+        
+      }
       this.tabName = name
+      this.preName = name
       if (name === 'result') {
         // Determine whether it is a result set(判断是否为结果集)
         if (this.hasResultData) return // Determine whether the data has been obtained, and return directly if it is obtained(判断是否已经获取过数据，获取过则直接返回)

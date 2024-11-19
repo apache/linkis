@@ -25,7 +25,7 @@ export default {
   cancel: 'Cancel',
   moduleResource: 'Module Resource',
   uploadResource: 'Please upload module resource',
-  onlyPyAndZip: 'Only .py and .zip files are supported',
+  onlyPyAndZip: 'Only .py, .zip and tar.gz files are supported',
   selectIsLoaded: 'Please select if loaded',
   selectIsExpire: 'Please select if expired',
   moduleDescription: 'Module Description',
@@ -46,12 +46,18 @@ export default {
   confirmStatusChange: 'Confirm Load Status Change',
   confirmStatusChangeContent: 'Are you sure you want to change the load status of module {name}?',
   moduleNameTooLong: 'Module name cannot exceed 50 characters',
-  moduleNameNotFormat: 'Module name can only contain letters, numbers, and underscores, and must start with a letter',
+  // 支持横线
+  moduleNameNotFormat: 'Module name can only contain letters, numbers, dash, and underscores, and must start with a letter',
   moduleNameExist: 'Module name {name} already exists, please delete the old module before re-uploading',
   moduleSizeExceed: 'Module size cannot exceed 50MB',
   saveSuccess: 'Saved successfully',
   normal: 'Normal',
   expire: 'Expired',
   known: 'Got it',
-  uploadFile: 'Upload File'
+  uploadFile: 'Upload File',
+  fullScreen: 'Full Screen View',
+  pythonModule: 'Module Dependencies',
+  placeholderPyModules: 'Please enter the module dependencies.',
+  noDeps: 'There is no module dependencies',
+  messageForPyModules: 'Please enter the module dependencies, separated by commas, Module name cannot exceed 50 characters and can only contain letters, numbers, dash, and underscores, and must start with a letter'
 };

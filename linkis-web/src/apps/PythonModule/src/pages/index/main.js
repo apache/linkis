@@ -6,7 +6,7 @@ export class Main extends LetgoPageBase {
     this.pythonModuleName = '';
     this.userName = '';
     this.engineType = '';
-    this.isExpired = 0;
+    // this.isExpired = 0;
     this.isLoaded = null;
     this.currentPage = 1;
     this.pageSize = 10;
@@ -17,9 +17,10 @@ export class Main extends LetgoPageBase {
     this.newModuleName = '';
     this.selectedEngineType = 'spark';
     this.selectedModuleDescription = '';
+    this.selectedModulePythonModule = '';
     this.selectedModulePath = '';
     this.selectedModuleIsLoad = 1;
-    this.selectedModuleIsExpire = 0;
+    // this.selectedModuleIsExpire = 0;
     this.selectedModuleId = null;
     this.selectedModuleFile = null;
     this.selectedModuleFileError = '';
@@ -33,6 +34,8 @@ export class Main extends LetgoPageBase {
     this.addFormRef = null;
     this.editFormRef = null;
     this.tutorialVisible = false;
+    this.isUploading = false;
+    this.getDep = false;
   }
 
   onMounted () {
@@ -49,7 +52,7 @@ export class Main extends LetgoPageBase {
         engineType: this.engineType,
         username: this.userName,
         // isLoad: this.isLoaded,
-        isExpire: this.isExpired,
+        isExpire: 0,
         pageNow: this.currentPage,
         pageSize: this.pageSize
       };
@@ -58,7 +61,7 @@ export class Main extends LetgoPageBase {
       }
       const response =
                 await this.$pageCode.apiPythonlistUdf.trigger(params);
-      this.pythonModuleList = response.data.pythonList;
+      this.pythonModuleList = response.data.pythonList
       this.totalRecords = response.data.totalPage;
       return response;
     } catch (error) {
@@ -76,7 +79,7 @@ export class Main extends LetgoPageBase {
     this.pythonModuleName = '';
     this.userName = '';
     this.engineType = '';
-    this.isExpired = 0;
+    // this.isExpired = 0;
     this.isLoaded = null;
     this.currentPage = 1;
     this.pageSize = 10;
@@ -87,11 +90,12 @@ export class Main extends LetgoPageBase {
     this.addPythonModuleVisible = true;
     this.selectedModule.name = '';
     this.selectedModule.engineType = 'spark';
-    this.selectedModule.isExpire = 0;
+    // this.selectedModule.isExpire = 0;
     this.selectedModule.isLoad = 1;
     this.selectedModule.path = '';
     this.selectedModule.fileList = [];
     this.selectedModule.description = '';
+    this.selectedModule.pythonModule = '';
   }
 
   showTutorial () {
@@ -169,7 +173,7 @@ export class Main extends LetgoPageBase {
       throw new Error(this.$pageCode.$t('moduleNameTooLong'));
     }
     // 名称只支持数字字母下划线，且以字母开头
-    if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(newModuleName.split('.')[0])) {
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(newModuleName.split('.')[0])) {
       this.$utils.FMessage.error(this.$pageCode.$t('moduleNameNotFormat'));
       throw new Error(this.$pageCode.$t('moduleNameNotFormat'));
     }
@@ -209,18 +213,32 @@ export class Main extends LetgoPageBase {
     }
   }
 
+  cutExtension(fileName) {
+    const pyIndex = fileName.indexOf('.py');
+    const zipIndex = fileName.indexOf('.zip');
+    const targzIndex = fileName.indexOf('.tar.gz');
+    if(Math.max(pyIndex, zipIndex, targzIndex) !== -1) {
+      return fileName.substring(0, Math.max(pyIndex, zipIndex, targzIndex));
+    } else {
+      return fileName;
+    }
+  }
   async handleUploadHttpRequest (options) {
     try {
+      this.isUploading = true;
       const formData = new FormData();
-      window.console.log('options:', options);
       formData.append('file', options.file);
       formData.append('fileName', options.file.name);
       const response = await this.$pageCode.apiPythonuploadFilesystem.trigger(formData);
       this.selectedModule.path = response.data.filePath;
-      this.selectedModule.name = options.file.name.split('.')[0];
+      this.selectedModule.name = this.cutExtension(response.data.fileName);
+      this.selectedModule.pythonModule = response.data.dependencies;
+      this.getDep = true;
       this.selectedModule.fileList = [options.file];
+      this.isUploading = false;
     } catch (err) {
       window.console.error(err);
+      this.isUploading = false;
       // this.$utils.FMessage.error('上传失败');
     }
   }
@@ -231,8 +249,9 @@ export class Main extends LetgoPageBase {
     selectedModuleDescription,
     selectedModulePath,
     selectedModuleIsLoad,
-    selectedModuleIsExpire,
-    selectedModuleId
+    // selectedModuleIsExpire,
+    selectedModulePythonModule,
+    selectedModuleId,
   ) {
     const params = {
       name: newModuleName,
@@ -240,7 +259,8 @@ export class Main extends LetgoPageBase {
       path: selectedModulePath,
       engineType: selectedEngineType,
       isLoad: selectedModuleIsLoad,
-      isExpire: selectedModuleIsExpire
+      pythonModule: selectedModulePythonModule,
+      isExpire: 0
     };
     if (selectedModuleId) {
       params.id = selectedModuleId;
@@ -284,7 +304,9 @@ export class Main extends LetgoPageBase {
         this.selectedModule.description,
         this.selectedModule.path,
         this.selectedModule.isLoad,
-        this.selectedModule.isExpire
+        this.selectedModule.pythonModule,
+
+        // this.selectedModule.isExpire
       );
       this.addPythonModuleVisible = false;
       this.loadPythonModuleList();
@@ -302,8 +324,9 @@ export class Main extends LetgoPageBase {
         this.selectedModule.description,
         this.selectedModule.path,
         this.selectedModule.isLoad,
-        this.selectedModule.isExpire,
-        this.selectedModule.id
+        // this.selectedModule.isExpire,
+        this.selectedModule.pythonModule,
+        this.selectedModule.id,
       );
       this.closeEditModuleModal();
       this.loadPythonModuleList();
@@ -338,16 +361,19 @@ export class Main extends LetgoPageBase {
   }
 
   async handleLoadStatusChange () {
-    const { id, name, path, isExpire, isLoad, engineType, description } =
+    const { id, name, path, 
+      // isExpire, 
+      isLoad, engineType, description, pythonModule } =
             this.selectedModule;
     window.console.log({
       id,
       name,
       path,
-      isExpire,
+      // isExpire,
       isLoad,
       engineType,
-      description
+      description,
+      pythonModule
     });
     const targetLoadStatus = isLoad === 1 ? 0 : 1;
     if (id === null) {
@@ -363,8 +389,9 @@ export class Main extends LetgoPageBase {
         description,
         path,
         targetLoadStatus,
-        isExpire,
-        id
+        // isExpire,
+        pythonModule,
+        id,
       );
       await this.loadPythonModuleList();
     } catch (error) {
@@ -377,6 +404,7 @@ export class Main extends LetgoPageBase {
 
   closeAddModuleModal () {
     this.addPythonModuleVisible = false;
+    this.getDep = false;
   }
 
   handleFileListChange ({ file, fileList }) {
@@ -385,6 +413,7 @@ export class Main extends LetgoPageBase {
 
   closeEditModuleModal () {
     this.editPythonModuleVisible = false;
+    this.getDep = false;
   }
 
   closeDeleteConfirmation () {
@@ -393,5 +422,10 @@ export class Main extends LetgoPageBase {
 
   closeLoadStatusChangeConfirmation () {
     this.loadStatusChangeConfirmationVisible = false;
+  }
+
+  openNewTab() {
+    window.open('./tutorial.html', '_blank');
+    this.tutorialVisible = false;
   }
 }

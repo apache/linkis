@@ -92,24 +92,25 @@ public class UdfUtils {
    * @throws IOException 如果文件读取失败。
    */
   private static String getRootPath(InputStream inputStream, String folder) throws IOException {
+    String rootPathStr = "";
     try (TarArchiveInputStream tarInput =
         new TarArchiveInputStream(new GzipCompressorInputStream(inputStream))) {
       TarArchiveEntry entry;
+      String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
       while ((entry = tarInput.getNextTarEntry()) != null) {
-        if (entry.isDirectory()
-            && entry.getName().endsWith(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
-          return entry.getName().replace(folder + FsPath.SEPARATOR, "");
+        if (entry.isDirectory() && entry.getName().endsWith(delimiter)) {
+          rootPathStr = entry.getName().replace(folder + FsPath.SEPARATOR, "");
+          return  rootPathStr;
         }
-        if (entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
-          String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
-          int delimiterIndex = entry.getName().indexOf(delimiter);
-          return entry.getName().substring(0, delimiterIndex);
+        if (entry.getName().contains(delimiter)) {
+          rootPathStr = entry.getName().substring(0, entry.getName().indexOf(delimiter));
+          return  rootPathStr;
         }
       }
     } catch (Exception e) {
       throw new UdfException(80039, "File upload failed, error message:", e);
     }
-    return null;
+    return rootPathStr;
   }
 
   /**

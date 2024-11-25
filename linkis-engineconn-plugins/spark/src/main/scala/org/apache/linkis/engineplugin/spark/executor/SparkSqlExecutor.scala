@@ -27,15 +27,20 @@ import org.apache.linkis.engineplugin.spark.sparkmeasure.SparkSqlMeasure
 import org.apache.linkis.engineplugin.spark.utils.{DirectPushCache, EngineUtils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.scheduler.executer._
 
-import org.apache.commons.lang3.ObjectUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.spark.sql.DataFrame
 
 import java.lang.reflect.InvocationTargetException
 import java.util
 import java.util.Date
+
+import scala.jdk.CollectionConverters.seqAsJavaListConverter
+
+import ch.cern.sparkmeasure.{StageMetrics, TaskMetrics}
 
 class SparkSqlExecutor(
     sparkEngineSession: SparkEngineSession,
@@ -91,29 +96,18 @@ class SparkSqlExecutor(
         .setContextClassLoader(sparkEngineSession.sparkSession.sharedState.jarClassLoader)
       val extensions =
         org.apache.linkis.engineplugin.spark.extension.SparkSqlExtension.getSparkSqlExtensions()
-      val sparkMeasureType = engineExecutionContext.getProperties
-        .get(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE)
-      val df = if (ObjectUtils.isNotEmpty(sparkMeasureType)) {
-        val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
-        val outputPath = FsPath.getFsPath(
-          outputPrefix,
-          options.get("user"),
-          sparkMeasureType.toString,
-          options.get("jobId"),
-          new Date().getTime.toString
-        )
-        val sparkMeasure =
-          new SparkSqlMeasure(
-            sparkEngineSession.sparkSession,
-            code,
-            sparkMeasureType.toString,
-            outputPath
-          )
 
-        sparkMeasure.generatorMetrics()
-      } else {
-        sparkEngineSession.sqlContext.sql(code)
+      // Start capturing Spark metrics
+      val sparkMeasure: Option[SparkSqlMeasure] =
+        createSparkMeasure(engineExecutionContext, sparkEngineSession, code)
+      val sparkMetrics: Option[Either[StageMetrics, TaskMetrics]] = sparkMeasure.flatMap {
+        measure =>
+          val metrics = measure.getSparkMetrics
+          metrics.foreach(measure.begin)
+          metrics
       }
+
+      val df = sparkEngineSession.sqlContext.sql(code)
 
       Utils.tryQuietly(
         extensions.foreach(
@@ -139,6 +133,13 @@ class SparkSqlExecutor(
           engineExecutionContext
         )
       }
+
+      // Stop capturing Spark metrics and output the records to the specified file.
+      sparkMeasure.foreach { measure =>
+        sparkMetrics.foreach(measure.end)
+        sparkMetrics.foreach(measure.outputMetrics)
+      }
+
       SuccessExecuteResponse()
     } catch {
       case e: InvocationTargetException =>
@@ -151,6 +152,33 @@ class SparkSqlExecutor(
         ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(ite), ite)
     } finally {
       Thread.currentThread().setContextClassLoader(standInClassLoader)
+    }
+  }
+
+  /**
+   * 创建 SparkSqlMeasure 实例的辅助方法
+   */
+  private def createSparkMeasure(
+      engineExecutionContext: EngineExecutionContext,
+      sparkEngineSession: SparkEngineSession,
+      code: String
+  ): Option[SparkSqlMeasure] = {
+    val sparkMeasureType = engineExecutionContext.getProperties
+      .getOrDefault(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE, "")
+      .toString
+
+    if (sparkMeasureType.nonEmpty) {
+      val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
+      val outputPath = FsPath.getFsPath(
+        outputPrefix,
+        LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1,
+        sparkMeasureType,
+        JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
+        new Date().getTime.toString
+      )
+      Some(new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath))
+    } else {
+      None
     }
   }
 

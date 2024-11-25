@@ -37,71 +37,100 @@ class SparkSqlMeasure(
     outputPath: FsPath
 ) extends Logging {
 
-  private val sqlType = getDQLSqlType
+  private val sqlType: String = determineSqlType
 
-  def generatorMetrics(): DataFrame = {
-    var df: DataFrame = null
-    val metricsMap: java.util.Map[String, Long] = metricType match {
-      case "stage" =>
-        val metrics = StageMetrics(sparkSession)
-        sqlType match {
-          case "SELECT" =>
-            df = sparkSession.sql(sql)
-            metrics.runAndMeasure(df.show(0))
-            metrics.aggregateStageMetricsJavaMap()
-          case "INSERT" =>
-            df = metrics.runAndMeasure(sparkSession.sql(sql))
-            metrics.aggregateStageMetricsJavaMap()
-          case _ =>
-            df = sparkSession.sql(sql)
-            new java.util.HashMap[String, Long]()
-        }
-      case "task" =>
-        val metrics = TaskMetrics(sparkSession)
-        sqlType match {
-          case "SELECT" =>
-            df = sparkSession.sql(sql)
-            metrics.runAndMeasure(df.show(0))
-            metrics.aggregateTaskMetricsJavaMap()
-          case "INSERT" =>
-            df = metrics.runAndMeasure(sparkSession.sql(sql))
-            metrics.aggregateTaskMetricsJavaMap()
-          case _ =>
-            df = sparkSession.sql(sql)
-            new java.util.HashMap[String, Long]()
-        }
-      case _ =>
-        df = sparkSession.sql(sql)
-        new java.util.HashMap[String, Long]()
+  def begin(metrics: Either[StageMetrics, TaskMetrics]): Unit = {
+    metrics match {
+      case Left(stageMetrics) =>
+        stageMetrics.begin()
+      case Right(taskMetrics) =>
+        taskMetrics.begin()
     }
-    if (MapUtils.isNotEmpty(metricsMap)) {
-      val retMap = new util.HashMap[String, Object]()
-      retMap.put("execution_code", sql)
-      retMap.put("metrics", metricsMap)
-      val mapper = new ObjectMapper()
-      val bytes = mapper.writeValueAsBytes(retMap)
-      val fs = FSFactory.getFs(outputPath)
-      if (!fs.exists(outputPath.getParent)) fs.mkdirs(outputPath.getParent)
-      val out = fs.write(outputPath, true)
-      out.write(bytes)
-      IOUtils.close(out)
-      fs.close()
-    }
-    df
   }
 
-  private def getDQLSqlType: String = {
+  def end(metrics: Either[StageMetrics, TaskMetrics]): Unit = {
+    metrics match {
+      case Left(stageMetrics) =>
+        stageMetrics.end()
+      case Right(taskMetrics) =>
+        taskMetrics.end()
+    }
+  }
+
+  private def enableSparkMeasure: Boolean = {
+    sqlType match {
+      case "SELECT" | "INSERT" => true
+      case _ => false
+    }
+  }
+
+  def getSparkMetrics: Option[Either[StageMetrics, TaskMetrics]] = {
+    if (enableSparkMeasure) {
+      metricType match {
+        case "stage" => Some(Left(StageMetrics(sparkSession)))
+        case "task" => Some(Right(TaskMetrics(sparkSession)))
+        case _ => None
+      }
+    } else {
+      None
+    }
+  }
+
+  def outputMetrics(metrics: Either[StageMetrics, TaskMetrics]): Unit = {
+    if (enableSparkMeasure) {
+      val metricsMap = collectMetrics(metrics)
+
+      if (MapUtils.isNotEmpty(metricsMap)) {
+        val retMap = new util.HashMap[String, Object]()
+        retMap.put("execution_code", sql)
+        retMap.put("metrics", metricsMap)
+
+        val mapper = new ObjectMapper()
+        val bytes = mapper.writeValueAsBytes(retMap)
+
+        val fs = FSFactory.getFs(outputPath)
+        try {
+          if (!fs.exists(outputPath.getParent)) fs.mkdirs(outputPath.getParent)
+          val out = fs.write(outputPath, true)
+          try {
+            out.write(bytes)
+          } finally {
+            IOUtils.closeQuietly(out)
+          }
+        } finally {
+          fs.close()
+        }
+      }
+    }
+  }
+
+  private def determineSqlType: String = {
     val parser = sparkSession.sessionState.sqlParser
     val logicalPlan = parser.parsePlan(sql)
 
-    val planName = logicalPlan.getClass.getSimpleName
-    planName match {
+    logicalPlan.getClass.getSimpleName match {
       case "UnresolvedWith" | "Project" | "GlobalLimit" => "SELECT"
       case "InsertIntoStatement" | "CreateTableAsSelectStatement" | "CreateTableAsSelect" =>
         "INSERT"
-      case _ =>
-        logger.info("当前SQL解析类型为{}, 跳过sparkmeasure", planName)
+      case planName =>
+        logger.info(s"Unsupported sql type")
         planName
+    }
+  }
+
+  private def collectMetrics(
+      metrics: Either[StageMetrics, TaskMetrics]
+  ): java.util.Map[String, Long] = {
+    metrics match {
+      case Left(stageMetrics) =>
+        logger.info("StageMetrics begin executed.")
+        stageMetrics.aggregateStageMetricsJavaMap()
+
+      case Right(taskMetrics) =>
+        logger.info("TaskMetrics begin executed.")
+        taskMetrics.aggregateTaskMetricsJavaMap()
+
+      case _ => new util.HashMap[String, Long]()
     }
   }
 

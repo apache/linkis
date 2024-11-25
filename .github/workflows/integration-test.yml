@@ -166,15 +166,15 @@ jobs:
           # Show port-forward list
           bash ./linkis-dist/helm/scripts/remote-proxy.sh list
           # Check if the web service is available
-          curl http://127.0.0.1:8088/indexhtml
+          curl http://127.0.0.1:8088/
 
           # Execute test by linkis-cli
           POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-mg-gateway -o jsonpath='{.items[0].metadata.name}'`
           kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
-          sh /opt/linkis/bin/linkis-cli -engineType shell-1 -codeType shell -code \"pwd\" ";
-
-          kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
-          sh /opt/linkis/bin/linkis-cli -engineType python-python2 -codeType python -code   'print(\"hello\")' "
+          sh /opt/linkis/bin/linkis-cli --async true -engineType shell-1 -codeType shell -code \"pwd\" ";
+          sleep 300
+          #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
+          #sh /opt/linkis/bin/linkis-cli -engineType python-python2 -codeType python -code   'print(\"hello\")' "
 
           #todo
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \

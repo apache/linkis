@@ -38,7 +38,7 @@ import java.lang.reflect.InvocationTargetException
 import java.util
 import java.util.Date
 
-import scala.jdk.CollectionConverters.seqAsJavaListConverter
+import scala.collection.JavaConverters._
 
 import ch.cern.sparkmeasure.{StageMetrics, TaskMetrics}
 

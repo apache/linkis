@@ -68,7 +68,8 @@ class TestSparkSqlExecutor {
       sparkSession,
       outputDir
     )
-    val sparkSqlExecutor = new SparkSqlExecutor(sparkEngineSession, 1L)
+    val sparkSqlExecutor =
+      new SparkSqlExecutor(sparkEngineSession, 1L, new java.util.HashMap[String, String]())
     Assertions.assertFalse(sparkSqlExecutor.isEngineInitialized)
     sparkSqlExecutor.init()
     Assertions.assertTrue(sparkSqlExecutor.isEngineInitialized)

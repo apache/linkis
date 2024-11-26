@@ -155,9 +155,6 @@ class SparkSqlExecutor(
     }
   }
 
-  /**
-   * 创建 SparkSqlMeasure 实例的辅助方法
-   */
   private def createSparkMeasure(
       engineExecutionContext: EngineExecutionContext,
       sparkEngineSession: SparkEngineSession,

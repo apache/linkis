@@ -123,13 +123,9 @@ class SparkSqlMeasure(
   ): java.util.Map[String, Long] = {
     metrics match {
       case Left(stageMetrics) =>
-        logger.info("StageMetrics begin executed.")
         stageMetrics.aggregateStageMetricsJavaMap()
-
       case Right(taskMetrics) =>
-        logger.info("TaskMetrics begin executed.")
         taskMetrics.aggregateTaskMetricsJavaMap()
-
       case _ => new util.HashMap[String, Long]()
     }
   }

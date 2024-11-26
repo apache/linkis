@@ -600,6 +600,7 @@ See licenses/ for text of these licenses.
     (Apache License, version 2.0) seatunnel-core-flink (org.apache.seatunnel:seatunnel-core-flink:2.1.2 - https://seatunnel.apache.org)
     (Apache License, version 2.0) seatunnel-core-flink-sql (org.apache.seatunnel:seatunnel-core-flink-sql:2.1.2 - https://seatunnel.apache.org)
     (Apache License, version 2.0) seatunnel-core-spark (org.apache.seatunnel:seatunnel-core-spark:2.1.2 - https://seatunnel.apache.org)
+    (Apache License, version 2.0) spark-measure (ch.cern.sparkmeasure:spark-measure_2.12:0.24 - https://github.com/LucaCanali/sparkMeasure)
 
 ========================================================================
 Third party CDDL licenses

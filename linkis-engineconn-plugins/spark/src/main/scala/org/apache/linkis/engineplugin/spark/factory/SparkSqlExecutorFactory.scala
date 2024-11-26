@@ -41,7 +41,7 @@ class SparkSqlExecutorFactory extends ComputationExecutorFactory {
   ): ComputationExecutor = {
     engineConn.getEngineConnSession match {
       case sparkEngineSession: SparkEngineSession =>
-        new SparkSqlExecutor(sparkEngineSession, id)
+        new SparkSqlExecutor(sparkEngineSession, id, engineCreationContext.getOptions)
       case _ =>
         throw NotSupportSparkSqlTypeException(INVALID_CREATE_SPARKSQL.getErrorDesc)
     }

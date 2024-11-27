@@ -20,6 +20,15 @@ package org.apache.linkis.ecm.core.launch
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.ecm.core.conf.ContainerizationConf.{
+  ENGINE_CONN_CONTAINERIZATION_ENABLE,
+  ENGINE_CONN_CONTAINERIZATION_ENGINE_LIST,
+  ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST,
+  ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS,
+  ENGINE_CONN_CONTAINERIZATION_MAPPING_STRATEGY
+}
+import org.apache.linkis.ecm.core.containerization.enums.MappingPortStrategyName
+import org.apache.linkis.ecm.core.containerization.strategy.MappingPortContext
 import org.apache.linkis.ecm.core.errorcode.LinkisECMErrorCodeSummary._
 import org.apache.linkis.ecm.core.exception.ECMCoreException
 import org.apache.linkis.ecm.core.utils.PortUtils
@@ -35,6 +44,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
@@ -53,6 +63,9 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   private var randomPortNum = 1
 
   private var engineConnPort: String = _
+
+  private var mappingPorts: String = ""
+  private var mappingHost: String = _
 
   protected def newProcessEngineConnCommandBuilder(): ProcessEngineCommandBuilder =
     new UnixProcessEngineCommandBuilder
@@ -142,6 +155,10 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   def getEngineConnPort: String = engineConnPort
 
+  def getMappingPorts: String = mappingPorts
+
+  def getMappingHost: String = mappingHost
+
   protected def getProcess(): Process = this.process
 
   /**
@@ -166,6 +183,20 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue)
       .toString
 
+    val engineType = LabelUtil.getEngineType(request.labels)
+    var engineMappingPortSize = getEngineMappingPortSize(engineType)
+    if (ENGINE_CONN_CONTAINERIZATION_ENABLE && engineMappingPortSize > 0) {
+      val strategyName = ENGINE_CONN_CONTAINERIZATION_MAPPING_STRATEGY.getValue
+      val mappingPortStrategy =
+        MappingPortContext.getInstance(MappingPortStrategyName.toEnum(strategyName))
+
+      while (engineMappingPortSize > 0) {
+        mappingPorts += mappingPortStrategy.availablePort() + ","
+        engineMappingPortSize = engineMappingPortSize - 1
+      }
+      mappingHost = ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST.getValue
+    }
+
     var springConf =
       Map[String, String]("server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn")
     val properties =
@@ -188,8 +219,22 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     engineConnConf = engineConnConf ++: request.creationDesc.properties.asScala
       .filterNot(_._1.startsWith("spring."))
       .toMap
+
+    engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS.key -> mappingPorts)
+    engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST.key -> mappingHost)
+
     arguments.addEngineConnConf(engineConnConf)
     EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToArgs(arguments.build())
+  }
+
+  def getEngineMappingPortSize(engineType: String): Int = {
+    val engineList = ENGINE_CONN_CONTAINERIZATION_ENGINE_LIST.getValue
+    val infoList = engineList.trim
+      .split(",")
+      .map(_.split("-"))
+      .filter(engine => engine(0).equals(engineType))
+    if (infoList.length > 0) infoList(0)(1).toInt
+    else 0
   }
 
   override def kill(): Unit = {

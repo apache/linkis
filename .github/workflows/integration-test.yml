@@ -171,10 +171,10 @@ jobs:
           # Execute test by linkis-cli
           POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-mg-gateway -o jsonpath='{.items[0].metadata.name}'`
           kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
-          sh /opt/linkis/bin/linkis-cli --async true -engineType shell-1 -codeType shell -code \"pwd\" ";
-          sleep 300
-          #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
-          #sh /opt/linkis/bin/linkis-cli -engineType python-python2 -codeType python -code   'print(\"hello\")' "
+          sh /opt/linkis/bin/linkis-cli -engineType shell-1 -codeType shell -code \"pwd\" ";
+
+          kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
+          sh /opt/linkis/bin/linkis-cli -engineType python-python2 -codeType python -code   'print(\"hello\")' "
 
           #todo
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
@@ -182,6 +182,4 @@ jobs:
 
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           #sh /opt/linkis/bin/linkis-cli -engineType spark-3.2.1 -codeType sql -code   'show databases' "
-          POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-linkismanager -o jsonpath='{.items[0].metadata.name}'`
-          kubectl logs -n linkis  ${POD_NAME} -f --tail=10000
         shell: bash

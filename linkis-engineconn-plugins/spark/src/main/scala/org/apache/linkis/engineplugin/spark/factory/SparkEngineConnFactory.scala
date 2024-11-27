@@ -137,6 +137,18 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     sparkConfig.setQueue(LINKIS_QUEUE_NAME.getValue(options))
     sparkConfig.setPyFiles(SPARK_PYTHON_FILES.getValue(options))
 
+    val conf = new util.HashMap[String, String]()
+    addSparkConf(conf, SPARK_DRIVER_HOST.key, SPARK_DRIVER_HOST.getValue(options))
+    addSparkConf(conf, SPARK_DRIVER_PORT.key, SPARK_DRIVER_PORT.getValue(options))
+    addSparkConf(conf, SPARK_DRIVER_BIND_ADDRESS.key, SPARK_DRIVER_BIND_ADDRESS.getValue(options))
+    addSparkConf(
+      conf,
+      SPARK_DRIVER_BLOCK_MANAGER_PORT.key,
+      SPARK_DRIVER_BLOCK_MANAGER_PORT.getValue(options)
+    )
+
+    sparkConfig.addAllConf(conf)
+
     logger.info(s"spark_info: ${sparkConfig}")
     sparkConfig
   }
@@ -185,6 +197,19 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // when spark version is greater than or equal to 1.5.0
     if (master.contains("yarn")) sparkConf.set("spark.yarn.isPython", "true")
 
+    addSparkConf(sparkConf, SPARK_DRIVER_HOST.key, SPARK_DRIVER_HOST.getValue(options))
+    addSparkConf(sparkConf, SPARK_DRIVER_PORT.key, SPARK_DRIVER_PORT.getValue(options))
+    addSparkConf(
+      sparkConf,
+      SPARK_DRIVER_BIND_ADDRESS.key,
+      SPARK_DRIVER_BIND_ADDRESS.getValue(options)
+    )
+    addSparkConf(
+      sparkConf,
+      SPARK_DRIVER_BLOCK_MANAGER_PORT.key,
+      SPARK_DRIVER_BLOCK_MANAGER_PORT.getValue(options)
+    )
+
     val outputDir = createOutputDir(sparkConf)
 
     logger.info(
@@ -213,6 +238,18 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sqlContext.setConf(kv._1, kv._2)
     }
     SparkEngineSession(sc, sqlContext, sparkSession, outputDir)
+  }
+
+  private def addSparkConf(conf: SparkConf, key: String, value: String): Unit = {
+    if (StringUtils.isNotEmpty(value)) {
+      conf.set(key, value)
+    }
+  }
+
+  private def addSparkConf(conf: JMap[String, String], key: String, value: String): Unit = {
+    if (StringUtils.isNotEmpty(value)) {
+      conf.put(key, value)
+    }
   }
 
   def createSparkSession(

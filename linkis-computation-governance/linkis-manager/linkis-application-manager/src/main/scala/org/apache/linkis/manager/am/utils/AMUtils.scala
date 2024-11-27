@@ -167,6 +167,8 @@ object AMUtils {
         AMEngineNodeVo.setLabels(node.getLabels)
         AMEngineNodeVo.setApplicationName(node.getServiceInstance.getApplicationName)
         AMEngineNodeVo.setInstance(node.getServiceInstance.getInstance)
+        AMEngineNodeVo.setMappingHost(node.getServiceInstance.getMappingHost)
+        AMEngineNodeVo.setMappingPorts(node.getServiceInstance.getMappingPorts)
         if (null != node.getEMNode) {
           AMEngineNodeVo.setEmInstance(node.getEMNode.getServiceInstance.getInstance)
         }

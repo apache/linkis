@@ -804,6 +804,8 @@ CREATE TABLE linkis_cg_manager_service_instance (
 	mark varchar(32) NULL,
 	identifier varchar(32) NULL,
 	ticketId varchar(255) NULL DEFAULT NULL,
+    mapping_host varchar(128) NULL DEFAULT NULL,
+    mapping_ports varchar(128) NULL DEFAULT NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	updator varchar(32) NULL,

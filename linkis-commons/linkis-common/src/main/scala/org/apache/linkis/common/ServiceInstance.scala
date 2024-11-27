@@ -21,10 +21,18 @@ class ServiceInstance {
   private var applicationName: String = _
   private var instance: String = _
   private var registryTimestamp: Long = _
+  private var mappingPorts: String = _
+  private var mappingHost: String = _
   def setApplicationName(applicationName: String): Unit = this.applicationName = applicationName
   def getApplicationName: String = applicationName
   def setInstance(instance: String): Unit = this.instance = instance
   def getInstance: String = instance
+
+  def setMappingPorts(mappingPorts: String): Unit = this.mappingPorts = mappingPorts
+  def getMappingPorts: String = mappingPorts
+
+  def setMappingHost(mappingHost: String): Unit = this.mappingHost = mappingHost
+  def getMappingHost: String = mappingHost
 
   def setRegistryTimestamp(registryTimestamp: Long): Unit = this.registryTimestamp =
     registryTimestamp
@@ -59,6 +67,18 @@ object ServiceInstance {
     val serviceInstance = new ServiceInstance
     serviceInstance.setApplicationName(applicationName)
     serviceInstance.setInstance(instance)
+    serviceInstance
+  }
+
+  def apply(
+      applicationName: String,
+      instance: String,
+      mappingPorts: String,
+      mappingHost: String
+  ): ServiceInstance = {
+    val serviceInstance = apply(applicationName, instance)
+    serviceInstance.setMappingPorts(mappingPorts)
+    serviceInstance.setMappingHost(mappingHost)
     serviceInstance
   }
 

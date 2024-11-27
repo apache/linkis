@@ -166,7 +166,7 @@ jobs:
           # Show port-forward list
           bash ./linkis-dist/helm/scripts/remote-proxy.sh list
           # Check if the web service is available
-          curl http://127.0.0.1:8088/indexhtml
+          curl http://127.0.0.1:8088/
 
           # Execute test by linkis-cli
           POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-mg-gateway -o jsonpath='{.items[0].metadata.name}'`
@@ -182,5 +182,4 @@ jobs:
 
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           #sh /opt/linkis/bin/linkis-cli -engineType spark-3.2.1 -codeType sql -code   'show databases' "
-
         shell: bash

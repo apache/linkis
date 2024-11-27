@@ -193,6 +193,7 @@ data:
     `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
     `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
     `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+    `observe_info` varchar(500) DEFAULT NULL COMMENT 'The notification information configuration of this job',
     PRIMARY KEY (`id`),
     KEY `created_time` (`created_time`),
     KEY `submit_user` (`submit_user`)
@@ -723,6 +724,9 @@ data:
     `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `mapping_host` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `mapping_ports` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,

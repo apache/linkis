@@ -95,6 +95,10 @@ CREATE TABLE `linkis_ps_python_module_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN mapping_ports varchar(128);
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN mapping_host varchar(128);
+
+
 
 
 

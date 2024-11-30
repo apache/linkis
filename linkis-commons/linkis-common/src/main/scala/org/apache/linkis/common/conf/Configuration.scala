@@ -37,6 +37,10 @@ object Configuration extends Logging {
 
   val PROMETHEUS_ENDPOINT = CommonVars("wds.linkis.prometheus.endpoint", "/actuator/prometheus")
 
+  val HEALTH_CHECK_URL_PATH = CommonVars("wds.linkis.health-check-url-path", "/actuator/health");
+
+  val STATUS_PAGE_URL_PATH = CommonVars("wds.linkis.status-page-url-path", "/actuator/info");
+
   val LINKIS_HOME = CommonVars("wds.linkis.home", CommonVars("LINKIS_HOME", "/tmp").getValue)
 
   val GATEWAY_URL: CommonVars[String] =

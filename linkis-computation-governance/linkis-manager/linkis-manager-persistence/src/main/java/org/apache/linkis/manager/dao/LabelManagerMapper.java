@@ -95,6 +95,8 @@ public interface LabelManagerMapper {
 
   void deleteLabelResourceByByTicketId(@Param("ticketId") String ticketId);
 
+  void deleteInstance(@Param("instance") String instance);
+
   void deleteLabelIdsAndInstance(
       @Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 

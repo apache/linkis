@@ -29,27 +29,26 @@ import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.resultset.table.TableResultSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ResultSetReaderFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetReaderFactory.class);
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
-      ResultSet<K, V> resultSet, InputStream inputStream) {
+          ResultSet<K, V> resultSet, InputStream inputStream) {
     return new StorageResultSetReader<>(resultSet, inputStream);
   }
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
-      ResultSet<K, V> resultSet, String value) {
+          ResultSet<K, V> resultSet, String value) {
     return new StorageResultSetReader<>(resultSet, value);
   }
 
-  public static ResultSetReader getResultSetReader(String res) {
+  public static ResultSetReader getResultSetReader(String res) throws IOException {
     ResultSetFactory rsFactory = ResultSetFactory.getInstance();
     if (rsFactory.isResultSet(res)) {
       ResultSet<? extends MetaData, ? extends Record> resultSet = rsFactory.getResultSet(res);
@@ -58,21 +57,12 @@ public class ResultSetReaderFactory {
       FsPath resPath = new FsPath(res);
       ResultSet<? extends MetaData, ? extends Record> resultSet =
           rsFactory.getResultSetByPath(resPath);
-      try {
-        FSFactory.getFs(resPath).init(null);
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs init failed", e);
-      }
-      ResultSetReader reader = null;
-      try {
-        reader =
-            ResultSetReaderFactory.getResultSetReader(
-                resultSet, FSFactory.getFs(resPath).read(resPath));
-      } catch (IOException e) {
-        logger.warn("ResultSetReaderFactory fs read failed", e);
-      }
+      Fs fs = FSFactory.getFs(resPath);
+      fs.init(null);
+      ResultSetReader reader =
+          ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath));
       if (reader instanceof StorageResultSetReader) {
-        ((StorageResultSetReader<?, ?>) reader).setFs(FSFactory.getFs(resPath));
+        ((StorageResultSetReader<?, ?>) reader).setFs(fs);
       }
       return (StorageResultSetReader<?, ?>) reader;
     }

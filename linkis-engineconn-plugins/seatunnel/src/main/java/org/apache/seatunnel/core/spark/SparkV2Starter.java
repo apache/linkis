@@ -17,11 +17,12 @@
 
 package org.apache.seatunnel.core.spark;
 
-import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils;
-
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.UnixStyleUsageFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils;
 import org.apache.seatunnel.api.env.EnvCommonOptions;
 import org.apache.seatunnel.common.Constants;
 import org.apache.seatunnel.common.config.Common;
@@ -48,13 +49,18 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.UnixStyleUsageFormatter;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
@@ -325,7 +331,7 @@ public class SparkV2Starter implements Starter {
   protected void appendAppJar(List<String> commands) {
     //    commands.add(Common.appLibDir().resolve("seatunnel-spark-starter.jar").toString());
     String appJarPath =
-        Common.appStarterDir().resolve(EngineType.SPARK2.getStarterJarName()).toString();
+        Common.appStarterDir().resolve(EngineType.SPARK3.getStarterJarName()).toString();
     logger.info("spark appJarPath:" + appJarPath);
     commands.add(appJarPath);
   }

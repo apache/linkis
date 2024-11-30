@@ -17,19 +17,17 @@
 
 package org.apache.linkis.storage.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.LocalFileSystem;
-
-import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Stack;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileSystemUtils {
   private static final Logger logger = LoggerFactory.getLogger(FileSystemUtils.class);
@@ -61,23 +59,19 @@ public class FileSystemUtils {
     createNewFile(filePath, StorageUtils.getJvmUser(), createParentWhenNotExists);
   }
 
-  public static void createNewFile(
-      FsPath filePath, String user, boolean createParentWhenNotExists) {
+  public static void createNewFile(FsPath filePath, String user, boolean createParentWhenNotExists)
+      throws Exception {
     FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(filePath, user);
     try {
       fileSystem.init(null);
       createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists);
-    } catch (IOException e) {
-      logger.warn("FileSystemUtils createNewFile failed", e);
-    } catch (Exception e) {
-      logger.warn("FileSystemUtils createNewFile failed", e);
     } finally {
       IOUtils.closeQuietly(fileSystem);
     }
   }
 
   public static void createNewFileWithFileSystem(
-      FileSystem fileSystem, FsPath filePath, String user, boolean createParentWhenNotExists)
+          FileSystem fileSystem, FsPath filePath, String user, boolean createParentWhenNotExists)
       throws Exception {
     if (!fileSystem.exists(filePath)) {
       if (!fileSystem.exists(filePath.getParent())) {

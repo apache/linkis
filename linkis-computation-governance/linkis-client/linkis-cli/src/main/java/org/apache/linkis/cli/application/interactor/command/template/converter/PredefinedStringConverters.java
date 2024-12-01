@@ -66,7 +66,7 @@ public class PredefinedStringConverters {
             return null;
           }
           Map<String, String> paraMap = new HashMap<>();
-          String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+          String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); // NOSONAR
           for (String prop : arr) {
             prop = prop.trim();
             int index = prop.indexOf("=");
@@ -97,7 +97,7 @@ public class PredefinedStringConverters {
                 return null;
               }
               SpecialMap<String, String> paraMap = new SpecialMap<>();
-              String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+              String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); // NOSONAR
               for (String prop : arr) {
                 prop = prop.trim();
                 int index = prop.indexOf("=");

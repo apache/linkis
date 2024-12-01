@@ -174,13 +174,10 @@ public class CliUtils {
   }
 
   public static String readFile(String path) {
-    try {
-      File inputFile = new File(path);
-
-      InputStream inputStream = new FileInputStream(inputFile);
-      InputStreamReader iReader = new InputStreamReader(inputStream);
-      BufferedReader bufReader = new BufferedReader(iReader);
-
+    File inputFile = new File(path);
+    try (InputStream inputStream = new FileInputStream(inputFile);
+        InputStreamReader iReader = new InputStreamReader(inputStream);
+        BufferedReader bufReader = new BufferedReader(iReader)) {
       StringBuilder sb = new StringBuilder();
       StringBuilder line;
       while (bufReader.ready()) {

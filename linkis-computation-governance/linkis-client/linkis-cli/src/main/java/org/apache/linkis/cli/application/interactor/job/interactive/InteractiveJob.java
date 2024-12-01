@@ -129,7 +129,7 @@ public class InteractiveJob implements Job {
         new LogRetriever(
             jobInfoResult.getUser(),
             jobInfoResult.getJobID(),
-            jobInfoResult.getStrongerExecId(),
+            submitResult.getStrongerExecId(),
             true,
             oper,
             new LogPresenter());
@@ -156,7 +156,7 @@ public class InteractiveJob implements Job {
         new ResultRetriever(
             jobInfoResult.getUser(),
             jobInfoResult.getJobID(),
-            jobInfoResult.getStrongerExecId(),
+            submitResult.getStrongerExecId(),
             oper,
             presenter);
 
@@ -219,7 +219,7 @@ public class InteractiveJob implements Job {
       // query progress
       try {
         jobInfoResult = oper.queryJobInfo(user, jobId);
-        oper.queryJobStatus(user, jobId, execId);
+        oper.queryJobStatus(jobInfoResult.getUser(), jobInfoResult.getJobID(), execId);
       } catch (Exception e) {
         logger.warn("", e);
         retryCnt++;

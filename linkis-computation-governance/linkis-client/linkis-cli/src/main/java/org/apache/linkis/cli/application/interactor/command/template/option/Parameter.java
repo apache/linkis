@@ -67,7 +67,7 @@ public class Parameter<T> extends BaseOption<T> implements Cloneable {
         .append(
             defaultValue.getClass().isArray()
                 ? StringUtils.join((Object[]) defaultValue, ", ")
-                : (defaultValue == null ? "" : defaultValue.toString()))
+                : defaultValue.toString())
         .append(System.lineSeparator());
 
     sb.append("\t\toptional:").append(isOptional());

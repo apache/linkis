@@ -49,8 +49,8 @@ object StorageConfiguration {
 
   val STORAGE_BUILD_FS_CLASSES = CommonVars(
     "wds.linkis.storage.build.fs.classes",
-    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem"
-      + "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem"
+    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
+      "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem"
   )
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)

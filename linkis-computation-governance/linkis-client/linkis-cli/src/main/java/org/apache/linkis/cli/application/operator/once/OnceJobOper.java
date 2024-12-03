@@ -92,10 +92,7 @@ public class OnceJobOper implements JobOper {
   private void panicIfNull(Object obj) {
     if (obj == null) {
       throw new LinkisClientExecutionException(
-          "EXE0040",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ExecutionErr,
-          "Instance of " + obj.getClass().getCanonicalName() + " is null");
+          "EXE0040", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Instance of <Unknown> is null");
     }
   }
 

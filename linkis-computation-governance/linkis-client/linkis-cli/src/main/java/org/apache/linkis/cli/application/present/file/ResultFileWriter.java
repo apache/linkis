@@ -50,7 +50,13 @@ public class ResultFileWriter {
 
     if (overWrite || !file.exists()) {
       try {
-        file.createNewFile();
+        if (!file.createNewFile()) {
+          throw new PresenterException(
+              "PST0006",
+              ErrorLevel.ERROR,
+              CommonErrMsg.PresentDriverErr,
+              "Cannot create file for path: " + file.getAbsolutePath());
+        }
       } catch (Exception e) {
         throw new PresenterException(
             "PST0006",

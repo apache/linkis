@@ -48,7 +48,11 @@ class ResultSetResult extends DWSResult with UserAction {
         for (cursor <- 1 to fileContentList.size()) {
           val colDataList = fileContentList.get(cursor - 1)
           var colData = colDataList.get(metaDataColnum - 1)
-          colData = evaluate(col.get("dataType"), colData.toString)
+          if (null == colData) {
+            colData = null;
+          } else {
+            colData = evaluate(col.get("dataType"), colData.toString)
+          }
           colDataList.set(metaDataColnum - 1, colData)
         }
       }

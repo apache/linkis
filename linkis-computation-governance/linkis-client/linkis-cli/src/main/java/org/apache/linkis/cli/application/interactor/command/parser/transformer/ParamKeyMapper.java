@@ -47,8 +47,7 @@ public abstract class ParamKeyMapper {
   }
 
   public ParamKeyMapper(Map<String, String> mapperRules) {
-    mapperRules = new HashMap<>();
-    initMapperRules(mapperRules);
+    initMapperRules(new HashMap<>());
   }
 
   /** Executor should overwrite init() method to set key to key mapping */

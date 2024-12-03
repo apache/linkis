@@ -54,7 +54,7 @@ public class StdOption<T> extends BaseOption<T> {
         .append(
             defaultValue.getClass().isArray()
                 ? StringUtils.join((Object[]) defaultValue, ", ")
-                : (defaultValue == null ? "" : defaultValue.toString()))
+                : defaultValue.toString())
         .append(System.lineSeparator());
 
     sb.append("\t\toptional:").append(isOptional());

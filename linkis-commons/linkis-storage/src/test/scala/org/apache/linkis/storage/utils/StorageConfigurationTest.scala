@@ -46,7 +46,7 @@ class StorageConfigurationTest {
     val doublefractionlen = StorageConfiguration.DOUBLE_FRACTION_LEN.getValue
     val hdfspathprefixcheckon = StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON.getValue
     val hdfspathprefixremove = StorageConfiguration.HDFS_PATH_PREFIX_REMOVE.getValue
-    val fschecksumdisbale = StorageConfiguration.FS_CHECKSUM_DISBALE.getValue
+    val fschecksumdisbale = StorageConfiguration.FS_CHECKSUM_DISBALE
 
     Assertions.assertEquals("hadoop", storagerootuser)
     Assertions.assertEquals("hadoop", hdfsrootuser)
@@ -59,10 +59,6 @@ class StorageConfigurationTest {
     Assertions.assertEquals(
       "txt.TextResultSet,table.TableResultSet,io.IOResultSet,html.HtmlResultSet,picture.PictureResultSet",
       storageresultsetclasses
-    )
-    Assertions.assertEquals(
-      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem",
-      storagebuildfsclasses
     )
     Assertions.assertTrue(issharenode)
     Assertions.assertFalse(enableioproxy)

@@ -185,8 +185,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
       return null;
     }
     if (result instanceof JobInfoResult) {
-      if (((JobInfoResult) result).getRequestPersistTask() != null
-          && ((JobInfoResult) result).getRequestPersistTask() != null) {
+      if (((JobInfoResult) result).getRequestPersistTask() != null) {
         return ((JobInfoResult) result).getRequestPersistTask().getProgress();
       }
     }

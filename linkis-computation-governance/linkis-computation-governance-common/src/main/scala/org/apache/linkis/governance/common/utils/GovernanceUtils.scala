@@ -132,7 +132,7 @@ object GovernanceUtils extends Logging {
    * @return
    */
   def getResultParentPath(creator: String): String = {
-    val resPrefix = GovernanceCommonConf.DEFAULT_LOGPATH_PREFIX
+    val resPrefix = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
     val resStb = new StringBuilder()
     if (resStb.endsWith("/")) {
       resStb.append(resPrefix)

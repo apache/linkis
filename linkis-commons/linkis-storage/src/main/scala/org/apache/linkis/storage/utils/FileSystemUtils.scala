@@ -122,7 +122,7 @@ object FileSystemUtils extends Logging {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
     dirsToMake.push(dest)
-    while (!fileSystem.exists(parentPath)) {
+    while (parentPath != null && !fileSystem.exists(parentPath)) {
       dirsToMake.push(parentPath)
       parentPath = parentPath.getParent
     }
@@ -153,7 +153,7 @@ object FileSystemUtils extends Logging {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
     dirsToMake.push(dest)
-    while (!fileSystem.exists(parentPath)) {
+    while (parentPath != null && !fileSystem.exists(parentPath)) {
       dirsToMake.push(parentPath)
       parentPath = parentPath.getParent
     }

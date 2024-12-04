@@ -29,6 +29,35 @@ object BmlServerConfiguration {
 
   val BML_IS_HDFS: CommonVars[Boolean] = CommonVars[Boolean]("wds.linkis.bml.is.hdfs", true)
 
+  /**
+   * BML_FILESYSTEM_TYPE: 用于区分BML的文件系统类型，目前支持hdfs、file、s3三种类型 默认值通过BML_IS_HDFS判断，以便版本向下兼容
+   * BML_FILESYSTEM_TYPE: Used to distinguish the type of file system for BML. Currently, it
+   * supports three types: hdfs, file, and s3. The default value is determined by BML_IS_HDFS to
+   * ensure backward compatibility with previous versions.
+   */
+  val BML_FILESYSTEM_TYPE = CommonVars(
+    "linkis.bml.filesystem.type",
+    if (BML_IS_HDFS.getValue) {
+      "hdfs"
+    } else {
+      "file"
+    }
+  )
+
+  /**
+   * BML_PREFIX: BML的文件系统前缀 默认值通过BML_IS_HDFS判断，以便版本向下兼容 BML_PREFIX: The file system prefix for BML.
+   * The default value is determined based on BML_IS_HDFS to ensure backward compatibility with
+   * previous versions.
+   */
+  val BML_PREFIX = CommonVars(
+    "linkis.bml.prefix",
+    if (BML_IS_HDFS.getValue) {
+      BML_HDFS_PREFIX.getValue
+    } else {
+      BML_LOCAL_PREFIX.getValue
+    }
+  )
+
   val BML_CLEAN_EXPIRED_TIME: CommonVars[Int] =
     CommonVars[Int]("wds.linkis.bml.cleanExpired.time", 100)
 

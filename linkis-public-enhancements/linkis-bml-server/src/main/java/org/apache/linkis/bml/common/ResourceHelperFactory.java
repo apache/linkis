@@ -26,16 +26,22 @@ public class ResourceHelperFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceHelperFactory.class);
 
-  private static final boolean IS_HDFS = (Boolean) BmlServerConfiguration.BML_IS_HDFS().getValue();
+  private static final String FILESYSTEM_TYPE =
+      BmlServerConfiguration.BML_FILESYSTEM_TYPE().getValue();
 
   private static final ResourceHelper HDFS_RESOURCE_HELPER = new HdfsResourceHelper();
 
   private static final ResourceHelper LOCAL_RESOURCE_HELPER = new LocalResourceHelper();
 
+  private static final ResourceHelper S3_RESOURCE_HELPER = new S3ResourceHelper();
+
   public static ResourceHelper getResourceHelper() {
-    if (IS_HDFS) {
+    if (FILESYSTEM_TYPE.equals("hdfs")) {
       LOGGER.info("will store resource in hdfs");
       return HDFS_RESOURCE_HELPER;
+    } else if (FILESYSTEM_TYPE.equals("s3")) {
+      LOGGER.info("will store resource in s3");
+      return S3_RESOURCE_HELPER;
     } else {
       LOGGER.info("will store resource in local");
       return LOCAL_RESOURCE_HELPER;

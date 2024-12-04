@@ -148,6 +148,9 @@ public class FsRestfulApi {
     if (StorageUtils.HDFS().equalsIgnoreCase(pathType)) {
       path = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
       returnType = StorageUtils.HDFS().toUpperCase();
+    } else if (StorageUtils.S3().equalsIgnoreCase(pathType)) {
+      path = localUserRootPath + userName;
+      returnType = StorageUtils.S3().toUpperCase();
     } else {
       path = localUserRootPath + userName;
       returnType = LOCAL_RETURN_TYPE;
@@ -1490,6 +1493,7 @@ public class FsRestfulApi {
     // 返回成功消息并包含文件地址
     return Message.ok().data("filePath", newPath);
   }
+
   /**
    * *
    *

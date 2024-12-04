@@ -363,8 +363,8 @@ public class S3FileSystem extends FileSystem {
   }
 
   /**
-   * s3没有目录概念，无法直接创建目录
-   * S3 lacks the concept of directories and cannot create directories directly.
+   * s3没有目录概念，无法直接创建目录 S3 lacks the concept of directories and cannot create directories directly.
+   *
    * @param dest
    * @return
    * @throws IOException

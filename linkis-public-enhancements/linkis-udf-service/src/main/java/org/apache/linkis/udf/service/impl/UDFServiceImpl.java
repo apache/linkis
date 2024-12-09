@@ -127,7 +127,14 @@ public class UDFServiceImpl implements UDFService {
         throw new UDFException("分类名不能为空！");
       }
       // 支持hdfs path
-      FsPath fsPath = new FsPath(udfVo.getPath());
+      String path = udfVo.getPath();
+      if (StringUtils.isBlank(path) || path.contains("../")) {
+        throw new UDFException(
+            "The path: "
+                + path
+                + " of udf is error. Please rename it and rebuild it.(udf的路径错误，请修改后重建)");
+      }
+      FsPath fsPath = new FsPath(path);
       //        FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath.getFsType());
       FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
       if (udfVo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(udfVo.getPath())) {

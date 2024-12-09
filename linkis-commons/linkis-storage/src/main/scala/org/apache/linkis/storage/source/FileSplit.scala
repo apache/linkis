@@ -51,6 +51,9 @@ class FileSplit(
 
   var params: util.Map[String, String] = new util.HashMap[String, String]
 
+  private var limitBytes = 0L
+  private var limitColumnLength = 0
+
   def page(page: Int, pageSize: Int): Unit = {
     if (!pageTrigger) {
       start = (page - 1) * pageSize
@@ -124,13 +127,42 @@ class FileSplit(
 
   def collect(): Pair[Object, util.ArrayList[Array[String]]] = {
     val record = new util.ArrayList[Array[String]]
-    val metaData = `while`(collectMetaData, r => record.add(collectRecord(r)))
+    var overFlag = false
+    var tmpBytes = 0L
+
+    val metaData = `while`(
+      collectMetaData,
+      r => {
+        if (limitBytes > 0 && !overFlag) {
+          val resArr = collectRecord(r)
+          resArr.foreach(res => tmpBytes = tmpBytes + res.getBytes.length)
+          if (tmpBytes > limitBytes) {
+            overFlag = true
+          }
+          record.add(resArr)
+        } else {
+          record.add(collectRecord(r))
+        }
+      }
+    )
     new Pair(metaData, record)
   }
 
   def collectRecord(record: Record): Array[String] = {
     record match {
-      case t: TableRecord => t.row.map(DataType.valueToString)
+      case t: TableRecord =>
+        if (limitColumnLength > 0) {
+          t.row.map { col =>
+            val str = DataType.valueToString(col)
+            if (str.length > limitColumnLength) {
+              str.substring(0, limitColumnLength)
+            } else {
+              str
+            }
+          }
+        } else {
+          t.row.map(DataType.valueToString)
+        }
       case l: LineRecord => Array(l.getLine)
     }
   }
@@ -156,6 +188,14 @@ class FileSplit(
   def ifContinueRead: Boolean = !pageTrigger || count <= end
 
   def ifStartRead: Boolean = !pageTrigger || count >= start
+
+  def setLimitBytes(limitBytes: Long): Unit = {
+    this.limitBytes = limitBytes
+  }
+
+  def setLimitColumnLength(limitColumnLength: Int): Unit = {
+    this.limitColumnLength = limitColumnLength
+  }
 
   override def close(): Unit = IOUtils.closeQuietly(fsReader)
 

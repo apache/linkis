@@ -111,7 +111,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     NodeResource resource =
         (NodeResource)
             retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                RMConfiguration.EXTERNAL_RETRY_NUM.getValue(),
                 (i) -> externalResourceRequester.requestResourceInfo(identifier, provider),
                 (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
     return resource;
@@ -136,7 +136,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     List<ExternalAppInfo> appInfos =
         (List<ExternalAppInfo>)
             retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                RMConfiguration.EXTERNAL_RETRY_NUM.getValue(),
                 (i) -> externalResourceRequester.requestAppInfo(identifier, provider),
                 (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
     return appInfos;
@@ -177,8 +177,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     if (label == null) {
       realClusterLabel =
           LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(ClusterLabel.class);
-      realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME().getValue());
-      realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE().getValue());
+      realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME.getValue());
+      realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE.getValue());
     } else {
       realClusterLabel = (ClusterLabel) label;
     }

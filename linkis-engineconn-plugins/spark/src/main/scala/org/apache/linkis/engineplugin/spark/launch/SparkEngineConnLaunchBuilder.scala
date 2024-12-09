@@ -74,9 +74,8 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
       engineConnBuildRequest: EngineConnBuildRequest
   ): util.Map[String, String] = {
     val environment = super.getEnvironment
-    if (isOnceMode) {
+    if (isOnceMode)
       addPathToClassPath(environment, s"$$$SPARK_HOME_ENV/jars/*")
-    }
     environment
   }
 

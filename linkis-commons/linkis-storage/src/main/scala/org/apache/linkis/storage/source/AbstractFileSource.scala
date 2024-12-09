@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.math3.util.Pair
 
 import java.util
+import java.util.Arrays
 
 import scala.collection.JavaConverters._
 
@@ -67,5 +68,15 @@ abstract class AbstractFileSource(var fileSplits: Array[FileSplit]) extends File
 
   override def getFileInfo(needToCountRowNumber: Int = 5000): Array[Pair[Int, Int]] =
     fileSplits.map(_.getFileInfo(needToCountRowNumber))
+
+  override def limitBytes(limitBytes: Long): FileSource = {
+    fileSplits.foreach((fileSplit: FileSplit) => fileSplit.setLimitBytes(limitBytes))
+    this
+  }
+
+  override def limitColumnLength(limitColumnLength: Int): FileSource = {
+    fileSplits.foreach((fileSplit: FileSplit) => fileSplit.setLimitColumnLength(limitColumnLength))
+    this
+  }
 
 }

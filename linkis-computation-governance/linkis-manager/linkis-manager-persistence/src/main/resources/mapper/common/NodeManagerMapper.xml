@@ -133,6 +133,12 @@
         WHERE instance = #{instance}
     </select>
 
+    <select id="getNodeInstanceByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
+        SELECT *
+        FROM linkis_cg_manager_service_instance
+        WHERE ticketId = #{ticketId}
+    </select>
+
     <select id="getNodeInstanceById" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
         SELECT *
         FROM linkis_cg_manager_service_instance

@@ -26,7 +26,7 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
-import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
+import org.apache.linkis.manager.am.label.{EngineReuseLabelChooser, LabelChecker}
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -49,7 +49,7 @@ import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
-import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
+import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
@@ -385,10 +385,18 @@ class DefaultEngineCreateService
 
   private def ensuresIdle(engineNode: EngineNode, resourceTicketId: String): Boolean = {
 
-    val engineNodeInfo = Utils.tryAndWarnMsg(
-      getEngineNodeManager.getEngineNodeInfoByDB(engineNode)
-    )("Failed to from db get engine node info")
+    val engineNodeInfo =
+      Utils.tryAndWarnMsg(if (engineNode.getMark == AMConstant.CLUSTER_PROCESS_MARK) {
+        getEngineNodeManager.getEngineNodeInfoByTicketId(resourceTicketId)
+      } else {
+        getEngineNodeManager.getEngineNodeInfoByDB(engineNode)
+      })("Failed to from db get engine node info")
+
     if (null == engineNodeInfo) return false
+
+    if (engineNodeInfo.getServiceInstance != null) {
+      engineNode.setServiceInstance(engineNodeInfo.getServiceInstance)
+    }
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
       val msg = if (metrics != null) metrics.getHeartBeatMsg else null

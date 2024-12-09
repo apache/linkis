@@ -30,6 +30,10 @@ object SparkConfiguration extends Logging {
   val SPARK_HOME_ENV = "SPARK_HOME"
   val SPARK_CONF_DIR_ENV = "SPARK_CONF_DIR"
 
+  val SPARK_YARN_CLIENT = "client"
+
+  val SPARK_YARN_CLUSTER = "cluster"
+
   val PROCESS_MAX_THREADS = CommonVars[Int]("wds.linkis.process.threadpool.max", 100)
 
   val SPARK_SESSION_HOOK = CommonVars[String]("wds.linkis.engine.spark.session.hook", "")
@@ -46,11 +50,38 @@ object SparkConfiguration extends Logging {
 
   val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", "client")
 
+  val SPARK_YARN_CLUSTER_JARS =
+    CommonVars[String]("linkis.spark.yarn.cluster.jars", "hdfs:///spark/cluster")
+
   val SPARK_APP_NAME = CommonVars[String]("spark.app.name", "Linkis-EngineConn-Spark")
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
   val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
 
+  val SPARK_K8S_CONFIG_FILE = CommonVars[String]("linkis.spark.k8s.config.file", "~/.kube/config")
+  val SPARK_K8S_SERVICE_ACCOUNT = CommonVars[String]("linkis.spark.k8s.serviceAccount", "")
+  val SPARK_K8S_MASTER_URL = CommonVars[String]("linkis.spark.k8s.master.url", "")
+  val SPARK_K8S_USERNAME = CommonVars[String]("linkis.spark.k8s.username", "")
+  val SPARK_K8S_PASSWORD = CommonVars[String]("linkis.spark.k8s.password", "")
+  val SPARK_K8S_IMAGE = CommonVars[String]("linkis.spark.k8s.image", "apache/spark:v3.2.1")
+  val SPARK_K8S_IMAGE_PULL_POLICY = CommonVars[String]("linkis.spark.k8s.imagePullPolicy", "Always")
+  val SPARK_K8S_LANGUAGE_TYPE = CommonVars[String]("linkis.spark.k8s.languageType", "Scala")
+  val SPARK_K8S_RESTART_POLICY = CommonVars[String]("linkis.spark.k8s.restartPolicy", "Never")
+  val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
+  val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
+  val SPARK_K8S_UI_PORT = CommonVars[String]("linkis.spark.k8s.ui.port", "4040")
+
+  val SPARK_K8S_EXECUTOR_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.executor.request.cores", "1")
+
+  val SPARK_K8S_DRIVER_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.driver.request.cores", "1")
+
+  val SPARK_KUBERNETES_FILE_UPLOAD_PATH =
+    CommonVars[String]("spark.kubernetes.file.upload.path", "local:///opt/spark/tmp")
+
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
+
+  val SPARK_PYTHON_FILES = CommonVars[String]("spark.submit.pyFiles", "")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
@@ -83,14 +114,14 @@ object SparkConfiguration extends Logging {
     "Map output compression method（map输出结果压缩方式）"
   )
 
-  val SPARK_MASTER = CommonVars[String]("spark.master", "yarn", "Default master（默认master）")
+  val SPARK_MASTER = CommonVars[String]("spark.master", "yarn", "Default yarn（默认yarn）")
 
   val SPARK_CONSOLE_OUTPUT_NUM = CommonVars[Int]("wds.linkis.spark.output.line.limit", 10)
 
   val LINKIS_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
 
   val DEFAULT_SPARK_JAR_NAME =
-    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.1.jar")
+    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.2.jar")
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
@@ -148,6 +179,11 @@ object SparkConfiguration extends Logging {
     CommonVars("linkis.spark.once.app.fetch.status.failed.num", 3)
 
   val SPARK_ONCE_YARN_RESTFUL_URL = CommonVars[String]("linkis.spark.once.yarn.restful.url", "")
+
+  val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
+
+  val SCALA_PARSE_APPEND_CODE =
+    CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

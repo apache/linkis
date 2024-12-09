@@ -81,13 +81,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-      <version>${json4s.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <scope>provided</scope>

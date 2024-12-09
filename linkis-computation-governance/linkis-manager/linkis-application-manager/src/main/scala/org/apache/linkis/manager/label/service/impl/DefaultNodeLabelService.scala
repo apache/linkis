@@ -19,14 +19,15 @@ package org.apache.linkis.manager.label.service.impl
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.converter.MetricsConverter
 import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
 import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.conf.LabelManagerConf
-import org.apache.linkis.manager.label.entity.{Feature, Label}
+import org.apache.linkis.manager.label.entity.{Feature, InheritableLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.{
   EngineInstanceLabel,
   EngineTypeLabel,
@@ -42,7 +43,6 @@ import org.apache.linkis.manager.persistence.{
 }
 import org.apache.linkis.manager.rm.service.LabelResourceService
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.server.toScalaBuffer
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 
 import java.util
-import java.util.List
+import java.util.{ArrayList, List}
 import java.util.stream.Collectors
 
 import scala.collection.JavaConverters._
@@ -201,6 +201,42 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     }
   }
 
+  override def labelsFromInstanceToNewInstance(
+      oldServiceInstance: ServiceInstance,
+      newServiceInstance: ServiceInstance
+  ): Unit = {
+    val labels = labelManagerPersistence.getLabelByServiceInstance(newServiceInstance)
+    val newKeyList = if (null != labels) {
+      labels.map(_.getLabelKey).asJava
+    } else {
+      new util.ArrayList[String]()
+    }
+    val nodeLabels = labelManagerPersistence.getLabelByServiceInstance(oldServiceInstance)
+    if (null == nodeLabels) {
+      return
+    }
+    val oldKeyList = nodeLabels.map(_.getLabelKey).asJava
+    oldKeyList.removeAll(newKeyList)
+    // Assign the old association to the newServiceInstance
+    if (!CollectionUtils.isEmpty(oldKeyList)) {
+      nodeLabels.foreach(nodeLabel => {
+        if (oldKeyList.contains(nodeLabel.getLabelKey)) {
+          val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(nodeLabel)
+          val labelId = tryToAddLabel(persistenceLabel)
+          if (labelId > 0) {
+            val labelIds = new util.ArrayList[Integer]
+            labelIds.add(labelId)
+            labelManagerPersistence.addLabelToNode(newServiceInstance, labelIds)
+          }
+        }
+
+      })
+    }
+    // Delete an old association
+    val oldLabelId = nodeLabels.map(_.getId).asJava
+    labelManagerPersistence.removeNodeLabels(oldServiceInstance, oldLabelId)
+  }
+
   /**
    * Remove the labels related by node instance
    *
@@ -234,13 +270,13 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     val removeLabels = if (isEngine) {
       labels
     } else {
-      labels.filter(label => !LabelManagerConf.LONG_LIVED_LABEL.contains(label.getLabelKey))
+      labels.filter(label => !AMConfiguration.LONG_LIVED_LABEL.contains(label.getLabelKey))
     }
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId).asJava)
 
     // remove taskId label
     labels.foreach(label => {
-      if (LabelManagerConf.TMP_LIVED_LABEL.contains(label.getLabelKey)) {
+      if (AMConfiguration.TMP_LIVED_LABEL.contains(label.getLabelKey)) {
         labelManagerPersistence.removeLabel(label)
       }
     })

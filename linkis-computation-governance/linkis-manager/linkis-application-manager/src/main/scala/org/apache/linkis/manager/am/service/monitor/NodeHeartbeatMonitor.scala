@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.ManagerMonitorConf
+import org.apache.linkis.manager.am.converter.MetricsConverter
 import org.apache.linkis.manager.am.service.em.EMUnregisterService
 import org.apache.linkis.manager.am.service.engine.EngineStopService
 import org.apache.linkis.manager.am.service.heartbeat.AMHeartbeatService
@@ -34,7 +35,6 @@ import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHea
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.service.common.label.ManagerLabelService
-import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
 

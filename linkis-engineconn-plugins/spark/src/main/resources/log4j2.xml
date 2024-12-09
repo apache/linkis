@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <configuration status="error" monitorInterval="30">
     <appenders>
         <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"
@@ -83,9 +83,6 @@
         </logger>
         <logger name="org.apache.spark.deploy.yarn.Client" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
-        </logger>
-        <logger name="com.netflix.discovery.TimedSupervisorTask" level="ERROR" additivity="true">
-            <appender-ref ref="Send"/>
         </logger>
     </loggers>
 </configuration>

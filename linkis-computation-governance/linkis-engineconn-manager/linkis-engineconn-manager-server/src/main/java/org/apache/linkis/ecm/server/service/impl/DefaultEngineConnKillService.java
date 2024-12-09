@@ -96,6 +96,13 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
       killYarnAppIdOfOneEc(engineStopRequest);
     }
 
+    if (AMConstant.CLUSTER_PROCESS_MARK.equals(engineStopRequest.getIdentifierType())
+        && engineStopRequest.getIdentifier() != null) {
+      List<String> appIds = new ArrayList<>();
+      appIds.add(engineStopRequest.getIdentifier());
+      GovernanceUtils.killYarnJobApp(appIds);
+    }
+
     if (!response.getStopStatus()) {
       EngineSuicideRequest request =
           new EngineSuicideRequest(
@@ -184,6 +191,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
       case "sqoop":
         regex = EngineConnConf.SQOOP_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
         break;
+      case "seatunnel":
       case "flink":
       case "hive":
         regex = EngineConnConf.HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();

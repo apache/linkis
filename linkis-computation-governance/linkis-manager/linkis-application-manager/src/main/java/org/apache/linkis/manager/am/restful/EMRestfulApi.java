@@ -123,7 +123,7 @@ public class EMRestfulApi {
 
   private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
+  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS.getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
     if (Configuration.isNotAdmin(userName)) {

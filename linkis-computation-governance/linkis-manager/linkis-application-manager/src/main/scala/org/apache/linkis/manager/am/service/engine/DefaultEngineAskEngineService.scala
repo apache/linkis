@@ -294,7 +294,7 @@ class DefaultEngineAskEngineService
     )
     val chooseLabels = multiUserEngineReuseLabelChooser.chooseLabels(labelList)
     val userCreatorAndEngineTypeLabel =
-      new RMLabelContainer(chooseLabels).getCombinedUserCreatorEngineTypeLabel
+      new RMLabelContainer(chooseLabels).getCombinedResourceLabel
     val engineCreateKey = if (null != userCreatorAndEngineTypeLabel) {
       userCreatorAndEngineTypeLabel.getStringValue + LabelUtil.getTenantValue(chooseLabels)
     } else {
@@ -303,7 +303,7 @@ class DefaultEngineAskEngineService
     val engineType = LabelUtil.getEngineType(chooseLabels)
     val semaphore =
       if (
-          AMConfiguration.AM_ENGINE_ASK_MAX_NUMBER.contains(
+          AMConfiguration.AM_ENGINE_ASK_MAX_NUMBER.containsKey(
             engineType.toLowerCase(Locale.getDefault)
           ) && StringUtils.isNotBlank(engineCreateKey)
       ) {
@@ -314,7 +314,7 @@ class DefaultEngineAskEngineService
               engineCreateKey,
               new Semaphore(
                 AMConfiguration.AM_ENGINE_ASK_MAX_NUMBER
-                  .getOrElse(engineType.toLowerCase(Locale.getDefault), 10)
+                  .getOrDefault(engineType.toLowerCase(Locale.getDefault), 10)
               )
             )
           }

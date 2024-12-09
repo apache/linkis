@@ -66,9 +66,6 @@
                 <exclude>com.google.guava:guava:jar</exclude>
                 <exclude>com.google.protobuf:protobuf-java:jar</exclude>
                 <exclude>com.ning:async-http-client:jar</exclude>
-                <exclude>com.sun.jersey:jersey-json:jar</exclude>
-                <exclude>com.sun.jersey:jersey-server:jar</exclude>
-                <exclude>com.sun.jersey:jersey-servlet:jar</exclude>
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
@@ -107,7 +104,6 @@
                 <exclude>javax.xml.bind:jaxb-api:jar</exclude>
                 <exclude>javax.xml.stream:stax-api:jar</exclude>
                 <exclude>mysql:mysql-connector-java:jar</exclude>
-                <exclude>org.antlr:antlr-runtime:jar</exclude>
                 <exclude>org.antlr:stringtemplate:jar</exclude>
                 <exclude>org.apache.commons:commons-compress:jar</exclude>
                 <exclude>org.apache.commons:commons-math:jar</exclude>
@@ -132,6 +128,8 @@
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
                 <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
                 <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
+                <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
                 <exclude>org.codehaus.woodstox:stax2-api:jar</exclude>
                 <exclude>org.codehaus.woodstox:woodstox-core-asl:jar</exclude>

@@ -17,17 +17,19 @@
 
 package org.apache.linkis.manager.label.conf
 
+import org.apache.linkis.manager.am.conf.AMConfiguration
+
 import org.junit.jupiter.api.Test
 
 class LabelManagerConfTest {
 
   @Test def testRandomFiltering(): Unit = {
     var label = "tenant"
-    assert(LabelManagerConf.LONG_LIVED_LABEL.contains(label))
+    assert(AMConfiguration.LONG_LIVED_LABEL.contains(label))
     label = "yarnCluster"
-    assert(LabelManagerConf.LONG_LIVED_LABEL.contains(label))
+    assert(AMConfiguration.LONG_LIVED_LABEL.contains(label))
     label = "test"
-    assert(!LabelManagerConf.LONG_LIVED_LABEL.contains(label))
+    assert(!AMConfiguration.LONG_LIVED_LABEL.contains(label))
   }
 
 }

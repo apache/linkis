@@ -76,8 +76,8 @@
       <version>${springfox.version}</version>
       <exclusions>
         <exclusion>
-          <artifactId>classgraph</artifactId>
           <groupId>io.github.classgraph</groupId>
+          <artifactId>classgraph</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

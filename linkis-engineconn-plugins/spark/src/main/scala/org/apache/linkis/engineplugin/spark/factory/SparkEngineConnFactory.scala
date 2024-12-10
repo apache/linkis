@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.factory
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineplugin.spark.client.context.{ExecutionContext, SparkConfig}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration

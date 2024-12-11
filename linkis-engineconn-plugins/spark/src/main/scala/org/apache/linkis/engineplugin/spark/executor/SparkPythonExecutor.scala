@@ -77,7 +77,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = SecureRandomStringUtils.randomAlphanumeric(256)
+  private lazy val py4jToken: String = SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()

@@ -47,6 +47,7 @@ import org.apache.spark.sql.execution.datasources.csv.UDF
 
 import java.io._
 import java.net.InetAddress
+import java.security.SecureRandom
 import java.util
 
 import scala.collection.JavaConverters._

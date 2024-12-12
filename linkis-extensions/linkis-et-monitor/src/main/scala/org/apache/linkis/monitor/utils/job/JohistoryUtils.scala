@@ -15,13 +15,29 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.util;
+package org.apache.linkis.monitor.utils.job
 
-public class Constants {
-  public static final String APPLICATION_NAME = "linkis-ps-publicservice";
+import org.apache.linkis.monitor.core.pac.ScannedData
 
-  public static final String UNFINISHED_JOB_STATUS =
-      "Inited,WaitForRetry,Scheduled,Running".toUpperCase();
+import java.util
 
-  public static final String FINISHED_JOB_STATUS = "Succeed,Failed,Cancelled,Timeout".toUpperCase();
+import scala.collection.JavaConverters._
+
+object JohistoryUtils {
+
+  def getJobhistorySanData(data: util.List[ScannedData]): List[Any] = {
+    if (data == null) {
+      return List.empty[ScannedData]
+    }
+    val scalaData = data.asScala
+    val result = scalaData.flatMap { dataList =>
+      if (dataList != null && dataList.getData() != null) {
+        dataList.getData().asScala
+      } else {
+        List.empty[ScannedData]
+      }
+    }.toList
+    result
+  }
+
 }

@@ -23,6 +23,8 @@ import org.apache.linkis.monitor.core.pac.DataFetcher;
 import org.apache.linkis.monitor.core.scanner.AnomalyScanner;
 import org.apache.linkis.monitor.core.scanner.DefaultScanner;
 import org.apache.linkis.monitor.factory.MapperFactory;
+import org.apache.linkis.monitor.jobhistory.analyze.JobHistoryAnalyzeAlertSender;
+import org.apache.linkis.monitor.jobhistory.analyze.JobHistoryAnalyzeRule;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrCodeRule;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrorCodeAlertSender;
 import org.apache.linkis.monitor.jobhistory.index.JobIndexRule;
@@ -170,6 +172,14 @@ public class JobHistoryMonitor {
       }
     } catch (Exception e) {
       logger.warn("CommonJobRunTimeRule Scan Error msg: " + e.getMessage());
+    }
+    // 新增失败任务分析扫描
+    try {
+      JobHistoryAnalyzeRule jobHistoryAnalyzeRule =
+              new JobHistoryAnalyzeRule(new JobHistoryAnalyzeAlertSender());
+      scanner.addScanRule(jobHistoryAnalyzeRule);
+    } catch (Exception e) {
+      logger.warn("JobHistoryAnalyzeRule Scan Error msg: " + e.getMessage());
     }
     // 执行任务扫描
     JobMonitorUtils.run(scanner, fetchers, true);

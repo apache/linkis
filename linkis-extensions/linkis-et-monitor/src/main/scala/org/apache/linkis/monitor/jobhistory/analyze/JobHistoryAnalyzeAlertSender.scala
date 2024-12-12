@@ -15,13 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.util;
+package org.apache.linkis.monitor.jobhistory.analyze
 
-public class Constants {
-  public static final String APPLICATION_NAME = "linkis-ps-publicservice";
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.constants.Constants
+import org.apache.linkis.monitor.core.ob.{Event, Observer}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
+import org.apache.linkis.monitor.utils.alert.ims.{MonitorAlertUtils, PooledImsAlertUtils}
 
-  public static final String UNFINISHED_JOB_STATUS =
-      "Inited,WaitForRetry,Scheduled,Running".toUpperCase();
+import java.util
 
-  public static final String FINISHED_JOB_STATUS = "Succeed,Failed,Cancelled,Timeout".toUpperCase();
+import scala.collection.JavaConverters._
+
+
+class JobHistoryAnalyzeAlertSender() extends Observer with Logging {
+  override def update(e: Event, jobHistroyList: scala.Any): Unit = {}
+
 }

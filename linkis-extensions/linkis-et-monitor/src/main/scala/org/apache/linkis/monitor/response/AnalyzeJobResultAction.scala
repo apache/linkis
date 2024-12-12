@@ -15,13 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.util;
+package org.apache.linkis.monitor.response
 
-public class Constants {
-  public static final String APPLICATION_NAME = "linkis-ps-publicservice";
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-  public static final String UNFINISHED_JOB_STATUS =
-      "Inited,WaitForRetry,Scheduled,Running".toUpperCase();
+import java.util
 
-  public static final String FINISHED_JOB_STATUS = "Succeed,Failed,Cancelled,Timeout".toUpperCase();
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/diagnosis-query")
+class AnalyzeJobResultAction extends DWSResult {
+
+  @BeanProperty
+  var messages: util.ArrayList[util.Map[String, AnyRef]] = _
+
 }

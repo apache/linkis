@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.util;
+package org.apache.linkis.jobhistory.dao;
 
-public class Constants {
-  public static final String APPLICATION_NAME = "linkis-ps-publicservice";
+import org.apache.linkis.jobhistory.entity.JobDiagnosis;
 
-  public static final String UNFINISHED_JOB_STATUS =
-      "Inited,WaitForRetry,Scheduled,Running".toUpperCase();
+public interface JobDiagnosisMapper {
+  void insert(JobDiagnosis jobDiagnosis);
 
-  public static final String FINISHED_JOB_STATUS = "Succeed,Failed,Cancelled,Timeout".toUpperCase();
+  void deleteById(Long id);
+
+  void update(JobDiagnosis jobDiagnosis);
+
+  JobDiagnosis selectById(Long jobHistoryId);
 }

@@ -32,6 +32,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +49,9 @@ public class JobhistoryUtils {
   private static Sender sender =
       Sender.getSender(
           Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());;
+
+  public static final String shellPath = Configuration.getLinkisHome() + "/admin/";
+  public static final String analyzeFilePath = "tools/linkis-analyze.sh";
 
   public static byte[] downLoadJobToExcel(
       List<QueryTaskVO> jobHistoryList,
@@ -171,5 +175,14 @@ public class JobhistoryUtils {
   private static String formatExecuteApplicationName(
       String executeApplicationName, String requestApplicationName) {
     return requestApplicationName + "/" + executeApplicationName;
+  }
+
+  public static String getDiagnosisMsg(String taskID) {
+    // 执行shell 脚本获取诊断信息
+    List<String> cmdlist = new ArrayList<>();
+    cmdlist.add("sh");
+    cmdlist.add(shellPath + analyzeFilePath);
+    cmdlist.add(taskID);
+    return Utils.exec(cmdlist.toArray(new String[3]), 600 * 1000L);
   }
 }

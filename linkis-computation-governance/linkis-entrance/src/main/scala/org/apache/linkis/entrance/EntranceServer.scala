@@ -175,7 +175,6 @@ abstract class EntranceServer extends Logging {
       }
 
       getEntranceContext.getOrCreateScheduler().submit(job)
-
       val msg = LogUtils.generateInfo(
         s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
       )
@@ -190,10 +189,6 @@ abstract class EntranceServer extends Logging {
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
-      getEntranceContext
-        .getOrCreatePersistenceManager()
-        .createPersistenceEngine()
-        .updateIfNeeded(jobRequest)
       LoggerUtils.removeJobIdMDC()
       job
     } { t =>

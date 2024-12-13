@@ -97,8 +97,8 @@ class StorageExcelWriter(
         case VarcharType => style.setDataFormat(format.getFormat("@"))
         case DateType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
         case TimestampType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
-        case DecimalType(dataType, 3) => style.setDataFormat(format.getFormat("#.000000000"))
-        case BigDecimalType => style.setDataFormat(format.getFormat("#.000000000"))
+        case DecimalType(_, _) => style.setDataFormat(format.getFormat("#.000000000"))
+        case BigDecimalType(_, _) => style.setDataFormat(format.getFormat("#.000000000"))
         case _ => style.setDataFormat(format.getFormat("@"))
       }
     }
@@ -171,10 +171,10 @@ class StorageExcelWriter(
         case VarcharType => cell.setCellValue(DataType.valueToString(elem))
         case DateType => cell.setCellValue(getDate(elem))
         case TimestampType => cell.setCellValue(getDate(elem))
-        case DecimalType(dataType, 3) =>
+        case DecimalType(_, _) =>
           doubleCheck(DataType.valueToString(elem))
           cell.setCellValue(DataType.valueToString(elem).toDouble)
-        case BigDecimalType =>
+        case BigDecimalType(_, _) =>
           doubleCheck(DataType.valueToString(elem))
           cell.setCellValue(DataType.valueToString(elem).toDouble)
         case _ =>

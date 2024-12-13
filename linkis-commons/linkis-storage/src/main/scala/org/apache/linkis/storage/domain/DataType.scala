@@ -89,7 +89,7 @@ object DataType extends Logging {
       case LongType | BigIntType => if (isNumberNull(newValue)) null else newValue.toLong
       case FloatType => if (isNumberNull(newValue)) null else newValue.toFloat
       case DoubleType => if (isNumberNull(newValue)) null else newValue.toDouble
-      case DecimalType(dataType, 3) =>
+      case DecimalType(_, _) =>
         if (isNumberNull(newValue)) null else new JavaBigDecimal(newValue)
       case DateType => if (isNumberNull(newValue)) null else Date.valueOf(newValue)
       case TimestampType =>
@@ -150,9 +150,11 @@ case object ArrayType extends DataType("array", 2003)
 case object MapType extends DataType("map", 2000)
 case object ListType extends DataType("list", 2001)
 case object StructType extends DataType("struct", 2002)
-case object BigDecimalType extends DataType("bigdecimal", 3)
 
 case class DecimalType(override val typeName: String, override val javaSQLType: Int)
+    extends DataType(typeName, javaSQLType)
+
+case class BigDecimalType(override val typeName: String, override val javaSQLType: Int)
     extends DataType(typeName, javaSQLType)
 
 case class Column(columnName: String, dataType: DataType, comment: String) {

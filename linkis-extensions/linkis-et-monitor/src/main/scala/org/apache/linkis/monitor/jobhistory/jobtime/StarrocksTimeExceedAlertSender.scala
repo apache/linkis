@@ -32,7 +32,7 @@ import java.util
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-class StarrocksTimeExceedAlterSender extends Observer with Logging {
+class StarrocksTimeExceedAlertSender extends Observer with Logging {
 
   /**
    * Observer Pattern

@@ -17,6 +17,8 @@
 
 package org.apache.linkis.monitor.jobhistory.jobtime
 
+import org.apache.commons.collections.MapUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
@@ -25,16 +27,12 @@ import org.apache.linkis.monitor.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.until.{CacheUtils, HttpsUntils}
 import org.apache.linkis.server.BDPJettyServerHelper
 
-import org.apache.commons.collections.MapUtils
-import org.apache.commons.lang3.StringUtils
-
 import java.util
-import java.util.{ArrayList, HashMap, List, Locale, Map}
-
+import java.util.Locale
 import scala.collection.JavaConverters._
 
-class StarrocksTimeExceedRule(hitObserver: Observer)
-    extends AbstractScanRule(event = new StarrocksTimeExceedHitEvent, observer = hitObserver)
+class StarrocksTimeKillRule(hitObserver: Observer)
+    extends AbstractScanRule(event = new StarrocksTimeKillHitEvent, observer = hitObserver)
     with Logging {
 
   private val scanRuleList = CacheUtils.cacheBuilder
@@ -51,7 +49,6 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
       logger.error("ScanRule is not bind with an observer. Will not be triggered")
       return false
     }
-    val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (scannedData <- data.asScala) {
       if (scannedData != null && scannedData.getData() != null) {
         var taskMinID = 0L;
@@ -66,27 +63,32 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     Constants.JDBC_ENGINE.toUpperCase(Locale.getDefault)
                   )
               ) {
-                // 获取job所使用的数据源类型
-                val datasourceConfMap = getDatasourceConf(job)
-                logger.info("starock  datasourceConfMap: {}", datasourceConfMap)
                 // 计算任务执行时间
                 val elapse = System.currentTimeMillis() - job.getCreatedTime.getTime
-                // 获取告警配置
-                val timeValue =
-                  HttpsUntils.getJDBCConf(job.getSubmitUser, Constants.JDBC_ALERT_TIME)
-                logger.info("starock  timeValue: {},elapse   {}", timeValue, elapse)
-                if (StringUtils.isNotBlank(timeValue)) {
-                  val timeoutInSeconds = timeValue.toDouble
-                  val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
-                  if (elapse > timeoutInMillis) {
-                    // 发送告警
-                    alertData.add(job)
+                // 获取超时kill配置信息
+                if (StringUtils.isNotBlank(job.getParams)) {
+                  val connectParamsMap = MapUtils.getMap(
+                    getDatasourceConf(job),
+                    "connectParams",
+                    new util.HashMap[AnyRef, AnyRef]
+                  )
+                  val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                  logger.info("starock  killTime: {}", killTime)
+                  if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
+                    if (StringUtils.isNotBlank(killTime)) {
+                      val timeoutInSeconds = killTime.toDouble
+                      val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                      if (elapse > timeoutInMillis) {
+                        // 触发kill任务
+                        HttpsUntils.killJob(job)
+                      }
+                    }
                   }
                 }
               }
               if (taskMinID == 0L || taskMinID > job.getId) {
                 taskMinID = job.getId
-                scanRuleList.put("jdbcUnfinishedAlertScan", taskMinID)
+                scanRuleList.put("jdbcUnfinishedKillScan", taskMinID)
               }
             case _ =>
               logger.warn(
@@ -97,15 +99,8 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
       } else {
         logger.warn("Ignored null scanned data")
       }
-
     }
-    logger.info("hit " + alertData.size() + " data in one iteration")
-    if (alertData.size() > 0) {
-      getHitEvent.notifyObserver(getHitEvent, alertData)
-      true
-    } else {
-      false
-    }
+    true
   }
 
   private def getDatasourceConf(job: JobHistory): util.Map[_, _] = {

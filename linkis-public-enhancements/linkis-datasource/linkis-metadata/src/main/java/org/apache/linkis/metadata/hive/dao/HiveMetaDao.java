@@ -53,7 +53,11 @@ public interface HiveMetaDao {
    */
   List<String> getAllDbs();
 
-  List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromDbPrvs(
+      MetadataQueryParam queryParam);
+
+  List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromTblPrvs(
+      MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 

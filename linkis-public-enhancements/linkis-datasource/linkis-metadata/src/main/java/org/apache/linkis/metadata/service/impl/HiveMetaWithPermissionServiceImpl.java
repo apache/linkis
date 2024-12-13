@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -79,7 +80,13 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
     if (flag) {
       List<String> roles = hiveMetaDao.getRolesByUser(queryParam.getUserName());
       queryParam.withRoles(roles);
-      return hiveMetaDao.getTablesByDbNameAndUserAndRoles(queryParam);
+      List<Map<String, Object>> hiveTables =
+          hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
+      hiveTables.addAll(
+          hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
+      return hiveTables.stream()
+          .distinct()
+          .collect(Collectors.toList());
     } else {
       log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
       return hiveMetaDao.getTablesByDbName(queryParam);

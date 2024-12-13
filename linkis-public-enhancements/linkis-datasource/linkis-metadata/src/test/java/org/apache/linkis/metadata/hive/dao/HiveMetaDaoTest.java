@@ -77,7 +77,8 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     queryParam.setDbName("default");
     queryParam.setTableName("employee");
     queryParam.setUserName("admin");
-    List<Map<String, Object>> tables = hiveMetaDao.getTablesByDbNameAndUserAndRoles(queryParam);
+    List<Map<String, Object>> tables =
+        hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
     Assertions.assertTrue(tables.size() == 0);
   }
 

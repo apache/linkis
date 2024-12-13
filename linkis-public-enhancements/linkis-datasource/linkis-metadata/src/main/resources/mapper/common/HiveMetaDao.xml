@@ -98,7 +98,7 @@
         GROUP BY NAME
         order by NAME
     </select>
-    <select id="getTablesByDbNameAndUserAndRoles" resultType="map" parameterType="map">
+    <select id="getTablesByDbNameAndUserAndRolesFromDbPrvs" resultType="map" parameterType="map">
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from DB_PRIVS t1
             inner join TBLS t2 on t1.DB_ID = t2.DB_ID and t1.DB_PRIV in ('SELECT','ALL')
@@ -110,7 +110,9 @@
                 #{id}
             </foreach>)
         </if>
-        union
+        order by NAME;
+    </select>
+    <select id="getTablesByDbNameAndUserAndRolesFromTblPrvs" resultType="map" parameterType="map">
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER
         from TBL_PRIVS t1
             inner join TBLS t2 on t1.TBL_ID=t2.TBL_ID and t1.TBL_PRIV in ('SELECT','ALL')

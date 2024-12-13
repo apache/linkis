@@ -70,11 +70,20 @@
                 <exclude>com.fasterxml.jackson.module:jackson-module-parameter-names:jar</exclude>
                 <exclude>jakarta.annotation:jakarta.annotation-api:jar</exclude>
                 <exclude>javax.inject:javax.inject:jar</exclude>
+                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
+                <exclude>com.sun.jersey:jersey-client:jar</exclude>
+                <exclude>com.sun.jersey:jersey-core:jar</exclude>
+                <exclude>com.sun.jersey:jersey-server:jar</exclude>
+                <exclude>com.sun.jersey:jersey-servlet:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
                 <exclude>joda-time:joda-time:jar</exclude>
                 <exclude>com.google.code.findbugs:jsr305:jar</exclude>
                 <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
                 <exclude>com.google.guava:listenablefuture:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
                 <exclude>io.micrometer:micrometer-core:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-commons-util:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-eventbus:jar</exclude>

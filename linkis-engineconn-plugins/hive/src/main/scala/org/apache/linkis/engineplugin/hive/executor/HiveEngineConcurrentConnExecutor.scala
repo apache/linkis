@@ -241,6 +241,10 @@ class HiveEngineConcurrentConnExecutor(
                 engineExecutorContext.appendStdout(
                   s"Your hive taskId: $taskId has $numberOfJobs MR jobs to do"
                 )
+                val queueName = hiveConf.get(HiveEngineConfiguration.HIVE_QUEUE_NAME)
+                engineExecutorContext.appendStdout(
+                  s"Your task will be submitted to the $queueName queue"
+                )
               }
 
               logger.info(s"there are ${numberOfJobs} jobs.")

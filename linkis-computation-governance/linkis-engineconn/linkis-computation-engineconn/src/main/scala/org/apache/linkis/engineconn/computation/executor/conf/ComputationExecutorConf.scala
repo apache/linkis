@@ -35,7 +35,7 @@ object ComputationExecutorConf {
 
   val PRINT_TASK_PARAMS_SKIP_KEYS = CommonVars(
     "linkis.engineconn.print.task.params.skip.keys",
-    "jobId",
+    "jobId,wds.linkis.rm.yarnqueue",
     "skip to print params key at job logs"
   )
 

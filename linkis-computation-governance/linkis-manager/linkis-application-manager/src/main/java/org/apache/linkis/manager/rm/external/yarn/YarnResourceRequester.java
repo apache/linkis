@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -57,6 +58,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   private final String HASTATE_ACTIVE = "active";
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private final Map<String, String> rmAddressMap = new ConcurrentHashMap<>();
+  private final String queuePrefix = EngineConnPluginConfiguration.QUEUE_PREFIX().getValue();
 
   private static final HttpClient httpClient = HttpClients.createDefault();
 
@@ -74,7 +76,11 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     logger.info("rmWebAddress: " + rmWebAddress);
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
-    String realQueueName = "root." + queueName;
+    if (queueName.startsWith(queuePrefix)) {
+      logger.info("Queue name {} starts with '{}', remove '{}'", queueName, queuePrefix, queuePrefix);
+      queueName = queueName.substring(queuePrefix.length());
+    }
+    String realQueueName = queuePrefix + queueName;
 
     try {
       YarnQueueInfo resources = getResources(rmWebAddress, realQueueName, queueName, provider);
@@ -301,7 +307,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String rmWebAddress = getAndUpdateActiveRmWebAddress(provider);
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
-    String realQueueName = "root." + queueName;
+    String realQueueName = queuePrefix + queueName;
 
     JsonNode resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
     if (resp.isMissingNode()) {

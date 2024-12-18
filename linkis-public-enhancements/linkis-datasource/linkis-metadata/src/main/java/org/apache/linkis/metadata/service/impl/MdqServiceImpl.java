@@ -376,7 +376,7 @@ public class MdqServiceImpl implements MdqService {
 
   private int getTableFileNum(String tableLocation) throws IOException {
     int tableFileNum = 0;
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       tableFileNum = (int) getRootHdfs().getContentSummary(tableFile.getPath()).getFileCount();
     }

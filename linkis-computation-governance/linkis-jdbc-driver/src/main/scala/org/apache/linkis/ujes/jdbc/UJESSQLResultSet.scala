@@ -176,12 +176,12 @@ class UJESSQLResultSet(
       return
     }
     val metaTmp = resultSetResult.getMetadata
-    if ("NULL".equals(String.valueOf(metaTmp))) {
+    if (NULL_VALUE.equals(String.valueOf(metaTmp))) {
       val fileContentList = resultSetResult.getFileContent.asInstanceOf[util.List[util.List[String]]]
       if (null != fileContentList) {
         resultSetMetaData.setColumnNameProperties(1, "linkis_string")
         resultSetMetaData.setDataTypeProperties(1, "String")
-        resultSetMetaData.setCommentPropreties(1, "NULL")
+        resultSetMetaData.setCommentPropreties(1, NULL_VALUE)
       }
     } else {
       metaData = metaTmp.asInstanceOf[util.List[util.Map[String, String]]]

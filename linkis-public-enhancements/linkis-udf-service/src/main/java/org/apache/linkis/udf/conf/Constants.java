@@ -22,6 +22,7 @@ import org.apache.linkis.common.conf.CommonVars;
 public class Constants {
   public static final String FILE_EXTENSION_PY = ".py";
   public static final String FILE_EXTENSION_ZIP = ".zip";
+  public static final String FILE_EXTENSION_SCALA = ".scala";
   public static final String FILE_EXTENSION_TAR_GZ = ".tar.gz";
   public static final String FILE_PERMISSION = "770";
   public static final String DELIMITER_COMMA = ",";

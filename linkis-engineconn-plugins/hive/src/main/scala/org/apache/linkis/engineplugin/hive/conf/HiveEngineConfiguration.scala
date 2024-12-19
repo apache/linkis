@@ -46,6 +46,12 @@ object HiveEngineConfiguration {
 
   val HIVE_RANGER_ENABLE = CommonVars[Boolean]("linkis.hive.ranger.enabled", false).getValue
 
+  val HIVE_ENGINE_CONN_JAVA_EXTRA_OPTS = CommonVars(
+    "wds.linkis.hive.engineConn.java.extraOpts",
+    "",
+    "Specify the option parameter of the java process (please modify it carefully!!!)"
+  )
+
   val HIVE_QUEUE_NAME: String = "mapreduce.job.queuename"
 
   val BDP_QUEUE_NAME: String = "wds.linkis.rm.yarnqueue"

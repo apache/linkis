@@ -196,11 +196,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       }
     }
     Utils.tryFinally(if (outputStream != null) flush()) {
-      closeFs
       if (outputStream != null) {
         IOUtils.closeQuietly(outputStream)
         outputStream = null
       }
+      closeFs
     }
   }
 

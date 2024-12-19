@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.io.executor
 
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
-import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -30,7 +29,6 @@ import org.apache.linkis.manager.common.entity.resource.{
   LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.io.conf.IOEngineConnConfiguration
 import org.apache.linkis.manager.engineplugin.io.domain.FSInfo
@@ -62,13 +60,11 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-import org.json4s.DefaultFormats
+import com.google.gson.internal.LinkedTreeMap
 
 class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     extends ConcurrentComputationExecutor(outputLimit)
     with Logging {
-
-  implicit val formats = DefaultFormats
 
   val fsIdCount = new AtomicLong()
 
@@ -328,7 +324,8 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       s"Creator ${methodEntity.creatorUser} for user ${methodEntity.proxyUser} init fs $methodEntity"
     )
     var fsId = methodEntity.id
-    val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
+    val properties =
+      methodEntity.params(0).asInstanceOf[LinkedTreeMap[String, String]].asScala.toMap
     val proxyUser = methodEntity.proxyUser
     if (!fsProxyService.canProxyUser(methodEntity.creatorUser, proxyUser, methodEntity.fsType)) {
       throw new StorageErrorException(

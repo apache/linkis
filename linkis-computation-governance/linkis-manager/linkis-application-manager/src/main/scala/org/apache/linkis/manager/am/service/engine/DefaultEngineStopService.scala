@@ -153,8 +153,8 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       }
 
       val engineTypeLabel =
-        node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).getOrElse(null)
-      val engineTypeStr = engineTypeLabel.asInstanceOf[EngineTypeLabel] getEngineType
+        node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).orNull
+      val engineTypeStr = engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType
       val isAllowKill = AMConfiguration.isAllowKilledEngineType(engineTypeStr)
 
       if (isAllowKill == false) {
@@ -165,7 +165,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
         // calculate the resources that can be released
         if (node.getNodeResource.getUsedResource != null) {
           val realResource = node.getNodeResource.getUsedResource match {
-            case dy: DriverAndYarnResource => dy.loadInstanceResource
+            case dy: DriverAndYarnResource => dy.getLoadInstanceResource
             case _ => node.getNodeResource.getUsedResource
           }
           loadInstanceResourceTotal =
@@ -180,8 +180,8 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       }
     }
     resultMap.put("killEngineNum", killEngineNum)
-    resultMap.put("memory", loadInstanceResourceTotal.memory)
-    resultMap.put("cores", loadInstanceResourceTotal.cores)
+    resultMap.put("memory", loadInstanceResourceTotal.getMemory)
+    resultMap.put("cores", loadInstanceResourceTotal.getCores)
     resultMap.put("batchKillEngineType", AMConfiguration.ALLOW_BATCH_KILL_ENGINE_TYPES.getValue)
     resultMap
   }
@@ -290,24 +290,28 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       dealEngineByEngineNode(engineNodes.toList, userName)
     }
     // kill EMnode by user creator
-    if (StringUtils.isNotBlank(engineType) && !creator.equals(Configuration.GLOBAL_CONF_SYMBOL)) {
-      val filterEngineNode = engineNodes
-        .filter(_.getOwner.equals(userName))
-        .filter(node => {
-          var filterResult = false
-          if (!node.getLabels.isEmpty) {
-            val userCreator = LabelUtil.getUserCreatorLabel(node.getLabels)
-            val engineTypeLabel = LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue
-            if (
-                userCreator.getUser.equals(userName) && userCreator.getCreator
-                  .equals(creator) && engineTypeLabel.equals(engineType)
-            ) {
-              filterResult = true
-            }
-          }
-          filterResult
-        })
-        .toList
+    if (StringUtils.isNotBlank(engineType)) {
+      val filterEngineNode = creator match {
+        case Configuration.GLOBAL_CONF_SYMBOL =>
+          engineNodes
+            .filter(_.getOwner.equals(userName))
+            .filter(!_.getLabels.isEmpty)
+            .filter(node =>
+              LabelUtil.getUserCreatorLabel(node.getLabels).getUser.equals(userName)
+                && LabelUtil.getEngineTypeLabel(node.getLabels).getEngineType.equals(engineType)
+            )
+            .toList
+        case _ =>
+          engineNodes
+            .filter(_.getOwner.equals(userName))
+            .filter(!_.getLabels.isEmpty)
+            .filter(node =>
+              LabelUtil.getUserCreatorLabel(node.getLabels).getUser.equals(userName)
+                && LabelUtil.getUserCreatorLabel(node.getLabels).getCreator.equals(creator)
+                && LabelUtil.getEngineTypeLabel(node.getLabels).getEngineType.equals(engineType)
+            )
+            .toList
+      }
       dealEngineByEngineNode(filterEngineNode, userName)
     }
   }

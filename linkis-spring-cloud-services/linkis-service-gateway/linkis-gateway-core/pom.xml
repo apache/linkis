@@ -76,15 +76,15 @@
       <version>${springfox.version}</version>
       <exclusions>
         <exclusion>
-          <artifactId>classgraph</artifactId>
           <groupId>io.github.classgraph</groupId>
+          <artifactId>classgraph</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
-      <version>4.8.112</version>
+      <version>${classgraph.version}</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>

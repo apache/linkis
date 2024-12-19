@@ -59,10 +59,6 @@ import scala.collection.JavaConverters._
 
 class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
-  private val HIVE_QUEUE_NAME: String = "mapreduce.job.queuename"
-  private val BDP_QUEUE_NAME: String = "wds.linkis.rm.yarnqueue"
-  private val HIVE_TEZ_QUEUE_NAME: String = "tez.queue.name"
-
   override protected def newExecutor(
       id: Int,
       engineCreationContext: EngineCreationContext,
@@ -188,10 +184,10 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       }
       .foreach { case (k, v) =>
         logger.info(s"key is $k, value is $v")
-        if (BDP_QUEUE_NAME.equals(k)) {
-          hiveConf.set(HIVE_QUEUE_NAME, v)
+        if (HiveEngineConfiguration.BDP_QUEUE_NAME.equals(k)) {
+          hiveConf.set(HiveEngineConfiguration.HIVE_QUEUE_NAME, v)
           if ("tez".equals(HiveEngineConfiguration.HIVE_ENGINE_TYPE)) {
-            hiveConf.set(HIVE_TEZ_QUEUE_NAME, v)
+            hiveConf.set(HiveEngineConfiguration.HIVE_TEZ_QUEUE_NAME, v)
           }
         } else hiveConf.set(k, v)
       }

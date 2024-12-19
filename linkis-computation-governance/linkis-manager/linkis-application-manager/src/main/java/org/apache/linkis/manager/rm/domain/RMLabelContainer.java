@@ -50,7 +50,7 @@ public class RMLabelContainer {
   private EngineTypeLabel engineTypeLabel;
   private UserCreatorLabel userCreatorLabel;
   private EngineInstanceLabel engineInstanceLabel;
-  private CombinedLabel combinedUserCreatorEngineTypeLabel;
+  private CombinedLabel combinedResourceLabel;
   private Label currentLabel;
 
   public RMLabelContainer(List<Label<?>> labels) {
@@ -58,11 +58,11 @@ public class RMLabelContainer {
     this.lockedLabels = Lists.newArrayList();
     try {
       if (getUserCreatorLabel() != null && getEngineTypeLabel() != null) {
-        this.combinedUserCreatorEngineTypeLabel =
+        this.combinedResourceLabel =
             (CombinedLabel)
                 combinedLabelBuilder.build(
                     "", Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel()));
-        this.labels.add(combinedUserCreatorEngineTypeLabel);
+        this.labels.add(combinedResourceLabel);
       }
     } catch (Exception e) {
       logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
@@ -157,8 +157,8 @@ public class RMLabelContainer {
     return null;
   }
 
-  public CombinedLabel getCombinedUserCreatorEngineTypeLabel() {
-    return combinedUserCreatorEngineTypeLabel;
+  public CombinedLabel getCombinedResourceLabel() {
+    return combinedResourceLabel;
   }
 
   public Label getCurrentLabel() {

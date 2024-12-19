@@ -71,7 +71,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     if (ecmResource != null) {
       val labelAvailableResource = ecmResource.getLeftResource
       canCreateECRes.setEcmResource(RMUtils.serializeResource(labelAvailableResource))
-      if (labelAvailableResource < requestResource) {
+      if (!labelAvailableResource.notLess(requestResource)) {
         logger.info(
           s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]"
         )
@@ -85,19 +85,19 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       }
     }
     // get CombinedLabel Resource Usage
-    labelContainer.setCurrentLabel(labelContainer.getCombinedUserCreatorEngineTypeLabel)
+    labelContainer.setCurrentLabel(labelContainer.getCombinedResourceLabel)
     val labelResource = getCombinedLabelResourceUsage(labelContainer, resource)
     labelResourceService.setLabelResource(
       labelContainer.getCurrentLabel,
       labelResource,
-      labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+      labelContainer.getCombinedResourceLabel.getStringValue
     )
 
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
       canCreateECRes.setLabelResource(RMUtils.serializeResource(labelAvailableResource))
       val labelMaxResource = labelResource.getMaxResource
-      if (labelAvailableResource < requestResource) {
+      if (!labelAvailableResource.notLess(requestResource)) {
         logger.info(
           s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
             s"label available resource[${labelAvailableResource}]"
@@ -136,7 +136,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     labelResource.setMaxResource(configuredResource)
     labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
     labelResource.setLeftResource(
-      labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource
+      labelResource.getMaxResource
+        .minus(labelResource.getUsedResource)
+        .minus(labelResource.getLockedResource)
     )
     logger.debug(
       s"${labelContainer.getCurrentLabel} ecmResource: Max: ${labelResource.getMaxResource}  \t " +
@@ -161,9 +163,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       case _ =>
     }
     // check combined label resource
-    if (
-        !labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
-    ) {
+    if (!labelContainer.getCombinedResourceLabel.equals(labelContainer.getCurrentLabel)) {
       throw new RMErrorException(
         RESOURCE_LATER_ERROR.getErrorCode,
         RESOURCE_LATER_ERROR.getErrorDesc + labelContainer.getCurrentLabel
@@ -212,13 +212,13 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     labelResourceService.setLabelResource(
       labelContainer.getCurrentLabel,
       labelResource,
-      labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+      labelContainer.getCombinedResourceLabel.getStringValue
     )
     logger.debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource}]")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
       val labelMaxResource = labelResource.getMaxResource
-      if (labelAvailableResource < requestResource) {
+      if (!labelAvailableResource.notLess(requestResource)) {
         logger.info(
           s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
             s"label available resource[${labelAvailableResource}]"
@@ -247,7 +247,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     logger.debug(s"emInstanceLabel resource info ${labelResource}")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
-      if (labelAvailableResource < requestResource) {
+      if (!labelAvailableResource.notLess(requestResource)) {
         logger.info(
           s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]"
         )
@@ -281,35 +281,35 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     val loadRequestResource = requestResource match {
       case li: LoadInstanceResource => li
       case driverAndYarnResource: DriverAndYarnResource =>
-        driverAndYarnResource.loadInstanceResource
+        driverAndYarnResource.getLoadInstanceResource
       case _ => null
     }
     loadRequestResource match {
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
         val loadInstanceMax = maxResource.asInstanceOf[LoadInstanceResource]
-        if (li.cores > loadInstanceAvailable.cores) {
+        if (li.getCores > loadInstanceAvailable.getCores) {
           (
             RMErrorCode.ECM_CPU_INSUFFICIENT.getErrorCode,
             RMErrorCode.ECM_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
-                li.cores,
-                loadInstanceAvailable.cores,
-                loadInstanceMax.cores
+                li.getCores,
+                loadInstanceAvailable.getCores,
+                loadInstanceMax.getCores
               )
           )
-        } else if (li.memory > loadInstanceAvailable.memory) {
+        } else if (li.getMemory > loadInstanceAvailable.getMemory) {
           (
             RMErrorCode.ECM_MEMORY_INSUFFICIENT.getErrorCode,
             RMErrorCode.ECM_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
-                li.memory,
-                loadInstanceAvailable.memory,
-                loadInstanceMax.memory
+                li.getMemory,
+                loadInstanceAvailable.getMemory,
+                loadInstanceMax.getMemory
               )
           )
         } else {
@@ -319,9 +319,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
-                li.instances,
-                loadInstanceAvailable.instances,
-                loadInstanceMax.instances
+                li.getInstances,
+                loadInstanceAvailable.getInstances,
+                loadInstanceMax.getInstances
               )
           )
         }
@@ -348,9 +348,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
             RMUtils.getResourceInfoMsg(
               RMConstant.MEMORY,
               RMConstant.MEMORY_UNIT_BYTE,
-              m.memory,
-              avail.memory,
-              max.memory
+              m.getMemory,
+              avail.getMemory,
+              max.getMemory
             )
         )
       case i: InstanceResource =>
@@ -362,9 +362,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
             RMUtils.getResourceInfoMsg(
               RMConstant.APP_INSTANCE,
               RMConstant.INSTANCE_UNIT,
-              i.instances,
-              avail.instances,
-              max.instances
+              i.getInstances,
+              avail.getInstances,
+              max.getInstances
             )
         )
       case c: CPUResource =>
@@ -376,25 +376,25 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
             RMUtils.getResourceInfoMsg(
               RMConstant.CPU,
               RMConstant.CPU_UNIT,
-              c.cores,
-              avail.cores,
-              max.cores
+              c.getCores,
+              avail.getCores,
+              max.getCores
             )
         )
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
         val avail = availableResource.asInstanceOf[LoadResource]
         val max = maxResource.asInstanceOf[LoadResource]
-        if (l.cores > loadAvailable.cores) {
+        if (l.getCores > loadAvailable.getCores) {
           (
             RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorCode,
             RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
-                l.cores,
-                avail.cores,
-                max.cores
+                l.getCores,
+                avail.getCores,
+                max.getCores
               )
           )
         } else {
@@ -404,9 +404,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
-                l.memory,
-                avail.memory,
-                max.memory
+                l.getMemory,
+                avail.getMemory,
+                max.getMemory
               )
           )
         }
@@ -414,28 +414,28 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
         val avail = availableResource.asInstanceOf[LoadInstanceResource]
         val max = maxResource.asInstanceOf[LoadInstanceResource]
-        if (li.cores > loadInstanceAvailable.cores) {
+        if (li.getCores > loadInstanceAvailable.getCores) {
           (
             RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorCode,
             RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
-                li.cores,
-                avail.cores,
-                max.cores
+                li.getCores,
+                avail.getCores,
+                max.getCores
               )
           )
-        } else if (li.memory > loadInstanceAvailable.memory) {
+        } else if (li.getMemory > loadInstanceAvailable.getMemory) {
           (
             RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorCode,
             RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
-                li.memory,
-                avail.memory,
-                max.memory
+                li.getMemory,
+                avail.getMemory,
+                max.getMemory
               )
           )
         } else {
@@ -445,9 +445,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
-                li.instances,
-                avail.instances,
-                max.instances
+                li.getInstances,
+                avail.getInstances,
+                max.getInstances
               )
           )
         }
@@ -455,28 +455,28 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
         val avail = availableResource.asInstanceOf[YarnResource]
         val max = maxResource.asInstanceOf[YarnResource]
-        if (yarn.queueCores > yarnAvailable.queueCores) {
+        if (yarn.getQueueCores > yarnAvailable.getQueueCores) {
           (
             RMErrorCode.QUEUE_CPU_INSUFFICIENT.getErrorCode,
             RMErrorCode.QUEUE_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
-                yarn.queueCores,
-                avail.queueCores,
-                max.queueCores
+                yarn.getQueueCores,
+                avail.getQueueCores,
+                max.getQueueCores
               )
           )
-        } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
+        } else if (yarn.getQueueMemory > yarnAvailable.getQueueMemory) {
           (
             RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getErrorCode,
             RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
-                yarn.queueMemory,
-                avail.queueMemory,
-                max.queueMemory
+                yarn.getQueueMemory,
+                avail.getQueueMemory,
+                max.getQueueMemory
               )
           )
         } else {
@@ -486,9 +486,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
-                yarn.queueInstances,
-                avail.queueInstances,
-                max.queueInstances
+                yarn.getQueueInstances,
+                avail.getQueueInstances,
+                max.getQueueInstances
               )
           )
         }
@@ -496,19 +496,23 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val dyAvailable = availableResource.asInstanceOf[DriverAndYarnResource]
         val dyMax = maxResource.asInstanceOf[DriverAndYarnResource]
         if (
-            dy.loadInstanceResource.memory > dyAvailable.loadInstanceResource.memory ||
-            dy.loadInstanceResource.cores > dyAvailable.loadInstanceResource.cores ||
-            dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances
+            dy.getLoadInstanceResource.getMemory > dyAvailable.getLoadInstanceResource.getMemory ||
+            dy.getLoadInstanceResource.getCores > dyAvailable.getLoadInstanceResource.getCores ||
+            dy.getLoadInstanceResource.getInstances > dyAvailable.getLoadInstanceResource.getInstances
         ) {
           val detail = generateNotEnoughMessage(
-            dy.loadInstanceResource,
-            dyAvailable.loadInstanceResource,
-            dyMax.loadInstanceResource
+            dy.getLoadInstanceResource,
+            dyAvailable.getLoadInstanceResource,
+            dyMax.getLoadInstanceResource
           )
           (detail._1, { detail._2 })
         } else {
           val detail =
-            generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource, dyMax.yarnResource)
+            generateNotEnoughMessage(
+              dy.getYarnResource,
+              dyAvailable.getYarnResource,
+              dyMax.getYarnResource
+            )
           (detail._1, { detail._2 })
         }
       case s: SpecialResource =>

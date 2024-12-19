@@ -17,30 +17,8 @@
 
 package org.apache.linkis.manager.rm
 
-import org.json4s.{CustomSerializer, Extraction}
-import org.json4s.JsonAST.JObject
-import org.json4s.JsonDSL._
-
 trait ResultResource
 
 case class NotEnoughResource(val reason: String = null) extends ResultResource
 
 case class AvailableResource(val ticketId: String) extends ResultResource
-
-object ResultResourceSerializer
-    extends CustomSerializer[ResultResource](implicit formats =>
-      (
-        {
-          case JObject(List(("NotEnoughResource", JObject(List(("reason", reason)))))) =>
-            NotEnoughResource(reason.extract[String])
-          case JObject(List(("AvailableResource", JObject(List(("ticketId", ticketId)))))) =>
-            AvailableResource(ticketId.extract[String])
-        },
-        {
-          case r: NotEnoughResource =>
-            ("NotEnoughResource", ("reason", Extraction.decompose(r.reason)))
-          case r: AvailableResource =>
-            ("AvailableResource", ("ticketId", Extraction.decompose(r.ticketId)))
-        }
-      )
-    )

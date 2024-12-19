@@ -26,13 +26,13 @@ import org.apache.linkis.governance.common.protocol.engineconn.{
 }
 import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
+import org.apache.linkis.manager.am.pointer.NodePointerBuilder
 import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.common.protocol.node.NodeHealthyRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.rm.service.ResourceManager
-import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.springframework.beans.factory.annotation.Autowired

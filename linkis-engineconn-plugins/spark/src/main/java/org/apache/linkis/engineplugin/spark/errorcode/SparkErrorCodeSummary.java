@@ -67,6 +67,10 @@ public enum SparkErrorCodeSummary implements LinkisErrorCode {
 
   NOT_SUPPORT_METHOD(43040, "Not support method for requestExpectedResource."),
   NOT_SUPPORT_FUNCTION(43050, "Not support spacial udf in non-SQL script.(特殊UDF不支持在非sql脚本中使用)"),
+
+  LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR(
+      43042,
+      "linkis.spark.yarn.cluster.jars parameters configuration errors(linkis.spark.yarn.cluster.jars 参数配置错误)."),
   ;
 
   /** (errorCode)错误码 */

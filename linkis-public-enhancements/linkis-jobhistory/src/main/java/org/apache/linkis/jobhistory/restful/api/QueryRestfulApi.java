@@ -19,14 +19,17 @@ package org.apache.linkis.jobhistory.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisCommonErrorException;
+import org.apache.linkis.common.utils.SHAUtils;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.*;
+import org.apache.linkis.jobhistory.service.JobHistoryDiagnosisService;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.transitional.TaskStatus;
+import org.apache.linkis.jobhistory.util.Constants;
 import org.apache.linkis.jobhistory.util.JobhistoryUtils;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
@@ -50,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,6 +81,7 @@ public class QueryRestfulApi {
   @Autowired private JobHistoryQueryService jobHistoryQueryService;
 
   @Autowired private DefaultQueryCacheManager queryCacheManager;
+  @Autowired private JobHistoryDiagnosisService jobHistoryDiagnosisService;
 
   @ApiOperation(
       value = "governanceStationAdmin",
@@ -556,6 +561,95 @@ public class QueryRestfulApi {
     }
   }
 
+  /** Method list should not contain subjob, which may cause performance problems. */
+  @ApiOperation(value = "listDurationTop", notes = "listDurationTop", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
+    @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
+    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "proxyUser",
+        required = false,
+        dataType = "String",
+        value = "proxyUser"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+  })
+  @RequestMapping(path = "/listDurationTop", method = RequestMethod.GET)
+  public Message listDurationTop(
+      HttpServletRequest req,
+      @RequestParam(value = "startDate", required = false) Long startDate,
+      @RequestParam(value = "endDate", required = false) Long endDate,
+      @RequestParam(value = "executeApplicationName", required = false)
+          String executeApplicationName,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "proxyUser", required = false) String proxyUser,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize)
+      throws QueryException {
+    if (org.springframework.util.StringUtils.isEmpty(pageNow)) {
+      pageNow = 1;
+    }
+    if (org.springframework.util.StringUtils.isEmpty(pageSize)) {
+      pageSize = 20;
+    }
+    if (org.springframework.util.StringUtils.isEmpty(proxyUser)) {
+      proxyUser = null;
+    } else {
+      if (!QueryUtils.checkNameValid(proxyUser)) {
+        return Message.error("Invalid proxyUser : " + proxyUser);
+      }
+    }
+    if (org.springframework.util.StringUtils.isEmpty(creator)) {
+      creator = null;
+    } else {
+      if (!QueryUtils.checkNameValid(creator)) {
+        return Message.error("Invalid creator : " + creator);
+      }
+    }
+    if (!org.springframework.util.StringUtils.isEmpty(executeApplicationName)) {
+      if (!QueryUtils.checkNameValid(executeApplicationName)) {
+        return Message.error("Invalid applicationName : " + executeApplicationName);
+      }
+    } else {
+      executeApplicationName = null;
+    }
+
+    if (endDate == null) {
+      endDate = System.currentTimeMillis();
+    }
+    if (startDate == null) {
+      startDate = 0L;
+    }
+
+    Date sDate = new Date(startDate);
+    Date eDate = new Date(endDate);
+    if (sDate.getTime() == eDate.getTime()) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(endDate);
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(calendar.getTime().getTime()); // todo check
+    }
+    List<JobHistory> queryTasks = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      queryTasks =
+          jobHistoryQueryService.taskDurationTopN(
+              sDate, eDate, proxyUser, creator, executeApplicationName);
+    } finally {
+      PageHelper.clearPage();
+    }
+
+    List<QueryTaskVO> vos = new ArrayList<>();
+    for (JobHistory jobHistory : queryTasks) {
+      QueryUtils.exchangeExecutionCode(jobHistory);
+      QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+      vos.add(taskVO);
+    }
+    return Message.ok().data(TaskConstant.TASKS, vos);
+  }
+
   private List<JobHistory> getJobhistoryList(
       HttpServletRequest req,
       Long startDate,
@@ -658,5 +752,112 @@ public class QueryRestfulApi {
       PageHelper.clearPage();
     }
     return queryTasks;
+  }
+
+  @ApiOperation(value = "get-doctor-signature", notes = "get signature", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "applicationId", required = false, dataType = "String", value = "user")
+  })
+  @RequestMapping(path = "/get-doctor-signature", method = RequestMethod.GET)
+  public Message getUserKeyValue(
+      HttpServletRequest req,
+      @RequestParam(value = "applicationId", required = false) String applicationId)
+      throws UnsupportedEncodingException {
+    if (StringUtils.isBlank(applicationId)) {
+      return Message.error("Invalid applicationId cannot be empty");
+    }
+    Map<String, String> parms = new HashMap<>();
+    String timestampStr = String.valueOf(System.currentTimeMillis());
+    parms.put("applicationId", applicationId);
+    parms.put("app_id", Configuration.LINKIS_SYS_NAME().getValue());
+    parms.put("timestamp", timestampStr);
+    parms.put("nonce", SHAUtils.DOCTOR_NONCE);
+    // doctor提供的token
+    String token = SHAUtils.DOCTOR_TOKEN.getValue();
+    if (StringUtils.isNotBlank(token)){
+      String signature =
+              SHAUtils.Encrypt(
+                      SHAUtils.Encrypt(
+                              parms.get("app_id") + SHAUtils.DOCTOR_NONCE + System.currentTimeMillis(), null)
+                              + token,
+                      null);
+      parms.put("signature", signature);
+      return Message.ok().data("doctor", parms);
+    } else {
+      return Message.error("Doctor token cannot be empty");
+    }
+  }
+
+  @ApiOperation(
+      value = "diagnosis-query",
+      notes = "query failed task diagnosis msg",
+      response = Message.class)
+  @RequestMapping(path = "/diagnosis-query", method = RequestMethod.GET)
+  public Message queryFailedTaskDiagnosis(
+      HttpServletRequest req, @RequestParam(value = "taskID", required = false) String taskID) {
+    String username = ModuleUserUtils.getOperationUser(req, "diagnosis-query");
+    if (StringUtils.isBlank(taskID)) {
+      return Message.error("Invalid jobId cannot be empty");
+    }
+    JobHistory jobHistory = null;
+    boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
+    boolean isDepartmentAdmin = Configuration.isDepartmentAdmin(username);
+    if (isAdmin) {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(Long.valueOf(taskID), null);
+    } else if (isDepartmentAdmin) {
+      String departmentId = JobhistoryUtils.getDepartmentByuser(username);
+      if (StringUtils.isNotBlank(departmentId)) {
+        List<JobHistory> list =
+            jobHistoryQueryService.search(
+                Long.valueOf(taskID),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                departmentId,
+                null);
+        if (!CollectionUtils.isEmpty(list)) {
+          jobHistory = list.get(0);
+        }
+      }
+    } else {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(Long.valueOf(taskID), username);
+    }
+    String diagnosisMsg = "";
+    if (jobHistory != null) {
+      String jobStatus = jobHistory.getStatus().toUpperCase();
+      JobDiagnosis jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID));
+      if (null == jobDiagnosis) {
+        diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
+        jobDiagnosis = new JobDiagnosis();
+        jobDiagnosis.setJobHistoryId(Long.valueOf(taskID));
+        jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+        jobDiagnosis.setCreatedTime(new Date());
+        jobDiagnosis.setUpdatedDate(new Date());
+        if (Constants.FINISHED_JOB_STATUS.contains(jobStatus)) {
+          jobDiagnosis.setOnlyRead("1");
+        }
+        jobHistoryDiagnosisService.insert(jobDiagnosis);
+      } else {
+        if (StringUtils.isNotBlank(jobDiagnosis.getOnlyRead())
+            && "1".equals(jobDiagnosis.getOnlyRead())) {
+          diagnosisMsg = jobDiagnosis.getDiagnosisContent();
+        } else {
+          diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
+          jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+          jobDiagnosis.setUpdatedDate(new Date());
+          jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+          if (Constants.FINISHED_JOB_STATUS.contains(jobStatus)) {
+            jobDiagnosis.setOnlyRead("1");
+          }
+          jobHistoryDiagnosisService.update(jobDiagnosis);
+        }
+      }
+    }
+    return Message.ok().data("diagnosisMsg", diagnosisMsg);
   }
 }

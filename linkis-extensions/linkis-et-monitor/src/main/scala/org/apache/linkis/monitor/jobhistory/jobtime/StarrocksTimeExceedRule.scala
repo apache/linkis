@@ -37,6 +37,8 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     extends AbstractScanRule(event = new StarrocksTimeExceedHitEvent, observer = hitObserver)
     with Logging {
 
+  private val scanRuleList = CacheUtils.cacheBuilder
+
   /**
    * if data match the pattern, return true and trigger observer should call isMatched()
    *
@@ -52,6 +54,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (scannedData <- data.asScala) {
       if (scannedData != null && scannedData.getData() != null) {
+        var taskMinID = 0L;
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
@@ -80,27 +83,10 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     alertData.add(job)
                   }
                 }
-                // 获取超时kill配置信息
-                if (StringUtils.isNotBlank(job.getParams)) {
-                  val connectParamsMap = MapUtils.getMap(
-                    datasourceConfMap,
-                    "connectParams",
-                    new util.HashMap[AnyRef, AnyRef]
-                  )
-                  val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
-                  logger.info("starock  killTime: {}", killTime)
-                  if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
-                    if (StringUtils.isNotBlank(killTime)) {
-                      val timeoutInSeconds = timeValue.toDouble
-                      val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
-                      if (elapse > timeoutInMillis) {
-                        // 触发kill任务
-                        HttpsUntils.killJob(job)
-                      }
-                    }
-                  }
-                }
-//                }
+              }
+              if (taskMinID == 0L || taskMinID > job.getId) {
+                taskMinID = job.getId
+                scanRuleList.put("jdbcUnfinishedAlertScan", taskMinID)
               }
             case _ =>
               logger.warn(

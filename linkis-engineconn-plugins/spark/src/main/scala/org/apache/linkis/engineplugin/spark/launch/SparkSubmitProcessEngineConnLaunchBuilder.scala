@@ -19,24 +19,31 @@ package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   LINKIS_SPARK_CONF,
   SPARK_APP_NAME,
   SPARK_DEFAULT_EXTERNAL_JARS_PATH,
+  SPARK_DEPLOY_MODE,
   SPARK_DRIVER_CLASSPATH,
   SPARK_DRIVER_EXTRA_JAVA_OPTIONS,
   SPARK_PYTHON_VERSION,
-  SPARK_SUBMIT_PATH
+  SPARK_SUBMIT_PATH,
+  SPARK_YARN_CLUSTER_JARS
 }
 import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
+import org.apache.linkis.engineplugin.spark.exception.SparkEngineException
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.entity.resource.DriverAndYarnResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.label.constant.LabelValueConstant
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.UserWithCreator
 
 import org.apache.commons.lang3.StringUtils
@@ -81,7 +88,11 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
 
     val userEngineResource = engineConnBuildRequest.engineResource
     val darResource = userEngineResource.getLockedResource.asInstanceOf[DriverAndYarnResource]
-    val files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
+    val files: ArrayBuffer[String] = getValueAndRemove(properties, "files", "")
+      .split(",")
+      .filter(isNotBlankPath)
+      .toBuffer
+      .asInstanceOf[ArrayBuffer[String]]
     val jars = new ArrayBuffer[String]()
     jars ++= getValueAndRemove(properties, "jars", "").split(",").filter(isNotBlankPath)
     jars ++= getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)
@@ -99,7 +110,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val archives = getValueAndRemove(properties, "archives", "").split(",").filter(isNotBlankPath)
 
     val queue = if (null != darResource) {
-      darResource.yarnResource.queueName
+      darResource.getYarnResource.getQueueName
     } else {
       "default"
     }
@@ -141,8 +152,34 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       memory
     }
 
+    var deployMode: String = SparkConfiguration.SPARK_YARN_CLIENT
+
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(engineConnBuildRequest.labels)
+    val isYarnClusterMode: Boolean =
+      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
+      else false
+
+    if (isYarnClusterMode) {
+      deployMode = SparkConfiguration.SPARK_YARN_CLUSTER
+      files ++= Array(s"${variable(PWD)}/conf/linkis-engineconn.properties")
+
+      var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)
+
+      if (StringUtils.isBlank(clusterJars)) {
+        throw new SparkEngineException(
+          SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorCode,
+          SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorDesc
+        )
+      }
+
+      if (clusterJars.endsWith("/")) {
+        clusterJars = clusterJars.dropRight(1)
+      }
+      jars += s"$clusterJars/*"
+    }
+
     addOpt("--master", "yarn")
-    addOpt("--deploy-mode", "client")
+    addOpt("--deploy-mode", deployMode)
     addOpt("--name", appName)
     addProxyUser()
 
@@ -163,8 +200,9 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     addOpt("--num-executors", numExecutors.toString)
     addOpt("--queue", queue)
 
-    getConf(engineConnBuildRequest, gcLogDir, logDir).foreach { case (key, value) =>
-      addOpt("--conf", s"""$key="$value"""")
+    getConf(engineConnBuildRequest, gcLogDir, logDir, isYarnClusterMode).foreach {
+      case (key, value) =>
+        addOpt("--conf", s"""$key="$value"""")
     }
 
     addOpt("--class", className)
@@ -178,7 +216,8 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
   def getConf(
       engineConnBuildRequest: EngineConnBuildRequest,
       gcLogDir: String,
-      logDir: String
+      logDir: String,
+      isYarnClusterMode: Boolean
   ): ArrayBuffer[(String, String)] = {
     val driverJavaSet = new StringBuilder(" -server")
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
@@ -194,7 +233,11 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       .foreach(l => {
         driverJavaSet.append(" ").append(l)
       })
-    driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))
+    if (isYarnClusterMode) {
+      driverJavaSet.append(" -Djava.io.tmpdir=/tmp")
+    } else {
+      driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))
+    }
     if (EnvConfiguration.ENGINE_CONN_DEBUG_ENABLE.getValue) {
       driverJavaSet.append(
         s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}"
@@ -212,6 +255,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       val keyValue = iterator.next()
       if (
           !SPARK_PYTHON_VERSION.key.equals(keyValue.getKey) &&
+          !SPARK_DEPLOY_MODE.key.equals(keyValue.getKey) &&
           keyValue.getKey.startsWith("spark.") &&
           StringUtils.isNotBlank(keyValue.getValue)
       ) {

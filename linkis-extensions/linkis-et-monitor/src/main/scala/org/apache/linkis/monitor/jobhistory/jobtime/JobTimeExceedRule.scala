@@ -73,7 +73,6 @@ class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (sd <- data.asScala) {
       if (sd != null && sd.getData() != null) {
-        var idLong = 0L
         for (d <- sd.getData().asScala) {
           if (d.isInstanceOf[JobHistory]) {
             val jobHistory = d.asInstanceOf[JobHistory]
@@ -84,22 +83,9 @@ class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
                 alertData.add(d.asInstanceOf[JobHistory])
               }
             }
-            if (idLong == 0L || jobHistory.getId < idLong) {
-              idLong = jobHistory.getId
-            }
+            scanRuleList.put("jobhistoryScan", jobHistory.getId)
           } else {
             logger.warn("Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName)
-          }
-        }
-        if (idLong > 0L) {
-          val id = Optional
-            .ofNullable(CacheUtils.cacheBuilder.getIfPresent("jobhistoryScan"))
-            .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue)
-          if (id == 0) {
-            scanRuleList.put("jobhistoryScan", idLong)
-          }
-          if (id > idLong) {
-            scanRuleList.put("jobhistoryScan", idLong)
           }
         }
       } else {

@@ -284,8 +284,8 @@ object SQLExplain extends Explain {
     }
     var overLimit: Boolean = false
     var code = cmd.trim
-    if (code.toLowerCase(Locale.getDefault).contains("limit")) {
-      code = code.substring(code.toLowerCase(Locale.getDefault).lastIndexOf("limit")).trim
+    if (code.toLowerCase(Locale.getDefault).contains(LIMIT)) {
+      code = code.substring(code.toLowerCase((Locale.getDefault)).lastIndexOf(LIMIT)).trim
     }
     val hasLimit = code.toLowerCase().matches("limit\\s+\\d+\\s*;?")
     if (hasLimit) {
@@ -310,13 +310,14 @@ object SQLExplain extends Explain {
    *   String
    */
   def repairSelectOverLimit(cmd: String): String = {
-    var code = cmd.trim
+    val code = cmd.trim
     var preCode = ""
     var tailCode = ""
-    var limitNum = SQL_DEFAULT_LIMIT.getValue
-    if (code.toLowerCase(Locale.getDefault).contains("limit")) {
-      preCode = code.substring(0, code.toLowerCase(Locale.getDefault).lastIndexOf("limit")).trim
-      tailCode = code.substring(code.toLowerCase(Locale.getDefault).lastIndexOf("limit")).trim
+    val limitNum = SQL_DEFAULT_LIMIT.getValue
+    val lowerCaseCode = code.toLowerCase(Locale.getDefault)
+    if (lowerCaseCode.contains(LIMIT)) {
+      preCode = code.substring(0, lowerCaseCode.lastIndexOf(LIMIT)).trim
+      tailCode = code.substring(lowerCaseCode.lastIndexOf(LIMIT)).trim
     }
     if (isUpperSelect(cmd)) preCode + " LIMIT " + limitNum else preCode + " limit " + limitNum
   }
@@ -395,24 +396,27 @@ object PythonExplain extends Explain {
       })
 
     code.split(System.lineSeparator()) foreach { code =>
-      if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
+      if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty) {
         throw PythonCodeCheckException(20070, "can not use sys module")
-      else if (IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty)
+      } else if (
+          IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
+      ) {
         throw PythonCodeCheckException(20071, "can not use os moudle")
-      else if (
+      } else if (
           IMPORT_PROCESS_MODULE.findAllIn(code).nonEmpty || FROM_MULTIPROCESS_IMPORT
             .findAllIn(code)
             .nonEmpty
-      )
+      ) {
         throw PythonCodeCheckException(20072, "can not use process module")
-      else if (
+      } else if (
           IMPORT_SUBPORCESS_MODULE.findAllIn(code).nonEmpty || FROM_SUBPROCESS_IMPORT
             .findAllIn(code)
             .nonEmpty
-      )
+      ) {
         throw PythonCodeCheckException(20072, "can not use subprocess module")
-      else if (SC_STOP.findAllIn(code).nonEmpty)
+      } else if (SC_STOP.findAllIn(code).nonEmpty) {
         throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
+      }
     }
     true
   }

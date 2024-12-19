@@ -31,7 +31,11 @@ object Configuration extends Logging {
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 
+  val LINKIS_SYS_NAME = CommonVars("linkis.system.name", "")
+
   val IS_PROMETHEUS_ENABLE = CommonVars("wds.linkis.prometheus.enable", false)
+
+  val IS_MULTIPLE_YARN_CLUSTER = CommonVars("linkis.multiple.yarn.cluster", false).getValue
 
   val PROMETHEUS_ENDPOINT = CommonVars("wds.linkis.prometheus.endpoint", "/actuator/prometheus")
 

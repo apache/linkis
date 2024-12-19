@@ -29,6 +29,10 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JsonUtils;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageUtils$;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -100,11 +104,11 @@ public class UdfUtils {
       while ((entry = tarInput.getNextTarEntry()) != null) {
         if (entry.isDirectory() && entry.getName().endsWith(delimiter)) {
           rootPathStr = entry.getName().replace(folder + FsPath.SEPARATOR, "");
-          return  rootPathStr;
+          return rootPathStr;
         }
         if (entry.getName().contains(delimiter)) {
           rootPathStr = entry.getName().substring(0, entry.getName().indexOf(delimiter));
-          return  rootPathStr;
+          return rootPathStr;
         }
       }
     } catch (Exception e) {
@@ -158,16 +162,16 @@ public class UdfUtils {
       return createZipFile(file.getInputStream(), packageName, rootPath);
     } else {
       throw new UdfException(
-              80038,
-              "The name directory "
-                      + packageName
-                      + " specified by PKG-INFO does not exist. Please confirm that the "
-                      + packageName
-                      + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
-                      + packageName
-                      + "不存在，请确认包中PKG-INFO指定"
-                      + packageName
-                      + "和实际文件夹名称一致)");
+          80038,
+          "The name directory "
+              + packageName
+              + " specified by PKG-INFO does not exist. Please confirm that the "
+              + packageName
+              + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
+              + packageName
+              + "不存在，请确认包中PKG-INFO指定"
+              + packageName
+              + "和实际文件夹名称一致)");
     }
   }
 
@@ -279,5 +283,57 @@ public class UdfUtils {
       }
     }
     return modules;
+  }
+
+  public static List<String> getRegisterFunctions(FileSystem fileSystem, FsPath fsPath, String path)
+          throws Exception {
+    try (InputStream is = fileSystem.read(fsPath)) {
+      // 将inputstream内容转换为字符串
+      String content = IOUtils.toString(is, StandardCharsets.UTF_8);
+      if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_PY)) {
+        // 解析python文件
+        return extractPythonMethodNames(path);
+      } else if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_SCALA)) {
+        // 解析scala代码
+        return extractScalaMethodNames(content);
+      } else {
+        throw new UdfException(80041, "Unsupported file type: " + path);
+      }
+    } catch (IOException e) {
+      throw new UdfException(80042, "Failed to read file: " + path, e);
+    }
+  }
+
+  public static List<String> extractScalaMethodNames(String scalaCode) {
+    List<String> methodNames = new ArrayList<>();
+    // 正则表达式匹配方法定义，包括修饰符
+    String regex = "(\\b(private|protected)\\b\\s+)?\\bdef\\s+(\\w+)\\b";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(scalaCode);
+    logger.info("use regex to get scala method names.. reg:{}", regex);
+    while (matcher.find()) {
+      String methodName = matcher.group(3);
+      methodNames.add(methodName);
+    }
+
+    return methodNames;
+  }
+
+  public static List<String> extractPythonMethodNames(String udfPath) throws Exception {
+    String localPath = udfPath.replace(StorageUtils$.MODULE$.FILE_SCHEMA(), "");
+    String exec =
+            Utils.exec(
+                    (new String[] {
+                            Constants.PYTHON_COMMAND.getValue(),
+                            Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
+                            localPath
+                    }));
+    logger.info(
+            "execute python script to get python method name...{} {} {}",
+            Constants.PYTHON_COMMAND.getValue(),
+            Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
+            localPath);
+    // 将exec转换为List<String>，exec为一个json数组
+    return JsonUtils.jackson().readValue(exec, new TypeReference<List<String>>() {});
   }
 }

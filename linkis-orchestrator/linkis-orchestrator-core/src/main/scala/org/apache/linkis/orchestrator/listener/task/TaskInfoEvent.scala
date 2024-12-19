@@ -112,3 +112,13 @@ case class TaskYarnResourceEvent(
     resourceMap: util.HashMap[String, ResourceWithStatus]
 ) extends TaskInfoEvent
     with OrchestratorAsyncEvent
+
+case class EngineQuitedUnexpectedlyEvent(execTask: ExecTask, serviceInstance: String)
+    extends TaskInfoEvent
+    with OrchestratorSyncEvent {
+
+  override def toString: String = {
+    s"task ${execTask.getIDInfo()}, serviceInstance $serviceInstance"
+  }
+
+}

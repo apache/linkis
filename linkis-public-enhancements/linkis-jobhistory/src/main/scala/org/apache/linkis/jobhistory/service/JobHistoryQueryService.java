@@ -55,4 +55,8 @@ public interface JobHistoryQueryService {
     void clearUndoneTasksByEntranceInstance(EntranceInstanceConfRequest request, Sender sender);
 
     List<JobHistory> searchByTasks(List<String> taskidList, String username);
+
+    List<JobHistory> taskDurationTopN(Date sDate, Date eDate, String username, String creator, String engineType);
+
+
 }

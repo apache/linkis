@@ -54,60 +54,46 @@ class JobHistoryDataFetcher(args: Array[Any], mapper: JobHistoryMapper)
         "Wrong input for JobHistoryDataFetcher. DataType: " + args.getClass.getCanonicalName
       )
     }
-    if (args != null && args.length == 2) {
-      val start = Utils.tryCatch(args(0).asInstanceOf[String].toLong) { t =>
-        {
-          logger.error("Failed to get data from DB: Illegal arguments.", t)
-          throw t
-        }
-      }
-      val end = Utils.tryCatch(args(1).asInstanceOf[String].toLong) { t =>
-        {
-          logger.error("Failed to get data from DB: Illegal arguments.", t)
-          throw t
-        }
-      }
-      mapper
-        .search(null, null, null, new Date(start), new Date(end), null)
-        .asInstanceOf[util.List[scala.Any]]
-    } else if (args != null && args.length == 4) {
-      val start = Utils.tryCatch(args(0).asInstanceOf[String].toLong) { t =>
-        {
-          logger.error("Failed to get data from DB: Illegal arguments.", t)
-          throw t
-        }
-      }
-      val end = Utils.tryCatch(args(1).asInstanceOf[String].toLong) { t =>
-        {
-          logger.error("Failed to get data from DB: Illegal arguments.", t)
-          throw t
-        }
-      }
-      val id = Utils.tryCatch(args(2).asInstanceOf[String].toLong) { t =>
-        {
-          logger.error("Failed to get data from DB: Illegal arguments.", t)
-          throw t
-        }
-      }
-      if (
-          StringUtils.isNotBlank(args(3).asInstanceOf[String]) && args(3)
-            .asInstanceOf[String]
-            .equals("updated_time")
-      ) {
-        val list = new util.ArrayList[String]()
-        Constants.DATA_FINISHED_JOB_STATUS_ARRAY.foreach(list.add)
-        mapper
-          .searchByCacheAndUpdateTime(id, null, list, new Date(start), new Date(end), null)
-          .asInstanceOf[util.List[scala.Any]]
-      } else {
-        var list = new util.ArrayList[String]()
-        Constants.DATA_UNFINISHED_JOB_STATUS_ARRAY.foreach(list.add)
-        if (args(3).asInstanceOf[String].equals("department")) {
-          list = null;
-        }
-        mapper
-          .searchByCache(id, null, list, new Date(start), new Date(end), null)
-          .asInstanceOf[util.List[scala.Any]]
+    if (args != null) {
+      val start = args(0).asInstanceOf[String].toLong
+      val end = args(1).asInstanceOf[String].toLong
+      // 根据参数数量进行不同的处理
+      args.length match {
+        // 参数数量为2，则数据库查询仅筛选开始和结束时间
+        case 2 =>
+          mapper
+            .search(null, null, null, new Date(start), new Date(end), null)
+            .asInstanceOf[util.List[scala.Any]]
+        // 参数数量为4，根据第四个参数进行不同的查询
+        case 4 =>
+          val id = args(2).asInstanceOf[String].toLong
+          val parm = args(3).asInstanceOf[String]
+          parm match {
+            // 筛选任务包含id，时间，已完成状态任务
+            case "finished_job" =>
+              val list = new util.ArrayList[String]()
+              Constants.DATA_FINISHED_JOB_STATUS_ARRAY.foreach(list.add)
+              mapper
+                .searchByCacheAndUpdateTime(id, null, list, new Date(start), new Date(end), null)
+                .asInstanceOf[util.List[scala.Any]]
+            // 筛选任务包含id，时间，未完成状态任务
+            case "unfinished_job" =>
+              var list = new util.ArrayList[String]()
+              Constants.DATA_UNFINISHED_JOB_STATUS_ARRAY.foreach(list.add)
+              mapper
+                .searchByCache(id, null, list, new Date(start), new Date(end), null)
+                .asInstanceOf[util.List[scala.Any]]
+            // 筛选任务包含id，时间
+            case _ =>
+              mapper
+                .searchByCache(id, null, null, new Date(start), new Date(end), null)
+                .asInstanceOf[util.List[scala.Any]]
+          }
+        case _ =>
+          throw new AnomalyScannerException(
+            21304,
+            "Wrong input for JobHistoryDataFetcher. Data: " + args
+          )
       }
     } else {
       throw new AnomalyScannerException(

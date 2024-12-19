@@ -21,6 +21,7 @@ import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 import org.apache.linkis.ujes.client.request.JobExecuteAction.{EngineType, RunType}
 import org.apache.linkis.ujes.client.response.ResultSetResult
 
+import java.math.{BigDecimal => JavaBigDecimal}
 import java.util
 import java.util.Locale
 
@@ -29,6 +30,7 @@ import com.google.gson.{Gson, JsonObject}
 object UJESClientUtils {
 
   val gson: Gson = new Gson()
+  val DECIMAL_REGEX = "^decimal\\(\\s*\\d*\\s*,\\s*\\d*\\s*\\)".r.unanchored
 
   def toEngineType(engineType: String): EngineType = engineType match {
     case "spark" => EngineType.SPARK
@@ -75,7 +77,7 @@ object UJESClientUtils {
         case "boolean" => value.toBoolean
         case "byte" => value.toByte
         case "bigint" => value.toLong
-        case "decimal" => value.toDouble
+        case "decimal" | DECIMAL_REGEX() => new JavaBigDecimal(value)
         case "array" => gson.fromJson(value, classOf[util.ArrayList[Object]])
         case "map" => gson.fromJson(value, classOf[util.HashMap[Object, Object]])
         case "struct" => gson.fromJson(value, classOf[JsonObject])

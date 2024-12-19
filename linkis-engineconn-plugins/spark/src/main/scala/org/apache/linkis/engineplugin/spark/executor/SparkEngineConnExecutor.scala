@@ -31,7 +31,7 @@ import org.apache.linkis.engineconn.computation.executor.utlis.{
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
-import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
+import org.apache.linkis.engineconn.executor.entity.{ResourceFetchExecutor, YarnExecutor}
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
@@ -44,6 +44,10 @@ import org.apache.linkis.engineplugin.spark.extension.{
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.common.exception.engineconn.{
+  EngineConnExecutorErrorCode,
+  EngineConnExecutorErrorException
+}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
@@ -51,7 +55,7 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
-import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 
@@ -67,6 +71,7 @@ import scala.collection.mutable.ArrayBuffer
 abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     extends ComputationExecutor
     with Logging
+    with YarnExecutor
     with ResourceFetchExecutor {
 
   private var initialized: Boolean = false
@@ -84,9 +89,16 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   private var thread: Thread = _
 
+  private var applicationId: String = sc.applicationId
+
+  override def getApplicationId: String = applicationId
+
+  override def getApplicationURL: String = ""
+  override def getYarnMode: String = ""
+  override def getQueue: String = ""
+
   override def init(): Unit = {
     logger.info(s"Ready to change engine state!")
-//    setCodeParser()  // todo check
     super.init()
   }
 
@@ -299,11 +311,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         resourceMap.put(
           sc.applicationId,
           new ResourceWithStatus(
-            resource.yarnResource.queueMemory,
-            resource.yarnResource.queueCores,
-            resource.yarnResource.queueInstances,
+            resource.getYarnResource.getQueueMemory,
+            resource.getYarnResource.getQueueCores,
+            resource.getYarnResource.getQueueInstances,
             applicationStatus,
-            resource.yarnResource.queueName
+            resource.getYarnResource.getQueueName
           )
         )
       case _ =>

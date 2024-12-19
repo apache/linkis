@@ -34,7 +34,6 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   ConcurrentComputationExecutor
 }
-import org.apache.linkis.engineconn.computation.executor.hook.ExecutorLabelsRestHook
 import org.apache.linkis.engineconn.computation.executor.listener.{
   ResultSetListener,
   TaskProgressListener,
@@ -50,7 +49,6 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
@@ -60,12 +58,10 @@ import org.apache.linkis.governance.common.exception.engineconn.{
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.hadoop.common.utils.KerberosUtils
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
   ResponseTaskYarnResource
 }
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant

@@ -27,6 +27,7 @@ import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.entity.IndexEntity;
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
 import org.apache.linkis.monitor.request.*;
+import org.apache.linkis.monitor.response.AnalyzeJobResultAction;
 import org.apache.linkis.monitor.response.EntranceTaskResult;
 import org.apache.linkis.monitor.response.KeyvalueResult;
 import org.apache.linkis.monitor.response.KillJobResultAction;
@@ -156,5 +157,16 @@ public class HttpsUntils {
             .build();
     KillJobResultAction killJobResultAction = client.killJob(killJobAction);
     Map data = MapUtils.getMap(killJobResultAction.getResultMap(), "data", new HashMap<>());
+  }
+
+  public static void analyzeJob(JobHistory jobHistory) {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+
+    AnalyzeJobAction analyzeJobAction =
+        AnalyzeJobAction.newBuilder()
+            .setTaskID(String.valueOf(jobHistory.getId()))
+            .setUser(Constants.ADMIN_USER())
+            .build();
+    AnalyzeJobResultAction analyzeJobResultAction = client.analyzeJob(analyzeJobAction);
   }
 }

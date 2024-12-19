@@ -49,10 +49,10 @@ object AcrossClusterRulesJudgeUtils extends Logging {
         leftResource != null && usedResource != null && maxResource != null && clusterMaxCapacity != null && clusterUsedCapacity != null
     ) {
 
-      val clusterUsedCPUPercentage = clusterUsedCapacity.queueCores
-        .asInstanceOf[Double] / clusterMaxCapacity.queueCores.asInstanceOf[Double]
-      val clusterUsedMemoryPercentage = clusterUsedCapacity.queueMemory
-        .asInstanceOf[Double] / clusterMaxCapacity.queueMemory.asInstanceOf[Double]
+      val clusterUsedCPUPercentage = clusterUsedCapacity.getQueueCores
+        .asInstanceOf[Double] / clusterMaxCapacity.getQueueCores.asInstanceOf[Double]
+      val clusterUsedMemoryPercentage = clusterUsedCapacity.getQueueMemory
+        .asInstanceOf[Double] / clusterMaxCapacity.getQueueMemory.asInstanceOf[Double]
 
       if (
           clusterUsedCPUPercentage >= clusterCPUPercentageThreshold || clusterUsedMemoryPercentage >= clusterMemoryPercentageThreshold
@@ -64,13 +64,13 @@ object AcrossClusterRulesJudgeUtils extends Logging {
         )
       }
 
-      val leftQueueMemory = leftResource.queueMemory / Math.pow(1024, 3).toLong
-      if (leftResource.queueCores >= CPUThreshold && leftQueueMemory >= MemoryThreshold) {
+      val leftQueueMemory = leftResource.getQueueMemory / Math.pow(1024, 3).toLong
+      if (leftResource.getQueueCores >= CPUThreshold && leftQueueMemory >= MemoryThreshold) {
         val usedCPUPercentage =
-          usedResource.queueCores.asInstanceOf[Double] / maxResource.queueCores
+          usedResource.getQueueCores.asInstanceOf[Double] / maxResource.getQueueCores
             .asInstanceOf[Double]
-        val usedMemoryPercentage = usedResource.queueMemory
-          .asInstanceOf[Double] / maxResource.queueMemory.asInstanceOf[Double]
+        val usedMemoryPercentage = usedResource.getQueueMemory
+          .asInstanceOf[Double] / maxResource.getQueueMemory.asInstanceOf[Double]
 
         logger.info(
           "cross cluster test in target rule check" + s"usedCPUPercentage: $usedCPUPercentage, CPUPercentageThreshold: $CPUPercentageThreshold" +
@@ -89,7 +89,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
       } else {
         throw new RMWarnException(
           RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-          s"leftResource.queueCores: ${leftResource.queueCores}, CPUThreshold: $CPUThreshold," +
+          s"leftResource.queueCores: ${leftResource.getQueueCores}, CPUThreshold: $CPUThreshold," +
             s"leftQueueMemory: $leftQueueMemory, MemoryThreshold: $MemoryThreshold"
         )
       }
@@ -105,10 +105,10 @@ object AcrossClusterRulesJudgeUtils extends Logging {
     if (usedResource != null && maxResource != null) {
 
       val usedCPUPercentage =
-        usedResource.queueCores.asInstanceOf[Double] / maxResource.queueCores
+        usedResource.getQueueCores.asInstanceOf[Double] / maxResource.getQueueCores
           .asInstanceOf[Double]
-      val usedMemoryPercentage = usedResource.queueMemory
-        .asInstanceOf[Double] / maxResource.queueMemory.asInstanceOf[Double]
+      val usedMemoryPercentage = usedResource.getQueueMemory
+        .asInstanceOf[Double] / maxResource.getQueueMemory.asInstanceOf[Double]
 
       logger.info(
         "cross cluster test in origin rule check" + s"usedCPUPercentage: $usedCPUPercentage, CPUPercentageThreshold: $CPUPercentageThreshold" +
@@ -186,7 +186,7 @@ object AcrossClusterRulesJudgeUtils extends Logging {
           AMConfiguration.PRIORITY_CLUSTER_TARGET
         )
     ) {
-      val leftResource = maxCapacity - usedCapacity
+      val leftResource = maxCapacity.minus(usedCapacity)
       // get target cluster resource threshold
       val targetCPUThreshold =
         engineCreateRequest.getProperties.get(AMConfiguration.TARGET_CPU_THRESHOLD)

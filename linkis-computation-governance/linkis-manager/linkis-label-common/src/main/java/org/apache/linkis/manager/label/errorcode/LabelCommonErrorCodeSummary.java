@@ -21,9 +21,6 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum LabelCommonErrorCodeSummary implements LinkisErrorCode {
   UPDATE_LABEL_FAILED(25001, "Update label realtion failed(更新标签属性失败)"),
-  CLUSTER_LABEL_ERROR_CODE(
-      25002,
-      "The value of the label is set incorrectly, the setting value is: ClusterType-ClusterName "),
   LABEL_ERROR_CODE(
       25002,
       "The value of the label is set incorrectly, only one value can be set, and the separator symbol '-' cannot be used(标签的值设置错误,只能设置一个值，不能使用分割符符号 '-') "),
@@ -34,7 +31,9 @@ public enum LabelCommonErrorCodeSummary implements LinkisErrorCode {
   CHECK_LABEL_REMOVE_REQUEST(
       25007,
       "ServiceInstance in request is null, please check label remove request(请求中的 ServiceInstance 为空，请检查标签删除请求)"),
-  CHECK_LABEL_VALUE_EMPTY(25008, "Label value cannot be empty");
+  CHECK_LABEL_VALUE_EMPTY(25008, "Label value cannot be empty"),
+  CLUSTER_LABEL_VALUE_ERROR(
+      25009, "The value of cluster label should have a length of 2 and be separated by '-' ");
 
   /** (errorCode)错误码 */
   private final int errorCode;

@@ -95,7 +95,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   protected val failedTasks: Count = new Count
 
-  private var lastTask: EngineConnTask = _
+  protected var lastTask: EngineConnTask = _
 
   private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
     EngineConnObject.getEngineCreationContext.getOptions
@@ -414,10 +414,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   def printTaskParamsLog(engineExecutorContext: EngineExecutionContext): Unit = {
     val sb = new StringBuilder
-
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       // skip log jobId because it corresponding jobid when the ec created
-      if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
+      if (
+          !ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue
+            .split(",")
+            .exists(_.equals(key))
+      ) {
         sb.append(s"${key}=${value}\n")
       }
     })

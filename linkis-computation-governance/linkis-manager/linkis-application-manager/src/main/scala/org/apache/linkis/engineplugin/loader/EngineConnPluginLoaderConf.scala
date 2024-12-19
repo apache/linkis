@@ -21,14 +21,8 @@ import org.apache.linkis.common.conf.{CommonVars, Configuration}
 
 object EngineConnPluginLoaderConf {
 
-  val ENGINE_PLUGIN_RESOURCE_ID_NAME_PREFIX: String =
-    "wds.linkis.engineConn.plugin.loader.resource-id."
-
-  val CLASS_LOADER_CLASS_NAME: CommonVars[String] =
-    CommonVars("wds.linkis.engineconn.plugin.loader.classname", "")
-
   val ENGINE_PLUGIN_LOADER_DEFAULT_USER: CommonVars[String] =
-    CommonVars("wds.linkis.engineconn.plugin.loader.defaultUser", "hadoop")
+    CommonVars("linkis.engineconn.plugin.loader.defaultUser", "hadoop")
 
   val ENGINE_PLUGIN_STORE_PATH: CommonVars[String] = CommonVars(
     "wds.linkis.engineconn.plugin.loader.store.path",

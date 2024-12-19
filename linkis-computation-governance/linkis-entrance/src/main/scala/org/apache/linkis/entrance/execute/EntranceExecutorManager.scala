@@ -19,8 +19,10 @@ package org.apache.linkis.entrance.execute
 
 import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
+import org.apache.linkis.entrance.execute.simple.{SimpleEntranceExecutor, SimpleExecuteBusContext}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.scheduler.executer.{Executor, ExecutorManager}
 import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
@@ -87,7 +89,14 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
         job.getJobRequest match {
           case jobReq: JobRequest =>
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(jobReq.getId)
+              if (EntranceConfiguration.LINKIS_ENTRANCE_SKIP_ORCHESTRATOR) {
+                new SimpleEntranceExecutor(
+                  jobReq.getId,
+                  SimpleExecuteBusContext.getOrchestratorListenerBusContext()
+                )
+              } else {
+                new DefaultEntranceExecutor(jobReq.getId)
+              }
             jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
             entranceEntranceExecutor
           case _ =>

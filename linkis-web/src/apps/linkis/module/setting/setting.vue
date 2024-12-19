@@ -448,7 +448,7 @@ export default {
             content: this.$t('message.linkis.setting.killEngine'),
             onOk: async () => {
               try {
-                api.fetch("/linkisManager/rm/killEngineByUpdateConfig", {
+                api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
                   creator: this.currentTabName,
                   engineType: this.subCategory[this.currentTabName] ? this.subCategory[this.currentTabName].categoryName : null
                 })

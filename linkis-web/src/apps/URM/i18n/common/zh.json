@@ -60,6 +60,7 @@
         "no": "否",
         "sprak": "sprak",
         "jarPackage": "jar包",
+        "registerFunc": "注册函数",
         "scriptPath": "脚本路径",
         "registerFunction": "注册的函数",
         "registerFormat": "注册格式",

@@ -1,3 +1,4 @@
+
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +16,7 @@
   ~ limitations under the License.
   -->
 
+
 <template>
   <div class="global-history">
     <Tabs v-model="tabName" @on-click="onClickTabs">
@@ -22,7 +24,8 @@
       <TabPane name="code" :label="$t('message.linkis.executionCode')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
-      <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
+      <TabPane v-show="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
+      <TabPane name="terminal" :label="$t('message.linkis.diagnosticLog')"></TabPane>
     </Tabs>
     <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
     <Button v-if="tabName === 'log'" class="foldButton" type="primary" @click="fold">{{foldFlag ? $t('message.linkis.unfold') : $t('message.linkis.fold')}}</Button>
@@ -46,11 +49,13 @@
       :visualParams="visualParams"
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
+    <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" />
   </div>
 </template>
 <script>
 import result from '@/components/consoleComponent/result.vue'
 import log from '@/components/consoleComponent/log.vue'
+import term from '@/components/consoleComponent/term.vue'
 import api from '@/common/service/api'
 import mixin from '@/common/service/mixin'
 import util from '@/common/util'
@@ -63,7 +68,8 @@ export default {
   components: {
     log,
     result,
-    ViewLog
+    ViewLog,
+    term
   },
   mixins: [mixin],
   props: {},
@@ -102,6 +108,7 @@ export default {
         info: ''
       },
       codes: { code: '' },
+      termLogs: '',
       engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
@@ -201,6 +208,19 @@ export default {
         const res = await api.fetch(`/jobhistory/job-extra-info?jobId=${this.$route.query.taskID}`, 'get')
         const { executionCode } = res.metricsMap;
         this.codes = { code: executionCode };
+      } else if(name === 'terminal') {
+        if (['Scheduled', 'Running'].includes(this.$route.query.status) || !this.termLogs) {
+          try {
+            const res = await api.fetch(`/jobhistory/diagnosis-query?taskID=${this.$route.query.taskID}`, 'get')
+            const { diagnosisMsg } = res;
+            this.termLogs = diagnosisMsg;
+          } catch (err) {
+            window.console.error(err);
+            this.termLogs = '';
+          }
+          
+        }
+        
       } else {
         this.$nextTick(() => {
           this.$refs.logRef.fold();

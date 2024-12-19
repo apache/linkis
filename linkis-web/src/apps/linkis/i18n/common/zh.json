@@ -1,6 +1,7 @@
 {
   "message": {
       "linkis": {
+          "diagnosticLog": "诊断日志",
           "refresh": "刷新",
           "findNewVer": "检测到新版本",
           "whetherUpdateNow": "是否立即更新？",

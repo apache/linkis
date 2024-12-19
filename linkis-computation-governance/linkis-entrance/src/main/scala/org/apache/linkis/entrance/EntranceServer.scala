@@ -17,42 +17,34 @@
 
 package org.apache.linkis.entrance
 
-import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.{
+  ENABLE_JOB_TIMEOUT_CHECK,
+  ENTRANCE_TASK_TIMEOUT
+}
 import org.apache.linkis.entrance.cs.CSEntranceHelper
-import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import org.apache.linkis.entrance.execute.EntranceJob
-import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.log.LogReader
-import org.apache.linkis.entrance.parser.ParserUtils
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.JobHistoryHelper
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.task.RequestTaskKill
 import org.apache.linkis.governance.common.utils.LoggerUtils
-import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-import java.{lang, util}
-import java.text.{MessageFormat, SimpleDateFormat}
-import java.util.Date
+import java.text.MessageFormat
+import java.util
 import java.util.concurrent.TimeUnit
-
-import scala.collection.JavaConverters._
 
 abstract class EntranceServer extends Logging {
 
@@ -531,6 +523,20 @@ abstract class EntranceServer extends Logging {
           SUBMIT_CODE_ISEMPTY.getErrorDesc
         )
       }
+
+      Utils.tryAndWarn{
+        // 如果是使用优先级队列，设置下优先级
+        val properties: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
+        val fifoStrategy: String = FIFO_QUEUE_STRATEGY
+        if (PFIFO_SCHEDULER_STRATEGY.equalsIgnoreCase(fifoStrategy) && properties != null && !properties.isEmpty) {
+          val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)
+          if (priorityValue != null) {
+            val value: Int = priorityValue.toString.toInt
+            job.setPriority(value)
+          }
+        }
+      }
+
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = LogUtils.generateInfo(
         s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted, success to failover"
@@ -598,50 +604,22 @@ abstract class EntranceServer extends Logging {
       LogUtils.generateInfo(s"the progress ${jobRequest.getProgress} -> $initProgress \n")
     )
 
-    val metricMap = new util.HashMap[String, Object]()
-    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_ENGINE_CONN_ENABLED.getValue) {
-      if (
-          jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-            TaskConstant.JOB_ENGINECONN_MAP
+  def getJob(execId: String): Option[Job] =
+    getEntranceContext.getOrCreateScheduler().get(execId).map(_.asInstanceOf[Job])
+
+  private[entrance] def getEntranceWebSocketService: Option[EntranceWebSocketService] =
+    if (ServerConfiguration.BDP_SERVER_SOCKET_MODE.getValue) {
+      if (entranceWebSocketService.isEmpty) synchronized {
+        if (entranceWebSocketService.isEmpty) {
+          entranceWebSocketService = Some(new EntranceWebSocketService)
+          entranceWebSocketService.foreach(_.setEntranceServer(this))
+          entranceWebSocketService.foreach(
+            getEntranceContext.getOrCreateEventListenerBus.addListener
           )
-      ) {
-        val oldEngineconnMap = jobRequest.getMetrics
-          .get(TaskConstant.JOB_ENGINECONN_MAP)
-          .asInstanceOf[util.Map[String, Object]]
-        metricMap.put(TaskConstant.JOB_ENGINECONN_MAP, oldEngineconnMap)
+        }
       }
-    }
-
-    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED.getValue) {
-      if (
-          jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-            TaskConstant.JOB_YARNRESOURCE
-          )
-      ) {
-        val oldResourceMap = jobRequest.getMetrics
-          .get(TaskConstant.JOB_YARNRESOURCE)
-          .asInstanceOf[util.Map[String, Object]]
-        metricMap.put(TaskConstant.JOB_YARNRESOURCE, oldResourceMap)
-      }
-    }
-
-    jobRequest.setInstances(initInstance)
-    jobRequest.setCreatedTime(initDate)
-    jobRequest.setStatus(initStatus)
-    jobRequest.setProgress(initProgress)
-    jobRequest.setReqId(initReqId)
-    jobRequest.setErrorCode(0)
-    jobRequest.setErrorDesc("")
-    jobRequest.setMetrics(metricMap)
-    jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, initDate)
-    // Allow task status updates to be unordered
-    jobRequest.setUpdateOrderFlag(false)
-
-    logAppender.append(
-      LogUtils.generateInfo(s"job ${jobRequest.getId} success to initialize the properties \n")
-    )
-    logger.info(s"job ${jobRequest.getId} success to initialize the properties")
-  }
+      entranceWebSocketService
+    } else None
 
   def getAllUndoneTask(filterWords: String, ecType: String = null): Array[EntranceJob] = {
     val consumers = getEntranceContext

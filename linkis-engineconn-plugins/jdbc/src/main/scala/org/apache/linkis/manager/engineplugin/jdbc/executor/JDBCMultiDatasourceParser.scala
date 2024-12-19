@@ -126,13 +126,6 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
 
-    // check dbType
-    if (!DS_TYPES_TO_EXECUTE_TASK_BY_JDBC.contains(dbType)) {
-      throw new JDBCGetDatasourceInfoException(
-        UNSUPPORTED_DS_TYPE.getErrorCode,
-        MessageFormat.format(UNSUPPORTED_DS_TYPE.getErrorDesc, dbType)
-      )
-    }
     if (CHANGE_DS_TYPE_TO_MYSQL) {
       dbType = "mysql"
     }

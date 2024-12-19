@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.6.0</revision>
+    <revision>1.7.0</revision>
 
     <zookeeper.version>3.9.2</zookeeper.version>
     <curator.version>4.2.0</curator.version>

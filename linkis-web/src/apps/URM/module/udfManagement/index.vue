@@ -423,7 +423,6 @@ export default {
           this.search()
           this.$Message.success(this.$t('message.linkis.udf.success'));
           
-          console.log(data);
           if (data.defaultLoad) {
             this.confirmKillIdle(data)
           }
@@ -434,7 +433,6 @@ export default {
         })
     },
     confirmKillIdle(data) {
-      console.log(data);
       this.$Modal.confirm({
         title: this.$t('message.linkis.setting.killEngineTitle'),
         content: this.$t('message.linkis.setting.killEngine'),

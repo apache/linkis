@@ -190,7 +190,7 @@ abstract class EntranceServer extends Logging {
         ) {
           val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)
           if (priorityValue != null) {
-            val value: Int = priorityValue.toString.toInt
+            val value: Int = getPriority(priorityValue.toString)
             job.setPriority(value)
           }
         }
@@ -314,6 +314,23 @@ abstract class EntranceServer extends Logging {
   if (timeoutCheck) {
     logger.info("Job time check is enabled")
     startTimeOutCheck()
+  }
+
+  val DOT = "."
+  val DEFAULT_PRIORITY = 100
+
+  private def getPriority(value: String): Int = {
+    var priority: Int = -1
+    Utils.tryAndWarn({
+      priority =
+        if (value.contains(DOT)) value.substring(0, value.indexOf(DOT)).toInt else value.toInt
+    })
+    if (priority < 0 || priority > Integer.MAX_VALUE - 1) {
+      logger.warn(s"illegal queue priority: ${value}")
+      DEFAULT_PRIORITY
+    } else {
+      priority
+    }
   }
 
 }

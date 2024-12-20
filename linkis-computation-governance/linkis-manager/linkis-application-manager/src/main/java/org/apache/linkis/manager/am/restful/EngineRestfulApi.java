@@ -772,16 +772,16 @@ public class EngineRestfulApi {
     }
     if (engineType.equals(Configuration.GLOBAL_CONF_SYMBOL())) {
       Arrays.stream(AMConfiguration.UDF_KILL_ENGINE_TYPE.split(","))
-              .forEach(
-                      engine ->
-                              engineStopService.stopUnlockECByUserCreatorAndECType(
-                                      userName, creatorStr, engine));
+          .forEach(
+              engine ->
+                  engineStopService.stopUnlockECByUserCreatorAndECType(
+                      userName, creatorStr, engine));
     } else {
-      engineStopService.stopUnlockECByUserCreatorAndECType(
-              userName, creatorStr, engineType);
+      engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
     }
     return Message.ok("Kill engineConn succeed");
   }
+
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
     String applicationName = jsonNode.get("applicationName").asText();
     String instance = jsonNode.get("instance").asText();

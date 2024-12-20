@@ -1440,14 +1440,14 @@ public class UDFRestfulApi {
   }
 
   @ApiImplicitParam(
-          name = "path",
-          dataType = "String",
-          value = "path",
-          example = "file:///test-dir/test-sub-dir/test1012_01.py")
+      name = "path",
+      dataType = "String",
+      value = "path",
+      example = "file:///test-dir/test-sub-dir/test1012_01.py")
   @RequestMapping(path = "/get-register-functions", method = RequestMethod.GET)
   public Message getRegisterFunctions(HttpServletRequest req, @RequestParam("path") String path) {
     if (StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_PY)
-            || StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_SCALA)) {
+        || StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_SCALA)) {
       if (StringUtils.startsWithIgnoreCase(path, StorageUtils$.MODULE$.FILE_SCHEMA())) {
         try {
           FsPath fsPath = new FsPath(path);
@@ -1456,7 +1456,7 @@ public class UDFRestfulApi {
           fileSystem.init(null);
           if (fileSystem.canRead(fsPath)) {
             return Message.ok()
-                    .data("functions", UdfUtils.getRegisterFunctions(fileSystem, fsPath, path));
+                .data("functions", UdfUtils.getRegisterFunctions(fileSystem, fsPath, path));
           } else {
             return Message.error("您没有权限访问该文件");
           }

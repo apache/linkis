@@ -116,13 +116,13 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
                 val newConsumer = createConsumer(groupName)
                 val group = getSchedulerContext.getOrCreateGroupFactory.getGroup(groupName)
                 newConsumer.setGroup(group)
-                val fifoQueueStrategy: String = FIFO_QUEUE_STRATEGY.toLowerCase()
                 // 需要判断人员是否是指定部门
                 val consumerQueue: ConsumeQueue =
                   if (
                       PFIFO_SCHEDULER_STRATEGY
-                        .equals(fifoQueueStrategy) && isSupportPriority(groupName)
+                        .equalsIgnoreCase(FIFO_QUEUE_STRATEGY) && isSupportPriority(groupName)
                   ) {
+                    logger.info(s"use priority queue: ${groupName}")
                     new PriorityLoopArrayQueue(group)
                   } else new LoopArrayQueue(group)
                 newConsumer.setConsumeQueue(consumerQueue)

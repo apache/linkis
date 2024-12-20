@@ -25,7 +25,6 @@ class StarrocksTimeKillAlertSender extends Observer with Logging {
   /**
    * Observer Pattern
    */
-  override def update(e: Event, jobHistroyList: scala.Any): Unit = {
-  }
+  override def update(e: Event, jobHistroyList: scala.Any): Unit = {}
 
 }

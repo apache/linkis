@@ -103,11 +103,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       queryParam.withRoles(roles);
       List<Map<String, Object>> hiveTables =
           hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
-      hiveTables.addAll(
-          hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
-      return hiveTables.stream()
-          .distinct()
-          .collect(Collectors.toList());
+      hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
+      return hiveTables.stream().distinct().collect(Collectors.toList());
     } else {
       log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
       return hiveMetaDao.getTablesByDbName(queryParam);

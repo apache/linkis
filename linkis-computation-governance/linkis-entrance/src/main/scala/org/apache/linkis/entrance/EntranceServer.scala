@@ -17,8 +17,6 @@
 
 package org.apache.linkis.entrance
 
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -35,9 +33,16 @@ import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.conf.SchedulerConfiguration.{ENGINE_PRIORITY_RUNTIME_KEY, FIFO_QUEUE_STRATEGY, PFIFO_SCHEDULER_STRATEGY}
+import org.apache.linkis.scheduler.conf.SchedulerConfiguration.{
+  ENGINE_PRIORITY_RUNTIME_KEY,
+  FIFO_QUEUE_STRATEGY,
+  PFIFO_SCHEDULER_STRATEGY
+}
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
+
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.text.MessageFormat
 import java.util
@@ -171,11 +176,15 @@ abstract class EntranceServer extends Logging {
         )
       }
 
-      Utils.tryAndWarn{
+      Utils.tryAndWarn {
         // 如果是使用优先级队列，设置下优先级
         val properties: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
         val fifoStrategy: String = FIFO_QUEUE_STRATEGY
-        if (PFIFO_SCHEDULER_STRATEGY.equalsIgnoreCase(fifoStrategy) && properties != null && !properties.isEmpty) {
+        if (
+            PFIFO_SCHEDULER_STRATEGY.equalsIgnoreCase(
+              fifoStrategy
+            ) && properties != null && !properties.isEmpty
+        ) {
           val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)
           if (priorityValue != null) {
             val value: Int = priorityValue.toString.toInt

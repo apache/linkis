@@ -17,8 +17,6 @@
 
 package org.apache.linkis.monitor.jobhistory.jobtime
 
-import org.apache.commons.collections.MapUtils
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
@@ -27,8 +25,12 @@ import org.apache.linkis.monitor.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.until.{CacheUtils, HttpsUntils}
 import org.apache.linkis.server.BDPJettyServerHelper
 
+import org.apache.commons.collections.MapUtils
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 import java.util.Locale
+
 import scala.collection.JavaConverters._
 
 class StarrocksTimeKillRule(hitObserver: Observer)

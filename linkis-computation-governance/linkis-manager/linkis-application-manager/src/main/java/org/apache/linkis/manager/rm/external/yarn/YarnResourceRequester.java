@@ -77,7 +77,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
     if (queueName.startsWith(queuePrefix)) {
-      logger.info("Queue name {} starts with '{}', remove '{}'", queueName, queuePrefix, queuePrefix);
+      logger.info(
+          "Queue name {} starts with '{}', remove '{}'", queueName, queuePrefix, queuePrefix);
       queueName = queueName.substring(queuePrefix.length());
     }
     String realQueueName = queuePrefix + queueName;

@@ -526,7 +526,10 @@ abstract class EntranceServer extends Logging {
 
       Utils.tryAndWarn{
         // 如果是使用优先级队列，设置下优先级
-        val properties: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
+        val configMap = params
+          .getOrDefault(TaskConstant.PARAMS, new util.HashMap[String, AnyRef]())
+          .asInstanceOf[util.Map[String, AnyRef]]
+        val properties: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(configMap)
         val fifoStrategy: String = FIFO_QUEUE_STRATEGY
         if (PFIFO_SCHEDULER_STRATEGY.equalsIgnoreCase(fifoStrategy) && properties != null && !properties.isEmpty) {
           val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)

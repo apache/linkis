@@ -15,11 +15,19 @@
   ~ limitations under the License.
   -->
 <template>
-  <div 
-    ref="terminal" 
-    class="terminal-container"
-    :style="{ height: terminalHeight + 'px' }"
-  ></div>
+  <div>
+    <div
+      ref="terminal" 
+      class="terminal-container"
+      :style="{ height: terminalHeight + 'px' }"
+    >
+      <Spin
+        v-show="loading"
+        size="large"
+        fix/>
+    </div>
+  </div>
+  
 </template>
 
 <script>
@@ -39,6 +47,10 @@ export default {
       default: () => {
         return {};
       },
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
 

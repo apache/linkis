@@ -49,7 +49,7 @@
       :visualParams="visualParams"
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
-    <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" />
+    <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" :loading="termLogLoading" />
   </div>
 </template>
 <script>
@@ -109,6 +109,7 @@ export default {
       },
       codes: { code: '' },
       termLogs: '',
+      termLogLoading: false,
       engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
@@ -211,7 +212,9 @@ export default {
       } else if(name === 'terminal') {
         if (['Scheduled', 'Running'].includes(this.$route.query.status) || !this.termLogs) {
           try {
+            this.termLogLoading = true;
             const res = await api.fetch(`/jobhistory/diagnosis-query?taskID=${this.$route.query.taskID}`, 'get')
+            this.termLogLoading = false;
             const { diagnosisMsg } = res;
             this.termLogs = diagnosisMsg;
           } catch (err) {

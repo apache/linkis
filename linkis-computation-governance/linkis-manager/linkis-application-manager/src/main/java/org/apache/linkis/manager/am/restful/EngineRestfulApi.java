@@ -770,7 +770,7 @@ public class EngineRestfulApi {
         && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
       return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
     }
-    if (engineType.equals(Configuration.GLOBAL_CONF_SYMBOL())) {
+    if (Configuration.GLOBAL_CONF_SYMBOL().equals(engineType)) {
       Arrays.stream(AMConfiguration.UDF_KILL_ENGINE_TYPE.split(","))
           .forEach(
               engine ->

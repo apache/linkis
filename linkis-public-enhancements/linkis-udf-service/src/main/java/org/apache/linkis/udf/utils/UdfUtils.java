@@ -19,7 +19,10 @@ package org.apache.linkis.udf.utils;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageUtils$;
 import org.apache.linkis.udf.conf.Constants;
 import org.apache.linkis.udf.exception.UdfException;
 
@@ -43,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -279,5 +283,57 @@ public class UdfUtils {
       }
     }
     return modules;
+  }
+
+  public static List<String> getRegisterFunctions(FileSystem fileSystem, FsPath fsPath, String path)
+      throws Exception {
+    try (InputStream is = fileSystem.read(fsPath)) {
+      // 将inputstream内容转换为字符串
+      String content = IOUtils.toString(is, StandardCharsets.UTF_8);
+      if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_PY)) {
+        // 解析python文件
+        return extractPythonMethodNames(path);
+      } else if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_SCALA)) {
+        // 解析scala代码
+        return extractScalaMethodNames(content);
+      } else {
+        throw new UdfException(80041, "Unsupported file type: " + path);
+      }
+    } catch (IOException e) {
+      throw new UdfException(80042, "Failed to read file: " + path, e);
+    }
+  }
+
+  public static List<String> extractScalaMethodNames(String scalaCode) {
+    List<String> methodNames = new ArrayList<>();
+    // 正则表达式匹配方法定义，包括修饰符
+    String regex = "(\\b(private|protected)\\b\\s+)?\\bdef\\s+(\\w+)\\b";
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(scalaCode);
+    logger.info("use regex to get scala method names.. reg:{}", regex);
+    while (matcher.find()) {
+      String methodName = matcher.group(3);
+      methodNames.add(methodName);
+    }
+
+    return methodNames;
+  }
+
+  public static List<String> extractPythonMethodNames(String udfPath) throws Exception {
+    String localPath = udfPath.replace(StorageUtils$.MODULE$.FILE_SCHEMA(), "");
+    String exec =
+        Utils.exec(
+            (new String[] {
+              Constants.PYTHON_COMMAND.getValue(),
+              Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
+              localPath
+            }));
+    logger.info(
+        "execute python script to get python method name...{} {} {}",
+        Constants.PYTHON_COMMAND.getValue(),
+        Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
+        localPath);
+    // 将exec转换为List<String>，exec为一个json数组
+    return JsonUtils.jackson().readValue(exec, new TypeReference<List<String>>() {});
   }
 }

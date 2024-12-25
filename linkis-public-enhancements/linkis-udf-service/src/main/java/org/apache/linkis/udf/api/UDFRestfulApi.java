@@ -1450,9 +1450,12 @@ public class UDFRestfulApi {
         || StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_SCALA)) {
       if (StringUtils.startsWithIgnoreCase(path, StorageUtils$.MODULE$.FILE_SCHEMA())) {
         try {
+          // 获取登录用户
+          String userName = ModuleUserUtils.getOperationUser(req, "get-register-functions");
+
           FsPath fsPath = new FsPath(path);
           // 获取文件系统实例
-          FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath);
+          FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
           fileSystem.init(null);
           if (fileSystem.canRead(fsPath)) {
             return Message.ok()

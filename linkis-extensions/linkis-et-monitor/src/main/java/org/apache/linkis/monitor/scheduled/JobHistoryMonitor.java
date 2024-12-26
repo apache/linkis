@@ -231,7 +231,7 @@ public class JobHistoryMonitor {
     long id =
         Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedAlertScan"))
             .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
+    long intervalMs = 7200 * 1000L;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;
@@ -254,7 +254,7 @@ public class JobHistoryMonitor {
     long id =
         Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedKillScan"))
             .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
+    long intervalMs = 7200 * 1000L;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;

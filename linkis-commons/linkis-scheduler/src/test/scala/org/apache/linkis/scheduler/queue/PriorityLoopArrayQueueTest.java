@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 class PriorityLoopArrayQueueTest {
     AtomicInteger productCounter = new AtomicInteger();
     AtomicInteger consumerCounter = new AtomicInteger();
+    Random rand = new Random();
 
     @Test
     public void testConcurrentPutAndTake() throws Exception {
@@ -39,7 +40,7 @@ class PriorityLoopArrayQueueTest {
         // 获取开始时间的毫秒数
         long startTime = System.currentTimeMillis();
         // 三分钟的毫秒数
-        long threeMinutesInMillis = 1 * 30 * 1000;
+        long threeMinutesInMillis = 30 * 1000L;
         int genLen = 5;
         int getLen = 7;
         final CountDownLatch latch = new CountDownLatch(genLen + getLen + 1);
@@ -48,7 +49,7 @@ class PriorityLoopArrayQueueTest {
             final int id = i;
             new Thread(() -> {
                 try{
-                    Thread.sleep(100 * id);
+                    Thread.sleep(100L * id);
                     latch.countDown();
                     latch.await();
                 } catch (InterruptedException e){
@@ -193,7 +194,6 @@ class PriorityLoopArrayQueueTest {
         System.out.println("【" + Thread.currentThread().getName() + "】" + opt + ":" + event.getId() + ", priority: " + event.getPriority() + ", index: " + event.getIndex());
     }
     private int getRandom(int bound){
-        Random rand = new Random();
         int res = rand.nextInt(bound);
         return res;
     }

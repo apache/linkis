@@ -218,7 +218,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       realQueueName = queueName;
       JsonNode childQueues = getChildQueuesOfCapacity(schedulerInfo);
       Optional<JsonNode> queue = getQueueOfCapacity(childQueues, realQueueName);
-      if (queue == null || !queue.isPresent()) {
+      if (!queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
@@ -240,7 +240,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
         queue = getQueue(childQueues, realQueueName);
       }
-      if (queue == null || !queue.isPresent()) {
+      if (!queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
@@ -413,7 +413,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String haAddress = (String) provider.getConfigMap().get("rmWebAddress");
     String activeAddress = rmAddressMap.get(haAddress);
     if (StringUtils.isBlank(activeAddress)) {
-      synchronized (haAddress.intern()) {
+      synchronized (haAddress.intern()) { // NOSONAR
         if (StringUtils.isBlank(activeAddress)) {
           if (logger.isDebugEnabled()) {
             logger.debug(

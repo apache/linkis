@@ -173,7 +173,7 @@ public class JobHistoryMonitor {
     // 新增失败任务分析扫描
     try {
       JobHistoryAnalyzeRule jobHistoryAnalyzeRule =
-              new JobHistoryAnalyzeRule(new JobHistoryAnalyzeAlertSender());
+          new JobHistoryAnalyzeRule(new JobHistoryAnalyzeAlertSender());
       scanner.addScanRule(jobHistoryAnalyzeRule);
     } catch (Exception e) {
       logger.warn("JobHistoryAnalyzeRule Scan Error msg: " + e.getMessage());
@@ -231,7 +231,7 @@ public class JobHistoryMonitor {
     long id =
         Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedAlertScan"))
             .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
+    long intervalMs = 7200 * 1000L;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;
@@ -252,21 +252,21 @@ public class JobHistoryMonitor {
   @Scheduled(cron = "${linkis.monitor.jdbc.timeout.kill.cron:0 0/10 0 * * ?}")
   public void jdbcUnfinishedKillScan() {
     long id =
-            Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedKillScan"))
-                    .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
-    long intervalMs = 7200 * 1000;
+        Optional.ofNullable(CacheUtils.cacheBuilder.getIfPresent("jdbcUnfinishedKillScan"))
+            .orElse(MonitorConfig.JOB_HISTORY_TIME_EXCEED.getValue());
+    long intervalMs = 7200 * 1000L;
     long maxIntervalMs = Constants.ERRORCODE_MAX_INTERVALS_SECONDS() * 1000;
     long endTime = System.currentTimeMillis();
     long startTime = endTime - intervalMs;
     AnomalyScanner scanner = new DefaultScanner();
     List<DataFetcher> fetchers =
-            JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "");
+        JobMonitorUtils.generateFetchers(startTime, endTime, maxIntervalMs, id, "");
     if (fetchers.isEmpty()) {
       logger.warn("jdbcUnfinishedScan generated 0 dataFetchers, plz check input");
       return;
     }
     StarrocksTimeKillRule starrocksTimeKillRule =
-            new StarrocksTimeKillRule(new StarrocksTimeKillAlertSender());
+        new StarrocksTimeKillRule(new StarrocksTimeKillAlertSender());
     scanner.addScanRule(starrocksTimeKillRule);
     JobMonitorUtils.run(scanner, fetchers, true);
   }

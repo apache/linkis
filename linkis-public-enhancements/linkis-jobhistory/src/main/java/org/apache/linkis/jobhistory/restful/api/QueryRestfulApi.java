@@ -774,13 +774,14 @@ public class QueryRestfulApi {
     parms.put("nonce", SHAUtils.DOCTOR_NONCE);
     // doctor提供的token
     String token = SHAUtils.DOCTOR_TOKEN.getValue();
-    if (StringUtils.isNotBlank(token)){
+    if (StringUtils.isNotBlank(token)) {
       String signature =
+          SHAUtils.Encrypt(
               SHAUtils.Encrypt(
-                      SHAUtils.Encrypt(
-                              parms.get("app_id") + SHAUtils.DOCTOR_NONCE + System.currentTimeMillis(), null)
-                              + token,
-                      null);
+                      parms.get("app_id") + SHAUtils.DOCTOR_NONCE + System.currentTimeMillis(),
+                      null)
+                  + token,
+              null);
       parms.put("signature", signature);
       return Message.ok().data("doctor", parms);
     } else {

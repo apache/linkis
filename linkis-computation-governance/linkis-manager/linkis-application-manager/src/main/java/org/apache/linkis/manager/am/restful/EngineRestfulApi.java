@@ -770,18 +770,18 @@ public class EngineRestfulApi {
         && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
       return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
     }
-    if (engineType.equals(Configuration.GLOBAL_CONF_SYMBOL())) {
+    if (Configuration.GLOBAL_CONF_SYMBOL().equals(engineType)) {
       Arrays.stream(AMConfiguration.UDF_KILL_ENGINE_TYPE.split(","))
-              .forEach(
-                      engine ->
-                              engineStopService.stopUnlockECByUserCreatorAndECType(
-                                      userName, creatorStr, engine));
+          .forEach(
+              engine ->
+                  engineStopService.stopUnlockECByUserCreatorAndECType(
+                      userName, creatorStr, engine));
     } else {
-      engineStopService.stopUnlockECByUserCreatorAndECType(
-              userName, creatorStr, engineType);
+      engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
     }
     return Message.ok("Kill engineConn succeed");
   }
+
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
     String applicationName = jsonNode.get("applicationName").asText();
     String instance = jsonNode.get("instance").asText();

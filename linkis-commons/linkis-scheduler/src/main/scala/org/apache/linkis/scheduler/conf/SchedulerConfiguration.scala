@@ -38,7 +38,7 @@ object SchedulerConfiguration {
 
   // support fifo pfifo
   val FIFO_QUEUE_STRATEGY =
-    CommonVars("linkis.fifo.queue.strategy", FIFO_SCHEDULER_STRATEGY).getValue
+    CommonVars("linkis.fifo.queue.strategy", "fifo").getValue
 
   val SUPPORT_PRIORITY_TASK_USERS =
     CommonVars("linkis.fifo.queue.support.priority.users", "").getValue

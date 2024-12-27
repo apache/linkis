@@ -30,9 +30,12 @@ import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, EngineConnTaskInfo}
+import org.apache.linkis.orchestrator.ecm.entity.{Mark, MarkReq}
+import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 import org.apache.linkis.orchestrator.listener.task.{
   TaskErrorResponseEvent,
   TaskLogEvent,
@@ -40,6 +43,8 @@ import org.apache.linkis.orchestrator.listener.task.{
 }
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.{toJavaMap, BDPJettyServerHelper}
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
@@ -52,6 +57,8 @@ object EngineConnMonitor extends Logging {
 
   private val ENGINECONN_LASTUPDATE_TIMEOUT =
     ComputationOrchestratorConf.ENGINECONN_LASTUPDATE_TIMEOUT.getValue.toLong
+
+  private val engineTypeKey = "engineType"
 
   private[linkis] def addEngineExecutorStatusMonitor(
       engineConnExecutorCache: util.Map[EngineConnTaskInfo, CodeExecTaskExecutor]
@@ -203,7 +210,20 @@ object EngineConnMonitor extends Logging {
       val execTask = executor.getExecTask
       Utils.tryAndError {
         val labels: Array[Label[_]] = executor.getEngineConnExecutor.getLabels()
-        val engineType: String = LabelUtil.getEngineTypeLabel(labels.toList.asJava).getEngineType
+        var engineType = ""
+        val mark: Mark = executor.getMark
+        if (mark != null) {
+          val req: MarkReq = mark.getMarkReq
+          if (req != null) {
+            val engineTypeRef: AnyRef = req.labels.get(engineTypeKey)
+            if (engineTypeRef != null && engineTypeRef.toString.contains("-")) {
+              engineType = engineTypeRef.toString.split("-")(0)
+            }
+          }
+        }
+        if (StringUtils.isEmpty(engineType)) {
+          engineType = getEngineType(labels)
+        }
         logger.warn(
           s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly."
         )
@@ -223,6 +243,15 @@ object EngineConnMonitor extends Logging {
         execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
       }
     }
+  }
+
+  private def getEngineType(labels: Array[Label[_]]): String = {
+    val labelArray: Array[Label[_]] = labels.filter(_.getLabelKey.equals(engineTypeKey))
+    var engineType = ""
+    if (labelArray != null && labelArray.size > 0) {
+      engineType = labelArray(0).asInstanceOf[EngineTypeLabel].getEngineType
+    }
+    engineType
   }
 
   private def updateExecutorActivityTime(

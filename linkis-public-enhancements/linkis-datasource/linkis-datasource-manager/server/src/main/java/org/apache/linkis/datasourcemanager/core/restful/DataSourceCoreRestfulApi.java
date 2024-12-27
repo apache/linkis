@@ -891,6 +891,44 @@ public class DataSourceCoreRestfulApi {
         "Fail to aes of data source[加密数据源密码失败]");
   }
 
+  @ApiOperation(
+      value = "getDataSourceByTypeName",
+      notes = "get data source by datasource type name",
+      response = Message.class)
+  @RequestMapping(value = "/info-by-type", method = RequestMethod.GET)
+  public Message getDataSourceListByTypes(
+      HttpServletRequest request,
+      @RequestParam(value = "typeName", required = false) String typeName,
+      @RequestParam(value = "currentPage", required = false) Integer currentPage,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String userName = ModuleUserUtils.getOperationUser(request, "getDataSourceByTypeName");
+          if (AuthContext.isAdministrator(userName)) {
+            userName = null;
+          }
+          List<DataSource> queryList = new ArrayList<>();
+          Message message = Message.ok();
+          List<DataSourceType> dataSourceTypes =
+              dataSourceRelateService.getAllDataSourceTypes(request.getHeader("Content-Language"));
+          // 从dataSourceTypes过滤出typeName为typeName的数据源类型
+          for (DataSourceType dataSourceType : dataSourceTypes) {
+            if (dataSourceType.getName().equals(typeName)) {
+              DataSourceVo dataSourceVo =
+                  new DataSourceVo(null, Long.valueOf(dataSourceType.getId()), null, null);
+              dataSourceVo.setCurrentPage(null != currentPage ? currentPage : 1);
+              dataSourceVo.setPageSize(null != pageSize ? pageSize : 10);
+              dataSourceVo.setPermissionUser(userName);
+              PageInfo<DataSource> pageInfo =
+                  dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
+              queryList = pageInfo.getList();
+              message.data("totalPage", pageInfo.getTotal());
+            }
+          }
+          return message.data("queryList", queryList);
+        },
+        "Fail to get all types of data source[获取数据源列表失败]");
+  }
   /**
    * Inner method to insert data source
    *

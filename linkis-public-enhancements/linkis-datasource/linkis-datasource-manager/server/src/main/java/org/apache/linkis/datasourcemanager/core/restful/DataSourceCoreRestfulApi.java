@@ -140,6 +140,37 @@ public class DataSourceCoreRestfulApi {
         "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
   }
 
+  @ApiOperation(
+      value = "getKeyDefinitionsByTypeName",
+      notes = "get key definitions by typeName",
+      response = Message.class)
+  @ApiImplicitParams({@ApiImplicitParam(name = "typeName", required = true, dataType = "String")})
+  @RequestMapping(value = "/key-define/{typeName}", method = RequestMethod.GET)
+  public Message getKeyDefinitionsByTypeName(
+      @PathVariable("typeName") String typeName, HttpServletRequest request) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String userName = ModuleUserUtils.getOperationUser(request, "getKeyDefinitionsByType");
+          List<DataSourceType> dataSourceTypes =
+              dataSourceRelateService.getAllDataSourceTypes(request.getHeader("Content-Language"));
+          DataSourceType targetDataSourceType =
+              dataSourceTypes.stream()
+                  .filter(type -> type.getName().equals(typeName))
+                  .findFirst()
+                  .orElse(null);
+          if (targetDataSourceType != null) {
+            List<DataSourceParamKeyDefinition> keyDefinitions =
+                dataSourceRelateService.getKeyDefinitionsByType(
+                    Long.valueOf(targetDataSourceType.getId()),
+                    request.getHeader("Content-Language"));
+            return Message.ok().data("keyDefine", keyDefinitions);
+          } else {
+            return Message.error("No data source type found with name: " + typeName);
+          }
+        },
+        "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
+  }
+
   @ApiOperation(value = "insertJsonInfo", notes = "insert json info", response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"dataSource"})
   @ApiImplicitParams({
@@ -891,6 +922,45 @@ public class DataSourceCoreRestfulApi {
         "Fail to aes of data source[加密数据源密码失败]");
   }
 
+  @ApiOperation(
+      value = "getDataSourceByTypeName",
+      notes = "get data source by datasource type name",
+      response = Message.class)
+  @RequestMapping(value = "/info-by-type", method = RequestMethod.GET)
+  public Message getDataSourceListByTypes(
+      HttpServletRequest request,
+      @RequestParam String typeName,
+      @RequestParam(required = false, defaultValue = "1") Integer currentPage,
+      @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String userName = ModuleUserUtils.getOperationUser(request, "getDataSourceByTypeName");
+          if (AuthContext.isAdministrator(userName)) {
+            userName = null;
+          }
+          List<DataSourceType> dataSourceTypes =
+              dataSourceRelateService.getAllDataSourceTypes(request.getHeader("Content-Language"));
+          DataSourceType targetDataSourceType =
+              dataSourceTypes.stream()
+                  .filter(type -> type.getName().equals(typeName))
+                  .findFirst()
+                  .orElse(null);
+          if (targetDataSourceType != null) {
+            DataSourceVo dataSourceVo = new DataSourceVo();
+            dataSourceVo.setDataSourceTypeId(Long.valueOf(targetDataSourceType.getId()));
+            dataSourceVo.setPermissionUser(userName);
+            dataSourceVo.setCurrentPage(currentPage);
+            dataSourceVo.setPageSize(pageSize);
+            PageInfo<DataSource> pageInfo =
+                dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
+            List<DataSource> queryList = pageInfo.getList();
+            return Message.ok().data("queryList", queryList).data("totalPage", pageInfo.getTotal());
+          } else {
+            return Message.error("No data source type found with name: " + typeName);
+          }
+        },
+        "Fail to get all types of data source[获取数据源列表失败]");
+  }
   /**
    * Inner method to insert data source
    *

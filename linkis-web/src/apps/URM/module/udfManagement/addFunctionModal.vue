@@ -97,7 +97,7 @@
           @set-node="setNodePath"/>
       </FormItem>
       <FormItem
-        v-if="fnType === 1 && fnCategory.isSpark"
+        v-if="fnType === 1 && fnCategory.isSpark && registerFunctions.length > 0"
         :label="$t('message.linkis.udf.registerFunc')"
         prop="pyPara">
         <Select
@@ -113,7 +113,7 @@
         </Select>
       </FormItem>
       <FormItem
-        v-if="fnType === 2 && fnCategory.isSpark"
+        v-if="fnType === 2 && fnCategory.isSpark && registerFunctions.length > 0"
         :label="$t('message.linkis.udf.registerFunc')"
         prop="scalapara">
         <Select
@@ -617,13 +617,14 @@ export default {
       });
       this.$nextTick(async () => {
         this.$set(this.setting, this.getTypes(), path);
-        this.registerFunctionEditable = false;
         if(this.getTypes() !== 'jarPath') {
           if (/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(path)) {
             try {
               this.registerFunctions = await this.getRegisterFunction(path);
               if(this.registerFunctions.length !== 0) {
                 this.registerFunctionEditable = false;
+              } else {
+                this.registerFunctionEditable = true;
               }
             } catch (err) {
               window.console.error(err);
@@ -771,6 +772,8 @@ export default {
             this.registerFunctions = await this.getRegisterFunction(node.path);
             if(this.registerFunctions.length !== 0) {
               this.registerFunctionEditable = false;
+            } else {
+              this.registerFunctionEditable = true;
             }
           } catch (err) {
             window.console.error(err);

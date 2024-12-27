@@ -101,10 +101,11 @@ public class AMConfiguration {
       CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python");
 
   public static final CommonVars<String> UNALLOW_BATCH_KILL_ENGINE_TYPES =
-      CommonVars.apply("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,jdbc,nebula");
+      CommonVars.apply("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,jdbc");
   public static final CommonVars<String> MULTI_USER_ENGINE_USER =
       CommonVars.apply("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser());
-  public static final String UDF_KILL_ENGINE_TYPE = CommonVars.apply("linkis.udf.kill.engine.type", "spark,hive").getValue();
+  public static final String UDF_KILL_ENGINE_TYPE =
+      CommonVars.apply("linkis.udf.kill.engine.type", "spark,hive").getValue();
 
   public static final CommonVars<Integer> ENGINE_LOCKER_MAX_TIME =
       CommonVars.apply("wds.linkis.manager.am.engine.locker.max.time", 1000 * 60 * 5);
@@ -204,7 +205,7 @@ public class AMConfiguration {
         AMConfiguration.UNALLOW_BATCH_KILL_ENGINE_TYPES.getValue().split(",");
     Optional<String> findResult =
         Arrays.stream(unAllowBatchKillEngine)
-            .filter(e -> engineType.toLowerCase().contains(e))
+            .filter(e -> e.equalsIgnoreCase(engineType))
             .findFirst();
     return findResult.isPresent();
   }

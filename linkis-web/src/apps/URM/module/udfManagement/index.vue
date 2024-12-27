@@ -440,7 +440,7 @@ export default {
           try {
             api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
               creator: '*',
-              engineType: data.udfType === 1 ? 'spark' : '*'
+              engineType: [1, 2].includes(data.udfType) ? 'spark' : '*'
             })
           } catch (err) {
             window.console.warn(err)

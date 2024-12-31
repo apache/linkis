@@ -351,7 +351,7 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private Date getTableModificationTime(String tableLocation) throws IOException {
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       return new Date(tableFile.getModificationTime());
     }
@@ -360,7 +360,7 @@ public class MdqServiceImpl implements MdqService {
 
   private int getPartitionsNum(String tableLocation) throws IOException {
     int partitionsNum = 0;
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       partitionsNum = getRootHdfs().listStatus(tableFile.getPath()).length;
     }

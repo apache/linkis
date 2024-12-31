@@ -161,7 +161,7 @@
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <poi.version>5.2.3</poi.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>2.0</snakeyaml.version>
     <jettision.version>1.5.4</jettision.version>
     <woodstox.core.version>6.4.0</woodstox.core.version>
     <classgraph.version>4.8.112</classgraph.version>

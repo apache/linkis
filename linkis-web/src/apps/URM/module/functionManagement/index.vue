@@ -390,7 +390,7 @@ export default {
           this.isLoading = false
           this.loading = false
           if (data.defaultLoad) {
-            this.confirmKillIdle(data)
+            this.confirmKillIdle()
           }
         })
         .catch(() => {
@@ -426,7 +426,7 @@ export default {
           this.search()
           this.$Message.success(this.$t('message.linkis.udf.success'));
           if (data.defaultLoad) {
-            this.confirmKillIdle(data)
+            this.confirmKillIdle()
           }
         })
         .catch(() => {
@@ -669,7 +669,7 @@ export default {
           })
       }
     },
-    confirmKillIdle(data) {
+    confirmKillIdle() {
       this.$Modal.confirm({
         title: this.$t('message.linkis.setting.killEngineTitle'),
         content: this.$t('message.linkis.setting.killEngine'),
@@ -677,7 +677,7 @@ export default {
           try {
             api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
               creator: '*',
-              engineType: [1, 2].includes(data.udfType) ? 'spark' : '*'
+              engineType: 'spark'
             })
           } catch (err) {
             window.console.warn(err)

@@ -70,13 +70,15 @@ abstract class PythonModuleLoad extends Logging {
       .getModulesInfo()
 
     // 使用Collections.sort()和Comparator进行排序
-    Collections.sort(
-      infoList,
-      new Comparator[PythonModuleInfoVO]() {
-        override def compare(o1: PythonModuleInfoVO, o2: PythonModuleInfoVO): Int =
-          Integer.compare(o1.getId.toInt, o1.getId.toInt)
-      }
-    )
+    if (infoList != null && !infoList.isEmpty) {
+      Collections.sort(
+        infoList,
+        new Comparator[PythonModuleInfoVO]() {
+          override def compare(o1: PythonModuleInfoVO, o2: PythonModuleInfoVO): Int =
+            Integer.compare(o1.getId.toInt, o1.getId.toInt)
+        }
+      )
+    }
     infoList
   }
 

@@ -48,7 +48,7 @@ object HiveEngineConfiguration {
 
   val HIVE_ENGINE_CONN_JAVA_EXTRA_OPTS = CommonVars(
     "wds.linkis.hive.engineConn.java.extraOpts",
-    "",
+    "-Djava.library.path=/appcom/Install/hadoop/lib/native",
     "Specify the option parameter of the java process (please modify it carefully!!!)"
   )
 

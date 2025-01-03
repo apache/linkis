@@ -190,7 +190,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
             null
           }
         if (args.length > 0 && args(0).isInstanceOf[java.util.Map[String, String]]) {
-          properties = args(0).asInstanceOf[java.util.Map[String, String]]
+          properties.putAll(args(0).asInstanceOf[java.util.Map[String, String]])
         }
         if (StringUtils.isNoneBlank(user)) {
           properties.put(StorageConfiguration.PROXY_USER.key, user)

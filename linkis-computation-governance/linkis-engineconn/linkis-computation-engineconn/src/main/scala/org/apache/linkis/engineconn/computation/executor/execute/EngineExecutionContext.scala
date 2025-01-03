@@ -210,10 +210,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
       }
     }
     if (!AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
-      val taskLogs = taskLog.split("\n")
-      taskLogs.foreach(line => {
-        LogHelper.cacheLog(line)
-      })
+      LogHelper.cacheLog(taskLog)
     } else {
       val listenerBus = getEngineSyncListenerBus
       getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))

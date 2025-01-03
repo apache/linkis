@@ -1445,14 +1445,18 @@ public class UDFRestfulApi {
       value = "path",
       example = "file:///test-dir/test-sub-dir/test1012_01.py")
   @RequestMapping(path = "/get-register-functions", method = RequestMethod.GET)
-  public Message getRegisterFunctions(HttpServletRequest req, @RequestParam("path") String path) {
+  public Message getRegisterFunctions(HttpServletRequest req, @RequestParam("path") String path) throws IOException {
     if (StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_PY)
         || StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_SCALA)) {
       if (StringUtils.startsWithIgnoreCase(path, StorageUtils$.MODULE$.FILE_SCHEMA())) {
+        FileSystem fileSystem = null;
         try {
+          // 获取登录用户
+          String userName = ModuleUserUtils.getOperationUser(req, "get-register-functions");
+
           FsPath fsPath = new FsPath(path);
           // 获取文件系统实例
-          FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath);
+          fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
           fileSystem.init(null);
           if (fileSystem.canRead(fsPath)) {
             return Message.ok()
@@ -1462,6 +1466,10 @@ public class UDFRestfulApi {
           }
         } catch (Exception e) {
           return Message.error("解析文件失败，错误信息：" + e);
+        } finally {
+          if (fileSystem != null) {
+            fileSystem.close();
+          }
         }
       } else {
         return Message.error("仅支持本地文件");

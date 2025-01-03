@@ -197,7 +197,7 @@ public class DriverAndYarnResource extends Resource {
     if (yarnResource != null) {
       yarn = yarnResource.toJson();
     }
-    return String.format("{\"driver\":%s, \"yarn\":%s}", load, yarn);
+    return String.format("{\"driver\":\"%s\", \"yarn\":\"%s\"}", load, yarn);
   }
 
   public String toString() {

@@ -245,7 +245,7 @@ public class DriverAndKubernetesResource extends Resource {
     if (kubernetesResource != null) {
       kubernetes = kubernetesResource.toJson();
     }
-    return String.format("{\"driver\":%s, \"kubernetes\":%s}", load, kubernetes);
+    return String.format("{\"driver\":\"%s\", \"kubernetes\":\"%s\"}", load, kubernetes);
   }
 
   public String toString() {

@@ -683,7 +683,7 @@ class TaskExecutionServiceImpl
     if (null != executor) {
       executor.getTaskById(taskId)
     } else {
-      logger.error(s"Executor of taskId : $taskId is not cached.")
+      logger.info(s"Executor of taskId : $taskId is not cached.")
       null
     }
   }

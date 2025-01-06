@@ -19,9 +19,14 @@ package org.apache.linkis.common.utils;
 
 import org.apache.linkis.common.conf.CommonVars;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SHAUtils {
 
@@ -65,5 +70,27 @@ public class SHAUtils {
       des += tmp;
     }
     return des;
+  }
+
+  public static void main(String[] args) throws IOException {
+    if (StringUtils.isBlank(args[0])) {
+      throw new LinkageError("Invalid applicationId cannot be empty");
+    }
+    Map<String, String> parms = new HashMap<>();
+    String timestampStr = String.valueOf(System.currentTimeMillis());
+    parms.put("applicationId", args[0]);
+    parms.put("app_id", args[1]);
+    parms.put("timestamp", timestampStr);
+    parms.put("nonce", DOCTOR_NONCE);
+    String token = args[2];
+    if (StringUtils.isNotBlank(token)) {
+      String signature =
+          Encrypt(
+              Encrypt(parms.get("app_id") + DOCTOR_NONCE + System.currentTimeMillis(), null)
+                  + token,
+              null);
+      parms.put("signature", signature);
+    }
+    System.out.println(parms);
   }
 }

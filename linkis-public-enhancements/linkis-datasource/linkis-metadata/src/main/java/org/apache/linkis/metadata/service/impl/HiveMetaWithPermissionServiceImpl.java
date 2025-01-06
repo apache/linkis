@@ -26,9 +26,13 @@ import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.metadata.utils.MdqConstants;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,18 +54,22 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
   private final String adminUser = DWSConfig.HIVE_DB_ADMIN_USER.getValue();
 
   @Override
-  public List<String> getDbsOptionalUserName(String userName) {
-    if (adminUser.equals(userName)) {
-      log.info("admin {} to get all dbs ", userName);
-      return hiveMetaDao.getAllDbs();
-    }
-    Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-    if (flag) {
-      List<String> roles = hiveMetaDao.getRolesByUser(userName);
-      return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+  public List<String> getDbsOptionalUserName(String userName, String permission) {
+    if (StringUtils.isNotBlank(permission) && permission.equals("write")) {
+      return hiveMetaDao.getCanWriteDbsByUser(userName);
     } else {
-      log.info("user {} to get all dbs no permission control", userName);
-      return hiveMetaDao.getAllDbs();
+      if (adminUser.equals(userName)) {
+        log.info("admin {} to get all dbs ", userName);
+        return hiveMetaDao.getAllDbs();
+      }
+      Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
+      if (flag) {
+        List<String> roles = hiveMetaDao.getRolesByUser(userName);
+        return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+      } else {
+        log.info("user {} to get all dbs no permission control", userName);
+        return hiveMetaDao.getAllDbs();
+      }
     }
   }
 
@@ -73,7 +81,21 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       return null;
     }
     String userName = queryParam.getUserName();
+    String dbName = queryParam.getDbName();
     if (adminUser.equals(userName)) {
+      String tableName = queryParam.getTableName();
+      // if tableName is not empty；query by tablename
+      if (StringUtils.isNotEmpty(tableName) && StringUtils.isNotEmpty(dbName)) {
+        log.info("admin {} to get table with tableName:{} ", userName, tableName);
+        Map<String, Object> queryRes =
+            hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (queryRes != null) {
+          result.add(queryRes);
+        }
+        return result;
+      }
+
       log.info("admin {} to get all tables ", userName);
       return hiveMetaDao.getTablesByDbName(queryParam);
     }
@@ -82,11 +104,10 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       queryParam.withRoles(roles);
       List<Map<String, Object>> hiveTables =
           hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
-      hiveTables.addAll(
-          hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
+      hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
       return hiveTables.stream()
-          .distinct()
-          .collect(Collectors.toList());
+              .sorted(Comparator.comparing(hiveTable -> (String) hiveTable.get("NAME")))
+              .collect(Collectors.toList());
     } else {
       log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
       return hiveMetaDao.getTablesByDbName(queryParam);

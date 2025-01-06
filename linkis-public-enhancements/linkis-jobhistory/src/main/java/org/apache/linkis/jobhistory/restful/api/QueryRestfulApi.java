@@ -754,40 +754,6 @@ public class QueryRestfulApi {
     return queryTasks;
   }
 
-  @ApiOperation(value = "get-doctor-signature", notes = "get signature", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "applicationId", required = false, dataType = "String", value = "user")
-  })
-  @RequestMapping(path = "/get-doctor-signature", method = RequestMethod.GET)
-  public Message getUserKeyValue(
-      HttpServletRequest req,
-      @RequestParam(value = "applicationId", required = false) String applicationId)
-      throws UnsupportedEncodingException {
-    if (StringUtils.isBlank(applicationId)) {
-      return Message.error("Invalid applicationId cannot be empty");
-    }
-    Map<String, String> parms = new HashMap<>();
-    String timestampStr = String.valueOf(System.currentTimeMillis());
-    parms.put("applicationId", applicationId);
-    parms.put("app_id", Configuration.LINKIS_SYS_NAME().getValue());
-    parms.put("timestamp", timestampStr);
-    parms.put("nonce", SHAUtils.DOCTOR_NONCE);
-    // doctor提供的token
-    String token = SHAUtils.DOCTOR_TOKEN.getValue();
-    if (StringUtils.isNotBlank(token)){
-      String signature =
-              SHAUtils.Encrypt(
-                      SHAUtils.Encrypt(
-                              parms.get("app_id") + SHAUtils.DOCTOR_NONCE + System.currentTimeMillis(), null)
-                              + token,
-                      null);
-      parms.put("signature", signature);
-      return Message.ok().data("doctor", parms);
-    } else {
-      return Message.error("Doctor token cannot be empty");
-    }
-  }
-
   @ApiOperation(
       value = "diagnosis-query",
       notes = "query failed task diagnosis msg",
@@ -838,7 +804,7 @@ public class QueryRestfulApi {
         jobDiagnosis.setDiagnosisContent(diagnosisMsg);
         jobDiagnosis.setCreatedTime(new Date());
         jobDiagnosis.setUpdatedDate(new Date());
-        if (Constants.FINISHED_JOB_STATUS.contains(jobStatus)) {
+        if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
           jobDiagnosis.setOnlyRead("1");
         }
         jobHistoryDiagnosisService.insert(jobDiagnosis);
@@ -851,7 +817,7 @@ public class QueryRestfulApi {
           jobDiagnosis.setDiagnosisContent(diagnosisMsg);
           jobDiagnosis.setUpdatedDate(new Date());
           jobDiagnosis.setDiagnosisContent(diagnosisMsg);
-          if (Constants.FINISHED_JOB_STATUS.contains(jobStatus)) {
+          if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
             jobDiagnosis.setOnlyRead("1");
           }
           jobHistoryDiagnosisService.update(jobDiagnosis);

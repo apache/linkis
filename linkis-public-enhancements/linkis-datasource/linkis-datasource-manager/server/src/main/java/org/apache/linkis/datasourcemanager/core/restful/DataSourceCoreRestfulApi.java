@@ -892,6 +892,64 @@ public class DataSourceCoreRestfulApi {
   }
 
   @ApiOperation(
+      value = "queryDataSourceWithConnectParms",
+      notes = "query datasource",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "system", dataType = "String"),
+    @ApiImplicitParam(name = "name", dataType = "Long"),
+    @ApiImplicitParam(name = "typeId", dataType = "Long"),
+    @ApiImplicitParam(name = "identifies", dataType = "String"),
+    @ApiImplicitParam(name = "currentPage", dataType = "Integer"),
+    @ApiImplicitParam(name = "pageSize", dataType = "Integer")
+  })
+  @RequestMapping(value = "/info/connect-params", method = RequestMethod.GET)
+  public Message queryDataSourceWithConnectParms(
+      @RequestParam(value = "system", required = false) String createSystem,
+      @RequestParam(value = "name", required = false) String dataSourceName,
+      @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
+      @RequestParam(value = "identifies", required = false) String identifies,
+      @RequestParam(value = "currentPage", required = false) Integer currentPage,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize,
+      HttpServletRequest request) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String permissionUser = ModuleUserUtils.getOperationUser(request, "queryDataSource");
+
+          DataSourceVo dataSourceVo =
+              new DataSourceVo(dataSourceName, dataSourceTypeId, identifies, createSystem);
+          dataSourceVo.setCurrentPage(null != currentPage ? currentPage : 1);
+          dataSourceVo.setPageSize(null != pageSize ? pageSize : 10);
+
+          if (AuthContext.isAdministrator(permissionUser)) {
+            permissionUser = null;
+          }
+          dataSourceVo.setPermissionUser(permissionUser);
+          PageInfo<DataSource> pageInfo =
+              dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
+          List<DataSource> queryList = pageInfo.getList();
+          for (DataSource dataSource : queryList) {
+            DataSource dataSourceConnect =
+                dataSourceInfoService.getDataSourceInfoForConnect(dataSource.getDataSourceName());
+            if (dataSourceConnect == null) {
+              return Message.error("No Exists The DataSource [不存在该数据源]");
+            }
+            Map<String, Object> connectParams = dataSourceConnect.getConnectParams();
+            List<DataSourceParamKeyDefinition> keyDefinitionList =
+                dataSourceRelateService.getKeyDefinitionsByType(
+                    dataSourceConnect.getDataSourceTypeId());
+            if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+              RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
+            }
+            connectParams.remove(AESUtils.PASSWORD);
+            dataSource.setConnectParams(connectParams);
+          }
+          return Message.ok().data("queryList", queryList).data("totalPage", pageInfo.getTotal());
+        },
+        "Fail to query page of data source[查询数据源失败]");
+  }
+
+  @ApiOperation(
       value = "encryptDatasourcePassword",
       notes = "encrypt datasource password",
       response = Message.class)

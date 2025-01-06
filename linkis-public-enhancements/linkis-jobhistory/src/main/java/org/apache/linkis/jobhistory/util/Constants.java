@@ -20,8 +20,4 @@ package org.apache.linkis.jobhistory.util;
 public class Constants {
   public static final String APPLICATION_NAME = "linkis-ps-publicservice";
 
-  public static final String UNFINISHED_JOB_STATUS =
-      "Inited,WaitForRetry,Scheduled,Running".toUpperCase();
-
-  public static final String FINISHED_JOB_STATUS = "Succeed,Failed,Cancelled,Timeout".toUpperCase();
 }

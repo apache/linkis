@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -104,7 +105,9 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       List<Map<String, Object>> hiveTables =
           hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
       hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
-      return hiveTables.stream().distinct().collect(Collectors.toList());
+      return hiveTables.stream()
+              .sorted(Comparator.comparing(hiveTable -> (String) hiveTable.get("NAME")))
+              .collect(Collectors.toList());
     } else {
       log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
       return hiveMetaDao.getTablesByDbName(queryParam);

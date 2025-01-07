@@ -131,6 +131,22 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
   }
 
+  @ApiOperation(
+      value = "queryDbsWithTablesgetByAccessTime",
+      notes = "query dbs with tables order by getByAccessTime",
+      response = Message.class)
+  @RequestMapping(path = "getByAccessTime", method = RequestMethod.GET)
+  public Message queryDbsWithTablesgetByAccessTime(HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "get all db and tables");
+    try {
+      JsonNode dbs = dataSourceService.getDbsWithTablesAndLastAccessAt(userName);
+      return Message.ok("").data("dbs", dbs);
+    } catch (Exception e) {
+      logger.error("Failed to queryDbsWithTables", e);
+      return Message.error("Failed to queryDbsWithTables", e);
+    }
+  }
+
   @ApiOperation(value = "queryTables", notes = "query tables", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "database", dataType = "String", value = "database")

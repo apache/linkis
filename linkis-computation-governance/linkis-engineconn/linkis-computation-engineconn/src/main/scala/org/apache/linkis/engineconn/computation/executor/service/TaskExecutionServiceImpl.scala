@@ -535,7 +535,7 @@ class TaskExecutionServiceImpl
     } else {
       val msg =
         "Task null! requestTaskStatus: " + ComputationEngineUtils.GSON.toJson(requestTaskStatus)
-      logger.error(msg)
+      logger.info(msg)
       ResponseTaskStatus(requestTaskStatus.execId, ExecutionNodeStatus.Cancelled)
     }
   }
@@ -582,7 +582,7 @@ class TaskExecutionServiceImpl
         if (null != task) {
           sendToEntrance(task, ResponseTaskLog(logUpdateEvent.taskId, logUpdateEvent.log))
         } else {
-          logger.error("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
+          logger.info("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
         }
       } else if (null != lastTask) {
         val executor = executorManager.getReportExecutor
@@ -624,7 +624,7 @@ class TaskExecutionServiceImpl
         logger.info(s"task ${task.getTaskId} status $toStatus will not be send to entrance")
       }
     } else {
-      logger.error(
+      logger.info(
         "Task cannot null! taskStatusChangedEvent: " + ComputationEngineUtils.GSON
           .toJson(taskStatusChangedEvent)
       )
@@ -651,7 +651,7 @@ class TaskExecutionServiceImpl
 
           sendToEntrance(task, respRunningInfo)
         } else {
-          logger.error(
+          logger.info(
             "Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON
               .toJson(taskProgressUpdateEvent)
           )
@@ -672,7 +672,7 @@ class TaskExecutionServiceImpl
         )
       )
     } else {
-      logger.error(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
+      logger.info(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
     }
     logger.info(s"Finished  to deal result event ${taskResultCreateEvent.taskId}")
   }
@@ -699,7 +699,7 @@ class TaskExecutionServiceImpl
         )
       )
     } else {
-      logger.error(
+      logger.info(
         "Task cannot null! taskResultSizeCreatedEvent: " + ComputationEngineUtils.GSON
           .toJson(taskResultSizeCreatedEvent)
       )

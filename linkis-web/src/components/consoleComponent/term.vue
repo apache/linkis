@@ -65,6 +65,7 @@ export default {
   watch: {
     logs(newVal) {
       if (this.terminal && newVal) {
+        this.terminal.clear()
         this.terminal.write(newVal)
         setTimeout(() => {
           this.terminal.scrollToTop();

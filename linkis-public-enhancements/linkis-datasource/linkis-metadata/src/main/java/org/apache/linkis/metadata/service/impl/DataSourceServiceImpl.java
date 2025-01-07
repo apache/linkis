@@ -40,10 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -103,6 +100,33 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
+  public JsonNode getDbsWithTablesAndLastAccessAt(String userName) {
+    ArrayNode dbNodes = jsonMapper.createArrayNode();
+    List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName, null);
+    MetadataQueryParam queryParam = MetadataQueryParam.of(userName);
+    int count = 0;
+    for (String db : dbs) {
+      if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {
+        logger.info("db  will be filter: " + db);
+        continue;
+      }
+      JsonNode jsonNode = queryTablesWithLastAccessAt(queryParam);
+      count += jsonNode.size();
+      if (count < 100000) {
+        queryParam.setDbName(db);
+        ObjectNode dbNode = jsonMapper.createObjectNode();
+        dbNode.put("databaseName", db);
+        dbNode.put("tables", jsonNode);
+        dbNodes.add(dbNode);
+      } else {
+        break;
+      }
+    }
+    return dbNodes;
+  }
+
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  @Override
   public JsonNode queryTables(MetadataQueryParam queryParam) {
     List<Map<String, Object>> listTables;
     try {
@@ -123,6 +147,34 @@ public class DataSourceServiceImpl implements DataSourceService {
       tableNode.put("lastAccessAt", (Integer) table.get("LAST_ACCESS_TIME"));
       tables.add(tableNode);
     }
+    return tables;
+  }
+
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  @Override
+  public JsonNode queryTablesWithLastAccessAt(MetadataQueryParam queryParam) {
+    List<Map<String, Object>> listTables;
+    try {
+      listTables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
+    } catch (Throwable e) {
+      logger.error("Failed to list Tables:", e);
+      throw new RuntimeException(e);
+    }
+    long threeMonthsAgo = System.currentTimeMillis() - (3L * 30 * 24 * 60 * 60 * 1000);
+    ArrayNode tables = jsonMapper.createArrayNode();
+    listTables.stream()
+        .filter(table -> ((Integer) table.get("LAST_ACCESS_TIME")).longValue() > threeMonthsAgo)
+        .forEach(
+            table -> {
+              ObjectNode tableNode = jsonMapper.createObjectNode();
+              tableNode.put("tableName", (String) table.get("NAME"));
+              tableNode.put("isView", table.get("TYPE").equals("VIRTUAL_VIEW"));
+              tableNode.put("databaseName", queryParam.getDbName());
+              tableNode.put("createdBy", (String) table.get("OWNER"));
+              tableNode.put("createdAt", (Integer) table.get("CREATE_TIME"));
+              tableNode.put("lastAccessAt", (Integer) table.get("LAST_ACCESS_TIME"));
+              tables.add(tableNode);
+            });
     return tables;
   }
 

@@ -27,7 +27,11 @@ public interface DataSourceService {
 
   JsonNode getDbsWithTables(String userName) throws Exception;
 
+  JsonNode getDbsWithTablesAndLastAccessAt(String userName) throws Exception;
+
   JsonNode queryTables(MetadataQueryParam queryParam);
+
+  JsonNode queryTablesWithLastAccessAt(MetadataQueryParam queryParam);
 
   JsonNode queryTableMeta(MetadataQueryParam queryParam);
 

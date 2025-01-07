@@ -37,6 +37,11 @@ object LinkisStorageConf {
       )
       .getValue
 
+  val HDFS_FILE_SYSTEM_REFRESHE_INTERVAL: Int =
+    CommonVars
+      .apply("wds.linkis.hdfs.rest.interval", 10)
+      .getValue
+
   val ROW_BYTE_MAX_LEN_STR = CommonVars("wds.linkis.resultset.row.max.str", "2m").getValue
 
   val ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR)

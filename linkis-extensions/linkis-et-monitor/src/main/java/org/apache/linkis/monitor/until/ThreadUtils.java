@@ -44,7 +44,7 @@ public class ThreadUtils extends ApplicationContextEvent {
       Utils.newCachedExecutionContext(5, "alert-pool-thread-", false);
 
   public static ExecutionContextExecutorService executors_analyze =
-          Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);
+      Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);
 
   public ThreadUtils(ApplicationContext source) {
     super(source);
@@ -68,7 +68,8 @@ public class ThreadUtils extends ApplicationContextEvent {
     }
     return msg;
   }
-  public static void analyzeRun(JobHistory jobHistory){
+
+  public static void analyzeRun(JobHistory jobHistory) {
     FutureTask future = new FutureTask(() -> HttpsUntils.analyzeJob(jobHistory), -1);
     executors_analyze.submit(future);
   }

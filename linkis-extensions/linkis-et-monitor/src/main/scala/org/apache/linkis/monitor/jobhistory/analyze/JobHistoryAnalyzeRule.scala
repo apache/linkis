@@ -17,8 +17,7 @@
 
 package org.apache.linkis.monitor.jobhistory.analyze
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.monitor.config.MonitorConfig
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
@@ -50,7 +49,7 @@ class JobHistoryAnalyzeRule(hitObserver: Observer)
           val jobStatus = jobHistory.getStatus.toUpperCase()
           if (Constants.FINISHED_JOB_STATUS.contains(jobStatus) && jobStatus.equals("FAILED")) {
             // 执行任务分析
-            HttpsUntils.analyzeJob(jobHistory)
+            ThreadUtils.analyzeRun(jobHistory)
           }
         case _ =>
       }

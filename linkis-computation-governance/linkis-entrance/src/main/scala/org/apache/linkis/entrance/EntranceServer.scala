@@ -150,13 +150,6 @@ abstract class EntranceServer extends Logging {
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
         case _ =>
       }
-      Utils.tryCatch {
-        if (logAppender.length() > 0) {
-          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
-        }
-      } { t =>
-        logger.error("Failed to write init log, reason: ", t)
-      }
 
       /**
        * job.afterStateChanged() method is only called in job.run(), and job.run() is called only
@@ -191,9 +184,18 @@ abstract class EntranceServer extends Logging {
           val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)
           if (priorityValue != null) {
             val value: Int = getPriority(priorityValue.toString)
+            logAppender.append(LogUtils.generateInfo(s"The task set priority is ${value} \n"))
             job.setPriority(value)
           }
         }
+      }
+
+      Utils.tryCatch {
+        if (logAppender.length() > 0) {
+          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
+        }
+      } { t =>
+        logger.error("Failed to write init log, reason: ", t)
       }
 
       getEntranceContext.getOrCreateScheduler().submit(job)

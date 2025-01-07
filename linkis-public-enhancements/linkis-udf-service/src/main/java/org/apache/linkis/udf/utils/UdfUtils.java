@@ -287,20 +287,20 @@ public class UdfUtils {
 
   public static List<String> getRegisterFunctions(FileSystem fileSystem, FsPath fsPath, String path)
       throws Exception {
-    try (InputStream is = fileSystem.read(fsPath)) {
-      // 将inputstream内容转换为字符串
-      String content = IOUtils.toString(is, StandardCharsets.UTF_8);
-      if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_PY)) {
-        // 解析python文件
-        return extractPythonMethodNames(path);
-      } else if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_SCALA)) {
+    if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_PY)) {
+      // 解析python文件
+      return extractPythonMethodNames(path);
+    } else if (StringUtils.endsWith(path, Constants.FILE_EXTENSION_SCALA)) {
+      try (InputStream is = fileSystem.read(fsPath)) {
+        // 将inputstream内容转换为字符串
+        String content = IOUtils.toString(is, StandardCharsets.UTF_8);
         // 解析scala代码
         return extractScalaMethodNames(content);
-      } else {
-        throw new UdfException(80041, "Unsupported file type: " + path);
+      } catch (IOException e) {
+        throw new UdfException(80042, "Failed to read file: " + path, e);
       }
-    } catch (IOException e) {
-      throw new UdfException(80042, "Failed to read file: " + path, e);
+    } else {
+      throw new UdfException(80041, "Unsupported file type: " + path);
     }
   }
 

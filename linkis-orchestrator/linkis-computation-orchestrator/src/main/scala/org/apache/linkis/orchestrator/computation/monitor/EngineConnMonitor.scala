@@ -37,6 +37,7 @@ import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor,
 import org.apache.linkis.orchestrator.ecm.entity.{Mark, MarkReq}
 import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 import org.apache.linkis.orchestrator.listener.task.{
+  EngineQuitedUnexpectedlyEvent,
   TaskErrorResponseEvent,
   TaskLogEvent,
   TaskStatusEvent
@@ -209,38 +210,14 @@ object EngineConnMonitor extends Logging {
     executors.foreach { executor =>
       val execTask = executor.getExecTask
       Utils.tryAndError {
-        val labels: Array[Label[_]] = executor.getEngineConnExecutor.getLabels()
-        var engineType = ""
-        val mark: Mark = executor.getMark
-        if (mark != null) {
-          val req: MarkReq = mark.getMarkReq
-          if (req != null) {
-            val engineTypeRef: AnyRef = req.labels.get(engineTypeKey)
-            if (engineTypeRef != null && engineTypeRef.toString.contains("-")) {
-              engineType = engineTypeRef.toString.split("-")(0)
-            }
-          }
-        }
-        if (StringUtils.isEmpty(engineType)) {
-          engineType = getEngineType(labels)
-        }
         logger.warn(
           s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly."
         )
-        val errLog = LogUtils.generateERROR(
-          s"Your job : ${execTask.getIDInfo()} was failed because the ${engineType} engine quitted unexpectedly(任务${execTask
-            .getIDInfo()}失败，" +
-            s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
-        )
-        val logEvent = TaskLogEvent(execTask, errLog)
-        execTask.getPhysicalContext.pushLog(logEvent)
-        val errorResponseEvent = TaskErrorResponseEvent(
+        val event = EngineQuitedUnexpectedlyEvent(
           execTask,
-          "task failed，Engine quitted unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
+          executor.getEngineConnExecutor.getServiceInstance.toString
         )
-        execTask.getPhysicalContext.broadcastSyncEvent(errorResponseEvent)
-        val statusEvent = TaskStatusEvent(execTask, ExecutionNodeStatus.Failed)
-        execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
+        execTask.getPhysicalContext.broadcastSyncEvent(event)
       }
     }
   }

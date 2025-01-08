@@ -762,6 +762,9 @@ public class QueryRestfulApi {
     if (StringUtils.isBlank(taskID)) {
       return Message.error("Invalid jobId cannot be empty");
     }
+    if (!QueryUtils.checkNumberValid(taskID)) {
+      throw new LinkisCommonErrorException(21304, "Invalid taskID : " + taskID);
+    }
     JobHistory jobHistory = null;
     boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
     boolean isDepartmentAdmin = Configuration.isDepartmentAdmin(username);

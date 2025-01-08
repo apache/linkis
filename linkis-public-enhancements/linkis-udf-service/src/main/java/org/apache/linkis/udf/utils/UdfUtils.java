@@ -325,7 +325,7 @@ public class UdfUtils {
         Utils.exec(
             (new String[] {
               "sudo",
-              Constants.PYTHON_COMMAND.getValue(),
+              Constants.PYTHON_PATH.getValue(),
               Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
               localPath
             }));

@@ -324,12 +324,14 @@ public class UdfUtils {
     String exec =
         Utils.exec(
             (new String[] {
-              Constants.PYTHON_COMMAND.getValue(),
+              "sudo",
+              Constants.PYTHON_PATH.getValue(),
               Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
               localPath
             }));
     logger.info(
-        "execute python script to get python method name...{} {} {}",
+        "execute python script to get python method name...{} {} {} {}",
+        "sudo",
         Constants.PYTHON_COMMAND.getValue(),
         Configuration.getLinkisHome() + "/admin/" + "linkis_udf_get_python_methods.py",
         localPath);

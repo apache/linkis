@@ -205,7 +205,7 @@ public class AMConfiguration {
         AMConfiguration.UNALLOW_BATCH_KILL_ENGINE_TYPES.getValue().split(",");
     Optional<String> findResult =
         Arrays.stream(unAllowBatchKillEngine)
-            .filter(e -> e.equalsIgnoreCase(engineType))
+            .filter(e -> engineType.toLowerCase().contains(e))
             .findFirst();
     return findResult.isPresent();
   }

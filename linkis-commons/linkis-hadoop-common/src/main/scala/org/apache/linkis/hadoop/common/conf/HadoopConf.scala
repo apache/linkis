@@ -65,7 +65,7 @@ object HadoopConf {
     CommonVars("linkis.hadoop.hdfs.cache.close.enable", true).getValue
 
   val HDFS_ENABLE_NOT_CLOSE_USERS =
-    CommonVars("linkis.hadoop.hdfs.cache.not.close.users", "").getValue
+    CommonVars("linkis.hadoop.hdfs.cache.not.close.users", "hadoop").getValue
 
   val HDFS_ENABLE_CACHE_IDLE_TIME =
     CommonVars("wds.linkis.hadoop.hdfs.cache.idle.time", 3 * 60 * 1000).getValue

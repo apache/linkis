@@ -1447,8 +1447,8 @@ public class UDFRestfulApi {
   @RequestMapping(path = "/get-register-functions", method = RequestMethod.GET)
   public Message getRegisterFunctions(HttpServletRequest req, @RequestParam("path") String path)
       throws IOException {
-    // 使用正则校验path,防止命令注入漏洞
-    if (!path.matches("^[a-zA-Z0-9_.-/:]+$")) {
+    String pathPrefix = "file:///";
+    if (StringUtils.isEmpty(path) || !path.startsWith(pathPrefix)) {
       return Message.error("path参数格式错误");
     }
     if (StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_PY)

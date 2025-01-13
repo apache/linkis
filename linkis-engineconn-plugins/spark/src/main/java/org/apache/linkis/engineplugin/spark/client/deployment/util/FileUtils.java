@@ -27,8 +27,8 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.stream.Stream;
 
 /**
@@ -63,7 +63,7 @@ public final class FileUtils {
 
   public static final String PACKAGE_SEPARATOR = ".";
 
-  public static final Random rnd = new Random();
+  public static final SecureRandom rand = new SecureRandom();
 
   // ------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ public final class FileUtils {
     final StringBuilder stringBuilder = new StringBuilder(prefix);
 
     for (int i = 0; i < RANDOM_FILE_NAME_LENGTH; i++) {
-      stringBuilder.append(ALPHABET[rnd.nextInt(ALPHABET.length)]);
+      stringBuilder.append(ALPHABET[rand.nextInt(ALPHABET.length)]);
     }
 
     return stringBuilder.toString();

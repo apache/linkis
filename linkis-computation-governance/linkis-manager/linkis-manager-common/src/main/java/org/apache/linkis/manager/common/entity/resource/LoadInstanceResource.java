@@ -192,10 +192,10 @@ public class LoadInstanceResource extends Resource {
   }
 
   public int getInstances() {
-    return instances;
+    return this.instances;
   }
 
   public int getInstance() {
-    return instances;
+    return this.instances; // NOSONAR
   }
 }

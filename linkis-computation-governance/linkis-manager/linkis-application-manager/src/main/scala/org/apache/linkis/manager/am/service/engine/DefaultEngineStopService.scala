@@ -308,7 +308,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
             .filter(node =>
               LabelUtil.getUserCreatorLabel(node.getLabels).getUser.equals(userName)
                 && LabelUtil.getUserCreatorLabel(node.getLabels).getCreator.equals(creator)
-                && LabelUtil.getEngineTypeLabel(node.getLabels).getEngineType.equals(engineType)
+                && LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue.equals(engineType)
             )
             .toList
       }

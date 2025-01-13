@@ -134,7 +134,6 @@ class RMMonitorRest extends Logging {
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = {
     val result = mapper.writeValueAsString(value)
-    logger.info(s"appendMessageData result: $result")
     message.data(key, mapper.readTree(result))
   }
 

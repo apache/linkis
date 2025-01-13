@@ -699,7 +699,7 @@ export default {
 
     async setNodePath(node) {
       this.$set(this.setting, this.getTypes(), node.path);
-      if(this.model !== 1) {
+      if(this.model !== 1 && /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(node.path)) {
         try {
           this.registerFunctions = await this.getRegisterFunction(node.path);
           if(this.registerFunctions.length !== 0) {

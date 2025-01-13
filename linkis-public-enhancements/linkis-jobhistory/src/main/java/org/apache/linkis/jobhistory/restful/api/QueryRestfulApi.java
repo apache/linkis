@@ -19,7 +19,6 @@ package org.apache.linkis.jobhistory.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisCommonErrorException;
-import org.apache.linkis.common.utils.SHAUtils;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -29,7 +28,6 @@ import org.apache.linkis.jobhistory.entity.*;
 import org.apache.linkis.jobhistory.service.JobHistoryDiagnosisService;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.transitional.TaskStatus;
-import org.apache.linkis.jobhistory.util.Constants;
 import org.apache.linkis.jobhistory.util.JobhistoryUtils;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
@@ -53,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -765,6 +762,9 @@ public class QueryRestfulApi {
     if (StringUtils.isBlank(taskID)) {
       return Message.error("Invalid jobId cannot be empty");
     }
+    if (!QueryUtils.checkNumberValid(taskID)) {
+      throw new LinkisCommonErrorException(21304, "Invalid taskID : " + taskID);
+    }
     JobHistory jobHistory = null;
     boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
     boolean isDepartmentAdmin = Configuration.isDepartmentAdmin(username);
@@ -795,7 +795,7 @@ public class QueryRestfulApi {
     }
     String diagnosisMsg = "";
     if (jobHistory != null) {
-      String jobStatus = jobHistory.getStatus().toUpperCase();
+      String jobStatus = jobHistory.getStatus();
       JobDiagnosis jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID));
       if (null == jobDiagnosis) {
         diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);

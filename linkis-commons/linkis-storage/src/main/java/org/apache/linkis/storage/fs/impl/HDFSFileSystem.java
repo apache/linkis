@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,12 @@ public class HDFSFileSystem extends FileSystem {
   private String label = null;
 
   private static final Logger logger = LoggerFactory.getLogger(HDFSFileSystem.class);
+
+  private static final String LOCKER_SUFFIX = "refresh";
+
+  private static final int REFRESH_INTERVAL = LinkisStorageConf.HDFS_FILE_SYSTEM_REFRESHE_INTERVAL() * 1000 * 60;
+
+  private static final ConcurrentHashMap<String, Long> lastCallTimes = new ConcurrentHashMap<>();
 
   /** File System abstract method start */
   @Override
@@ -328,9 +335,21 @@ public class HDFSFileSystem extends FileSystem {
 
   private void resetRootHdfs() {
     if (fs != null) {
-      synchronized (this) {
+      String locker = user + LOCKER_SUFFIX;
+      synchronized (locker.intern()) {
         if (fs != null) {
           if (HadoopConf.HDFS_ENABLE_CACHE()) {
+            long currentTime = System.currentTimeMillis();
+            Long lastCallTime = lastCallTimes.get(user);
+
+            if (lastCallTime != null && (currentTime - lastCallTime) < REFRESH_INTERVAL) {
+              logger.warn(
+                  "Method call denied for username: {} Please wait for {} minutes.",
+                  user,
+                  REFRESH_INTERVAL / 60000);
+              return;
+            }
+            lastCallTimes.put(user, currentTime);
             HDFSUtils.closeHDFSFIleSystem(fs, user, label, true);
           } else {
             HDFSUtils.closeHDFSFIleSystem(fs, user, label);

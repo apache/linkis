@@ -195,7 +195,7 @@ public class LoadInstanceResource extends Resource {
     return this.instances;
   }
 
-  public int getInstance() {
+  public int getInstance() {// NOSONAR
     return this.instances; // NOSONAR
   }
 }

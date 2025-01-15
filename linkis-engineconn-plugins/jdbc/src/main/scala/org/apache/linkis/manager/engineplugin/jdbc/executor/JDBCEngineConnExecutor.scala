@@ -351,10 +351,12 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   override def close(): Unit = {
     logger.info("Start closing the jdbc engine.")
+    Utils.tryQuietly(killAll())
     connectionManager.close()
     if (JDBCConfiguration.JDBC_KERBEROS_ENABLE.getValue) {
       connectionManager.shutdownRefreshKerberosLoginService()
     }
+
     logger.info("The jdbc engine has closed successfully.")
   }
 

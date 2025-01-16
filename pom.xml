@@ -152,7 +152,7 @@
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <jsonpath.version>2.9.0</jsonpath.version>
     <jettison.version>1.5.4</jettison.version>
-    <xstream.core.version>1.4.20</xstream.core.version>
+    <xstream.core.version>1.4.21</xstream.core.version>
     <woodstox.version>6.4.0</woodstox.version>
     <snakeyaml.version>1.33</snakeyaml.version>
 

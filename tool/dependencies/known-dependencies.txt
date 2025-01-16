@@ -815,6 +815,7 @@ xmlbeans-5.2.1.jar
 xmlenc-0.52.jar
 xom-1.2.5.jar
 xstream-1.4.20.jar
+xstream-1.4.21.jar
 xz-1.5.jar
 zipkin-2.23.2.jar
 zipkin-reporter-2.16.3.jar

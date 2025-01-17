@@ -29,7 +29,7 @@ object CodeAndRunTypeUtils {
    */
   val CODE_TYPE_AND_RUN_TYPE_RELATION = CommonVars(
     "linkis.codeType.language.relation",
-    "sql=>sql|hql|jdbc|hive|psql|fql|tsql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell,json=>json|data_calc,pipeline=>pipeline"
+    "sql=>sql|hql|jdbc|hive|psql|fql|tsql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell,json=>json|data_calc,pipeline=>pipeline|out"
   )
 
   val LANGUAGE_TYPE_SQL = "sql"

@@ -17,13 +17,14 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration$;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 import org.apache.linkis.manager.engineplugin.jdbc.utils.JdbcParamUtils;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
@@ -31,12 +32,9 @@ import javax.sql.DataSource;
 
 import java.io.Closeable;
 import java.security.PrivilegedExceptionAction;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,8 +44,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.USERNAME;
-import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.of;
+import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
 import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
 
 public class ConnectionManager {
@@ -56,7 +53,7 @@ public class ConnectionManager {
   private final Map<String, DataSource> dataSourceFactories;
   private final JDBCDataSourceConfigurations jdbcDataSourceConfigurations;
 
-  private static volatile ConnectionManager connectionManager;
+  private static volatile ConnectionManager connectionManager; // NOSONAR
   private ScheduledExecutorService scheduledExecutorService;
   private Integer kinitFailCount = 0;
 
@@ -66,9 +63,9 @@ public class ConnectionManager {
   }
 
   public static ConnectionManager getInstance() {
-    if (connectionManager == null) {
-      synchronized (ConnectionManager.class) {
-        if (connectionManager == null) {
+    if (connectionManager == null) { // NOSONAR
+      synchronized (ConnectionManager.class) { // NOSONAR
+        if (connectionManager == null) { // NOSONAR
           connectionManager = new ConnectionManager();
         }
       }
@@ -184,6 +181,9 @@ public class ConnectionManager {
     boolean removeAbandoned =
         JDBCPropertiesParser.getBool(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_ENABLED, true);
+    boolean logAbandoned =
+        JDBCPropertiesParser.getBool(
+            properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED, true);
     int removeAbandonedTimeout =
         JDBCPropertiesParser.getInt(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
@@ -216,6 +216,7 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+    datasource.setLogAbandoned(logAbandoned);
     if (queryTimeout > 0) {
       datasource.setQueryTimeout(queryTimeout);
     }

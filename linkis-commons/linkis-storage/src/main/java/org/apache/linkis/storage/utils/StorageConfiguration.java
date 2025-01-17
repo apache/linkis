@@ -71,7 +71,8 @@ public class StorageConfiguration {
       new CommonVars<>(
           "wds.linkis.storage.build.fs.classes",
           "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem,"
-              + "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem",
+              + "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem,"
+                  +"org.apache.linkis.storage.factory.impl.BuildAzureBlobFileSystem",
           null,
           null);
 
@@ -158,4 +159,9 @@ public class StorageConfiguration {
 
   public static CommonVars<String> S3_BUCKET =
       new CommonVars("linkis.storage.s3.bucket", "", null, null);
+
+  public static CommonVars<String> AZURE_ACCT_NAME =
+      new CommonVars("linkis.storage.azure.acctName", "", null, null);
+  public static CommonVars<String> AZURE_ACCT_CONNECT_STR =
+          new CommonVars("linkis.storage.azure.connectstr", "", null, null);
 }

@@ -226,6 +226,7 @@
     <spring-cloud.version>2021.0.8</spring-cloud.version>
     <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>
     <spring-cloud-common.version>3.1.7</spring-cloud-common.version>
+    <azure.blob.bom>1.2.30</azure.blob.bom>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1368,6 +1369,13 @@
         <groupId>com.alibaba.cloud</groupId>
         <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         <version>${spring-cloud-alibaba.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.azure</groupId>
+        <artifactId>azure-sdk-bom</artifactId>
+        <version>${azure.blob.bom}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -17,6 +17,9 @@
 
 package org.apache.linkis.storage.utils;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.curator.utils.CloseableUtils;
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.resultset.ResultSet;
@@ -30,10 +33,8 @@ import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.ResultSetFactory;
 import org.apache.linkis.storage.resultset.ResultSetReaderFactory;
 import org.apache.linkis.storage.resultset.ResultSetWriterFactory;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.curator.utils.CloseableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -42,9 +43,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ;
 
@@ -55,11 +53,13 @@ public class StorageUtils {
   public static final String FILE = "file";
   public static final String OSS = "oss";
   public static final String S3 = "s3";
+  public static final String BLOB = "https";
 
   public static final String FILE_SCHEMA = "file://";
   public static final String HDFS_SCHEMA = "hdfs://";
   public static final String OSS_SCHEMA = "oss://";
   public static final String S3_SCHEMA = "s3://";
+  public static final String BLOB_SCHEMA = "https://";
 
   private static final NumberFormat nf = NumberFormat.getInstance();
 
@@ -216,7 +216,9 @@ public class StorageUtils {
    * @return
    */
   public static FsPath getFsPath(String path) {
-    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA)) {
+      if (path.startsWith(FILE_SCHEMA)
+              || path.startsWith(HDFS_SCHEMA)
+              || path.startsWith(BLOB_SCHEMA)) {
       return new FsPath(path);
     } else {
       return new FsPath(FILE_SCHEMA + path);

@@ -45,7 +45,7 @@ public class MybatisConfiguration {
   public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXACTIVE =
       CommonVars.apply("wds.linkis.server.mybatis.datasource.maxActive", 20);
   public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXWAIT =
-      CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", 6000);
+      CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", 60000);
   public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_TBERM =
       CommonVars.apply("wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis", 60000);
   public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MEITM =

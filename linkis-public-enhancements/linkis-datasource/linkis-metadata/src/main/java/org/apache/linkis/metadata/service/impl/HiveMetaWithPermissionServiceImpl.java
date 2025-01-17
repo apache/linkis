@@ -106,6 +106,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
           hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
       hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
       return hiveTables.stream()
+          .distinct()
           .sorted(Comparator.comparing(hiveTable -> (String) hiveTable.get("NAME")))
           .collect(Collectors.toList());
     } else {

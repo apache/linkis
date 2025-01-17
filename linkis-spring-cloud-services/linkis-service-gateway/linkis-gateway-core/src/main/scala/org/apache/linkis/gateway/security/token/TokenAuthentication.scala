@@ -59,7 +59,7 @@ object TokenAuthentication extends Logging {
     var tokenUser = tokenUserOpt.getOrElse("")
 
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
-    ModuleUserUtils.printAuditLog(
+    logger.info(
       String
         .format("Use Linkis Auth : %s,User : %s,Ip : %s", encryptToken(token), tokenUser, host)
     )

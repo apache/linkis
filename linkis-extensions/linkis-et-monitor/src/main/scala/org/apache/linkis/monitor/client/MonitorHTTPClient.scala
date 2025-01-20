@@ -17,12 +17,30 @@
 
 package org.apache.linkis.monitor.client
 
+import org.apache.linkis.datasource.client.response.{
+  GetConnectParamsByDataSourceNameResult,
+  GetInfoByDataSourceNameResult,
+  GetInfoPublishedByDataSourceNameResult
+}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.{EmsListAction, EntranceTaskAction, MonitorResourceAction}
-import org.apache.linkis.monitor.response.EntranceTaskResult
+import org.apache.linkis.monitor.request.{
+  AnalyzeJobAction,
+  DataSourceParamsAction,
+  EmsListAction,
+  EntranceTaskAction,
+  KeyvalueAction,
+  KillJobAction,
+  MonitorAction
+}
+import org.apache.linkis.monitor.response.{
+  AnalyzeJobResultAction,
+  EntranceTaskResult,
+  KeyvalueResult,
+  KillJobResultAction
+}
 import org.apache.linkis.ujes.client.response.EmsListResult
 
 import java.io.Closeable
@@ -30,7 +48,7 @@ import java.util.concurrent.TimeUnit
 
 abstract class MonitorHTTPClient extends Closeable {
 
-  protected[client] def executeJob(ujesJobAction: MonitorResourceAction): Result
+  protected[client] def executeJob(ujesJobAction: MonitorAction): Result
 
   def list(emsListAction: EmsListAction): EmsListResult = {
     executeJob(emsListAction).asInstanceOf[EmsListResult]
@@ -38,6 +56,24 @@ abstract class MonitorHTTPClient extends Closeable {
 
   def entranList(entranceTaskAction: EntranceTaskAction): EntranceTaskResult = {
     executeJob(entranceTaskAction).asInstanceOf[EntranceTaskResult]
+  }
+
+  def getConfKeyValue(keyvalueAction: KeyvalueAction): KeyvalueResult = {
+    executeJob(keyvalueAction).asInstanceOf[KeyvalueResult]
+  }
+
+  def getInfoByDataSourceInfo(
+      datasourceInfoAction: DataSourceParamsAction
+  ): GetInfoPublishedByDataSourceNameResult = {
+    executeJob(datasourceInfoAction).asInstanceOf[GetInfoPublishedByDataSourceNameResult]
+  }
+
+  def killJob(killJobAction: KillJobAction): KillJobResultAction = {
+    executeJob(killJobAction).asInstanceOf[KillJobResultAction]
+  }
+
+  def analyzeJob(analyzeJobAction: AnalyzeJobAction): AnalyzeJobResultAction = {
+    executeJob(analyzeJobAction).asInstanceOf[AnalyzeJobResultAction]
   }
 
 }

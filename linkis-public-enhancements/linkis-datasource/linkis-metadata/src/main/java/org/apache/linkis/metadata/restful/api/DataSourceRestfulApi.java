@@ -21,6 +21,7 @@ import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+import org.apache.linkis.metadata.util.HiveService2Utils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -62,7 +63,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
   public Message queryDatabaseInfo(HttpServletRequest req) {
     String userName = ModuleUserUtils.getOperationUser(req, "get dbs");
     try {
-      JsonNode dbs = dataSourceService.getDbs(userName);
+      JsonNode dbs;
+      if (HiveService2Utils.checkHiveServer2Enable()) {
+        dbs = HiveService2Utils.getDbs(userName);
+      } else {
+        dbs = dataSourceService.getDbs(userName);
+      }
       return Message.ok("").data("dbs", dbs);
     } catch (Exception e) {
       logger.error("Failed to get database(获取数据库失败)", e);
@@ -137,7 +143,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     String userName = ModuleUserUtils.getOperationUser(req, "get tables");
     MetadataQueryParam queryParam = MetadataQueryParam.of(userName).withDbName(database);
     try {
-      JsonNode tables = dataSourceService.queryTables(queryParam);
+      JsonNode tables;
+      if (HiveService2Utils.checkHiveServer2Enable()) {
+        tables = HiveService2Utils.getTables(userName, database);
+      } else {
+        tables = dataSourceService.queryTables(queryParam);
+      }
       return Message.ok("").data("tables", tables);
     } catch (Exception e) {
       logger.error("Failed to queryTables", e);
@@ -160,8 +171,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(table);
     try {
-      JsonNode columns =
-          hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+      JsonNode columns;
+      if (HiveService2Utils.checkHiveServer2Enable()) {
+        columns = HiveService2Utils.getColumns(userName, database, table);
+      } else {
+        columns =
+            hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+      }
       return Message.ok("").data("columns", columns);
     } catch (Exception e) {
       logger.error("Failed to get data table structure(获取数据表结构失败)", e);

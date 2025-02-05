@@ -45,6 +45,7 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +67,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -962,7 +966,7 @@ public class FsRestfulApi {
           }
           break;
         default:
-          WorkspaceExceptionManager.createException(80015);
+          throw WorkspaceExceptionManager.createException(80015);
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
@@ -1150,31 +1154,31 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            }
-            column[1][i] = "string";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = "col_" + (i + 1);
-            column[1][i] = "string";
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              }
+              column[1][i] = "string";
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = "col_" + (i + 1);
+              column[1][i] = "string";
+            }
           }
         }
         res.put("columnName", column[0]);
@@ -1244,35 +1248,35 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            } else {
-              csvMap.put(column[0][i], "string");
-            }
-            csvMapList.add(csvMap);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            csvMap.put("col_" + (i + 1), "string");
-            csvMapList.add(csvMap);
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              } else {
+                csvMap.put(column[0][i], "string");
+              }
+              csvMapList.add(csvMap);
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              csvMap.put("col_" + (i + 1), "string");
+              csvMapList.add(csvMap);
+            }
           }
         }
         sheetInfo = new HashMap<>(1);
@@ -1417,7 +1421,7 @@ public class FsRestfulApi {
       throws WorkSpaceException, IOException {
     String username = ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
     if (StringUtils.isEmpty(filePath)) {
-      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
     }
     if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
@@ -1427,146 +1431,63 @@ public class FsRestfulApi {
     return Message.ok().data("data", fileMD5Str);
   }
 
-  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
+  @ApiOperation(value = "check-hdfs-files", notes = "encrypt file path", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
-    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+    @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "Path")
   })
-  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
-  public Message pythonUpload(
-      HttpServletRequest req,
-      @RequestParam("file") MultipartFile file,
-      @RequestParam(value = "fileName", required = false) String fileName)
+  @RequestMapping(path = "/check-hdfs-files", method = RequestMethod.GET)
+  public Message checkHdfsFiles(
+      HttpServletRequest req, @RequestParam(value = "filePath", required = false) String filePath)
       throws WorkSpaceException, IOException {
-
-    // 获取登录用户
-    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
-
-    // 校验文件名称
-    if (StringUtils.isBlank(fileName)) {
-      return Message.error("文件名称不能为空");
+    String username = ModuleUserUtils.getOperationUser(req, "check-hdfs-files " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
     }
-    // 获取文件名称
-    if (!fileName.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
-      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
+    if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
 
-    // 校验文件类型
-    if (!file.getOriginalFilename().endsWith(".py")
-        && !file.getOriginalFilename().endsWith(".zip")
-        && !file.getOriginalFilename().endsWith(".tar.gz")) {
-      return Message.error("仅支持.py和.zip和.tar.gz格式模块文件");
+    if (!WorkspaceUtil.hiveFilePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(HIVE_FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
 
-    // 校验文件大小
-    if (file.getSize() > 50 * 1024 * 1024) {
-      return Message.error("限制最大单个文件50M");
+    FsPath fsPath = new FsPath(filePath);
+    FileSystem fs = fsService.getFileSystem(username, fsPath);
+    if (!fs.exists(fsPath)) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
-
-    // tar.gz包依赖检查
-    // 获取install_requires中的python模块
-    List<String> pythonModules = FilesystemUtils.getInstallRequestPythonModules(file);
-    String dependencies = "";
-    if (CollectionUtils.isNotEmpty(pythonModules)) {
-      dependencies = pythonModules.stream().distinct().collect(Collectors.joining(","));
-      String errorMsg = FilesystemUtils.checkModuleFile(pythonModules, username);
-      if (StringUtils.isNotBlank(errorMsg)) {
-        return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + errorMsg);
-      }
-    }
-
-    // 定义目录路径
-    String path = "hdfs:///appcom/linkis/udf/" + username;
-    FsPath fsPath = new FsPath(path);
-
-    // 获取文件系统实例
-    FileSystem fileSystem = fsService.getFileSystem(username, fsPath);
-
-    // 确认目录是否存在，不存在则创建新目录
-    if (!fileSystem.exists(fsPath)) {
+    List<Map<String, Object>> resultMap = new ArrayList<>();
+    List<FsPath> list = fs.list(fsPath);
+    if (CollectionUtils.isNotEmpty(list)) {
+      ExecutorService executorService = Executors.newFixedThreadPool(10);
+      list.forEach(
+          path -> {
+            executorService.submit(
+                () -> {
+                  try {
+                    Map<String, Object> dataMap = new HashMap<>();
+                    dataMap.put("checkSum", fs.checkSum(path));
+                    dataMap.put("blockSize", fs.getBlockSize(path));
+                    dataMap.put("path", path.getPath());
+                    synchronized (resultMap) {
+                      resultMap.add(dataMap);
+                    }
+                  } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                  }
+                });
+          });
+      // 关闭线程池并等待所有任务完成
+      executorService.shutdown();
       try {
-        fileSystem.mkdirs(fsPath);
-        fileSystem.setPermission(fsPath, "770");
-      } catch (IOException e) {
-        return Message.error("创建目录失败：" + e.getMessage());
-      }
-    }
-
-    // 构建新的文件路径
-    String newPath = fsPath.getPath() + FsPath.SEPARATOR + file.getOriginalFilename();
-    // 上传文件,tar包需要单独解压处理
-    if (!file.getOriginalFilename().endsWith(".tar.gz")) {
-      FsPath fsPathNew = new FsPath(newPath);
-      try (InputStream is = file.getInputStream();
-          OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
-        IOUtils.copy(is, outputStream);
-      } catch (IOException e) {
-        return Message.error("文件上传失败：" + e.getMessage());
-      }
-    } else {
-      InputStream is = null;
-      OutputStream outputStream = null;
-      try {
-        String packageName = FilesystemUtils.findPackageName(file.getInputStream());
-        if (FilesystemUtils.checkModuleIsExistEnv(packageName)) {
-          return Message.error("python3环境中已存在模块：" + packageName + "请勿重复上传");
+        if (!executorService.awaitTermination(60L, TimeUnit.MINUTES)) {
+          executorService.shutdownNow();
         }
-        fileName = packageName + FsPath.CUR_DIR + "zip";
-        if (StringUtils.isBlank(packageName)) {
-          return Message.error("文件上传失败：PKG-INFO 文件不存在");
-        }
-        is = FilesystemUtils.getZipInputStreamByTarInputStream(file, packageName);
-        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName;
-        FsPath fsPathNew = new FsPath(newPath);
-        outputStream = fileSystem.write(fsPathNew, true);
-        IOUtils.copy(is, outputStream);
-      } catch (Exception e) {
-        return Message.error("文件上传失败：" + e.getMessage());
-      } finally {
-        if (outputStream != null) {
-          IOUtils.closeQuietly(outputStream);
-        }
-        if (is != null) {
-          IOUtils.closeQuietly(is);
-        }
+      } catch (InterruptedException e) {
+        executorService.shutdownNow();
+        Thread.currentThread().interrupt();
       }
     }
-    // 返回成功消息并包含文件地址
-    return Message.ok()
-        .data("filePath", newPath)
-        .data("dependencies", dependencies)
-        .data("fileName", fileName);
-  }
-
-
-  /**
-   * *
-   *
-   * @param filePermission: 700,744 Prohibit users from modifying their own unreadable content
-   */
-  private static boolean checkFilePermissions(String filePermission) {
-    boolean result = false;
-    if (StringUtils.isNumeric(filePermission)) {
-      char[] ps = filePermission.toCharArray();
-      int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
-      if (ownerPermissions >= 4) {
-        result = true;
-      }
-    }
-    return result;
-  }
-
-  private static void traverseFolder(
-      FsPath fsPath, FileSystem fileSystem, Stack<FsPath> dirsToChmod) throws IOException {
-    List<FsPath> list = fileSystem.list(fsPath);
-    if (list == null) {
-      return;
-    }
-    for (FsPath path : list) {
-      if (path.isdir()) {
-        traverseFolder(path, fileSystem, dirsToChmod);
-      }
-      dirsToChmod.push(path);
-    }
+    return Message.ok().data("fileDataList", resultMap);
   }
 }

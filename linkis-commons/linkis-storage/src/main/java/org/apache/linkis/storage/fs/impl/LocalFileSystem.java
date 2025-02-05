@@ -515,4 +515,9 @@ public class LocalFileSystem extends FileSystem {
   public String checkSum(FsPath dest) {
     return null;
   }
+
+  @Override
+  public long getBlockSize(FsPath dest) {
+    return 0L;
+  }
 }

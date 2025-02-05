@@ -45,6 +45,7 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +67,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -1414,7 +1418,7 @@ public class FsRestfulApi {
       throws WorkSpaceException, IOException {
     String username = ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
     if (StringUtils.isEmpty(filePath)) {
-      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
     }
     if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
@@ -1422,5 +1426,65 @@ public class FsRestfulApi {
     FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
     String fileMD5Str = fs.checkSum(new FsPath(filePath));
     return Message.ok().data("data", fileMD5Str);
+  }
+
+  @ApiOperation(value = "check-hdfs-files", notes = "encrypt file path", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "Path")
+  })
+  @RequestMapping(path = "/check-hdfs-files", method = RequestMethod.GET)
+  public Message checkHdfsFiles(
+      HttpServletRequest req, @RequestParam(value = "filePath", required = false) String filePath)
+      throws WorkSpaceException, IOException {
+    String username = ModuleUserUtils.getOperationUser(req, "check-hdfs-files " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
+    }
+    if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
+    }
+
+    if (!WorkspaceUtil.hiveFilePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(HIVE_FILEPATH_ILLEGAL_SYMBOLS, filePath));
+    }
+
+    FsPath fsPath = new FsPath(filePath);
+    FileSystem fs = fsService.getFileSystem(username, fsPath);
+    if (!fs.exists(fsPath)) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
+    }
+    List<Map<String, Object>> resultMap = new ArrayList<>();
+    List<FsPath> list = fs.list(fsPath);
+    if (CollectionUtils.isNotEmpty(list)) {
+      ExecutorService executorService = Executors.newFixedThreadPool(10);
+      list.forEach(
+          path -> {
+            executorService.submit(
+                () -> {
+                  try {
+                    Map<String, Object> dataMap = new HashMap<>();
+                    dataMap.put("checkSum", fs.checkSum(path));
+                    dataMap.put("blockSize", fs.getBlockSize(path));
+                    dataMap.put("path", path.getPath());
+                    synchronized (resultMap) {
+                      resultMap.add(dataMap);
+                    }
+                  } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                  }
+                });
+          });
+      // 关闭线程池并等待所有任务完成
+      executorService.shutdown();
+      try {
+        if (!executorService.awaitTermination(60L, TimeUnit.MINUTES)) {
+          executorService.shutdownNow();
+        }
+      } catch (InterruptedException e) {
+        executorService.shutdownNow();
+        Thread.currentThread().interrupt();
+      }
+    }
+    return Message.ok().data("fileDataList", resultMap);
   }
 }

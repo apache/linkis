@@ -17,25 +17,30 @@
 
 package org.apache.linkis.storage.resultset;
 
-import org.apache.linkis.common.io.*;
-import org.apache.linkis.common.io.resultset.*;
-import org.apache.linkis.common.io.resultset.ResultSetWriter;
-import org.apache.linkis.common.utils.*;
-import org.apache.linkis.storage.*;
-import org.apache.linkis.storage.conf.*;
-import org.apache.linkis.storage.domain.*;
-import org.apache.linkis.storage.utils.*;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream;
+import org.apache.linkis.common.io.Fs;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.common.io.MetaData;
+import org.apache.linkis.common.io.Record;
+import org.apache.linkis.common.io.resultset.ResultSerializer;
+import org.apache.linkis.common.io.resultset.ResultSet;
+import org.apache.linkis.common.io.resultset.ResultSetWriter;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
+import org.apache.linkis.storage.domain.Dolphin;
+import org.apache.linkis.storage.exception.StorageErrorException;
+import org.apache.linkis.storage.utils.FileSystemUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.apache.linkis.storage.exception.StorageErrorCode.FS_ERROR;
 
 public class StorageResultSetWriter<K extends MetaData, V extends Record>
     extends ResultSetWriter<K, V> {
@@ -98,8 +103,9 @@ public class StorageResultSetWriter<K extends MetaData, V extends Record>
               fs.init(null);
               FileSystemUtils.createNewFile(storePath, proxyUser, true);
               outputStream = fs.write(storePath, true);
-            } catch (IOException e) {
-              logger.warn("StorageResultSetWriter createNewFile failed", e);
+            } catch (Exception e) {
+              throw new StorageErrorException(
+                  FS_ERROR.getCode(), "StorageResultSetWriter createNewFile failed", e);
             }
             logger.info("Succeed to create a new file:{}", storePath);
             fileCreated = true;

@@ -141,10 +141,25 @@ object JDBCMultiDatasourceParser extends Logging {
         JDBC_PORT_NOT_NULL.getErrorDesc
       )
     }
-    var jdbcUrl = s"jdbc:$dbType://$host:$port"
+
+    var jdbcUrl: String = if (dbType == "doris") {
+      s"jdbc:mysql://$host:$port"
+    } else if (dbType == "kingbase") {
+      s"jdbc:kingbase8://$host:$port"
+    } else {
+      s"jdbc:$dbType://$host:$port"
+    }
+
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
-    if (strObjIsNotBlank(dbName)) {
-      jdbcUrl = s"$jdbcUrl/$dbName"
+    val instance = dbConnParams.get(JDBCEngineConnConstant.DS_INSTANCE)
+    if (dbType == "doris" || dbType == "kingbase") {
+      if (strObjIsNotBlank(instance)) {
+        jdbcUrl = s"$jdbcUrl/$instance"
+      }
+    } else {
+      if (strObjIsNotBlank(dbName)) {
+        jdbcUrl = s"$jdbcUrl/$dbName"
+      }
     }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)
@@ -159,9 +174,9 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     if (!paramsMap.isEmpty) {
-      val paramsJoin =
-        for ((k, v) <- paramsMap.asScala) yield s"$k=${v.toString}".toList.mkString("&")
-      jdbcUrl = s"$jdbcUrl&$paramsJoin"
+      for (elem <- paramsMap.asScala) {
+        jdbcUrl = s"$jdbcUrl&${elem._1}=${elem._2}"
+      }
     }
 
     jdbcUrl

@@ -54,6 +54,16 @@ object LinkisMainHelper {
           s"--$realKey=$v"
         }
         .toArray
+
+    var healthCheckUrlPath = Configuration.HEALTH_CHECK_URL_PATH.getValue
+    var statusPageUrlPath = Configuration.STATUS_PAGE_URL_PATH.getValue
+    if (ServerConfiguration.IS_GATEWAY.getValue.equals("false")) {
+      healthCheckUrlPath = servletPath + healthCheckUrlPath
+      statusPageUrlPath = servletPath + statusPageUrlPath
+    }
+    resArr = resArr :+ s"--health-check-url-path=$healthCheckUrlPath"
+    resArr = resArr :+ s"--status-page-url-path=$statusPageUrlPath"
+
     if (Configuration.IS_PROMETHEUS_ENABLE.getValue) {
       var prometheusEndpoint = Configuration.PROMETHEUS_ENDPOINT.getValue
       if (ServerConfiguration.IS_GATEWAY.getValue.equals("false")) {

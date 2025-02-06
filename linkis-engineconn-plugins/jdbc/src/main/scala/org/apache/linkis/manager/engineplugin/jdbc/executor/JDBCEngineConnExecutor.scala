@@ -18,6 +18,8 @@
 package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
@@ -300,6 +302,15 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val output = if (resultSetWriter != null) resultSetWriter.toString else null
       Utils.tryQuietly {
         IOUtils.closeQuietly(resultSetWriter)
+
+        // Remove the current resultSetWriter
+        val resultSetWritersField =
+          classOf[EngineExecutionContext].getDeclaredField("resultSetWriters")
+        resultSetWritersField.setAccessible(true)
+        val resultSetWriters = resultSetWritersField
+          .get(engineExecutorContext)
+          .asInstanceOf[ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]]]
+        resultSetWriters synchronized resultSetWriters -= resultSetWriter
       }
       logger.info("sql executed completed.")
       AliasOutputExecuteResponse(null, output)

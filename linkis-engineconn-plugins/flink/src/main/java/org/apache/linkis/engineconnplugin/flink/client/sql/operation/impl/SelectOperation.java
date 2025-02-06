@@ -17,18 +17,6 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
-import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import org.apache.linkis.engineconnplugin.flink.client.result.AbstractResult;
-import org.apache.linkis.engineconnplugin.flink.client.result.BatchResult;
-import org.apache.linkis.engineconnplugin.flink.client.result.ChangelogResult;
-import org.apache.linkis.engineconnplugin.flink.client.result.ResultUtil;
-import org.apache.linkis.engineconnplugin.flink.client.result.TypedResult;
-import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
-import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
-import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
-
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.api.Table;
@@ -40,15 +28,25 @@ import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.logical.utils.LogicalTypeUtils;
 import org.apache.flink.table.types.utils.DataTypeUtils;
 import org.apache.flink.types.Row;
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.result.AbstractResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.BatchResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.ChangelogResult;
+import org.apache.linkis.engineconnplugin.flink.client.result.ResultUtil;
+import org.apache.linkis.engineconnplugin.flink.client.result.TypedResult;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
+import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
+import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
@@ -59,11 +57,11 @@ public class SelectOperation extends AbstractJobOperation {
 
   private final String query;
 
-  private AbstractResult<?, ?> result;
+  private volatile AbstractResult<?, ?> result;
 
-  private TableSchema resultSchema;
+  private volatile TableSchema resultSchema;
 
-  private List<ColumnInfo> columnInfos;
+  private volatile List<ColumnInfo> columnInfos;
 
   public SelectOperation(FlinkEngineConnContext context, String query) {
     super(context);
@@ -73,13 +71,7 @@ public class SelectOperation extends AbstractJobOperation {
 
   @Override
   protected JobID submitJob() throws SqlExecutionException {
-    JobID jobId = executeQueryInternal(context.getExecutionContext(), query);
-    List<TableColumn> resultSchemaColumns = resultSchema.getTableColumns();
-    columnInfos = new ArrayList<>();
-    for (TableColumn column : resultSchemaColumns) {
-      columnInfos.add(ColumnInfo.create(column.getName(), column.getType().getLogicalType()));
-    }
-    return jobId;
+    return executeQueryInternal(context.getExecutionContext(), query);
   }
 
   @Override
@@ -153,6 +145,12 @@ public class SelectOperation extends AbstractJobOperation {
     boolean isChangelogResult = executionContext.getEnvironment().getExecution().inStreamingMode();
     // initialize result
     resultSchema = removeTimeAttributes(table.getSchema());
+
+    columnInfos = new ArrayList<>();
+    for (TableColumn column : resultSchema.getTableColumns()) {
+      columnInfos.add(ColumnInfo.create(column.getName(), column.getType().getLogicalType()));
+    }
+
     if (isChangelogResult) {
       result =
           ResultUtil.createChangelogResult(

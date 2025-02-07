@@ -25,6 +25,11 @@
     >
       <Tag
         ref="tag"
+        style="
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 300px;"
         v-if="
           !clickValue.includes(`${item.key}${item.value}`)
         "
@@ -140,8 +145,8 @@ export default {
       let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
       if (reg.test(this.value2)) {
         this.$Message.error("Label content cannot be special symbols and spaces(标签内容不能为特殊符号和空格)！");
-      } else if (this.value2.length >= 16) {
-        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过16)！");
+      } else if (this.value2.length >= 100) {
+        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过100)！");
       } else if (this.value1 && this.value2) {
         this.$emit("addEnter", this.value1, this.value2);
         this.adding = false;
@@ -162,8 +167,8 @@ export default {
       let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
       if (reg.test(editedInputValue)) {
         this.$Message.error("标签内容不能为特殊符号和空格！");
-      } else if (editedInputValue.length >= 16) {
-        this.$Message.error("标签内容长度不超过16！");
+      } else if (editedInputValue.length >= 100) {
+        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过100)！");
       } else if (item.key && editedInputValue) {
         this.$emit("editEnter", item.key, item.value, editedInputValue);
         this.clickValue = '';

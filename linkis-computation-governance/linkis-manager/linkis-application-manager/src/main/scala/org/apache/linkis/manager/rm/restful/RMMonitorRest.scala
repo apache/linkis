@@ -19,6 +19,7 @@ package org.apache.linkis.manager.rm.restful
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
 import org.apache.linkis.governance.common.protocol.conf.{
   AcrossClusterRequest,
   AcrossClusterResponse
@@ -132,9 +133,10 @@ class RMMonitorRest extends Logging {
 
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
+  private val queuePrefix = EngineConnPluginConfiguration.QUEUE_PREFIX.getValue
+
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = {
     val result = mapper.writeValueAsString(value)
-    logger.info(s"appendMessageData result: $result")
     message.data(key, mapper.readTree(result))
   }
 
@@ -371,7 +373,17 @@ class RMMonitorRest extends Logging {
   ): Message = {
     ModuleUserUtils.getOperationUser(request, "getQueueResource")
     val message = Message.ok("")
-    val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
+    var queueName: String = param.get("queuename").asInstanceOf[String]
+    if (StringUtils.isNotBlank(queueName) && queueName.startsWith(queuePrefix)) {
+      logger.info(
+        "Queue name {} starts with '{}', remove '{}'",
+        queueName,
+        queuePrefix,
+        queuePrefix
+      )
+      queueName = queueName.substring(queuePrefix.length)
+    }
+    val yarnIdentifier = new YarnResourceIdentifier(queueName)
     var clustername = param.get("clustername").asInstanceOf[String]
     val crossCluster = java.lang.Boolean.parseBoolean(
       param.getOrDefault("crossCluster", "false").asInstanceOf[String]
@@ -396,7 +408,7 @@ class RMMonitorRest extends Logging {
         queueInfo.put("queuename", maxResource)
         queueInfo.put(
           "maxResources",
-          Map("memory" -> maxResource.getQueueName, "cores" -> maxResource.getQueueCores)
+          Map("memory" -> maxResource.getQueueMemory, "cores" -> maxResource.getQueueCores)
         )
         queueInfo.put(
           "usedResources",

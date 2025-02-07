@@ -178,6 +178,9 @@ public class ConnectionManager {
     boolean removeAbandoned =
         JDBCPropertiesParser.getBool(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_ENABLED, true);
+    boolean logAbandoned =
+        JDBCPropertiesParser.getBool(
+            properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED, true);
     int removeAbandonedTimeout =
         JDBCPropertiesParser.getInt(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
@@ -205,6 +208,7 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+    datasource.setLogAbandoned(logAbandoned);
     return datasource;
   }
 

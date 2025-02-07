@@ -60,7 +60,8 @@ public class HDFSFileSystem extends FileSystem {
 
   private static final String LOCKER_SUFFIX = "refresh";
 
-  private static final int REFRESH_INTERVAL = LinkisStorageConf.HDFS_FILE_SYSTEM_REFRESHE_INTERVAL() * 1000 * 60;
+  private static final int REFRESH_INTERVAL =
+      LinkisStorageConf.HDFS_FILE_SYSTEM_REFRESHE_INTERVAL() * 1000 * 60;
 
   private static final ConcurrentHashMap<String, Long> lastCallTimes = new ConcurrentHashMap<>();
 
@@ -336,7 +337,7 @@ public class HDFSFileSystem extends FileSystem {
   private void resetRootHdfs() {
     if (fs != null) {
       String locker = user + LOCKER_SUFFIX;
-      synchronized (locker.intern()) {
+      synchronized (locker.intern()) { // NOSONAR
         if (fs != null) {
           if (HadoopConf.HDFS_ENABLE_CACHE()) {
             long currentTime = System.currentTimeMillis();

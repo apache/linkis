@@ -73,8 +73,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
   private LoadingCache<String, List<ExternalResourceProvider>> providerCache =
       CacheBuilder.newBuilder()
           .maximumSize(20)
-          .expireAfterAccess(1, TimeUnit.HOURS)
-          .refreshAfterWrite(
+          .expireAfterWrite(
               RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(), TimeUnit.MINUTES)
           .build(
               new CacheLoader<String, List<ExternalResourceProvider>>() {

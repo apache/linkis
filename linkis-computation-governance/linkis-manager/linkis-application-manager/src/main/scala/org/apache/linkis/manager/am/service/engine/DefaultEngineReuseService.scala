@@ -162,17 +162,18 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     var engineScoreList =
       getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
 
+    // reuse EC according to template name
     val confTemplateNameKey = "ec.resource.name"
     val templateName: String =
-      engineReuseRequest.getProperties.getOrDefault(confTemplateNameKey, "")
-    if (StringUtils.isNotBlank(templateName)) {
+      getValueByKeyFromProps(confTemplateNameKey, engineReuseRequest.getProperties)
+    if (
+        StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
+    ) {
       engineScoreList = engineScoreList
         .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
         .filter(engine => {
-          val params: String = engine.getParams
-          val paramsMap: util.Map[String, String] =
-            AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
-          val oldTemplateName: String = paramsMap.getOrDefault(confTemplateNameKey, "")
+          val oldTemplateName: String =
+            getValueByKeyFromProps(confTemplateNameKey, parseParamsToMap(engine.getParams))
           templateName.equalsIgnoreCase(oldTemplateName)
         })
       logger.info(s"${engineScoreList.length} engine by templateName can be reused.")
@@ -208,10 +209,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         engineScoreList = engineScoreList
           .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
           .filter(engine => {
-            val params: String = engine.getParams
-            val paramsMap: util.Map[String, String] =
-              AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
-            val enginePythonVersion: String = getPythonVersion(paramsMap)
+            val enginePythonVersion: String = getPythonVersion(parseParamsToMap(engine.getParams))
             var pythonVersionMatch: Boolean = true
             if (
                 StringUtils.isNotBlank(pythonVersion) && StringUtils
@@ -316,16 +314,26 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     engine
   }
 
-  private def getPythonVersion(prop: util.Map[String, String]): String = {
-    var pythonVersion: String = null
-    if (prop == null) {
-      return null
+  private def parseParamsToMap(params: String) = {
+    if (StringUtils.isNotBlank(params)) {
+      AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
+    } else {
+      null
     }
+  }
 
-    if (prop.containsKey(PYTHON_VERSION_KEY)) {
-      pythonVersion = prop.get(PYTHON_VERSION_KEY)
-    } else if (prop.containsKey(SPARK_PYTHON_VERSION_KEY)) {
-      pythonVersion = prop.get(SPARK_PYTHON_VERSION_KEY)
+  private def getValueByKeyFromProps(key: String, paramsMap: util.Map[String, String]) = {
+    if (paramsMap != null) {
+      paramsMap.getOrDefault(key, "")
+    } else {
+      ""
+    }
+  }
+
+  private def getPythonVersion(prop: util.Map[String, String]): String = {
+    var pythonVersion: String = getValueByKeyFromProps(PYTHON_VERSION_KEY, prop)
+    if (StringUtils.isBlank(pythonVersion)) {
+      pythonVersion = getValueByKeyFromProps(SPARK_PYTHON_VERSION_KEY, prop)
     }
     pythonVersion
   }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.service.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
@@ -46,6 +45,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -213,12 +213,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
     List<String> rangerTables = dataSourceService.queryRangerTables(queryParam);
     Set<String> tableNames =
-            listTables.stream().map(table -> (String) table.get("NAME")).collect(Collectors.toSet());
+        listTables.stream().map(table -> (String) table.get("NAME")).collect(Collectors.toSet());
     // 过滤掉ranger中有，hive中也有的表
     rangerTables =
-            rangerTables.stream()
-                    .filter(rangerTable -> !tableNames.contains(rangerTable))
-                    .collect(Collectors.toList());
+        rangerTables.stream()
+            .filter(rangerTable -> !tableNames.contains(rangerTable))
+            .collect(Collectors.toList());
 
     ArrayNode tables = jsonMapper.createArrayNode();
     for (Map<String, Object> table : listTables) {
@@ -248,7 +248,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   private ArrayNode sortArrayNode(ArrayNode tables) {
     try {
-      List<JsonNode> tableArrays = jsonMapper.readValue(tables.toString(), new TypeReference<List<JsonNode>>() {});
+      List<JsonNode> tableArrays =
+          jsonMapper.readValue(tables.toString(), new TypeReference<List<JsonNode>>() {});
       tableArrays.sort(Comparator.comparing(node -> node.get("tableName").asText()));
       ArrayNode sortedTables = jsonMapper.createArrayNode();
       for (JsonNode table : tableArrays) {

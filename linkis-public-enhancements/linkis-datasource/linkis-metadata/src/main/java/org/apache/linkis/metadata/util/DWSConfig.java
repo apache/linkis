@@ -48,10 +48,8 @@ public class DWSConfig {
   public static final String HDFS_FILE_SYSTEM_REST_ERRS =
       LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS();
 
-  public static CommonVars<String> RANGER_DB_URL =
-      CommonVars$.MODULE$.apply("ranger.db.url", "");
-  public static CommonVars<String> RANGER_DB_USER =
-      CommonVars$.MODULE$.apply("ranger.db.user", "");
+  public static CommonVars<String> RANGER_DB_URL = CommonVars$.MODULE$.apply("ranger.db.url", "");
+  public static CommonVars<String> RANGER_DB_USER = CommonVars$.MODULE$.apply("ranger.db.user", "");
   public static CommonVars<String> RANGER_DB_PASSWORD =
       CommonVars$.MODULE$.apply("ranger.db.password", "");
 }

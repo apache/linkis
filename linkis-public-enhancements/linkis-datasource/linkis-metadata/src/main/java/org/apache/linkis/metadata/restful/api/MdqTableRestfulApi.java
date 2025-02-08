@@ -120,9 +120,9 @@ public class MdqTableRestfulApi {
     List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
     if (CollectionUtils.isNotEmpty(rangerColumns)) {
       tableFieldsInfo =
-              tableFieldsInfo.stream()
-                      .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
-                      .collect(Collectors.toList());
+          tableFieldsInfo.stream()
+              .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+              .collect(Collectors.toList());
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }

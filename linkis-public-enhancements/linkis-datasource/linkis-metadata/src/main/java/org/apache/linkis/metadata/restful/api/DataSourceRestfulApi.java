@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -183,6 +184,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     try {
       JsonNode columns =
           hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+      List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+      if (rangerColumns != null) {
+        columns = dataSourceService.filterRangerColumns(columns, rangerColumns);
+      }
       return Message.ok("").data("columns", columns);
     } catch (Exception e) {
       logger.error("Failed to get data table structure(获取数据表结构失败)", e);

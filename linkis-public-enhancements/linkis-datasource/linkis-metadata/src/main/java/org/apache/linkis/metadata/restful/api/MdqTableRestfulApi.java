@@ -27,6 +27,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -68,6 +69,8 @@ public class MdqTableRestfulApi {
   private static final String ASC = "asc";
 
   @Autowired private MdqService mdqService;
+
+  @Autowired private DataSourceService dataSourceService;
   ObjectMapper mapper = new ObjectMapper();
 
   @ApiOperation(value = "getTableBaseInfo", notes = "get table base info", response = Message.class)
@@ -113,6 +116,13 @@ public class MdqTableRestfulApi {
     if (CollectionUtils.isEmpty(tableFieldsInfo)
         && mdqService.isExistInMdq(database, tableName, userName)) {
       tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
+    }
+    List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+    if (CollectionUtils.isNotEmpty(rangerColumns)) {
+      tableFieldsInfo =
+              tableFieldsInfo.stream()
+                      .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+                      .collect(Collectors.toList());
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }

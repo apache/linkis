@@ -262,7 +262,8 @@ export default {
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_\*\-]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_\*\-]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'},
+          {type: 'string', max: 100, message: this.$t('message.linkis.tenantTagManagement.maxLen')},
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},

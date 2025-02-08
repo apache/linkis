@@ -65,7 +65,7 @@ export default {
   watch: {
     logs(newVal) {
       if (this.terminal && newVal) {
-        this.terminal.clear()
+        this.terminal.clear();
         this.terminal.write(newVal)
         setTimeout(() => {
           this.terminal.scrollToTop();
@@ -98,6 +98,27 @@ export default {
   },
 
   methods: {
+    copyToClipboard(text) {
+      try {
+        // 优先使用 navigator.clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+    
+        // 降级使用 execCommand
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return Promise.resolve();
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
     initTerminal() {
       this.terminal = new Terminal({
         cursorBlink: false,
@@ -129,6 +150,16 @@ export default {
           this.terminal.scrollToTop();
         }, 0)
       }
+      this.terminal.attachCustomKeyEventHandler((arg) => {
+        if (arg.ctrlKey && arg.code === "KeyC" && arg.type === "keydown") {
+          const selection = this.terminal.getSelection();
+          if (selection) {
+            this.copyToClipboard(selection);
+            return false;
+          }
+        }
+        return true;
+      });
     },
 
     onResize() {

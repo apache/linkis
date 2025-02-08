@@ -340,10 +340,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Failed)
         case _ => logger.warn(s"task get response is $executeResponse")
       }
+      Utils.tryAndWarn(afterExecute(engineConnTask, executeResponse))
       executeResponse
     }
-
-    Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
     // lastTask = null
     response

@@ -39,6 +39,7 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.NOT_SUPPORT_LIMIT_DBS
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
 import org.apache.linkis.manager.engineplugin.jdbc.exception.{
@@ -130,11 +131,38 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     if (StringUtils.isNotBlank(dataSourceName)) {
       dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
     }
+    // deal with url param for ds conn
+    parseJdbcUrl(jdbcUrl, properties)
     val connection = connectionManager.getConnection(dataSourceIdentifier, properties)
     if (StringUtils.isNotBlank(taskId)) {
       connectionCache.put(taskId, connection)
     }
     connection
+  }
+
+  def parseJdbcUrl(jdbcUrl: String, parameters: util.Map[String, String]): Unit = {
+    if (StringUtils.isEmpty(jdbcUrl)) {
+      return None
+    }
+    val queryIndex = jdbcUrl.indexOf('?')
+    if (queryIndex != -1) {
+      val query = jdbcUrl.substring(queryIndex + 1)
+      val pairs = query.split("&")
+
+      pairs.foreach { pair =>
+        try {
+          val keyValue = pair.split("=", 2)
+          if (keyValue.length == 2) {
+            val key = keyValue(0)
+            val value = keyValue(1)
+            parameters.put(key, value)
+          }
+        } catch {
+          case e: Exception =>
+            logger.info(s"wrong link parameters: ${pair}")
+        }
+      }
+    }
   }
 
   override def executeLine(
@@ -165,7 +193,18 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       }
       logger.info(s"create statement is:  $statement")
       connectionManager.saveStatement(taskId, statement)
-      val isResultSetAvailable = statement.execute(code)
+      val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
+      val jdbcUrl: String = properties.get(JDBCEngineConnConstant.JDBC_URL)
+      var newCode = code
+      val dbs: Array[String] = NOT_SUPPORT_LIMIT_DBS.split(",")
+      if (StringUtils.isNotBlank(jdbcUrl) && dbs.length > 0) {
+        dbs.foreach(dbName => {
+          if (jdbcUrl.toLowerCase().contains(dbName.toLowerCase())) {
+            newCode = code.replaceAll("(?i)limit[^;]*;?$", "").trim
+          }
+        })
+      }
+      val isResultSetAvailable = statement.execute(newCode)
       logger.info(s"Is ResultSet available ? : $isResultSetAvailable")
       if (monitor != null) {
         /* refresh progress */

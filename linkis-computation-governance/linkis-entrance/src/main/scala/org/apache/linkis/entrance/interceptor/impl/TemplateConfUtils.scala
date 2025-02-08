@@ -304,6 +304,13 @@ object TemplateConfUtils extends Logging {
 
           })
           if (keyList.size() > 0) {
+            val runtimeMap: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
+            runtimeMap.put(confTemplateNameKey, templateName)
+            logAppender.append(
+              LogUtils
+                .generateInfo(s"use template conf with templateName: ${templateName} \n")
+            )
+            TaskUtils.addRuntimeMap(params, runtimeMap)
             TaskUtils.addStartupMap(params, keyList)
           }
         }

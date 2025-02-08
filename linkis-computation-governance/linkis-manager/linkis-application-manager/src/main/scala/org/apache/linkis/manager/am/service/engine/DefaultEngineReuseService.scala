@@ -162,6 +162,22 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     var engineScoreList =
       getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
 
+    val confTemplateNameKey = "ec.resource.name"
+    val templateName: String =
+      engineReuseRequest.getProperties.getOrDefault(confTemplateNameKey, "")
+    if (StringUtils.isNotBlank(templateName)) {
+      engineScoreList = engineScoreList
+        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
+        .filter(engine => {
+          val params: String = engine.getParams
+          val paramsMap: util.Map[String, String] =
+            AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
+          val oldTemplateName: String = paramsMap.getOrDefault(confTemplateNameKey, "")
+          templateName.equalsIgnoreCase(oldTemplateName)
+        })
+      logger.info(s"${engineScoreList.length} engine by templateName can be reused.")
+    }
+
     // 获取需要的资源
     if (AMConfiguration.EC_REUSE_WITH_RESOURCE_RULE_ENABLE) {
       val labels: util.List[Label[_]] =

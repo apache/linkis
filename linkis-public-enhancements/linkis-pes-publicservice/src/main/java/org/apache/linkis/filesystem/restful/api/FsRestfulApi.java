@@ -67,9 +67,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -1459,34 +1458,29 @@ public class FsRestfulApi {
     List<Map<String, Object>> resultMap = new ArrayList<>();
     List<FsPath> list = fs.list(fsPath);
     if (CollectionUtils.isNotEmpty(list)) {
-      ExecutorService executorService = Executors.newFixedThreadPool(10);
-      list.forEach(
-          path -> {
-            executorService.submit(
-                () -> {
-                  try {
-                    Map<String, Object> dataMap = new HashMap<>();
-                    dataMap.put("checkSum", fs.checkSum(path));
-                    dataMap.put("blockSize", fs.getBlockSize(path));
-                    dataMap.put("path", path.getPath());
-                    synchronized (resultMap) {
-                      resultMap.add(dataMap);
-                    }
-                  } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                  }
-                });
-          });
-      // 关闭线程池并等待所有任务完成
-      executorService.shutdown();
-      try {
-        if (!executorService.awaitTermination(60L, TimeUnit.MINUTES)) {
-          executorService.shutdownNow();
-        }
-      } catch (InterruptedException e) {
-        executorService.shutdownNow();
-        Thread.currentThread().interrupt();
-      }
+      List<CompletableFuture<Void>> futures =
+          list.stream()
+              .map(
+                  path ->
+                      CompletableFuture.runAsync(
+                          () -> {
+                            try {
+                              Map<String, Object> dataMap = new HashMap<>();
+                              dataMap.put("checkSum", fs.checkSum(path));
+                              dataMap.put("blockSize", fs.getBlockSize(path));
+                              dataMap.put("path", path.getPath());
+                              synchronized (resultMap) {
+                                resultMap.add(dataMap);
+                              }
+                            } catch (IOException e) {
+                              LOGGER.error(e.getMessage(), e);
+                              throw new RuntimeException(e);
+                            }
+                          },
+                          FilesystemUtils.executorService))
+              .collect(Collectors.toList());
+
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
     return Message.ok().data("fileDataList", resultMap);
   }

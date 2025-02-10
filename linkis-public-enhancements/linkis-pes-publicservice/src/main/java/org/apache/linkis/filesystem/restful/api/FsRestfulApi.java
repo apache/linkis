@@ -1423,7 +1423,7 @@ public class FsRestfulApi {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
     FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
-    String fileMD5Str = fs.checkSum(new FsPath(filePath));
+    String fileMD5Str = fs.getChecksumWithMD5(new FsPath(filePath));
     return Message.ok().data("data", fileMD5Str);
   }
 
@@ -1463,7 +1463,7 @@ public class FsRestfulApi {
                           () -> {
                             try {
                               Map<String, Object> dataMap = new HashMap<>();
-                              dataMap.put("checkSum", fs.checkSum(path));
+                              dataMap.put("checkSum", fs.getChecksum(path));
                               dataMap.put("blockSize", fs.getBlockSize(path));
                               dataMap.put("path", path.getPath());
                               synchronized (resultMap) {

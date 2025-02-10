@@ -504,7 +504,7 @@ public class HDFSFileSystem extends FileSystem {
   }
 
   @Override
-  public String checkSum(FsPath dest) throws IOException {
+  public String getChecksumWithMD5(FsPath dest) throws IOException {
     String path = checkHDFSPath(dest.getPath());
     if (!exists(dest)) {
       throw new IOException("directory or file not exists: " + path);
@@ -512,6 +512,16 @@ public class HDFSFileSystem extends FileSystem {
     MD5MD5CRC32FileChecksum fileChecksum =
         (MD5MD5CRC32FileChecksum) fs.getFileChecksum(new Path(path));
     return fileChecksum.toString().split(":")[1];
+  }
+
+  @Override
+  public String getChecksum(FsPath dest) throws IOException {
+    String path = checkHDFSPath(dest.getPath());
+    if (!exists(dest)) {
+      throw new IOException("directory or file not exists: " + path);
+    }
+    FileChecksum fileChecksum = fs.getFileChecksum(new Path(path));
+    return fileChecksum.toString();
   }
 
   @Override

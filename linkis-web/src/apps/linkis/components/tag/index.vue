@@ -146,7 +146,7 @@ export default {
       if (reg.test(this.value2)) {
         this.$Message.error("Label content cannot be special symbols and spaces(标签内容不能为特殊符号和空格)！");
       } else if (this.value2.length >= 100) {
-        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过100)！");
+        this.$Message.error("Tag content length not exceeding 100(标签内容长度不超过100)！");
       } else if (this.value1 && this.value2) {
         this.$emit("addEnter", this.value1, this.value2);
         this.adding = false;
@@ -168,7 +168,7 @@ export default {
       if (reg.test(editedInputValue)) {
         this.$Message.error("标签内容不能为特殊符号和空格！");
       } else if (editedInputValue.length >= 100) {
-        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过100)！");
+        this.$Message.error("Tag content length not exceeding 100(标签内容长度不超过100)！");
       } else if (item.key && editedInputValue) {
         this.$emit("editEnter", item.key, item.value, editedInputValue);
         this.clickValue = '';

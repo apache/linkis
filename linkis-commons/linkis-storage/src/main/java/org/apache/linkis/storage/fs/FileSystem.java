@@ -54,6 +54,7 @@ public abstract class FileSystem implements Fs {
   public abstract long getLength(FsPath dest) throws IOException;
 
   public abstract String getChecksumWithMD5(FsPath dest) throws IOException;
+
   public abstract String getChecksum(FsPath dest) throws IOException;
 
   public abstract long getBlockSize(FsPath dest) throws IOException;

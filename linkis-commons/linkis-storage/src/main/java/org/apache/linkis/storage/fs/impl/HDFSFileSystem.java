@@ -521,7 +521,7 @@ public class HDFSFileSystem extends FileSystem {
       throw new IOException("directory or file not exists: " + path);
     }
     FileChecksum fileChecksum = fs.getFileChecksum(new Path(path));
-    return fileChecksum.toString().split(":")[1];
+    return fileChecksum.toString();
   }
 
   @Override

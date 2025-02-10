@@ -192,6 +192,7 @@
     <!-- dev env -->
     <java.version>1.8</java.version>
     <maven.version>3.5.0</maven.version>
+    <json4s.version>3.7.0-M11</json4s.version>
     <scala.version>2.11.12</scala.version>
     <scala.binary.version>2.11</scala.binary.version>
     <ant.version>1.10.12</ant.version>
@@ -1488,11 +1489,13 @@
       </properties>
     </profile>
     <profile>
-      <id>spark-3.2</id>
+      <id>spark-3.4</id>
       <properties>
-        <spark.version>3.2.1</spark.version>
-        <scala.version>2.12.15</scala.version>
+        <json4s.version>3.7.0-M11</json4s.version>
+        <spark.version>3.4.4</spark.version>
+        <scala.version>2.12.17</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
+        <jackson-bom.version>2.13.4</jackson-bom.version>
       </properties>
     </profile>
 

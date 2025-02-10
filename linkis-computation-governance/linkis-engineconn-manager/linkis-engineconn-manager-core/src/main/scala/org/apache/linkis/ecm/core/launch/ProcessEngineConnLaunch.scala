@@ -223,7 +223,14 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       )
     )
 
-    val engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    var engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    val engineType =
+      request.labels.asScala.filter(_.getLabelKey.equals("engineType")).map(_.getStringValue).head
+    if (engineType.contains("3.4.4")) {
+      processBuilder.setEnv("SPARK_HOME", "/appcom/Install/spark3")
+      processBuilder.setEnv("SPARK_CMD", "/appcom/Install/spark3-cmd")
+      processBuilder.setEnv("PATH", "$SPARK_CMD/bin:$PATH")
+    }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env
     val engineConnEnvKeyArray = engineConnEnvKeys.split(",")

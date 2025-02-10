@@ -123,4 +123,18 @@ public class EngineTypeLabelCreator {
     }
     defaultVersion.put(type, version);
   }
+
+  public static EngineTypeLabel createEngineTypeLabel(String type, String version) {
+    if (null == defaultVersion) {
+      init();
+    }
+    EngineTypeLabel label = labelBuilderFactory.createLabel(EngineTypeLabel.class);
+    label.setEngineType(type);
+    if (StringUtils.isNotBlank(version)) {
+      label.setVersion(version);
+    } else {
+      defaultVersion.get(type);
+    }
+    return label;
+  }
 }

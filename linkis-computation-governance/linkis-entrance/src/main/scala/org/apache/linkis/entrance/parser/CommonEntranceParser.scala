@@ -35,10 +35,15 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
-import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{
+  CodeLanguageLabel,
+  EngineType,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.queue.SchedulerEventState
+import org.apache.linkis.storage.script.VariableParser
 
 import org.apache.commons.lang3.StringUtils
 
@@ -265,9 +270,17 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       if (formatCode) executionCode = format(executionCode)
       jobReq.setExecutionCode(executionCode)
     }
-    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(executeApplicationName)
+    var engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(executeApplicationName)
     val runTypeLabel =
       labelBuilderFactory.createLabel[Label[_]](LabelKeyConstant.CODE_TYPE_KEY, runType)
+    val variableMap =
+      jobReq.getParams.get(VariableParser.VARIABLE).asInstanceOf[util.Map[String, String]]
+    if (variableMap.containsKey(LabelCommonConfig.SPARK3_ENGINE_VERSION)) {
+      engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(
+        EngineType.SPARK.toString,
+        variableMap.get(LabelCommonConfig.SPARK3_ENGINE_VERSION)
+      )
+    }
     val userCreatorLabel = labelBuilderFactory
       .createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)
 

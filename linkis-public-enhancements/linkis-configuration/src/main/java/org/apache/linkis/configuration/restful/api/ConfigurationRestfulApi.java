@@ -314,25 +314,35 @@ public class ConfigurationRestfulApi {
       ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
       List<ConfigKeyValue> settings = fullTree.getSettings();
       chekList.add(settings);
+      // 特殊逻辑处理
       for (ConfigKeyValue configKeyValue : settings) {
+        // spark.conf 配置处理空格
         if (configKeyValue.getKey().equals("spark.conf")
             && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
           sparkConf = configKeyValue.getConfigValue().trim();
           configKeyValue.setConfigValue(sparkConf);
         }
+        // 配置管理密码加密处理，开关打开时才执行加密
         if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
             && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
             && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
           List<ConfigUserValue> userConfigValue =
               configKeyService.getUserConfigValue(
                   engine, configKeyValue.getKey(), creator, username);
-          for (ConfigUserValue configUserValue : userConfigValue) {
-            if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
-                && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
-              configKeyValue.setConfigValue(
-                  AESUtils.encrypt(
-                      configKeyValue.getConfigValue(),
-                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+          if (CollectionUtils.isEmpty(userConfigValue)) {
+            configKeyValue.setConfigValue(
+                AESUtils.encrypt(
+                    configKeyValue.getConfigValue(),
+                    AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+          } else {
+            for (ConfigUserValue configUserValue : userConfigValue) {
+              if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+                  && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
+                configKeyValue.setConfigValue(
+                    AESUtils.encrypt(
+                        configKeyValue.getConfigValue(),
+                        AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+              }
             }
           }
         }

@@ -137,6 +137,9 @@ public class AMConfiguration {
   public static final boolean EC_REUSE_WITH_RESOURCE_RULE_ENABLE =
       CommonVars.apply("linkis.ec.reuse.with.resource.rule.enable", false).getValue();
 
+  public static final boolean EC_REUSE_WITH_TEMPLATE_RULE_ENABLE =
+      CommonVars.apply("linkis.ec.reuse.with.template.rule.enable", false).getValue();
+
   public static final String EC_REUSE_WITH_RESOURCE_WITH_ECS =
       CommonVars.apply("linkis.ec.reuse.with.resource.with.ecs", "spark,hive,shell,python")
           .getValue();

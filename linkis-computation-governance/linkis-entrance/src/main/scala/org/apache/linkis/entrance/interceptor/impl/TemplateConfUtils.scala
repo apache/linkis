@@ -304,6 +304,11 @@ object TemplateConfUtils extends Logging {
 
           })
           if (keyList.size() > 0) {
+            keyList.put(confTemplateNameKey, templateName)
+            logAppender.append(
+              LogUtils
+                .generateInfo(s"use template conf with templateName: ${templateName} \n")
+            )
             TaskUtils.addStartupMap(params, keyList)
           }
         }

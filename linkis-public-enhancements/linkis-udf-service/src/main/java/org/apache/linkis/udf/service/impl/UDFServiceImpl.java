@@ -758,8 +758,7 @@ public class UDFServiceImpl implements UDFService {
         long loadCount = udfDao.getSameLoadCount(userName, udfInfo.getUdfName());
         if (loadCount > 0) {
           throw new UDFException(
-              "There is a Jar package function with the same name(存在同名的Jar包函数)： "
-                  + udfInfo.getUdfName());
+              String.format("用户 %s 已加载过 %s 函数或用户操作过于频繁请刷新后重试", userName, udfInfo.getUdfName()));
         }
         // 校验jar包名字
         //                String path = udfInfo.getPath();

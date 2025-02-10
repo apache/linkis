@@ -40,6 +40,7 @@ object EntranceUtils extends Logging {
 
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
+  val sparkVersionRegex = "^(3\\.4\\.4|3)$"
   def getUserCreatorEcTypeKey(
       userCreatorLabel: UserCreatorLabel,
       engineTypeLabel: EngineTypeLabel

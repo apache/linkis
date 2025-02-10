@@ -65,8 +65,7 @@ public class JDBCEngineConnConstant {
       "wds.linkis.jdbc.pool.remove.abandoned.enabled";
   public static final String JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED =
       "wds.linkis.jdbc.pool.remove.abandoned.log.enabled";
-  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT =
-      "wds.linkis.jdbc.pool.remove.abandoned.timeout";
+  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT = "linkisJDBCPoolAbandonedTimeout";
 
   public static final String DS_JDBC_HOST = "host";
   public static final String DS_JDBC_PORT = "port";

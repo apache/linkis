@@ -47,7 +47,7 @@ class CachedTokenService extends TokenService {
 
   private val tokenCache: LoadingCache[String, Token] = CacheBuilder.newBuilder
     .maximumSize(TokenConfiguration.TOKEN_CACHE_MAX_SIZE)
-    .refreshAfterWrite(TokenConfiguration.TOKEN_CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES)
+    .expireAfterWrite(TokenConfiguration.TOKEN_CACHE_EXPIRE_MINUTES, TimeUnit.MINUTES)
     .build(new CacheLoader[String, Token]() {
 
       override def load(tokenName: String): Token = {

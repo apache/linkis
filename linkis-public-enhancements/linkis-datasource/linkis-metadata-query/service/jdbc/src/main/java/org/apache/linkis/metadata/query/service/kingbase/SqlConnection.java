@@ -100,7 +100,7 @@ public class SqlConnection extends AbstractSqlConnection {
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
     String columnSql =
-        "SELECT * FROM " + String.format("\"%s\"", database) + "." + table + " WHERE 1 = 2";
+        "SELECT * FROM " + database + "." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
     ResultSetMetaData meta = null;

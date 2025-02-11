@@ -376,7 +376,9 @@ class TaskExecutionServiceImpl
     val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
     scheduler.submit(new Runnable {
       override def run(): Unit = {
-        logger.info(s"start progress daemon thread for task ${task.getTaskId}, status ${task.getStatus}")
+        logger.info(
+          s"start progress daemon thread for task ${task.getTaskId}, status ${task.getStatus}"
+        )
         Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
         while (!ExecutionNodeStatus.isCompleted(task.getStatus)) {
           Utils.tryAndWarn {
@@ -419,7 +421,9 @@ class TaskExecutionServiceImpl
             Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
           )
         }
-        logger.info(s"End progress daemon thread exit task ${task.getTaskId}, status ${task.getStatus}")
+        logger.info(
+          s"End progress daemon thread exit task ${task.getTaskId}, status ${task.getStatus}"
+        )
       }
     })
   }

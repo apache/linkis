@@ -117,12 +117,14 @@ public class MdqTableRestfulApi {
         && mdqService.isExistInMdq(database, tableName, userName)) {
       tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
     }
-    List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
-    if (CollectionUtils.isNotEmpty(rangerColumns)) {
-      tableFieldsInfo =
-          tableFieldsInfo.stream()
-              .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
-              .collect(Collectors.toList());
+    if (dataSourceService.checkRangerConnectionConfig()) {
+      List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+      if (CollectionUtils.isNotEmpty(rangerColumns)) {
+        tableFieldsInfo =
+                tableFieldsInfo.stream()
+                        .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+                        .collect(Collectors.toList());
+      }
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }

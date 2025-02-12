@@ -531,4 +531,19 @@ public class HDFSFileSystem extends FileSystem {
     }
     return fs.getBlockSize(new Path(path));
   }
+
+  @Override
+  public List<FsPath> getAllFilePaths(FsPath path) throws IOException {
+    FileStatus[] stat = fs.listStatus(new Path(checkHDFSPath(path.getPath())));
+    List<FsPath> fsPaths = new ArrayList<>();
+    for (FileStatus f : stat) {
+      FsPath fsPath = fillStorageFile(new FsPath(f.getPath().toUri().getPath()), f);
+      if (fs.isDirectory(f.getPath())) {
+        fsPaths.addAll(getAllFilePaths(fsPath));
+      } else {
+        fsPaths.add(fsPath);
+      }
+    }
+    return fsPaths;
+  }
 }

@@ -1453,10 +1453,10 @@ public class FsRestfulApi {
     FsPath fsPath = new FsPath(filePath);
     FileSystem fs = fsService.getFileSystem(username, fsPath);
     if (!fs.exists(fsPath)) {
-      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     }
     List<Map<String, Object>> resultMap = new ArrayList<>();
-    List<FsPath> list = fs.list(fsPath);
+    List<FsPath> list = fs.getAllFilePaths(fsPath);
     if (CollectionUtils.isNotEmpty(list)) {
       List<CompletableFuture<Void>> futures =
           list.stream()

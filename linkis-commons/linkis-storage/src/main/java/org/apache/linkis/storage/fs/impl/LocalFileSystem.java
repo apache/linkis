@@ -519,4 +519,9 @@ public class LocalFileSystem extends FileSystem {
   public long getBlockSize(FsPath dest) {
     return 0L;
   }
+
+  @Override
+  public List<FsPath> getAllFilePaths(FsPath dest) {
+    return new ArrayList<>();
+  }
 }

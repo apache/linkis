@@ -146,7 +146,8 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     if (ready && StringUtils.isNotBlank(udfNames) && StringUtils.isNotBlank(jobId)) {
       val codeType: String = LabelUtil.getCodeType(engineExecutorContext.getLabels.toList.asJava)
       val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
-      if (!CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL.equals(languageType)) {
+      // sql 或者 python
+      if (!ComputationExecutorConf.SUPPORT_SPECIAL_UDF_LANGUAGES.getValue.contains(languageType)) {
         val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
         if (StringUtils.isNotBlank(udfNames)) {
           val funcNames: Array[String] = udfNames.split(",")

@@ -37,7 +37,12 @@ case class SparkUDFCheckRule(sparkSession: SparkSession) extends Rule[LogicalPla
     val codeType: String = System.getProperty(ComputationExecutorConf.CODE_TYPE, "sql")
     // 从系统属性中获取udf函数名
     val udfNames: String = System.getProperty(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, "")
-    if ("sql".equals(codeType) || StringUtils.isBlank(udfNames)) {
+
+    if (
+        ComputationExecutorConf.SUPPORT_SPECIAL_UDF_LANGUAGES.getValue.contains(
+          codeType
+        ) || StringUtils.isBlank(udfNames)
+    ) {
       // 如果是 SQL 类型，或者未注册特殊udf函数，直接返回原始计划
       plan
     } else {

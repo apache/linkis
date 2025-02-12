@@ -214,7 +214,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         val pythonVersion = SparkConfiguration.SPARK_PYTHON_VERSION.getValue(
           EngineConnObject.getEngineCreationContext.getOptions
         )
-        val engineType = sc.getConf.get("label.engineType")
+        val engineType = LabelUtil.getEngineTypeLabel(engineExecutorContext.getLabels.toList.asJava).getStringValue
         val sb = new StringBuilder
         sb.append(s"spark.executor.instances=$executorNum\n")
         sb.append(s"spark.executor.memory=${executorMem}G\n")

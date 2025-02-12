@@ -24,6 +24,7 @@ import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.common.conf.RMConfiguration
@@ -46,11 +47,11 @@ import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.linkis.storage.script.VariableParser
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.entrance.utils.EntranceUtils
 
 import java.util
 import java.util.Date
 import java.util.regex.Pattern
+
 import scala.collection.JavaConverters._
 
 class CommonEntranceParser(val persistenceManager: PersistenceManager)
@@ -282,10 +283,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       if (pattern.matches()) {
         version = LabelCommonConfig.SPARK3_ENGINE_VERSION
       }
-      engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(
-        EngineType.SPARK.toString,
-        version
-      )
+      engineTypeLabel =
+        EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SPARK.toString, version)
     }
     val userCreatorLabel = labelBuilderFactory
       .createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)

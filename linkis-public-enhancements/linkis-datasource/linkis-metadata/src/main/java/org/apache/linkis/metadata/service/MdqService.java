@@ -59,6 +59,8 @@ public interface MdqService {
 
   boolean isExistInMdq(String database, String tableName, String user);
 
+  boolean isExistInHive(MetadataQueryParam queryParam);
+
   MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user);
 
   MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam);

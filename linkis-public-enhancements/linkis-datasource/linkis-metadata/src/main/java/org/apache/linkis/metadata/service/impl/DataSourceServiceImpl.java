@@ -181,7 +181,7 @@ public class DataSourceServiceImpl implements DataSourceService {
       return rangerPermissionService.queryRangerColumns(queryParam);
     } catch (Exception e) {
       logger.error("Failed to get Ranger Columns:", e);
-      return new ArrayList<>();
+      return null;
     }
   }
 
@@ -191,11 +191,9 @@ public class DataSourceServiceImpl implements DataSourceService {
       ArrayNode filteredColumns = jsonMapper.createArrayNode();
       for (int i = 0; i < hiveColumns.size(); i++) {
         JsonNode column = hiveColumns.get(i);
-        if (rangerColumns.contains(column.get("name").asText())) {
-          // 删除node
-          continue;
+        if (rangerColumns.contains(column.get("columnName").asText())) {
+          filteredColumns.add(column);
         }
-        filteredColumns.add(column);
       }
       return filteredColumns;
     } catch (Exception e) {

@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.restful.api;
 
 import org.apache.linkis.metadata.ddl.ImportDDLCreator;
 import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
+import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
@@ -44,9 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,8 +88,16 @@ public class MdqTableRestfulApi {
     MdqTableBaseInfoVO tableBaseInfo;
     if (mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
-    } else {
+    } else if (mdqService.isExistInHive(queryParam)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
+    } else {
+      // 可能是存在于ranger，暂时都返回默认值
+      Map<String, Object> table = new HashMap<>();
+      table.put("CREATE_TIME", 0);
+      table.put("OWNER", "default");
+      table.put("NAME", "default");
+      table.put("LAST_ACCESS_TIME", 0);
+      tableBaseInfo = DomainCoversionUtils.mapToMdqTableBaseInfoVO(table, queryParam.getDbName());
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }
@@ -119,11 +126,11 @@ public class MdqTableRestfulApi {
     }
     if (dataSourceService.checkRangerConnectionConfig()) {
       List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
-      if (CollectionUtils.isNotEmpty(rangerColumns)) {
+      if (null != rangerColumns) {
         tableFieldsInfo =
-            tableFieldsInfo.stream()
-                .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
-                .collect(Collectors.toList());
+          tableFieldsInfo.stream()
+            .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+            .collect(Collectors.toList());
       }
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);

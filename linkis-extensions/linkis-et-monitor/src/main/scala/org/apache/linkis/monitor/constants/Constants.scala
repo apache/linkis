@@ -113,4 +113,6 @@ object Constants {
 
   val JDBC_ENGINE = "jdbc"
 
+  val TASK_ARCHIVE_SH = "linkis_task_archive.sh"
+
 }

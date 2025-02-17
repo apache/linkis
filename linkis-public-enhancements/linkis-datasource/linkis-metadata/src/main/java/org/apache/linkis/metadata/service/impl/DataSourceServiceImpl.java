@@ -76,8 +76,10 @@ public class DataSourceServiceImpl implements DataSourceService {
   @Override
   public JsonNode getDbs(String userName, String permission) throws Exception {
     Set<String> hiveDbs = dataSourceService.getHiveDbs(userName, permission);
-    Set<String> rangerDbs = dataSourceService.getRangerDbs(userName);
-    hiveDbs.addAll(rangerDbs);
+    if (checkRangerConnectionConfig()) {
+      Set<String> rangerDbs = dataSourceService.getRangerDbs(userName);
+      hiveDbs.addAll(rangerDbs);
+    }
     // 将hiveDbs根据String升序排序
     List<String> sortedDbs = hiveDbs.stream().sorted().collect(Collectors.toList());
     ArrayNode dbsNode = jsonMapper.createArrayNode();
@@ -179,7 +181,7 @@ public class DataSourceServiceImpl implements DataSourceService {
       return rangerPermissionService.queryRangerColumns(queryParam);
     } catch (Exception e) {
       logger.error("Failed to get Ranger Columns:", e);
-      return new ArrayList<>();
+      return null;
     }
   }
 
@@ -189,11 +191,9 @@ public class DataSourceServiceImpl implements DataSourceService {
       ArrayNode filteredColumns = jsonMapper.createArrayNode();
       for (int i = 0; i < hiveColumns.size(); i++) {
         JsonNode column = hiveColumns.get(i);
-        if (rangerColumns.contains(column.get("name").asText())) {
-          // 删除node
-          continue;
+        if (rangerColumns.contains(column.get("columnName").asText())) {
+          filteredColumns.add(column);
         }
-        filteredColumns.add(column);
       }
       return filteredColumns;
     } catch (Exception e) {
@@ -211,14 +211,23 @@ public class DataSourceServiceImpl implements DataSourceService {
       logger.error("Failed to list Tables:", e);
       throw new RuntimeException(e);
     }
-    List<String> rangerTables = dataSourceService.queryRangerTables(queryParam);
-    Set<String> tableNames =
-        listTables.stream().map(table -> (String) table.get("NAME")).collect(Collectors.toSet());
-    // 过滤掉ranger中有，hive中也有的表
-    rangerTables =
-        rangerTables.stream()
-            .filter(rangerTable -> !tableNames.contains(rangerTable))
-            .collect(Collectors.toList());
+    List<String> rangerTables = new ArrayList<>();
+    try {
+      if (checkRangerConnectionConfig()) {
+        rangerTables = dataSourceService.queryRangerTables(queryParam);
+        Set<String> tableNames =
+            listTables.stream()
+                .map(table -> (String) table.get("NAME"))
+                .collect(Collectors.toSet());
+        // 过滤掉ranger中有，hive中也有的表
+        rangerTables =
+            rangerTables.stream()
+                .filter(rangerTable -> !tableNames.contains(rangerTable))
+                .collect(Collectors.toList());
+      }
+    } catch (Exception e) {
+      logger.error("Failed to get Ranger Tables:", e);
+    }
 
     ArrayNode tables = jsonMapper.createArrayNode();
     for (Map<String, Object> table : listTables) {
@@ -480,5 +489,16 @@ public class DataSourceServiceImpl implements DataSourceService {
       }
     }
     return rootHdfs;
+  }
+
+  @Override
+  public Boolean checkRangerConnectionConfig() {
+    if (StringUtils.isNotBlank(DWSConfig.RANGER_DB_URL.getValue())
+        && StringUtils.isNotBlank(DWSConfig.RANGER_DB_USER.getValue())
+        && StringUtils.isNotBlank(DWSConfig.RANGER_DB_PASSWORD.getValue())) {
+      logger.debug("ranger db config exists, connection check success");
+      return true;
+    }
+    return false;
   }
 }

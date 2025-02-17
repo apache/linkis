@@ -183,7 +183,7 @@
     <spring-cloud.version>2021.0.8</spring-cloud.version>
     <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>
     <spring-cloud-common.version>3.1.7</spring-cloud-common.version>
-    <spring.boot.admin.version>2.7.16</spring.boot.admin.version>
+    <spring.boot.admin.version>3.1.2</spring.boot.admin.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -1489,14 +1489,14 @@
       </properties>
     </profile>
     <profile>
-      <id>spark-3.4</id>
+      <id>spark-3</id>
       <properties>
         <revision>1.11.0-wds-spark3</revision>
         <json4s.version>3.7.0-M11</json4s.version>
         <spark.version>3.4.4</spark.version>
         <scala.version>2.12.17</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
-        <jackson-bom.version>2.13.4</jackson-bom.version>
+        <jackson-bom.version>2.14.2</jackson-bom.version>
       </properties>
     </profile>
 

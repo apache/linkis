@@ -29,6 +29,7 @@ import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.MdqService;
+import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -44,9 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,8 +88,15 @@ public class MdqTableRestfulApi {
     MdqTableBaseInfoVO tableBaseInfo;
     if (mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
-    } else {
+    } else if (mdqService.isExistInHive(queryParam)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
+    } else {
+      // 可能是存在于ranger，用管理员权限获取表基础信息
+      MetadataQueryParam queryAllParam =
+        MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+         .withDbName(database)
+         .withTableName(tableName);
+      tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }
@@ -117,12 +123,14 @@ public class MdqTableRestfulApi {
         && mdqService.isExistInMdq(database, tableName, userName)) {
       tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
     }
-    List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
-    if (CollectionUtils.isNotEmpty(rangerColumns)) {
-      tableFieldsInfo =
+    if (dataSourceService.checkRangerConnectionConfig()) {
+      List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+      if (null != rangerColumns) {
+        tableFieldsInfo =
           tableFieldsInfo.stream()
-              .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
-              .collect(Collectors.toList());
+            .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+            .collect(Collectors.toList());
+      }
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }

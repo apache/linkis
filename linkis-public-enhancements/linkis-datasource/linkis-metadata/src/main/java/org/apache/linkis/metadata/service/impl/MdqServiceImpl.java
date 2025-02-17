@@ -206,6 +206,19 @@ public class MdqServiceImpl implements MdqService {
 
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
+  public boolean isExistInHive(MetadataQueryParam queryParam) {
+    List<Map<String, Object>> tables =
+        hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
+    Optional<Map<String, Object>> tableOptional =
+        tables
+            .parallelStream()
+            .filter(f -> queryParam.getTableName().equals(f.get("NAME")))
+            .findFirst();
+    return tableOptional.isPresent();
+  }
+
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  @Override
   public MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam) {
     List<Map<String, Object>> tables =
         hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);

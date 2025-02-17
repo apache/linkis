@@ -33,6 +33,8 @@ public interface DataSourceService {
 
   Set<String> getHiveDbs(String userName, String permission) throws Exception;
 
+  Boolean checkRangerConnectionConfig();
+
   JsonNode getDbsWithTables(String userName) throws Exception;
 
   JsonNode getDbsWithTablesAndLastAccessAt(String userName) throws Exception;

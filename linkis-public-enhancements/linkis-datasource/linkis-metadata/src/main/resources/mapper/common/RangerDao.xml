@@ -45,6 +45,7 @@
                     xp.policy_text LIKE CONCAT('%', #{param}, '%')
                 </foreach>
             </if>
+            AND (xp.policy_text LIKE '%{"accesses":[{"type":"select"%' OR xp.policy_text LIKE '%{"accesses":[{"type":"all"%')
         </where>
     </select>
 </mapper>

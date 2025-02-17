@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.restful.api;
 
 import org.apache.linkis.metadata.ddl.ImportDDLCreator;
 import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
-import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
@@ -30,6 +29,7 @@ import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.MdqService;
+import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -91,13 +91,12 @@ public class MdqTableRestfulApi {
     } else if (mdqService.isExistInHive(queryParam)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
     } else {
-      // 可能是存在于ranger，暂时都返回默认值
-      Map<String, Object> table = new HashMap<>();
-      table.put("CREATE_TIME", 0);
-      table.put("OWNER", "default");
-      table.put("NAME", tableName);
-      table.put("LAST_ACCESS_TIME", 0);
-      tableBaseInfo = DomainCoversionUtils.mapToMdqTableBaseInfoVO(table, queryParam.getDbName());
+      // 可能是存在于ranger，用管理员权限获取表基础信息
+      MetadataQueryParam queryAllParam =
+        MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+         .withDbName(database)
+         .withTableName(tableName);
+      tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }

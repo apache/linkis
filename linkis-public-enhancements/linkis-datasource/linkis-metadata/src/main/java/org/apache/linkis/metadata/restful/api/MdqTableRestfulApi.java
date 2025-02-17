@@ -95,7 +95,7 @@ public class MdqTableRestfulApi {
       Map<String, Object> table = new HashMap<>();
       table.put("CREATE_TIME", 0);
       table.put("OWNER", "default");
-      table.put("NAME", "default");
+      table.put("NAME", tableName);
       table.put("LAST_ACCESS_TIME", 0);
       tableBaseInfo = DomainCoversionUtils.mapToMdqTableBaseInfoVO(table, queryParam.getDbName());
     }

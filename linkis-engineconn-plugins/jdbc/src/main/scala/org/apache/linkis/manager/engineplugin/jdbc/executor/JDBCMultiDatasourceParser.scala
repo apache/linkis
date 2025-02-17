@@ -42,6 +42,10 @@ import scala.collection.JavaConverters._
 
 object JDBCMultiDatasourceParser extends Logging {
 
+  private val MYSQL_SQL_CONNECT_URL = "jdbc:mysql://%s:%s/%s"
+  private val ORACLE_SQL_CONNECT_URL = "jdbc:oracle:thin:@%s:%s:%s"
+  private val POSTGRESQL_SQL_CONNECT_URL = "jdbc:postgresql://%s:%s/%s"
+
   def queryDatasourceInfoByName(
       datasourceName: String,
       username: String,
@@ -126,7 +130,14 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
 
-    if (CHANGE_DS_TYPE_TO_MYSQL) {
+    // check dbType
+    if (!DS_TYPES_TO_EXECUTE_TASK_BY_JDBC.contains(dbType)) {
+      throw new JDBCGetDatasourceInfoException(
+        UNSUPPORTED_DS_TYPE.getErrorCode,
+        MessageFormat.format(UNSUPPORTED_DS_TYPE.getErrorDesc, dbType)
+      )
+    }
+    if (CHANGE_DS_TYPE_TO_MYSQL.contains(dbType)) {
       dbType = "mysql"
     }
 
@@ -153,6 +164,15 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
     var jdbcUrl = s"jdbc:$dbType://$host:$port"
+    dbType match {
+      case "oracle" =>
+        val instance: Object = dbConnParams.get("instance")
+        jdbcUrl = String.format(ORACLE_SQL_CONNECT_URL, host, port, instance)
+      case _ =>
+        jdbcUrl = s"jdbc:$dbType://$host:$port"
+    }
+    logger.info(s"jdbc ${dbType} connection_url: $jdbcUrl")
+
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
     if (strObjIsNotBlank(dbName)) {
       jdbcUrl = s"$jdbcUrl/$dbName"

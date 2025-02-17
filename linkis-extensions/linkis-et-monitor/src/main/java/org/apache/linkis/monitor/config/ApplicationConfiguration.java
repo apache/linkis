@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor.config;
 
+import de.codecentric.boot.admin.server.utils.jackson.AdminServerModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.codecentric.boot.admin.server.utils.jackson.AdminServerModule;
 
 @Configuration
 class ApplicationConfiguration implements WebMvcConfigurer {
@@ -36,7 +36,6 @@ class ApplicationConfiguration implements WebMvcConfigurer {
   @Primary
   public ObjectMapper jsonMapper() {
     ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new AdminServerModule(new String[] {".*password$"}));
     mapper.registerModule(new JavaTimeModule());
     return mapper;
   }

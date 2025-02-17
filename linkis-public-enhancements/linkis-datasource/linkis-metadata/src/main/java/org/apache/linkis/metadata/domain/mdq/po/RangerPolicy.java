@@ -108,28 +108,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     setPolicyLabels(policyLables);
   }
 
-  /** @param other */
-  public void updateFrom(RangerPolicy other) {
-    super.updateFrom(other);
-
-    setService(other.getService());
-    setName(other.getName());
-    setPolicyType(other.getPolicyType());
-    setPolicyPriority(other.getPolicyPriority());
-    setDescription(other.getDescription());
-    setResourceSignature(other.getResourceSignature());
-    setIsAuditEnabled(other.getIsAuditEnabled());
-    setResources(other.getResources());
-    setPolicyItems(other.getPolicyItems());
-    setDenyPolicyItems(other.getDenyPolicyItems());
-    setAllowExceptions(other.getAllowExceptions());
-    setDenyExceptions(other.getDenyExceptions());
-    setDataMaskPolicyItems(other.getDataMaskPolicyItems());
-    setRowFilterPolicyItems(other.getRowFilterPolicyItems());
-    setOptions(other.getOptions());
-    setPolicyLabels(other.getPolicyLabels());
-  }
-
   /** @return the type */
   public String getService() {
     return service;
@@ -401,122 +379,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     }
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-
-    toString(sb);
-
-    return sb.toString();
-  }
-
-  public StringBuilder toString(StringBuilder sb) {
-    sb.append("RangerPolicy={");
-
-    super.toString(sb);
-
-    sb.append("service={").append(service).append("} ");
-    sb.append("name={").append(name).append("} ");
-    sb.append("policyType={").append(policyType).append("} ");
-    sb.append("policyPriority={").append(policyPriority).append("} ");
-    sb.append("description={").append(description).append("} ");
-    sb.append("resourceSignature={").append(resourceSignature).append("} ");
-    sb.append("isAuditEnabled={").append(isAuditEnabled).append("} ");
-    sb.append("serviceType={").append(serviceType).append("} ");
-
-    sb.append("resources={");
-    if (resources != null) {
-      for (Map.Entry<String, RangerPolicyResource> e : resources.entrySet()) {
-        sb.append(e.getKey()).append("={");
-        e.getValue().toString(sb);
-        sb.append("} ");
-      }
-    }
-    sb.append("} ");
-    sb.append("policyLabels={");
-    if (policyLabels != null) {
-      for (String policyLabel : policyLabels) {
-        if (policyLabel != null) {
-          sb.append(policyLabel).append(" ");
-        }
-      }
-    }
-    sb.append("} ");
-    sb.append("policyItems={");
-    if (policyItems != null) {
-      for (RangerPolicyItem policyItem : policyItems) {
-        if (policyItem != null) {
-          policyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("denyPolicyItems={");
-    if (denyPolicyItems != null) {
-      for (RangerPolicyItem policyItem : denyPolicyItems) {
-        if (policyItem != null) {
-          policyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("allowExceptions={");
-    if (allowExceptions != null) {
-      for (RangerPolicyItem policyItem : allowExceptions) {
-        if (policyItem != null) {
-          policyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("denyExceptions={");
-    if (denyExceptions != null) {
-      for (RangerPolicyItem policyItem : denyExceptions) {
-        if (policyItem != null) {
-          policyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("dataMaskPolicyItems={");
-    if (dataMaskPolicyItems != null) {
-      for (RangerDataMaskPolicyItem dataMaskPolicyItem : dataMaskPolicyItems) {
-        if (dataMaskPolicyItem != null) {
-          dataMaskPolicyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("rowFilterPolicyItems={");
-    if (rowFilterPolicyItems != null) {
-      for (RangerRowFilterPolicyItem rowFilterPolicyItem : rowFilterPolicyItems) {
-        if (rowFilterPolicyItem != null) {
-          rowFilterPolicyItem.toString(sb);
-        }
-      }
-    }
-    sb.append("} ");
-
-    sb.append("options={");
-    if (options != null) {
-      for (Map.Entry<String, Object> e : options.entrySet()) {
-        sb.append(e.getKey()).append("={");
-        sb.append(e.getValue().toString());
-        sb.append("} ");
-      }
-    }
-    sb.append("} ");
-
-    sb.append("}");
-
-    return sb;
-  }
-
   public static class RangerPolicyResource implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -597,59 +459,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     /** @param isRecursive the isRecursive to set */
     public void setIsRecursive(Boolean isRecursive) {
       this.isRecursive = isRecursive == null ? Boolean.FALSE : isRecursive;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyResource={");
-      sb.append("values={");
-      if (values != null) {
-        for (String value : values) {
-          sb.append(value).append(" ");
-        }
-      }
-      sb.append("} ");
-      sb.append("isExcludes={").append(isExcludes).append("} ");
-      sb.append("isRecursive={").append(isRecursive).append("} ");
-      sb.append("}");
-
-      return sb;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((isExcludes == null) ? 0 : isExcludes.hashCode());
-      result = prime * result + ((isRecursive == null) ? 0 : isRecursive.hashCode());
-      result = prime * result + ((values == null) ? 0 : values.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyResource other = (RangerPolicyResource) obj;
-      if (isExcludes == null) {
-        if (other.isExcludes != null) return false;
-      } else if (!isExcludes.equals(other.isExcludes)) return false;
-      if (isRecursive == null) {
-        if (other.isRecursive != null) return false;
-      } else if (!isRecursive.equals(other.isRecursive)) return false;
-      if (values == null) {
-        if (other.values != null) return false;
-      } else if (!values.equals(other.values)) return false;
-      return true;
     }
   }
 
@@ -769,100 +578,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     public void setDelegateAdmin(Boolean delegateAdmin) {
       this.delegateAdmin = delegateAdmin == null ? Boolean.FALSE : delegateAdmin;
     }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyItem={");
-
-      sb.append("accessTypes={");
-      if (accesses != null) {
-        for (RangerPolicyItemAccess access : accesses) {
-          if (access != null) {
-            access.toString(sb);
-          }
-        }
-      }
-      sb.append("} ");
-
-      sb.append("users={");
-      if (users != null) {
-        for (String user : users) {
-          if (user != null) {
-            sb.append(user).append(" ");
-          }
-        }
-      }
-      sb.append("} ");
-
-      sb.append("groups={");
-      if (groups != null) {
-        for (String group : groups) {
-          if (group != null) {
-            sb.append(group).append(" ");
-          }
-        }
-      }
-      sb.append("} ");
-
-      sb.append("conditions={");
-      if (conditions != null) {
-        for (RangerPolicyItemCondition condition : conditions) {
-          if (condition != null) {
-            condition.toString(sb);
-          }
-        }
-      }
-      sb.append("} ");
-
-      sb.append("delegateAdmin={").append(delegateAdmin).append("} ");
-      sb.append("}");
-
-      return sb;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((accesses == null) ? 0 : accesses.hashCode());
-      result = prime * result + ((conditions == null) ? 0 : conditions.hashCode());
-      result = prime * result + ((delegateAdmin == null) ? 0 : delegateAdmin.hashCode());
-      result = prime * result + ((groups == null) ? 0 : groups.hashCode());
-      result = prime * result + ((users == null) ? 0 : users.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyItem other = (RangerPolicyItem) obj;
-      if (accesses == null) {
-        if (other.accesses != null) return false;
-      } else if (!accesses.equals(other.accesses)) return false;
-      if (conditions == null) {
-        if (other.conditions != null) return false;
-      } else if (!conditions.equals(other.conditions)) return false;
-      if (delegateAdmin == null) {
-        if (other.delegateAdmin != null) return false;
-      } else if (!delegateAdmin.equals(other.delegateAdmin)) return false;
-      if (groups == null) {
-        if (other.groups != null) return false;
-      } else if (!groups.equals(other.groups)) return false;
-      if (users == null) {
-        if (other.users != null) return false;
-      } else if (!users.equals(other.users)) return false;
-      return true;
-    }
   }
 
   public static class RangerDataMaskPolicyItem extends RangerPolicyItem
@@ -897,51 +612,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
       this.dataMaskInfo = dataMaskInfo == null ? new RangerPolicyItemDataMaskInfo() : dataMaskInfo;
     }
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((dataMaskInfo == null) ? 0 : dataMaskInfo.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!super.equals(obj)) return false;
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerDataMaskPolicyItem other = (RangerDataMaskPolicyItem) obj;
-      if (dataMaskInfo == null) {
-        if (other.dataMaskInfo != null) return false;
-      } else if (!dataMaskInfo.equals(other.dataMaskInfo)) return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerDataMaskPolicyItem={");
-
-      super.toString(sb);
-
-      sb.append("dataMaskInfo={");
-      if (dataMaskInfo != null) {
-        dataMaskInfo.toString(sb);
-      }
-      sb.append("} ");
-
-      sb.append("}");
-
-      return sb;
-    }
   }
 
   public static class RangerRowFilterPolicyItem extends RangerPolicyItem
@@ -975,52 +645,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     public void setRowFilterInfo(RangerPolicyItemRowFilterInfo rowFilterInfo) {
       this.rowFilterInfo =
           rowFilterInfo == null ? new RangerPolicyItemRowFilterInfo() : rowFilterInfo;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((rowFilterInfo == null) ? 0 : rowFilterInfo.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!super.equals(obj)) return false;
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerRowFilterPolicyItem other = (RangerRowFilterPolicyItem) obj;
-      if (rowFilterInfo == null) {
-        if (other.rowFilterInfo != null) return false;
-      } else if (!rowFilterInfo.equals(other.rowFilterInfo)) return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerRowFilterPolicyItem={");
-
-      super.toString(sb);
-
-      sb.append("rowFilterInfo={");
-      if (rowFilterInfo != null) {
-        rowFilterInfo.toString(sb);
-      }
-      sb.append("} ");
-
-      sb.append("}");
-
-      return sb;
     }
   }
 
@@ -1061,48 +685,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     /** @param isAllowed the isAllowed to set */
     public void setIsAllowed(Boolean isAllowed) {
       this.isAllowed = isAllowed == null ? Boolean.TRUE : isAllowed;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyItemAccess={");
-      sb.append("type={").append(type).append("} ");
-      sb.append("isAllowed={").append(isAllowed).append("} ");
-      sb.append("}");
-
-      return sb;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((isAllowed == null) ? 0 : isAllowed.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyItemAccess other = (RangerPolicyItemAccess) obj;
-      if (isAllowed == null) {
-        if (other.isAllowed != null) return false;
-      } else if (!isAllowed.equals(other.isAllowed)) return false;
-      if (type == null) {
-        if (other.type != null) return false;
-      } else if (!type.equals(other.type)) return false;
-      return true;
     }
   }
 
@@ -1152,54 +734,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
         this.values.addAll(values);
       }
     }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyItemCondition={");
-      sb.append("type={").append(type).append("} ");
-      sb.append("values={");
-      if (values != null) {
-        for (String value : values) {
-          sb.append(value).append(" ");
-        }
-      }
-      sb.append("} ");
-      sb.append("}");
-
-      return sb;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      result = prime * result + ((values == null) ? 0 : values.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyItemCondition other = (RangerPolicyItemCondition) obj;
-      if (type == null) {
-        if (other.type != null) return false;
-      } else if (!type.equals(other.type)) return false;
-      if (values == null) {
-        if (other.values != null) return false;
-      } else if (!values.equals(other.values)) return false;
-      return true;
-    }
   }
 
   public static class RangerPolicyItemDataMaskInfo implements java.io.Serializable {
@@ -1242,55 +776,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
       this.valueExpr = valueExpr;
     }
 
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((dataMaskType == null) ? 0 : dataMaskType.hashCode());
-      result = prime * result + ((conditionExpr == null) ? 0 : conditionExpr.hashCode());
-      result = prime * result + ((valueExpr == null) ? 0 : valueExpr.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!super.equals(obj)) return false;
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyItemDataMaskInfo other = (RangerPolicyItemDataMaskInfo) obj;
-      if (dataMaskType == null) {
-        if (other.dataMaskType != null) return false;
-      } else if (!dataMaskType.equals(other.dataMaskType)) return false;
-      if (conditionExpr == null) {
-        if (other.conditionExpr != null) return false;
-      } else if (!conditionExpr.equals(other.conditionExpr)) return false;
-      if (valueExpr == null) {
-        if (other.valueExpr != null) return false;
-      } else if (!valueExpr.equals(other.valueExpr)) return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyItemDataMaskInfo={");
-
-      sb.append("dataMaskType={").append(dataMaskType).append("} ");
-      sb.append("conditionExpr={").append(conditionExpr).append("} ");
-      sb.append("valueExpr={").append(valueExpr).append("} ");
-
-      sb.append("}");
-
-      return sb;
-    }
   }
 
   public static class RangerPolicyItemRowFilterInfo implements java.io.Serializable {
@@ -1310,46 +795,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
 
     public void setFilterExpr(String filterExpr) {
       this.filterExpr = filterExpr;
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((filterExpr == null) ? 0 : filterExpr.hashCode());
-      return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (!super.equals(obj)) return false;
-      if (this == obj) return true;
-      if (obj == null) return false;
-      if (getClass() != obj.getClass()) return false;
-      RangerPolicyItemRowFilterInfo other = (RangerPolicyItemRowFilterInfo) obj;
-      if (filterExpr == null) {
-        if (other.filterExpr != null) return false;
-      } else if (!filterExpr.equals(other.filterExpr)) return false;
-      return true;
-    }
-
-    @Override
-    public String toString() {
-      StringBuilder sb = new StringBuilder();
-
-      toString(sb);
-
-      return sb.toString();
-    }
-
-    public StringBuilder toString(StringBuilder sb) {
-      sb.append("RangerPolicyItemDataMaskInfo={");
-
-      sb.append("filterExpr={").append(filterExpr).append("} ");
-
-      sb.append("}");
-
-      return sb;
     }
   }
 }

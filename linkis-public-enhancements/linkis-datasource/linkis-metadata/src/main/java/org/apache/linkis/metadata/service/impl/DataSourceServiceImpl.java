@@ -218,12 +218,14 @@ public class DataSourceServiceImpl implements DataSourceService {
       if (checkRangerConnectionConfig()) {
         rangerTables = dataSourceService.queryRangerTables(queryParam);
         Set<String> tableNames =
-                listTables.stream().map(table -> (String) table.get("NAME")).collect(Collectors.toSet());
+            listTables.stream()
+                .map(table -> (String) table.get("NAME"))
+                .collect(Collectors.toSet());
         // 过滤掉ranger中有，hive中也有的表
         rangerTables =
-                rangerTables.stream()
-                        .filter(rangerTable -> !tableNames.contains(rangerTable))
-                        .collect(Collectors.toList());
+            rangerTables.stream()
+                .filter(rangerTable -> !tableNames.contains(rangerTable))
+                .collect(Collectors.toList());
       }
     } catch (Exception e) {
       logger.error("Failed to get Ranger Tables:", e);
@@ -494,8 +496,8 @@ public class DataSourceServiceImpl implements DataSourceService {
   @Override
   public Boolean checkRangerConnectionConfig() {
     if (StringUtils.isNotBlank(DWSConfig.RANGER_DB_URL.getValue())
-            && StringUtils.isNotBlank(DWSConfig.RANGER_DB_USER.getValue())
-            && StringUtils.isNotBlank(DWSConfig.RANGER_DB_PASSWORD.getValue())) {
+        && StringUtils.isNotBlank(DWSConfig.RANGER_DB_USER.getValue())
+        && StringUtils.isNotBlank(DWSConfig.RANGER_DB_PASSWORD.getValue())) {
       logger.debug("ranger db config exists, connection check success");
       return true;
     }

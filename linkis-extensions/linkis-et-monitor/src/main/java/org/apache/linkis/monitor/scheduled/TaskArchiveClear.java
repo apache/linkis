@@ -18,6 +18,7 @@
 package org.apache.linkis.monitor.scheduled;
 
 import org.apache.linkis.monitor.config.MonitorConfig;
+import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.until.ThreadUtils;
 import org.apache.linkis.monitor.utils.log.LogUtils;
 
@@ -44,9 +45,9 @@ public class TaskArchiveClear {
     logger.info("Start to linkis_task_archive shell");
     List<String> cmdlist = new ArrayList<>();
     cmdlist.add("sh");
-    cmdlist.add(MonitorConfig.shellPath + "linkis_task_archive.sh");
-    logger.info("linkis_task_archive.sh  shell command {}", cmdlist);
-    String exec = ThreadUtils.run(cmdlist, "linkis_task_archive.sh");
+    cmdlist.add(MonitorConfig.shellPath + Constants.TASK_ARCHIVE_SH());
+    logger.info(Constants.TASK_ARCHIVE_SH() + "shell command {}", cmdlist);
+    String exec = ThreadUtils.run(cmdlist, Constants.TASK_ARCHIVE_SH());
     logger.info("shell log  {}", exec);
     logger.info("End to linkis_task_archive shell ");
   }

@@ -435,7 +435,24 @@
       <artifactId>kubernetes-model-core</artifactId>
       <version>${kubernetes-client.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_${scala.binary.version}</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-reflect</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>
@@ -485,17 +502,6 @@
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>spark-3</id>
-      <properties>
-        <revision>1.11.0-wds-spark3</revision>
-        <json4s.version>3.7.0-M11</json4s.version>
-        <spark.version>3.4.4</spark.version>
-        <scala.version>2.12.17</scala.version>
-        <scala.binary.version>2.12</scala.binary.version>
-        <jackson-bom.version>2.14.2</jackson-bom.version>
-      </properties>
-    </profile>
     <!-- spark2-hadoop3 version:spark2.4 use hadoop2.7.2 by default mvn validate -Pspark-2.4-hadoop-3.3  -->
     <profile>
       <id>spark-2.4-hadoop-3.3</id>

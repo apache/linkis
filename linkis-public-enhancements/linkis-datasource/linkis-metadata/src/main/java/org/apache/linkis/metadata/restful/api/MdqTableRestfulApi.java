@@ -93,9 +93,9 @@ public class MdqTableRestfulApi {
     } else {
       // 可能是存在于ranger，用管理员权限获取表基础信息
       MetadataQueryParam queryAllParam =
-        MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
-         .withDbName(database)
-         .withTableName(tableName);
+          MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+              .withDbName(database)
+              .withTableName(tableName);
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
@@ -127,9 +127,9 @@ public class MdqTableRestfulApi {
       List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
       if (null != rangerColumns) {
         tableFieldsInfo =
-          tableFieldsInfo.stream()
-            .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
-            .collect(Collectors.toList());
+            tableFieldsInfo.stream()
+                .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+                .collect(Collectors.toList());
       }
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);

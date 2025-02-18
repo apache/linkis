@@ -327,28 +327,39 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
   @Override
   public Map<ServiceInstance, List<PersistenceLabel>> getLabelRelationsByServiceInstance(
-          List<ServiceInstance> serviceInstances) {
+      List<ServiceInstance> serviceInstances) {
     if (CollectionUtils.isEmpty(serviceInstances)) return Collections.emptyMap();
     Map<ServiceInstance, List<PersistenceLabel>> resultMap = new HashMap<>();
     List<Map<String, Object>> nodeRelationsByLabels =
-            labelManagerMapper.listLabelRelationByServiceInstance(serviceInstances);
-    Map<String, List<Map<String, Object>>> groupByInstanceMap = nodeRelationsByLabels.stream()
-            .collect(Collectors.groupingBy(nodeRelationsByLabel -> nodeRelationsByLabel.get("instance").toString()));
-    serviceInstances.stream().filter(serviceInstance -> groupByInstanceMap.containsKey(serviceInstance.getInstance())).forEach(serviceInstance -> {
-      List<PersistenceLabel> persistenceLabelList = new ArrayList<>();
-      groupByInstanceMap.get(serviceInstance.getInstance()).forEach(map -> {
-        try {
-          PersistenceLabel persistenceLabel = new PersistenceLabel();
-          BeanUtils.populate(persistenceLabel, map);
-          PersistenceUtils.setValue(persistenceLabel);
-          persistenceLabelList.add(persistenceLabel);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-          throw new PersistenceWarnException(
-                  BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
-        }
-      });
-      resultMap.put(serviceInstance, persistenceLabelList);
-    });
+        labelManagerMapper.listLabelRelationByServiceInstance(serviceInstances);
+    Map<String, List<Map<String, Object>>> groupByInstanceMap =
+        nodeRelationsByLabels.stream()
+            .collect(
+                Collectors.groupingBy(
+                    nodeRelationsByLabel -> nodeRelationsByLabel.get("instance").toString()));
+    serviceInstances.stream()
+        .filter(serviceInstance -> groupByInstanceMap.containsKey(serviceInstance.getInstance()))
+        .forEach(
+            serviceInstance -> {
+              List<PersistenceLabel> persistenceLabelList = new ArrayList<>();
+              groupByInstanceMap
+                  .get(serviceInstance.getInstance())
+                  .forEach(
+                      map -> {
+                        try {
+                          PersistenceLabel persistenceLabel = new PersistenceLabel();
+                          BeanUtils.populate(persistenceLabel, map);
+                          PersistenceUtils.setValue(persistenceLabel);
+                          persistenceLabelList.add(persistenceLabel);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                          throw new PersistenceWarnException(
+                              BEANUTILS_POPULATE_FAILED.getErrorCode(),
+                              BEANUTILS_POPULATE_FAILED.getErrorDesc(),
+                              e);
+                        }
+                      });
+              resultMap.put(serviceInstance, persistenceLabelList);
+            });
     return resultMap;
   }
 

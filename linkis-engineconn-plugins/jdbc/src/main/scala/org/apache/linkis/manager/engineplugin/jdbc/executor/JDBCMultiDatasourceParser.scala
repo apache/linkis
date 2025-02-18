@@ -164,22 +164,24 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
     var jdbcUrl = s"jdbc:$dbType://$host:$port"
+    val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
     dbType match {
       case "oracle" =>
         val instance: Object = dbConnParams.get("instance")
         jdbcUrl = String.format(ORACLE_SQL_CONNECT_URL, host, port, instance)
       case "postgresql" =>
-        val instance: Object = dbConnParams.get("instance")
+        var instance: Object = dbConnParams.get("instance")
+        if (strObjIsBlank(instance) && strObjIsNotBlank(dbName)) {
+          instance = dbName
+        }
         jdbcUrl = String.format(POSTGRESQL_SQL_CONNECT_URL, host, port, instance)
       case _ =>
         jdbcUrl = s"jdbc:$dbType://$host:$port"
+        if (strObjIsNotBlank(dbName)) {
+          jdbcUrl = s"$jdbcUrl/$dbName"
+        }
     }
     logger.info(s"jdbc ${dbType} connection_url: $jdbcUrl")
-
-    val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
-    if (strObjIsNotBlank(dbName)) {
-      jdbcUrl = s"$jdbcUrl/$dbName"
-    }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)
     val paramsMap =

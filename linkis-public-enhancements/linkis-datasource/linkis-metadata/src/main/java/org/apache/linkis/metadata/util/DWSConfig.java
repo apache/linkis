@@ -48,8 +48,12 @@ public class DWSConfig {
   public static final String HDFS_FILE_SYSTEM_REST_ERRS =
       LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS();
 
+  public static CommonVars<Boolean> RANGER_DB_ENABLE =
+      CommonVars$.MODULE$.apply("ranger.db.enable", false);
   public static CommonVars<String> RANGER_DB_URL = CommonVars$.MODULE$.apply("ranger.db.url", "");
   public static CommonVars<String> RANGER_DB_USER = CommonVars$.MODULE$.apply("ranger.db.user", "");
   public static CommonVars<String> RANGER_DB_PASSWORD =
       CommonVars$.MODULE$.apply("ranger.db.password", "");
+  public static CommonVars<Long> RANGER_DB_MAX_WAIT =
+      CommonVars$.MODULE$.apply("ranger.db.max.wait", 5000L);
 }

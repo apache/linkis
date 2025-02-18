@@ -20,16 +20,19 @@ package org.apache.linkis.metadata.service.impl;
 import org.apache.linkis.metadata.domain.mdq.po.RangerPolicy;
 import org.apache.linkis.metadata.hive.dao.RangerDao;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+import org.apache.linkis.metadata.service.DataSourceService;
+import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.RangerPermissionService;
+import org.apache.linkis.metadata.util.DWSConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,10 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
   private static final Logger log = LoggerFactory.getLogger(RangerPermissionServiceImpl.class);
 
   @Autowired private RangerDao rangerDao;
+
+  @Autowired private DataSourceService dataSourceService;
+
+  @Autowired private HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -85,9 +92,17 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
       RangerPolicy.RangerPolicyResource tableResource = rangerPolicy.getResources().get("table");
       List<String> values = tableResource.getValues();
       for (String table : values) {
-        if (!"*".equals(table)) {
-          rangerTables.add(table);
+        if ("*".equals(table)) {
+          MetadataQueryParam queryAllParam =
+              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                  .withDbName(queryParam.getDbName());
+          List<Map<String, Object>> hiveTables = dataSourceService.queryHiveTables(queryAllParam);
+          List<String> tableNames =
+              hiveTables.stream().map(tb -> (String) tb.get("NAME")).collect(Collectors.toList());
+          rangerTables.addAll(tableNames);
+          break;
         }
+        rangerTables.add(table);
       }
     }
     return rangerTables;
@@ -99,8 +114,12 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
     List<String> policyTextList =
         rangerDao.getRangerPolicyText(
             queryParam.getUserName() + "-hive",
-            RangerPolicy.POLICY_TYPE_ROWFILTER,
+            RangerPolicy.POLICY_TYPE_ACCESS,
             Arrays.asList(queryParam.getDbName(), queryParam.getTableName()));
+    if (CollectionUtils.isEmpty(policyTextList)) {
+      // 如果ranger侧没有配置权限，则展示所有字段
+      return null;
+    }
     for (String policyTextStr : policyTextList) {
       RangerPolicy rangerPolicy = objectMapper.readValue(policyTextStr, RangerPolicy.class);
       if (rangerPolicy == null
@@ -111,9 +130,21 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
       RangerPolicy.RangerPolicyResource columnResource = rangerPolicy.getResources().get("column");
       List<String> values = columnResource.getValues();
       for (String column : values) {
-        if (!"*".equals(column)) {
-          rangerColumns.add(column);
+        if ("*".equals(column)) {
+          MetadataQueryParam queryAllParam =
+              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                  .withDbName(queryParam.getDbName())
+                  .withTableName(queryParam.getTableName());
+          JsonNode allColumns =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
+                  queryAllParam);
+          for (int i = 0; i < allColumns.size(); i++) {
+            JsonNode node = allColumns.get(i);
+            rangerColumns.add(node.get("columnName").asText());
+          }
+          break;
         }
+        rangerColumns.add(column);
       }
     }
     return rangerColumns;

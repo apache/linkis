@@ -34,6 +34,7 @@ import javax.sql.DataSource;
 
 import java.util.HashMap;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,10 +73,14 @@ public class LinkisMybatisConfig {
   }
 
   private DataSource rangerDataSource() {
-    return DataSourceUtils.buildDataSource(
-        DWSConfig.RANGER_DB_URL.getValue(),
-        DWSConfig.RANGER_DB_USER.getValue(),
-        DWSConfig.RANGER_DB_PASSWORD.getValue());
+    DruidDataSource rangerDataSource =
+        (DruidDataSource)
+            DataSourceUtils.buildDataSource(
+                DWSConfig.RANGER_DB_URL.getValue(),
+                DWSConfig.RANGER_DB_USER.getValue(),
+                DWSConfig.RANGER_DB_PASSWORD.getValue());
+    rangerDataSource.setMaxWait(DWSConfig.RANGER_DB_MAX_WAIT.getValue());
+    return rangerDataSource;
   }
 
   @Bean(name = "dataSource")

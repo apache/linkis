@@ -493,7 +493,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
   @Override
   public Boolean checkRangerConnectionConfig() {
-    if (StringUtils.isNotBlank(DWSConfig.RANGER_DB_URL.getValue())
+    if (DWSConfig.RANGER_DB_ENABLE.getValue()
+        && StringUtils.isNotBlank(DWSConfig.RANGER_DB_URL.getValue())
         && StringUtils.isNotBlank(DWSConfig.RANGER_DB_USER.getValue())
         && StringUtils.isNotBlank(DWSConfig.RANGER_DB_PASSWORD.getValue())) {
       logger.debug("ranger db config exists, connection check success");

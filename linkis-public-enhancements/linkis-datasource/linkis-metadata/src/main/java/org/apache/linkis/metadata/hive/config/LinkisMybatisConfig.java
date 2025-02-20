@@ -88,12 +88,14 @@ public class LinkisMybatisConfig {
   public DynamicDataSource mutiDataSource() {
     DataSource hiveDataSource = hiveDataSource();
     DataSource mysqlDataSource = mysqlDataSource();
-    DataSource rangerDataSource = rangerDataSource();
     DynamicDataSource dynamicDataSource = new DynamicDataSource();
     HashMap<Object, Object> hashMap = new HashMap<>();
     hashMap.put(DSEnum.FIRST_DATA_SOURCE, hiveDataSource);
     hashMap.put(DSEnum.SECONDE_DATA_SOURCE, mysqlDataSource);
-    hashMap.put(DSEnum.THIRD_DATA_SOURCE, rangerDataSource);
+    if (DWSConfig.RANGER_DB_ENABLE.getValue()) {
+      DataSource rangerDataSource = rangerDataSource();
+      hashMap.put(DSEnum.THIRD_DATA_SOURCE, rangerDataSource);
+    }
     dynamicDataSource.setTargetDataSources(hashMap);
     dynamicDataSource.setDefaultTargetDataSource(mysqlDataSource);
     return dynamicDataSource;

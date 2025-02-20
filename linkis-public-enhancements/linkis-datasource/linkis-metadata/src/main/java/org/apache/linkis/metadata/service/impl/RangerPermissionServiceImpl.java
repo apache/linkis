@@ -23,16 +23,13 @@ import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.RangerPermissionService;
-import org.apache.linkis.metadata.util.DWSConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,17 +89,9 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
       RangerPolicy.RangerPolicyResource tableResource = rangerPolicy.getResources().get("table");
       List<String> values = tableResource.getValues();
       for (String table : values) {
-        if ("*".equals(table)) {
-          MetadataQueryParam queryAllParam =
-              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
-                  .withDbName(queryParam.getDbName());
-          List<Map<String, Object>> hiveTables = dataSourceService.queryHiveTables(queryAllParam);
-          List<String> tableNames =
-              hiveTables.stream().map(tb -> (String) tb.get("NAME")).collect(Collectors.toList());
-          rangerTables.addAll(tableNames);
-          break;
+        if (!"*".equals(table)) {
+          rangerTables.add(table);
         }
-        rangerTables.add(table);
       }
     }
     return rangerTables;
@@ -129,23 +118,7 @@ public class RangerPermissionServiceImpl implements RangerPermissionService {
       }
       RangerPolicy.RangerPolicyResource columnResource = rangerPolicy.getResources().get("column");
       List<String> values = columnResource.getValues();
-      for (String column : values) {
-        if ("*".equals(column)) {
-          MetadataQueryParam queryAllParam =
-              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
-                  .withDbName(queryParam.getDbName())
-                  .withTableName(queryParam.getTableName());
-          JsonNode allColumns =
-              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
-                  queryAllParam);
-          for (int i = 0; i < allColumns.size(); i++) {
-            JsonNode node = allColumns.get(i);
-            rangerColumns.add(node.get("columnName").asText());
-          }
-          break;
-        }
-        rangerColumns.add(column);
-      }
+      rangerColumns.addAll(values);
     }
     return rangerColumns;
   }

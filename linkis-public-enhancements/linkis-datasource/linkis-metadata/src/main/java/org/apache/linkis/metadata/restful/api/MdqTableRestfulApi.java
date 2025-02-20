@@ -85,18 +85,31 @@ public class MdqTableRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
-    MdqTableBaseInfoVO tableBaseInfo;
+    MdqTableBaseInfoVO tableBaseInfo = null;
     if (mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
     } else if (mdqService.isExistInHive(queryParam)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
     } else {
-      // 可能是存在于ranger，用管理员权限获取表基础信息
-      MetadataQueryParam queryAllParam =
-          MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
-              .withDbName(database)
-              .withTableName(tableName);
-      tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
+      // 可能是存在于ranger，先查看该用户是否有表权限
+      if (dataSourceService.checkRangerConnectionConfig()) {
+        try {
+          List<String> rangerTables = dataSourceService.queryRangerTables(queryParam);
+          if (rangerTables.contains(tableName)) {
+            // 用管理员权限获取表基础信息
+            MetadataQueryParam queryAllParam =
+                MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                    .withDbName(database)
+                    .withTableName(tableName);
+            tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
+          }
+        } catch (Exception e) {
+          logger.error("get ranger columns failed", e);
+        }
+      }
+      if (null == tableBaseInfo) {
+        return Message.error("table not exist");
+      }
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }

@@ -115,8 +115,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     Set<String> dbs = dataSourceService.getHiveDbs(userName, null);
     Set<String> rangerDbs = dataSourceService.getRangerDbs(userName);
     dbs.addAll(rangerDbs);
+    List<String> sortedDbs = dbs.stream().sorted().collect(Collectors.toList());
     MetadataQueryParam queryParam = MetadataQueryParam.of(userName);
-    for (String db : dbs) {
+    for (String db : sortedDbs) {
       if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {
         logger.info("db  will be filter: " + db);
         continue;
@@ -178,7 +179,25 @@ public class DataSourceServiceImpl implements DataSourceService {
   @Override
   public List<String> getRangerColumns(MetadataQueryParam queryParam) {
     try {
-      return rangerPermissionService.queryRangerColumns(queryParam);
+      List<String> rangerColumns = rangerPermissionService.queryRangerColumns(queryParam);
+      if (null != rangerColumns) {
+        if (rangerColumns.contains("*")) {
+          List<String> allColumns = new ArrayList<>();
+          MetadataQueryParam queryAllParam =
+              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                  .withDbName(queryParam.getDbName())
+                  .withTableName(queryParam.getTableName());
+          JsonNode allColumnsNodes =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
+                  queryAllParam);
+          for (int i = 0; i < allColumnsNodes.size(); i++) {
+            JsonNode node = allColumnsNodes.get(i);
+            allColumns.add(node.get("columnName").asText());
+          }
+          return allColumns;
+        }
+      }
+      return rangerColumns;
     } catch (Exception e) {
       logger.error("Failed to get Ranger Columns:", e);
       return null;

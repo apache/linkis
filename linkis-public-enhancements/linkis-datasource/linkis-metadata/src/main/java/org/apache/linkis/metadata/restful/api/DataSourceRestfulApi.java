@@ -185,15 +185,19 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     JsonNode columns;
     try {
       if (dataSourceService.checkRangerConnectionConfig()) {
-        MetadataQueryParam queryAllParam =
-            MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
-                .withDbName(database)
-                .withTableName(table);
-        columns =
-            hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryAllParam);
         List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
         if (rangerColumns != null) {
+          MetadataQueryParam queryAllParam =
+              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                  .withDbName(database)
+                  .withTableName(table);
+          columns =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
+                  queryAllParam);
           columns = dataSourceService.filterRangerColumns(columns, rangerColumns);
+        } else {
+          columns =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
         }
       } else {
         columns =

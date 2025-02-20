@@ -47,7 +47,7 @@ public class ThreadUtils extends ApplicationContextEvent {
       Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);
 
   public static ExecutionContextExecutorService executors_archive =
-      Utils.newCachedExecutionContext(50, "archive-pool-thread-", false);
+      Utils.newCachedExecutionContext(10, "archive-pool-thread-", false);
 
   public ThreadUtils(ApplicationContext source) {
     super(source);

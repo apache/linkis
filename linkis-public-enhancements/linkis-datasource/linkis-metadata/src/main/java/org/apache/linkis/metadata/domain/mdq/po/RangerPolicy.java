@@ -611,7 +611,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     public void setDataMaskInfo(RangerPolicyItemDataMaskInfo dataMaskInfo) {
       this.dataMaskInfo = dataMaskInfo == null ? new RangerPolicyItemDataMaskInfo() : dataMaskInfo;
     }
-
   }
 
   public static class RangerRowFilterPolicyItem extends RangerPolicyItem
@@ -775,7 +774,6 @@ public class RangerPolicy extends RangerBaseModelObject implements java.io.Seria
     public void setValueExpr(String valueExpr) {
       this.valueExpr = valueExpr;
     }
-
   }
 
   public static class RangerPolicyItemRowFilterInfo implements java.io.Serializable {

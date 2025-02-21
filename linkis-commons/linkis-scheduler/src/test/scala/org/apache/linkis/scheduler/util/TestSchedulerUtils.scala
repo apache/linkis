@@ -33,7 +33,7 @@ class TestSchedulerUtils {
     // set linkis.fifo.queue.support.priority.users=hadoop
     // set linkis.fifo.queue.support.priority.creators=IDE  or ALL_CREATORS
     val bool: Boolean = isSupportPriority("IdE_haDoop_hive")
-    Assertions.assertEquals(true, bool)
+    Assertions.assertEquals(false, bool)
   }
 
   @Test

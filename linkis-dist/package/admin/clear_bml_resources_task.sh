@@ -29,44 +29,29 @@ else
    fi
 fi
 source ${LINKIS_DB_CONFIG_PATH}
-delete_day_num=90
-if [[ $1 =~ ^[0-9]+$ ]]; then
-    if [ $1 -gt 0 ]; then
-      delete_day_num=$1
-    fi
-fi
-
 MYSQL_EXEC_CMD="mysqlsec --dpmc $LINKIS_DB_CONFIG_PATH -h$MYSQL_HOST -P$MYSQL_PORT  $MYSQL_DB -ss -e "
 if [ "$is_mysqlsec" == "false" ]; then
     echo "使用 mysql 进行数据处理"
     MYSQL_EXEC_CMD="mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DB -ss -e "
 fi
-delete_day=`date -d "-$delete_day_num days"  "+%Y-%m-%d"`
-delte_time="$delete_day 00:00:00"
-echo "start to delete linkis_ps_job_history_group_history before $delte_time"
-parm="created_time <=\"$delte_time\" "
+echo "start to delete linkis_ps_bml_resources_task version data"
 
-count=$($MYSQL_EXEC_CMD "SELECT count(1) FROM linkis_ps_job_history_group_history where $parm limit 1" 2>&1)
-if [ $? -ne 0 ]; then
-    echo "执行 count 查询出错，错误信息为: $count"
-else
-    echo "count 查询执行成功，结果为: $count"
-fi
-
-maxid=$($MYSQL_EXEC_CMD "SELECT MAX(id) FROM linkis_ps_job_history_group_history where $parm limit 1" 2>&1)
-if [ $? -ne 0 ]; then
-    echo "执行 maxid 查询出错，错误信息为: $maxid"
-else
-    echo "maxid 查询执行成功，结果为: $maxid"
-fi
-
-while [ $count -gt 0 ];do
-    $MYSQL_EXEC_CMD "DELETE FROM linkis_ps_job_history_group_history  where id <= $maxid limit 5000;"
-    count=$($MYSQL_EXEC_CMD "SELECT count(1) FROM linkis_ps_job_history_group_history where $parm limit 1" 2>&1)
-    if [ $? -ne 0 ]; then
-        echo "执行 count 查询出错，错误信息为: $count"
-    else
-        echo "删除成功，剩余数量: $count"
-    fi
-    sleep 1s
+#查询版本信息大于10的resouce_id,并进行遍历处理
+$MYSQL_EXEC_CMD"SELECT resource_id FROM (SELECT resource_id, COUNT(version) AS version_num FROM linkis_ps_bml_resources_task GROUP BY resource_id) a WHERE a.version_num > 10" | while IFS=$'\t' read -r resource_id; do
+    #统计resource_id版本数量
+    total_count=$($MYSQL_EXEC_CMD"SELECT COUNT(*) FROM linkis_ps_bml_resources_task WHERE resource_id = \"$resource_id\"")
+    while [ $total_count -gt 10 ];do
+      echo "Resource_id: $resource_id, Total count: $total_count"
+      #拼接需要删除的id
+      ids_to_delete=$($MYSQL_EXEC_CMD"SELECT GROUP_CONCAT(id) FROM (SELECT id FROM linkis_ps_bml_resources_task WHERE resource_id = \"$resource_id\" ORDER BY version DESC LIMIT 5000 OFFSET 10) t")
+      echo "$resource_id,will to delete: $ids_to_delete"
+      if [ -n "$ids_to_delete" ]; then
+          #执行删除操作
+          $MYSQL_EXEC_CMD"DELETE FROM linkis_ps_bml_resources_task WHERE resource_id = \"$resource_id\" AND id IN ($ids_to_delete)"
+          echo "($ids_to_delete) delete over"
+          #更新resource_id版本数量
+          total_count=$($MYSQL_EXEC_CMD"SELECT COUNT(*) FROM linkis_ps_bml_resources_task WHERE resource_id = \"$resource_id\"")
+          echo "Resource_id: $resource_id, left count: $total_count"
+      fi
+   done
 done

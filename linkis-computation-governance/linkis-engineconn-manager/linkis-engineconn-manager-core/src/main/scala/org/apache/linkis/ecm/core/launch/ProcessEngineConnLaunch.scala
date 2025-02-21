@@ -35,6 +35,8 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
@@ -224,12 +226,24 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     )
 
     var engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
-    val engineType =
-      request.labels.asScala.filter(_.getLabelKey.equals("engineType")).map(_.getStringValue).head
-    if (engineType.contains("3.4.4")) {
-      processBuilder.setEnv("SPARK_HOME", "/appcom/Install/spark3")
-      processBuilder.setEnv("SPARK_CMD", "/appcom/Install/spark3-cmd")
-      processBuilder.setEnv("PATH", "$SPARK_CMD/bin:$PATH")
+    if (
+        LabelUtil
+          .getEngineTypeLabel(request.labels)
+          .getVersion
+          .contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
+    ) {
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_HOME_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_HOME.getValue
+      )
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_CMD_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_CMD.getValue
+      )
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_PATH_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_PATH.getValue
+      )
     }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env

@@ -85,10 +85,7 @@ public class SHAUtils {
     String token = args[2];
     if (StringUtils.isNotBlank(token)) {
       String signature =
-          Encrypt(
-              Encrypt(parms.get("app_id") + DOCTOR_NONCE + System.currentTimeMillis(), null)
-                  + token,
-              null);
+          Encrypt(Encrypt(parms.get("app_id") + DOCTOR_NONCE + timestampStr, null) + token, null);
       parms.put("signature", signature);
     }
     System.out.println(parms);

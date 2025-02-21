@@ -36,8 +36,8 @@
         @on-close="handleClose2"
         @on-change="handleTagChange"
       >
-      <span
-        style="
+        <span
+          style="
           display: inline-block;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -47,8 +47,8 @@
           line-height: 14px;
           vertical-align: middle;
           margin-bottom: 2px">
-        {{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
-      </span>
+          {{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
+        </span>
       </Tag>
       <!-- Edit tags(编辑标签) -->
       <div class="addAndCancel" v-else>

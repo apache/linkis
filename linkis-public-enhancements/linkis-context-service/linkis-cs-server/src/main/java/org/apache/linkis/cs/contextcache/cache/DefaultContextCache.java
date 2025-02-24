@@ -17,6 +17,10 @@
 
 package org.apache.linkis.cs.contextcache.cache;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.listener.Event;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -30,24 +34,16 @@ import org.apache.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
 import org.apache.linkis.cs.listener.event.ContextIDEvent;
 import org.apache.linkis.cs.listener.event.impl.DefaultContextIDEvent;
 import org.apache.linkis.cs.listener.manager.imp.DefaultContextListenerManager;
-
-import org.apache.commons.lang3.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.cs.listener.event.enumeration.OperateType.*;
 
@@ -85,9 +81,8 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
       return null;
     }
     try {
-      ContextIDValue contextIDValue = cache.getIfPresent(contextID.getContextId());
-      if (contextIDValue == null) {
-        contextIDValue = contextIDValueGenerator.createContextIDValue(contextID);
+      ContextIDValue contextIDValue = contextIDValueGenerator.createContextIDValue(contextID);
+      {
         put(contextIDValue);
         DefaultContextIDEvent defaultContextIDEvent = new DefaultContextIDEvent();
         defaultContextIDEvent.setContextID(contextID);

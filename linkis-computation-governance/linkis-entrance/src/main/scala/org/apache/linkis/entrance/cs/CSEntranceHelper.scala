@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.cs
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.cs.client.service.{
   CSNodeServiceImpl,
+  CSTableService,
   CSVariableService,
   LinkisJobDataServiceImpl
 }
@@ -27,7 +28,12 @@ import org.apache.linkis.cs.client.utils.{ContextServiceUtils, SerializeHelper}
 import org.apache.linkis.cs.common.entity.`object`.LinkisVariable
 import org.apache.linkis.cs.common.entity.data.LinkisJobData
 import org.apache.linkis.cs.common.entity.enumeration.{ContextScope, ContextType}
-import org.apache.linkis.cs.common.entity.source.{CommonContextKey, LinkisWorkflowContextID}
+import org.apache.linkis.cs.common.entity.metadata.CSTable
+import org.apache.linkis.cs.common.entity.source.{
+  CommonContextKey,
+  ContextKeyValue,
+  LinkisWorkflowContextID
+}
 import org.apache.linkis.cs.common.utils.CSCommonUtils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.execute.EntranceJob
@@ -38,12 +44,18 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.queue.Job
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReaderFactory}
+import org.apache.linkis.storage.resultset.table.TableRecord
+import org.apache.linkis.storage.utils.StorageUtils
 
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
+import scala.util.matching.Regex
 
 object CSEntranceHelper extends Logging {
 
@@ -174,6 +186,7 @@ object CSEntranceHelper extends Logging {
    */
   def addCSVariable(requestPersistTask: JobRequest): Unit = {
     val variableMap = new util.HashMap[String, AnyRef]()
+    addCSTableVariable(requestPersistTask, variableMap)
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams)
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
@@ -199,6 +212,104 @@ object CSEntranceHelper extends Logging {
 
       logger.info("parse variable end nodeName: {}", nodeNameStr)
     }
+  }
+
+  def addCSTableVariable(
+      requestPersistTask: JobRequest,
+      variableMap: java.util.HashMap[String, AnyRef]
+  ): Unit = {
+    // 2.csTable
+    {
+      // a.提取变量字符串
+      val tableNames = mutable.Set[String]()
+      val variables = extractVariables(requestPersistTask.getExecutionCode)
+      if (variables.nonEmpty) {
+        variables.foreach { variable =>
+          tableNames.add(variable.split("\\.")(0))
+        }
+      }
+
+      // b.查询暂存表
+      val table: com.google.common.collect.Table[String, String, String] =
+        com.google.common.collect.HashBasedTable.create()
+      if (tableNames.nonEmpty) {
+        val csTableService = CSTableService.getInstance()
+        val params = requestPersistTask.getParams.asScala
+        val configuration: Option[Map[String, Object]] = params.get("configuration").collect {
+          case config: java.util.Map[String, Object] => config.asScala.toMap
+        }
+        val runtime: Option[Map[String, String]] = configuration.flatMap { config =>
+          config.get("runtime").collect { case runtimeMap: java.util.Map[String, String] =>
+            runtimeMap.asScala.toMap
+          }
+        }
+        val contextID = runtime.get("contextID")
+        val nodeName = runtime.get("nodeName")
+        val csTables: List[ContextKeyValue] =
+          csTableService.searchUpstreamTableKeyValue(contextID, nodeName).asScala.toList
+
+        if (csTables.nonEmpty) {
+          csTables.foreach { contextKeyValue =>
+            val csTable = contextKeyValue.getContextValue.getValue.asInstanceOf[CSTable]
+            val tableName = csTable.getName
+            if (tableNames.contains(tableName)) {
+              val location = csTable.getLocation
+              val resPath = StorageUtils.getFsPath(location)
+              val resultSetFactory = ResultSetFactory.getInstance()
+              val resultSet = resultSetFactory.getResultSetByType(ResultSetFactory.TABLE_TYPE)
+              val fs = FSFactory.getFs(resPath)
+              fs.init(null)
+              val reader = ResultSetReaderFactory.getResultSetReader(resultSet, fs.read(resPath))
+
+              val metaData = reader.getMetaData
+
+              val max = 1
+              var num = 0
+              while (reader.hasNext) {
+                num += 1
+                if (num > max) return
+                val record = reader.getRecord
+                val row = record.asInstanceOf[TableRecord].row
+                val columns = csTable.getColumns
+                columns.zipWithIndex.foreach { case (column, i) =>
+                  table.put(tableName, column.getName, row(i).toString)
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // 替换变量
+      if (!table.isEmpty) {
+        table.rowKeySet().asScala.foreach { tableName =>
+          val row = table.row(tableName).asScala.toMap
+          row.foreach { case (columnName, value) =>
+            val variable = s"$tableName.$columnName"
+            if (requestPersistTask.getExecutionCode.contains(s"$variable")) {
+              variableMap.put(variable, value)
+              variables.remove(variable)
+            }
+          }
+        }
+      }
+
+      // 验证
+      if (variables.nonEmpty) {
+        throw new IllegalArgumentException(s"变量{${variables.head}}解析失败，请检查暂存表或暂存字段是否存在")
+      }
+    }
+  }
+
+  def extractVariables(input: String): mutable.Set[String] = {
+    val pattern: Regex = "\\$\\{([^}]*)\\}".r
+    val variables = mutable.Set[String]()
+
+    pattern.findAllMatchIn(input).foreach { matchResult =>
+      variables += matchResult.group(1)
+    }
+
+    variables
   }
 
 }

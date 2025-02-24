@@ -17,6 +17,10 @@
 
 package org.apache.linkis.manager.am.service.engine;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.utils.ByteTimeUtils;
@@ -54,6 +58,7 @@ import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.label.service.UserLabelService;
 import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.rm.AvailableResource;
 import org.apache.linkis.manager.rm.NotEnoughResource;
@@ -64,22 +69,22 @@ import org.apache.linkis.manager.service.common.label.LabelFilter;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.server.BDPJettyServerHelper;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class DefaultEngineCreateService extends AbstractEngineService
@@ -97,6 +102,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
   @Autowired private NodeMetricManagerPersistence nodeMetricManagerPersistence;
   @Autowired private List<EngineReuseLabelChooser> engineReuseLabelChoosers;
   @Autowired private EngineStopService engineStopService;
+  @Autowired private NodeManagerPersistence nodeManagerPersistence;
 
   @Receiver
   public EngineNode createEngine(EngineCreateRequest engineCreateRequest, Sender sender)
@@ -149,7 +155,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
     Optional<Node> choseNode =
         emScoreNodeList == null || emScoreNodeList.length == 0
             ? Optional.empty()
-            : nodeSelector.choseNode(emScoreNodeList);
+            : this.choseNode(emScoreNodeList, engineCreateRequest.getUser());
 
     if (!choseNode.isPresent()) {
       throw new LinkisRetryException(
@@ -280,6 +286,49 @@ public class DefaultEngineCreateService extends AbstractEngineService
     }
 
     return engineNode;
+  }
+
+  private Optional<Node> choseNode(Node[] nodes, String user) {
+    if (nodes == null || nodes.length == 0) {
+      return Optional.empty();
+    } else {
+      Node[] resultNodes = nodes;
+
+      {
+        Set<String> hostNames =
+            Arrays.stream(resultNodes)
+                .map(node -> node.getServiceInstance().getInstance().split(":")[0])
+                .collect(Collectors.toSet());
+
+        List<Node> nodesList = nodeManagerPersistence.getNodes(user);
+        List<ServiceInstance> serviceInstanceList =
+            nodesList.stream()
+                .map(Node::getServiceInstance)
+                .filter(
+                    serviceInstance ->
+                        "linkis-cg-engineconn".equals(serviceInstance.getApplicationName()))
+                .collect(Collectors.toList());
+
+        Map<String, Integer> countMap = new HashMap<>(resultNodes.length);
+        for (String hostName : hostNames) countMap.put(hostName, 0);
+        for (ServiceInstance serviceInstance : serviceInstanceList) {
+          String hostname = serviceInstance.getInstance().split(":")[0];
+          countMap.put(hostname, countMap.get(hostname) + 1);
+        }
+
+        Comparator<Node> comparator =
+            (o1, o2) ->
+                countMap.get(o1.getServiceInstance().getInstance().split(":")[0])
+                    - countMap.get(o2.getServiceInstance().getInstance().split(":")[0]);
+        resultNodes = Arrays.stream(resultNodes).sorted(comparator).toArray(Node[]::new);
+      }
+
+      if (resultNodes.length == 0) {
+        return Optional.empty();
+      } else {
+        return Optional.of(resultNodes[0]);
+      }
+    }
   }
 
   /**

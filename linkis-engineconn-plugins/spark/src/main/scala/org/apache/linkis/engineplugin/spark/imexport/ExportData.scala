@@ -83,7 +83,7 @@ object ExportData extends Logging {
       CsvRelation.saveDFToCsv(spark, df, path, hasHeader, isOverwrite, options)
     } else {
       df.write
-        .format("com.webank.wedatasphere.spark.excel")
+        .format("com.crealytics.spark.excel")
         .option("sheetName", sheetName)
         .option("useHeader", hasHeader)
         .option("exportNullValue", nullValue)

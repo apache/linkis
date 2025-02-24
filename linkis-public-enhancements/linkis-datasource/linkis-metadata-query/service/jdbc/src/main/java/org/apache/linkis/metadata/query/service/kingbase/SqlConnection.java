@@ -17,20 +17,24 @@
 
 package org.apache.linkis.metadata.query.service.kingbase;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.commons.collections.MapUtils;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SqlConnection extends AbstractSqlConnection {
 
@@ -79,7 +83,7 @@ public class SqlConnection extends AbstractSqlConnection {
       stmt = conn.createStatement();
       rs =
           stmt.executeQuery(
-              "SELECT ('\"' || table_schema || '\".\"' || table_name || '\"') AS table_name "
+              "SELECT table_name "
                   + "FROM information_schema.TABLES WHERE table_schema ='"
                   + schema
                   + "'");
@@ -96,7 +100,7 @@ public class SqlConnection extends AbstractSqlConnection {
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
     String columnSql =
-        "SELECT * FROM " + String.format("\"%s\"", database) + "." + table + " WHERE 1 = 2";
+        "SELECT * FROM " + database + "." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
     ResultSetMetaData meta = null;
@@ -143,6 +147,7 @@ public class SqlConnection extends AbstractSqlConnection {
               .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
+    LOG.info("jdbc connection url: {}", url);
     try {
       return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
     } catch (Exception e) {

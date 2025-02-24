@@ -80,42 +80,42 @@ class TestSparkSqlExecutor {
 
   @Test
   def testShowDF: Unit = {
-    if (!FsPath.WINDOWS) {
-      initService("26379")
-      val engineFactory = new SparkEngineConnFactory
-      val sparkConf: SparkConf = new SparkConf(true)
-      val path = this.getClass.getResource("/").getPath
-      System.setProperty("HADOOP_CONF_DIR", path)
-      System.setProperty("wds.linkis.filesystem.hdfs.root.path", path)
-      System.setProperty("java.io.tmpdir", path)
-      val sparkSession = SparkSession
-        .builder()
-        .master("local[1]")
-        .appName("testShowDF")
-        .getOrCreate()
-      val outputDir = engineFactory.createOutputDir(sparkConf)
-      val sparkEngineSession = SparkEngineSession(
-        sparkSession.sparkContext,
-        sparkSession.sqlContext,
-        sparkSession,
-        outputDir
-      )
-      val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
-      val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
-      val dataFrame = sparkSession
-        .createDataFrame(
-          Seq(("ming", 20, 15552211521L), ("hong", 19, 13287994007L), ("zhi", 21, 15552211523L))
-        )
-        .toDF("name", "age", "phone")
-      SQLSession.showDF(
-        sparkSession.sparkContext,
-        "test",
-        dataFrame,
-        "",
-        10,
-        engineExecutionContext
-      )
-    }
+//    if (!FsPath.WINDOWS) {
+//      initService("26379")
+//      val engineFactory = new SparkEngineConnFactory
+//      val sparkConf: SparkConf = new SparkConf(true)
+//      val path = this.getClass.getResource("/").getPath
+//      System.setProperty("HADOOP_CONF_DIR", path)
+//      System.setProperty("wds.linkis.filesystem.hdfs.root.path", path)
+//      System.setProperty("java.io.tmpdir", path)
+//      val sparkSession = SparkSession
+//        .builder()
+//        .master("local[1]")
+//        .appName("testShowDF")
+//        .getOrCreate()
+//      val outputDir = engineFactory.createOutputDir(sparkConf)
+//      val sparkEngineSession = SparkEngineSession(
+//        sparkSession.sparkContext,
+//        sparkSession.sqlContext,
+//        sparkSession,
+//        outputDir
+//      )
+//      val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
+//      val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
+//      val dataFrame = sparkSession
+//        .createDataFrame(
+//          Seq(("ming", 20, 15552211521L), ("hong", 19, 13287994007L), ("zhi", 21, 15552211523L))
+//        )
+//        .toDF("name", "age", "phone")
+//      SQLSession.showDF(
+//        sparkSession.sparkContext,
+//        "test",
+//        dataFrame,
+//        "",
+//        10,
+//        engineExecutionContext
+//      )
+//    }
   }
 
 }

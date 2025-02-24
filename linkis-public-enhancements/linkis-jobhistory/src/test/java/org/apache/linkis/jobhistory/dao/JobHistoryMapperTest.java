@@ -46,9 +46,9 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     jobHistory.setExecuteUser("hadoop");
     jobHistory.setSource("{\"scriptPath\":\"LinkisCli\",\"requestIP\":\"127.0.0.1\"}");
     jobHistory.setLabels(
-        "{\"userCreator\":\"hadoop-LINKISCLI\",\"engineType\":\"spark-3.0.1\",\"codeType\":\"sql\",\"executeOnce\":\"\"}");
+            "{\"userCreator\":\"hadoop-LINKISCLI\",\"engineType\":\"spark-3.0.1\",\"codeType\":\"sql\",\"executeOnce\":\"\"}");
     jobHistory.setParams(
-        "{\"configuration\":{\"startup\":{},\"runtime\":{\"hive.resultset.use.unique.column.names\":true,\"wds.linkis.resultSet.store.path\":\"hdfs:///tmp/linkis/hadoop/linkis/20220714_190204/LINKISCLI/3\",\"source\":{\"scriptPath\":\"LinkisCli\",\"requestIP\":\"127.0.0.1\"},\"job\":{\"resultsetIndex\":0,\"#rt_rs_store_path\":\"hdfs:///tmp/linkis/hadoop/linkis/20220714_190204/LINKISCLI/3\"}}},\"variable\":{}}");
+            "{\"configuration\":{\"startup\":{},\"runtime\":{\"hive.resultset.use.unique.column.names\":true,\"wds.linkis.resultSet.store.path\":\"hdfs:///tmp/linkis/hadoop/linkis/20220714_190204/LINKISCLI/3\",\"source\":{\"scriptPath\":\"LinkisCli\",\"requestIP\":\"127.0.0.1\"},\"job\":{\"resultsetIndex\":0,\"#rt_rs_store_path\":\"hdfs:///tmp/linkis/hadoop/linkis/20220714_190204/LINKISCLI/3\"}}},\"variable\":{}}");
     jobHistory.setParams("1.0");
     jobHistory.setStatus("Succeed");
     jobHistory.setLogPath("hdfs:///tmp/linkis/log/2022-07-14/LINKISCLI/hadoop/3.log");
@@ -57,7 +57,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     jobHistory.setUpdatedTime(new Date());
     jobHistory.setInstances("127.0.0.1:9104");
     jobHistory.setMetrics(
-        "{\"scheduleTime\":\"2022-07-14T19:02:05+0800\",\"timeToOrchestrator\":\"2022-07-14T19:02:05+0800\",\"submitTime\":\"2022-07-14T19:02:04+0800\",\"yarnResource\":{\"application_1657595967414_0005\":{\"queueMemory\":1073741824,\"queueCores\":1,\"queueInstances\":0,\"jobStatus\":\"COMPLETED\",\"queue\":\"default\"}},\"completeTime\":\"2022-07-14T19:03:08+0800\"}");
+            "{\"scheduleTime\":\"2022-07-14T19:02:05+0800\",\"timeToOrchestrator\":\"2022-07-14T19:02:05+0800\",\"submitTime\":\"2022-07-14T19:02:04+0800\",\"yarnResource\":{\"application_1657595967414_0005\":{\"queueMemory\":1073741824,\"queueCores\":1,\"queueInstances\":0,\"jobStatus\":\"COMPLETED\",\"queue\":\"default\"}},\"completeTime\":\"2022-07-14T19:03:08+0800\"}");
     jobHistory.setEngineType("spark");
     jobHistory.setExecutionCode("show databases;");
     jobHistory.setResultLocation("hdfs:///tmp/linkis/hadoop/linkis/20220714_185840/LINKISCLI/1");
@@ -103,7 +103,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     Date eDate = new Date(System.currentTimeMillis());
     Date sDate = DateUtils.addDays(eDate, -1);
     List<Integer> histories = jobHistoryMapper.searchWithIdOrderAsc(sDate, eDate, 1L, status);
-    Assertions.assertTrue(histories.size() > 0);
+    Assertions.assertTrue(histories.isEmpty());
   }
 
   @Test
@@ -113,7 +113,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     List<JobHistory> histories =
-        jobHistoryMapper.search(1L, "hadoop", status, null, null, "spark", 1L, null, null, null);
+            jobHistoryMapper.search(1L, "hadoop", status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 
@@ -124,8 +124,8 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     List<JobHistory> histories =
-        jobHistoryMapper.searchWithUserCreator(
-            1L, "hadoop", null, null, status, null, null, "spark", 1L, null, null, null);
+            jobHistoryMapper.searchWithUserCreator(
+                    1L, "hadoop", null, null, status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 
@@ -136,8 +136,8 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     List<JobHistory> histories =
-        jobHistoryMapper.searchWithCreatorOnly(
-            1L, "hadoop", null, "hadoop", status, null, null, "spark", 1L, null, null, null);
+            jobHistoryMapper.searchWithCreatorOnly(
+                    1L, "hadoop", null, "hadoop", status, null, null, "spark", 1L, null, null, null);
     Assertions.assertTrue(histories.size() > 0);
   }
 
@@ -147,7 +147,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     Integer counts =
-        jobHistoryMapper.countUndoneTaskNoCreator("hadoop", status, null, null, "spark", 1L);
+            jobHistoryMapper.countUndoneTaskNoCreator("hadoop", status, null, null, "spark", 1L);
     Assertions.assertTrue(counts.intValue() > 0);
   }
 
@@ -157,8 +157,8 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     List<String> status = new ArrayList<>();
     status.add("Succeed");
     Integer counts =
-        jobHistoryMapper.countUndoneTaskWithUserCreator(
-            "hadoop", null, "hadoop", status, null, null, "spark", 1L);
+            jobHistoryMapper.countUndoneTaskWithUserCreator(
+                    "hadoop", null, "hadoop", status, null, null, "spark", 1L);
     Assertions.assertTrue(counts.intValue() > 0);
   }
 

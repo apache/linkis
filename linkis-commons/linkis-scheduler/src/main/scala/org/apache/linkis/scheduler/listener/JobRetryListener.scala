@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.persistence
+package org.apache.linkis.scheduler.listener
 
-import org.apache.linkis.entrance.EntranceContext
-import org.apache.linkis.scheduler.listener.{JobListener, JobRetryListener, ProgressListener}
+import org.apache.linkis.scheduler.queue.Job
 
-abstract class PersistenceManager
-    extends JobListener
-    with ResultSetListener
-    with ProgressListener
-    with JobRetryListener {
+import java.util
 
-  def getEntranceContext: EntranceContext
+trait JobRetryListener extends SchedulerListener {
 
-  def setEntranceContext(entranceContext: EntranceContext): Unit
-
-  def createPersistenceEngine(): PersistenceEngine
-
-  def createResultSetEngine(): ResultSetEngine
-
-  // TODO Need to support HA(需要支持HA)
+  def onJobFailed(
+      job: Job,
+      code: String,
+      props: util.Map[String, AnyRef],
+      errorCode: Int,
+      errorDesc: String
+  ): Boolean
 
 }

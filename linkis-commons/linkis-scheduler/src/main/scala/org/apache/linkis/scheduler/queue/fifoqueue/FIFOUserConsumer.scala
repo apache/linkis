@@ -112,6 +112,7 @@ class FIFOUserConsumer(
       val waitForRetryJobs = runningJobs.filter(job => job != null && job.isJobCanRetry)
       waitForRetryJobs.find { job =>
         isRetryJob = Utils.tryCatch(job.turnToRetry()) { t =>
+          logger.info("Job state flipped to Scheduled failed in Retry(Retry时，job状态翻转为Scheduled失败)！")
           job.onFailure(
             "Job state flipped to Scheduled failed in Retry(Retry时，job状态翻转为Scheduled失败)！",
             t
@@ -150,6 +151,7 @@ class FIFOUserConsumer(
     }
 
     event.foreach { case job: Job =>
+      logger.info(s"event not empty ${job.getState}  id: ${job.getId()}")
       Utils.tryCatch {
         val (totalDuration, askDuration) =
           (fifoGroup.getMaxAskExecutorDuration, fifoGroup.getAskExecutorInterval)

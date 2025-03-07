@@ -21,6 +21,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -91,6 +92,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   private var applicationId: String = sc.applicationId
 
+  private var sparkTmpConf = Map[String, String]()
   override def getApplicationId: String = applicationId
 
   override def getApplicationURL: String = ""
@@ -405,6 +407,29 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   override def close(): Unit = {
     super.close()
+  }
+
+  override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
+    super.beforeExecute(engineConnTask)
+    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty) {
+      sparkTmpConf = sc.getConf.getAll.toMap
+    }
+  }
+
+  override protected def afterExecute(
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {
+    val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
+    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.nonEmpty) {
+      val differentValues = sparkTmpConf.filter { case (key, value) =>
+        !sqlContext.getConf(key).equals(value)
+      }
+      differentValues.foreach { case (key, value) =>
+        sqlContext.setConf(key, value)
+      }
+    }
+    super.afterExecute(engineConnTask, executeResponse)
   }
 
 }

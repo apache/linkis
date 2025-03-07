@@ -298,7 +298,9 @@ public class TenantConfigrationRestfulApi {
     if (StringUtils.isBlank(departmentTenantVo.getId())) {
       DepartmentTenantVo departTenant =
           tenantConfigService.queryDepartTenant(
-              departmentTenantVo.getCreator(), departmentTenantVo.getDepartmentId());
+              departmentTenantVo.getCreator(),
+              departmentTenantVo.getDepartmentId(),
+              departmentTenantVo.getDepartment());
       if (null != departTenant) {
         return Message.error("department creator is exist");
       }
@@ -335,6 +337,7 @@ public class TenantConfigrationRestfulApi {
   public Message queryDepartmentTenant(
       HttpServletRequest req,
       @RequestParam(value = "departmentId", required = false) String departmentId,
+      @RequestParam(value = "department", required = false) String department,
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "tenantValue", required = false) String tenantValue,
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
@@ -344,11 +347,12 @@ public class TenantConfigrationRestfulApi {
       return Message.error("Failed to query-tenant-list,msg: only administrator users to use");
     }
     if (StringUtils.isBlank(departmentId)) departmentId = null;
+    if (StringUtils.isBlank(department)) department = null;
     if (StringUtils.isBlank(creator)) creator = null;
     if (StringUtils.isBlank(tenantValue)) tenantValue = null;
     Map<String, Object> resultMap =
         tenantConfigService.queryDepartmentTenant(
-            departmentId, creator, tenantValue, pageNow, pageSize);
+            departmentId, department, creator, tenantValue, pageNow, pageSize);
     return Message.ok()
         .data("tenantList", resultMap.get("tenantList"))
         .data(JobRequestConstants.TOTAL_PAGE(), resultMap.get(JobRequestConstants.TOTAL_PAGE()));

@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.utils.LinkisUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
@@ -129,10 +130,15 @@ public class QueryPersistenceManager extends PersistenceManager {
   public boolean onJobFailed(
       Job job, String code, Map<String, Object> props, int errorCode, String errorDesc) {
     AtomicBoolean canRetry = new AtomicBoolean(false);
-    // TODO 改成配置
-    String aiSqlKey = "linkis.ai.sql";
-    String retryNumKey = "linkis.ai.retry.num";
-    String errorCodeArray = "01002,01003,13005,13006,13012";
+    String aiSqlKey = EntranceConfiguration.AI_SQL_KEY();
+    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY();
+    String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
+    boolean testMode = EntranceConfiguration.AI_SQL_TEST_MODE();
+    if (testMode) {
+      logger.info("test mode, props: {} ", props);
+      props.put(retryNumKey, 1);
+      props.put(aiSqlKey, true);
+    }
 
     // 只对 aiSql 做重试
     if (props != null && "true".equals(props.get(aiSqlKey))) {
@@ -160,8 +166,7 @@ public class QueryPersistenceManager extends PersistenceManager {
   }
 
   private boolean canRetryCode(String code) {
-    String exceptCode =
-        "INSERT INTO, INSERT OVERWRITE TABLE, CREATE TABLE, ALTER TABLE, CREATE TEMPORARY";
+    String exceptCode = EntranceConfiguration.UNSUPPORTED_RETRY_CODES();
     String[] keywords = exceptCode.split(",");
     for (String keyword : keywords) {
       // 使用空格分割关键字，并移除空字符串

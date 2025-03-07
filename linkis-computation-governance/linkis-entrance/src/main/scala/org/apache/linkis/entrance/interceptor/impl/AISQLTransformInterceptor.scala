@@ -18,17 +18,25 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
-import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
+import org.apache.linkis.governance.common.protocol.job.JobAiReqInsert
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.rpc.Sender
+
+import org.springframework.beans.BeanUtils
 
 import java.{lang, util}
+import java.util.Date
+
 import scala.collection.JavaConverters._
 
-class AISQLTransformInterceptor extends EntranceInterceptor {
+class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     // TODO 修改为变量
@@ -55,15 +63,32 @@ class AISQLTransformInterceptor extends EntranceInterceptor {
       currentEngineType = sparkEngineType
 
       // TODO 将转换后的数据保存到数据库
+      persist(jobRequest);
+
     }
     // 开启 spark 动态资源规划, spark3.4.4
     if (sparkEngineType.equals(currentEngineType)) {
+      logger.info("spark3 add dynamic resource.")
       val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(jobRequest.getParams)
       // add spark dynamic resource planning
       // TODO
       startMap.put("", "")
     }
     jobRequest
+  }
+
+  private def persist(jobRequest: JobRequest) = {
+    val sender: Sender =
+      Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
+    val jobAiRequest: JobAiRequest = new JobAiRequest
+    BeanUtils.copyProperties(jobRequest, jobAiRequest)
+    jobAiRequest.setId(null)
+    jobAiRequest.setJobHistoryId(jobRequest.getId + "")
+    jobAiRequest.setChangeTime(new Date())
+    val jobAiReqInsert: JobAiReqInsert = JobAiReqInsert(jobAiRequest)
+    logger.info(s"${jobRequest.getId} insert into ai_history: ${jobAiRequest}")
+    sender.ask(jobAiReqInsert)
+    logger.info(s"${jobRequest.getId} insert into ai_history end.")
   }
 
 }

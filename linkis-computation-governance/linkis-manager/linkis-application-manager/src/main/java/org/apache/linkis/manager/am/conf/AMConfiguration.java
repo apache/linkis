@@ -95,13 +95,14 @@ public class AMConfiguration {
   public static final CommonVars<String> MULTI_USER_ENGINE_TYPES =
       CommonVars.apply(
           "wds.linkis.multi.user.engine.types",
-          "jdbc,es,presto,io_file,appconn,openlookeng,trino,jobserver,nebula,hbase,doris");
+          "es,presto,io_file,appconn,openlookeng,trino,jobserver,nebula,hbase,doris");
 
   public static final CommonVars<String> ALLOW_BATCH_KILL_ENGINE_TYPES =
-      CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python");
+      CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python,jdbc");
 
   public static final CommonVars<String> UNALLOW_BATCH_KILL_ENGINE_TYPES =
-      CommonVars.apply("wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,jdbc");
+      CommonVars.apply(
+          "wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,nebula");
   public static final CommonVars<String> MULTI_USER_ENGINE_USER =
       CommonVars.apply("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser());
   public static final String UDF_KILL_ENGINE_TYPE =
@@ -135,6 +136,9 @@ public class AMConfiguration {
 
   public static final boolean EC_REUSE_WITH_RESOURCE_RULE_ENABLE =
       CommonVars.apply("linkis.ec.reuse.with.resource.rule.enable", false).getValue();
+
+  public static final boolean EC_REUSE_WITH_TEMPLATE_RULE_ENABLE =
+      CommonVars.apply("linkis.ec.reuse.with.template.rule.enable", false).getValue();
 
   public static final String EC_REUSE_WITH_RESOURCE_WITH_ECS =
       CommonVars.apply("linkis.ec.reuse.with.resource.with.ecs", "spark,hive,shell,python")
@@ -205,7 +209,7 @@ public class AMConfiguration {
         AMConfiguration.UNALLOW_BATCH_KILL_ENGINE_TYPES.getValue().split(",");
     Optional<String> findResult =
         Arrays.stream(unAllowBatchKillEngine)
-            .filter(e -> e.equalsIgnoreCase(engineType))
+            .filter(e -> engineType.toLowerCase().contains(e))
             .findFirst();
     return findResult.isPresent();
   }

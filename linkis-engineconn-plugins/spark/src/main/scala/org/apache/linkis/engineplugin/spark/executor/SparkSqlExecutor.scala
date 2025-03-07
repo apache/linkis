@@ -113,4 +113,5 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override protected def getExecutorIdPreFix: String = "SparkSqlExecutor_"
+  def getSparkEngineSession: SparkEngineSession = sparkEngineSession
 }

@@ -24,8 +24,8 @@
       <TabPane name="code" :label="$t('message.linkis.executionCode')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
-      <TabPane v-show="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
-      <TabPane v-show="hasEngine" name="udfLog" :label="$t('message.linkis.udfLog')"></TabPane>
+      <TabPane :disabled="!hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
+      <TabPane :disabled="!showUDF" name="udfLog" :label="$t('message.linkis.udfLog')"></TabPane>
       <TabPane name="terminal" :label="$t('message.linkis.diagnosticLog')"></TabPane>
     </Tabs>
     <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
@@ -50,7 +50,7 @@
       :visualParams="visualParams"
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
-    <logWithPage ref="udfLog" logType="udfLog" v-show="tabName === 'udfLog' && hasEngine" />
+    <logWithPage ref="udfLog" logType="udfLog" v-show="tabName === 'udfLog' && showUDF && hasEngine" />
     
     <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" :loading="termLogLoading" />
   </div>
@@ -124,6 +124,7 @@ export default {
       yarnAddress: '',
       logTimer: null,
       preName: 'log',
+      showUDF: false,
     }
   },
   created() {
@@ -137,6 +138,7 @@ export default {
   async mounted() {
     let taskID = this.$route.query.taskID
     let engineInstance = this.$route.query.engineInstance
+    
     const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
     // 仅管理员可以查看引擎日志
     const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin') || storage.get('isLogDeptAdmin')))
@@ -153,6 +155,7 @@ export default {
       this.hasEngine = !!param;
 
     }
+    this.showUDF = ['spark', 'hive'].includes(this.param.engineType)
     await this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85;

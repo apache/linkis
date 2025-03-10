@@ -17,9 +17,11 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
-import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration._
+
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
 import org.apache.linkis.governance.common.protocol.job.JobAiReqInsert
@@ -28,6 +30,8 @@ import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreat
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
+
+import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.BeanUtils
 
@@ -39,18 +43,19 @@ import scala.collection.JavaConverters._
 class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    // TODO 修改为变量
-    val aiSqlEnable = true
-    // 转换为小写
-    val supportAISQLCreator = "IDE"
+    val aiSqlEnable: Boolean = AI_SQL_ENABLED
+    val supportAISQLCreator: String = AI_SQL_CREATORS.toLowerCase()
     val sqlLanguage: String = LANGUAGE_TYPE_AI_SQL
-    val sparkEngineType = "spark-3.4.4"
+    val sparkEngineType: String = AI_SQL_DEFAULT_SPARK_ENGINE_TYPE
     val labels: util.List[Label[_]] = jobRequest.getLabels
     val codeType: String = LabelUtil.getCodeType(labels)
     // engineType and creator have been verified in LabelCheckInterceptor.
     val userCreatorOpt: Option[Label[_]] = labels.asScala.find(_.isInstanceOf[UserCreatorLabel])
     val creator: String = userCreatorOpt.get.asInstanceOf[UserCreatorLabel].getCreator
     val engineTypeLabelOpt: Option[Label[_]] = labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
+
+    val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(jobRequest.getParams)
+
     // aiSql change to spark
     var currentEngineType: String =
       engineTypeLabelOpt.get.asInstanceOf[EngineTypeLabel].getEngineType
@@ -59,20 +64,39 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
           .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
     ) {
       engineTypeLabelOpt.get.asInstanceOf[EngineTypeLabel].setEngineType(sparkEngineType)
-      // TODO 添加 aisql 标识
+
+      startMap.put(AI_SQL_KEY, "true")
+
       currentEngineType = sparkEngineType
 
-      // TODO 将转换后的数据保存到数据库
       persist(jobRequest);
 
     }
     // 开启 spark 动态资源规划, spark3.4.4
     if (sparkEngineType.equals(currentEngineType)) {
       logger.info("spark3 add dynamic resource.")
-      val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(jobRequest.getParams)
+
       // add spark dynamic resource planning
-      // TODO
-      startMap.put("", "")
+      startMap.put("spark.shuffle.service.enabled", SPARK_SHUFFLE_SERVICE_ENABLED)
+      startMap.put("spark.dynamicAllocation.enabled", SPARK_DYNAMIC_ALLOCATION_ENABLED)
+      startMap.put("spark.dynamicAllocation.minExecutors", SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS)
+      startMap.put("spark.dynamicAllocation.maxExecutors", SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS)
+      startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES)
+      startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY)
+      startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES)
+
+      Utils.tryAndWarn {
+        val extraConfs: String = SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
+        if (StringUtils.isNotBlank(extraConfs)) {
+          val confs: Array[String] = extraConfs.split(",")
+          for (conf <- confs) {
+            val confKey: String = conf.split("=")(0)
+            val confValue: String = conf.split("=")(1)
+            startMap.put(confKey, confValue)
+          }
+        }
+      }
+
     }
     jobRequest
   }

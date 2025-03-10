@@ -21,7 +21,6 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.conf.EntranceConfiguration._
-
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
 import org.apache.linkis.governance.common.protocol.job.JobAiReqInsert
@@ -77,13 +76,25 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
       logger.info("spark3 add dynamic resource.")
 
       // add spark dynamic resource planning
-      startMap.put("spark.shuffle.service.enabled", SPARK_SHUFFLE_SERVICE_ENABLED)
-      startMap.put("spark.dynamicAllocation.enabled", SPARK_DYNAMIC_ALLOCATION_ENABLED)
-      startMap.put("spark.dynamicAllocation.minExecutors", SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS)
-      startMap.put("spark.dynamicAllocation.maxExecutors", SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS)
-      startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES)
-      startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY)
-      startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES)
+      startMap.put(
+        "spark.shuffle.service.enabled",
+        SPARK_SHUFFLE_SERVICE_ENABLED.asInstanceOf[AnyRef]
+      )
+      startMap.put(
+        "spark.dynamicAllocation.enabled",
+        SPARK_DYNAMIC_ALLOCATION_ENABLED.asInstanceOf[AnyRef]
+      )
+      startMap.put(
+        "spark.dynamicAllocation.minExecutors",
+        SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS.asInstanceOf[AnyRef]
+      )
+      startMap.put(
+        "spark.dynamicAllocation.maxExecutors",
+        SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.asInstanceOf[AnyRef]
+      )
+      startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES.asInstanceOf[AnyRef])
+      startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY.asInstanceOf[AnyRef])
+      startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES.asInstanceOf[AnyRef])
 
       Utils.tryAndWarn {
         val extraConfs: String = SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS

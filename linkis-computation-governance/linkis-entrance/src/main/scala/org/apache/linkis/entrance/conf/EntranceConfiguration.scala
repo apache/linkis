@@ -328,19 +328,19 @@ object EntranceConfiguration {
     CommonVars[Boolean]("linkis.spark.shuffle.service.enabled", true).getValue
 
   val SPARK_EXECUTOR_CORES: Int =
-    CommonVars[Int]("spark.executor.cores", 7).getValue
+    CommonVars[Int]("spark.executor.cores", 5).getValue
 
   val SPARK_EXECUTOR_MEMORY: String =
-    CommonVars[String]("spark.executor.memory", "28G").getValue
+    CommonVars[String]("spark.executor.memory", "20G").getValue
 
   val SPARK_EXECUTOR_INSTANCES: Int =
-    CommonVars[Int]("spark.executor.instances", 0).getValue
+    CommonVars[Int]("spark.executor.instances", 1).getValue
 
   val SPARK_DYNAMIC_ALLOCATION_ENABLED: Boolean =
     CommonVars[Boolean]("spark.dynamicAllocation.enabled", true).getValue
 
   val SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS: Int =
-    CommonVars[Int]("spark.dynamicAllocation.minExecutors", 0).getValue
+    CommonVars[Int]("spark.dynamicAllocation.minExecutors", 1).getValue
 
   val SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS: Int =
     CommonVars[Int]("spark.dynamicAllocation.maxExecutors", Integer.MAX_VALUE).getValue

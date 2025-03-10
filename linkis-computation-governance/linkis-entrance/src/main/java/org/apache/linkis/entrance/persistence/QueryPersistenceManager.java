@@ -18,8 +18,10 @@
 package org.apache.linkis.entrance.persistence;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.LinkisUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
@@ -28,6 +30,11 @@ import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import scala.Option;
 import scala.Tuple2;
@@ -117,6 +124,66 @@ public class QueryPersistenceManager extends PersistenceManager {
     entranceJob.setUpdateMetrisFlag(true);
     entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
     updateJobStatus(job);
+  }
+
+  @Override
+  public boolean onJobFailed(
+      Job job, String code, Map<String, Object> props, int errorCode, String errorDesc) {
+    AtomicBoolean canRetry = new AtomicBoolean(false);
+    String aiSqlKey = EntranceConfiguration.AI_SQL_KEY();
+    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY();
+    String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
+    boolean testMode = EntranceConfiguration.AI_SQL_TEST_MODE();
+    if (testMode) {
+      logger.info("test mode, props: {} ", props);
+      props.put(retryNumKey, 1);
+      props.put(aiSqlKey, true);
+    }
+
+    // 只对 aiSql 做重试
+    if (props != null && "true".equals(props.get(aiSqlKey))) {
+      LinkisUtils.tryAndWarn(
+          () -> {
+            int retryNum = (int) props.getOrDefault(retryNumKey, 0);
+            boolean canRetryCode = canRetryCode(code);
+            if (retryNum > 0
+                && errorCodeArray.contains(String.valueOf(errorCode))
+                && canRetryCode) {
+              logger.info(
+                  "mark task: {} status to WaitForRetry, current retryNum: {}, for errorCode: {}, errorDesc: {}",
+                  job.getId(),
+                  retryNum,
+                  errorCode,
+                  errorDesc);
+              job.transitionWaitForRetry();
+              canRetry.set(true);
+              props.put(retryNumKey, retryNum - 1);
+            }
+          },
+          logger);
+    }
+    return canRetry.get();
+  }
+
+  private boolean canRetryCode(String code) {
+    String exceptCode = EntranceConfiguration.UNSUPPORTED_RETRY_CODES();
+    String[] keywords = exceptCode.split(",");
+    for (String keyword : keywords) {
+      // 使用空格分割关键字，并移除空字符串
+      String[] parts = keyword.trim().split("\\s+");
+      StringBuilder regexBuilder = new StringBuilder("\\s*");
+      for (String part : parts) {
+        regexBuilder.append(part);
+        regexBuilder.append("\\s*");
+      }
+      String regex = regexBuilder.toString();
+      Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+      Matcher matcher = pattern.matcher(code);
+      if (matcher.find()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override

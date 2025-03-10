@@ -145,6 +145,7 @@ abstract class EntranceServer extends Logging {
       job.setLogListener(getEntranceContext.getOrCreateLogManager())
       job.setProgressListener(getEntranceContext.getOrCreatePersistenceManager())
       job.setJobListener(getEntranceContext.getOrCreatePersistenceManager())
+      job.setJobRetryListener(getEntranceContext.getOrCreatePersistenceManager())
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)

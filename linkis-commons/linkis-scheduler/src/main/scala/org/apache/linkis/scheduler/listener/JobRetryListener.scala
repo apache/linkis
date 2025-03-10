@@ -15,23 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.protocol.conf
+package org.apache.linkis.scheduler.listener
 
-import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.scheduler.queue.Job
 
-trait TenantConf extends RequestProtocol
+import java.util
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
+trait JobRetryListener extends SchedulerListener {
 
-case class TenantResponse(user: String, creator: String, isValid: String, tenant: String)
+  def onJobFailed(
+      job: Job,
+      code: String,
+      props: util.Map[String, AnyRef],
+      errorCode: Int,
+      errorDesc: String
+  ): Boolean
 
-case class DepartTenantRequest(creator: String, departmentId: String, departmentName: String)
-    extends TenantConf
-
-case class DepartTenantResponse(
-    creator: String,
-    departmentId: String,
-    departmentName: String,
-    isValid: String,
-    tenant: String
-)
+}

@@ -77,8 +77,13 @@ public class DataSourceServiceImpl implements DataSourceService {
   public JsonNode getDbs(String userName, String permission) throws Exception {
     Set<String> hiveDbs = dataSourceService.getHiveDbs(userName, permission);
     if (checkRangerConnectionConfig()) {
-      Set<String> rangerDbs = dataSourceService.getRangerDbs(userName);
-      hiveDbs.addAll(rangerDbs);
+      if (StringUtils.isNotBlank(permission) && permission.equals("write")) {
+        // ranger只允许配置查询权限，如果需要查询有写入权限的表，则不查ranger的数据
+        logger.info("ranger only support query permission");
+      } else {
+        Set<String> rangerDbs = dataSourceService.getRangerDbs(userName);
+        hiveDbs.addAll(rangerDbs);
+      }
     }
     // 将hiveDbs根据String升序排序
     List<String> sortedDbs = hiveDbs.stream().sorted().collect(Collectors.toList());

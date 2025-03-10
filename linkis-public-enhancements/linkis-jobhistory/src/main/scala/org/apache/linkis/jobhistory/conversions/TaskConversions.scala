@@ -18,10 +18,16 @@
 package org.apache.linkis.jobhistory.conversions
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
+import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
-import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
+import org.apache.linkis.jobhistory.entity.{
+  JobAiHistory,
+  JobDetail,
+  JobHistory,
+  QueryTask,
+  QueryTaskVO
+}
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -395,6 +401,25 @@ object TaskConversions extends Logging {
         "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)"
     }
     runTime
+  }
+
+  def JobAiReqToJobAiHistory(jobAiRequest: JobAiRequest): JobAiHistory = {
+    val jobAiHistory = new JobAiHistory
+    BeanUtils.copyProperties(jobAiRequest, jobAiHistory)
+    if (null != jobAiRequest.getMetrics) {
+      jobAiHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobAiRequest.getMetrics))
+    }
+    if (null != jobAiRequest.getParams) {
+      jobAiHistory.setParams(BDPJettyServerHelper.gson.toJson(jobAiRequest.getParams))
+    }
+    if (null != jobAiRequest.getLabels) {
+      val labelMap = new util.HashMap[String, String](jobAiRequest.getLabels.size())
+      jobAiRequest.getLabels.asScala
+        .map(l => l.getLabelKey -> l.getStringValue)
+        .foreach(kv => labelMap.put(kv._1, kv._2))
+      jobAiHistory.setLabels(BDPJettyServerHelper.gson.toJson(labelMap))
+    }
+    jobAiHistory
   }
 
 }

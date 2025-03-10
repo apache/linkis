@@ -283,4 +283,22 @@ object EntranceConfiguration {
   val ENABLE_HDFS_RES_DIR_PRIVATE =
     CommonVars[Boolean]("linkis.entrance.enable.hdfs.res.dir.private", false).getValue
 
+  val UNSUPPORTED_RETRY_CODES =
+    CommonVars(
+      "linkis.entrance.unsupported.retry.codes",
+      "INSERT INTO,CREATE TABLE,ALTER TABLE,CREATE TEMPORARY"
+    ).getValue
+
+  val SUPPORTED_RETRY_ERROR_CODES =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.codes",
+      "01002,01003,13005,13006,13012"
+    ).getValue
+
+  val AI_SQL_TEST_MODE =
+    CommonVars("linkis.entrance.aisql.test.mode", true).getValue
+
+  val AI_SQL_KEY = "linkis.ai.sql"
+
+  val RETRY_NUM_KEY = "linkis.ai.retry.num"
 }

@@ -5,33 +5,25 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+package org.apache.linkis.jobhistory.service;
 
-package org.apache.linkis.governance.common.protocol.conf
 
-import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.governance.common.protocol.job.JobAiReqInsert;
+import org.apache.linkis.governance.common.protocol.job.JobRespProtocol;
 
-trait TenantConf extends RequestProtocol
+public interface JobAiHistoryService {
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
+    JobRespProtocol insert(JobAiReqInsert jobAiReqInsert);
 
-case class TenantResponse(user: String, creator: String, isValid: String, tenant: String)
 
-case class DepartTenantRequest(creator: String, departmentId: String, departmentName: String)
-    extends TenantConf
-
-case class DepartTenantResponse(
-    creator: String,
-    departmentId: String,
-    departmentName: String,
-    isValid: String,
-    tenant: String
-)
+}

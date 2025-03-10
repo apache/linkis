@@ -15,23 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.protocol.conf
+package org.apache.linkis.jobhistory.dao;
 
-import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.jobhistory.entity.JobAiHistory;
 
-trait TenantConf extends RequestProtocol
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
-case class TenantRequest(user: String, creator: String) extends TenantConf
+public interface JobAiHistoryMapper {
 
-case class TenantResponse(user: String, creator: String, isValid: String, tenant: String)
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
+  void insert(JobAiHistory jobAiHistory);
 
-case class DepartTenantRequest(creator: String, departmentId: String, departmentName: String)
-    extends TenantConf
-
-case class DepartTenantResponse(
-    creator: String,
-    departmentId: String,
-    departmentName: String,
-    isValid: String,
-    tenant: String
-)
+  @Retryable(
+      value = {CannotGetJdbcConnectionException.class},
+      maxAttempts = 5,
+      backoff = @Backoff(delay = 10000))
+  void update(JobAiHistory jobAiHistory);
+}

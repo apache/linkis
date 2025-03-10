@@ -1,6 +1,7 @@
 {
   "message": {
       "linkis": {
+          "udfLog": "UDF 日志",
           "diagnosticLog": "诊断日志",
           "refresh": "刷新",
           "findNewVer": "检测到新版本",

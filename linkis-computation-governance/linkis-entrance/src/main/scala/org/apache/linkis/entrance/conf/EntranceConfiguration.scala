@@ -309,7 +309,41 @@ object EntranceConfiguration {
   val AI_SQL_TEST_MODE =
     CommonVars("linkis.entrance.aisql.test.mode", true).getValue
 
+  val AI_SQL_ENABLED =
+    CommonVars("linkis.ai.sql.enabled", true).getValue
+
+  val AI_SQL_DEFAULT_SPARK_ENGINE_TYPE =
+    CommonVars("linkis.ai.sql.default.spark.engine.type", "spark-3.4.4").getValue
+
+  val AI_SQL_CREATORS =
+    CommonVars("linkis.ai.sql.support.creators", "IDE").getValue
+
   val AI_SQL_KEY = "linkis.ai.sql"
 
   val RETRY_NUM_KEY = "linkis.ai.retry.num"
+
+  val SPARK_SHUFFLE_SERVICE_ENABLED =
+    CommonVars("linkis.spark.shuffle.service.enabled", true).getValue
+
+  val SPARK_EXECUTOR_CORES =
+    CommonVars("spark.executor.cores", 7).getValue
+
+  val SPARK_EXECUTOR_MEMORY =
+    CommonVars("spark.executor.memory", "28G").getValue
+
+  val SPARK_EXECUTOR_INSTANCES =
+    CommonVars("spark.executor.instances", "0").getValue
+
+  val SPARK_DYNAMIC_ALLOCATION_ENABLED =
+    CommonVars("spark.dynamicAllocation.enabled", true).getValue
+
+  val SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS =
+    CommonVars("spark.dynamicAllocation.minExecutors", 0).getValue
+
+  val SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS =
+    CommonVars("spark.dynamicAllocation.maxExecutors", Integer.MAX_VALUE).getValue
+
+  val SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
+    CommonVars("spark.dynamicAllocation.additional.confs", "").getValue
+
 }

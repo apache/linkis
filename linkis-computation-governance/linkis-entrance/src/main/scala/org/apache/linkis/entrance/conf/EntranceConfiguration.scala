@@ -307,9 +307,11 @@ object EntranceConfiguration {
   val AI_SQL_CREATORS: String =
     CommonVars[String]("linkis.ai.sql.support.creators", "IDE").getValue
 
-  val AI_SQL_KEY = "linkis.ai.sql"
+  val AI_SQL_KEY: CommonVars[String] =
+    CommonVars[String]("linkis.ai.sql.enable", "true")
 
-  val RETRY_NUM_KEY = "linkis.ai.retry.num"
+  val RETRY_NUM_KEY: CommonVars[Int] =
+    CommonVars[Int]("linkis.ai.retry.num", 1)
 
   val SPARK_SHUFFLE_SERVICE_ENABLED: Boolean =
     CommonVars[Boolean]("linkis.spark.shuffle.service.enabled", true).getValue

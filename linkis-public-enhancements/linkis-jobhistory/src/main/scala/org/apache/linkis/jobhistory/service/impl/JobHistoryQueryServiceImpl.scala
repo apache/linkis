@@ -348,7 +348,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     } else {
       (TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus
         .valueOf(newStatus)
-        .ordinal || (oldStatus == TaskStatus.Running.toString && newStatus == TaskStatus.Scheduled.toString)) && !TaskStatus
+        .ordinal || (TaskStatus.Running.toString.equals(oldStatus) && (TaskStatus.Scheduled.toString
+        .equals(newStatus)) || TaskStatus.WaitForRetry.toString.equals(newStatus))) && !TaskStatus
         .isComplete(TaskStatus.valueOf(oldStatus))
     }
   }

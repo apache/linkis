@@ -1,6 +1,7 @@
 {
   "message": {
     "linkis": {
+      "udfLog": "UDF Log",
       "diagnosticLog": "Diagnostic Log",
       "refresh": "Refresh",
       "tableSetting": "Table Setting",

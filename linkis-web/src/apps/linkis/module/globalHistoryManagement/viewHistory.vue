@@ -25,6 +25,7 @@
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
       <TabPane v-show="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
+      <TabPane v-show="hasEngine" name="udfLog" :label="$t('message.linkis.udfLog')"></TabPane>
       <TabPane name="terminal" :label="$t('message.linkis.diagnosticLog')"></TabPane>
     </Tabs>
     <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
@@ -49,11 +50,14 @@
       :visualParams="visualParams"
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
+    <logWithPage ref="udfLog" logType="udfLog" v-show="tabName === 'udfLog' && hasEngine" />
+    
     <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" :loading="termLogLoading" />
   </div>
 </template>
 <script>
 import result from '@/components/consoleComponent/result.vue'
+import logWithPage from './log.vue';
 import log from '@/components/consoleComponent/log.vue'
 import term from '@/components/consoleComponent/term.vue'
 import api from '@/common/service/api'
@@ -69,7 +73,8 @@ export default {
     log,
     result,
     ViewLog,
-    term
+    term,
+    logWithPage
   },
   mixins: [mixin],
   props: {},
@@ -194,6 +199,18 @@ export default {
       } else if(name === 'engineLog') {
         if(this.param) {
           this.$refs.logPanel.getLogs(0, {
+            applicationName: "linkis-cg-engineconn",
+            emInstance: this.param?.ecmInstance || '',
+            instance: this.param?.serviceInstance || '',
+            ticketId: this.param?.ticketId || '',
+            engineType: this.param?.engineType || '',
+            logDirSuffix: this.param?.logDirSuffix || '',
+          })
+        }
+
+      } else if(name === 'udfLog') {
+        if(this.param) {
+          this.$refs.udfLog.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
             emInstance: this.param?.ecmInstance || '',
             instance: this.param?.serviceInstance || '',

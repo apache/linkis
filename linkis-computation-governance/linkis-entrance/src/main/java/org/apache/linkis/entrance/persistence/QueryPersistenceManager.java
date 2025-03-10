@@ -28,6 +28,7 @@ import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
+import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
 
@@ -130,21 +131,17 @@ public class QueryPersistenceManager extends PersistenceManager {
   public boolean onJobFailed(
       Job job, String code, Map<String, Object> props, int errorCode, String errorDesc) {
     AtomicBoolean canRetry = new AtomicBoolean(false);
-    String aiSqlKey = EntranceConfiguration.AI_SQL_KEY();
-    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY();
+    String aiSqlKey = EntranceConfiguration.AI_SQL_KEY().key();
+    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY().key();
     String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
-    boolean testMode = EntranceConfiguration.AI_SQL_TEST_MODE();
-    if (testMode) {
-      logger.info("test mode, props: {} ", props);
-      props.put(retryNumKey, 1);
-      props.put(aiSqlKey, true);
-    }
+
+    Map<String, Object> startupMap = TaskUtils.getStartupMap(props);
 
     // 只对 aiSql 做重试
-    if (props != null && "true".equals(props.get(aiSqlKey))) {
+    if ("true".equals(startupMap.get(aiSqlKey))) {
       LinkisUtils.tryAndWarn(
           () -> {
-            int retryNum = (int) props.getOrDefault(retryNumKey, 0);
+            int retryNum = (int) startupMap.getOrDefault(retryNumKey, 1);
             boolean canRetryCode = canRetryCode(code);
             if (retryNum > 0
                 && errorCodeArray.contains(String.valueOf(errorCode))
@@ -157,7 +154,8 @@ public class QueryPersistenceManager extends PersistenceManager {
                   errorDesc);
               job.transitionWaitForRetry();
               canRetry.set(true);
-              props.put(retryNumKey, retryNum - 1);
+              startupMap.put(retryNumKey, retryNum - 1);
+              TaskUtils.addStartupMap(props, startupMap);
             }
           },
           logger);

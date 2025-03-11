@@ -348,6 +348,9 @@ object EntranceConfiguration {
   val SPARK_EXECUTOR_MEMORY_OVERHEAD: String =
     CommonVars[String]("spark.yarn.executor.memoryOverhead", "3G").getValue
 
+  val SPARK3_PYTHON_VERSION: String =
+    CommonVars[String]("spark.python.version", "python3").getValue
+
   val SPARK_DYNAMIC_ALLOCATION_ENABLED: Boolean =
     CommonVars[Boolean]("spark.dynamicAllocation.enabled", true).getValue
 

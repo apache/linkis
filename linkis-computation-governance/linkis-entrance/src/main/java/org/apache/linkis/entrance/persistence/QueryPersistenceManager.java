@@ -130,32 +130,72 @@ public class QueryPersistenceManager extends PersistenceManager {
   @Override
   public boolean onJobFailed(
       Job job, String code, Map<String, Object> props, int errorCode, String errorDesc) {
+    if (!EntranceConfiguration.TASK_RETRY_ENABLED()) {
+      return false;
+    }
+
+    if (!(job instanceof EntranceJob)) {
+      return false;
+    }
+
+    boolean containsAny = false;
+    String errorDescArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_DESC();
+    String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
+    for (String keyword : errorDescArray.split(",")) {
+      if (errorDesc.contains(keyword.trim()) || errorCodeArray.contains(errorCode + "")) {
+        containsAny = true;
+        break;
+      }
+    }
+
+    if (!containsAny) {
+      return false;
+    }
+
     AtomicBoolean canRetry = new AtomicBoolean(false);
     String aiSqlKey = EntranceConfiguration.AI_SQL_KEY().key();
     String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY().key();
-    String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
+
+    final EntranceJob entranceJob = (EntranceJob) job;
+
+    // 处理广播表
+    String dataFrameKey = "dataFrame to local exception";
+    if (errorDesc.contains(dataFrameKey)) {
+      entranceJob
+          .getJobRequest()
+          .setExecutionCode("set spark.sql.autoBroadcastJoinThreshold=-1; " + code);
+    }
 
     Map<String, Object> startupMap = TaskUtils.getStartupMap(props);
-
     // 只对 aiSql 做重试
     if ("true".equals(startupMap.get(aiSqlKey))) {
       LinkisUtils.tryAndWarn(
           () -> {
             int retryNum = (int) startupMap.getOrDefault(retryNumKey, 1);
             boolean canRetryCode = canRetryCode(code);
-            if (retryNum > 0
-                && errorCodeArray.contains(String.valueOf(errorCode))
-                && canRetryCode) {
+            if (retryNum > 0 && canRetryCode) {
               logger.info(
                   "mark task: {} status to WaitForRetry, current retryNum: {}, for errorCode: {}, errorDesc: {}",
-                  job.getId(),
+                  entranceJob.getJobInfo().getId(),
                   retryNum,
                   errorCode,
                   errorDesc);
+              // 重试
               job.transitionWaitForRetry();
+
+              // 修改错误码和错误描述
+              entranceJob.getJobRequest().setErrorCode(20503);
+              entranceJob.getJobRequest().setErrorDesc("资源紧张，当前任务正在进行智能重试");
               canRetry.set(true);
               startupMap.put(retryNumKey, retryNum - 1);
+              // once 引擎
+              if ((boolean) EntranceConfiguration.AI_SQL_RETRY_ONCE().getValue()) {
+                startupMap.put("executeOnce", true);
+              }
               TaskUtils.addStartupMap(props, startupMap);
+              logger.info("task {} set retry status success.", entranceJob.getJobInfo().getId());
+            } else {
+              logger.info("task {} not support retry.", entranceJob.getJobInfo().getId());
             }
           },
           logger);

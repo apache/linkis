@@ -107,6 +107,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
       startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES.asInstanceOf[AnyRef])
       startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY.asInstanceOf[AnyRef])
       startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES.asInstanceOf[AnyRef])
+      startMap.put("spark.python.version", SPARK3_PYTHON_VERSION.asInstanceOf[AnyRef])
       startMap.put(
         "spark.yarn.executor.memoryOverhead",
         SPARK_EXECUTOR_MEMORY_OVERHEAD.asInstanceOf[AnyRef]

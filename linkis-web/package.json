@@ -46,7 +46,7 @@
         "sql-formatter": "2.3.3",
         "svgo": "3.0.2",
         "v-jsoneditor": "1.4.5",
-        "vue": "2.6.12",
+        "vue": "3.0.0",
         "vue-i18n": "8.22.1",
         "vue-router": "3.4.8",
         "vuedraggable": "2.24.3",

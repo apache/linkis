@@ -20,13 +20,12 @@
 <template>
   <div class="global-history">
     <Tabs v-model="tabName" @on-click="onClickTabs">
-      <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
-      <TabPane name="code" :label="$t('message.linkis.executionCode')"></TabPane>
-      <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
-      <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
-      <TabPane :disabled="!hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
-      <TabPane :disabled="!showUDF" name="udfLog" :label="$t('message.linkis.udfLog')"></TabPane>
-      <TabPane name="terminal" :label="$t('message.linkis.diagnosticLog')"></TabPane>
+      <TabPane 
+        v-for="tab in tabs" 
+        :key="tab.name"
+        :name="tab.name"
+        :label="$t(tab.label)">
+      </TabPane>
     </Tabs>
     <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
     <Button v-if="tabName === 'log'" class="foldButton" type="primary" @click="fold">{{foldFlag ? $t('message.linkis.unfold') : $t('message.linkis.fold')}}</Button>
@@ -124,7 +123,7 @@ export default {
       yarnAddress: '',
       logTimer: null,
       preName: 'log',
-      showUDF: false,
+      showUDF: false,  
     }
   },
   created() {
@@ -163,6 +162,24 @@ export default {
   computed: {
     isHistoryDetail() {
       return this.$route.path === '/console/viewHistoryDetail'
+    },
+    tabs() {
+      let tabs = [
+        { name: 'log', label: 'message.linkis.log' },
+        { name: 'code', label: 'message.linkis.executionCode' },
+        // { name: 'detail', label: 'message.linkis.detail', disabled: true },
+        { name: 'result', label: 'message.linkis.result' },
+        { name: 'engineLog', label: 'message.linkis.engineLog' },
+        { name: 'udfLog', label: 'message.linkis.udfLog' },
+        { name: 'terminal', label: 'message.linkis.diagnosticLog' }
+      ]
+      if(!this.hasEngine) {
+        tabs = tabs.filter(tab => tab.name !== 'engineLog')
+      }
+      if(!this.showUDF) {
+        tabs = tabs.filter(tab => tab.name !== 'udfLog')
+      }
+      return tabs
     }
   },
   methods: {

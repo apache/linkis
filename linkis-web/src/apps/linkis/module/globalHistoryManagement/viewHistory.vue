@@ -164,7 +164,7 @@ export default {
       this.tabs = this.tabs.filter(tab => tab.name !== 'udfLog')
     }
   },
-  unmouted() {
+  destroyed() {
     if(this.logTimer) {
       clearTimeout(this.logTimer);
     }

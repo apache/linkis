@@ -12,14 +12,14 @@
   "dependencies": {
     "@fesjs/fes-design": "^0.7.31",
     "@types/lodash": "^4.14.198",
-    "@vitejs/plugin-vue": "^4.1.0",
+    "@vitejs/plugin-vue": "^5.2.1",
     "axios": "^1.7.4",
     "dayjs": "^1.11.10",
     "dexie": "^3.2.7",
     "md5": "^2.3.0",
     "monaco-editor": "^0.43.0",
     "qs": "^6.11.2",
-    "vite": "^4.5.9",
+    "vite": "^6.2.1",
     "vue": "^3.2.47",
     "vue-i18n": "^9.14.3",
     "vue-router": "^4.2.2"

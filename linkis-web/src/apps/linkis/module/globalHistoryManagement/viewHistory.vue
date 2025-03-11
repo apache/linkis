@@ -123,19 +123,12 @@ export default {
       yarnAddress: '',
       logTimer: null,
       preName: 'log',
-      showUDF: false,  
+      showUDF: false,
+      tabs: [],
     }
   },
-  created() {
+  async created() {
     this.hasResultData = false
-  },
-  unmouted() {
-    if(this.logTimer) {
-      clearTimeout(this.logTimer);
-    }
-  },
-  async mounted() {
-    let taskID = this.$route.query.taskID
     let engineInstance = this.$route.query.engineInstance
     
     const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
@@ -155,6 +148,29 @@ export default {
 
     }
     this.showUDF = ['spark', 'hive'].includes(this.param.engineType)
+    this.tabs = [
+      { name: 'log', label: 'message.linkis.log' },
+      { name: 'code', label: 'message.linkis.executionCode' },
+      // { name: 'detail', label: 'message.linkis.detail', disabled: true },
+      { name: 'result', label: 'message.linkis.result' },
+      { name: 'engineLog', label: 'message.linkis.engineLog' },
+      { name: 'udfLog', label: 'message.linkis.udfLog' },
+      { name: 'terminal', label: 'message.linkis.diagnosticLog' }
+    ]
+    if(!this.hasEngine) {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'engineLog')
+    }
+    if(!this.showUDF) {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'udfLog')
+    }
+  },
+  unmouted() {
+    if(this.logTimer) {
+      clearTimeout(this.logTimer);
+    }
+  },
+  async mounted() {
+    let taskID = this.$route.query.taskID
     await this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85;
@@ -162,24 +178,6 @@ export default {
   computed: {
     isHistoryDetail() {
       return this.$route.path === '/console/viewHistoryDetail'
-    },
-    tabs() {
-      let tabs = [
-        { name: 'log', label: 'message.linkis.log' },
-        { name: 'code', label: 'message.linkis.executionCode' },
-        // { name: 'detail', label: 'message.linkis.detail', disabled: true },
-        { name: 'result', label: 'message.linkis.result' },
-        { name: 'engineLog', label: 'message.linkis.engineLog' },
-        { name: 'udfLog', label: 'message.linkis.udfLog' },
-        { name: 'terminal', label: 'message.linkis.diagnosticLog' }
-      ]
-      if(!this.hasEngine) {
-        tabs = tabs.filter(tab => tab.name !== 'engineLog')
-      }
-      if(!this.showUDF) {
-        tabs = tabs.filter(tab => tab.name !== 'udfLog')
-      }
-      return tabs
     }
   },
   methods: {

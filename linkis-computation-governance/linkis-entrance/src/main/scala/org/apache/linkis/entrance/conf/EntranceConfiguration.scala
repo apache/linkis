@@ -346,7 +346,7 @@ object EntranceConfiguration {
     CommonVars[Int]("spark.executor.instances", 1).getValue
 
   val SPARK_EXECUTOR_MEMORY_OVERHEAD: String =
-    CommonVars[String]("spark.yarn.executor.memoryOverhead", "3G").getValue
+    CommonVars[String]("spark.executor.memoryOverhead", "3G").getValue
 
   val SPARK3_PYTHON_VERSION: String =
     CommonVars[String]("spark.python.version", "python3").getValue

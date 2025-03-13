@@ -207,7 +207,8 @@ class DefaultEntranceExecutor(id: Long)
     val msg: String = failedResponse.getErrorCode + ", " + failedResponse.getErrorMsg
     var canRetry = false
     val props: util.Map[String, AnyRef] = entranceExecuteRequest.properties()
-    entranceExecuteRequest.getJob.getJobRetryListener.foreach(listener => {
+    val job: EntranceExecutionJob = entranceExecuteRequest.getJob
+    job.getJobRetryListener.foreach(listener => {
       canRetry = listener.onJobFailed(
         entranceExecuteRequest.getJob,
         entranceExecuteRequest.code(),
@@ -217,7 +218,10 @@ class DefaultEntranceExecutor(id: Long)
       )
     })
     // 无法重试，更新失败状态
-    if (!canRetry) {
+    if (canRetry) {
+      logger.info(s"task: ${job.getId} reset progress from ${job.getProgress} to 0.0")
+      job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
+    } else {
       logger.debug(s"task execute Failed with : ${msg}")
       getEngineExecuteAsyncReturn.foreach { jobReturn =>
         jobReturn.notifyError(msg, failedResponse.getCause)

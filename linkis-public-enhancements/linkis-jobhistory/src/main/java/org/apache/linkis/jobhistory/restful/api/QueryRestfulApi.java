@@ -122,12 +122,14 @@ public class QueryRestfulApi {
       }
     }
     QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
-    // todo check
+
+    // todo check  20503 is retry error code
     if (taskVO == null) {
       return Message.error(
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
-    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())) {
+    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())
+        && !Integer.valueOf(20503).equals(taskVO.getErrCode())) {
       //  任务运行时不显示异常信息(Do not display exception information during task runtime)
       taskVO.setErrCode(null);
       taskVO.setErrDesc(null);

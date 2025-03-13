@@ -115,7 +115,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     if (job.getProgress() >= 0
             && persistedProgress >= updatedProgress
             && entranceJob.getUpdateMetrisFlag()
-        || !(job.getProgress() == 0 && EntranceConfiguration.AI_SQL_ENABLED())) {
+        || !(progress == 0 && EntranceConfiguration.AI_SQL_ENABLED())) {
       return;
     }
     if (updatedProgress > 1) {

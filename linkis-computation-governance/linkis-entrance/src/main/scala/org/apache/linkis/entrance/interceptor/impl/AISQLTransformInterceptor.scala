@@ -43,7 +43,7 @@ import scala.collection.JavaConverters._
 class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    val aiSqlEnable: Boolean = AI_SQL_ENABLED
+    val aiSqlEnable: Boolean = AI_SQL_KEY.getValue.asInstanceOf[Boolean]
     val supportAISQLCreator: String = AI_SQL_CREATORS.toLowerCase()
     val sqlLanguage: String = LANGUAGE_TYPE_AI_SQL
     val sparkEngineType: String = AI_SQL_DEFAULT_SPARK_ENGINE_TYPE

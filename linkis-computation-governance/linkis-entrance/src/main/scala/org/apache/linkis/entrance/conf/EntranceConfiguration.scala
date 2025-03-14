@@ -334,7 +334,7 @@ object EntranceConfiguration {
     CommonVars[Boolean]("linkis.ai.sql.once.enable", true)
 
   val SPARK_SHUFFLE_SERVICE_ENABLED: Boolean =
-    CommonVars[Boolean]("linkis.spark.shuffle.service.enabled", true).getValue
+    CommonVars[Boolean]("spark.shuffle.service.enabled", true).getValue
 
   val SPARK_EXECUTOR_CORES: Int =
     CommonVars[Int]("spark.executor.cores", 4).getValue

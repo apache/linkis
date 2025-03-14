@@ -304,9 +304,6 @@ object EntranceConfiguration {
   val TASK_RETRY_ENABLED: Boolean =
     CommonVars[Boolean]("linkis.task.retry.enabled", true).getValue
 
-  val AI_SQL_ENABLED: Boolean =
-    CommonVars[Boolean]("linkis.ai.sql.enabled", true).getValue
-
   val AI_SQL_DEFAULT_SPARK_ENGINE_TYPE: String =
     CommonVars[String]("linkis.ai.sql.default.spark.engine.type", "spark-3.4.4").getValue
 

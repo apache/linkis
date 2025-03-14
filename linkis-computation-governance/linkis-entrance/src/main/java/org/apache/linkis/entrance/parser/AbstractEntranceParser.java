@@ -92,7 +92,9 @@ public abstract class AbstractEntranceParser extends EntranceParser {
     jobRequest.setStatus(job.getState().toString());
     jobRequest.setUpdatedTime(new Date());
 
-    if (EntranceConfiguration.TASK_RETRY_ENABLED()
+    if (job.isCompleted()
+        && !job.isSucceed()
+        && EntranceConfiguration.TASK_RETRY_ENABLED()
         && Integer.valueOf(20503).equals(jobRequest.getErrorCode())
         && job.getErrorResponse() != null
         && StringUtils.isNotEmpty(job.getErrorResponse().message())) {

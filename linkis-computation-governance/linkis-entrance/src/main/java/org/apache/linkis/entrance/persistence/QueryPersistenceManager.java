@@ -43,6 +43,8 @@ import scala.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary.EXEC_FAILED_TO_RETRY;
+
 public class QueryPersistenceManager extends PersistenceManager {
   private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
 
@@ -191,8 +193,8 @@ public class QueryPersistenceManager extends PersistenceManager {
               job.transitionWaitForRetry();
 
               // 修改错误码和错误描述
-              entranceJob.getJobRequest().setErrorCode(20503);
-              entranceJob.getJobRequest().setErrorDesc("资源紧张，当前任务正在进行智能重试");
+              entranceJob.getJobRequest().setErrorCode(EXEC_FAILED_TO_RETRY.getErrorCode());
+              entranceJob.getJobRequest().setErrorDesc(EXEC_FAILED_TO_RETRY.getErrorDesc());
               canRetry.set(true);
               startupMap.put(retryNumKey, retryNum - 1);
               // once 引擎

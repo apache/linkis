@@ -37,6 +37,7 @@ import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -116,7 +117,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       }
       if (jobReq.getStatus != null) {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
+        val startUpMap: util.Map[String, AnyRef] =
+          TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
+        val aiSqlEnable: AnyRef = startUpMap.getOrDefault("linkis.ai.sql.enable", "false")
+        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, aiSqlEnable.toString)) {
           throw new QueryException(
             120001,
             s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +
@@ -181,7 +185,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           }
           if (jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, "false")) {
               throw new QueryException(
                 120001,
                 s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}，" +
@@ -342,15 +346,19 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobHistory2JobRequest(list)
   }
 
-  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = {
+  private def shouldUpdate(oldStatus: String, newStatus: String, aiSqlEnable: String): Boolean = {
     if (TaskStatus.valueOf(oldStatus) == TaskStatus.valueOf(newStatus)) {
       true
-    } else {
+    } else if ("true".equals(aiSqlEnable)) {
       (TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus
         .valueOf(newStatus)
         .ordinal || (TaskStatus.Running.toString.equals(oldStatus) && (TaskStatus.Scheduled.toString
         .equals(newStatus)) || TaskStatus.WaitForRetry.toString.equals(newStatus))) && !TaskStatus
         .isComplete(TaskStatus.valueOf(oldStatus))
+    } else {
+      TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus
+        .valueOf(newStatus)
+        .ordinal && !TaskStatus.isComplete(TaskStatus.valueOf(oldStatus))
     }
   }
 

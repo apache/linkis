@@ -228,6 +228,17 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         sb.append(s"spark.executor.memoryOverhead=${memoryOverhead}\n")
         sb.append(s"spark.python.version=$pythonVersion\n")
         sb.append(s"spark.engineType=$engineType\n")
+        val dynamicAllocation: String = sc.getConf.get("spark.dynamicAllocation.enabled", "false")
+        if ("true".equals(dynamicAllocation)) {
+          val shuffleEnabled: String = sc.getConf.get("spark.shuffle.service.enabled", "false")
+          val minExecutors: Int = sc.getConf.get("spark.dynamicAllocation.minExecutors", "1").toInt
+          val maxExecutors: Int =
+            sc.getConf.get("spark.dynamicAllocation.maxExecutors", Integer.MAX_VALUE + "").toInt
+          sb.append("spark.dynamicAllocation.enabled=true\n")
+          sb.append(s"spark.shuffle.service.enabled=$shuffleEnabled\n")
+          sb.append(s"spark.dynamicAllocation.minExecutors=$minExecutors\n")
+          sb.append(s"spark.dynamicAllocation.maxExecutors=$maxExecutors\n")
+        }
         sb.append("\n")
         engineExecutionContext.appendStdout(
           LogUtils.generateInfo(s" Your spark job exec with configs:\n${sb.toString()}")

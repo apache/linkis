@@ -297,7 +297,7 @@ object EntranceConfiguration {
   val UNSUPPORTED_RETRY_CODES =
     CommonVars(
       "linkis.entrance.unsupported.retry.codes",
-      "INSERT INTO,CREATE TABLE,ALTER TABLE,CREATE TEMPORARY"
+      "INSERT INTO,CREATE TABLE,ALTER TABLE,CREATE TEMPORARY,TRUNCATE TABLE,MERGE INTO,DROP TABLE"
     ).getValue
 
   val SUPPORTED_RETRY_ERROR_CODES =

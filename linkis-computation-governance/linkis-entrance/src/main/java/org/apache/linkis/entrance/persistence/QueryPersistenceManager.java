@@ -223,6 +223,15 @@ public class QueryPersistenceManager extends PersistenceManager {
         regexBuilder.append(part);
         regexBuilder.append("\\s*");
       }
+      if (keyword.startsWith("CREATE")) {
+        regexBuilder.delete(regexBuilder.length() - 3, regexBuilder.length());
+        regexBuilder.append("\\b(?!\\s+IF\\s+NOT\\s+EXISTS)");
+      }
+      if (keyword.startsWith("DROP")) {
+        regexBuilder.delete(regexBuilder.length() - 3, regexBuilder.length());
+        regexBuilder.append("\\b(?!\\s+IF\\s+EXISTS)");
+      }
+
       String regex = regexBuilder.toString();
       Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
       Matcher matcher = pattern.matcher(code);

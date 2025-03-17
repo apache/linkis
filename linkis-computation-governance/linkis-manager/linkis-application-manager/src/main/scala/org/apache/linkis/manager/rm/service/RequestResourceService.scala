@@ -175,10 +175,13 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
 
     // 是否是跨集群的任务
     var acrossClusterTask: Boolean = false
-    var aiTask: Boolean = false
     if (props != null) {
       acrossClusterTask = props.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false").toBoolean
-      aiTask = props.getOrDefault("linkis.ai.sql.enabled", "false").toBoolean
+      var aiTask: Boolean = props.getOrDefault("linkis.ai.sql.enabled", "false").toBoolean
+      if (aiTask) {
+        props.put(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
+        acrossClusterTask = false
+      }
     }
 
     // hive cluster check
@@ -187,7 +190,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           engineType
         ) && SUPPORT_CLUSTER_RULE_EC_TYPES.contains(
           engineType
-        ) && props != null && acrossClusterTask && !"spark".equals(engineType) && !aiTask
+        ) && props != null && acrossClusterTask && !"spark".equals(engineType)
     ) {
       val queueName = props.getOrDefault(YARN_QUEUE_NAME_CONFIG_KEY, "default")
       logger.info(s"hive cluster check with queue: $queueName")

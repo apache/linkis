@@ -141,7 +141,7 @@
     <reflections.version>0.9.12</reflections.version>
     <mybatis-plus.boot.starter.version>3.5.7</mybatis-plus.boot.starter.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
-    <druid.version>1.1.23</druid.version>
+    <druid.version>1.2.4</druid.version>
     <javassist.version>3.27.0-GA</javassist.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>

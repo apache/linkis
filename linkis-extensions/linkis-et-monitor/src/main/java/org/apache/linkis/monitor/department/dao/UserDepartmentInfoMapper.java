@@ -15,25 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.department.dao;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorAction
+import org.apache.linkis.monitor.department.entity.UserDepartmentInfo;
 
-class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+import org.springframework.transaction.annotation.Transactional;
 
-  override protected[client] def executeJob(monitorAction: MonitorAction): Result =
-    monitorAction match {
+import java.util.List;
 
-      case action: Action => dwsHttpClient.execute(action)
+@Mapper
+public interface UserDepartmentInfoMapper {
 
-    }
+  void insertUser(UserDepartmentInfo user);
 
-  override def close(): Unit = dwsHttpClient.close()
+  @Transactional(rollbackFor = Exception.class)
+  int batchInsertUsers(@Param("userDepartmentInfos") List<UserDepartmentInfo> userDepartmentInfos);
+
+  void updateUser(UserDepartmentInfo user);
+
+  UserDepartmentInfo selectUser(@Param("userName") String userName);
+
+  @Transactional(rollbackFor = Exception.class)
+  void deleteUser();
+
+  List<UserDepartmentInfo> selectAllUsers();
 }

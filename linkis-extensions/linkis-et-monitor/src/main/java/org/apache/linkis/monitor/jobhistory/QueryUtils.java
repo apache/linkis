@@ -23,7 +23,7 @@ import java.util.Date;
 
 public class QueryUtils {
 
-  private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+  private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // NOSONAR
 
   public static String dateToString(Date date) {
     return dateFormat.format(date);

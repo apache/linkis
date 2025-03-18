@@ -15,25 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.response
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorAction
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
+import java.util
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+import scala.beans.BeanProperty
 
-  override protected[client] def executeJob(monitorAction: MonitorAction): Result =
-    monitorAction match {
+@DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/diagnosis-query")
+class AnalyzeJobResultAction extends DWSResult {
 
-      case action: Action => dwsHttpClient.execute(action)
+  @BeanProperty
+  var messages: util.ArrayList[util.Map[String, AnyRef]] = _
 
-    }
-
-  override def close(): Unit = dwsHttpClient.close()
 }

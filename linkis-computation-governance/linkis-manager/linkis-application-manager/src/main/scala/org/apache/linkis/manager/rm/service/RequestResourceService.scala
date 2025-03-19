@@ -177,11 +177,6 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     var acrossClusterTask: Boolean = false
     if (props != null) {
       acrossClusterTask = props.getOrDefault(AMConfiguration.ACROSS_CLUSTER_TASK, "false").toBoolean
-      val aiTask: Boolean = props.getOrDefault("linkis.ai.sql.enable", "false").toBoolean
-      if (aiTask) {
-        props.put(AMConfiguration.ACROSS_CLUSTER_TASK, "false")
-        acrossClusterTask = false
-      }
     }
 
     // hive cluster check

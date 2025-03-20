@@ -39,7 +39,7 @@ object EnvConfiguration {
   val ENGINE_CONN_CLASSPATH_FILES =
     CommonVars("linkis.engineConn.classpath.files", "", "engineConn额外的配置文件")
 
-  val MAX_METASPACE_SIZE = CommonVars("linkis.engineconn.metaspace.size.max", "256m")
+  val MAX_METASPACE_SIZE = CommonVars("linkis.engineconn.metaspace.size.max", "512m")
 
   lazy val metaspaceSize =
     s"-XX:MaxMetaspaceSize=${MAX_METASPACE_SIZE.getValue} -XX:MetaspaceSize=128m"

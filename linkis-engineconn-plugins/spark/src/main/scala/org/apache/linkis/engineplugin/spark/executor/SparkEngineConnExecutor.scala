@@ -59,6 +59,7 @@ import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.server.toJavaMap
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
@@ -424,8 +425,19 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
   override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
     super.beforeExecute(engineConnTask)
     if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty) {
-      sparkTmpConf = sc.getConf.getAll.toMap
+      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
+      sparkTmpConf = sqlContext.getAllConfs
     }
+// 维护spark扩展配置,防止不同版本的sprk 默认配置与用户配置匹配不上，导致配置无法回滚
+    SparkConfiguration.SPARK_ENGINE_EXTENSION_CONF
+      .split(',')
+      .foreach(keyValue => {
+        val key = keyValue.split("=")(0).trim
+        val value = keyValue.split("=")(1).trim
+        if (!sparkTmpConf.containsKey(key)) {
+          sparkTmpConf += key -> value
+        }
+      })
   }
 
   override protected def afterExecute(

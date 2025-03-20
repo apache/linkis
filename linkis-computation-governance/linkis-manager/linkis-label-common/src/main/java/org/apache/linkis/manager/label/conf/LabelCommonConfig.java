@@ -46,7 +46,8 @@ public class LabelCommonConfig {
       CommonVars.apply("linkis.spark.engine.home", "/appcom/Install/spark");
   public static final CommonVars<String> SPARK3_ENGINE_HOME =
       CommonVars.apply("linkis.spark3.engine.home", "/appcom/Install/spark3");
-
+  public static final CommonVars<Boolean> USER_DEFAULT_SPAKR_SWITCH =
+      CommonVars.apply("linkis.user.default.spark3.switch", false);
   public static final CommonVars<String> SPARK3_ENGINE_CMD =
       CommonVars.apply("linkis.spark3.engine.cmd", "/appcom/Install/spark3-cmd");
   public static final CommonVars<String> SPARK_ENGINE_CMD =

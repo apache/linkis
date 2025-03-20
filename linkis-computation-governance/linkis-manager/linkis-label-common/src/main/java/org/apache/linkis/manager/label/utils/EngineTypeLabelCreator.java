@@ -44,8 +44,13 @@ public class EngineTypeLabelCreator {
       synchronized (EngineTypeLabelCreator.class) {
         if (null == defaultVersion) {
           defaultVersion = new HashMap<>(16);
-          defaultVersion.put(
-              EngineType.SPARK().toString(), LabelCommonConfig.SPARK_ENGINE_VERSION.getValue());
+          if (LabelCommonConfig.USER_DEFAULT_SPAKR_SWITCH.getValue()) {
+            defaultVersion.put(
+                EngineType.SPARK().toString(), LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue());
+          } else {
+            defaultVersion.put(
+                EngineType.SPARK().toString(), LabelCommonConfig.SPARK_ENGINE_VERSION.getValue());
+          }
           defaultVersion.put(
               EngineType.HIVE().toString(), LabelCommonConfig.HIVE_ENGINE_VERSION.getValue());
           defaultVersion.put(

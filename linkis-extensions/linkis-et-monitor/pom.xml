@@ -85,16 +85,12 @@
           <artifactId>reactor-netty-http</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-webflux</artifactId>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webflux</artifactId>
-      <version>6.1.14</version>
-    </dependency>
+
     <dependency>
       <groupId>io.projectreactor.netty</groupId>
       <artifactId>reactor-netty-http</artifactId>

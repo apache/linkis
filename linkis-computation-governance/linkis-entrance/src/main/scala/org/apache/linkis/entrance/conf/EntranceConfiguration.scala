@@ -344,7 +344,7 @@ object EntranceConfiguration {
     CommonVars[Int]("spark.dynamicAllocation.minExecutors", 1).getValue
 
   val SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS: Int =
-    CommonVars[Int]("spark.dynamicAllocation.maxExecutors", Integer.MAX_VALUE).getValue
+    CommonVars[Int]("spark.dynamicAllocation.maxExecutors", 50).getValue
 
   val SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS: String =
     CommonVars[String]("spark.dynamicAllocation.additional.confs", "").getValue

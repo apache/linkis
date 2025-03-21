@@ -230,23 +230,26 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     //  处理spark环境问题，兼容spark切换spark-cmd后spark2能正常使用
     val engineTypeLabel = LabelUtil.getEngineTypeLabel(request.labels)
     if (engineTypeLabel.getEngineType.equals(EngineType.SPARK.toString)) {
-      val (sparkHome, sparkCmd, sparkEnginePath) =
+      val (sparkHome, sparkCmd, sparkEnginePath, sparkConfig) =
         if (engineTypeLabel.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)) {
           (
             LabelCommonConfig.SPARK3_ENGINE_HOME.getValue,
             LabelCommonConfig.SPARK3_ENGINE_CMD.getValue,
-            LabelCommonConfig.SPARK3_ENGINE_PATH.getValue
+            LabelCommonConfig.SPARK3_ENGINE_PATH.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_CONFIG.getValue
           )
         } else {
           (
             LabelCommonConfig.SPARK_ENGINE_HOME.getValue,
             LabelCommonConfig.SPARK_ENGINE_CMD.getValue,
-            LabelCommonConfig.SPARK_ENGINE_PATH.getValue
+            LabelCommonConfig.SPARK_ENGINE_PATH.getValue,
+            LabelCommonConfig.SPARK_ENGINE_CONFIG.getValue
           )
         }
       processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_HOME_CONF, sparkHome)
       processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_CMD_CONF, sparkCmd)
       processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_PATH_CONF, sparkEnginePath)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_CONF_DIR, sparkConfig)
     }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env

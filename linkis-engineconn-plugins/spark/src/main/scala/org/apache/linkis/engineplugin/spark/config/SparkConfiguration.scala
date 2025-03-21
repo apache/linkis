@@ -184,6 +184,7 @@ object SparkConfiguration extends Logging {
 
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
+
 // 多个配置用英文逗号分割
   val SPARK_ENGINE_EXTENSION_CONF =
     CommonVars("linkis.spark.engine.extension.conf", "spark.sql.shuffle.partitions=200").getValue

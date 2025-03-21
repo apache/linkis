@@ -424,8 +424,12 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
     super.beforeExecute(engineConnTask)
-    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty) {
-      sparkTmpConf = sc.getConf.getAll.toMap
+    if (
+        EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty && this
+          .isInstanceOf[SparkSqlExecutor]
+    ) {
+      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
+      sparkTmpConf = sqlContext.getAllConfs
       // 维护spark扩展配置,防止不同版本的sprk 默认配置与用户配置匹配不上，导致配置无法回滚
       SparkConfiguration.SPARK_ENGINE_EXTENSION_CONF
         .split(',')
@@ -443,8 +447,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
   ): Unit = {
-    val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
-    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.nonEmpty) {
+    if (
+        EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.nonEmpty && this
+          .isInstanceOf[SparkSqlExecutor]
+    ) {
+      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
       val differentValues = sparkTmpConf.filter { case (key, value) =>
         !sqlContext.getConf(key).equals(value)
       }

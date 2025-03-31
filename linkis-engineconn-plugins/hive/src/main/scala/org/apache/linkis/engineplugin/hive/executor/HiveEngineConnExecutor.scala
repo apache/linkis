@@ -52,6 +52,7 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
@@ -124,6 +125,8 @@ class HiveEngineConnExecutor(
 
   private val splitter = "_"
 
+  private var readResByObject = false
+
   override def init(): Unit = {
     LOG.info(s"Ready to change engine state!")
     if (HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
@@ -137,6 +140,17 @@ class HiveEngineConnExecutor(
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
+    readResByObject = MapUtils.getBooleanValue(
+      engineExecutorContext.getProperties,
+      JobRequestConstants.LINKIS_HIVE_EC_READ_RESULT_BY_OBJECT,
+      false
+    )
+    if (readResByObject) {
+      hiveConf.set(
+        "list.sink.output.formatter",
+        "org.apache.hadoop.hive.serde2.thrift.ThriftFormatter"
+      )
+    }
     this.engineExecutorContext = engineExecutorContext
     CSHiveHelper.setContextIDInfoToHiveConf(engineExecutorContext, hiveConf)
     singleSqlProgressMap.clear()
@@ -354,30 +368,36 @@ class HiveEngineConnExecutor(
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     resultSetWriter.addMetaData(metaData)
     val colLength = metaData.columns.length
-    val result = new util.ArrayList[String]()
+    val result = new util.ArrayList[Object]()
     var rows = 0
     while (driver.getResults(result)) {
-      val scalaResult: mutable.Buffer[String] = result.asScala
+      val scalaResult: mutable.Buffer[Object] = result.asScala
       scalaResult foreach { s =>
-        val arr: Array[String] = s.split("\t")
-        val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
-        if (arr.length > colLength) {
-          logger.error(
-            s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute(查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
-          )
-          throw new ErrorException(
-            60078,
-            """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
-          )
+        if (!readResByObject) {
+          val arr: Array[String] = s.asInstanceOf[String].split("\t")
+          val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
+          if (arr.length > colLength) {
+            logger.error(
+              s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute(查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
+            )
+            throw new ErrorException(
+              60078,
+              """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
+            )
+          }
+          if (arr.length == colLength) {
+            arrAny.appendAll(arr)
+          } else if (arr.length == 0) for (i <- 1 to colLength) arrAny.asJava add ""
+          else {
+            val i = colLength - arr.length
+            arr foreach arrAny.asJava.add
+            for (i <- 1 to i) arrAny.asJava add ""
+          }
+          resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+        } else {
+          resultSetWriter.addRecord(new TableRecord(s.asInstanceOf[Array[Any]]))
         }
-        if (arr.length == colLength) arr foreach arrAny.asJava.add
-        else if (arr.length == 0) for (i <- 1 to colLength) arrAny.asJava add ""
-        else {
-          val i = colLength - arr.length
-          arr foreach arrAny.asJava.add
-          for (i <- 1 to i) arrAny.asJava add ""
-        }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+
       }
       rows += result.size
       result.clear()

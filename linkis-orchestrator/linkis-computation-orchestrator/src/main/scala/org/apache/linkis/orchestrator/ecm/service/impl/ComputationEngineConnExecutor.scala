@@ -44,6 +44,8 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
 
   override def getServiceInstance: ServiceInstance = engineNode.getServiceInstance
 
+  def getEngineNode: EngineNode = engineNode
+
   private def getEngineConnSender: Sender = Sender.getSender(getServiceInstance)
 
   override def getTicketId: String = engineNode.getTicketId

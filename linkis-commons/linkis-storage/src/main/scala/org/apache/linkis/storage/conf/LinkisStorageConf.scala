@@ -33,7 +33,7 @@ object LinkisStorageConf {
     CommonVars
       .apply(
         "wds.linkis.hdfs.rest.errs",
-        ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*"
+        ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*|.*The client is stopped.*"
       )
       .getValue
 

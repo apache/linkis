@@ -340,8 +340,11 @@ class RMMonitorRest extends Logging {
         record.put("engineInstance", node.getServiceInstance.getInstance)
       }
 
+      // return labels
+      val labels: util.List[Label[_]] = node.getLabels
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
+      record.put("labels", labels)
       if (node.getNodeResource != null) {
         if (node.getNodeResource.getLockedResource != null) {
           record.put("preUsedResource", node.getNodeResource.getLockedResource)

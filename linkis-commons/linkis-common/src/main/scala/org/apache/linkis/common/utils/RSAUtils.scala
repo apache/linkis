@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets
 import java.security.{KeyPair, KeyPairGenerator, PrivateKey, PublicKey}
 
 object RSAUtils {
-  private implicit val keyPair = genKeyPair(1024)
+  private implicit val keyPair = genKeyPair(2048)
 
   def genKeyPair(keyLength: Int): KeyPair = {
     val keyPair = KeyPairGenerator.getInstance("RSA")

@@ -83,7 +83,7 @@ class SecurityFilter extends Filter {
         ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI
           .exists(r => !r.equals("") && request.getRequestURI.startsWith(r))
     ) {
-      logger.info("pass auth uri: " + request.getRequestURI)
+      logger.debug("pass auth uri: " + request.getRequestURI)
       true
     } else {
       val userName = Utils.tryCatch(SecurityFilter.getLoginUser(request)) {

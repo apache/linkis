@@ -101,7 +101,7 @@ public class AMConfiguration {
       CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python");
 
   public static final CommonVars<String> UNALLOW_BATCH_KILL_ENGINE_TYPES =
-      CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "trino,appconn,io_file");
+      CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "trino,appconn,io_file,nebula");
   public static final CommonVars<String> MULTI_USER_ENGINE_USER =
       CommonVars.apply("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser());
 

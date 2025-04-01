@@ -13,7 +13,7 @@
     "@fesjs/fes-design": "^0.7.31",
     "@types/lodash": "^4.14.198",
     "@vitejs/plugin-vue": "^5.2.1",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "dayjs": "^1.11.10",
     "dexie": "^3.2.7",
     "md5": "^2.3.0",

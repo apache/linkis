@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.12.0-wds</revision>
+    <revision>1.13.0-wds</revision>
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
@@ -1491,7 +1491,7 @@
     <profile>
       <id>spark-3</id>
       <properties>
-        <revision>1.12.0-wds-spark3</revision>
+        <revision>1.13.0-wds-spark3</revision>
         <json4s.version>3.7.0-M11</json4s.version>
         <spark.version>3.4.4</spark.version>
         <scala.version>2.12.17</scala.version>

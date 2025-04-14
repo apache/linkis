@@ -447,19 +447,30 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
   ): Unit = {
-    if (
-        EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.nonEmpty && this
-          .isInstanceOf[SparkSqlExecutor]
-    ) {
-      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
-      val differentValues = sparkTmpConf.filter { case (key, value) =>
-        !sqlContext.getConf(key).equals(value)
+    try {
+      if (
+          EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue
+          && sparkTmpConf != null && !sparkTmpConf.isEmpty
+          && this.isInstanceOf[SparkSqlExecutor]
+      ) {
+
+        val sqlExecutor = this.asInstanceOf[SparkSqlExecutor]
+        Option(sqlExecutor.getSparkEngineSession)
+          .flatMap(session => Option(session.sqlContext))
+          .foreach { sqlContext =>
+            sparkTmpConf.foreach { case (key, value) =>
+              if (value != null && !value.equals(sqlContext.getConf(key))) {
+                sqlContext.setConf(key, value)
+              }
+            }
+          }
       }
-      differentValues.foreach { case (key, value) =>
-        sqlContext.setConf(key, value)
-      }
+    } catch {
+      case e: Exception =>
+        logger.error(s"Error in afterExecute for task ${engineConnTask.getTaskId}", e)
+    } finally {
+      super.afterExecute(engineConnTask, executeResponse)
     }
-    super.afterExecute(engineConnTask, executeResponse)
   }
 
 }

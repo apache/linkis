@@ -683,15 +683,29 @@ class HiveEngineConnExecutor(
       engineConnTask: EngineConnTask,
       executeResponse: ExecuteResponse
   ): Unit = {
-    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && hiveTmpConf.nonEmpty) {
-      val differentValues = hiveTmpConf.filter { case (key, value) =>
-        sessionState.getConf.getAllProperties.asScala.toMap.get(key).exists(_ != value)
+    try {
+      if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && hiveTmpConf.nonEmpty) {
+        val sessionConf = sessionState.getConf
+        if (sessionConf != null) {
+          val currentProps = Option(sessionConf.getAllProperties)
+            .map(_.asScala.toMap)
+            .getOrElse(Map.empty)
+          hiveTmpConf.foreach { case (key, value) =>
+            currentProps.get(key).filter(_ != value).foreach { _ =>
+              logger.info(s"Resetting configuration key: $key to original value: $value")
+              sessionConf.set(key, value)
+            }
+          }
+        } else {
+          logger.warn("Session configuration is null, cannot reset hive configurations")
+        }
       }
-      differentValues.foreach { case (key, value) =>
-        sessionState.getConf.set(key, value)
-      }
+    } catch {
+      case e: Exception =>
+        logger.error("Error occurred while resetting hive configurations", e)
+    } finally {
+      super.afterExecute(engineConnTask, executeResponse)
     }
-    super.afterExecute(engineConnTask, executeResponse)
   }
 
 }

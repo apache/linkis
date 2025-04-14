@@ -587,16 +587,18 @@ public class ConfigurationRestfulApi {
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
         && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
         && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+      String passwd =
+          AESUtils.encrypt(
+              configKeyValue.getConfigValue(), AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
       List<ConfigUserValue> userConfigValue =
           configKeyService.getUserConfigValue(engineType, configKeyValue.getKey(), creator, user);
-      for (ConfigUserValue configUserValue : userConfigValue) {
-        if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
-            && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
-          configKeyValue.setConfigValue(
-              AESUtils.encrypt(
-                  configKeyValue.getConfigValue(), AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
-        }
+      if (userConfigValue.stream()
+          .anyMatch(
+              configValue ->
+                  configValue.getConfigValue().equals(configKeyValue.getConfigValue()))) {
+        passwd = configKeyValue.getConfigValue();
       }
+      configKeyValue.setConfigValue(passwd);
     }
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);

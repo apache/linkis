@@ -18,15 +18,23 @@
 package org.apache.linkis.entrance.parser
 
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.{
+  SPARK3_VERSION_COERCION_DEPARTMENT,
+  SPARK3_VERSION_COERCION_SWITCH,
+  SPARK3_VERSION_COERCION_USERS
+}
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.EntranceUtils
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.conf.{
+  DepartmentRequest,
+  DepartmentResponse
+}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
@@ -41,8 +49,9 @@ import org.apache.linkis.manager.label.entity.engine.{
   EngineType,
   UserCreatorLabel
 }
-import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
+import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtil}
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.linkis.storage.script.VariableParser
 
@@ -124,13 +133,14 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     if (formatCode) code = format(code)
     jobRequest.setExecutionCode(code)
     // 4. parse label
-    val labels: util.Map[String, Label[_]] = buildLabel(labelMap)
+    var labels: util.HashMap[String, Label[_]] = buildLabel(labelMap)
     JobTimeoutManager.checkTimeoutLabel(labels)
     checkEngineTypeLabel(labels)
     generateAndVerifyCodeLanguageLabel(runType, labels)
     generateAndVerifyUserCreatorLabel(executeUser, labels)
     generateAndVerifyClusterLabel(labels)
-
+    // sparkVersion cover,only spark use
+    labels = sparkVersionCoercion(labels, executeUser)
     jobRequest.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobRequest.setSource(source)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
@@ -293,32 +303,30 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     val userCreatorLabel = labelBuilderFactory
       .createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)
 
-    val labelList = new util.ArrayList[Label[_]](3)
-    labelList.add(engineTypeLabel)
-    labelList.add(runTypeLabel)
-    labelList.add(userCreatorLabel)
+    var labels = new util.HashMap[String, Label[_]]()
     if (jobReq.getParams != null) {
       val labelMap = params
         .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, AnyRef]())
         .asInstanceOf[util.Map[String, AnyRef]]
-      if (null != labelMap && !labelMap.isEmpty) {
-        val list: util.List[Label[_]] =
-          labelBuilderFactory.getLabels(labelMap)
-        labelList.addAll(list)
-      }
+      labels.putAll(buildLabel(labelMap))
     }
+    labels.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
+    labels.put(LabelKeyConstant.CODE_TYPE_KEY, runTypeLabel)
+    labels.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, userCreatorLabel)
     jobReq.setProgress("0.0")
     jobReq.setSource(source)
     // In order to be compatible with the code, let enginetype and runtype have the same attribute
     jobReq.setStatus(SchedulerEventState.Inited.toString)
     // Package labels
-    jobReq.setLabels(labelList)
+    // sparkVersion cover,only spark use
+    labels = sparkVersionCoercion(labels, umUser)
+    jobReq.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
     jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 
-  private def buildLabel(labelMap: util.Map[String, AnyRef]): util.Map[String, Label[_]] = {
+  private def buildLabel(labelMap: util.Map[String, AnyRef]): util.HashMap[String, Label[_]] = {
     val labelKeyValueMap = new util.HashMap[String, Label[_]]()
     if (null != labelMap && !labelMap.isEmpty) {
       val list: util.List[Label[_]] =
@@ -330,6 +338,63 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       }
     }
     labelKeyValueMap
+  }
+
+  private def sparkVersionCoercion(
+      labels: util.HashMap[String, Label[_]],
+      username: String
+  ): util.HashMap[String, Label[_]] = {
+    // 个人>部门
+    // 是否强制转换
+    if (SPARK3_VERSION_COERCION_SWITCH && (null != labels && !labels.isEmpty)) {
+      val engineTypeLabel = labels.get(LabelKeyConstant.ENGINE_TYPE_KEY)
+      val engineType = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "engine")
+      val version = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "version")
+      if (
+          engineType.equals(EngineType.SPARK.toString) && (!version.equals(
+            LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+          ))
+      ) {
+        Utils.tryAndWarnMsg {
+          // 判断用户是否是个人配置中的一员
+          if (SPARK3_VERSION_COERCION_USERS.contains(username)) {
+            logger.info(s"Spark version will be change 3.4.4:${username} ")
+            labels.replace(
+              LabelKeyConstant.ENGINE_TYPE_KEY,
+              EngineTypeLabelCreator.createEngineTypeLabel(
+                EngineType.SPARK.toString,
+                LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+              )
+            )
+            return labels
+          }
+          var departmentId = "";
+          val sender: Sender = Sender.getSender(
+            Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
+          )
+          val responseObject = sender.ask(new DepartmentRequest(username))
+          if (responseObject.isInstanceOf[DepartmentResponse]) {
+            val departmentResponse = responseObject.asInstanceOf[DepartmentResponse]
+            if (StringUtils.isNotBlank(departmentResponse.departmentId)) {
+              departmentId = departmentResponse.departmentId
+            }
+          }
+          // 判断用户所在部门是否需要转换
+          if (SPARK3_VERSION_COERCION_DEPARTMENT.contains(departmentId)) {
+            logger.info(s"Spark version will be change 3.4.4 by department:${username} ")
+            labels.replace(
+              LabelKeyConstant.ENGINE_TYPE_KEY,
+              EngineTypeLabelCreator.createEngineTypeLabel(
+                EngineType.SPARK.toString,
+                LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+              )
+            )
+            return labels
+          }
+        }(s"error to Spark 3 version coercion: ${username}")
+      }
+    }
+    labels;
   }
 
   // todo to format code using proper way

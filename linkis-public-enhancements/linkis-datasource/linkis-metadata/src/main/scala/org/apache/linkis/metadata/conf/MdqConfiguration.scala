@@ -28,4 +28,7 @@ object MdqConfiguration {
     "org.apache.linkis.engineplugin.spark.imexport.LoadData"
   )
 
+  val HDFS_INIT_MAX_RETRY_COUNT: CommonVars[Integer] =
+    CommonVars.apply("linkis.hdfs.max.retry.count", 10)
+
 }

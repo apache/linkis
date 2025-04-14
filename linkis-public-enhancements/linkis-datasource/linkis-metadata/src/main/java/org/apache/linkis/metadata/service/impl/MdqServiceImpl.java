@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.service.impl;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.metadata.conf.MdqConfiguration;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import org.apache.linkis.metadata.domain.mdq.Tunple;
@@ -397,6 +398,10 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private String getTableSize(String tableLocation) throws IOException {
+    return getTableSizeWithRetry(tableLocation, 0);
+  }
+
+  private String getTableSizeWithRetry(String tableLocation, int retryCount) throws IOException {
     try {
       String tableSize = "0B";
       if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
@@ -409,11 +414,12 @@ public class MdqServiceImpl implements MdqService {
     } catch (IOException e) {
       String message = e.getMessage();
       String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-      if (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
-          || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)) {
-        logger.info("Failed to get tableSize, retry", e);
+      if (retryCount <= MdqConfiguration.HDFS_INIT_MAX_RETRY_COUNT().getValue()
+          && (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
+              || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
+        logger.warn("Failed to get tableSize, retry", e);
         resetRootHdfs();
-        return getTableSize(tableLocation);
+        return getTableSizeWithRetry(tableLocation, retryCount + 1);
       } else {
         throw e;
       }

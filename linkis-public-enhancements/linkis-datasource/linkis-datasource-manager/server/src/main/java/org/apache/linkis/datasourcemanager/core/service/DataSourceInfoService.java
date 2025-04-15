@@ -73,6 +73,18 @@ public interface DataSourceInfoService {
   DataSource getDataSourcePublishInfo(String dataSourceName);
 
   /**
+   * * Get data source for latest published version by ip, port
+   *
+   * @param datasourceTypeName
+   * @param ip
+   * @param port
+   * @param userName
+   * @return
+   */
+  DataSource getDataSourcePublishInfo(
+      String datasourceTypeName, String ip, String port, String userName);
+
+  /**
    * Get data source
    *
    * @param dataSourceId id

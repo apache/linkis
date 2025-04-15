@@ -18,15 +18,23 @@
 package org.apache.linkis.entrance.parser
 
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.{
+  SPARK3_VERSION_COERCION_DEPARTMENT,
+  SPARK3_VERSION_COERCION_SWITCH,
+  SPARK3_VERSION_COERCION_USERS
+}
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.EntranceUtils
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.conf.{
+  DepartmentRequest,
+  DepartmentResponse
+}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
@@ -41,8 +49,9 @@ import org.apache.linkis.manager.label.entity.engine.{
   EngineType,
   UserCreatorLabel
 }
-import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
+import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtil}
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.linkis.storage.script.VariableParser
 

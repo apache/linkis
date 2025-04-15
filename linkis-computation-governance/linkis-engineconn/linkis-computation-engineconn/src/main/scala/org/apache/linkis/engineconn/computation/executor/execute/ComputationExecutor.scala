@@ -44,6 +44,7 @@ import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineType,
@@ -58,6 +59,7 @@ import org.apache.linkis.scheduler.executer._
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -272,9 +274,21 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         incomplete ++= code
         response match {
           case e: ErrorExecuteResponse =>
-            failedTasks.increase()
-            logger.error("execute code failed!", e.t)
-            return response
+            val props: util.Map[String, String] = engineCreationContext.getOptions
+            val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
+            val retryNum: Int =
+              Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
+            logger.info(
+              s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
+              e.t
+            )
+            if (!props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+              return ErrorRetryExecuteResponse(e.message, index, e.t)
+            } else {
+              failedTasks.increase()
+              logger.error("execute code failed!", e.t)
+              return response
+            }
           case SuccessExecuteResponse() =>
             engineExecutionContext.appendStdout("\n")
             incomplete.setLength(0)
@@ -345,6 +359,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
     // lastTask = null
+    logger.info(s"response type: ${response.getClass}")
     response
   } {
     LoggerUtils.removeJobIdMDC()

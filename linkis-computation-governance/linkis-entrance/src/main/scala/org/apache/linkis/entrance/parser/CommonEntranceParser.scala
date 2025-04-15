@@ -31,10 +31,7 @@ import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.conf.{
-  DepartmentRequest,
-  DepartmentResponse
-}
+import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
@@ -140,7 +137,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     generateAndVerifyUserCreatorLabel(executeUser, labels)
     generateAndVerifyClusterLabel(labels)
     // sparkVersion cover,only spark use
-    labels = sparkVersionCoercion(labels, executeUser)
+    labels = sparkVersionCoercion(labels, executeUser, submitUser)
     jobRequest.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobRequest.setSource(source)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
@@ -319,7 +316,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobReq.setStatus(SchedulerEventState.Inited.toString)
     // Package labels
     // sparkVersion cover,only spark use
-    labels = sparkVersionCoercion(labels, umUser)
+    labels = sparkVersionCoercion(labels, umUser, submitUser)
     jobReq.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
     jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
@@ -342,7 +339,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
 
   private def sparkVersionCoercion(
       labels: util.HashMap[String, Label[_]],
-      username: String
+      executeUser: String,
+      submitUser: String
   ): util.HashMap[String, Label[_]] = {
     // 个人>部门
     // 是否强制转换
@@ -357,8 +355,13 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       ) {
         Utils.tryAndWarnMsg {
           // 判断用户是否是个人配置中的一员
-          if (SPARK3_VERSION_COERCION_USERS.contains(username)) {
-            logger.info(s"Spark version will be change 3.4.4:${username} ")
+          if (
+              SPARK3_VERSION_COERCION_USERS.contains(executeUser) || SPARK3_VERSION_COERCION_USERS
+                .contains(submitUser)
+          ) {
+            logger.info(
+              s"Spark version will be change 3.4.4,submitUser:${submitUser},executeUser:${executeUser} "
+            )
             labels.replace(
               LabelKeyConstant.ENGINE_TYPE_KEY,
               EngineTypeLabelCreator.createEngineTypeLabel(
@@ -368,20 +371,32 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
             )
             return labels
           }
-          var departmentId = "";
+          var executeUserDepartmentId = "";
+          var submitUserDepartmentId = "";
           val sender: Sender = Sender.getSender(
             Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
           )
-          val responseObject = sender.ask(new DepartmentRequest(username))
-          if (responseObject.isInstanceOf[DepartmentResponse]) {
-            val departmentResponse = responseObject.asInstanceOf[DepartmentResponse]
-            if (StringUtils.isNotBlank(departmentResponse.departmentId)) {
-              departmentId = departmentResponse.departmentId
+          val responseExecuteUser = sender.ask(new DepartmentRequest(executeUser))
+          if (responseExecuteUser.isInstanceOf[DepartmentResponse]) {
+            val departmentExecuteUser = responseExecuteUser.asInstanceOf[DepartmentResponse]
+            if (StringUtils.isNotBlank(departmentExecuteUser.departmentId)) {
+              executeUserDepartmentId = departmentExecuteUser.departmentId
+            }
+          }
+          val responseSubmitUser = sender.ask(new DepartmentRequest(submitUser))
+          if (responseSubmitUser.isInstanceOf[DepartmentResponse]) {
+            val departmentSubmitUser = responseSubmitUser.asInstanceOf[DepartmentResponse]
+            if (StringUtils.isNotBlank(departmentSubmitUser.departmentId)) {
+              submitUserDepartmentId = departmentSubmitUser.departmentId
             }
           }
           // 判断用户所在部门是否需要转换
-          if (SPARK3_VERSION_COERCION_DEPARTMENT.contains(departmentId)) {
-            logger.info(s"Spark version will be change 3.4.4 by department:${username} ")
+          if (
+              SPARK3_VERSION_COERCION_DEPARTMENT.contains(
+                executeUserDepartmentId
+              ) || SPARK3_VERSION_COERCION_DEPARTMENT.contains(submitUserDepartmentId)
+          ) {
+            logger.info(s"Spark version will be change 3.4.4 by department:${executeUser} ")
             labels.replace(
               LabelKeyConstant.ENGINE_TYPE_KEY,
               EngineTypeLabelCreator.createEngineTypeLabel(
@@ -391,7 +406,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
             )
             return labels
           }
-        }(s"error to Spark 3 version coercion: ${username}")
+        }(s"error to Spark 3 version coercion: ${executeUser}")
       }
     }
     labels;

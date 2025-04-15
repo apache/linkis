@@ -36,6 +36,10 @@ trait DataSourceRemoteClient extends RemoteClient {
                                 action: GetInfoPublishedByUserIpPortAction
                               ): GetInfoPublishedByUserIpPortResult
 
+  def getInfoPublishedByIpPort(
+      action: GetInfoPublishedByUserIpPortAction
+  ): GetInfoPublishedByUserIpPortResult
+
   def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult
 
   def getConnectParams(

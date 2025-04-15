@@ -22,11 +22,13 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.PYTHON_SAFE_CHECK_SWITCH
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.interceptor.exception.{
   PythonCodeCheckException,
   ScalaCodeCheckException
 }
+import org.apache.linkis.entrance.utils.SafeUtils
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
 import org.apache.commons.lang3.StringUtils
@@ -366,58 +368,60 @@ object PythonExplain extends Explain {
     if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
-
-    CAN_PASS_CODES
-      .split(";")
-      .foreach(c => {
-        if (code.contains(c)) {
-          if (
-              IMPORT_SYS_MOUDLE
-                .findAllIn(code)
-                .nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty
-          ) {
-            throw PythonCodeCheckException(20070, "can not use sys module")
-          } else if (
-              IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
-          ) {
-            throw PythonCodeCheckException(20071, "can not use os module")
-          } else if (
-              IMPORT_PROCESS_MODULE
-                .findAllIn(code)
-                .nonEmpty || FROM_MULTIPROCESS_IMPORT.findAllIn(code).nonEmpty
-          ) {
-            throw PythonCodeCheckException(20072, "can not use process module")
-          } else if (SC_STOP.findAllIn(code).nonEmpty) {
-            throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
-          } else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty) {
-            throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
-          }
-        }
-      })
-
-    code.split(System.lineSeparator()) foreach { code =>
-      if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty) {
-        throw PythonCodeCheckException(20070, "can not use sys module")
-      } else if (
-          IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
-      ) {
-        throw PythonCodeCheckException(20071, "can not use os moudle")
-      } else if (
-          IMPORT_PROCESS_MODULE.findAllIn(code).nonEmpty || FROM_MULTIPROCESS_IMPORT
-            .findAllIn(code)
-            .nonEmpty
-      ) {
-        throw PythonCodeCheckException(20072, "can not use process module")
-      } else if (
-          IMPORT_SUBPORCESS_MODULE.findAllIn(code).nonEmpty || FROM_SUBPROCESS_IMPORT
-            .findAllIn(code)
-            .nonEmpty
-      ) {
-        throw PythonCodeCheckException(20072, "can not use subprocess module")
-      } else if (SC_STOP.findAllIn(code).nonEmpty) {
-        throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
-      }
+    if (PYTHON_SAFE_CHECK_SWITCH && (!SafeUtils.isCodeSafe(code))) {
+      throw PythonCodeCheckException(20074, "Invalid python code.(当前代码存在非法获取系统信息或执行非法命令等危险操作，禁止执行)")
     }
+//    CAN_PASS_CODES
+//      .split(";")
+//      .foreach(c => {
+//        if (code.contains(c)) {
+//          if (
+//              IMPORT_SYS_MOUDLE
+//                .findAllIn(code)
+//                .nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty
+//          ) {
+//            throw PythonCodeCheckException(20070, "can not use sys module")
+//          } else if (
+//              IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
+//          ) {
+//            throw PythonCodeCheckException(20071, "can not use os module")
+//          } else if (
+//              IMPORT_PROCESS_MODULE
+//                .findAllIn(code)
+//                .nonEmpty || FROM_MULTIPROCESS_IMPORT.findAllIn(code).nonEmpty
+//          ) {
+//            throw PythonCodeCheckException(20072, "can not use process module")
+//          } else if (SC_STOP.findAllIn(code).nonEmpty) {
+//            throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
+//          } else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty) {
+//            throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
+//          }
+//        }
+//      })
+//
+//    code.split(System.lineSeparator()) foreach { code =>
+//      if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty) {
+//        throw PythonCodeCheckException(20070, "can not use sys module")
+//      } else if (
+//          IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
+//      ) {
+//        throw PythonCodeCheckException(20071, "can not use os moudle")
+//      } else if (
+//          IMPORT_PROCESS_MODULE.findAllIn(code).nonEmpty || FROM_MULTIPROCESS_IMPORT
+//            .findAllIn(code)
+//            .nonEmpty
+//      ) {
+//        throw PythonCodeCheckException(20072, "can not use process module")
+//      } else if (
+//          IMPORT_SUBPORCESS_MODULE.findAllIn(code).nonEmpty || FROM_SUBPROCESS_IMPORT
+//            .findAllIn(code)
+//            .nonEmpty
+//      ) {
+//        throw PythonCodeCheckException(20072, "can not use subprocess module")
+//      } else if (SC_STOP.findAllIn(code).nonEmpty) {
+//        throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
+//      }
+//    }
     true
   }
 

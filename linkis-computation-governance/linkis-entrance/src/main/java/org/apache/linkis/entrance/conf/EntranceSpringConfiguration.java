@@ -133,6 +133,7 @@ public class EntranceSpringConfiguration {
       new VarSubstitutionInterceptor(),
       new LogPathCreateInterceptor(),
       new ScalaCodeInterceptor(),
+      new PythonCodeCheckInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
       new UserCreatorIPCheckInterceptor()

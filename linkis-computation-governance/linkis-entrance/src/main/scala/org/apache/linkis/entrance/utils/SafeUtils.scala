@@ -18,8 +18,6 @@
 package org.apache.linkis.entrance.utils
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.common.conf.EngineConnConf
-import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import java.util.regex.Pattern
 

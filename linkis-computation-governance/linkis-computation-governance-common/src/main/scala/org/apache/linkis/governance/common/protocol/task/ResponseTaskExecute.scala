@@ -45,6 +45,15 @@ case class ResponseTaskError(execId: String, errorMsg: String)
     extends RetryableProtocol
     with RequestProtocol
 
+class ResponseTaskExecuteWithExecuteCodeIndex(
+    execId: String,
+    errorMsg: String,
+    private var _errorIndex: Int = 0
+) extends ResponseTaskError(execId, errorMsg) {
+  def errorIndex: Int = _errorIndex
+  def errorIndex_=(value: Int): Unit = _errorIndex = value
+}
+
 case class ResponseTaskStatus(execId: String, status: ExecutionNodeStatus)
     extends RetryableProtocol
     with RequestProtocol

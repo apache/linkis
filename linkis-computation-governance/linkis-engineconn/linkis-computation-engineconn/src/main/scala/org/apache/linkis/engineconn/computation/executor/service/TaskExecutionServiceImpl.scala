@@ -250,7 +250,10 @@ class TaskExecutionServiceImpl
               logger.error(message, throwable)
               sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
             case ErrorRetryExecuteResponse(message, index, throwable) =>
-              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+              sendToEntrance(
+                task,
+                new ResponseTaskExecuteWithExecuteCodeIndex(task.getTaskId, message, index)
+              )
               logger.error(message, throwable)
               sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
             case _ =>

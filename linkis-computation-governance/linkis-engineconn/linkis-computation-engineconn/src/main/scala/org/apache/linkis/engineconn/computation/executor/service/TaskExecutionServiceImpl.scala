@@ -71,6 +71,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
+  ErrorRetryExecuteResponse,
   ExecuteResponse,
   IncompleteExecuteResponse,
   SubmitResponse
@@ -245,6 +246,10 @@ class TaskExecutionServiceImpl
           LoggerUtils.setJobIdMDC(jobId)
           submitTaskToExecutor(task, labels) match {
             case ErrorExecuteResponse(message, throwable) =>
+              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+              logger.error(message, throwable)
+              sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+            case ErrorRetryExecuteResponse(message, index, throwable) =>
               sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
               logger.error(message, throwable)
               sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))

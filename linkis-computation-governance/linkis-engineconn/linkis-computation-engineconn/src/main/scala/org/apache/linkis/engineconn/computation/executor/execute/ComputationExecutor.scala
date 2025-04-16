@@ -283,6 +283,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
               e.t
             )
             if (!props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+              engineConnTask.getProperties.put("linkis.failed.task.index", index.toString)
               return ErrorRetryExecuteResponse(e.message, index, e.t)
             } else {
               failedTasks.increase()

@@ -19,7 +19,10 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
-import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
+import org.apache.linkis.datasource.client.request.{
+  GetInfoPublishedByDataSourceNameAction,
+  GetInfoPublishedByUserIpPortAction
+}
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
@@ -287,6 +290,29 @@ object JDBCMultiDatasourceParser extends Logging {
 
   private def strObjIsBlank(str: Object): Boolean = {
     !strObjIsNotBlank(str)
+  }
+
+  def queryDatasourceInfoByConnParams(
+      userName: String,
+      ip: String,
+      port: String,
+      datasourceTypeName: String
+  ): util.Map[String, String] = {
+    val dataSourceClient = new LinkisDataSourceRemoteClient()
+    val action: GetInfoPublishedByUserIpPortAction = GetInfoPublishedByUserIpPortAction.builder
+      .setDatasourceTypeName(datasourceTypeName)
+      .setUser(userName)
+      .setIp(ip)
+      .setPort(port)
+      .build // ignore parameter 'system'
+
+    val dataSource: DataSource = dataSourceClient.getInfoPublishedByIpPort(action).getDataSource
+    if (dataSource != null) {
+      queryDatasourceInfo(dataSource.getDataSourceName, dataSource)
+    } else {
+      null
+    }
+
   }
 
 }

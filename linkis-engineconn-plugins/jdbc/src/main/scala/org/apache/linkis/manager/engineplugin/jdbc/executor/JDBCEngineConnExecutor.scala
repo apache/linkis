@@ -39,7 +39,10 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.NOT_SUPPORT_LIMIT_DBS
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
+  NOT_SUPPORT_LIMIT_DBS,
+  SUPPORT_CONN_PARAM_EXECUTE_ENABLE
+}
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
 import org.apache.linkis.manager.engineplugin.jdbc.exception.{
@@ -289,6 +292,50 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     if (StringUtils.isBlank(dataSourceName)) {
       dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG
     }
+
+    if (dataSourceInfo == null && SUPPORT_CONN_PARAM_EXECUTE_ENABLE) {
+      val connHost: String =
+        executorProperties.getOrDefault(
+          JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST,
+          ""
+        )
+      val connPort: String =
+        executorProperties.getOrDefault(
+          JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_PORT,
+          ""
+        )
+      val connDsType: String =
+        executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_TYPE, "")
+      val userName: String = executorProperties.getOrDefault(
+        JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME,
+        ""
+      )
+      logger.info(
+        s"use conn param get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, port:${connPort}, dsType:${connDsType}, connUser: ${userName}"
+      )
+      if (
+          StringUtils.isBlank(connHost) || StringUtils
+            .isBlank(connPort) || StringUtils.isBlank(connDsType) || StringUtils.isBlank(userName)
+      ) {
+        throw new JDBCGetDatasourceInfoException(
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc + " 缺失部分连接参数"
+        )
+      }
+      if (!execSqlUser.equals(userName)) {
+        throw new JDBCGetDatasourceInfoException(
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc + " 执行用户和连接用户不匹配"
+        )
+      }
+      dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
+        userName,
+        connHost,
+        connPort,
+        connDsType
+      )
+    }
+
     // runtime jdbc params > jdbc datasource info > jdbc engine global config
     if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
       globalConfig.putAll(dataSourceInfo)

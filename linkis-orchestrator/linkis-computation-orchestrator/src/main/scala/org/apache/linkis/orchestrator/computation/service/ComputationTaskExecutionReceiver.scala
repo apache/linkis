@@ -92,10 +92,21 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
         .foreach { codeExecutor =>
           OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
+
+          taskStatus match {
+            case rts: ResponseTaskStatusWithExecuteCodeIndex =>
+              logger.info(s"execute error with index: ${rts.errorIndex}")
+              codeExecutor.getExecTask.updateIndexMap(
+                "execute.error.code.index",
+                rts.errorIndex.toString
+              )
+            case _ =>
+          }
           val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
           logger.info(
             s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"
           )
+
           codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
           codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
           isExist = true

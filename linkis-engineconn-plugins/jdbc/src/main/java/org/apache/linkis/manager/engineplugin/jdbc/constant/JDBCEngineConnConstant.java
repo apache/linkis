@@ -52,6 +52,12 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME =
           "linkis.datasource.params.username";
 
+  public static final String JDBC_ENGINE_RUN_TIME_DS_TYPE = "linkis.datasource.type";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST = "linkis.datasource.params.host";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_PORT = "linkis.datasource.params.port";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME =
+      "linkis.datasource.params.username";
+
   public static final String JDBC_POOL_TEST_ON_BORROW = "wds.linkis.jdbc.pool.testOnBorrow";
   public static final String JDBC_POOL_TEST_ON_RETURN = "wds.linkis.jdbc.pool.testOnReturn";
   public static final String JDBC_POOL_TEST_WHILE_IDLE = "wds.linkis.jdbc.pool.testWhileIdle";

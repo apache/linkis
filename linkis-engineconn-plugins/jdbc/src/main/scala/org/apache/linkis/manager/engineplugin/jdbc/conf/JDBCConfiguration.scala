@@ -40,4 +40,7 @@ object JDBCConfiguration {
   val DS_TYPES_TO_EXECUTE_TASK_BY_JDBC =
     CommonVars[String]("linkis.can.execute.task.ds.types.by.jdbc", "starrocks").getValue
 
+  val SUPPORT_CONN_PARAM_EXECUTE_ENABLE: Boolean =
+    CommonVars[Boolean]("linkis.support.conn.param.execute.enable", true).getValue
+
 }

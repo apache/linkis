@@ -221,6 +221,16 @@ class DefaultEntranceExecutor(id: Long)
     if (canRetry) {
       logger.info(s"task: ${job.getId} reset progress from ${job.getProgress} to 0.0")
       job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
+
+      // 处理失败任务
+      failedResponse match {
+        case rte: DefaultFailedTaskResponse =>
+          if (rte.errorIndex >= 0) {
+            logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
+            props.put("execute.error.code.index", rte.errorIndex.toString)
+          }
+        case _ =>
+      }
     } else {
       logger.debug(s"task execute Failed with : ${msg}")
       getEngineExecuteAsyncReturn.foreach { jobReturn =>

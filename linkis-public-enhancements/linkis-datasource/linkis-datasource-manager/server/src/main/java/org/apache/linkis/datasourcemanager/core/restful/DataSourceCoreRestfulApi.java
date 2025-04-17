@@ -222,7 +222,9 @@ public class DataSourceCoreRestfulApi {
   @RequestMapping(value = "/info/json/create", method = RequestMethod.POST)
   public Message insertJson(@RequestBody DataSource dataSource, HttpServletRequest request) {
     String userName = ModuleUserUtils.getOperationUser(request, "insertJsonCreate");
-    if (!DatasourceConf.INSERT_DATAESOURCE_LIMIT.getValue().contains(dataSource.getDataSourceTypeName())) {
+    if (!DatasourceConf.INSERT_DATAESOURCE_LIMIT
+        .getValue()
+        .contains(dataSource.getDataSourceTypeName())) {
       return Message.error("Data source creation only supports starrocks");
     }
     dataSource.setDataSourceName(

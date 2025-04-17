@@ -42,9 +42,9 @@ trait ExecTask extends PhysicalOrchestration[ExecTask] {
     case _ => false
   }
 
-  def indexMap: Map[String, String] = _params
+  def params: Map[String, String] = _params
 
-  def updateIndexMap(key: String, value: String): Unit = {
+  def updateParams(key: String, value: String): Unit = {
     _params += (key -> value)
   }
 

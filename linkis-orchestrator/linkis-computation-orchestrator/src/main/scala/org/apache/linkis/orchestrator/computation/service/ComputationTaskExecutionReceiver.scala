@@ -27,6 +27,7 @@ import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.ecm.service.TaskExecutionReceiver
 import org.apache.linkis.orchestrator.listener.task._
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorLoggerUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
@@ -96,7 +97,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
           taskStatus match {
             case rts: ResponseTaskStatusWithExecuteCodeIndex =>
               logger.info(s"execute error with index: ${rts.errorIndex}")
-              codeExecutor.getExecTask.updateIndexMap(
+              codeExecutor.getExecTask.updateParams(
                 "execute.error.code.index",
                 rts.errorIndex.toString
               )
@@ -187,10 +188,8 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         responseTaskError match {
           case rte: ResponseTaskExecuteWithExecuteCodeIndex =>
             logger.info(s"execute error with index: ${rte.errorIndex}")
-            codeExecutor.getExecTask.updateIndexMap(
-              "execute.error.code.index",
-              rte.errorIndex.toString
-            )
+            val task: ExecTask = codeExecutor.getExecTask.getPhysicalContext.getRootTask
+            task.updateParams("execute.error.code.index", rte.errorIndex.toString)
           case _ =>
         }
 

@@ -21,7 +21,6 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   TaskLogUpdateEvent,
   TaskResponseErrorEvent,
@@ -30,6 +29,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
 import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf.SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteException
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
@@ -39,20 +39,12 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
-import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
-import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{
-  CodeLanguageLabel,
-  EngineType,
-  EngineTypeLabel,
-  RunType,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
@@ -66,11 +58,10 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import scala.collection.JavaConverters._
 
-import DataWorkCloudApplication.getApplicationContext
 import com.google.common.cache.{Cache, CacheBuilder}
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
-    extends AccessibleExecutor
+  extends AccessibleExecutor
     with ResourceExecutor
     with LabelExecutor
     with Logging {
@@ -100,13 +91,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   protected var lastTask: EngineConnTask = _
 
-  private val MAX_TASK_EXECUTE_NUM = if (null != EngineConnObject.getEngineCreationContext) {
-    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
-      EngineConnObject.getEngineCreationContext.getOptions
-    )
-  } else {
-    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
-  }
+  private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
+    EngineConnObject.getEngineCreationContext.getOptions
+  )
 
   private val CLOSE_LOCKER = new Object
 
@@ -181,9 +168,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {}
 
   protected def afterExecute(
-      engineConnTask: EngineConnTask,
-      executeResponse: ExecuteResponse
-  ): Unit = {
+                              engineConnTask: EngineConnTask,
+                              executeResponse: ExecuteResponse
+                            ): Unit = {
     Utils.tryAndWarn {
       ComputationExecutorHook.getComputationExecutorHooks.foreach { hook =>
         hook.afterExecutorExecute(engineConnTask, executeResponse)
@@ -191,8 +178,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
     val executorNumber = getSucceedNum + getFailedNum
     if (
-        MAX_TASK_EXECUTE_NUM > 0 && runningTasks
-          .getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM
+      MAX_TASK_EXECUTE_NUM > 0 && runningTasks
+        .getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM
     ) {
       logger.error(s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. ")
       ExecutorManager.getInstance.getReportExecutor.tryShutdown()
@@ -207,9 +194,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   }
 
   def toExecuteTask(
-      engineConnTask: EngineConnTask,
-      internalExecute: Boolean = false
-  ): ExecuteResponse = {
+                     engineConnTask: EngineConnTask,
+                     internalExecute: Boolean = false
+                   ): ExecuteResponse = {
     runningTasks.increase()
     this.internalExecute = internalExecute
     Utils.tryFinally {
@@ -264,51 +251,75 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           Array(hookedCode)
         }
       engineExecutionContext.setTotalParagraph(codes.length)
+
+      val retryEnable: Boolean = SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED
+
       codes.indices.foreach({ index =>
         if (ExecutionNodeStatus.Cancelled == engineConnTask.getStatus) {
           return ErrorExecuteResponse("Job is killed by user!", null)
         }
-        val code = codes(index)
-        engineExecutionContext.setCurrentParagraph(index + 1)
-
-        response = Utils.tryCatch(if (incomplete.nonEmpty) {
-          executeCompletely(engineExecutionContext, code, incomplete.toString())
-        } else executeLine(engineExecutionContext, code)) { t =>
-          ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
-        }
-
-        incomplete ++= code
-        response match {
-          case e: ErrorExecuteResponse =>
-            val props: util.Map[String, String] = engineCreationContext.getOptions
-            val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
-            val retryNum: Int =
-              Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
-            logger.info(
-              s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
-              e.t
+        var executeFlag = true
+        val errorIndex: Int = Integer.valueOf(
+          engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+        )
+        engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
+        // 重试的时候如果执行过则跳过执行
+        if (retryEnable && errorIndex > 0 && index < errorIndex) {
+          engineExecutionContext.appendStdout(
+            LogUtils.generateInfo(
+              s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
             )
-            if (!props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
-              engineConnTask.getProperties.put("linkis.failed.task.index", index.toString)
-              return ErrorRetryExecuteResponse(e.message, index, e.t)
-            } else {
-              failedTasks.increase()
-              logger.error("execute code failed!", e.t)
-              return response
-            }
-          case SuccessExecuteResponse() =>
-            engineExecutionContext.appendStdout("\n")
-            incomplete.setLength(0)
-          case e: OutputExecuteResponse =>
-            incomplete.setLength(0)
-            val output =
-              if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit) {
-                e.getOutput.substring(0, outputPrintLimit)
-              } else e.getOutput
-            engineExecutionContext.appendStdout(output)
-            if (StringUtils.isNotBlank(e.getOutput)) engineExecutionContext.sendResultSet(e)
-          case _: IncompleteExecuteResponse =>
-            incomplete ++= incompleteSplitter
+          )
+          executeFlag = false
+        }
+        if (executeFlag) {
+          val code = codes(index)
+          engineExecutionContext.setCurrentParagraph(index + 1)
+          response = Utils.tryCatch(if (incomplete.nonEmpty) {
+            executeCompletely(engineExecutionContext, code, incomplete.toString())
+          } else executeLine(engineExecutionContext, code)) { t =>
+            ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
+          }
+          // info(s"Finished to execute task ${engineConnTask.getTaskId}")
+          incomplete ++= code
+          response match {
+            case e: ErrorExecuteResponse =>
+              val props: util.Map[String, String] = engineCreationContext.getOptions
+              val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
+              val retryNum: Int =
+                Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
+
+              if (retryEnable && !props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+                logger.info(
+                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
+                  e.t
+                )
+                engineExecutionContext.appendStdout(
+                  LogUtils.generateInfo(
+                    s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                  )
+                )
+                engineConnTask.getProperties.put("execute.error.code.index", index.toString)
+                return ErrorRetryExecuteResponse(e.message, index, e.t)
+              } else {
+                failedTasks.increase()
+                logger.error("execute code failed!", e.t)
+                return response
+              }
+            case SuccessExecuteResponse() =>
+              engineExecutionContext.appendStdout("\n")
+              incomplete.setLength(0)
+            case e: OutputExecuteResponse =>
+              incomplete.setLength(0)
+              val output =
+                if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit) {
+                  e.getOutput.substring(0, outputPrintLimit)
+                } else e.getOutput
+              engineExecutionContext.appendStdout(output)
+              if (StringUtils.isNotBlank(e.getOutput)) engineExecutionContext.sendResultSet(e)
+            case _: IncompleteExecuteResponse =>
+              incomplete ++= incompleteSplitter
+          }
         }
       })
       Utils.tryCatch(engineExecutionContext.close()) { t =>
@@ -361,13 +372,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Failed)
         case _ => logger.warn(s"task get response is $executeResponse")
       }
+      Utils.tryAndWarn(afterExecute(engineConnTask, executeResponse))
       executeResponse
     }
-
-    Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
     // lastTask = null
-    logger.info(s"response type: ${response.getClass}")
     response
   } {
     LoggerUtils.removeJobIdMDC()
@@ -382,18 +391,18 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   protected def incompleteSplitter = "\n"
 
   def executeCompletely(
-      engineExecutorContext: EngineExecutionContext,
-      code: String,
-      completedLine: String
-  ): ExecuteResponse
+                         engineExecutorContext: EngineExecutionContext,
+                         code: String,
+                         completedLine: String
+                       ): ExecuteResponse
 
   def progress(taskID: String): Float
 
   def getProgressInfo(taskID: String): Array[JobProgressInfo]
 
   protected def createEngineExecutionContext(
-      engineConnTask: EngineConnTask
-  ): EngineExecutionContext = {
+                                              engineConnTask: EngineConnTask
+                                            ): EngineExecutionContext = {
     val userCreator = engineConnTask.getLables
       .find(_.isInstanceOf[UserCreatorLabel])
       .map { case label: UserCreatorLabel => label }
@@ -409,12 +418,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       engineExecutionContext.setStorePath(
         engineConnTask.getProperties.get(RequestTask.RESULT_SET_STORE_PATH).toString
       )
-    }
-    if (engineConnTask.getProperties.containsKey(JobRequestConstants.ENABLE_DIRECT_PUSH)) {
-      engineExecutionContext.setEnableDirectPush(
-        engineConnTask.getProperties.get(JobRequestConstants.ENABLE_DIRECT_PUSH).toString.toBoolean
-      )
-      logger.info(s"Enable direct push in engineTask ${engineConnTask.getTaskId}.")
     }
     logger.info(s"StorePath : ${engineExecutionContext.getStorePath.orNull}.")
     engineExecutionContext.setJobId(engineConnTask.getTaskId)
@@ -442,10 +445,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   def printTaskParamsLog(engineExecutorContext: EngineExecutionContext): Unit = {
     val sb = new StringBuilder
-
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       // skip log jobId because it corresponding jobid when the ec created
-      if (!ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue.contains(key)) {
+      if (
+        !ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue
+          .split(",")
+          .exists(_.equals(key))
+      ) {
         sb.append(s"${key}=${value}\n")
       }
     })
@@ -466,7 +472,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
       case ExecutionNodeStatus.Running =>
         if (
-            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
+          newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
         ) {
           task.setStatus(newStatus)
         } else {

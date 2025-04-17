@@ -62,21 +62,23 @@ object SafeUtils extends Logging {
     "import\\s+os\\.getresuid|" +
     "import\\s+os\\.getresgid"
 
-  private val ANNOTATION_PATTERN = "#.*$"
+  private val ANNOTATION_PATTERN = "^\\s*#.*$"
 
   private val SAFETY_PASS = "SAFETY_PASS"
 
   def isCodeSafe(code: String): Boolean = {
     var isSafe = true
+    // 在匹配高危代码前，先移除注释
+    val commentPattern = Pattern.compile(ANNOTATION_PATTERN, Pattern.MULTILINE)
+    val mather = commentPattern.matcher(code)
+    val cleanCode = mather.replaceAll("")
     val code_pattern =
       Pattern.compile(DANGEROUS_CODE_PATTERN, Pattern.DOTALL | Pattern.CASE_INSENSITIVE)
-    val code_matcher = code_pattern.matcher(code)
+    val code_matcher = code_pattern.matcher(cleanCode)
     while (code_matcher.find) {
       isSafe = false
-      val annotation_pattern = Pattern.compile(ANNOTATION_PATTERN, Pattern.MULTILINE)
-      val annotation_matcher = annotation_pattern.matcher(code)
-      while (annotation_matcher.find)
-        if (annotation_matcher.group.contains(SAFETY_PASS)) isSafe = true
+      while (mather.find)
+        if (mather.group.contains(SAFETY_PASS)) isSafe = true
     }
     isSafe
   }

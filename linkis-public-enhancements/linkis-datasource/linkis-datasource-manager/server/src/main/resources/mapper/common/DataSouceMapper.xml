@@ -253,7 +253,7 @@
         <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
         INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
-            t.`name` = #{datasourceTypeName} and d.`create_user`  = #{userName}
+            t.`name` = #{datasourceTypeName} and d.`create_user`  = #{owner}
         </where>
     </select>
 

@@ -132,9 +132,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.log {
-  height: 100%;
-}
 .btns {
   position: absolute;
   top: -2px;
@@ -153,11 +150,16 @@ export default {
   text-align: center
 }
 </style>
-<style>
+<style lang="scss" scoped>
 .engine-log-page .ivu-page-item, .engine-log-page .ivu-page-item-jump-prev {
   display: none;
 }
 .engine-log-page li.ivu-page-next {
   padding-left: 20px;
+}
+.log {
+  .workbench-log-view {
+    height: calc(100% - 24px) !important;
+  }
 }
 </style>

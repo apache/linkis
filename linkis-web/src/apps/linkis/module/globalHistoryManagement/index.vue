@@ -478,7 +478,7 @@ export default {
         
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 228
+      this.moduleHeight = this.$parent.$el.clientHeight - 252
       if(this.showAdvance) {
         this.moduleHeight -= 42
       }

@@ -257,10 +257,9 @@ class TaskExecutionServiceImpl
               logger.error(message, throwable)
               sendToEntrance(
                 task,
-                new ResponseTaskStatusWithExecuteCodeIndex(
+                ResponseTaskStatus(
                   task.getTaskId,
-                  ExecutionNodeStatus.Failed,
-                  index
+                  ExecutionNodeStatus.Failed
                 )
               )
             case _ =>

@@ -555,6 +555,7 @@ public class DataSourceCoreRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
     @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
     @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
@@ -565,6 +566,7 @@ public class DataSourceCoreRestfulApi {
       @PathVariable("ip") String ip,
       @PathVariable("port") String port,
       @PathVariable("owner") String owner,
+      @PathVariable("datasourceUser") String datasourceUser,
       HttpServletRequest request)
       throws UnsupportedEncodingException {
     return RestfulApiHelper.doAndResponse(
@@ -575,7 +577,7 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Parameter owner cannot be empty （参数 owner 不能为空）");
           }
           DataSource dataSource =
-              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner);
+              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner, datasourceUser);
           if (dataSource == null) {
             return Message.error("No Exists The DataSource [不存在该数据源]");
           }

@@ -29,6 +29,7 @@ class GetInfoPublishedByUserIpPortAction extends GetAction with DataSourceAction
   private var ip: String = _
   private var port: String = _
   private var owner: String = _
+  private var datasourceUser: String = _
 
   override def suffixURLs: Array[String] =
     Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", datasourceTypeName, ip, port)
@@ -50,12 +51,17 @@ object GetInfoPublishedByUserIpPortAction {
     private var system: String = _
     private var user: String = _
     private var owner: String = _
+    private var datasourceUser: String = _
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
+    def setDatasourceUser(datasourceUser: String): Builder = {
+      this.datasourceUser = datasourceUser
+      this
+    }
     def setOwner(owner: String): Builder = {
       this.owner = owner
       this
@@ -97,11 +103,14 @@ object GetInfoPublishedByUserIpPortAction {
 //      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
+      if (datasourceUser == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
+
       val GetInfoPublishedByUserIpPortAction = new GetInfoPublishedByUserIpPortAction
       GetInfoPublishedByUserIpPortAction.datasourceTypeName = this.datasourceTypeName
       GetInfoPublishedByUserIpPortAction.ip = this.ip
       GetInfoPublishedByUserIpPortAction.port = this.port
       GetInfoPublishedByUserIpPortAction.owner = this.owner
+      GetInfoPublishedByUserIpPortAction.datasourceUser = this.datasourceUser
       if (StringUtils.isNotBlank(system)) {
         GetInfoPublishedByUserIpPortAction.setParameter("system", system)
       }

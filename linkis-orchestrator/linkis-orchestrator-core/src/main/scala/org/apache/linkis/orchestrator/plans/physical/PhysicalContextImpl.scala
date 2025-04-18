@@ -70,6 +70,8 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
       OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
       cause
     )
+    // 标识失败代码索引，以便重试的时候只执行未执行代码
+    failedResponse.errorIndex = this.rootTask.params.getOrElse("execute.error.code.index", "-1").toInt
     this.response = failedResponse
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }

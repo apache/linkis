@@ -75,11 +75,6 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
         case succeed: SucceedTaskResponse =>
           logger.info(s"Succeed to execute ExecTask(${task.getIDInfo})")
           transientStatus(ExecutionNodeStatus.Succeed)
-        case failedTaskResponse: DefaultFailedTaskResponse =>
-          logger.info(s"DefaultFailed to execute ExecTask(${task.getIDInfo})")
-          failedTaskResponse.errorIndex =
-            task.params.getOrElse("execute.error.code.index", "-1").toInt
-          transientStatus(ExecutionNodeStatus.Failed)
         case failedTaskResponse: FailedTaskResponse =>
           logger.info(s"Failed to execute ExecTask(${task.getIDInfo})")
           transientStatus(ExecutionNodeStatus.Failed)

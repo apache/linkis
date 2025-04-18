@@ -62,6 +62,7 @@ object GetInfoPublishedByUserIpPortAction {
       this.datasourceUser = datasourceUser
       this
     }
+
     def setOwner(owner: String): Builder = {
       this.owner = owner
       this
@@ -103,7 +104,8 @@ object GetInfoPublishedByUserIpPortAction {
 //      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
-      if (datasourceUser == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
+      if (datasourceUser == null)
+        throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val GetInfoPublishedByUserIpPortAction = new GetInfoPublishedByUserIpPortAction
       GetInfoPublishedByUserIpPortAction.datasourceTypeName = this.datasourceTypeName

@@ -221,17 +221,27 @@ public class DataSourceCoreRestfulApi {
   })
   @RequestMapping(value = "/info/json/create", method = RequestMethod.POST)
   public Message insertJson(@RequestBody DataSource dataSource, HttpServletRequest request) {
-    String userName = ModuleUserUtils.getOperationUser(request, "insertJsonCreate");
-    if (!DatasourceConf.INSERT_DATAESOURCE_LIMIT
-        .getValue()
-        .contains(dataSource.getDataSourceTypeName())) {
-      return Message.error("Data source creation only supports starrocks");
+    ModuleUserUtils.getOperationUser(request, "insertJsonCreate");
+    String owner = dataSource.getCreateUser();
+    String dataSourceTypeName = dataSource.getDataSourceTypeName();
+    // 参数校验
+    if (StringUtils.isBlank(owner)) {
+      return Message.error("Parameter createUser cannot be empty （参数 createUser 不能为空）");
     }
+    if (StringUtils.isBlank(dataSourceTypeName)) {
+      return Message.error(
+          "Parameter dataSourceTypeName cannot be empty （参数 dataSourceTypeName 不能为空）");
+    }
+    // 限制仅支持starrocks
+    if (!DatasourceConf.INSERT_DATAESOURCE_LIMIT.getValue().contains(dataSourceTypeName)) {
+      return Message.error("DataSource Create Only Support starrocks");
+    }
+    // 参数调整
     dataSource.setDataSourceName(
         String.join(
             "_",
-            dataSource.getDataSourceTypeName(),
-            userName,
+            dataSourceTypeName,
+            owner,
             DateTypeUtils.dateFormatSecondLocal().get().format(new Date())));
     if (dataSourceInfoService.existDataSource(dataSource.getDataSourceName())) {
       return Message.error(
@@ -241,8 +251,11 @@ public class DataSourceCoreRestfulApi {
               + dataSource.getDataSourceName()
               + " 已经存在]");
     }
+    DataSourceType dataSourceType = getDatasoutceTypeID(dataSourceTypeName, request);
+    if (dataSourceType != null)
+      dataSource.setDataSourceTypeId(Long.valueOf(dataSourceType.getId()));
     // 创建数据源
-    insertDatasource(dataSource, userName);
+    insertDatasource(dataSource, owner);
     Map<String, Object> stringHashMap = new HashMap<>();
     stringHashMap.put("connectParams", dataSource.getConnectParams());
     stringHashMap.put("comment", "初始化版本");
@@ -277,22 +290,22 @@ public class DataSourceCoreRestfulApi {
         required = true,
         dataType = "String",
         example = "1650426189000"),
-    @ApiImplicitParam(name = "createUser", required = true, dataType = "String", example = "hive"),
+    @ApiImplicitParam(name = "createUser", required = true, dataType = "String"),
     @ApiImplicitParam(name = "dataSourceDesc", required = true, dataType = "String"),
     @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String"),
     @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String"),
     @ApiImplicitParam(name = "labels", required = true, dataType = "String"),
     @ApiImplicitParam(name = "connectParams", required = true, dataType = "List"),
-    @ApiImplicitParam(name = "host", dataType = "String", example = "127.0.0.1"),
+    @ApiImplicitParam(name = "host", dataType = "String"),
     @ApiImplicitParam(name = "password", dataType = "String"),
-    @ApiImplicitParam(name = "port", dataType = "String", example = "9523"),
+    @ApiImplicitParam(name = "port", dataType = "String"),
     @ApiImplicitParam(name = "subSystem", dataType = "String"),
     @ApiImplicitParam(name = "username", dataType = "String"),
-    @ApiImplicitParam(name = "expire", dataType = "boolean", example = "false"),
-    @ApiImplicitParam(name = "file", dataType = "String", example = "adn"),
-    @ApiImplicitParam(name = "modifyTime", dataType = "String", example = "1657611440000"),
-    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "hadoop"),
-    @ApiImplicitParam(name = "versionId", dataType = "String", example = "18")
+    @ApiImplicitParam(name = "expire", dataType = "boolean"),
+    @ApiImplicitParam(name = "file", dataType = "String"),
+    @ApiImplicitParam(name = "modifyTime", dataType = "String"),
+    @ApiImplicitParam(name = "modifyUser", dataType = "String"),
+    @ApiImplicitParam(name = "versionId", dataType = "String")
   })
   @ApiOperationSupport(ignoreParameters = {"dataSource"})
   @RequestMapping(value = "/info/{dataSourceId}/json", method = RequestMethod.PUT)
@@ -542,29 +555,33 @@ public class DataSourceCoreRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
     @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
     @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
-      value = "/publishedInfo/{datasourceTypeName}/{ip}/{port}",
+      value = "/publishedInfo/{datasourceTypeName}/{owner}/{ip}/{port}",
       method = RequestMethod.GET)
   public Message getPublishedInfoByIpPort(
       @PathVariable("datasourceTypeName") String datasourceTypeName,
       @PathVariable("ip") String ip,
       @PathVariable("port") String port,
+      @PathVariable("owner") String owner,
+      @PathVariable("datasourceUser") String datasourceUser,
       HttpServletRequest request)
       throws UnsupportedEncodingException {
     return RestfulApiHelper.doAndResponse(
         () -> {
-          String userName =
-              ModuleUserUtils.getOperationUser(
-                  request, "getPublishedInfoByIpPort ip:" + ip + ",port:" + port);
+          ModuleUserUtils.getOperationUser(
+              request, "getPublishedInfoByIpPort ip:" + ip + ",port:" + port);
+          if (StringUtils.isBlank(owner)) {
+            return Message.error("Parameter owner cannot be empty （参数 owner 不能为空）");
+          }
           DataSource dataSource =
-              dataSourceInfoService.getDataSourcePublishInfo(
-                  datasourceTypeName, ip, port, userName);
+              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner, datasourceUser);
           if (dataSource == null) {
             return Message.error("No Exists The DataSource [不存在该数据源]");
           }
-          if (!AuthContext.hasPermission(dataSource, userName)) {
+          if (!AuthContext.hasPermission(dataSource, owner)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
           List<DataSourceParamKeyDefinition> keyDefinitionList =

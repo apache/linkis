@@ -310,26 +310,25 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME,
         ""
       )
+      val proxyUser: String =
+        globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser)
       logger.info(
-        s"use conn param get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, port:${connPort}, dsType:${connDsType}, connUser: ${userName}"
+        s"use conn param get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, port:${connPort}, dsType:${connDsType}, createUser:${execSqlUser} connUser: ${proxyUser}"
       )
       if (
           StringUtils.isBlank(connHost) || StringUtils
-            .isBlank(connPort) || StringUtils.isBlank(connDsType) || StringUtils.isBlank(userName)
+            .isBlank(connPort) || StringUtils.isBlank(connDsType) || StringUtils.isBlank(
+            execSqlUser
+          ) || StringUtils.isBlank(proxyUser)
       ) {
         throw new JDBCGetDatasourceInfoException(
           JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
           JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc + " 缺失部分连接参数"
         )
       }
-      if (!execSqlUser.equals(userName)) {
-        throw new JDBCGetDatasourceInfoException(
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc + " 执行用户和连接用户不匹配"
-        )
-      }
       dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
-        userName,
+        execSqlUser,
+        proxyUser,
         connHost,
         connPort,
         connDsType

@@ -126,10 +126,10 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
   @Override
   public DataSource getDataSourcePublishInfo(
-      String datasourceTypeName, String ip, String port, String userName) {
+          String datasourceTypeName, String ip, String port, String owner, String datasourceUser) {
     DataSource dataSource = null;
     List<DataSource> dataSourceList =
-        dataSourceDao.selectDatasourcesByType(datasourceTypeName, userName);
+        dataSourceDao.selectDatasourcesByType(datasourceTypeName, owner);
     if (CollectionUtils.isNotEmpty(dataSourceList)) {
       for (DataSource dataSourceInfo : dataSourceList) {
         if (null == dataSourceInfo.getPublishedVersionId()) {
@@ -138,7 +138,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
           String parameter =
               dataSourceVersionDao.selectOneVersion(
                   dataSourceInfo.getId(), dataSourceInfo.getPublishedVersionId());
-          if (parameter.contains(ip) && parameter.contains(port)) {
+          if (parameter.contains(ip) && parameter.contains(port)&& parameter.contains(datasourceUser)) {
             dataSource = dataSourceInfo;
             dataSource.setParameter(parameter);
           }

@@ -17,7 +17,7 @@
 
 <template>
   <div class="global-history">
-    <div class="global-history-searchbar">
+    <div ref="searchBar" class="global-history-searchbar">
       <div class="searchbar-items">
         <div class="searchbar-item">
           <label class="label">{{$t('message.linkis.jobId')}}</label>
@@ -375,7 +375,6 @@ export default {
     }
     
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 220
     // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
     window.addEventListener('resize', this.getHeight)
   },
@@ -478,10 +477,7 @@ export default {
         
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 252
-      if(this.showAdvance) {
-        this.moduleHeight -= 42
-      }
+      this.moduleHeight = this.$parent.$el.clientHeight - this.$refs.searchBar.offsetHeight - 200;
     },
     clickAdvance() {
       this.showAdvance = !this.showAdvance

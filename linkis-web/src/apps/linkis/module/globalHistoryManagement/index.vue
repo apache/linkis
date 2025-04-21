@@ -477,7 +477,7 @@ export default {
         
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - this.$refs.searchBar.offsetHeight - 200;
+      this.moduleHeight = this.$parent.$el.clientHeight - this.$refs.searchBar.offsetHeight - 210;
       if(this.showAdvance) {
         this.moduleHeight -= 10
       }

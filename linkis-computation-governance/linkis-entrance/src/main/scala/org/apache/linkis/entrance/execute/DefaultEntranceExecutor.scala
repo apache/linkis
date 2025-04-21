@@ -47,6 +47,7 @@ import org.apache.linkis.orchestrator.execution.{
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.server.BDPJettyServerHelper
 
@@ -227,7 +228,9 @@ class DefaultEntranceExecutor(id: Long)
         case rte: DefaultFailedTaskResponse =>
           if (rte.errorIndex >= 0) {
             logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
-            props.put("execute.error.code.index", rte.errorIndex.toString)
+            val newParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+            newParams.put("execute.error.code.index", rte.errorIndex.toString)
+            TaskUtils.addRuntimeMap(props, newParams)
           }
         case _ =>
       }

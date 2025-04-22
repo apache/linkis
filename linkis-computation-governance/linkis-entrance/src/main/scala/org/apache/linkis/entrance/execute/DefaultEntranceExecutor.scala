@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
 import org.apache.linkis.governance.common.utils.LoggerUtils
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -55,6 +56,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
 import java.util.Date
+
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 class DefaultEntranceExecutor(id: Long)
     extends EntranceExecutor(id)
@@ -220,8 +223,24 @@ class DefaultEntranceExecutor(id: Long)
     })
     // 无法重试，更新失败状态
     if (canRetry) {
+      // 可以重试，重置任务进度为0
       logger.info(s"task: ${job.getId} reset progress from ${job.getProgress} to 0.0")
       job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
+
+      // 如果有模板参数，则需要按模板参数重启动引擎
+      val startMap: util.Map[String, AnyRef] =
+        TaskUtils.getStartupMap(entranceExecuteRequest.getJob.params)
+      if (startMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
+        val tempConf: util.HashMap[String, AnyRef] = startMap
+          .getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, new util.HashMap[String, AnyRef]())
+          .asInstanceOf[util.HashMap[String, AnyRef]]
+        tempConf.asScala.foreach { case (key, value) =>
+          // 保留原有已经设置的spark3相关参数
+          if (!startMap.containsKey(key)) {
+            startMap.put(key, value)
+          }
+        }
+      }
 
       // 处理失败任务
       failedResponse match {

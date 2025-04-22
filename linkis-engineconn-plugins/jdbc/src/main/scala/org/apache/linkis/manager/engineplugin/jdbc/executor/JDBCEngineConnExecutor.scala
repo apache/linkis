@@ -65,6 +65,7 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
@@ -291,8 +292,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     if (StringUtils.isBlank(dataSourceName)) {
       dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG
     }
-
-    if (dataSourceInfo == null && SUPPORT_CONN_PARAM_EXECUTE_ENABLE) {
+    if (MapUtils.isEmpty(dataSourceInfo) && SUPPORT_CONN_PARAM_EXECUTE_ENABLE) {
       val connHost: String =
         executorProperties.getOrDefault(
           JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST,

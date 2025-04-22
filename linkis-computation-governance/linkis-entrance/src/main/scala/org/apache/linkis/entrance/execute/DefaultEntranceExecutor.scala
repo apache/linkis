@@ -228,10 +228,12 @@ class DefaultEntranceExecutor(id: Long)
       job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
 
       // 如果有模板参数，则需要按模板参数重启动引擎
+      val runtimeMap: util.Map[String, AnyRef] =
+        TaskUtils.getRuntimeMap(entranceExecuteRequest.getJob.params)
       val startMap: util.Map[String, AnyRef] =
         TaskUtils.getStartupMap(entranceExecuteRequest.getJob.params)
-      if (startMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
-        val tempConf: util.HashMap[String, AnyRef] = startMap
+      if (runtimeMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
+        val tempConf: util.HashMap[String, AnyRef] = runtimeMap
           .getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, new util.HashMap[String, AnyRef]())
           .asInstanceOf[util.HashMap[String, AnyRef]]
         tempConf.asScala.foreach { case (key, value) =>

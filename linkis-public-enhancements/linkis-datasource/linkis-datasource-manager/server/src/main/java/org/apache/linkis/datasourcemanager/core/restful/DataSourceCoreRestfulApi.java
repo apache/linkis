@@ -553,11 +553,11 @@ public class DataSourceCoreRestfulApi {
       notes = "Retrieve published information of a data source by its type name, IP and port",
       response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
-          @ApiImplicitParam(name = "owner", required = true, dataType = "String"),
-          @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
-          @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
-          @ApiImplicitParam(name = "port", required = true, dataType = "String")
+    @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "owner", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
       value = "/publishedInfo/{datasourceTypeName}/{owner}/{datasourceUser}/{ip}/{port}",

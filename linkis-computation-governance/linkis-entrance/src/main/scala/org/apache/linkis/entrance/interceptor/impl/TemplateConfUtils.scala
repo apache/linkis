@@ -277,8 +277,12 @@ object TemplateConfUtils extends Logging {
               s"If task execution fails, the template $templateName configuration parameters will be used to rerun the task\n"
             )
           )
+          val keyList = new util.HashMap[String, AnyRef]()
+          templateConflist.asScala.foreach(ele => {
+            keyList.put(ele.getKey, ele.getConfigValue)
+          })
           // 缓存配置到startUp
-          startMap.put(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, templateConflist)
+          startMap.put(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, keyList)
           // 清理旧的
           TaskUtils.clearStartupMap(params)
           // 添加新的

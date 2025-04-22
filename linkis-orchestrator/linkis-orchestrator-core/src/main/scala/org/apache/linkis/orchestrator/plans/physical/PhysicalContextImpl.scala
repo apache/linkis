@@ -71,7 +71,8 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
       cause
     )
     // 标识失败代码索引，以便重试的时候只执行未执行代码
-    failedResponse.errorIndex = this.rootTask.params.getOrElse("execute.error.code.index", "-1").toInt
+    failedResponse.errorIndex =
+      this.rootTask.params.getOrElse("execute.error.code.index", "-1").toInt
     this.response = failedResponse
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }

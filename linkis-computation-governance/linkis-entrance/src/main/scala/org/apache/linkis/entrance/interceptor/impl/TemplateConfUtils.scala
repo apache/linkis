@@ -281,12 +281,10 @@ object TemplateConfUtils extends Logging {
           templateConflist.asScala.foreach(ele => {
             keyList.put(ele.getKey, ele.getConfigValue)
           })
-          // 缓存配置到startUp
-          startMap.put(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, keyList)
-          // 清理旧的
-          TaskUtils.clearStartupMap(params)
-          // 添加新的
-          TaskUtils.addStartupMap(params, startMap)
+          val confRuntimeMap = new util.HashMap[String, AnyRef]()
+          confRuntimeMap.put(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, keyList)
+          // 缓存配置到runtime
+          TaskUtils.addRuntimeMap(params, confRuntimeMap)
           // 如果是aisql则不需要手动处理模板参数
           templateConflist.clear()
         }

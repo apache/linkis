@@ -140,7 +140,8 @@ object SQLSession extends Logging {
     )
     val hasSetResultSetNum: Boolean = engineExecutionContext.getProperties
       .getOrDefault("hasSetResultSetNum", "true")
-      .asInstanceOf[Boolean]
+      .toString
+      .toBoolean
     if (hasSetResultSetNum && errorIndex > 0) {
       engineExecutionContext.setResultSetNum(errorIndex)
       engineExecutionContext.getProperties.put("hasSetResultSetNum", "false")

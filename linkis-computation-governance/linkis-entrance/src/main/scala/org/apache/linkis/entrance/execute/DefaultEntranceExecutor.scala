@@ -242,6 +242,8 @@ class DefaultEntranceExecutor(id: Long)
                 startMap.put(key, value)
               }
             }
+            TaskUtils.clearStartupMap(params)
+            TaskUtils.addStartupMap(params, startMap)
           case _ =>
         }
       }

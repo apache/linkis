@@ -231,16 +231,19 @@ class DefaultEntranceExecutor(id: Long)
       val runtimeMap: util.Map[String, AnyRef] =
         TaskUtils.getRuntimeMap(entranceExecuteRequest.getJob.params)
       val startMap: util.Map[String, AnyRef] =
-        TaskUtils.getStartupMap(entranceExecuteRequest.getJob.params)
+        TaskUtils.getStartupMap(entranceExecuteRequest.getJob.getJobRequest.getParams)
       if (runtimeMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
-        val tempConf: util.HashMap[String, AnyRef] = runtimeMap
+        val tempConf: AnyRef = runtimeMap
           .getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, new util.HashMap[String, AnyRef]())
-          .asInstanceOf[util.HashMap[String, AnyRef]]
-        tempConf.asScala.foreach { case (key, value) =>
-          // 保留原有已经设置的spark3相关参数
-          if (!startMap.containsKey(key)) {
-            startMap.put(key, value)
-          }
+        tempConf match {
+          case map: util.HashMap[String, AnyRef] =>
+            map.asScala.foreach { case (key, value) =>
+              // 保留原有已经设置的spark3相关参数
+              if (!startMap.containsKey(key)) {
+                startMap.put(key, value)
+              }
+            }
+          case _ =>
         }
       }
 

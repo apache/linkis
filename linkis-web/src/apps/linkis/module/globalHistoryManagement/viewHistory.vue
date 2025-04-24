@@ -147,7 +147,7 @@ export default {
       this.hasEngine = !!param;
 
     }
-    this.showUDF = ['spark', 'hive'].includes(this.param.engineType)
+    this.showUDF = ['spark', 'hive'].includes(this.param?.engineType || '')
     this.tabs = [
       { name: 'log', label: 'message.linkis.log' },
       { name: 'code', label: 'message.linkis.executionCode' },

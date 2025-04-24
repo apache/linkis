@@ -269,7 +269,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
         )
         // 重试的时候如果执行过则跳过执行
-        if (errorIndex > 0 && index < errorIndex) {
+        // TODO 为了测试跳过失败语句，测试完需要恢复，去掉等于号
+        if (errorIndex > 0 && index <= errorIndex) {
           executeFlag = false
         }
         if (executeFlag) {

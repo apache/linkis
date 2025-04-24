@@ -83,7 +83,7 @@ public interface DataSourceInfoService {
    * @return
    */
   DataSource getDataSourcePublishInfo(
-          String datasourceTypeName, String ip, String port, String owner, String datasourceUser);
+      String datasourceTypeName, String ip, String port, String owner, String datasourceUser);
 
   /**
    * Get data source

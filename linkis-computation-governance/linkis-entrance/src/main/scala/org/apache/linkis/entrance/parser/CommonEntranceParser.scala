@@ -48,6 +48,7 @@ import org.apache.linkis.manager.label.entity.engine.{
 }
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtil}
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 import org.apache.linkis.storage.script.VariableParser
@@ -107,6 +108,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
         s"${EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc},  labels is null"
       )
     }
+    addUserToRuntime(submitUser, executeUser, configMap)
     // 3. set Code
     var code: String = null
     var runType: String = null
@@ -243,8 +245,10 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobReq.setExecuteUser(umUser)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)
+
+    addUserToRuntime(submitUser, umUser, _params)
     _params match {
-      case mapParams: java.util.Map[String, AnyRef] => jobReq.setParams(mapParams)
+      case mapParams: util.Map[String, AnyRef] => jobReq.setParams(mapParams)
       case _ =>
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
@@ -321,6 +325,17 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
     jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
+  }
+
+  private def addUserToRuntime(submitUser: String, umUser: String, _params: AnyRef): Unit = {
+    val runtimeMap: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+    runtimeMap.put(TaskConstant.SUBMIT_USER, submitUser)
+    runtimeMap.put(TaskConstant.EXECUTE_USER, umUser)
+    _params match {
+      case map: util.Map[String, AnyRef] =>
+        TaskUtils.addRuntimeMap(map, runtimeMap)
+      case _ =>
+    }
   }
 
   private def buildLabel(labelMap: util.Map[String, AnyRef]): util.HashMap[String, Label[_]] = {

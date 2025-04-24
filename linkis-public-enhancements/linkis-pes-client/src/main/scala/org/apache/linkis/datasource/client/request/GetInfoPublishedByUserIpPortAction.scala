@@ -32,7 +32,15 @@ class GetInfoPublishedByUserIpPortAction extends GetAction with DataSourceAction
   private var datasourceUser: String = _
 
   override def suffixURLs: Array[String] =
-    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", datasourceTypeName, ip, port)
+    Array(
+      DATA_SOURCE_SERVICE_MODULE.getValue,
+      "publishedInfo",
+      datasourceTypeName,
+      owner,
+      datasourceUser,
+      ip,
+      port
+    )
 
   private var user: String = _
 
@@ -104,8 +112,9 @@ object GetInfoPublishedByUserIpPortAction {
 //      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
-      if (datasourceUser == null)
+      if (datasourceUser == null) {
         throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
+      }
 
       val GetInfoPublishedByUserIpPortAction = new GetInfoPublishedByUserIpPortAction
       GetInfoPublishedByUserIpPortAction.datasourceTypeName = this.datasourceTypeName

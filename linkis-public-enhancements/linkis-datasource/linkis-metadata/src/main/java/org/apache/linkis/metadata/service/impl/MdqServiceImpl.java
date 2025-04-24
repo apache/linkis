@@ -417,7 +417,7 @@ public class MdqServiceImpl implements MdqService {
       if (retryCount <= MdqConfiguration.HDFS_INIT_MAX_RETRY_COUNT().getValue()
           && (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
               || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
-        logger.warn("Failed to get tableSize, retry", e);
+        logger.info("Failed to get tableSize, retry", e);
         resetRootHdfs();
         return getTableSizeWithRetry(tableLocation, retryCount + 1);
       } else {

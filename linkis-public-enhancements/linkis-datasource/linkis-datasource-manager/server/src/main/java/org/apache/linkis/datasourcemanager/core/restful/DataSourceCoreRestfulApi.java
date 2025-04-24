@@ -554,21 +554,21 @@ public class DataSourceCoreRestfulApi {
       response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "owner", required = true, dataType = "String"),
     @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
     @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
-      value = "/publishedInfo/{datasourceTypeName}/{owner}/{ip}/{port}",
+      value = "/publishedInfo/{datasourceTypeName}/{owner}/{datasourceUser}/{ip}/{port}",
       method = RequestMethod.GET)
   public Message getPublishedInfoByIpPort(
       @PathVariable("datasourceTypeName") String datasourceTypeName,
-      @PathVariable("ip") String ip,
-      @PathVariable("port") String port,
       @PathVariable("owner") String owner,
       @PathVariable("datasourceUser") String datasourceUser,
-      HttpServletRequest request)
-      throws UnsupportedEncodingException {
+      @PathVariable("ip") String ip,
+      @PathVariable("port") String port,
+      HttpServletRequest request) {
     return RestfulApiHelper.doAndResponse(
         () -> {
           ModuleUserUtils.getOperationUser(
@@ -577,7 +577,8 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Parameter owner cannot be empty （参数 owner 不能为空）");
           }
           DataSource dataSource =
-              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner, datasourceUser);
+              dataSourceInfoService.getDataSourcePublishInfo(
+                  datasourceTypeName, ip, port, owner, datasourceUser);
           if (dataSource == null) {
             return Message.error("No Exists The DataSource [不存在该数据源]");
           }
@@ -590,6 +591,9 @@ public class DataSourceCoreRestfulApi {
           if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
             RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
           }
+          DataSourceType dataSourceType = new DataSourceType();
+          dataSourceType.setName(datasourceTypeName);
+          dataSource.setDataSourceType(dataSourceType);
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");

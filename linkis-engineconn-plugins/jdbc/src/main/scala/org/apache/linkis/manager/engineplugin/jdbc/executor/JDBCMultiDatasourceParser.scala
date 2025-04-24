@@ -303,6 +303,7 @@ object JDBCMultiDatasourceParser extends Logging {
     val action: GetInfoPublishedByUserIpPortAction = GetInfoPublishedByUserIpPortAction.builder
       .setDatasourceTypeName(datasourceTypeName)
       .setUser(createUser)
+      .setOwner(createUser)
       .setDatasourceUser(proxyUser)
       .setIp(ip)
       .setPort(port)

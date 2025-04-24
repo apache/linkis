@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
 import org.apache.linkis.governance.common.utils.LoggerUtils
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -47,6 +48,7 @@ import org.apache.linkis.orchestrator.execution.{
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.server.BDPJettyServerHelper
 
@@ -54,6 +56,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
 import java.util.Date
+
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 class DefaultEntranceExecutor(id: Long)
     extends EntranceExecutor(id)
@@ -219,15 +223,37 @@ class DefaultEntranceExecutor(id: Long)
     })
     // 无法重试，更新失败状态
     if (canRetry) {
+      // 可以重试，重置任务进度为0
       logger.info(s"task: ${job.getId} reset progress from ${job.getProgress} to 0.0")
       job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
+
+      // 如果有模板参数，则需要按模板参数重启动引擎
+      val params: util.Map[String, AnyRef] = entranceExecuteRequest.getJob.getJobRequest.getParams
+      val runtimeMap: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
+      val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(params)
+      if (runtimeMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
+        val tempConf: AnyRef = runtimeMap
+          .getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, new util.HashMap[String, AnyRef]())
+        tempConf match {
+          case map: util.HashMap[String, AnyRef] =>
+            map.asScala.foreach { case (key, value) =>
+              // 保留原有已经设置的spark3相关参数
+              if (!startMap.containsKey(key)) {
+                startMap.put(key, value)
+              }
+            }
+          case _ =>
+        }
+      }
 
       // 处理失败任务
       failedResponse match {
         case rte: DefaultFailedTaskResponse =>
           if (rte.errorIndex >= 0) {
             logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
-            props.put("execute.error.code.index", rte.errorIndex.toString)
+            val newParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+            newParams.put("execute.error.code.index", rte.errorIndex.toString)
+            TaskUtils.addRuntimeMap(props, newParams)
           }
         case _ =>
       }

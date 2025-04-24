@@ -56,6 +56,9 @@ object OrchestratorConfiguration {
   val TASK_MAX_PERSIST_WAIT_TIME =
     CommonVars("wds.linkis.orchestrator.task.persist.wait.max", new TimeType("5m"))
 
+  val ERROR_TASK_RECEIVER_WAIT_TIME =
+    CommonVars("linkis.error.task.receiver.wait.time", new TimeType("30s"))
+
   val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 30000)
 
   val RETRYTASK_MAXIMUM_AGE = CommonVars("wds.linkis.computation.orchestrator.retry.max.age", 10)

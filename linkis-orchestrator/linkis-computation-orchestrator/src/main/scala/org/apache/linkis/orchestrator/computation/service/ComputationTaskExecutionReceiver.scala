@@ -93,6 +93,15 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
         .foreach { codeExecutor =>
           OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
+          val task: ExecTask = codeExecutor.getExecTask.getPhysicalContext.getRootTask
+          taskStatus match {
+            case rte: ResponseTaskStatusWithExecuteCodeIndex =>
+              logger.info(s"execute error with index: ${rte.errorIndex}")
+              task.updateParams("execute.error.code.index", rte.errorIndex.toString)
+            case _ =>
+          }
+          // 标识当前方法执行过，该方法是异步的，处理失败任务需要该方法执行完
+          task.updateParams("task.error.receiver.flag", "true")
           val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
           logger.info(
             s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"
@@ -174,15 +183,6 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       .getByEngineConnAndTaskId(serviceInstance, responseTaskError.execId)
       .foreach { codeExecutor =>
         OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
-        val task: ExecTask = codeExecutor.getExecTask.getPhysicalContext.getRootTask
-        responseTaskError match {
-          case rte: ResponseTaskExecuteWithExecuteCodeIndex =>
-            logger.info(s"execute error with index: ${rte.errorIndex}")
-            task.updateParams("execute.error.code.index", rte.errorIndex.toString)
-          case _ =>
-        }
-        // 标识当前方法执行过，该方法是异步的，处理失败任务需要该方法执行完
-        task.updateParams("task.error.receiver.flag", "true")
         val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
         logger.info(
           s"From engineConn receive responseTaskError  info${responseTaskError.execId}, now post to listenerBus event: ${event.execTask.getIDInfo()}"

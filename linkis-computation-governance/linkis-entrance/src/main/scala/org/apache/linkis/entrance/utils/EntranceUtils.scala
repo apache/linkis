@@ -18,7 +18,9 @@
 package org.apache.linkis.entrance.utils
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
@@ -105,6 +107,21 @@ object EntranceUtils extends Logging {
     } else {
       entranceRealNumber
     }
+  }
+
+  def getUserDeapartmentId(username: String): String = {
+    var departmentId = ""
+    val sender: Sender =
+      Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+    val responseSubmitUser = sender.ask(new DepartmentRequest(username))
+    responseSubmitUser match {
+      case departmentSubmitUser: DepartmentResponse =>
+        if (StringUtils.isNotBlank(departmentSubmitUser.departmentId)) {
+          departmentId = departmentSubmitUser.departmentId
+        }
+      case _ =>
+    }
+    departmentId
   }
 
 }

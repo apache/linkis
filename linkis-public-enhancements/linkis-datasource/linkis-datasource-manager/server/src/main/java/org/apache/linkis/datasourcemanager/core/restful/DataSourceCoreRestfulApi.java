@@ -43,6 +43,7 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,6 +232,18 @@ public class DataSourceCoreRestfulApi {
     if (StringUtils.isBlank(dataSourceTypeName)) {
       return Message.error(
           "Parameter dataSourceTypeName cannot be empty （参数 dataSourceTypeName 不能为空）");
+    }
+    Map<String, Object> connectParams = dataSource.getConnectParams();
+    if (MapUtils.isEmpty(connectParams)) {
+      return Message.error("Parameter connectParams cannot be empty （参数 connectParams 不能为空）");
+    }
+    // 定义需要校验的参数
+    String[] requiredParams = {"host", "port", "driverClassName", "username", "password"};
+    for (String param : requiredParams) {
+      Object value = connectParams.get(param);
+      if (value == null || StringUtils.isEmpty(value.toString())) {
+        return Message.error("Parameter " + param + " cannot be empty （参数 " + param + " 不能为空）");
+      }
     }
     // 限制仅支持starrocks
     if (!DatasourceConf.INSERT_DATAESOURCE_LIMIT.getValue().contains(dataSourceTypeName)) {
@@ -560,29 +573,29 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
-      value = "/publishedInfo/{datasourceTypeName}/{owner}/{datasourceUser}/{ip}/{port}",
+      value = "/publishedInfo/{datasourceTypeName}/{owner}/{ip}/{port}",
       method = RequestMethod.GET)
   public Message getPublishedInfoByIpPort(
       @PathVariable("datasourceTypeName") String datasourceTypeName,
       @PathVariable("owner") String owner,
-      @PathVariable("datasourceUser") String datasourceUser,
       @PathVariable("ip") String ip,
       @PathVariable("port") String port,
       HttpServletRequest request) {
     return RestfulApiHelper.doAndResponse(
         () -> {
-          ModuleUserUtils.getOperationUser(
-              request, "getPublishedInfoByIpPort ip:" + ip + ",port:" + port);
+          String username =
+              ModuleUserUtils.getOperationUser(
+                  request, "getPublishedInfoByIpPort ip:" + ip + ",port:" + port);
           if (StringUtils.isBlank(owner)) {
             return Message.error("Parameter owner cannot be empty （参数 owner 不能为空）");
           }
+
           DataSource dataSource =
-              dataSourceInfoService.getDataSourcePublishInfo(
-                  datasourceTypeName, ip, port, owner, datasourceUser);
+              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner);
           if (dataSource == null) {
             return Message.error("No Exists The DataSource [不存在该数据源]");
           }
-          if (!AuthContext.hasPermission(dataSource, owner)) {
+          if (!AuthContext.hasPermission(dataSource, username)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
           List<DataSourceParamKeyDefinition> keyDefinitionList =

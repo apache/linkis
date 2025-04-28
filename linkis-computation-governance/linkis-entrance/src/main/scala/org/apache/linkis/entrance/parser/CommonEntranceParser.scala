@@ -386,30 +386,13 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
             )
             return labels
           }
-          var executeUserDepartmentId = "";
-          var submitUserDepartmentId = "";
-          val sender: Sender = Sender.getSender(
-            Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
-          )
-          val responseExecuteUser = sender.ask(new DepartmentRequest(executeUser))
-          if (responseExecuteUser.isInstanceOf[DepartmentResponse]) {
-            val departmentExecuteUser = responseExecuteUser.asInstanceOf[DepartmentResponse]
-            if (StringUtils.isNotBlank(departmentExecuteUser.departmentId)) {
-              executeUserDepartmentId = departmentExecuteUser.departmentId
-            }
-          }
-          val responseSubmitUser = sender.ask(new DepartmentRequest(submitUser))
-          if (responseSubmitUser.isInstanceOf[DepartmentResponse]) {
-            val departmentSubmitUser = responseSubmitUser.asInstanceOf[DepartmentResponse]
-            if (StringUtils.isNotBlank(departmentSubmitUser.departmentId)) {
-              submitUserDepartmentId = departmentSubmitUser.departmentId
-            }
-          }
-          // 判断用户所在部门是否需要转换
+          val executeUserDepartmentId = EntranceUtils.getUserDeapartmentId(executeUser)
+          val submitUserDepartmentId = EntranceUtils.getUserDeapartmentId(submitUser)
           if (
-              SPARK3_VERSION_COERCION_DEPARTMENT.contains(
-                executeUserDepartmentId
-              ) || SPARK3_VERSION_COERCION_DEPARTMENT.contains(submitUserDepartmentId)
+              (StringUtils.isNotBlank(executeUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
+                .contains(executeUserDepartmentId)) ||
+              (StringUtils.isNotBlank(submitUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
+                .contains(submitUserDepartmentId))
           ) {
             logger.info(s"Spark version will be change 3.4.4 by department:${executeUser} ")
             labels.replace(

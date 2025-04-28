@@ -79,11 +79,10 @@ public interface DataSourceInfoService {
    * @param ip
    * @param port
    * @param owner
-   * @param datasourceUser
    * @return
    */
   DataSource getDataSourcePublishInfo(
-      String datasourceTypeName, String ip, String port, String owner, String datasourceUser);
+      String datasourceTypeName, String ip, String port, String owner);
 
   /**
    * Get data source

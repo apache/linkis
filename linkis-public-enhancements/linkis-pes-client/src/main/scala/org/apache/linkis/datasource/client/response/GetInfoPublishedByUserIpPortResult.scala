@@ -25,7 +25,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 import scala.beans.BeanProperty
 
 @DWSHttpMessageResult(
-  "/api/rest_j/v\\d+/data-source-manager/publishedInfo/(\\S+)/(\\S+)/(\\S+)/(\\S+)/(\\S+)"
+  "/api/rest_j/v\\d+/data-source-manager/publishedInfo/(\\S+)/(\\S+)/(\\S+)/(\\S+)"
 )
 class GetInfoPublishedByUserIpPortResult extends DWSResult {
   @BeanProperty var info: java.util.Map[String, Any] = _

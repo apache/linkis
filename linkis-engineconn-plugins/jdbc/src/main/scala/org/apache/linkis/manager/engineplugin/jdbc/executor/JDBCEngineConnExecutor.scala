@@ -308,29 +308,26 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val submitUser: String = executorProperties.getOrDefault(TaskConstant.SUBMIT_USER, "")
       val executeUser: String =
         executorProperties.getOrDefault(TaskConstant.EXECUTE_USER, submitUser)
-      logger.info(
-        s"use conn param get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, " +
-          s"port:${connPort}, dsType:${connDsType}, " +
-          s"createUser:${submitUser} connUser: ${executeUser}"
-      )
+
       if (
-          StringUtils.isBlank(connHost) || StringUtils
-            .isBlank(connPort) || StringUtils.isBlank(connDsType) || StringUtils.isBlank(
+          StringUtils.isNotBlank(connHost) && StringUtils
+            .isNotBlank(connPort) && StringUtils.isNotBlank(connDsType) && StringUtils.isNotBlank(
             submitUser
-          ) || StringUtils.isBlank(executeUser)
+          ) && StringUtils.isNotBlank(executeUser)
       ) {
-        throw new JDBCGetDatasourceInfoException(
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc + " 缺失部分连接参数"
+        logger.info(
+          s"use conn ip and port get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, " +
+            s"port:${connPort}, dsType:${connDsType}, " +
+            s"createUser:${submitUser} connUser: ${executeUser}"
+        )
+        dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
+          submitUser,
+          executeUser,
+          connHost,
+          connPort,
+          connDsType
         )
       }
-      dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
-        submitUser,
-        executeUser,
-        connHost,
-        connPort,
-        connDsType
-      )
     }
 
     // runtime jdbc params > jdbc datasource info > jdbc engine global config

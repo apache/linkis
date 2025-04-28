@@ -21,7 +21,6 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.info.DefaultNodeHealthyInfoManager
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   TaskLogUpdateEvent,
   TaskResponseErrorEvent,
@@ -43,15 +42,8 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
-import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
-import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{
-  CodeLanguageLabel,
-  EngineType,
-  EngineTypeLabel,
-  RunType,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
@@ -65,7 +57,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import scala.collection.JavaConverters._
 
-import DataWorkCloudApplication.getApplicationContext
 import com.google.common.cache.{Cache, CacheBuilder}
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
@@ -271,6 +262,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         // 重试的时候如果执行过则跳过执行
         // TODO 为了测试跳过失败语句，测试完需要恢复，去掉等于号
         if (errorIndex > 0 && index <= errorIndex) {
+          engineExecutionContext.appendStdout(
+            s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+          )
           executeFlag = false
         }
         if (executeFlag) {
@@ -289,11 +283,14 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
               val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
               val retryNum: Int =
                 Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
-              logger.info(
-                s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
-                e.t
-              )
               if (!props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+                logger.info(
+                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
+                  e.t
+                )
+                engineExecutionContext.appendStdout(
+                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                )
                 engineConnTask.getProperties.put("execute.error.code.index", index.toString)
                 return ErrorRetryExecuteResponse(e.message, index, e.t)
               } else {

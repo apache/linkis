@@ -253,6 +253,9 @@ class DefaultEntranceExecutor(id: Long)
             logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
             val newParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
             newParams.put("execute.error.code.index", rte.errorIndex.toString)
+            LogUtils.generateInfo(
+              s"tasks execute error with error index: ${rte.errorIndex} and will retry."
+            )
             TaskUtils.addRuntimeMap(props, newParams)
           }
         case _ =>

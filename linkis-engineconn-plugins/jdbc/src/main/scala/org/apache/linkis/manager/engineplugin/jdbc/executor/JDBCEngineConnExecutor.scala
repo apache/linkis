@@ -311,9 +311,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
       if (
           StringUtils.isNotBlank(connHost) && StringUtils
-            .isNotBlank(connPort) && StringUtils.isNotBlank(connDsType) && StringUtils.isNotBlank(
-            submitUser
-          ) && StringUtils.isNotBlank(executeUser)
+            .isNotBlank(connPort) && StringUtils
+            .isNotBlank(connDsType) && StringUtils.isNotBlank(executeUser)
       ) {
         logger.info(
           s"use conn ip and port get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, " +
@@ -321,7 +320,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             s"createUser:${submitUser} connUser: ${executeUser}"
         )
         dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
-          submitUser,
+          executeUser,
           executeUser,
           connHost,
           connPort,

@@ -31,14 +31,7 @@ class GetInfoPublishedByUserIpPortAction extends GetAction with DataSourceAction
   private var owner: String = _
 
   override def suffixURLs: Array[String] =
-    Array(
-      DATA_SOURCE_SERVICE_MODULE.getValue,
-      "publishedInfo",
-      datasourceTypeName,
-      owner,
-      ip,
-      port
-    )
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", datasourceTypeName, owner, ip, port)
 
   private var user: String = _
 
@@ -62,7 +55,6 @@ object GetInfoPublishedByUserIpPortAction {
       this.user = user
       this
     }
-
 
     def setOwner(owner: String): Builder = {
       this.owner = owner

@@ -152,4 +152,7 @@ object ComputationExecutorConf {
 
   val CODE_TYPE = "codeType"
 
+  val SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED: Boolean =
+    CommonVars[Boolean]("linkis.partial.retry.for.failed.task.enabled", false).getValue
+
 }

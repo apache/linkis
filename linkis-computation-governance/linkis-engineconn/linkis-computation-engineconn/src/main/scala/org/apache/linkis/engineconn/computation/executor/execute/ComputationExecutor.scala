@@ -21,10 +21,15 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.listener.event.{TaskLogUpdateEvent, TaskResponseErrorEvent, TaskStatusChangedEvent}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{
+  TaskLogUpdateEvent,
+  TaskResponseErrorEvent,
+  TaskStatusChangedEvent
+}
 import org.apache.linkis.engineconn.acessible.executor.utils.AccessibleExecutorUtils.currentEngineIsUnHealthy
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf.SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteException
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
@@ -43,15 +48,17 @@ import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLab
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+
 import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
-import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf.SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     extends AccessibleExecutor

@@ -243,7 +243,8 @@ object TemplateConfUtils extends Logging {
             LogUtils
               .generateInfo(s"Try to get template conf data with template name:[$templateName]\n")
           )
-          templateConflist = templateCacheName.get(templateName)
+          val cacheList: util.List[TemplateConfKey] = templateCacheName.get(templateName)
+          templateConflist.addAll(cacheList)
           if (templateConflist == null || templateConflist.size() == 0) {
             logAppender.append(
               LogUtils.generateWarn(

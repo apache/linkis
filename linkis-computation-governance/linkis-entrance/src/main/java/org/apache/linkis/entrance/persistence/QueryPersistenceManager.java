@@ -27,11 +27,15 @@ import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -199,6 +203,13 @@ public class QueryPersistenceManager extends PersistenceManager {
               startupMap.put(retryNumKey, retryNum - 1);
               // once 引擎
               if ((boolean) EntranceConfiguration.AI_SQL_RETRY_ONCE().getValue()) {
+                // once 引擎
+                ExecuteOnceLabel onceLabel =
+                    LabelBuilderFactoryContext.getLabelBuilderFactory()
+                        .createLabel(ExecuteOnceLabel.class);
+                List<Label<?>> labels = entranceJob.getJobRequest().getLabels();
+                labels.add(onceLabel);
+                logger.info("aisql retry add once label for task id:{}", job.getJobInfo().getId());
                 startupMap.put("executeOnce", true);
               }
               TaskUtils.addStartupMap(props, startupMap);

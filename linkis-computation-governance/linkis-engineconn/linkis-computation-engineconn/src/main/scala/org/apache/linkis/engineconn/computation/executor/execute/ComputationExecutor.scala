@@ -262,11 +262,14 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         val errorIndex: Int = Integer.valueOf(
           engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
         )
+        engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
         // 重试的时候如果执行过则跳过执行
         // TODO 为了测试跳过失败语句，测试完需要恢复，去掉等于号
         if (retryEnable && errorIndex > 0 && index <= errorIndex) {
           engineExecutionContext.appendStdout(
-            s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+            LogUtils.generateInfo(
+              s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+            )
           )
           executeFlag = false
         }
@@ -293,7 +296,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
                   e.t
                 )
                 engineExecutionContext.appendStdout(
-                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                  LogUtils.generateInfo(
+                    s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                  )
                 )
                 engineConnTask.getProperties.put("execute.error.code.index", index.toString)
                 return ErrorRetryExecuteResponse(e.message, index, e.t)

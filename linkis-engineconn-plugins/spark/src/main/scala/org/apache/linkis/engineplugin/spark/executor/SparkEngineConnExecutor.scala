@@ -201,8 +201,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     logger.info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
 
-    // print job configuration, only the first paragraph
-    if (isFirstParagraph == true) {
+    // print job configuration, only the first paragraph or retry
+    val errorIndex: Integer = Integer.valueOf(
+      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+    )
+    if (isFirstParagraph || (errorIndex + 1 == errorIndex)) {
       Utils.tryCatch({
         val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
         val executorMem: Long =

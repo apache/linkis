@@ -283,7 +283,7 @@ object EntranceConfiguration {
   val ENABLE_HDFS_RES_DIR_PRIVATE =
     CommonVars[Boolean]("linkis.entrance.enable.hdfs.res.dir.private", false).getValue
 
-  val UNSUPPORTED_RETRY_CODES = CommonVars("linkis.entrance.unsupported.retry.codes", "").getValue
+  val UNSUPPORTED_RETRY_CODES = CommonVars("linkis.entrance.unsupported.retry.codes", "NOCODE").getValue
 
   val SUPPORTED_RETRY_ERROR_CODES =
     CommonVars(

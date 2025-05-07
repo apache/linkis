@@ -34,7 +34,7 @@ public interface MetadataQueryService {
    * @return
    */
   void getConnection(String dataSourceType, String operator, Map<String, Object> params)
-      throws Exception;
+          throws Exception;
 
   /**
    * @param dataSourceId data source id
@@ -43,7 +43,7 @@ public interface MetadataQueryService {
    */
   @Deprecated
   List<String> getDatabasesByDsId(String dataSourceId, String system, String userName)
-      throws ErrorException;
+          throws ErrorException;
 
   /**
    * @param dataSourceId data source id
@@ -53,7 +53,7 @@ public interface MetadataQueryService {
    */
   @Deprecated
   List<String> getTablesByDsId(String dataSourceId, String database, String system, String userName)
-      throws ErrorException;
+          throws ErrorException;
 
   /**
    * @param dataSourceId data source id
@@ -64,8 +64,8 @@ public interface MetadataQueryService {
    */
   @Deprecated
   Map<String, String> getTablePropsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException;
+          String dataSourceId, String database, String table, String system, String userName)
+          throws ErrorException;
   /**
    * @param dataSourceId data source i
    * @param database database
@@ -75,13 +75,13 @@ public interface MetadataQueryService {
    */
   @Deprecated
   MetaPartitionInfo getPartitionsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException;
+          String dataSourceId,
+          String database,
+          String table,
+          String system,
+          Boolean traverse,
+          String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceId data source id
@@ -95,13 +95,13 @@ public interface MetadataQueryService {
    */
   @Deprecated
   Map<String, String> getPartitionPropsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException;
+          String dataSourceId,
+          String database,
+          String table,
+          String partition,
+          String system,
+          String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceId data source id
@@ -112,8 +112,8 @@ public interface MetadataQueryService {
    */
   @Deprecated
   List<MetaColumnInfo> getColumnsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException;
+          String dataSourceId, String database, String table, String system, String userName)
+          throws ErrorException;
 
   /**
    * Get connection information
@@ -125,8 +125,8 @@ public interface MetadataQueryService {
    * @return
    */
   Map<String, String> getConnectionInfoByDsName(
-      String dataSourceName, Map<String, String> queryParams, String system, String userName)
-      throws ErrorException;
+          String dataSourceName, Map<String, String> queryParams, String system, String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceName data source name
@@ -134,7 +134,7 @@ public interface MetadataQueryService {
    * @return
    */
   List<String> getDatabasesByDsName(String dataSourceName, String system, String userName)
-      throws ErrorException;
+          throws ErrorException;
 
   /**
    * @param dataSourceName
@@ -145,7 +145,7 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   List<String> getDatabasesByDsNameAndEnvId(
-      String dataSourceName, String system, String userName, String envId) throws ErrorException;
+          String dataSourceName, String system, String userName, String envId) throws ErrorException;
 
   /**
    * @param dataSourceName data source name
@@ -154,7 +154,7 @@ public interface MetadataQueryService {
    * @return
    */
   List<String> getTablesByDsName(
-      String dataSourceName, String database, String system, String userName) throws ErrorException;
+          String dataSourceName, String database, String system, String userName) throws ErrorException;
 
   /**
    * @param dataSourceName
@@ -166,8 +166,8 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   List<String> getTablesByDsNameAndEnvId(
-      String dataSourceName, String database, String system, String userName, String envId)
-      throws ErrorException;
+          String dataSourceName, String database, String system, String userName, String envId)
+          throws ErrorException;
 
   /**
    * @param dataSourceName data source name
@@ -177,8 +177,8 @@ public interface MetadataQueryService {
    * @return
    */
   Map<String, String> getTablePropsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException;
+          String dataSourceName, String database, String table, String system, String userName)
+          throws ErrorException;
   /**
    * @param dataSourceName data source name
    * @param database database
@@ -187,13 +187,13 @@ public interface MetadataQueryService {
    * @return
    */
   MetaPartitionInfo getPartitionsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException;
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          Boolean traverse,
+          String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceName data source name
@@ -206,13 +206,13 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   Map<String, String> getPartitionPropsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException;
+          String dataSourceName,
+          String database,
+          String table,
+          String partition,
+          String system,
+          String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceName data source id
@@ -222,8 +222,8 @@ public interface MetadataQueryService {
    * @return
    */
   List<MetaColumnInfo> getColumnsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException;
+          String dataSourceName, String database, String table, String system, String userName)
+          throws ErrorException;
 
   /**
    * @param dataSourceName
@@ -236,13 +236,13 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   List<MetaColumnInfo> getColumnsByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException;
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException;
 
   /**
    * @param dataSourceName
@@ -255,13 +255,13 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   GenerateSqlInfo getSparkSqlByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException;
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException;
 
   /**
    * @param dataSourceName
@@ -274,11 +274,19 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   GenerateSqlInfo getJdbcSqlByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException;
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException;
+
+  GenerateSqlInfo getFlinkSqlByDsNameAndEnvId(
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId);
 }

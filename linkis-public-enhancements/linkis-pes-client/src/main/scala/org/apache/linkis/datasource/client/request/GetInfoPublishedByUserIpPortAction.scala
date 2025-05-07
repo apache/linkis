@@ -28,10 +28,17 @@ class GetInfoPublishedByUserIpPortAction extends GetAction with DataSourceAction
   private var datasourceTypeName: String = _
   private var ip: String = _
   private var port: String = _
-  private var owner: String = _
+  private var datasourceUser: String = _
 
   override def suffixURLs: Array[String] =
-    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", datasourceTypeName, owner, ip, port)
+    Array(
+      DATA_SOURCE_SERVICE_MODULE.getValue,
+      "publishedInfo",
+      datasourceTypeName,
+      datasourceUser,
+      ip,
+      port
+    )
 
   private var user: String = _
 
@@ -49,15 +56,15 @@ object GetInfoPublishedByUserIpPortAction {
     private var port: String = _
     private var system: String = _
     private var user: String = _
-    private var owner: String = _
+    private var datasourceUser: String = _
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setOwner(owner: String): Builder = {
-      this.owner = owner
+    def setDatasourceUser(datasourceUser: String): Builder = {
+      this.datasourceUser = datasourceUser
       this
     }
 
@@ -91,7 +98,7 @@ object GetInfoPublishedByUserIpPortAction {
       if (port == null) {
         throw new DataSourceClientBuilderException(PORT_NEEDED.getErrorDesc)
       }
-      if (owner == null) {
+      if (datasourceUser == null) {
         throw new DataSourceClientBuilderException(OWNER_NEEDED.getErrorDesc)
       }
 //      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
@@ -101,7 +108,7 @@ object GetInfoPublishedByUserIpPortAction {
       GetInfoPublishedByUserIpPortAction.datasourceTypeName = this.datasourceTypeName
       GetInfoPublishedByUserIpPortAction.ip = this.ip
       GetInfoPublishedByUserIpPortAction.port = this.port
-      GetInfoPublishedByUserIpPortAction.owner = this.owner
+      GetInfoPublishedByUserIpPortAction.datasourceUser = this.datasourceUser
       if (StringUtils.isNotBlank(system)) {
         GetInfoPublishedByUserIpPortAction.setParameter("system", system)
       }

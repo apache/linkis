@@ -122,5 +122,6 @@ public interface DataSourceDao {
       @Param("dataSourceId") Long datasourceId, @Param("versionId") long versionId);
 
   List<DataSource> selectDatasourcesByType(
-      @Param("datasourceTypeName") String datasourceTypeName, @Param("owner") String owner);
+      @Param("datasourceTypeName") String datasourceTypeName,
+      @Param("datasourceUser") String datasourceUser);
 }

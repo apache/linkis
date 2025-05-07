@@ -223,10 +223,10 @@ public class DataSourceCoreRestfulApi {
   @RequestMapping(value = "/info/json/create", method = RequestMethod.POST)
   public Message insertJson(@RequestBody DataSource dataSource, HttpServletRequest request) {
     ModuleUserUtils.getOperationUser(request, "insertJsonCreate");
-    String owner = dataSource.getCreateUser();
+    String datasourceUser = dataSource.getCreateUser();
     String dataSourceTypeName = dataSource.getDataSourceTypeName();
     // 参数校验
-    if (StringUtils.isBlank(owner)) {
+    if (StringUtils.isBlank(datasourceUser)) {
       return Message.error("Parameter createUser cannot be empty （参数 createUser 不能为空）");
     }
     if (StringUtils.isBlank(dataSourceTypeName)) {
@@ -254,7 +254,7 @@ public class DataSourceCoreRestfulApi {
         String.join(
             "_",
             dataSourceTypeName,
-            owner,
+            datasourceUser,
             DateTypeUtils.dateFormatSecondLocal().get().format(new Date())));
     if (dataSourceInfoService.existDataSource(dataSource.getDataSourceName())) {
       return Message.error(
@@ -268,7 +268,7 @@ public class DataSourceCoreRestfulApi {
     if (dataSourceType != null)
       dataSource.setDataSourceTypeId(Long.valueOf(dataSourceType.getId()));
     // 创建数据源
-    insertDatasource(dataSource, owner);
+    insertDatasource(dataSource, datasourceUser);
     Map<String, Object> stringHashMap = new HashMap<>();
     stringHashMap.put("connectParams", dataSource.getConnectParams());
     stringHashMap.put("comment", "初始化版本");
@@ -567,17 +567,16 @@ public class DataSourceCoreRestfulApi {
       response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "datasourceTypeName", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "owner", required = true, dataType = "String"),
     @ApiImplicitParam(name = "datasourceUser", required = true, dataType = "String"),
     @ApiImplicitParam(name = "ip", required = true, dataType = "String"),
     @ApiImplicitParam(name = "port", required = true, dataType = "String")
   })
   @RequestMapping(
-      value = "/publishedInfo/{datasourceTypeName}/{owner}/{ip}/{port}",
+      value = "/publishedInfo/{datasourceTypeName}/{datasourceUser}/{ip}/{port}",
       method = RequestMethod.GET)
   public Message getPublishedInfoByIpPort(
       @PathVariable("datasourceTypeName") String datasourceTypeName,
-      @PathVariable("owner") String owner,
+      @PathVariable("datasourceUser") String datasourceUser,
       @PathVariable("ip") String ip,
       @PathVariable("port") String port,
       HttpServletRequest request) {
@@ -586,12 +585,14 @@ public class DataSourceCoreRestfulApi {
           String username =
               ModuleUserUtils.getOperationUser(
                   request, "getPublishedInfoByIpPort ip:" + ip + ",port:" + port);
-          if (StringUtils.isBlank(owner)) {
-            return Message.error("Parameter owner cannot be empty （参数 owner 不能为空）");
+          if (StringUtils.isBlank(datasourceUser)) {
+            return Message.error(
+                "Parameter datasourceUser cannot be empty （参数 datasourceUser 不能为空）");
           }
 
           DataSource dataSource =
-              dataSourceInfoService.getDataSourcePublishInfo(datasourceTypeName, ip, port, owner);
+              dataSourceInfoService.getDataSourcePublishInfo(
+                  datasourceTypeName, ip, port, datasourceUser);
           if (dataSource == null) {
             return Message.error("No Exists The DataSource [不存在该数据源]");
           }

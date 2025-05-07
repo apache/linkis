@@ -302,8 +302,8 @@ object JDBCMultiDatasourceParser extends Logging {
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     val action: GetInfoPublishedByUserIpPortAction = GetInfoPublishedByUserIpPortAction.builder
       .setDatasourceTypeName(datasourceTypeName)
-      .setUser(proxyUser)
-      .setOwner(proxyUser)
+      .setUser(createUser)
+      .setDatasourceUser(proxyUser)
       .setIp(ip)
       .setPort(port)
       .build // ignore parameter 'system'

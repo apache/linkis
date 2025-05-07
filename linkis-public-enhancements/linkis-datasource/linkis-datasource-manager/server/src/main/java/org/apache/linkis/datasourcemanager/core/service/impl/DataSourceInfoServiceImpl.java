@@ -126,16 +126,17 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
   @Override
   public DataSource getDataSourcePublishInfo(
-      String datasourceTypeName, String ip, String port, String owner) {
+      String datasourceTypeName, String ip, String port, String datasourceUser) {
     try {
-      // 2. 查询数据源列表
+      // 1. 查询数据源列表
       List<DataSource> dataSourceList =
-          dataSourceDao.selectDatasourcesByType(datasourceTypeName, owner);
+          dataSourceDao.selectDatasourcesByType(datasourceTypeName, datasourceUser);
       if (CollectionUtils.isEmpty(dataSourceList)) {
-        LOG.debug("No datasource found for type:{} and owner:{}", datasourceTypeName, owner);
+        LOG.debug(
+            "No datasource found for type:{} and owner:{}", datasourceTypeName, datasourceUser);
         return null;
       }
-      // 3. 筛选符合条件的已发布数据源
+      // 2. 筛选符合条件的已发布数据源
       return dataSourceList.stream()
           .filter(
               dataSource ->
@@ -152,7 +153,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                   StringUtils.isNotBlank(entry.getValue())
                       && entry.getValue().contains(ip)
                       && entry.getValue().contains(port)
-                      && entry.getValue().contains(owner))
+                      && entry.getValue().contains(datasourceUser))
           .sorted(
               Comparator.comparing(
                   entry -> entry.getKey().getCreateTime(), Comparator.reverseOrder()))
@@ -166,7 +167,11 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
               })
           .orElse(null);
     } catch (Exception e) {
-      LOG.error("Get published datasource failed, type:{}, owner:{}", datasourceTypeName, owner, e);
+      LOG.error(
+          "Get published datasource failed, type:{}, datasourceUser:{}",
+          datasourceTypeName,
+          datasourceUser,
+          e);
       return null;
     }
   }

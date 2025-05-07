@@ -690,10 +690,14 @@ class HiveEngineConnExecutor(
           val currentProps = Option(sessionConf.getAllProperties)
             .map(_.asScala.toMap)
             .getOrElse(Map.empty)
-          hiveTmpConf.foreach { case (key, value) =>
-            currentProps.get(key).filter(_ != value).foreach { _ =>
-              logger.info(s"Resetting configuration key: $key to original value: $value")
-              sessionConf.set(key, value)
+          currentProps.foreach { case (key, value) =>
+            if (hiveTmpConf.contains(key)) {
+              hiveTmpConf.get(key).filter(_ != value).foreach { userValue =>
+                logger.info(s"Resetting configuration key: $key ,value: $value cover $userValue")
+                sessionConf.set(key, hiveTmpConf.get(key).toString)
+              }
+            } else {
+              sessionConf.set(key, null)
             }
           }
         } else {

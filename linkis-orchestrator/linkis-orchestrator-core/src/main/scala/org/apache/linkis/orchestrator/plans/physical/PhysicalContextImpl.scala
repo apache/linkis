@@ -84,7 +84,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
             val codeType: String = LabelUtil.getCodeType(labels)
             if ("aisql".equals(codeType)) {
               val params: Map[String, String] = this.rootTask.params
-              val flag: Boolean = params.getOrElse("task.error.receiver.flag", "false").toBoolean
+              var flag: Boolean = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               val startTime: Long = System.currentTimeMillis()
               while (
                   System
@@ -92,6 +92,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
               ) {
                 logger.info("task error receiver not end.")
                 Thread.sleep(1000)
+                flag = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               }
               logger.info("task error receiver end.")
               failedResponse.errorIndex = params.getOrElse("execute.error.code.index", "-1").toInt

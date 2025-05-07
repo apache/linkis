@@ -6,7 +6,10 @@
   <strong>Linkis 构建了一层计算中间件，方便上层应用与底层数据引擎之间的连接、治理和编排 </strong>
 </p>
 <p align="center">
-  <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
+  <a href="https://linkis.apache.org/">Apache Linkis | 官网</a>
+</p>
+<p align="center">
+  <a href="https://deepwiki.com/apache/linkis">Apache Linkis | DeepWiki</a>
 </p>
 
 <p align="center">
@@ -59,6 +62,8 @@ Linkis 在上层应用程序和底层引擎之间构建了一层计算中间件�
 降低了整体复杂度，同时节约了整体开发和维护成本。  
 Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企业和 1000+沙盒试验用户，涉及金融、电信、制造、互联网等多个行业。
 许多公司已经将 Linkis 作为大数据平台底层计算存储引擎的统一入口，和计算请求/任务的治理管控利器。
+
+Apache Linkis | DeepWiki : https://deepwiki.com/apache/linkis
 
 ![没有 Linkis 之前 ](https://user-images.githubusercontent.com/7869972/148767370-06025750-090e-4fd6-bd32-aab2fbb01352.png)
 

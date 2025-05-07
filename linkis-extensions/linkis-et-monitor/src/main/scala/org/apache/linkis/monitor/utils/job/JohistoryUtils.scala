@@ -15,25 +15,29 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.utils.job
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorAction
+import org.apache.linkis.monitor.core.pac.ScannedData
 
-class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
+import java.util
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+import scala.collection.JavaConverters._
 
-  override protected[client] def executeJob(monitorAction: MonitorAction): Result =
-    monitorAction match {
+object JohistoryUtils {
 
-      case action: Action => dwsHttpClient.execute(action)
-
+  def getJobhistorySanData(data: util.List[ScannedData]): List[Any] = {
+    if (data == null) {
+      return List.empty[ScannedData]
     }
+    val scalaData = data.asScala
+    val result = scalaData.flatMap { dataList =>
+      if (dataList != null && dataList.getData() != null) {
+        dataList.getData().asScala
+      } else {
+        List.empty[ScannedData]
+      }
+    }.toList
+    result
+  }
 
-  override def close(): Unit = dwsHttpClient.close()
 }

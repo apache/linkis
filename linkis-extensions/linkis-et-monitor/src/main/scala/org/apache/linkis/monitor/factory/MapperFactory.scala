@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor.factory
 
+import org.apache.linkis.monitor.department.dao.UserDepartmentInfoMapper
 import org.apache.linkis.monitor.instance.dao.{
   InsLabelRelationDao,
   InstanceInfoDao,
@@ -33,6 +34,8 @@ object MapperFactory {
   private var instanceLabelMapper: InstanceLabelDao = _
 
   private var instanceLabelRelationMapper: InsLabelRelationDao = _
+
+  private var userDepartmentInfoMapper: UserDepartmentInfoMapper = _
 
   def getJobHistoryMapper(): JobHistoryMapper = jobHistoryMapper
 
@@ -56,6 +59,14 @@ object MapperFactory {
 
   def setInsLabelRelationMapper(instanceLabelRelationMapper: InsLabelRelationDao): Unit = {
     MapperFactory.instanceLabelRelationMapper = instanceLabelRelationMapper
+  }
+
+  // 获取userDepartmentInfoMapper的值
+  def getUserDepartmentInfoMapper: UserDepartmentInfoMapper = userDepartmentInfoMapper
+
+  // 设置userDepartmentInfoMapper的值
+  def setUserDepartmentInfoMapper(mapper: UserDepartmentInfoMapper): Unit = {
+    userDepartmentInfoMapper = mapper
   }
 
 }

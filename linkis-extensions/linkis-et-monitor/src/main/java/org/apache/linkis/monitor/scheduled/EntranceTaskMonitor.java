@@ -121,7 +121,8 @@ public class EntranceTaskMonitor {
         });
     Map<String, Object> likisData = null;
     try {
-      likisData = MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", null), "data");
+      likisData =
+          MapUtils.getMap(HttpsUntils.getEntranceTask(null, Constants.ADMIN_USER(), null), "data");
       logger.info("TaskMonitor hadoop response  {}:", likisData);
     } catch (IOException e) {
       logger.warn("failed to get EntranceTask data");
@@ -163,7 +164,9 @@ public class EntranceTaskMonitor {
         try {
           // 通过serviceInstance 获取entrance中任务数量信息
           Map<String, Object> entranceData =
-              MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", entranceService), "data");
+              MapUtils.getMap(
+                  HttpsUntils.getEntranceTask(null, Constants.ADMIN_USER(), entranceService),
+                  "data");
           int runningTaskNumber = 0;
           int queuedTaskNumber = 0;
           int totalTaskNumber = 0;

@@ -7,7 +7,10 @@
     governance and orchestration between the upper applications and the underlying data engines. </strong>
 </p>
 <p align="center">
-  <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
+  <a href="https://linkis.apache.org/">Apache Linkis | Website</a>
+</p>
+<p align="center">
+  <a href="https://deepwiki.com/apache/linkis">Apache Linkis | DeepWiki</a>
 </p>
 
 <p align="center">
@@ -59,6 +62,8 @@
 As a computation middleware, Linkis provides powerful connectivity, reuse, orchestration, expansion, and governance capabilities. By decoupling the application layer and the engine layer, it simplifies the complex network call relationship, and thus reduces the overall complexity and saves the development and maintenance costs as well.
 
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
+
+Apache Linkis | DeepWiki : https://deepwiki.com/apache/linkis
 
 ![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 

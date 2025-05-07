@@ -452,7 +452,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     try {
       if (
           EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue
-          && sparkTmpConf != null && !sparkTmpConf.isEmpty
+          && sparkTmpConf.nonEmpty
           && this.isInstanceOf[SparkSqlExecutor]
       ) {
 
@@ -460,9 +460,13 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         Option(sqlExecutor.getSparkEngineSession)
           .flatMap(session => Option(session.sqlContext))
           .foreach { sqlContext =>
-            sparkTmpConf.foreach { case (key, value) =>
-              if (value != null && !value.equals(sqlContext.getConf(key))) {
-                sqlContext.setConf(key, value)
+            sqlContext.getAllConfs.foreach { case (key, value) =>
+              if (sparkTmpConf.contains(key)) {
+                if (value != null && !value.equals(sparkTmpConf.get(key).toString)) {
+                  sqlContext.setConf(key, sparkTmpConf.get(key).toString)
+                }
+              } else {
+                sqlContext.setConf(key, null)
               }
             }
           }

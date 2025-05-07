@@ -264,8 +264,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         )
         engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
         // 重试的时候如果执行过则跳过执行
-        // TODO 为了测试跳过失败语句，测试完需要恢复，去掉等于号
-        if (retryEnable && errorIndex > 0 && index <= errorIndex) {
+        if (retryEnable && errorIndex > 0 && index < errorIndex) {
           engineExecutionContext.appendStdout(
             LogUtils.generateInfo(
               s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."

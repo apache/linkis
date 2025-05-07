@@ -205,7 +205,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     val errorIndex: Integer = Integer.valueOf(
       engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
     )
-    if (isFirstParagraph || (errorIndex + 1 == errorIndex)) {
+    if (isFirstParagraph || (errorIndex + 1 == engineExecutorContext.getCurrentParagraph)) {
       Utils.tryCatch({
         val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
         val executorMem: Long =

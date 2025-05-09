@@ -461,13 +461,16 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         Option(sqlExecutor.getSparkEngineSession)
           .flatMap(session => Option(session.sqlContext))
           .foreach { sqlContext =>
-            sqlContext.getAllConfs.foreach { case (key, value) =>
-              if (sparkTmpConf.contains(key)) {
-                if (value != null && !value.equals(sparkTmpConf.get(key).toString)) {
-                  sqlContext.setConf(key, sparkTmpConf.get(key).toString)
-                }
-              } else {
-                sqlContext.setConf(key, null)
+            sparkTmpConf.foreach { case (key, value) =>
+              if (value != null && !value.equals(sqlContext.getConf(key))) {
+                sqlContext.setConf(key, value)
+              }
+            }
+            // 清理多出来的配置
+            sqlContext.getAllConfs.keys.foreach { key =>
+              if (!sparkTmpConf.contains(key)) {
+                logger.info(s"Clearing extra configuration key: $key")
+                sqlContext.setConf(key, "")
               }
             }
           }

@@ -305,15 +305,15 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       .createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)
 
     var labels = new util.HashMap[String, Label[_]]()
+    labels.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
+    labels.put(LabelKeyConstant.CODE_TYPE_KEY, runTypeLabel)
+    labels.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, userCreatorLabel)
     if (jobReq.getParams != null) {
       val labelMap = params
         .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, AnyRef]())
         .asInstanceOf[util.Map[String, AnyRef]]
       labels.putAll(buildLabel(labelMap))
     }
-    labels.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
-    labels.put(LabelKeyConstant.CODE_TYPE_KEY, runTypeLabel)
-    labels.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, userCreatorLabel)
     jobReq.setProgress("0.0")
     jobReq.setSource(source)
     // In order to be compatible with the code, let enginetype and runtype have the same attribute

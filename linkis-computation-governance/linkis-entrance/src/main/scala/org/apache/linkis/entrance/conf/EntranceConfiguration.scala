@@ -215,6 +215,9 @@ object EntranceConfiguration {
   val TEMPLATE_CONF_ADD_ONCE_LABEL_ENABLE =
     CommonVars("wds.linkis.entrance.template.add.once.label.enable", false)
 
+  val SUPPORT_TEMPLATE_CONF_RETRY_ENABLE =
+    CommonVars("linkis.entrance.template.retry.enable", false)
+
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR: CommonVars[Boolean] =
     CommonVars[Boolean]("linkis.entrance.auto.clean.dirty.data.enable", true)
 

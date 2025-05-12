@@ -206,7 +206,10 @@ object TemplateConfUtils extends Logging {
         }
 
         // 处理runtime参数中的模板名称，用于失败任务重试的时候使用模板参数重试
-        if (StringUtils.isBlank(templateName)) {
+        if (
+            EntranceConfiguration.SUPPORT_TEMPLATE_CONF_RETRY_ENABLE.getValue && StringUtils
+              .isBlank(templateName)
+        ) {
           templateName =
             runtimeMap.getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, "").toString
         }

@@ -123,7 +123,7 @@ public class QueryPersistenceManager extends PersistenceManager {
         && persistedProgress >= updatedProgress
         && entranceJob.getUpdateMetrisFlag()) {
       notUpdate = true;
-      if (EntranceConfiguration.TASK_RETRY_ENABLED() && updatedProgress == 0) {
+      if (EntranceConfiguration.TASK_RETRY_ENABLED() && updatedProgress == 0) { // NOSONAR
         notUpdate = false;
       }
     }

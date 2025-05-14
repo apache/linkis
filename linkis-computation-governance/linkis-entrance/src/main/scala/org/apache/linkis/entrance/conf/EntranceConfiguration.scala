@@ -298,7 +298,13 @@ object EntranceConfiguration {
   val SUPPORTED_RETRY_ERROR_DESC =
     CommonVars(
       "linkis.entrance.supported.retry.error.desc",
-      "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception"
+      "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
+    ).getValue
+
+  val SUPPORT_ADD_RETRY_CODE_KEYS =
+    CommonVars(
+      "linkis.entrance.supported.add.retry.code.keys",
+      "dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
     ).getValue
 
   val TASK_RETRY_ENABLED: Boolean =

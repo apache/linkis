@@ -257,12 +257,6 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -340,10 +334,6 @@
         <exclusion>
           <groupId>org.codehaus.jackson</groupId>
           <artifactId>jackson-core-asl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -507,12 +497,6 @@
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
       <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -525,12 +509,6 @@
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-xc</artifactId>
       <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>

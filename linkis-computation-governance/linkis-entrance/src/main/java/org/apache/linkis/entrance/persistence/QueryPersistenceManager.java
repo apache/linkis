@@ -35,6 +35,8 @@ import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -172,8 +174,8 @@ public class QueryPersistenceManager extends PersistenceManager {
     final EntranceJob entranceJob = (EntranceJob) job;
 
     // 处理广播表
-    String dataFrameKey = "dataFrame to local exception";
-    if (errorDesc.contains(dataFrameKey)) {
+    String dataFrameKey = EntranceConfiguration.SUPPORT_ADD_RETRY_CODE_KEYS();
+    if (containsAny(errorDesc, dataFrameKey)) {
       entranceJob
           .getJobRequest()
           .setExecutionCode("set spark.sql.autoBroadcastJoinThreshold=-1; " + code);
@@ -331,4 +333,23 @@ public class QueryPersistenceManager extends PersistenceManager {
 
   @Override
   public void onResultSizeCreated(Job job, int resultSize) {}
+
+  private static boolean containsAny(String src, String target) {
+    if (StringUtils.isBlank(target)) {
+      return false;
+    }
+    return containsAny(src, target.split(","));
+  }
+
+  private static boolean containsAny(String src, String[] target) {
+    if (target == null || StringUtils.isBlank(src)) {
+      return false;
+    }
+    for (String item : target) {
+      if (src.toLowerCase().contains(item.toLowerCase())) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

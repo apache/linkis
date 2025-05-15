@@ -31,7 +31,7 @@ object SafeUtils extends Logging {
     "os\\.system|" +
     "os\\.popen|" +
     "shutil\\.execute|" +
-    "eval|exec|`.*?`|" +
+    "eval|`.*?`|" +
     "import\\s+os\\.env|" +
     "import\\s+os\\.getlogin|" +
     "import\\s+os\\.getpid|" +

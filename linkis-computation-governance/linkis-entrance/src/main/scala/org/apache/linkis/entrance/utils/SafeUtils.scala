@@ -23,10 +23,16 @@ import java.util.regex.Pattern
 
 object SafeUtils extends Logging {
 
-  private val DANGEROUS_CODE_PATTERN = "/etc/passwd|/etc/shadow|/etc/group|" +
+  private val DANGEROUS_CODE_PATTERN = "/etc/passwd|" +
+    "/etc/shadow|" +
+    "/etc/group|" +
     "open\\(\\s*['\"]/etc/[^'\"]+['\"]\\s*,|" +
-    "subprocess\\|os\\.system\\|os\\.popen\\|shutil\\.execute\\|" +
-    "eval\\|exec\\|`.*?`|import\\s+os\\.env|" +
+    "subprocess|" +
+    "os\\.system|" +
+    "os\\.popen|" +
+    "shutil\\.execute|" +
+    "eval|`.*?`|" +
+    "import\\s+os\\.env|" +
     "import\\s+os\\.getlogin|" +
     "import\\s+os\\.getpid|" +
     "import\\s+os\\.getppid|" +
@@ -62,7 +68,7 @@ object SafeUtils extends Logging {
     "import\\s+os\\.getresuid|" +
     "import\\s+os\\.getresgid"
 
-  private val ANNOTATION_PATTERN = "^\\s*#.*$"
+  private val ANNOTATION_PATTERN = "\\s*#.*$"
 
   private val SAFETY_PASS = "SAFETY_PASS"
 
@@ -70,15 +76,15 @@ object SafeUtils extends Logging {
     var isSafe = true
     // 在匹配高危代码前，先移除注释
     val commentPattern = Pattern.compile(ANNOTATION_PATTERN, Pattern.MULTILINE)
-    val mather = commentPattern.matcher(code)
-    val cleanCode = mather.replaceAll("")
+    val cleanCode = commentPattern.matcher(code).replaceAll("")
     val code_pattern =
       Pattern.compile(DANGEROUS_CODE_PATTERN, Pattern.DOTALL | Pattern.CASE_INSENSITIVE)
     val code_matcher = code_pattern.matcher(cleanCode)
     while (code_matcher.find) {
       isSafe = false
+      val mather = commentPattern.matcher(code)
       while (mather.find)
-        if (mather.group.contains(SAFETY_PASS)) isSafe = true
+        if (mather.group.toUpperCase().contains(SAFETY_PASS)) isSafe = true
     }
     isSafe
   }

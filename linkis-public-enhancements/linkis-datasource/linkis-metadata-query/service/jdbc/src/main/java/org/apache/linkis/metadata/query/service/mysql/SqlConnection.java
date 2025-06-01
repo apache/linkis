@@ -104,7 +104,7 @@ public class SqlConnection extends AbstractSqlConnection {
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(database, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();

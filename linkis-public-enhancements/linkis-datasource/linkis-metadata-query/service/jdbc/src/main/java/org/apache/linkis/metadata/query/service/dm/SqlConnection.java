@@ -124,11 +124,12 @@ public class SqlConnection extends AbstractSqlConnection {
     return columns;
   }
 
-  private List<String> getPrimaryKeys(String schema, String table) throws SQLException {
+  private List<String> getPrimaryKeys(String database, String schema, String table)
+      throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     DatabaseMetaData dbMeta = conn.getMetaData();
-    rs = dbMeta.getPrimaryKeys(null, schema, table);
+    rs = dbMeta.getPrimaryKeys(database, schema, table);
     while (rs.next()) {
       primaryKeys.add(rs.getString("COLUMN_NAME"));
     }

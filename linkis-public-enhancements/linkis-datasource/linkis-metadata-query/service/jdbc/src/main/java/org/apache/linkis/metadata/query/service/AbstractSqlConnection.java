@@ -69,7 +69,7 @@ public abstract class AbstractSqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(schemaname, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -99,12 +99,13 @@ public abstract class AbstractSqlConnection implements Closeable {
    * @return
    * @throws SQLException
    */
-  public List<String> getPrimaryKeys(String table) throws SQLException {
+  public List<String> getPrimaryKeys(String database, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
       DatabaseMetaData dbMeta = conn.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
+      // add database
+      rs = dbMeta.getPrimaryKeys(database, null, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
       }

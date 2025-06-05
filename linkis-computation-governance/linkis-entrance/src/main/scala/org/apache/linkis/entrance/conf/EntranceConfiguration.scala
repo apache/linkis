@@ -365,4 +365,23 @@ object EntranceConfiguration {
     CommonVars[Boolean]("spark.version.coercion.switch", false).getValue
 
   val PYTHON_SAFE_CHECK_SWITCH = CommonVars("linkis.python.safe.check.switch", false).getValue
+
+  val DOCTOR_URL = CommonVars("linkis.doctor.url", "").getValue
+
+  val DOCTOR_DYNAMIC_ENGINE_URL = CommonVars(
+    "linkis.doctor.api",
+    "/api/v1/external/engine/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+  ).getValue
+
+  val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
+
+  val LINKIS_SYSTEM_NAME = CommonVars("linkis.system.name", "").getValue
+
+  val DOCTOR_CLUSTER = CommonVars("linkis.doctor.cluster", "").getValue
+
+  val AI_SQL_DYNAMIC_ENGINE_SWITCH =
+    CommonVars("linkis.aisql.dynamic.engine.type.switch", false).getValue
+
+  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.doctor.http.timeout", 30000).getValue
+
 }

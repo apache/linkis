@@ -19,7 +19,8 @@ package org.apache.linkis.entrance.utils
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, SHAUtils, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -29,11 +30,19 @@ import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreat
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.rpc.Sender
-
+import org.apache.linkis.server.BDPJettyServerHelper
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.http.client.config.RequestConfig
+import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
+import org.apache.http.entity.{ContentType, StringEntity}
+import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
+import org.apache.http.util.EntityUtils
+import org.apache.linkis.common.log.LogUtils
 
+import java.nio.charset.StandardCharsets
 import java.util
-
+import java.util.{HashMap, Map}
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 object EntranceUtils extends Logging {
@@ -43,6 +52,8 @@ object EntranceUtils extends Logging {
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   val sparkVersionRegex = "^3(\\.\\d+)*$"
+
+  var DOCTOR_NONCE = "12345"
 
   def getUserCreatorEcTypeKey(
       userCreatorLabel: UserCreatorLabel,
@@ -122,6 +133,82 @@ object EntranceUtils extends Logging {
       case _ =>
     }
     departmentId
+  }
+
+  def getDynamicEngineType(sql: String, logAppender: java.lang.StringBuilder): String = {
+    var engineType = "spark"
+    if (!EntranceConfiguration.AI_SQL_DYNAMIC_ENGINE_SWITCH) {
+      return engineType
+    }
+    // 参数校验
+    if (
+        StringUtils.isBlank(EntranceConfiguration.LINKIS_SYSTEM_NAME) ||
+        StringUtils.isBlank(EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN) ||
+        StringUtils.isBlank(EntranceConfiguration.DOCTOR_CLUSTER) ||
+        StringUtils.isBlank(EntranceConfiguration.DOCTOR_URL)
+    ) {
+      return engineType
+    }
+    // 组装请求url
+    logAppender.append(LogUtils.generateInfo(s"动态引擎切换，引擎默认值：$engineType"))
+    var url = EntranceConfiguration.DOCTOR_URL + EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL
+    val timestampStr = String.valueOf(System.currentTimeMillis)
+    val signature = SHAUtils.Encrypt(
+      SHAUtils.Encrypt(
+        EntranceConfiguration.LINKIS_SYSTEM_NAME + DOCTOR_NONCE + timestampStr,
+        null
+      ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
+      null
+    )
+    url = url
+      .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
+      .replace("$timestamp", timestampStr)
+      .replace("$nonce", DOCTOR_NONCE)
+      .replace("$signature", signature)
+    // 组装请求
+    val httpPost = new HttpPost(url)
+    val parm = new util.HashMap[String, AnyRef]
+    parm.put("sql", sql)
+    parm.put("highStability", "")
+    parm.put("queueResourceUsage", "")
+    parm.put("cluster", EntranceConfiguration.DOCTOR_CLUSTER)
+    val json = BDPJettyServerHelper.gson.toJson(parm)
+    val requestConfig = RequestConfig
+      .custom()
+      .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .build()
+    val entity = new StringEntity(
+      json,
+      ContentType.create(ContentType.APPLICATION_JSON.getMimeType, StandardCharsets.UTF_8.toString)
+    )
+    entity.setContentEncoding(StandardCharsets.UTF_8.toString)
+    httpPost.setConfig(requestConfig)
+    httpPost.setEntity(entity)
+    val httpClient = HttpClients.createDefault
+    try {
+      val startTime = System.currentTimeMillis()
+      val execute = httpClient.execute(httpPost)
+      // 请求结果处理
+      val responseStr: String =
+        EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
+      val endTime = System.currentTimeMillis()
+      val responseMapJson: Map[String, Object] =
+        BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
+      if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
+        val dataMap = MapUtils.getMap(responseMapJson, "data")
+        engineType = dataMap.get("engine").toString
+        logAppender.append(LogUtils.generateInfo(s"动态引擎切换，Doctoris返回: $engineType"))
+        val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
+        logAppender.append(LogUtils.generateInfo(s"HTTP调用耗时：$duration 秒"))
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn(s"调用Doctoris diagnose接口失败：sql: $sql", e)
+        logAppender.append(LogUtils.generateInfo(s"动态引擎切换异常，使用引擎默认值: $engineType"))
+    } finally {
+      httpClient.close()
+    }
+    engineType
   }
 
 }

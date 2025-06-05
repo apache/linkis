@@ -313,6 +313,9 @@ object EntranceConfiguration {
   val AI_SQL_DEFAULT_SPARK_ENGINE_TYPE: String =
     CommonVars[String]("linkis.ai.sql.default.spark.engine.type", "spark-3.4.4").getValue
 
+  val AI_SQL_DEFAULT_HIVE_ENGINE_TYPE: String =
+    CommonVars[String]("linkis.ai.sql.default.hive.engine.type", "hive-2.3.3").getValue
+
   val AI_SQL_CREATORS: String =
     CommonVars[String]("linkis.ai.sql.support.creators", "IDE").getValue
 

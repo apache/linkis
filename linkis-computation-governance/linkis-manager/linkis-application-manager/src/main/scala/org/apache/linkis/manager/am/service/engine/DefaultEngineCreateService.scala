@@ -146,7 +146,7 @@ class DefaultEngineCreateService
     if (null == emScoreNodeList || emScoreNodeList.isEmpty) {
       throw new LinkisRetryException(
         AMConstant.EM_ERROR_CODE,
-        s" The em of labels ${engineCreateRequest.getLabels} not found"
+        s" The ecm of labels ${engineCreateRequest.getLabels} not found"
       )
     }
 

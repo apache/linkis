@@ -241,15 +241,30 @@ object TemplateConfUtils extends Logging {
         if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
           val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
           templateName = getCustomTemplateConfName(jobRequest, codeType, logAppender)
+          if (StringUtils.isNotBlank(templateName)) {
+            logAppender.append(
+              LogUtils
+                .generateWarn(s"Try to execute task with template: $templateName in script.\n")
+            )
+          }
         }
 
         // 处理runtime参数中的模板名称，用于失败任务重试的时候使用模板参数重试
+        var runtimeTemplateFlag = false
         if (
             EntranceConfiguration.SUPPORT_TEMPLATE_CONF_RETRY_ENABLE.getValue && StringUtils
               .isBlank(templateName)
         ) {
           templateName =
             runtimeMap.getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, "").toString
+          if (StringUtils.isNotBlank(templateName)) {
+            runtimeTemplateFlag = true
+            logAppender.append(
+              LogUtils.generateWarn(
+                s"Try to execute task with template: $templateName in runtime params.\n"
+              )
+            )
+          }
         }
 
         // code template name > start params template uuid
@@ -311,7 +326,9 @@ object TemplateConfUtils extends Logging {
         val codeType: String = LabelUtil.getCodeType(jobRequest.getLabels)
 
         if (
-            LANGUAGE_TYPE_AI_SQL.equals(codeType) && templateConflist != null && templateConflist
+            LANGUAGE_TYPE_AI_SQL.equals(
+              codeType
+            ) && runtimeTemplateFlag && templateConflist != null && templateConflist
               .size() > 0
         ) {
           logAppender.append(

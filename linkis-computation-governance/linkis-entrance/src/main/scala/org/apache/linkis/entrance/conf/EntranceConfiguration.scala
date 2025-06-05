@@ -364,5 +364,5 @@ object EntranceConfiguration {
   val SPARK3_VERSION_COERCION_SWITCH: Boolean =
     CommonVars[Boolean]("spark.version.coercion.switch", false).getValue
 
-  val PYTHON_SAFE_CHECK_SWITCH = CommonVars("linkis.python.safe.check.switch", true).getValue
+  val PYTHON_SAFE_CHECK_SWITCH = CommonVars("linkis.python.safe.check.switch", false).getValue
 }

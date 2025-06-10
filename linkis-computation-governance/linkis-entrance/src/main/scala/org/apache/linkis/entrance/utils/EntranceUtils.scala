@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.utils
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, SHAUtils, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
@@ -31,6 +32,7 @@ import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
+
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.config.RequestConfig
@@ -38,11 +40,11 @@ import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
 import org.apache.http.entity.{ContentType, StringEntity}
 import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
 import org.apache.http.util.EntityUtils
-import org.apache.linkis.common.log.LogUtils
 
 import java.nio.charset.StandardCharsets
 import java.util
 import java.util.{HashMap, Map}
+
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 object EntranceUtils extends Logging {
@@ -150,7 +152,7 @@ object EntranceUtils extends Logging {
       return engineType
     }
     // 组装请求url
-    logAppender.append(LogUtils.generateInfo(s"动态引擎切换，引擎默认值：$engineType"))
+    var printlog = s"Dynamic engine switching, using the engine's default values：$engineType"
     var url = EntranceConfiguration.DOCTOR_URL + EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL
     val timestampStr = String.valueOf(System.currentTimeMillis)
     val signature = SHAUtils.Encrypt(
@@ -197,16 +199,18 @@ object EntranceUtils extends Logging {
       if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
         val dataMap = MapUtils.getMap(responseMapJson, "data")
         engineType = dataMap.get("engine").toString
-        logAppender.append(LogUtils.generateInfo(s"动态引擎切换，Doctoris返回: $engineType"))
         val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
-        logAppender.append(LogUtils.generateInfo(s"HTTP调用耗时：$duration 秒"))
+        printlog =
+          s"Dynamic engine switching, Doctoris returns： $engineType ,Http call duration: $duration seconds"
       }
     } catch {
       case e: Exception =>
         logger.warn(s"调用Doctoris diagnose接口失败：sql: $sql", e)
-        logAppender.append(LogUtils.generateInfo(s"动态引擎切换异常，使用引擎默认值: $engineType"))
+        printlog =
+          s"Dynamic engine switching exception, using the engine's default values：$engineType"
     } finally {
       httpClient.close()
+      logAppender.append(LogUtils.generateWarn(s"$printlog\n"))
     }
     engineType
   }

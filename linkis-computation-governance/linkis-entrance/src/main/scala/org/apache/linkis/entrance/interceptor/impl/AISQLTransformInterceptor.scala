@@ -17,10 +17,9 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.conf.EntranceConfiguration._
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
@@ -33,10 +32,14 @@ import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreat
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.BeanUtils
 
-import java.util.Date
 import java.{lang, util}
+import java.util.Date
+
 import scala.collection.JavaConverters._
 
 class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
@@ -95,7 +98,8 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
           currentEngineType = sparkEngineType
         }
       } else {
-        val engineType: String = EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
+        val engineType: String =
+          EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
         if ("hive".equals(engineType)) {
           changeEngineLabel(hiveEngineType, labels)
           logAppender.append(LogUtils.generateWarn(s"use $hiveEngineType by call doctor.\n"))

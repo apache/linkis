@@ -299,6 +299,12 @@ class DefaultEMInfoService extends EMInfoService with Logging {
         Resource.initResource(resourceType)
       )
     ) { case ((accSum, accUed, accLock), nodeResource) =>
+      if (null == nodeResource.getUsedResource) {
+        nodeResource.setUsedResource(Resource.initResource(resourceType))
+      }
+      if (null == nodeResource.getLockedResource) {
+        nodeResource.setLockedResource(Resource.initResource(resourceType))
+      }
       (
         accSum.add(nodeResource.getUsedResource.add(nodeResource.getLockedResource)),
         accUed.add(nodeResource.getUsedResource),

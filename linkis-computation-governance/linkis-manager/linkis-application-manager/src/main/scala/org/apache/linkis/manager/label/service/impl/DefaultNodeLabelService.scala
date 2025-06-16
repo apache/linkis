@@ -453,18 +453,22 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     val resultMap = new util.HashMap[String, util.List[Label[_]]]()
     val map = labelManagerPersistence.getLabelRelationsByServiceInstance(serviceInstanceList)
     serviceInstanceList.asScala.foreach(serviceInstance => {
-      val LabelList = map
-        .get(serviceInstance)
-        .asScala
-        .map { label =>
-          val realyLabel: Label[_] = labelFactory.createLabel(
-            label.getLabelKey,
-            if (!CollectionUtils.isEmpty(label.getValue)) label.getValue else label.getStringValue
-          )
-          realyLabel
-        }
-        .toList
-        .asJava
+      val LabelList = Option(map.get(serviceInstance))
+        .map(
+          _.asScala
+            .filter(_ != null)
+            .map { label =>
+              val realyLabel: Label[_] = labelFactory.createLabel(
+                label.getLabelKey,
+                if (!CollectionUtils.isEmpty(label.getValue)) label.getValue
+                else label.getStringValue
+              )
+              realyLabel
+            }
+            .toList
+            .asJava
+        )
+        .getOrElse(new util.ArrayList[Label[_]]())
       resultMap.put(serviceInstance.toString, LabelList)
     })
     resultMap

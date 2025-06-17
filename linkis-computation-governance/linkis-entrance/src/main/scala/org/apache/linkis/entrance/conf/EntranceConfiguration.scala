@@ -375,19 +375,21 @@ object EntranceConfiguration {
   val DOCTOR_URL = CommonVars("linkis.doctor.url", "").getValue
 
   val DOCTOR_DYNAMIC_ENGINE_URL = CommonVars(
-    "linkis.doctor.api",
+    "linkis.aisql.doctor.api",
     "/api/v1/external/engine/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
   ).getValue
 
   val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
 
+  val DOCTOR_NONCE = CommonVars.apply("linkis.doctor.signature.nonce", "").getValue
+
   val LINKIS_SYSTEM_NAME = CommonVars("linkis.system.name", "").getValue
 
-  val DOCTOR_CLUSTER = CommonVars("linkis.doctor.cluster", "").getValue
+  val DOCTOR_CLUSTER = CommonVars("linkis.aisql.doctor.cluster", "").getValue
 
   val AI_SQL_DYNAMIC_ENGINE_SWITCH =
     CommonVars("linkis.aisql.dynamic.engine.type.switch", false).getValue
 
-  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.doctor.http.timeout", 30000).getValue
+  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 30000).getValue
 
 }

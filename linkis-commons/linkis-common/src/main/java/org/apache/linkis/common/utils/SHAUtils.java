@@ -30,7 +30,8 @@ import java.util.Map;
 
 public class SHAUtils {
 
-  public static String DOCTOR_NONCE = "12345";
+  public static final String DOCTOR_NONCE =
+          CommonVars.apply("linkis.doctor.signature.nonce", "").getValue();
   public static final CommonVars<String> DOCTOR_TOKEN =
       CommonVars.apply("linkis.doctor.signature.token", "");
 

@@ -22,6 +22,8 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, SHAUtils, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
+import org.apache.linkis.entrance.exception.EntranceRPCException
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -38,7 +40,8 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.methods.{CloseableHttpResponse, HttpPost}
 import org.apache.http.entity.{ContentType, StringEntity}
-import org.apache.http.impl.client.{CloseableHttpClient, HttpClients}
+import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpClients}
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.apache.http.util.EntityUtils
 
 import java.nio.charset.StandardCharsets
@@ -55,7 +58,16 @@ object EntranceUtils extends Logging {
 
   val sparkVersionRegex = "^3(\\.\\d+)*$"
 
-  var DOCTOR_NONCE = "12345"
+  protected val connectionManager = new PoolingHttpClientConnectionManager
+  protected val cookieStore = new BasicCookieStore
+
+  private val httpClient: CloseableHttpClient = HttpClients
+    .custom()
+    .setDefaultCookieStore(cookieStore)
+    .setMaxConnTotal(20)
+    .setMaxConnPerRoute(10)
+    .setConnectionManager(connectionManager)
+    .build()
 
   def getUserCreatorEcTypeKey(
       userCreatorLabel: UserCreatorLabel,
@@ -151,13 +163,14 @@ object EntranceUtils extends Logging {
     ) {
       return engineType
     }
+    logger.info(s"AISQL automatically switches engines and begins to call Doctoris")
     // 组装请求url
     var printlog = s"Dynamic engine switching, using the engine's default values：$engineType"
     var url = EntranceConfiguration.DOCTOR_URL + EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL
     val timestampStr = String.valueOf(System.currentTimeMillis)
     val signature = SHAUtils.Encrypt(
       SHAUtils.Encrypt(
-        EntranceConfiguration.LINKIS_SYSTEM_NAME + DOCTOR_NONCE + timestampStr,
+        EntranceConfiguration.LINKIS_SYSTEM_NAME + EntranceConfiguration.DOCTOR_NONCE + timestampStr,
         null
       ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
       null
@@ -165,7 +178,7 @@ object EntranceUtils extends Logging {
     url = url
       .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
       .replace("$timestamp", timestampStr)
-      .replace("$nonce", DOCTOR_NONCE)
+      .replace("$nonce", EntranceConfiguration.DOCTOR_NONCE)
       .replace("$signature", signature)
     // 组装请求
     val httpPost = new HttpPost(url)
@@ -186,31 +199,44 @@ object EntranceUtils extends Logging {
     entity.setContentEncoding(StandardCharsets.UTF_8.toString)
     httpPost.setConfig(requestConfig)
     httpPost.setEntity(entity)
-    val httpClient = HttpClients.createDefault
+    val startTime = System.currentTimeMillis()
+    var responseStr = ""
+    // 捕获Doctoris端异常信息
     try {
-      val startTime = System.currentTimeMillis()
       val execute = httpClient.execute(httpPost)
-      // 请求结果处理
-      val responseStr: String =
-        EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
-      val endTime = System.currentTimeMillis()
-      val responseMapJson: Map[String, Object] =
-        BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
-      if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
-        val dataMap = MapUtils.getMap(responseMapJson, "data")
-        engineType = dataMap.get("engine").toString
-        val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
-        printlog =
-          s"Dynamic engine switching, Doctoris returns： $engineType ,Http call duration: $duration seconds"
-      }
+      responseStr = EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
     } catch {
       case e: Exception =>
-        logger.warn(s"调用Doctoris diagnose接口失败：sql: $sql", e)
-        printlog =
-          s"Dynamic engine switching exception, using the engine's default values：$engineType"
-    } finally {
-      httpClient.close()
-      logAppender.append(LogUtils.generateWarn(s"$printlog\n"))
+        logger.warn(s"调用Doctoris接口异常：sql: $sql ,entity: $entity,responseStr: $responseStr", e)
+        printlog = s"Doctoris component exception, using default engine：$engineType"
+        logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
+    }
+    if (StringUtils.isNotBlank(responseStr)) {
+      // 捕获Doctoris端数据异常信息
+      try {
+        // 请求结果处理
+        val endTime = System.currentTimeMillis()
+        val responseMapJson: Map[String, Object] =
+          BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
+        if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
+          val dataMap = MapUtils.getMap(responseMapJson, "data")
+          engineType = dataMap.get("engine").toString
+          val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
+          printlog =
+            s"Aisql automatically switches engines, Suggest $engineType to execute tasks ,This decision took $duration seconds"
+        } else {
+          throw new EntranceRPCException(
+            EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
+            EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorDesc
+          )
+        }
+      } catch {
+        case e: Exception =>
+          logger.warn(s"Doctoris返回数据解析失败：josn: $responseStr", e)
+          printlog = s"Doctoris data parse exception, using the engine's default values：$engineType"
+      } finally {
+        logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
+      }
     }
     engineType
   }

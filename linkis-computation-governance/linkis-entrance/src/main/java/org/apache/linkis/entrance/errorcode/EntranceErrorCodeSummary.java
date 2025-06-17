@@ -81,6 +81,8 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
 
   LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)"),
 
+  DOCTORIS_ERROR(20302, "Doctoris data retrieval is abnormal"),
+
   FAILOVER_RUNNING_TO_CANCELLED(
       30001,
       "Job {0} failover, status changed from Running to Cancelled (任务故障转移，状态从Running变更为Cancelled)");

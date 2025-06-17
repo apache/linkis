@@ -17,10 +17,10 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.conf.EntranceConfiguration._
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
@@ -28,15 +28,20 @@ import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
 import org.apache.linkis.governance.common.protocol.job.JobAiReqInsert
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.BeanUtils
 
-import java.util.Date
 import java.{lang, util}
+import java.util.Date
+
 import scala.collection.JavaConverters._
 
 class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
@@ -66,21 +71,22 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
      */
     var currentEngineType: String = engineTypeLabel.getStringValue
     if (
-        aiSqlEnable && sqlLanguage
-          .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
+      aiSqlEnable && sqlLanguage
+        .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
     ) {
 
+      logger.info(s"aisql enable for ${jobRequest.getId}")
       startMap.put(AI_SQL_KEY.key, AI_SQL_KEY.getValue.asInstanceOf[AnyRef])
       startMap.put(RETRY_NUM_KEY.key, RETRY_NUM_KEY.getValue.asInstanceOf[AnyRef])
-      logAppender.append(LogUtils.generateWarn(s"current code is aiSql task.\n"))
+      logAppender.append(LogUtils.generateInfo(s"current code is aiSql task.\n"))
 
       // 用户配置了模板参数
       if (startMap.containsKey("ec.resource.name")) {
-        val hiveParamKeys = "hive,mapreduce"
+        val hiveParamKeys: String = AI_SQL_HIVE_TEMPLATE_KEYS
         if (containsKeySubstring(startMap, hiveParamKeys)) {
           changeEngineLabel(hiveEngineType, labels)
           logAppender.append(
-            LogUtils.generateWarn(
+            LogUtils.generateInfo(
               s"use $hiveEngineType by set ${startMap.get("ec.resource.name")} template.\n"
             )
           )
@@ -88,81 +94,48 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
         } else {
           changeEngineLabel(sparkEngineType, labels)
           logAppender.append(
-            LogUtils.generateWarn(
+            LogUtils.generateInfo(
               s"use $sparkEngineType by set ${startMap.get("ec.resource.name")} template.\n"
             )
           )
           currentEngineType = sparkEngineType
         }
+        logger.info(
+          s"use ${startMap.get("ec.resource.name")} conf, use $currentEngineType execute task."
+        )
       } else {
-        val engineType: String = EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
+        logger.info(s"start intelligent selection execution engine for ${jobRequest.getId}")
+        val engineType: String =
+          EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
         if ("hive".equals(engineType)) {
           changeEngineLabel(hiveEngineType, labels)
-          logAppender.append(LogUtils.generateWarn(s"use $hiveEngineType by call doctor.\n"))
+          logAppender.append(
+            LogUtils.generateInfo(s"use $hiveEngineType by intelligent selection.\n")
+          )
           currentEngineType = hiveEngineType
         } else {
           changeEngineLabel(sparkEngineType, labels)
-          logAppender.append(LogUtils.generateWarn(s"use $sparkEngineType by call doctor.\n"))
+          logAppender.append(
+            LogUtils.generateInfo(s"use $sparkEngineType by intelligent selection.\n")
+          )
           currentEngineType = sparkEngineType
         }
+        logger.info(
+          s"end intelligent selection execution engine, and engineType is ${currentEngineType} for ${jobRequest.getId}."
+        )
+        EntranceUtils.dealsparkDynamicConf(jobRequest, logAppender, jobRequest.getParams)
       }
 
       persist(jobRequest);
-
     }
-    // 开启 spark 动态资源规划, spark3.4.4
-    if (sparkEngineType.equals(currentEngineType) && SPARK_DYNAMIC_ALLOCATION_ENABLED) {
-      logAppender.append(
-        LogUtils.generateWarn(s"spark dynamic allocation enabled for $currentEngineType.\n")
-      )
-      logger.info("spark3 add dynamic resource.")
 
-      // add spark dynamic resource planning
-      startMap.put(
-        "spark.shuffle.service.enabled",
-        SPARK_SHUFFLE_SERVICE_ENABLED.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.enabled",
-        SPARK_DYNAMIC_ALLOCATION_ENABLED.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.minExecutors",
-        SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.maxExecutors",
-        SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.asInstanceOf[AnyRef]
-      )
-      startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES.asInstanceOf[AnyRef])
-      startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY.asInstanceOf[AnyRef])
-      startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES.asInstanceOf[AnyRef])
-      startMap.put("spark.python.version", SPARK3_PYTHON_VERSION.asInstanceOf[AnyRef])
-      startMap.put(
-        "spark.executor.memoryOverhead",
-        SPARK_EXECUTOR_MEMORY_OVERHEAD.asInstanceOf[AnyRef]
-      )
-
-      Utils.tryAndWarn {
-        val extraConfs: String = SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
-        if (StringUtils.isNotBlank(extraConfs)) {
-          val confs: Array[String] = extraConfs.split(",")
-          for (conf <- confs) {
-            val confKey: String = conf.split("=")(0)
-            val confValue: String = conf.split("=")(1)
-            startMap.put(confKey, confValue)
-          }
-        }
-      }
-
-    }
     TaskUtils.addStartupMap(jobRequest.getParams, startMap)
     jobRequest
   }
 
   private def persist(jobRequest: JobRequest) = {
     val sender: Sender =
-      Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
+      Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
     val jobAiRequest: JobAiRequest = new JobAiRequest
     BeanUtils.copyProperties(jobRequest, jobAiRequest)
     jobAiRequest.setId(null)

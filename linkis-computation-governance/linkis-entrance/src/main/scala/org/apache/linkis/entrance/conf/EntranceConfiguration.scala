@@ -316,6 +316,9 @@ object EntranceConfiguration {
   val AI_SQL_DEFAULT_HIVE_ENGINE_TYPE: String =
     CommonVars[String]("linkis.ai.sql.default.hive.engine.type", "hive-2.3.3").getValue
 
+  val AI_SQL_HIVE_TEMPLATE_KEYS: String =
+    CommonVars[String]("linkis.ai.sql.hive.template.keys", "hive,mapreduce").getValue
+
   val AI_SQL_CREATORS: String =
     CommonVars[String]("linkis.ai.sql.support.creators", "IDE").getValue
 

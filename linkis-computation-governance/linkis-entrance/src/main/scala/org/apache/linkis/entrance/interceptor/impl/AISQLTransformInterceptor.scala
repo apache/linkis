@@ -73,17 +73,18 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
           .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
     ) {
 
+      logger.info(s"aisql enable for ${jobRequest.getId}")
       startMap.put(AI_SQL_KEY.key, AI_SQL_KEY.getValue.asInstanceOf[AnyRef])
       startMap.put(RETRY_NUM_KEY.key, RETRY_NUM_KEY.getValue.asInstanceOf[AnyRef])
-      logAppender.append(LogUtils.generateWarn(s"current code is aiSql task.\n"))
+      logAppender.append(LogUtils.generateInfo(s"current code is aiSql task.\n"))
 
       // 用户配置了模板参数
       if (startMap.containsKey("ec.resource.name")) {
-        val hiveParamKeys = "hive,mapreduce"
+        val hiveParamKeys: String = AI_SQL_HIVE_TEMPLATE_KEYS
         if (containsKeySubstring(startMap, hiveParamKeys)) {
           changeEngineLabel(hiveEngineType, labels)
           logAppender.append(
-            LogUtils.generateWarn(
+            LogUtils.generateInfo(
               s"use $hiveEngineType by set ${startMap.get("ec.resource.name")} template.\n"
             )
           )
@@ -91,24 +92,35 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
         } else {
           changeEngineLabel(sparkEngineType, labels)
           logAppender.append(
-            LogUtils.generateWarn(
+            LogUtils.generateInfo(
               s"use $sparkEngineType by set ${startMap.get("ec.resource.name")} template.\n"
             )
           )
           currentEngineType = sparkEngineType
         }
+        logger.info(
+          s"use ${startMap.get("ec.resource.name")} conf, use $currentEngineType execute task."
+        )
       } else {
+        logger.info(s"start intelligent selection execution engine for ${jobRequest.getId}")
         val engineType: String =
           EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
         if ("hive".equals(engineType)) {
           changeEngineLabel(hiveEngineType, labels)
-          logAppender.append(LogUtils.generateWarn(s"use $hiveEngineType by call doctor.\n"))
+          logAppender.append(
+            LogUtils.generateInfo(s"use $hiveEngineType by intelligent selection.\n")
+          )
           currentEngineType = hiveEngineType
         } else {
           changeEngineLabel(sparkEngineType, labels)
-          logAppender.append(LogUtils.generateWarn(s"use $sparkEngineType by call doctor.\n"))
+          logAppender.append(
+            LogUtils.generateInfo(s"use $sparkEngineType by intelligent selection.\n")
+          )
           currentEngineType = sparkEngineType
         }
+        logger.info(
+          s"end intelligent selection execution engine, and engineType is ${currentEngineType} for ${jobRequest.getId}."
+        )
       }
 
       persist(jobRequest);
@@ -117,7 +129,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
     // 开启 spark 动态资源规划, spark3.4.4
     if (sparkEngineType.equals(currentEngineType) && SPARK_DYNAMIC_ALLOCATION_ENABLED) {
       logAppender.append(
-        LogUtils.generateWarn(s"spark dynamic allocation enabled for $currentEngineType.\n")
+        LogUtils.generateInfo(s"spark dynamic allocation enabled for $currentEngineType.\n")
       )
       logger.info("spark3 add dynamic resource.")
 

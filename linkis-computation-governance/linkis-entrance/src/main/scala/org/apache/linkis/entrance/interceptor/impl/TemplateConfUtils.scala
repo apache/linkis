@@ -244,7 +244,7 @@ object TemplateConfUtils extends Logging {
           if (StringUtils.isNotBlank(templateName)) {
             logAppender.append(
               LogUtils
-                .generateWarn(s"Try to execute task with template: $templateName in script.\n")
+                .generateInfo(s"Try to execute task with template: $templateName in script.\n")
             )
           }
         }
@@ -260,7 +260,7 @@ object TemplateConfUtils extends Logging {
           if (StringUtils.isNotBlank(templateName)) {
             runtimeTemplateFlag = true
             logAppender.append(
-              LogUtils.generateWarn(
+              LogUtils.generateInfo(
                 s"Try to execute task with template: $templateName in runtime params.\n"
               )
             )
@@ -285,7 +285,7 @@ object TemplateConfUtils extends Logging {
             templateConflist = templateCache.get(templateUuid)
             if (templateConflist == null || templateConflist.size() == 0) {
               logAppender.append(
-                LogUtils.generateWarn(
+                LogUtils.generateInfo(
                   s"Can not get any template conf data with template uid:$templateUuid\n"
                 )
               )
@@ -303,7 +303,7 @@ object TemplateConfUtils extends Logging {
           templateConflist.addAll(cacheList)
           if (templateConflist == null || templateConflist.size() == 0) {
             logAppender.append(
-              LogUtils.generateWarn(
+              LogUtils.generateInfo(
                 s"Can not get any template conf data with template name:$templateName\n"
               )
             )
@@ -331,8 +331,9 @@ object TemplateConfUtils extends Logging {
             ) && runtimeTemplateFlag && templateConflist != null && templateConflist
               .size() > 0
         ) {
+          logger.info("aisql deal with template in runtime params.")
           logAppender.append(
-            LogUtils.generateWarn(
+            LogUtils.generateInfo(
               s"If task execution fails, the template $templateName configuration parameters will be used to rerun the task\n"
             )
           )
@@ -366,6 +367,7 @@ object TemplateConfUtils extends Logging {
 
           })
           if (keyList.size() > 0) {
+            logger.info(s"use template conf for templateName: ${templateName}")
             keyList.put(confTemplateNameKey, templateName)
             logAppender.append(
               LogUtils

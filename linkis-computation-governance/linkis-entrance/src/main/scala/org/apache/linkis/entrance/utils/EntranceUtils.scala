@@ -209,8 +209,8 @@ object EntranceUtils extends Logging {
       responseStr = EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
     } catch {
       case e: Exception =>
-        logger.warn(s"调用Doctoris接口异常：sql: $sql ,entity: $entity,responseStr: $responseStr", e)
-        printlog = s"Doctoris component exception, using default engine：$engineType"
+        logger.warn(s"调用智能选择接口异常：sql: $sql ,entity: $entity,responseStr: $responseStr", e)
+        printlog = s"Aisql intelligent selection component exception, using default engine：$engineType"
         logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
     }
     if (StringUtils.isNotBlank(responseStr)) {
@@ -225,7 +225,7 @@ object EntranceUtils extends Logging {
           engineType = dataMap.get("engine").toString
           val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
           printlog =
-            s"Aisql automatically switches engines, Suggest $engineType to execute tasks ,This decision took $duration seconds"
+            s"Aisql intelligent selection engines, Suggest $engineType to execute tasks ,This decision took $duration seconds"
         } else {
           throw new EntranceRPCException(
             EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
@@ -235,7 +235,7 @@ object EntranceUtils extends Logging {
       } catch {
         case e: Exception =>
           logger.warn(s"Doctoris返回数据解析失败：josn: $responseStr", e)
-          printlog = s"Doctoris data parse exception, using the engine's default values：$engineType"
+          printlog = s"Aisql intelligent selection data parse exception, using the engine's default values：$engineType"
       } finally {
         logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
       }

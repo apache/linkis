@@ -31,7 +31,7 @@ import java.util.Map;
 public class SHAUtils {
 
   public static final String DOCTOR_NONCE =
-          CommonVars.apply("linkis.doctor.signature.nonce", "").getValue();
+      CommonVars.apply("linkis.doctor.signature.nonce", "").getValue();
   public static final CommonVars<String> DOCTOR_TOKEN =
       CommonVars.apply("linkis.doctor.signature.token", "");
 

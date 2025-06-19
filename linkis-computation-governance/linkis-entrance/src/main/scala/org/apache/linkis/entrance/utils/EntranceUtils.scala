@@ -64,8 +64,8 @@ object EntranceUtils extends Logging {
   private val httpClient: CloseableHttpClient = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
-    .setMaxConnTotal(20)
-    .setMaxConnPerRoute(10)
+    .setMaxConnTotal(EntranceConfiguration.DOCTOR_HTTP_MAX_CONNECT)
+    .setMaxConnPerRoute(EntranceConfiguration.DOCTOR_HTTP_MAX_CONNECT / 2)
     .setConnectionManager(connectionManager)
     .build()
 
@@ -191,6 +191,8 @@ object EntranceUtils extends Logging {
     val requestConfig = RequestConfig
       .custom()
       .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setConnectionRequestTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setSocketTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
       .build()
     val entity = new StringEntity(
       json,

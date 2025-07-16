@@ -151,7 +151,13 @@ public class QueryRestfulApi {
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
     @ApiImplicitParam(name = "isAdminView", dataType = "Boolean"),
-    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance")
+    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+    @ApiImplicitParam(
+        name = "engineInstance",
+        required = false,
+        dataType = "String",
+        value = "engineInstance"),
+    @ApiImplicitParam(name = "runType", required = false, dataType = "String", value = "runType")
   })
   @RequestMapping(path = "/list", method = RequestMethod.GET)
   public Message list(
@@ -169,7 +175,8 @@ public class QueryRestfulApi {
       @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
       @RequestParam(value = "isDeptView", required = false) Boolean isDeptView,
       @RequestParam(value = "instance", required = false) String instance,
-      @RequestParam(value = "engineInstance", required = false) String engineInstance)
+      @RequestParam(value = "engineInstance", required = false) String engineInstance,
+      @RequestParam(value = "runType", required = false) String runType)
       throws IOException, QueryException {
     List<JobHistory> queryTasks = null;
     try {
@@ -188,7 +195,8 @@ public class QueryRestfulApi {
               isAdminView,
               isDeptView,
               instance,
-              engineInstance);
+              engineInstance,
+              runType);
     } catch (Exception e) {
       return Message.error(e.getMessage());
     }
@@ -298,6 +306,7 @@ public class QueryRestfulApi {
               eDate,
               engineType,
               queryCacheManager.getUndoneTaskMinId(),
+              null,
               null,
               null,
               null);
@@ -442,7 +451,7 @@ public class QueryRestfulApi {
         if (StringUtils.isNotBlank(departmentId)) {
           List<JobHistory> list =
               jobHistoryQueryService.search(
-                  jobId, null, null, null, null, null, null, null, null, departmentId, null);
+                  jobId, null, null, null, null, null, null, null, null, departmentId, null, null);
           if (!CollectionUtils.isEmpty(list)) {
             jobHistory = list.get(0);
           }
@@ -512,7 +521,8 @@ public class QueryRestfulApi {
               isAdminView,
               isDeptView,
               instance,
-              engineInstance);
+              engineInstance,
+              null);
       PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
       if (pageInfo.getTotal() > 5000) {
         queryTasks.addAll(
@@ -530,7 +540,8 @@ public class QueryRestfulApi {
                 isAdminView,
                 isDeptView,
                 instance,
-                engineInstance));
+                engineInstance,
+                null));
       }
       List<QueryTaskVO> vos =
           pageInfo.getList().stream()
@@ -663,7 +674,8 @@ public class QueryRestfulApi {
       Boolean isAdminView,
       Boolean isDeptView,
       String instance,
-      String engineInstance)
+      String engineInstance,
+      String runType)
       throws LinkisCommonErrorException {
     String username = SecurityFilter.getLoginUsername(req);
     if (StringUtils.isBlank(status)) {
@@ -746,7 +758,8 @@ public class QueryRestfulApi {
               null,
               instance,
               departmentId,
-              engineInstance);
+              engineInstance,
+              runType);
     } finally {
       PageHelper.clearPage();
     }
@@ -787,6 +800,7 @@ public class QueryRestfulApi {
                 null,
                 null,
                 departmentId,
+                null,
                 null);
         if (!CollectionUtils.isEmpty(list)) {
           jobHistory = list.get(0);

@@ -282,9 +282,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       startJobId: lang.Long,
       instance: String,
       departmentId: String,
-      engineInstance: String
+      engineInstance: String,
+      runType: String
   ): util.List[JobHistory] = {
-
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(
@@ -297,7 +297,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
@@ -313,7 +314,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -336,7 +338,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     }
     result
@@ -364,7 +367,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null, null, null), {
+      jobHistoryMapper
+        .search(jobId, null, null, sDate, eDate, null, null, null, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
@@ -493,6 +497,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         null,
         null,
         request.instance,
+        null,
         null,
         null
       )

@@ -117,6 +117,7 @@ public class JobHistoryQueryServiceTest {
             1L,
             null,
             null,
+            null,
             null);
     Assertions.assertTrue(histories.size() == 0);
   }

@@ -114,6 +114,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -155,6 +156,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -177,6 +179,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>

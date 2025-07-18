@@ -289,6 +289,9 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     } else if (StringUtils.isBlank(password)) {
       return Message.error("Password can not be blank(密码不能为空)！")
     }
+    if (GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && userName.toLowerCase().startsWith("hduser")) {
+      return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
+    }
     if (
         GatewayConfiguration.ADMIN_USER.getValue.equals(
           userName

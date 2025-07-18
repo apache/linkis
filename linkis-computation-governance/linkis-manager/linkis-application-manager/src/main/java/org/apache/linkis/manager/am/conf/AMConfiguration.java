@@ -159,6 +159,27 @@ public class AMConfiguration {
   public static final boolean COMBINED_WITHOUT_YARN_DEFAULT =
       CommonVars.apply("linkis.combined.without.yarn.default", true).getValue();
 
+  public static final String SPARK_EXECUTOR_CORES =
+      CommonVars.apply("spark.executor.cores", "2").getValue();
+
+  public static final String SPARK_EXECUTOR_MEMORY =
+      CommonVars.apply("spark.executor.memory", "6G").getValue();
+
+  public static final String SPARK_EXECUTOR_INSTANCES =
+      CommonVars.apply("spark.executor.instances", "1").getValue();
+
+  public static final String SPARK_EXECUTOR_MEMORY_OVERHEAD =
+      CommonVars.apply("spark.executor.memoryOverhead", "2G").getValue();
+
+  public static final String SPARK3_PYTHON_VERSION =
+      CommonVars.apply("spark.python.version", "python3").getValue();
+
+  public static final boolean SPARK_DYNAMIC_ALLOCATION_ENABLED =
+      CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue();
+
+  public static final String SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
+      CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue();
+
   public static final Map<String, Integer> AM_ENGINE_ASK_MAX_NUMBER = new HashMap<>();
 
   static {

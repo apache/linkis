@@ -124,54 +124,8 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
       }
 
       persist(jobRequest);
-
     }
-    // 开启 spark 动态资源规划, spark3.4.4
-    if (sparkEngineType.equals(currentEngineType) && SPARK_DYNAMIC_ALLOCATION_ENABLED) {
-      logAppender.append(
-        LogUtils.generateInfo(s"spark dynamic allocation enabled for $currentEngineType.\n")
-      )
-      logger.info("spark3 add dynamic resource.")
 
-      // add spark dynamic resource planning
-      startMap.put(
-        "spark.shuffle.service.enabled",
-        SPARK_SHUFFLE_SERVICE_ENABLED.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.enabled",
-        SPARK_DYNAMIC_ALLOCATION_ENABLED.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.minExecutors",
-        SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS.asInstanceOf[AnyRef]
-      )
-      startMap.put(
-        "spark.dynamicAllocation.maxExecutors",
-        SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.asInstanceOf[AnyRef]
-      )
-      startMap.put("spark.executor.cores", SPARK_EXECUTOR_CORES.asInstanceOf[AnyRef])
-      startMap.put("spark.executor.memory", SPARK_EXECUTOR_MEMORY.asInstanceOf[AnyRef])
-      startMap.put("spark.executor.instances", SPARK_EXECUTOR_INSTANCES.asInstanceOf[AnyRef])
-      startMap.put("spark.python.version", SPARK3_PYTHON_VERSION.asInstanceOf[AnyRef])
-      startMap.put(
-        "spark.executor.memoryOverhead",
-        SPARK_EXECUTOR_MEMORY_OVERHEAD.asInstanceOf[AnyRef]
-      )
-
-      Utils.tryAndWarn {
-        val extraConfs: String = SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
-        if (StringUtils.isNotBlank(extraConfs)) {
-          val confs: Array[String] = extraConfs.split(",")
-          for (conf <- confs) {
-            val confKey: String = conf.split("=")(0)
-            val confValue: String = conf.split("=")(1)
-            startMap.put(confKey, confValue)
-          }
-        }
-      }
-
-    }
     TaskUtils.addStartupMap(jobRequest.getParams, startMap)
     jobRequest
   }

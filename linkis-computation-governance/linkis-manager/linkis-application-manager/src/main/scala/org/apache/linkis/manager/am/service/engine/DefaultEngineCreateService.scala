@@ -41,11 +41,12 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
@@ -186,6 +187,9 @@ class DefaultEngineCreateService
     if (engineCreateRequest.getProperties == null) {
       engineCreateRequest.setProperties(new util.HashMap[String, String]())
     }
+    // 3.1 deal with spark3 dynamic allocation conf
+    dealWithSparkDynamicAllocationParams(engineCreateRequest.getProperties, labelList)
+
     val resource =
       generateResource(
         engineCreateRequest.getProperties,
@@ -313,6 +317,47 @@ class DefaultEngineCreateService
       )
     }
     engineNode
+  }
+
+  /**
+   * 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
+   * @param properties
+   */
+  private def dealWithSparkDynamicAllocationParams(
+      properties: util.Map[String, String],
+      labels: util.List[Label[_]]
+  ): Unit = {
+    val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
+    val sparkDynamicAllocationEnabled: Boolean = AMConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
+    if (
+        sparkDynamicAllocationEnabled && engineTypeLabel.getEngineType.equals(
+          EngineType.SPARK.toString
+        ) && engineTypeLabel.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
+    ) {
+      val templateName: String = properties.getOrDefault("ec.resource.name", "")
+      logger.info(s"enabled spark dynamic allocation, and user template name: [${templateName}]")
+      if (StringUtils.isBlank(templateName)) {
+        properties.put("spark.executor.cores", AMConfiguration.SPARK_EXECUTOR_CORES)
+        properties.put("spark.executor.memory", AMConfiguration.SPARK_EXECUTOR_MEMORY)
+        properties.put("spark.executor.instances", AMConfiguration.SPARK_EXECUTOR_INSTANCES)
+        properties.put(
+          "spark.executor.memoryOverhead",
+          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD
+        )
+        properties.put("spark.python.version", AMConfiguration.SPARK3_PYTHON_VERSION)
+        Utils.tryAndWarn {
+          val extraConfs: String = AMConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
+          if (StringUtils.isNotBlank(extraConfs)) {
+            val confs: Array[String] = extraConfs.split(",")
+            for (conf <- confs) {
+              val confKey: String = conf.split("=")(0)
+              val confValue: String = conf.split("=")(1)
+              properties.put(confKey, confValue)
+            }
+          }
+        }
+      }
+    }
   }
 
   def canCreateEC(engineCreateRequest: EngineCreateRequest): CanCreateECRes = {

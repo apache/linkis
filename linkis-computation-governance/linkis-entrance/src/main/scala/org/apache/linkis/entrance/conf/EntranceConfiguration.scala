@@ -331,36 +331,6 @@ object EntranceConfiguration {
   val AI_SQL_RETRY_ONCE: CommonVars[Boolean] =
     CommonVars[Boolean]("linkis.ai.sql.once.enable", true)
 
-  val SPARK_SHUFFLE_SERVICE_ENABLED: Boolean =
-    CommonVars[Boolean]("spark.shuffle.service.enabled", true).getValue
-
-  val SPARK_EXECUTOR_CORES: Int =
-    CommonVars[Int]("spark.executor.cores", 4).getValue
-
-  val SPARK_EXECUTOR_MEMORY: String =
-    CommonVars[String]("spark.executor.memory", "17G").getValue
-
-  val SPARK_EXECUTOR_INSTANCES: Int =
-    CommonVars[Int]("spark.executor.instances", 1).getValue
-
-  val SPARK_EXECUTOR_MEMORY_OVERHEAD: String =
-    CommonVars[String]("spark.executor.memoryOverhead", "3G").getValue
-
-  val SPARK3_PYTHON_VERSION: String =
-    CommonVars[String]("spark.python.version", "python3").getValue
-
-  val SPARK_DYNAMIC_ALLOCATION_ENABLED: Boolean =
-    CommonVars[Boolean]("spark.dynamicAllocation.enabled", true).getValue
-
-  val SPARK_DYNAMIC_ALLOCATION_MIN_EXECUTORS: Int =
-    CommonVars[Int]("spark.dynamicAllocation.minExecutors", 1).getValue
-
-  val SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS: Int =
-    CommonVars[Int]("spark.dynamicAllocation.maxExecutors", 50).getValue
-
-  val SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS: String =
-    CommonVars[String]("spark.dynamicAllocation.additional.confs", "").getValue
-
   val SPARK3_VERSION_COERCION_USERS: String =
     CommonVars[String]("spark.version.coercion.users", "").getHotValue()
 

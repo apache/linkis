@@ -20,6 +20,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
 import org.apache.linkis.basedatamanager.server.service.GatewayAuthTokenService;
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.utils.RSAUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -35,6 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -195,5 +198,89 @@ public class GatewayAuthTokenRestfulApi {
       return Message.error("Invalid Token(数据库中未配置的无效令牌)");
     }
     return Message.ok().data("result", checkResult);
+  }
+
+  @ApiImplicitParams({@ApiImplicitParam(paramType = "query", dataType = "string", name = "token")})
+  @ApiOperation(value = "decrypt-token", notes = "decrypt token", httpMethod = "GET")
+  @RequestMapping(path = "/decrypt-token", method = RequestMethod.GET)
+  public Message decryptToken(HttpServletRequest request, String token) {
+    ModuleUserUtils.getOperationUser(request, "Try to decrypt auth token with token");
+    try {
+      String decryptToken = token;
+      if (Configuration.LINKIS_RSA_TOKEN_SWITCH() && decryptToken.startsWith(RSAUtils.PREFIX())) {
+        decryptToken = RSAUtils.dncryptWithLinkisPublicKey(token);
+      }
+      return Message.ok().data("encryptToken", token).data("decryptToken", decryptToken);
+    } catch (Exception e) {
+      return Message.error("Failed to decrypt token").data("encryptToken", token);
+    }
+  }
+
+  @ApiImplicitParams({@ApiImplicitParam(paramType = "query", dataType = "string", name = "token")})
+  @ApiOperation(value = "encrypt-token", notes = "encrypt token ", httpMethod = "GET")
+  @RequestMapping(path = "/encrypt-token", method = RequestMethod.GET)
+  public Message encryptToken(HttpServletRequest request, String token) {
+    ModuleUserUtils.getOperationUser(request, "Try to encrypt the existing tokens");
+    if (StringUtils.isBlank(token)) {
+      return Message.error(" token can not be empty [token不能为空]");
+    }
+    if (Configuration.LINKIS_RSA_TOKEN_SWITCH()) {
+      if (StringUtils.isNotBlank(token) && (!token.startsWith(RSAUtils.PREFIX()))) {
+        // 用户SDK调用返回加密token
+        GatewayAuthTokenEntity entityByToken =
+            gatewayAuthTokenService.getEntityByToken(RSAUtils.tokenSubRule(token));
+        if (Objects.isNull(entityByToken)) {
+          return Message.error("Invalid Token(数据库中未配置的无效令牌)");
+        }
+        if (StringUtils.isBlank(entityByToken.getTokenSign())) {
+          return Message.error("Invalid Token(数据库中未配置的无效令牌)");
+        }
+        return Message.ok().data("encryptToken", entityByToken.getTokenSign());
+      } else {
+        return Message.error("Invalid Token(令牌格式异常，请检查令牌格式)");
+      }
+    } else {
+      return Message.ok().data("msg", "Linkis集群未开启RSA开关，不执行加密");
+    }
+  }
+
+  @ApiOperation(value = "encrypt-token-all", notes = "encrypt history token ", httpMethod = "GET")
+  @RequestMapping(path = "/encrypt-token-all", method = RequestMethod.GET)
+  public Message encryptTokenAll(HttpServletRequest request) {
+    // 处理旧明文token，对明文token执行加密，并更新数据库
+    if (!Configuration.LINKIS_RSA_TOKEN_SWITCH()) {
+      return Message.ok().data("msg", "Linkis集群未开启RSA开关，不执行加密");
+    }
+    List<GatewayAuthTokenEntity> list = gatewayAuthTokenService.list();
+    list.forEach(
+        entity -> {
+          if (null == entity.getTokenSign()
+              || (!entity.getTokenSign().startsWith(RSAUtils.PREFIX()))) {
+            String tokenName = entity.getTokenName();
+            String encryptToken = RSAUtils.encryptWithLinkisPublicKey(tokenName);
+            tokenName = tokenName.substring(0, tokenName.length() / 2);
+            entity.setTokenName(tokenName);
+            entity.setTokenSign(encryptToken);
+            gatewayAuthTokenService.updateById(entity);
+          }
+        });
+    return Message.ok();
+  }
+
+  @ApiOperation(value = "decrypt-token-all", notes = "decrypt history token ", httpMethod = "GET")
+  @RequestMapping(path = "/decrypt-token-all", method = RequestMethod.GET)
+  public Message decryptTokenAll(HttpServletRequest request) {
+    // 处理旧明文token，对明文token执行解密，并更新数据库
+    List<GatewayAuthTokenEntity> list = gatewayAuthTokenService.list();
+    list.forEach(
+        entity -> {
+          if (entity.getTokenSign().startsWith(RSAUtils.PREFIX())) {
+            String tokenName = RSAUtils.dncryptWithLinkisPublicKey(entity.getTokenSign());
+            entity.setTokenName(tokenName);
+            entity.setTokenSign(null);
+            gatewayAuthTokenService.updateById(entity);
+          }
+        });
+    return Message.ok();
   }
 }

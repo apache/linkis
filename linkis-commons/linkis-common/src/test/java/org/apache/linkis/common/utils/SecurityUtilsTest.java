@@ -112,6 +112,14 @@ public class SecurityUtilsTest {
   }
 
   @Test
+  public void testRSA() {
+    String originalData = "rsa-test-str";
+    String encryptData = RSAUtils.encryptWithLinkisPublicKey(originalData);
+    String dncryptData = RSAUtils.dncryptWithLinkisPublicKey(encryptData);
+    Assertions.assertEquals(dncryptData, originalData);
+  }
+
+  @Test
   public void testCheckJdbcConnParams() {
     String host = "127.0.0.1";
     Integer port = 3306;

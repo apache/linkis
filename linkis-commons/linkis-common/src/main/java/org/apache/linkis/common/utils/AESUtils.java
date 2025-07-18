@@ -86,6 +86,21 @@ public class AESUtils {
     }
   }
 
+  public static String encrypt(byte[] content, String password) {
+    try {
+      // 创建密码器
+      Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+      // 初始化为加密模式的密码器
+      cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(password));
+      // 加密
+      byte[] result = cipher.doFinal(content);
+      // 通过Base64转码返回
+      return Base64.encodeBase64String(result).trim();
+    } catch (Exception e) {
+      throw new ErrorException(21304, "AES加密加密失败");
+    }
+  }
+
   /**
    * AES 解密操作
    *
@@ -102,6 +117,26 @@ public class AESUtils {
       // 执行操作
       byte[] result = cipher.doFinal(Base64.decodeBase64(content));
       return new String(result, ENCODING_TYPE);
+    } catch (Exception e) {
+      throw new ErrorException(21304, "AES加密解密失败");
+    }
+  }
+
+  /**
+   * AES 解密操作
+   *
+   * @param content
+   * @param password
+   * @return
+   */
+  public static byte[] decrypt(byte[] content, String password) {
+    try {
+      // 实例化
+      Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+      // 使用密钥初始化，设置为解密模式
+      cipher.init(Cipher.DECRYPT_MODE, getSecretKey(password));
+      // 执行操作
+      return cipher.doFinal(Base64.decodeBase64(content));
     } catch (Exception e) {
       throw new ErrorException(21304, "AES加密解密失败");
     }

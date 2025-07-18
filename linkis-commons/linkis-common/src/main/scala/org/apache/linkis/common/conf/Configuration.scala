@@ -17,7 +17,7 @@
 
 package org.apache.linkis.common.conf
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, RSAUtils}
 
 import org.apache.commons.lang3.StringUtils
 
@@ -80,6 +80,12 @@ object Configuration extends Logging {
 
   val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
 
+  val LINKIS_RSA_TOKEN_SWITCH = CommonVars("linkis.rsa.token.switch", false).getValue
+
+  val LINKIS_RSA_PUBLIC_KEY = CommonVars("linkis.rsa.public.key", "")
+
+  val LINKIS_RSA_PRIVATE_KEY = CommonVars("linkis.rsa.private.key", "")
+
   val ERROR_MSG_TIP =
     CommonVars(
       "linkis.jobhistory.error.msg.tip",
@@ -102,7 +108,14 @@ object Configuration extends Logging {
     if (StringUtils.isBlank(token)) {
       false
     } else {
-      token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      if (Configuration.LINKIS_RSA_TOKEN_SWITCH && token.startsWith(RSAUtils.PREFIX)) {
+        RSAUtils
+          .dncryptWithLinkisPublicKey(token)
+          .toUpperCase()
+          .contains(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      } else {
+        token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      }
     }
   }
 

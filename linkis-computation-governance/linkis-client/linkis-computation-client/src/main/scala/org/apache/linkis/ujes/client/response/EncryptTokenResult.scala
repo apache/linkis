@@ -15,21 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.authentication.dao;
+package org.apache.linkis.ujes.client.response
 
-import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-import org.apache.ibatis.annotations.Param;
+import java.util
 
-import java.util.List;
+import scala.beans.BeanProperty
 
-public interface TokenDao {
+@DWSHttpMessageResult("/api/rest_j/v\\d+/basedata-manager/gateway-auth-token/encrypt-token")
+class EncryptTokenResult extends DWSResult {
 
-  TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
+  @BeanProperty
+  var encryptToken: String = _
 
-  List<TokenEntity> selectTokenByNameWithLike(@Param("tokenName") String tokenName);
-
-  TokenEntity selectTokenBySign(@Param("tokenSign") String tokenSign);
-
-  List<TokenEntity> getAllTokens();
 }

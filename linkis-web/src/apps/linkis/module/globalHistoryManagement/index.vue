@@ -63,6 +63,15 @@
           />
         </div>
         <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.runType.label')}}</label>
+          <Input
+            :maxlength="50"
+            v-model.trim="searchBar.runType"
+            :placeholder="$t('message.linkis.formItems.runType.placeholder')"
+            style="width:80px;"
+          />
+        </div>
+        <div class="searchbar-item">
           <label class="label">{{$t('message.linkis.formItems.engine.label')}}</label>
           <Select v-model="searchBar.engine" style="width: 70px">
             <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
@@ -575,6 +584,7 @@ export default {
       const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setSeconds(59)): this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
+        runType: this.searchBar.runType,
         creator: this.searchBar.creator,
         executeApplicationName: this.searchBar.engine,
         status: this.searchBar.status,
@@ -843,13 +853,14 @@ export default {
           // renderType: 'tooltip',
         },
         {
-          title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
+          title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' +  this.$t('message.linkis.tableColumns.runType') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
           key: 'requestApplicationName',
           align: 'center',
           width: 130,
-          renderType: 'concat',
+          renderType: 'multiConcat',
           renderParams: {
-            concatKey: 'executeApplicationName'
+            concatKey1: 'runType',
+            concatKey2: 'executeApplicationName'
           }
 
         },

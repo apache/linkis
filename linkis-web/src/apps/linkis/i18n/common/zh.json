@@ -166,6 +166,7 @@
               "startTime": "启动时间",
               "executeApplicationName": "引擎",
               "requestApplicationName": "应用",
+              "runType": "任务类型",
               "user": "用户",
               "createdTime": "创建时间",
               "updateTime": "更新时间",
@@ -266,6 +267,10 @@
               "creator": {
                   "label": "应用",
                   "placeholder": "请输入应用搜索"
+              },
+              "runType": {
+                  "label": "任务类型",
+                  "placeholder": "请输入runType"
               },
               "engine": {
                   "label": "引擎"
@@ -558,6 +563,7 @@
             "addUDFAdmin": "新增UDF管理员",
             "remove": "删除",
             "edit": "编辑",
+            "tokenInfo": "Token信息",
             "searchLabel": "模糊搜索:",
             "searchPlaceholder": "请输入搜索内容",
             "search": "搜索",

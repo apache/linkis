@@ -224,9 +224,11 @@ object EntranceUtils extends Logging {
         if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
           val dataMap = MapUtils.getMap(responseMapJson, "data")
           engineType = dataMap.get("engine").toString
+          // 获取命中规则
+          val reason = dataMap.get("reason").toString
           val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
           printlog =
-            s"Aisql intelligent selection engines, Suggest $engineType to execute tasks ,This decision took $duration seconds"
+            s"Aisql intelligent selection engines, Suggest $engineType to execute tasks,Hit rules: $reason ,This decision took $duration seconds"
         } else {
           throw new EntranceRPCException(
             EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,

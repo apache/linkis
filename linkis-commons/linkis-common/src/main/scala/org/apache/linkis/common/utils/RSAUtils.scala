@@ -163,10 +163,10 @@ object RSAUtils extends Logging {
    * @param token
    *   输入的完整 token 字符串。
    * @return
-   *   提取的 token 前半部分字符串。
+   *   提取的 token 后半部分字符串。
    */
   def tokenSubRule(token: String): String = {
-    token.substring(0, token.length / 2)
+    token.substring(token.length / 2, token.length)
   }
 
 }

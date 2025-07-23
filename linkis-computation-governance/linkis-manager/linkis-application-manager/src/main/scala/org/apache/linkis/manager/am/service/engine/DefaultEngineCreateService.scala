@@ -337,14 +337,30 @@ class DefaultEngineCreateService
       val templateName: String = properties.getOrDefault("ec.resource.name", "")
       logger.info(s"enabled spark dynamic allocation, and user template name: [${templateName}]")
       if (StringUtils.isBlank(templateName)) {
-        properties.put("spark.executor.cores", AMConfiguration.SPARK_EXECUTOR_CORES)
-        properties.put("spark.executor.memory", AMConfiguration.SPARK_EXECUTOR_MEMORY)
-        properties.put("spark.executor.instances", AMConfiguration.SPARK_EXECUTOR_INSTANCES)
         properties.put(
-          "spark.executor.memoryOverhead",
-          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD
+          AMConfiguration.SPARK_EXECUTOR_CORES.key,
+          AMConfiguration.SPARK_EXECUTOR_CORES.getValue
         )
-        properties.put("spark.python.version", AMConfiguration.SPARK3_PYTHON_VERSION)
+        properties.put(
+          AMConfiguration.SPARK_EXECUTOR_MEMORY.key,
+          AMConfiguration.SPARK_EXECUTOR_MEMORY.getValue
+        )
+        properties.put(
+          AMConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
+          AMConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
+        )
+        properties.put(
+          AMConfiguration.SPARK_EXECUTOR_INSTANCES.key,
+          AMConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
+        )
+        properties.put(
+          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
+          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
+        )
+        properties.put(
+          AMConfiguration.SPARK3_PYTHON_VERSION.key,
+          AMConfiguration.SPARK3_PYTHON_VERSION.getValue
+        )
         Utils.tryAndWarn {
           val extraConfs: String = AMConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
           if (StringUtils.isNotBlank(extraConfs)) {

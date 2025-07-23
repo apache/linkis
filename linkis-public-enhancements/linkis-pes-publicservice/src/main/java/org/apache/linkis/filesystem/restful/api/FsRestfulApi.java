@@ -1491,7 +1491,7 @@ public class FsRestfulApi {
       notes = "copy keytab file from hdfs",
       response = Message.class)
   @RequestMapping(path = "/copy-keytab-files", method = RequestMethod.GET)
-  public Message copyAndEncryptKeytab(HttpServletRequest req,String user) {
+  public Message copyAndEncryptKeytab(HttpServletRequest req, String user) {
     final String operation = "copy-and-encrypt-keytab";
     final String owner = "hadoop";
     final String group = "hadoop";
@@ -1527,7 +1527,10 @@ public class FsRestfulApi {
       // 5. 处理每个keytab文件
       List<FsPath> sourceFiles = fs.list(hdfsKeytabPath);
       if (StringUtils.isNotBlank(user)) {
-        sourceFiles = sourceFiles.stream().filter(fsPath -> fsPath.getPath().endsWith(user + HDFSUtils.KEYTAB_SUFFIX())).collect(Collectors.toList());
+        sourceFiles =
+            sourceFiles.stream()
+                .filter(fsPath -> fsPath.getPath().endsWith(user + HDFSUtils.KEYTAB_SUFFIX()))
+                .collect(Collectors.toList());
       }
       if (sourceFiles.isEmpty()) {
         logger.warn("No keytab files found in source directory: {}", sourcePath);
@@ -1539,7 +1542,7 @@ public class FsRestfulApi {
           String fileName = sourceFile.getPath().replace(sourcePath, targetPath);
           FsPath targetFile = new FsPath(fileName);
           // 读取源文件内容
-          byte[] keyTabFileByte =IOUtils.toByteArray(fs.read(sourceFile));
+          byte[] keyTabFileByte = IOUtils.toByteArray(fs.read(sourceFile));
           // 加密内容
           String encryptedContent = AESUtils.encrypt(keyTabFileByte, AESUtils.PASSWORD);
           // 写入目标文件

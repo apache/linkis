@@ -92,11 +92,13 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected val connectionManager = new PoolingHttpClientConnectionManager
 
+  // 设置连接池参数
+  connectionManager.setMaxTotal(clientConfig.getMaxConnection)
+  connectionManager.setDefaultMaxPerRoute(clientConfig.getMaxConnection / 2)
+
   private val httpClientBuilder: HttpClientBuilder = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
-    .setMaxConnTotal(clientConfig.getMaxConnection)
-    .setMaxConnPerRoute(clientConfig.getMaxConnection / 2)
     .setConnectionManager(connectionManager)
 
   protected val httpClient: CloseableHttpClient = if (clientConfig.isSSL) {

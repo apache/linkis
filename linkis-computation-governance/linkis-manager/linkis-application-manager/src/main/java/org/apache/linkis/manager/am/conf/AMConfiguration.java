@@ -159,20 +159,23 @@ public class AMConfiguration {
   public static final boolean COMBINED_WITHOUT_YARN_DEFAULT =
       CommonVars.apply("linkis.combined.without.yarn.default", true).getValue();
 
-  public static final String SPARK_EXECUTOR_CORES =
-      CommonVars.apply("spark.executor.cores", "2").getValue();
+  public static final CommonVars<String> SPARK_EXECUTOR_CORES =
+      CommonVars.apply("spark.executor.cores", "2");
 
-  public static final String SPARK_EXECUTOR_MEMORY =
-      CommonVars.apply("spark.executor.memory", "6G").getValue();
+  public static final CommonVars<String> SPARK_EXECUTOR_MEMORY =
+      CommonVars.apply("spark.executor.memory", "6G");
 
-  public static final String SPARK_EXECUTOR_INSTANCES =
-      CommonVars.apply("spark.executor.instances", "1").getValue();
+  public static final CommonVars<String> SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS =
+      CommonVars.apply("spark.dynamicAllocation.maxExecutors", "50");
 
-  public static final String SPARK_EXECUTOR_MEMORY_OVERHEAD =
-      CommonVars.apply("spark.executor.memoryOverhead", "2G").getValue();
+  public static final CommonVars<String> SPARK_EXECUTOR_INSTANCES =
+      CommonVars.apply("spark.executor.instances", "1");
 
-  public static final String SPARK3_PYTHON_VERSION =
-      CommonVars.apply("spark.python.version", "python3").getValue();
+  public static final CommonVars<String> SPARK_EXECUTOR_MEMORY_OVERHEAD =
+      CommonVars.apply("spark.executor.memoryOverhead", "2G");
+
+  public static final CommonVars<String> SPARK3_PYTHON_VERSION =
+      CommonVars.apply("spark.python.version", "python3");
 
   public static final boolean SPARK_DYNAMIC_ALLOCATION_ENABLED =
       CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue();

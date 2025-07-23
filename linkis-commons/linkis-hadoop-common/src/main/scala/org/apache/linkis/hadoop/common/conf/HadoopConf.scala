@@ -30,7 +30,7 @@ object HadoopConf {
 
   val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
 
-  val LINKIS_KEYTAB_FILE = CommonVars("linkis.copy.keytab.file", "/appcom/linkis/keytab/")
+  val LINKIS_KEYTAB_FILE = CommonVars("linkis.copy.keytab.file", "/mnt/bdap/keytab/")
 
   val EXTERNAL_KEYTAB_FILE_PREFIX =
     CommonVars("linkis.external.keytab.file.prefix", "/appcom/config/external-conf/keytab")

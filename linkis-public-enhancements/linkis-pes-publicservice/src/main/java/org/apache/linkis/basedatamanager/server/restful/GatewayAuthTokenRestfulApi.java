@@ -44,11 +44,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = "GatewayAuthTokenRestfulApi")
 @RestController
 @RequestMapping(path = "/basedata-manager/gateway-auth-token")
 public class GatewayAuthTokenRestfulApi {
+  private final Logger LOGGER = LoggerFactory.getLogger(getClass());
   @Autowired GatewayAuthTokenService gatewayAuthTokenService;
 
   @ApiImplicitParams({
@@ -113,6 +116,12 @@ public class GatewayAuthTokenRestfulApi {
 
     ModuleUserUtils.getOperationUser(
         request, "Add a Gateway Auth Token Record," + gatewayAuthToken.toString());
+    if (Configuration.LINKIS_RSA_TOKEN_SWITCH()) {
+      String tokenSubRule = RSAUtils.tokenSubRule(gatewayAuthToken.getTokenName());
+      String encryptToken = RSAUtils.encryptWithLinkisPublicKey(gatewayAuthToken.getTokenName());
+      gatewayAuthToken.setTokenName(tokenSubRule);
+      gatewayAuthToken.setTokenSign(encryptToken);
+    }
     boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
     return Message.ok("").data("result", result);
   }
@@ -258,10 +267,14 @@ public class GatewayAuthTokenRestfulApi {
               || (!entity.getTokenSign().startsWith(RSAUtils.PREFIX()))) {
             String tokenName = entity.getTokenName();
             String encryptToken = RSAUtils.encryptWithLinkisPublicKey(tokenName);
-            tokenName = tokenName.substring(0, tokenName.length() / 2);
+            tokenName = RSAUtils.tokenSubRule(tokenName);
             entity.setTokenName(tokenName);
             entity.setTokenSign(encryptToken);
-            gatewayAuthTokenService.updateById(entity);
+            try {
+              gatewayAuthTokenService.updateById(entity);
+            } catch (Exception e) {
+              LOGGER.warn("历史token加密失败，token id：" + entity.getId());
+            }
           }
         });
     return Message.ok();
@@ -274,7 +287,8 @@ public class GatewayAuthTokenRestfulApi {
     List<GatewayAuthTokenEntity> list = gatewayAuthTokenService.list();
     list.forEach(
         entity -> {
-          if (entity.getTokenSign().startsWith(RSAUtils.PREFIX())) {
+          if (null != entity.getTokenSign()
+              && entity.getTokenSign().startsWith(RSAUtils.PREFIX())) {
             String tokenName = RSAUtils.dncryptWithLinkisPublicKey(entity.getTokenSign());
             entity.setTokenName(tokenName);
             entity.setTokenSign(null);

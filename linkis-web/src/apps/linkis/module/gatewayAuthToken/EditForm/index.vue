@@ -17,11 +17,7 @@
 
 <template>
   <div class="table-warp">
-    <form-create
-      :rule="rule"
-      v-model="formModel"
-      :option="options"
-    />
+    <form-create :rule="rule" v-model="formModel" :option="options" />
   </div>
 </template>
 
@@ -30,24 +26,16 @@ export default {
   props: {
     mode: String,
   },
-  data() {
-    return {
-      formModel: {
-        elapseDay: 1,
-        permanentlyValid: false,
-      },
-      // formData: {},
-      options: {
-        submitBtn: false,
-      },
-      rule: [
+  computed: {
+    rule: function () {
+      return [
         {
           type: 'hidden',
-          title: "id",
+          title: 'id',
           field: 'id',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: '',
           },
           validate: [
             {
@@ -61,42 +49,61 @@ export default {
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
+          title: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.tokenName'
+          ),
           field: 'tokenName',
           info: 'Token Name,Example: TEST-AUTH',
           value: '',
           props: {
-            placeholder: "eg. TEST-AUTH",
+            placeholder: 'eg. TEST-AUTH',
+            disabled: this.mode === 'edit',
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
+              message:
+                                `${this.$t(
+                                  'message.linkis.datasource.pleaseInput'
+                                )}` +
+                                this.$t(
+                                  'message.linkis.basedataManagement.gatewayAuthToken.tokenName'
+                                ),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
+          title: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.legalUsers'
+          ),
           field: 'legalUsers',
           value: '',
-          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersInfo'),
+          info: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.legalUsersInfo'
+          ),
           props: {
-            placeholder: "eg. *",
+            placeholder: 'eg. *',
           },
           validate: [
             {
               required: true,
-              validator: (rule, value)=>{
-                return new Promise((resolve, reject)=>{
-                  if(!value){
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.empty'))
+              validator: (rule, value) => {
+                return new Promise((resolve, reject) => {
+                  if (!value) {
+                    reject(
+                      this.$t(
+                        'message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.empty'
+                      )
+                    )
                   }
-                  if(value<-1){
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.format'))
+                  if (value < -1) {
+                    reject(
+                      this.$t(
+                        'message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.format'
+                      )
+                    )
                   }
                   resolve()
                 })
@@ -107,20 +114,28 @@ export default {
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
+          title: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.legalHosts'
+          ),
           field: 'legalHosts',
           value: '',
-          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfo'),
+          info: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfo'
+          ),
           props: {
-            placeholder: "eg. *",
+            placeholder: 'eg. *',
           },
           validate: [
             {
               required: true,
-              validator: (rule, value)=>{
-                return new Promise((resolve, reject)=>{
-                  if(!value){
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfoValidate.empty'))
+              validator: (rule, value) => {
+                return new Promise((resolve, reject) => {
+                  if (!value) {
+                    reject(
+                      this.$t(
+                        'message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfoValidate.empty'
+                      )
+                    )
                   }
                   resolve()
                 })
@@ -131,45 +146,62 @@ export default {
         },
         {
           type: 'radio',
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.permanentlyValid'),
-          field: "permanentlyValid",
+          title: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.permanentlyValid'
+          ),
+          field: 'permanentlyValid',
           value: false,
           hidden: false,
           options: [
-            {value: false,label: "否",disabled: false},
-            {value: true,label: "是",disabled: false},
+            { value: false, label: '否', disabled: false },
+            { value: true, label: '是', disabled: false },
           ],
           on: {
             'on-change': () => {
-              this.rule[5].hidden = !this.rule[5].hidden;
-              if(!this.rule[5].hidden) {
-                this.rule[5].value = 1;
+              this.rule[5].hidden = !this.rule[5].hidden
+              if (!this.rule[5].hidden) {
+                this.rule[5].value = 1
               } else {
-                this.rule[5].value = -1;
+                this.rule[5].value = -1
               }
-            }
-          }
+            },
+          },
         },
         {
           type: 'inputNumber',
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
+          title: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.elapseDay'
+          ),
           field: 'elapseDay',
           value: 1,
           hidden: false,
-          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.info'),
+          info: this.$t(
+            'message.linkis.basedataManagement.gatewayAuthToken.info'
+          ),
           props: {
-            placeholder: "eg . 1",
+            placeholder: 'eg . 1',
           },
           validate: [
             {
               required: true,
-              validator: (rule, value)=>{
-                return new Promise((resolve, reject)=>{
-                  if(!value){
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
+              validator: (rule, value) => {
+                return new Promise((resolve, reject) => {
+                  if (!value) {
+                    reject(
+                      this.$t(
+                        'message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'
+                      )
+                    )
                   }
-                  if(!this.formModel.permanentlyValid && value < 1) {
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.GT0'))
+                  if (
+                    !this.formModel.permanentlyValid &&
+                                        value < 1
+                  ) {
+                    reject(
+                      this.$t(
+                        'message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.GT0'
+                      )
+                    )
                   }
                   resolve()
                 })
@@ -177,8 +209,20 @@ export default {
               trigger: 'blur',
             },
           ],
-        }
+        },
       ]
+    },
+  },
+  data() {
+    return {
+      formModel: {
+        elapseDay: 1,
+        permanentlyValid: false,
+      },
+      // formData: {},
+      options: {
+        submitBtn: false,
+      },
     }
   },
 }

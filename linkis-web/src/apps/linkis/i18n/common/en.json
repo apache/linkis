@@ -167,6 +167,7 @@
         "costTime": "Time Elapsed",
         "executeApplicationName": "Engine",
         "requestApplicationName": "App",
+        "runType": "Run Type",
         "user": "User",
         "createdTime": "Created at",
         "updateTime": "Update Time",
@@ -286,10 +287,14 @@
         "instance": {
           "label": "Entrance Instance",
           "placeholder": "Please search by entering the instance"
-      },
+        },
         "creator": {
           "label": "App",
           "placeholder": "Please search by entering the application name"
+        },
+        "runType": {
+          "label": "Run Type",
+          "placeholder": "Please search by entering the run type"
         },
         "engine": {
           "label": "Engine"
@@ -606,6 +611,7 @@
         "add": "Add",
         "remove": "Remove",
         "edit": "Edit",
+        "tokenInfo": "Token",
         "searchLabel": "Fuzzy Search:",
         "searchPlaceholder": "Please enter your search",
         "search": "Search",

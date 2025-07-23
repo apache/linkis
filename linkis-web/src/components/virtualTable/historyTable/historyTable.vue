@@ -142,6 +142,8 @@ export default {
           return this.renderIf(cell, params);
         case 'checkbox':
           return this.renderCheckbox(value, cell, trIndex);
+        case 'multiConcat':
+          return this.render2Concat(value, cell, params);
         default:
           return null;
       }
@@ -337,6 +339,11 @@ export default {
     renderConcat(value, cell, params) {
       return (h) => {
         return h('span', {}, `${value} / ${cell[params.concatKey]}`);
+      };
+    },
+    render2Concat(value, cell, params) {
+      return (h) => {
+        return h('span', {}, `${value} / ${cell[params.concatKey1]} /  ${cell[params.concatKey2]}`);
       };
     },
     renderIf(cell, params) {

@@ -271,6 +271,7 @@ export default {
         row.permanentlyValid = true;
         this.$refs.editForm.formModel.rule[5].hidden = true
       }
+      this.$refs.editForm.formModel.rule[1].props.disabled = true
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true

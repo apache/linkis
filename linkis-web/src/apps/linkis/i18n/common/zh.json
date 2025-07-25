@@ -1,6 +1,8 @@
 {
   "message": {
       "linkis": {
+          "tokenPlain": "token明文",
+          "tokenCipher": "token密文",
           "udfLog": "UDF 日志",
           "diagnosticLog": "诊断日志",
           "refresh": "刷新",

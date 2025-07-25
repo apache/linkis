@@ -17,7 +17,11 @@
 
 <template>
   <div class="table-warp">
-    <form-create :rule="rule" v-model="formModel" :option="options" />
+    <form-create
+      :rule="rule"
+      v-model="formModel"
+      :option="options"
+    />
   </div>
 </template>
 
@@ -69,7 +73,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}` + this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
               trigger: 'blur',
             },
           ],
@@ -86,12 +90,12 @@ export default {
           validate: [
             {
               required: true,
-              validator: (rule, value) => {
-                return new Promise((resolve, reject) => {
-                  if (!value) {
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.empty'))
                   }
-                  if (value < -1) {
+                  if(value<-1){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.format'))
                   }
                   resolve()
@@ -113,9 +117,9 @@ export default {
           validate: [
             {
               required: true,
-              validator: (rule, value) => {
-                return new Promise((resolve, reject) => {
-                  if (!value) {
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfoValidate.empty'))
                   }
                   resolve()
@@ -132,13 +136,13 @@ export default {
           value: false,
           hidden: false,
           options: [
-            { value: false, label: "否", disabled: false },
-            { value: true, label: "是", disabled: false },
+            {value: false,label: this.$t('message.linkis.no'),disabled: false},
+            {value: true,label: this.$t('message.linkis.yes'),disabled: false},
           ],
           on: {
             'on-change': () => {
               this.rule[5].hidden = !this.rule[5].hidden;
-              if (!this.rule[5].hidden) {
+              if(!this.rule[5].hidden) {
                 this.rule[5].value = 1;
               } else {
                 this.rule[5].value = -1;
@@ -159,12 +163,12 @@ export default {
           validate: [
             {
               required: true,
-              validator: (rule, value) => {
-                return new Promise((resolve, reject) => {
-                  if (!value) {
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
                   }
-                  if (!this.formModel.permanentlyValid && value < 1) {
+                  if(!this.formModel.permanentlyValid && value < 1) {
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.GT0'))
                   }
                   resolve()

@@ -100,17 +100,17 @@
       :loading="tokenModalLoading"
     >
       <div slot="footer">
-        <Button type="primary" size="large" @click="onTokenModalClose()">确认</Button>
+        <Button type="primary" size="large" @click="onTokenModalClose()">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
       <div style="padding: 20px;">
         <div style="margin-bottom: 20px; display: flex;">
-          <div style="display:flex; align-items: center">token明文：</div>
+          <div style="display:flex; align-items: center">{{ $t('message.linkis.tokenPlain') }}：</div>
           <div style="flex:1; padding: 10px; background-color: #f8f8f9; border: 1px solid #dcdee2; border-radius: 4px; word-break: break-all;">
             {{ tokenInfo.decryptToken || '' }}
           </div>
         </div>
         <div style="display: flex; position: relative">
-          <div>token密文：</div>
+          <div>{{ $t('message.linkis.tokenCipher') }}：</div>
           <div style="flex:1; padding: 10px; background-color: #f8f8f9; border: 1px solid #dcdee2; border-radius: 4px; word-break: break-all;">
             {{ tokenInfo.encryptToken || '' }}
           </div>

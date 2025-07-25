@@ -1,6 +1,8 @@
 {
   "message": {
     "linkis": {
+      "tokenPlain": "Plaintext Token",
+      "tokenCipher": "Ciphertext Token",
       "udfLog": "UDF Log",
       "diagnosticLog": "Diagnostic Log",
       "refresh": "Refresh",
@@ -167,7 +169,7 @@
         "costTime": "Time Elapsed",
         "executeApplicationName": "Engine",
         "requestApplicationName": "App",
-        "runType": "Run Type",
+        "runType": "RunType",
         "user": "User",
         "createdTime": "Created at",
         "updateTime": "Update Time",
@@ -293,8 +295,8 @@
           "placeholder": "Please search by entering the application name"
         },
         "runType": {
-          "label": "Run Type",
-          "placeholder": "Please search by entering the run type"
+          "label": "RunType",
+          "placeholder": "Please search by entering the runType"
         },
         "engine": {
           "label": "Engine"

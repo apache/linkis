@@ -260,6 +260,7 @@ export default {
         elapseDay: -1,
         permanentlyValid: true
       }
+      this.$refs.editForm.formModel.rule[1].props.disabled = false
       this.$refs.editForm.formModel.rule[5].hidden = true
       this.$refs.editForm.formModel.setValue(row)
 

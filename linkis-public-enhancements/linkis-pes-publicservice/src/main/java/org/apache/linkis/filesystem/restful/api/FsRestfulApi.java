@@ -1502,6 +1502,9 @@ public class FsRestfulApi {
       logger.info("Keytab copy feature is disabled for user: {}", username);
       return Message.ok("Keytab copy feature is disabled");
     }
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     try {
       // 2. 初始化路径和文件系统
       String sourcePath = HadoopConf.KEYTAB_FILE().getValue();

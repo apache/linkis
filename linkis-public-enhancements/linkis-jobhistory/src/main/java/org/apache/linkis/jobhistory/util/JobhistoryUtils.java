@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 public class JobhistoryUtils {
   private static final Logger logger = LoggerFactory.getLogger(JobhistoryUtils.class);
   public static String headersStr =
-      "任务ID,来源,查询语句,状态,已耗时,关键信息,是否复用,申请开始时间,申请结束时间,申请耗时,应用/引擎,用户,创建时间";
+      "任务ID,来源,查询语句,状态,已耗时,关键信息,是否复用,申请开始时间,申请结束时间,申请耗时,应用/任务类型/引擎,用户,创建时间";
   public static String headersEnStr =
-      "JobID,Source,Execution Code,Status,Time Elapsed,Key Information,IsRuse,Application Start Time,Application End Time,Application Takes Time,App / Engine,User,Created at";
+      "JobID,Source,Execution Code,Status,Time Elapsed,Key Information,IsRuse,Application Start Time,Application End Time,Application Takes Time,App /Run Type/Engine,User,Created at";
   private static Sender sender =
       Sender.getSender(
           Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());;
@@ -112,7 +112,9 @@ public class JobhistoryUtils {
             row,
             10,
             formatExecuteApplicationName(
-                queryTaskVO.getExecuteApplicationName(), queryTaskVO.getRequestApplicationName()));
+                queryTaskVO.getExecuteApplicationName(),
+                queryTaskVO.getRequestApplicationName(),
+                queryTaskVO.getRunType()));
         if (viewResult) {
           createCell(row, 11, queryTaskVO.getUmUser());
           createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
@@ -173,8 +175,8 @@ public class JobhistoryUtils {
 
   // 格式化executeApplicationName的方法
   private static String formatExecuteApplicationName(
-      String executeApplicationName, String requestApplicationName) {
-    return requestApplicationName + "/" + executeApplicationName;
+      String executeApplicationName, String requestApplicationName, String runType) {
+    return requestApplicationName + "/" + runType + "/" + executeApplicationName;
   }
 
   public static String getDiagnosisMsg(String taskID) {

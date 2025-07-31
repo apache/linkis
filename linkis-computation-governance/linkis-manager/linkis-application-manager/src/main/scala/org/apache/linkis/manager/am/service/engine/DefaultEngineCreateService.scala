@@ -187,8 +187,6 @@ class DefaultEngineCreateService
     if (engineCreateRequest.getProperties == null) {
       engineCreateRequest.setProperties(new util.HashMap[String, String]())
     }
-    // 3.1 deal with spark3 dynamic allocation conf
-    dealWithSparkDynamicAllocationParams(engineCreateRequest.getProperties, labelList)
 
     val resource =
       generateResource(
@@ -317,63 +315,6 @@ class DefaultEngineCreateService
       )
     }
     engineNode
-  }
-
-  /**
-   * 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
-   * @param properties
-   */
-  private def dealWithSparkDynamicAllocationParams(
-      properties: util.Map[String, String],
-      labels: util.List[Label[_]]
-  ): Unit = {
-    val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
-    val sparkDynamicAllocationEnabled: Boolean = AMConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
-    if (
-        sparkDynamicAllocationEnabled && engineTypeLabel.getEngineType.equals(
-          EngineType.SPARK.toString
-        ) && engineTypeLabel.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
-    ) {
-      val templateName: String = properties.getOrDefault("ec.resource.name", "")
-      logger.info(s"enabled spark dynamic allocation, and user template name: [${templateName}]")
-      if (StringUtils.isBlank(templateName)) {
-        properties.put(
-          AMConfiguration.SPARK_EXECUTOR_CORES.key,
-          AMConfiguration.SPARK_EXECUTOR_CORES.getValue
-        )
-        properties.put(
-          AMConfiguration.SPARK_EXECUTOR_MEMORY.key,
-          AMConfiguration.SPARK_EXECUTOR_MEMORY.getValue
-        )
-        properties.put(
-          AMConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
-          AMConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
-        )
-        properties.put(
-          AMConfiguration.SPARK_EXECUTOR_INSTANCES.key,
-          AMConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
-        )
-        properties.put(
-          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
-          AMConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
-        )
-        properties.put(
-          AMConfiguration.SPARK3_PYTHON_VERSION.key,
-          AMConfiguration.SPARK3_PYTHON_VERSION.getValue
-        )
-        Utils.tryAndWarn {
-          val extraConfs: String = AMConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
-          if (StringUtils.isNotBlank(extraConfs)) {
-            val confs: Array[String] = extraConfs.split(",")
-            for (conf <- confs) {
-              val confKey: String = conf.split("=")(0)
-              val confValue: String = conf.split("=")(1)
-              properties.put(confKey, confValue)
-            }
-          }
-        }
-      }
-    }
   }
 
   def canCreateEC(engineCreateRequest: EngineCreateRequest): CanCreateECRes = {

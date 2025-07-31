@@ -364,4 +364,23 @@ object EntranceConfiguration {
 
   val DOCTOR_HTTP_MAX_CONNECT = CommonVars("linkis.aisql.doctor.http.max.connect", 20).getValue
 
+  val SPARK_EXECUTOR_CORES = CommonVars.apply("spark.executor.cores", "2");
+
+  var SPARK_EXECUTOR_MEMORY = CommonVars.apply("spark.executor.memory", "6G");
+
+  var SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS =
+    CommonVars.apply("spark.dynamicAllocation.maxExecutors", "50");
+
+  var SPARK_EXECUTOR_INSTANCES = CommonVars.apply("spark.executor.instances", "1");
+
+  var SPARK_EXECUTOR_MEMORY_OVERHEAD = CommonVars.apply("spark.executor.memoryOverhead", "2G");
+
+  var SPARK3_PYTHON_VERSION = CommonVars.apply("spark.python.version", "python3");
+
+  var SPARK_DYNAMIC_ALLOCATION_ENABLED =
+    CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
+
+  var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
+    CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
+
 }

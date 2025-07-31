@@ -27,8 +27,13 @@ import org.apache.linkis.governance.common.entity.TemplateConfKey
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.manager.label.entity.engine.FixedEngineConnLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineType,
+  EngineTypeLabel,
+  FixedEngineConnLabel
+}
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
@@ -364,7 +369,6 @@ object TemplateConfUtils extends Logging {
               }
               keyList.put(key, newValue)
             }
-
           })
           if (keyList.size() > 0) {
             logger.info(s"use template conf for templateName: ${templateName}")
@@ -374,6 +378,60 @@ object TemplateConfUtils extends Logging {
                 .generateInfo(s"use template conf with templateName: ${templateName} \n")
             )
             TaskUtils.addStartupMap(params, keyList)
+          }
+        } else {
+          // deal with spark3 dynamic allocation conf
+          // 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
+          val properties = new util.HashMap[String, AnyRef]()
+          val label: EngineTypeLabel = LabelUtil.getEngineTypeLabel(jobRequest.getLabels)
+          val sparkDynamicAllocationEnabled: Boolean =
+            EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
+          if (
+              sparkDynamicAllocationEnabled && label.getEngineType.equals(
+                EngineType.SPARK.toString
+              ) && label.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
+          ) {
+            properties.put(
+              EntranceConfiguration.SPARK_EXECUTOR_CORES.key,
+              EntranceConfiguration.SPARK_EXECUTOR_CORES.getValue
+            )
+            properties.put(
+              EntranceConfiguration.SPARK_EXECUTOR_MEMORY.key,
+              EntranceConfiguration.SPARK_EXECUTOR_MEMORY.getValue
+            )
+            properties.put(
+              EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
+              EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
+            )
+            properties.put(
+              EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.key,
+              EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
+            )
+            properties.put(
+              EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
+              EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
+            )
+            properties.put(
+              EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
+              EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
+            )
+            Utils.tryAndWarn {
+              val extraConfs: String =
+                EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
+              if (StringUtils.isNotBlank(extraConfs)) {
+                val confs: Array[String] = extraConfs.split(",")
+                for (conf <- confs) {
+                  val confKey: String = conf.split("=")(0)
+                  val confValue: String = conf.split("=")(1)
+                  properties.put(confKey, confValue)
+                }
+              }
+            }
+            logAppender.append(
+              LogUtils
+                .generateInfo(s"use spark3 default conf. \n")
+            )
+            TaskUtils.addStartupMap(params, properties)
           }
         }
       case _ =>

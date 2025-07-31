@@ -17,8 +17,6 @@
 
 package org.apache.linkis.common.utils;
 
-import org.apache.linkis.common.conf.CommonVars;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -29,11 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SHAUtils {
-
-  public static final String DOCTOR_NONCE =
-      CommonVars.apply("linkis.doctor.signature.nonce", "").getValue();
-  public static final CommonVars<String> DOCTOR_TOKEN =
-      CommonVars.apply("linkis.doctor.signature.token", "");
 
   /**
    * 对字符串加密,默认使用SHA-256
@@ -74,19 +67,31 @@ public class SHAUtils {
   }
 
   public static void main(String[] args) throws IOException {
-    if (StringUtils.isBlank(args[0])) {
+    String applicationId = args[0];
+    String app_id = args[1];
+    String token = args[2];
+    String nonce = args[3];
+    if (StringUtils.isBlank(applicationId)) {
       throw new LinkageError("Invalid applicationId cannot be empty");
+    }
+    if (StringUtils.isBlank(app_id)) {
+      throw new LinkageError("Invalid app_id cannot be empty");
+    }
+    if (StringUtils.isBlank(token)) {
+      throw new LinkageError("Invalid token cannot be empty");
+    }
+    if (StringUtils.isBlank(nonce)) {
+      throw new LinkageError("Invalid nonce cannot be empty");
     }
     Map<String, String> parms = new HashMap<>();
     String timestampStr = String.valueOf(System.currentTimeMillis());
-    parms.put("applicationId", args[0]);
-    parms.put("app_id", args[1]);
+    parms.put("applicationId", applicationId);
+    parms.put("app_id", app_id);
     parms.put("timestamp", timestampStr);
-    parms.put("nonce", DOCTOR_NONCE);
-    String token = args[2];
+    parms.put("nonce", nonce);
     if (StringUtils.isNotBlank(token)) {
       String signature =
-          Encrypt(Encrypt(parms.get("app_id") + DOCTOR_NONCE + timestampStr, null) + token, null);
+          Encrypt(Encrypt(parms.get("app_id") + nonce + timestampStr, null) + token, null);
       parms.put("signature", signature);
     }
     System.out.println(parms);

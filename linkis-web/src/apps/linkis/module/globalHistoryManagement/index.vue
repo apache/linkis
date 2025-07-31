@@ -610,6 +610,7 @@ export default {
         delete params.proxyUser
         delete params.instance
         delete params.engineInstance
+        delete params.runType
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {

@@ -105,7 +105,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         userLabelService.getUserLabels(engineReuseRequest.getUser)
       )
       .asScala
-
+    logger.info(s"Task ${taskId} labelList size: ${labelList.size}");
     val exclusionInstances: Array[String] =
       labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
         case Some(l) =>
@@ -126,6 +126,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
 
     var filterLabelList = labelList.filter(_.isInstanceOf[EngineNodeLabel]).asJava
+    logger.info(s"Task ${taskId} filterLabelList size: ${filterLabelList.size}");
 
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
@@ -139,6 +140,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
 
     val instances = nodeLabelService.getScoredNodeMapsByLabels(filterLabelList)
+    logger.info(s"Task ${taskId} instances size: ${instances.size}");
 
     if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
       val instancesKeys = instances.asScala.keys.toArray
@@ -161,6 +163,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     }
     var engineScoreList =
       getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
+    logger.info(s"Task ${taskId} engineScoreList size: ${engineScoreList.length}");
 
     // reuse EC according to template name
     val confTemplateNameKey = "ec.resource.name"
@@ -181,6 +184,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
     // 获取需要的资源
     if (AMConfiguration.EC_REUSE_WITH_RESOURCE_RULE_ENABLE) {
+      logger.info(
+        s"Task ${taskId} start to filter resources, the engine size: ${engineScoreList.length}"
+      );
       val labels: util.List[Label[_]] =
         engineCreateService.buildLabel(engineReuseRequest.getLabels, engineReuseRequest.getUser)
       if (engineReuseRequest.getProperties == null) {
@@ -234,6 +240,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           })
       }
 
+      logger.info(
+        s"Task ${taskId} end filter resources, the engine size: ${engineScoreList.length}"
+      );
       if (engineScoreList.isEmpty) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,

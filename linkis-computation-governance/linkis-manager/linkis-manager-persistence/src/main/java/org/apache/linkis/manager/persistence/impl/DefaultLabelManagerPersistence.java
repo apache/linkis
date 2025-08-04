@@ -332,6 +332,7 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     Map<ServiceInstance, List<PersistenceLabel>> resultMap = new HashMap<>();
     List<Map<String, Object>> nodeRelationsByLabels =
         labelManagerMapper.listLabelRelationByServiceInstance(serviceInstances);
+    logger.info("list label relation end, with size: {}", nodeRelationsByLabels.size());
     Map<String, List<Map<String, Object>>> groupByInstanceMap =
         nodeRelationsByLabels.stream()
             .collect(

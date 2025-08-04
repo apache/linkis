@@ -139,6 +139,7 @@ class DefaultEngineAskEngineService
               )
           }
         }
+        logger.info(s"Task: ${taskId} start to reuse engine.")
         var reuseNode: EngineNode = null
         if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
           val engineReuseRequest = new EngineReuseRequest()

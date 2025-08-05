@@ -247,9 +247,10 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
             .collect(Collectors.toList());
 
     try {
+      logger.info("start getEngineNodes.");
       ResourceInfo resourceInfo =
           resourceManager.getResourceInfo(serviceInstancesList.toArray(new ServiceInstance[0]));
-
+      logger.info("end resourceInfo {}", resourceInfo);
       if (serviceInstancesList.isEmpty()) {
         throw new LinkisRetryException(
             AMConstant.ENGINE_ERROR_CODE, "Service instances cannot be empty.");
@@ -257,8 +258,15 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
       List<NodeMetrics> nodeMetrics =
           nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
-
+      logger.info(
+          "get nodeMetrics, with engineNode size: {}, res size: {}",
+          engineNodes.length,
+          nodeMetrics.size());
       List<PersistenceNode> persistenceNodes = nodeManagerMapper.getNodesByInstances(instances);
+      logger.info(
+          "get persistenceNodes, with instance size: {}, res size: {}",
+          instances.size(),
+          persistenceNodes.size());
 
       for (EngineNode engineNode : engineNodes) {
         Optional<NodeMetrics> optionMetrics =
@@ -290,6 +298,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       linkisRetryException.initCause(e);
       throw linkisRetryException;
     }
+    logger.info("end getEngineNodes");
     return engineNodes;
   }
 

@@ -51,8 +51,12 @@ class HotspotExclusionRule extends NodeSelectRule with Logging {
     if (null == nodes || nodes.length < 3) {
       return nodes
     }
-    val shuffleSize = if (nodes.length <= 10) {
-      nodes.length / 2
+    val shuffleSize: Int = if (nodes.length == 2) {
+      2
+    } else if (nodes.length <= 6) {
+      3
+    } else if (nodes.length <= 10) {
+      4
     } else {
       5
     }

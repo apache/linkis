@@ -829,6 +829,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
 
   override def getResourceInfo(serviceInstances: Array[ServiceInstance]): ResourceInfo = {
+    logger.info("getResourceInfo")
     val resourceInfo = ResourceInfo(Lists.newArrayList())
     serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
@@ -844,12 +845,14 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           engineInstanceLabel.setServiceName(serviceInstance.getApplicationName)
           engineInstanceLabel.setInstance(serviceInstance.getInstance)
           aggregatedResource = labelResourceService.getLabelResource(engineInstanceLabel)
+          logger.info("getLabelResource engineconn, engineInstanceLabel {}", engineInstanceLabel)
         case GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue =>
           val emInstanceLabel =
             LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
           emInstanceLabel.setServiceName(serviceInstance.getApplicationName)
           emInstanceLabel.setInstance(serviceInstance.getInstance)
           aggregatedResource = labelResourceService.getLabelResource(emInstanceLabel)
+          logger.info("getLabelResource ecm, emInstanceLabel {}", emInstanceLabel)
       }
       rmNode.setServiceInstance(serviceInstance)
       rmNode.setNodeResource(aggregatedResource)

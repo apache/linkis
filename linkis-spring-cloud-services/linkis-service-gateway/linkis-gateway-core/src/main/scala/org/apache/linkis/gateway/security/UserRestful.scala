@@ -194,6 +194,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   private val LINE_DELIMITER = "</br>"
   private val USERNAME_STR = "userName"
   private val PASSWD_STR = "password"
+  private val SOURCE_STR = "source"
   private val PASSWD_ENCRYPT_STR = "passwdEncrypt"
 
   private def getUserNameAndPWD(gatewayContext: GatewayContext): (String, String) = {
@@ -289,10 +290,11 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     } else if (StringUtils.isBlank(password)) {
       return Message.error("Password can not be blank(密码不能为空)！")
     }
+
     if (
         GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && userName
           .toLowerCase()
-          .startsWith("hduser")
+          .startsWith("hduser") && (!getRequestSource(gatewayContext).equals("client"))
     ) {
       return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
     }
@@ -435,6 +437,21 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       )
     }
     message
+  }
+
+  private def getRequestSource(gatewayContext: GatewayContext): String = {
+    var source = ""
+    if (StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
+      val json = BDPJettyServerHelper.gson.fromJson(
+        gatewayContext.getRequest.getRequestBody,
+        classOf[java.util.Map[String, Object]]
+      )
+      val tmpSource = json.getOrDefault(SOURCE_STR, null)
+      if (null != tmpSource) {
+        source = tmpSource.toString
+      }
+    }
+    source
   }
 
 }

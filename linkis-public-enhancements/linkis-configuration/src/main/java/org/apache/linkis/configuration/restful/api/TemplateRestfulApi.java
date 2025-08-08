@@ -165,7 +165,7 @@ public class TemplateRestfulApi {
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
         logger.warn("Token:{} has no permission to queryKeyInfoList.", token);
-        return Message.error("Token:" + token + " has no permission to queryKeyInfoList.");
+        return Message.error("Token has no permission to queryKeyInfoList.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User:{} has no permission to queryKeyInfoList.", username);

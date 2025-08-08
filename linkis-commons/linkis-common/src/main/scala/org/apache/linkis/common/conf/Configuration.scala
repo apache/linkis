@@ -116,7 +116,7 @@ object Configuration extends Logging {
           .toUpperCase()
           .contains(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
       } else {
-        token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+        token.toUpperCase().contains(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
       }
     }
   }

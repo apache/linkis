@@ -62,12 +62,15 @@ public final class ParserUtils {
     }
     Date date = new Date(System.currentTimeMillis());
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat hourFormat = new SimpleDateFormat("HH"); // 新增：小时格式（24小时制）
     String dateString = dateFormat.format(date);
+    String hourString = hourFormat.format(date); // 新增：当前小时（如 "08", "14"）
     String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
     String umUser = jobRequest.getExecuteUser();
     FsPath lopPrefixPath = new FsPath(logPathPrefix);
     if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
-      String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
+      String commonLogPath =
+          logPathPrefix + "/" + "log" + "/" + dateString + "/" + hourString + "/" + creator;
       logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
       CommonLogPathUtils.buildCommonPath(commonLogPath);
     } else {
@@ -81,6 +84,8 @@ public final class ParserUtils {
               + creator
               + "/"
               + dateString
+              + "/"
+              + hourString
               + "/"
               + jobRequest.getId()
               + ".log";

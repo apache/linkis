@@ -31,6 +31,7 @@ import org.apache.linkis.server.exception.{LoginExpireException, NonLoginExcepti
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 
 import java.io.File
 import java.text.DateFormat
@@ -127,6 +128,8 @@ object SecurityFilter extends Logging {
       logger.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
     } else if (TokenAuthentication.isTokenRequest(gatewayContext)) {
       TokenAuthentication.tokenAuth(gatewayContext)
+    } else if (OAuth2Authentication.isOAuth2Request(gatewayContext)) {
+      OAuth2Authentication.OAuth2Entry(gatewayContext)
     } else {
       val userName = Utils.tryCatch(GatewaySSOUtils.getLoginUser(gatewayContext)) {
         case n @ (_: NonLoginException | _: LoginExpireException) =>

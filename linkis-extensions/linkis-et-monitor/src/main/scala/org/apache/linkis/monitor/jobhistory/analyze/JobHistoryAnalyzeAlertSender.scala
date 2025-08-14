@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.jobhistory.analyze
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorAction
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.constants.Constants
+import org.apache.linkis.monitor.core.ob.{Event, Observer}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
+import org.apache.linkis.monitor.utils.alert.ims.{MonitorAlertUtils, PooledImsAlertUtils}
 
-class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
+import java.util
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+import scala.collection.JavaConverters._
 
-  override protected[client] def executeJob(monitorAction: MonitorAction): Result =
-    monitorAction match {
+class JobHistoryAnalyzeAlertSender() extends Observer with Logging {
+  override def update(e: Event, jobHistroyList: scala.Any): Unit = {}
 
-      case action: Action => dwsHttpClient.execute(action)
-
-    }
-
-  override def close(): Unit = dwsHttpClient.close()
 }

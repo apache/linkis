@@ -17,24 +17,26 @@
 
 package org.apache.linkis.monitor.until;
 
-import org.apache.linkis.bml.conf.BmlConfiguration;
-import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.Utils;
-import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
-import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
+import org.apache.linkis.datasource.client.response.GetInfoPublishedByDataSourceNameResult;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.monitor.client.MonitorHTTPClient;
-import org.apache.linkis.monitor.client.MonitorHTTPClientClientImpl;
 import org.apache.linkis.monitor.config.MonitorConfig;
+import org.apache.linkis.monitor.constants.Constants;
+import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.entity.IndexEntity;
-import org.apache.linkis.monitor.request.EmsListAction;
-import org.apache.linkis.monitor.request.EntranceTaskAction;
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
+import org.apache.linkis.monitor.request.*;
+import org.apache.linkis.monitor.response.AnalyzeJobResultAction;
 import org.apache.linkis.monitor.response.EntranceTaskResult;
+import org.apache.linkis.monitor.response.KeyvalueResult;
+import org.apache.linkis.monitor.response.KillJobResultAction;
+import org.apache.linkis.protocol.utils.ZuulEntranceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.ujes.client.response.EmsListResult;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -47,10 +49,8 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,89 +58,18 @@ import org.slf4j.LoggerFactory;
 public class HttpsUntils {
   private static final Logger logger = LoggerFactory.getLogger(HttpsUntils.class);
 
-  public static DWSClientConfig dwsClientConfig = createClientConfig(null, null);
-  //        IOUtils.closeQuietly(client);
-  public static MonitorHTTPClient client = new MonitorHTTPClientClientImpl(dwsClientConfig);
   public static final String localHost = Utils.getLocalHostname();
 
-  public static Map<String, Object> sendHttp(String url, Map<String, Object> properties)
-      throws IOException {
-    if (null == dwsClientConfig) {
-      dwsClientConfig = createClientConfig(url, properties);
-    }
-    if (null == client) {
-      client = new MonitorHTTPClientClientImpl(dwsClientConfig);
-    }
-    EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
+  public static Map<String, Object> getEmsResourceList() throws IOException {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+    EmsListAction build = EmsListAction.newBuilder().setUser(Constants.ADMIN_USER()).build();
     EmsListResult result = client.list(build);
     return result.getResultMap();
   }
 
-  public static DWSClientConfig createClientConfig(String url, Map<String, Object> properties) {
-    String realUrl = "";
-    if (StringUtils.isBlank(url)) {
-      realUrl = Configuration.getGateWayURL();
-    } else {
-      realUrl = url;
-    }
-    Map<String, Object> parms = new HashMap<>();
-    if (MapUtils.isNotEmpty(properties)) {
-      parms = properties;
-    }
-    int maxConnection =
-        (int)
-            parms.getOrDefault(
-                BmlConfiguration.CONNECTION_MAX_SIZE_SHORT_NAME(),
-                BmlConfiguration.CONNECTION_MAX_SIZE().getValue());
-    int connectTimeout =
-        (int)
-            parms.getOrDefault(
-                BmlConfiguration.CONNECTION_TIMEOUT_SHORT_NAME(),
-                BmlConfiguration.CONNECTION_TIMEOUT().getValue());
-    int readTimeout =
-        (int)
-            parms.getOrDefault(
-                BmlConfiguration.CONNECTION_READ_TIMEOUT_SHORT_NAME(),
-                BmlConfiguration.CONNECTION_READ_TIMEOUT().getValue());
-    String tokenKey =
-        (String)
-            parms.getOrDefault(
-                BmlConfiguration.AUTH_TOKEN_KEY_SHORT_NAME(),
-                BmlConfiguration.AUTH_TOKEN_KEY().getValue());
-    String tokenValue =
-        (String)
-            parms.getOrDefault(
-                BmlConfiguration.AUTH_TOKEN_VALUE_SHORT_NAME(),
-                BmlConfiguration.AUTH_TOKEN_VALUE().getValue());
-
-    DWSClientConfig clientConfig =
-        ((DWSClientConfigBuilder)
-                (DWSClientConfigBuilder.newBuilder()
-                    .addServerUrl(realUrl)
-                    .connectionTimeout(connectTimeout)
-                    .discoveryEnabled(false)
-                    .discoveryFrequency(1, TimeUnit.MINUTES)
-                    .loadbalancerEnabled(false)
-                    .maxConnectionSize(maxConnection)
-                    .retryEnabled(false)
-                    .readTimeout(readTimeout)
-                    .setAuthenticationStrategy(new TokenAuthenticationStrategy())
-                    .setAuthTokenKey(tokenKey)
-                    .setAuthTokenValue(tokenValue)))
-            .setDWSVersion("v1")
-            .build();
-
-    return clientConfig;
-  }
-
   public static Map<String, Object> getEntranceTask(String url, String user, String Instance)
       throws IOException {
-    if (null == dwsClientConfig) {
-      dwsClientConfig = createClientConfig(null, null);
-    }
-    if (null == client) {
-      client = new MonitorHTTPClientClientImpl(dwsClientConfig);
-    }
+    MonitorHTTPClient client = ClientSingleton.getInstance();
     EntranceTaskAction build =
         EntranceTaskAction.newBuilder().setUser(user).setInstance(Instance).build();
     EntranceTaskResult result = client.entranList(build);
@@ -156,8 +85,10 @@ public class HttpsUntils {
     RequestConfig requestConfig = RequestConfig.DEFAULT;
     StringEntity entity =
         new StringEntity(
-            json, ContentType.create(ContentType.APPLICATION_JSON.getMimeType(), "UTF-8"));
-    entity.setContentEncoding("UTF-8");
+            json,
+            ContentType.create(
+                ContentType.APPLICATION_JSON.getMimeType(), StandardCharsets.UTF_8.toString()));
+    entity.setContentEncoding(StandardCharsets.UTF_8.toString());
 
     HttpPost httpPost = new HttpPost(MonitorConfig.ECM_TASK_IMURL.getValue());
     httpPost.setConfig(requestConfig);
@@ -165,9 +96,77 @@ public class HttpsUntils {
 
     CloseableHttpClient httpClient = HttpClients.createDefault();
     CloseableHttpResponse execute = httpClient.execute(httpPost);
-    String responseStr = EntityUtils.toString(execute.getEntity(), "UTF-8");
+    String responseStr =
+        EntityUtils.toString(execute.getEntity(), StandardCharsets.UTF_8.toString());
     Map<String, String> map = BDPJettyServerHelper.gson().fromJson(responseStr, Map.class);
     logger.info("send index response :{}", map);
     Assert.isTrue(!"0".equals(map.get("resultCode")), map.get("resultMsg"));
+  }
+
+  public static String getJDBCConf(String user, String conf) {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+    KeyvalueAction build =
+        KeyvalueAction.newBuilder()
+            .setVersion("4")
+            .setEngineType(Constants.JDBC_ENGINE())
+            .setCreator("IDE")
+            .setConfigKey(conf)
+            .setUser(user)
+            .build();
+    KeyvalueResult result = client.getConfKeyValue(build);
+    Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
+    ArrayList arrayList = (ArrayList) data.get("configValues");
+    if (CollectionUtils.isNotEmpty(arrayList)) {
+      String json = BDPJettyServerHelper.gson().toJson(arrayList.get(0));
+      Map map = BDPJettyServerHelper.gson().fromJson(json, Map.class);
+      return MapUtils.getString(map, "configValue", "");
+    } else {
+      return "";
+    }
+  }
+
+  public static Map getDatasourceConf(String user, String datasourceName) {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+    DataSourceParamsAction dataSourceParamsAction =
+        DataSourceParamsAction.builder()
+            .setSystem(Constants.ALERT_SUB_SYSTEM_ID())
+            .setDataSourceName(datasourceName)
+            .setUser(user)
+            .build();
+    GetInfoPublishedByDataSourceNameResult result =
+        client.getInfoByDataSourceInfo(dataSourceParamsAction);
+    Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
+    Map datasourceInfoMap = MapUtils.getMap(data, "info", new HashMap<>());
+    return datasourceInfoMap;
+  }
+
+  public static void killJob(JobHistory jobHistory) {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+    String[] split = jobHistory.getInstances().split(Constants.SPLIT_DELIMITER());
+    String execID =
+        ZuulEntranceUtils.generateExecID(
+            jobHistory.getJobReqId(),
+            GovernanceCommonConf.ENTRANCE_SERVICE_NAME().getValue(),
+            split);
+    KillJobAction killJobAction =
+        KillJobAction.builder()
+            .setIdList(Collections.singletonList(execID))
+            .setTaskIDList(Collections.singletonList(jobHistory.getId()))
+            .setExecID(execID)
+            .setUser(jobHistory.getSubmitUser())
+            .build();
+    KillJobResultAction killJobResultAction = client.killJob(killJobAction);
+    Map data = MapUtils.getMap(killJobResultAction.getResultMap(), "data", new HashMap<>());
+  }
+
+  public static void analyzeJob(JobHistory jobHistory) {
+    MonitorHTTPClient client = ClientSingleton.getInstance();
+
+    AnalyzeJobAction analyzeJobAction =
+        AnalyzeJobAction.newBuilder()
+            .setTaskID(String.valueOf(jobHistory.getId()))
+            .setUser(Constants.ADMIN_USER())
+            .build();
+    AnalyzeJobResultAction analyzeJobResultAction = client.analyzeJob(analyzeJobAction);
   }
 }

@@ -143,7 +143,7 @@ object OAuth2Authentication extends Logging {
    * 生成OAuth认证的URL
    *
    * @note
-   * 认证完成回调链接需要在认证服务器上进行配置
+   *   认证完成回调链接需要在认证服务器上进行配置
    * @return
    */
   private def generateAuthenticationUrl(): String = {
@@ -159,11 +159,11 @@ object OAuth2Authentication extends Logging {
    * 验证访问码的有效性并获取访问令牌
    *
    * @param code
-   * 访问码
+   *   访问码
    * @param host
-   * 客户端主机
+   *   客户端主机
    * @return
-   * 访问令牌
+   *   访问令牌
    */
   private def exchangeAccessToken(code: String, host: String): String = {
     val exchangeUrl = OAUTH_EXCHANGE_URL.getValue
@@ -226,9 +226,11 @@ object OAuth2Authentication extends Logging {
       null
     })
   }
+
 }
 
 object HttpUtils extends Logging {
+
   def get(
       url: String,
       headers: Map[String, String] = Map.empty,

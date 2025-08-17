@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
 import org.apache.linkis.gateway.security.token.TokenAuthentication
 import org.apache.linkis.server.{validateFailed, Message}
@@ -31,7 +32,6 @@ import org.apache.linkis.server.exception.{LoginExpireException, NonLoginExcepti
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 
 import java.io.File
 import java.text.DateFormat

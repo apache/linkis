@@ -52,4 +52,26 @@ class SQLExplainTest {
     res = SQLExplain.isSelectOverLimit(code);
     Assertions.assertEquals(false, res);
   }
+
+  /**
+   * 未修复前代码进行拼接sql时，输出的sql为
+   *      select
+   *      id,
+   *      name,
+   *      array_join(array_intersect(map_keys(info),array['abs','oda'],' limit 5000;
+   *      ') as infos
+   *      from ods.dim_ep22
+   */
+  @Test
+  void splicingLimitSql() {
+    String code = "select\n" +
+            "id,\n" +
+            "name,\n" +
+            "array_join(array_intersect(map_keys(info),array['abs','oda'],';') as infos\n" +
+            "from ods.dim_ep22";
+    StringBuilder logAppender = new StringBuilder();
+    JobRequest jobRequest = new JobRequest();
+    SQLExplain.dealSQLLimit(code, jobRequest, logAppender);
+    Assertions.assertEquals(code+" limit 5000", jobRequest.getExecutionCode());
+  }
 }

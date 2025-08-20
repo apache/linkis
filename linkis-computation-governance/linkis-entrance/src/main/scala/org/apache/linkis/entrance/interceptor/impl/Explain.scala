@@ -176,7 +176,7 @@ object SQLExplain extends Explain {
         }
       }
     } else {
-      tempCode.split(";") foreach { singleCode =>
+      splitSqlWithRealSemicolon(tempCode) foreach { singleCode =>
         if (isSelectCmd(singleCode)) {
           val trimCode = singleCode.trim
           if (isSelectCmdNoLimit(trimCode) && !isNoLimitAllowed) {
@@ -228,6 +228,50 @@ object SQLExplain extends Explain {
       if ('\\' != realTempCode.charAt(i) && ';' == realTempCode.charAt(i + 1)) array += (i + 1)
     }
     array.toArray
+  }
+
+  private def splitSqlWithRealSemicolon(tempCode: String): Array[String] = {
+    // sql has been split by semicolons, but the semicolons within single quotes, double quotes, and backquotes are ignored
+    val splitSql = new ArrayBuffer[String]
+    val current = new StringBuilder
+    var inSingleQuote = false
+    var inDoubleQuote = false
+    var inBackQuote = false
+    var escapeNext = false
+
+    for (char <- tempCode) {
+      if (escapeNext) {
+        current.append(char)
+        escapeNext = false
+      } else {
+        char match {
+          case '\\' =>
+            current.append(char)
+            escapeNext = true
+          case '\'' if !inDoubleQuote && !inBackQuote =>
+            current.append(char)
+            inSingleQuote = !inSingleQuote
+          case '"' if !inSingleQuote && !inBackQuote =>
+            current.append(char)
+            inDoubleQuote = !inDoubleQuote
+          case '`' if !inSingleQuote && !inDoubleQuote =>
+            current.append(char)
+            inBackQuote = !inBackQuote
+          case ';' if !inSingleQuote && !inDoubleQuote && !inBackQuote =>
+            splitSql += current.toString()
+            current.clear()
+          case _ =>
+            current.append(char)
+        }
+      }
+    }
+
+    // Add the last fragment
+    if (current.nonEmpty) {
+      splitSql += current.toString()
+    }
+    splitSql.toArray
+
   }
 
   private def addNoLimit(code: String) = code + NO_LIMIT_STRING

@@ -19,6 +19,7 @@ package org.apache.linkis.gateway.security.oauth
 
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
@@ -44,13 +45,6 @@ object OAuth2Authentication extends Logging {
     path == "oauth_login" || path == "oauth_redirect"
   }
 
-  private def getMethod(gatewayContext: GatewayContext) = {
-    var userURI = ServerConfiguration.BDP_SERVER_USER_URI.getValue
-    if (!userURI.endsWith("/")) userURI += "/"
-    val path = gatewayContext.getRequest.getRequestURI.replace(userURI, "")
-    path
-  }
-
   def OAuth2Entry(gatewayContext: GatewayContext, login: Boolean = false): Boolean = {
     val path = getMethod(gatewayContext)
     if (path == "oauth_redirect") {
@@ -63,6 +57,13 @@ object OAuth2Authentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, message)
       false
     }
+  }
+
+  private def getMethod(gatewayContext: GatewayContext) = {
+    var userURI = ServerConfiguration.BDP_SERVER_USER_URI.getValue
+    if (!userURI.endsWith("/")) userURI += "/"
+    val path = gatewayContext.getRequest.getRequestURI.replace(userURI, "")
+    path
   }
 
   def OAuth2Redirect(gatewayContext: GatewayContext): Boolean = {
@@ -78,6 +79,22 @@ object OAuth2Authentication extends Logging {
       Message.ok("创建链接成功！").data("redirectUrl", generateAuthenticationUrl())
     SecurityFilter.filterResponse(gatewayContext, message)
     true
+  }
+
+  /**
+   * 生成OAuth认证的URL
+   *
+   * @note
+   *   认证完成回调链接需要在认证服务器上进行配置
+   * @return
+   */
+  private def generateAuthenticationUrl(): String = {
+    var oauthServerUrl =
+      s"${OAUTH_AUTHENTICATION_URL.getValue}?client_id=${OAUTH_CLIENT_ID.getValue}&response_type=code"
+    if (StringUtils.isNotBlank(OAUTH_SCOPE.getValue)) {
+      oauthServerUrl += s"&scope=${OAUTH_SCOPE.getValue}"
+    }
+    oauthServerUrl
   }
 
   def OAuth2Auth(gatewayContext: GatewayContext, login: Boolean = false): Boolean = {
@@ -119,7 +136,11 @@ object OAuth2Authentication extends Logging {
       if (login) {
         GatewaySSOUtils.setLoginUser(gatewayContext, username)
         val msg =
-          Message.ok("login successful(登录成功)！").data("userName", username).data("isAdmin", false)
+          Message
+            .ok("login successful(登录成功)！")
+            .data("userName", username)
+            .data("enableWatermark", GatewayConfiguration.ENABLE_WATER_MARK.getValue)
+            .data("isAdmin", false)
         SecurityFilter.filterResponse(gatewayContext, msg)
         return true
       }
@@ -137,22 +158,6 @@ object OAuth2Authentication extends Logging {
 
   private def extractCode(gatewayContext: GatewayContext): String = {
     Utils.tryCatch(gatewayContext.getRequest.getQueryParams.get("code")(0))(_ => null)
-  }
-
-  /**
-   * 生成OAuth认证的URL
-   *
-   * @note
-   *   认证完成回调链接需要在认证服务器上进行配置
-   * @return
-   */
-  private def generateAuthenticationUrl(): String = {
-    var oauthServerUrl =
-      s"${OAUTH_AUTHENTICATION_URL.getValue}?client_id=${OAUTH_CLIENT_ID.getValue}&response_type=code"
-    if (StringUtils.isNotBlank(OAUTH_SCOPE.getValue)) {
-      oauthServerUrl += s"&scope=${OAUTH_SCOPE.getValue}"
-    }
-    oauthServerUrl
   }
 
   /**

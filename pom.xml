@@ -104,7 +104,7 @@
   <properties>
     <revision>1.7.0</revision>
 
-    <zookeeper.version>3.9.2</zookeeper.version>
+    <zookeeper.version>3.9.3</zookeeper.version>
     <curator.version>4.2.0</curator.version>
     <hadoop.version>3.3.4</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
@@ -185,16 +185,16 @@
     <!-- utils -->
     <guava.version>32.0.0-jre</guava.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-io.version>2.17.0</commons-io.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-beanutils.version>1.11.0</commons-beanutils.version>
     <commons-compress.version>1.26.1</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
-    <commons-fileupload.version>1.5</commons-fileupload.version>
+    <commons-fileupload.version>1.6.0</commons-fileupload.version>
     <commons-net.version>3.9.0</commons-net.version>
     <commons-cli.version>1.3.1</commons-cli.version>
     <jline.version>3.9.0</jline.version>

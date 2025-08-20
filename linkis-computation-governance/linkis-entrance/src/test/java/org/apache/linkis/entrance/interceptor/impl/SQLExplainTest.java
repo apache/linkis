@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.interceptor.impl;
 
+import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabelRel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
@@ -42,6 +43,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -331,7 +333,8 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     if (CollectionUtils.isEmpty(serviceInstances)) return Collections.emptyMap();
     Map<ServiceInstance, List<PersistenceLabel>> resultMap = new HashMap<>();
     List<Map<String, Object>> nodeRelationsByLabels =
-        labelManagerMapper.listLabelRelationByServiceInstance(serviceInstances);
+        listLabelRelationByServiceInstance(
+            serviceInstances, RMConfiguration.LABEL_SERVICE_PARTITION_NUM.getValue());
     logger.info("list label relation end, with size: {}", nodeRelationsByLabels.size());
     Map<String, List<Map<String, Object>>> groupByInstanceMap =
         nodeRelationsByLabels.stream()
@@ -372,5 +375,14 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
   @Override
   public List<ServiceInstance> getNodeByLabelKeyValue(String labelKey, String stringValue) {
     return labelManagerMapper.getNodeByLabelKeyValue(labelKey, stringValue);
+  }
+
+  public List<Map<String, Object>> listLabelRelationByServiceInstance(
+      List<ServiceInstance> nodes, int batchSize) {
+
+    return Lists.partition(nodes, batchSize).stream()
+        .map(batch -> labelManagerMapper.listLabelRelationByServiceInstance(batch))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
   }
 }

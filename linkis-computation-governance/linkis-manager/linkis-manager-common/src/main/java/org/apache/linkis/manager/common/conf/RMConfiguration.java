@@ -32,6 +32,9 @@ public class RMConfiguration {
   public static final CommonVars<TimeType> LOCK_RELEASE_CHECK_INTERVAL =
       CommonVars.apply("wds.linkis.manager.rm.lock.release.check.interval", new TimeType("5m"));
 
+  public static final CommonVars<TimeType> LOCK_FAILED_LABEL_RESOURCE_DEAL_INTERVAL =
+      CommonVars.apply("wds.linkis.manager.rm.lock.failed.deal.interval", new TimeType("10s"));
+
   // Resource parameter(资源参数)
   public static final CommonVars<Integer> USER_AVAILABLE_CPU =
       CommonVars.apply("wds.linkis.rm.client.core.max", 10);
@@ -73,4 +76,10 @@ public class RMConfiguration {
       CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.type", "K8S");
   public static final CommonVars<Integer> EXTERNAL_RETRY_NUM =
       CommonVars.apply("wds.linkis.rm.external.retry.num", 3);
+
+  public static final CommonVars<Integer> LABEL_SERVICE_PARTITION_NUM =
+      CommonVars.apply("wds.linkis.label.service.partition.num", 100);
+
+  public static final CommonVars<Boolean> GET_RESOURCE_BY_LABEL_VALUE_ENABLED =
+      CommonVars.apply("wds.linkis.get.resource.by.label.value.enable", false);
 }

@@ -116,6 +116,15 @@ public class AMConfiguration {
               "wds.linkis.manager.am.can.retry.logs", "already in use;Cannot allocate memory")
           .getValue();
 
+  public static final int REUSE_ENGINE_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.reuse.max.thread.size", 200).getValue();
+
+  public static final int CREATE_ENGINE_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.create.max.thread.size", 200).getValue();
+
+  public static final int ASK_ENGINE_ERROR_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.ask.error.max.thread.size", 100).getValue();
+
   public static final int ASK_ENGINE_ASYNC_MAX_THREAD_SIZE =
       CommonVars.apply("wds.linkis.ecm.launch.max.thread.size", 200).getValue();
 
@@ -133,6 +142,9 @@ public class AMConfiguration {
 
   public static final Boolean NODE_SELECT_HOTSPOT_EXCLUSION_RULE =
       CommonVars.apply("linkis.node.select.hotspot.exclusion.rule.enable", true).getValue();
+
+  public static final CommonVars<String> NODE_SELECT_HOTSPOT_EXCLUSION_SHUFFLE_RULER =
+      CommonVars.apply("linkis.node.select.hotspot.exclusion.shuffle.ruler", "size-limit");
 
   public static final boolean EC_REUSE_WITH_RESOURCE_RULE_ENABLE =
       CommonVars.apply("linkis.ec.reuse.with.resource.rule.enable", false).getValue();

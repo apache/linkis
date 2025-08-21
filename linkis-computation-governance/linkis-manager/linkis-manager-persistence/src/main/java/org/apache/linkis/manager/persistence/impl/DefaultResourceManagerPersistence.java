@@ -113,6 +113,11 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
   }
 
   @Override
+  public List<PersistenceResource> getResourceByLabelValues(List<String> labelValues) {
+    return labelManagerMapper.getInstanceResourceByLabelValue(labelValues);
+  }
+
+  @Override
   public List<PersistenceResource> getResourceByUser(String user) throws PersistenceErrorException {
     List<PersistenceResource> persistenceResourceList =
         resourceManagerMapper.getResourceByUserName(user);

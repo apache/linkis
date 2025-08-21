@@ -49,7 +49,7 @@ class ResourceLockService extends Logging {
         lockManagerPersistence.lock(persistenceLock, Long.MaxValue)
       }
       if (isLocked) {
-        logger.info("successfully locked label" + persistenceLock.getLockObject)
+        logger.info("successfully locked label " + persistenceLock.getLockObject)
       }
       isLocked
     } { case t: Throwable =>

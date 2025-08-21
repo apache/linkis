@@ -31,9 +31,11 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.*;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
@@ -73,43 +75,45 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
   @Autowired private ResourceManager resourceManager;
 
+  @Autowired private NodeManagerMapper nodeManagerMapper;
+
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
   private final LabelBuilderFactory labelBuilderFactory =
-      LabelBuilderFactoryContext.getLabelBuilderFactory();
+          LabelBuilderFactoryContext.getLabelBuilderFactory();
 
   @Override
   public List<EngineNode> listEngines(String user) {
     List<Node> userNodes = nodeManagerPersistence.getNodes(user);
 
     List<EngineNode> nodes =
-        userNodes.stream()
-            .map(Node::getServiceInstance)
-            .map(nodeManagerPersistence::getEngineNode)
-            .collect(Collectors.toList());
+            userNodes.stream()
+                    .map(Node::getServiceInstance)
+                    .map(nodeManagerPersistence::getEngineNode)
+                    .collect(Collectors.toList());
 
     List<NodeMetrics> nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(nodes);
     Map<String, NodeMetrics> metricses =
-        nodeMetrics.stream()
-            .collect(
-                Collectors.toMap(
-                    m -> m.getServiceInstance().toString(),
-                    m -> m,
-                    (existingValue, newValue) -> newValue));
+            nodeMetrics.stream()
+                    .collect(
+                            Collectors.toMap(
+                                    m -> m.getServiceInstance().toString(),
+                                    m -> m,
+                                    (existingValue, newValue) -> newValue));
 
     nodes.forEach(
-        node -> {
-          Optional<NodeMetrics> nodeMetricsOptional =
-              Optional.ofNullable(metricses.get(node.getServiceInstance().toString()));
-          nodeMetricsOptional.ifPresent(m -> metricsConverter.fillMetricsToNode(node, m));
-        });
+            node -> {
+              Optional<NodeMetrics> nodeMetricsOptional =
+                      Optional.ofNullable(metricses.get(node.getServiceInstance().toString()));
+              nodeMetricsOptional.ifPresent(m -> metricsConverter.fillMetricsToNode(node, m));
+            });
     return nodes;
   }
 
   @Retryable(
-      value = {feign.RetryableException.class, UndeclaredThrowableException.class},
-      maxAttempts = 5,
-      backoff = @Backoff(delay = 10000))
+          value = {feign.RetryableException.class, UndeclaredThrowableException.class},
+          maxAttempts = 5,
+          backoff = @Backoff(delay = 10000))
   @Override
   public EngineNode getEngineNodeInfo(EngineNode engineNode) {
     EngineNodePointer engine = nodePointerBuilder.buildEngineNodePointer(engineNode);
@@ -125,10 +129,10 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     EngineNode dbEngineNode = nodeManagerPersistence.getEngineNode(engineNode.getServiceInstance());
     if (null == dbEngineNode) {
       throw new LinkisRetryException(
-          AMConstant.ENGINE_ERROR_CODE, engineNode + " not exists in db");
+              AMConstant.ENGINE_ERROR_CODE, engineNode + " not exists in db");
     }
     metricsConverter.fillMetricsToNode(
-        dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
+            dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
     return dbEngineNode;
   }
 
@@ -139,13 +143,13 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, ticketId + " not exists in db");
     }
     metricsConverter.fillMetricsToNode(
-        dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
+            dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
     return dbEngineNode;
   }
 
   @Override
   public void updateEngineStatus(
-      ServiceInstance serviceInstance, NodeStatus fromState, NodeStatus toState) {}
+          ServiceInstance serviceInstance, NodeStatus fromState, NodeStatus toState) {}
 
   @Override
   public void updateEngine(EngineNode engineNode) {
@@ -165,12 +169,12 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     }
     if (!NodeStatus.isLocked(node.getNodeStatus())) {
       Optional<String> lockStr =
-          engineLocker.lockEngine(node, (long) AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue());
+              engineLocker.lockEngine(node, (long) AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue());
       if (!lockStr.isPresent()) {
         throw new LinkisRetryException(
-            AMConstant.ENGINE_ERROR_CODE,
-            String.format(
-                "Failed to request lock from engine by reuse %s", node.getServiceInstance()));
+                AMConstant.ENGINE_ERROR_CODE,
+                String.format(
+                        "Failed to request lock from engine by reuse %s", node.getServiceInstance()));
       }
       node.setLock(lockStr.get());
       return node;
@@ -197,8 +201,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       Optional<String> lockStr = engineLocker.lockEngine(node, timeout);
       if (!lockStr.isPresent()) {
         throw new LinkisRetryException(
-            AMConstant.ENGINE_ERROR_CODE,
-            String.format("Failed to request lock from engine %s", node.getServiceInstance()));
+                AMConstant.ENGINE_ERROR_CODE,
+                String.format("Failed to request lock from engine %s", node.getServiceInstance()));
       }
       node.setLock(lockStr.get());
       return node;
@@ -223,59 +227,78 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     if (scoreServiceInstances == null || scoreServiceInstances.length == 0) {
       return null;
     }
+    List<String> instances = new ArrayList<String>();
     List<ScoreServiceInstance> scoreServiceInstancesList = Arrays.asList(scoreServiceInstances);
     EngineNode[] engineNodes =
-        scoreServiceInstancesList.stream()
-            .map(
-                scoreServiceInstance -> {
-                  AMEngineNode engineNode = new AMEngineNode();
-                  engineNode.setScore(scoreServiceInstance.getScore());
-                  engineNode.setServiceInstance(scoreServiceInstance.getServiceInstance());
-                  return engineNode;
-                })
-            .toArray(EngineNode[]::new);
+            scoreServiceInstancesList.stream()
+                    .map(
+                            scoreServiceInstance -> {
+                              AMEngineNode engineNode = new AMEngineNode();
+                              engineNode.setScore(scoreServiceInstance.getScore());
+                              engineNode.setServiceInstance(scoreServiceInstance.getServiceInstance());
+                              instances.add(scoreServiceInstance.getServiceInstance().getInstance());
+                              return engineNode;
+                            })
+                    .toArray(EngineNode[]::new);
 
     List<ServiceInstance> serviceInstancesList =
-        scoreServiceInstancesList.stream()
-            .map(ScoreServiceInstance::getServiceInstance)
-            .collect(Collectors.toList());
+            scoreServiceInstancesList.stream()
+                    .map(ScoreServiceInstance::getServiceInstance)
+                    .collect(Collectors.toList());
 
     try {
+      logger.info("start getEngineNodes.");
       ResourceInfo resourceInfo =
-          resourceManager.getResourceInfo(serviceInstancesList.toArray(new ServiceInstance[0]));
-
+              resourceManager.getResourceInfo(serviceInstancesList.toArray(new ServiceInstance[0]));
+      logger.info("end resourceInfo {}", resourceInfo);
       if (serviceInstancesList.isEmpty()) {
         throw new LinkisRetryException(
-            AMConstant.ENGINE_ERROR_CODE, "Service instances cannot be empty.");
+                AMConstant.ENGINE_ERROR_CODE, "Service instances cannot be empty.");
       }
 
       List<NodeMetrics> nodeMetrics =
-          nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
+              nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
+      logger.info(
+              "get nodeMetrics, with engineNode size: {}, res size: {}",
+              engineNodes.length,
+              nodeMetrics.size());
+      List<PersistenceNode> persistenceNodes = nodeManagerMapper.getNodesByInstances(instances);
+      logger.info(
+              "get persistenceNodes, with instance size: {}, res size: {}",
+              instances.size(),
+              persistenceNodes.size());
 
       for (EngineNode engineNode : engineNodes) {
         Optional<NodeMetrics> optionMetrics =
-            nodeMetrics.stream()
-                .filter(
-                    nodeMetric ->
-                        nodeMetric.getServiceInstance().equals(engineNode.getServiceInstance()))
-                .findFirst();
+                nodeMetrics.stream()
+                        .filter(
+                                nodeMetric ->
+                                        nodeMetric.getServiceInstance().equals(engineNode.getServiceInstance()))
+                        .findFirst();
 
         Optional<RMNode> optionRMNode =
-            resourceInfo.resourceInfo().stream()
-                .filter(
-                    resourceNode ->
-                        resourceNode.getServiceInstance().equals(engineNode.getServiceInstance()))
-                .findFirst();
+                resourceInfo.resourceInfo().stream()
+                        .filter(
+                                resourceNode ->
+                                        resourceNode.getServiceInstance().equals(engineNode.getServiceInstance()))
+                        .findFirst();
 
         optionMetrics.ifPresent(metrics -> metricsConverter.fillMetricsToNode(engineNode, metrics));
         optionRMNode.ifPresent(rmNode -> engineNode.setNodeResource(rmNode.getNodeResource()));
+
+        persistenceNodes.stream()
+                .filter(
+                        node -> node.getInstance().equals(engineNode.getServiceInstance().getInstance()))
+                .findFirst()
+                .ifPresent(persistenceNode -> engineNode.setParams(persistenceNode.getParams()));
       }
     } catch (Exception e) {
       LinkisRetryException linkisRetryException =
-          new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "Failed to process data.");
+              new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "Failed to process data.");
       linkisRetryException.initCause(e);
       throw linkisRetryException;
     }
+    logger.info("end getEngineNodes");
     return engineNodes;
   }
 
@@ -289,7 +312,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     nodeManagerPersistence.addEngineNode(engineNode);
     // init metric
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(
-        metricsConverter.getInitMetric(engineNode.getServiceInstance()));
+            metricsConverter.getInitMetric(engineNode.getServiceInstance()));
   }
 
   /**
@@ -328,19 +351,19 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     oldEngineLabel.setInstance(serviceInstance.getInstance());
     oldEngineLabel.setServiceName(engineNode.getServiceInstance().getApplicationName());
     PersistenceLabel oldPersistenceLabel =
-        labelBuilderFactory.convertLabel(oldEngineLabel, PersistenceLabel.class);
+            labelBuilderFactory.convertLabel(oldEngineLabel, PersistenceLabel.class);
     PersistenceLabel label =
-        labelManagerPersistence.getLabelByKeyValue(
-            oldPersistenceLabel.getLabelKey(), oldPersistenceLabel.getStringValue());
+            labelManagerPersistence.getLabelByKeyValue(
+                    oldPersistenceLabel.getLabelKey(), oldPersistenceLabel.getStringValue());
 
     PersistenceLabel persistenceLabel =
-        labelBuilderFactory.convertLabel(engineLabel, PersistenceLabel.class);
+            labelBuilderFactory.convertLabel(engineLabel, PersistenceLabel.class);
     persistenceLabel.setLabelValueSize(persistenceLabel.getValue().size());
     labelManagerPersistence.updateLabel(label.getId(), persistenceLabel);
   }
 
   public EngineOperateResponse executeOperation(
-      EngineNode engineNode, EngineOperateRequest request) {
+          EngineNode engineNode, EngineOperateRequest request) {
     EngineNodePointer engine = nodePointerBuilder.buildEngineNodePointer(engineNode);
     return engine.executeOperation(request);
   }
@@ -349,8 +372,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     EngineNode engineNode = getEngineNode(serviceInstance);
     if (Objects.isNull(engineNode)) {
       throw new AMErrorException(
-          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
-          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
+              AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
+              AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
     }
     NodeMetrics nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode);
     if (engineNode.getNodeStatus() == null) {

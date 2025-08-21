@@ -622,7 +622,7 @@ public class FsRestfulApi {
         required = true,
         dataType = "Integer",
         defaultValue = "5000"),
-    @ApiImplicitParam(name = "maskedFieldNames", required = false, dataType = "String")
+    @ApiImplicitParam(name = "maskedFiledNames", required = false, dataType = "String")
   })
   @RequestMapping(path = "/openFile", method = RequestMethod.GET)
   public Message openFile(
@@ -635,7 +635,7 @@ public class FsRestfulApi {
       @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
       @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
           Integer columnPageSize,
-      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames)
+      @RequestParam(value = "maskedFiledNames", required = false) String maskedFiledNames)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -691,7 +691,7 @@ public class FsRestfulApi {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
-
+      int realSize = 0;
       try {
         Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
         LOGGER.info(
@@ -702,14 +702,13 @@ public class FsRestfulApi {
         try {
           if (metaMap instanceof Map[]) {
             Map[] realMap = (Map[]) metaMap;
-            int realSize = realMap.length;
+            realSize = realMap.length;
 
             // 判断列索引在实际列数范围内
             if ((columnPage - 1) * columnPageSize > realSize) {
               throw WorkspaceExceptionManager.createException(80036, path);
             }
 
-            message.data("totalColumn", realSize);
             if (realSize > FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()) {
               message.data("column_limit_display", true);
               message.data(
@@ -738,15 +737,21 @@ public class FsRestfulApi {
           LOGGER.info("Failed to set flag", e);
         }
         // 增加字段屏蔽
-        Set<String> maskedFields =
-            StringUtils.isBlank(maskedFieldNames)
-                ? Collections.emptySet()
-                : new HashSet<>(Arrays.asList(maskedFieldNames.toLowerCase().split(",")));
         Object resultmap = newMap == null ? metaMap : newMap;
-        Map[] metadata = filterMaskedFieldsFromMetadata(resultmap, maskedFields);
-        List<String[]> fileContent =
-            removeFieldsFromContent(resultmap, result.getSecond(), maskedFields);
-        message.data("metadata", metadata).data("fileContent", fileContent);
+        if (FileSource$.MODULE$.isResultSet(fsPath.getPath())
+            && StringUtils.isNotBlank(maskedFiledNames)) {
+          // 如果结果集并且屏蔽字段不为空，则执行屏蔽逻辑，反之则保持原逻辑
+          Set<String> maskedFields =
+              new HashSet<>(Arrays.asList(maskedFiledNames.toLowerCase().split(",")));
+          Map[] metadata = filterMaskedFieldsFromMetadata(resultmap, maskedFields);
+          List<String[]> fileContent =
+              removeFieldsFromContent(resultmap, result.getSecond(), maskedFields);
+          message.data("totalColumn", realSize > 0 ? realSize - maskedFiledNames.length() : 0);
+          message.data("metadata", metadata).data("fileContent", fileContent);
+        } else {
+          message.data("totalColumn", realSize);
+          message.data("metadata", resultmap).data("fileContent", result.getSecond());
+        }
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
         return message.data("page", page).data("totalPage", 0);
@@ -806,7 +811,8 @@ public class FsRestfulApi {
                 i -> {
                   Map<String, Object> meta = fieldMetadata[i];
                   Object columnName = meta.get("columnName");
-                  return columnName != null && fieldsToRemove.contains(columnName.toString().toLowerCase());
+                  return columnName != null
+                      && fieldsToRemove.contains(columnName.toString().toLowerCase());
                 })
             .distinct()
             .boxed()

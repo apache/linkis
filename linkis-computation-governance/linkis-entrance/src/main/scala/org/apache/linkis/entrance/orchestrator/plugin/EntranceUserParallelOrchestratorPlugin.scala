@@ -46,7 +46,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
   private val configCache: LoadingCache[String, Integer] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .expireAfterAccess(1, TimeUnit.HOURS)
+    .expireAfterAccess(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .expireAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, Integer]() {
 

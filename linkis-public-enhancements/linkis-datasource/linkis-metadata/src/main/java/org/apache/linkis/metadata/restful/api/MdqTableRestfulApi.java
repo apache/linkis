@@ -21,10 +21,7 @@ import org.apache.linkis.metadata.ddl.ImportDDLCreator;
 import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.*;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
@@ -34,6 +31,7 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -212,6 +210,30 @@ public class MdqTableRestfulApi {
             .data("pageNow", pageNow)
             .data("pageSize", pageSize);
     return data;
+  }
+
+  @ApiOperation(value = "getTableInfo", notes = "get table info", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+    @ApiImplicitParam(name = "tableName", dataType = "String")
+  })
+  @RequestMapping(path = "getTableInfo", method = RequestMethod.GET)
+  public Message getTableInfo(
+      @RequestParam(value = "database", required = false) String database,
+      @RequestParam(value = "tableName", required = false) String tableName,
+      HttpServletRequest req)
+      throws IOException {
+    String userName = ModuleUserUtils.getOperationUser(req, "getTableInfo " + tableName);
+    if (StringUtils.isBlank(tableName)) {
+      Message.error("param tableName can not be empty");
+    }
+    if (StringUtils.isBlank(database)) {
+      Message.error("param database can not be empty");
+    }
+    MetadataQueryParam queryParam =
+        MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
+    MdqTableStatisticInfoDTO tableStatisticInfo = mdqService.getTableInfo(queryParam);
+    return Message.ok().data("tableInfo", tableStatisticInfo);
   }
 
   @ApiOperation(

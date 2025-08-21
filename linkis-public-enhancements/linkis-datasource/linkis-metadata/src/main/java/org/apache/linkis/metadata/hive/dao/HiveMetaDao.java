@@ -28,7 +28,11 @@ public interface HiveMetaDao {
 
   String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
+  String getLocationByDbAndTableSlave(MetadataQueryParam queryParam);
+
   Map<String, Object> getStorageInfo(MetadataQueryParam queryParam);
+
+  Map<String, Object> getStorageInfoSlave(MetadataQueryParam queryParam);
 
   /**
    * get user's roles by username
@@ -37,6 +41,8 @@ public interface HiveMetaDao {
    * @return the role name list
    */
   List<String> getRolesByUser(String userName);
+
+  List<String> getRolesByUserSlave(String userName);
 
   /**
    * get dbs by user's username and user's roles
@@ -48,6 +54,9 @@ public interface HiveMetaDao {
   List<String> getDbsByUserAndRoles(
       @Param("userName") String userName, @Param("roles") List<String> roles);
 
+  List<String> getDbsByUserAndRolesSlave(
+      @Param("userName") String userName, @Param("roles") List<String> roles);
+
   /**
    * get all list of DBS NAME
    *
@@ -55,15 +64,28 @@ public interface HiveMetaDao {
    */
   List<String> getAllDbs();
 
+  List<String> getAllDbsSlave();
+
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromDbPrvs(
+      MetadataQueryParam queryParam);
+
+  List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromDbPrvsSlave(
       MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromTblPrvs(
       MetadataQueryParam queryParam);
 
+  List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromTblPrvsSlave(
+      MetadataQueryParam queryParam);
+
   List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
+  List<Map<String, Object>> getTablesByDbNameSlave(MetadataQueryParam queryParam);
+
   Map<String, Object> getTableInfoByTableNameAndDbName(
+      @Param("tableName") String tableName, @Param("dbName") String dbName);
+
+  Map<String, Object> getTableInfoByTableNameAndDbNameSlave(
       @Param("tableName") String tableName, @Param("dbName") String dbName);
 
   /**
@@ -74,17 +96,34 @@ public interface HiveMetaDao {
    */
   Long getPartitionSize(MetadataQueryParam queryParam);
 
+  Long getPartitionSizeSlave(MetadataQueryParam queryParam);
+
   List<String> getPartitions(MetadataQueryParam queryParam);
+
+  List<String> getPartitionsSlave(MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getColumns(MetadataQueryParam queryParam);
 
+  List<Map<String, Object>> getColumnsSlave(MetadataQueryParam queryParam);
+
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
+
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlave(
+      MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
 
+  List<Map<String, Object>> getColumnsByStorageDescriptionIDSlave(MetadataQueryParam queryParam);
+
   List<Map<String, Object>> getPartitionKeys(MetadataQueryParam queryParam);
+
+  List<Map<String, Object>> getPartitionKeysSlave(MetadataQueryParam queryParam);
 
   String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 
+  String getTableCommentSlave(@Param("DbName") String DbName, @Param("tableName") String tableName);
+
   List<String> getCanWriteDbsByUser(@Param("userName") String userName);
+
+  List<String> getCanWriteDbsByUserSlave(@Param("userName") String userName);
 }

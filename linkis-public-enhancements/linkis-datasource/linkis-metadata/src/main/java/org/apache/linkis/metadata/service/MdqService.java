@@ -18,10 +18,7 @@
 package org.apache.linkis.metadata.service;
 
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.*;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
@@ -76,4 +73,6 @@ public interface MdqService {
   MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
       MetadataQueryParam queryParam, String partitionName)
       throws IOException, MdqIllegalParamException;
+
+  MdqTableStatisticInfoDTO getTableInfo(MetadataQueryParam queryParam) throws IOException;
 }

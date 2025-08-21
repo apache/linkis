@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.service.impl;
 
+import org.apache.linkis.metadata.conf.MdqConfiguration;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
@@ -56,19 +57,39 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
   @Override
   public List<String> getDbsOptionalUserName(String userName, String permission) {
     if (StringUtils.isNotBlank(permission) && permission.equals("write")) {
-      return hiveMetaDao.getCanWriteDbsByUser(userName);
+      if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+        return hiveMetaDao.getCanWriteDbsByUser(userName);
+      } else {
+        return hiveMetaDao.getCanWriteDbsByUserSlave(userName);
+      }
     } else {
       if (adminUser.equals(userName)) {
         log.info("admin {} to get all dbs ", userName);
-        return hiveMetaDao.getAllDbs();
+        if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+          return hiveMetaDao.getAllDbs();
+        } else {
+          return hiveMetaDao.getAllDbsSlave();
+        }
       }
       Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
       if (flag) {
-        List<String> roles = hiveMetaDao.getRolesByUser(userName);
-        return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+        List<String> roles;
+        List<String> dbsByUserAndRoles;
+        if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+          roles = hiveMetaDao.getRolesByUser(userName);
+          dbsByUserAndRoles = hiveMetaDao.getDbsByUserAndRoles(userName, roles);
+        } else {
+          roles = hiveMetaDao.getRolesByUserSlave(userName);
+          dbsByUserAndRoles = hiveMetaDao.getDbsByUserAndRolesSlave(userName, roles);
+        }
+        return dbsByUserAndRoles;
       } else {
         log.info("user {} to get all dbs no permission control", userName);
-        return hiveMetaDao.getAllDbs();
+        if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+          return hiveMetaDao.getAllDbs();
+        } else {
+          return hiveMetaDao.getAllDbsSlave();
+        }
       }
     }
   }
@@ -87,8 +108,12 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       // if tableName is not empty；query by tablename
       if (StringUtils.isNotEmpty(tableName) && StringUtils.isNotEmpty(dbName)) {
         log.info("admin {} to get table with tableName:{} ", userName, tableName);
-        Map<String, Object> queryRes =
-            hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
+        Map<String, Object> queryRes;
+        if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+          queryRes = hiveMetaDao.getTableInfoByTableNameAndDbName(tableName, dbName);
+        } else {
+          queryRes = hiveMetaDao.getTableInfoByTableNameAndDbNameSlave(tableName, dbName);
+        }
         List<Map<String, Object>> result = new ArrayList<>();
         if (queryRes != null) {
           result.add(queryRes);
@@ -97,21 +122,37 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       }
 
       log.info("admin {} to get all tables ", userName);
-      return hiveMetaDao.getTablesByDbName(queryParam);
+      if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+        return hiveMetaDao.getTablesByDbName(queryParam);
+      } else {
+        return hiveMetaDao.getTablesByDbNameSlave(queryParam);
+      }
     }
     if (flag) {
-      List<String> roles = hiveMetaDao.getRolesByUser(queryParam.getUserName());
-      queryParam.withRoles(roles);
-      List<Map<String, Object>> hiveTables =
-          hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
-      hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
+      List<String> roles;
+      List<Map<String, Object>> hiveTables;
+      if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+        roles = hiveMetaDao.getRolesByUser(userName);
+        queryParam.withRoles(roles);
+        hiveTables = hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvs(queryParam);
+        hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvs(queryParam));
+      } else {
+        roles = hiveMetaDao.getRolesByUserSlave(userName);
+        queryParam.withRoles(roles);
+        hiveTables = hiveMetaDao.getTablesByDbNameAndUserAndRolesFromDbPrvsSlave(queryParam);
+        hiveTables.addAll(hiveMetaDao.getTablesByDbNameAndUserAndRolesFromTblPrvsSlave(queryParam));
+      }
       return hiveTables.stream()
           .distinct()
           .sorted(Comparator.comparing(hiveTable -> (String) hiveTable.get("NAME")))
           .collect(Collectors.toList());
     } else {
       log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
-      return hiveMetaDao.getTablesByDbName(queryParam);
+      if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+        return hiveMetaDao.getTablesByDbName(queryParam);
+      } else {
+        return hiveMetaDao.getTablesByDbNameSlave(queryParam);
+      }
     }
   }
 
@@ -130,11 +171,17 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       return dataSourceService.queryTableMeta(queryParam);
     }
     if (flag) {
-      List<String> roles = hiveMetaDao.getRolesByUser(userName);
-      queryParam.withRoles(roles);
-      // with permission
-      Map<String, Object> tableMap =
-          hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+      List<String> roles;
+      Map<String, Object> tableMap;
+      if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+        roles = hiveMetaDao.getRolesByUser(userName);
+        queryParam.withRoles(roles);
+        tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+      } else {
+        roles = hiveMetaDao.getRolesByUserSlave(userName);
+        queryParam.withRoles(roles);
+        tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlave(queryParam);
+      }
       if (null != tableMap
           && !tableMap.isEmpty()
           && tableMap.containsKey(MdqConstants.SDID_KEY())) {

@@ -194,6 +194,20 @@ public class AMConfiguration {
   public static final boolean AM_USER_RESET_RESOURCE =
       CommonVars.apply("linkis.am.user.reset.resource.enable", true).getValue();
 
+  public static final CommonVars<Boolean> ENGINE_REUSE_ENABLE_CACHE =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.enable.cache", false);
+
+  public static final CommonVars<TimeType> ENGINE_REUSE_CACHE_EXPIRE_TIME =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.expire.time", new TimeType("5s"));
+
+  public static final CommonVars<Long> ENGINE_REUSE_CACHE_MAX_SIZE =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.max.size", 1000L);
+
+  public static final CommonVars<String> ENGINE_REUSE_CACHE_SUPPORT_ENGINES =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.support.engines", "shell");
+  public static final CommonVars<String> ENGINE_REUSE_SHUFF_SUPPORT_ENGINES =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.shuff.support.engines", "shell");
+
   public static String getDefaultMultiEngineUser() {
     String jvmUser = Utils.getJvmUser();
     return String.format(

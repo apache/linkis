@@ -27,7 +27,7 @@ public class RMConfiguration {
       CommonVars.apply("wds.linkis.rm.wait.event.time.out", 1000 * 60 * 12L);
 
   public static final CommonVars<TimeType> LOCK_RELEASE_TIMEOUT =
-      CommonVars.apply("wds.linkis.manager.rm.lock.release.timeout", new TimeType("5m"));
+      CommonVars.apply("wds.linkis.manager.rm.lock.release.timeout", new TimeType("10m"));
 
   public static final CommonVars<TimeType> LOCK_RELEASE_CHECK_INTERVAL =
       CommonVars.apply("wds.linkis.manager.rm.lock.release.check.interval", new TimeType("5m"));

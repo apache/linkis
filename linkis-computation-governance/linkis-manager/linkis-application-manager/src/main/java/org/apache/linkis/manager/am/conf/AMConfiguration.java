@@ -75,7 +75,7 @@ public class AMConfiguration {
       CommonVars.apply("wds.linkis.governance.admin.operations", "");
 
   public static final CommonVars<TimeType> ENGINE_START_MAX_TIME =
-      CommonVars.apply("wds.linkis.manager.am.engine.start.max.time", new TimeType("11m"));
+      CommonVars.apply("wds.linkis.manager.am.engine.start.max.time", new TimeType("8m"));
 
   public static final CommonVars<TimeType> ENGINE_CONN_START_REST_MAX_WAIT_TIME =
       CommonVars.apply("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"));

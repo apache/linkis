@@ -166,7 +166,16 @@ object RSAUtils extends Logging {
    *   提取的 token 后半部分字符串。
    */
   def tokenSubRule(token: String): String = {
-    token.substring(token.length / 2, token.length)
+    val lowerToken = token.toLowerCase()
+    // 判断条件：
+    // 1. 以 "-auth" 结尾（不区分大小写）且长度 < 12
+    // 2. 或者长度 < 10
+    if (lowerToken.endsWith("-auth") && lowerToken.length < 12 || lowerToken.length < 10) {
+      token // 不截取，原样返回
+    } else {
+      // 否则，取后半部分（原逻辑）
+      token.substring(token.length / 2, token.length)
+    }
   }
 
 }

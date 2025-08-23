@@ -20,6 +20,8 @@ download() {
   TAR_FILE=$2
   HARD_LINK_ROOT=$3
 
+  mkdir -p ${TAR_CACHE_ROOT}
+
   if [ ! -f ${TAR_CACHE_ROOT}/${TAR_FILE} ]; then
     echo "- downloading ${TAR_FILE} to ${TAR_CACHE_ROOT} from ${TAR_URL}"
     curl -L ${TAR_URL} -o ${TAR_CACHE_ROOT}/${TAR_FILE}

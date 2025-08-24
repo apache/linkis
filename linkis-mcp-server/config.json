@@ -1,0 +1,13 @@
+{
+    "current_env": "dev",
+    "dev": {
+        "LINKIS_BASE_URL": "http://localhost:9001",
+        "LINKIS_TOKEN": "your_dev_token",
+        "LINKIS_ENV": "dev"
+    },
+    "prod": {
+        "LINKIS_BASE_URL": "http://localhost:9001",
+        "LINKIS_TOKEN": "your_prod_token",
+        "LINKIS_ENV": "prod"
+    }
+}

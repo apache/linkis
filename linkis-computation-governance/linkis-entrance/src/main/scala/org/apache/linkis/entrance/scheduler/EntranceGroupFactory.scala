@@ -24,24 +24,20 @@ import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.utils.EntranceUtils
-import org.apache.linkis.governance.common.protocol.conf.{
-  RequestQueryEngineConfigWithGlobalConfig,
-  ResponseQueryConfig
-}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
-
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.commons.collections.MapUtils
 
 class EntranceGroupFactory extends GroupFactory with Logging {
 
@@ -166,7 +162,7 @@ object EntranceGroupFactory {
    */
   def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
     val userDefinedRunningJobs =
-      if (keyAndValue.containsKey(EntranceConfiguration.WDS_LINKIS_ENTRANCE_RUNNING_JOB.key)) {
+      if (MapUtils.isNotEmpty(keyAndValue) && keyAndValue.containsKey(EntranceConfiguration.WDS_LINKIS_ENTRANCE_RUNNING_JOB.key)) {
         EntranceConfiguration.WDS_LINKIS_ENTRANCE_RUNNING_JOB.getValue(keyAndValue)
       } else {
         EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)

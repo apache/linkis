@@ -24,6 +24,7 @@ import org.apache.linkis.common.utils.RSAUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +181,7 @@ public class GatewayAuthTokenRestfulApi {
     ModuleUserUtils.getOperationUser(
         request, "Try to check auth token with checkName:" + checkName);
     Boolean checkResult = false;
+    GatewayAuthTokenEntity authToken = null;
     // 参数校验
     if (StringUtils.isBlank(checkName)) {
       return Message.error(" checkName can not be empty [用户名不能为空]");
@@ -188,7 +190,39 @@ public class GatewayAuthTokenRestfulApi {
       return Message.error(" token can not be empty [token不能为空]");
     }
     // query token
-    GatewayAuthTokenEntity authToken = gatewayAuthTokenService.getEntityByToken(token);
+    if (Configuration.LINKIS_RSA_TOKEN_SWITCH()) {
+      // 开关打开情况下，对token进行判断
+      if (token.startsWith(RSAUtils.PREFIX())) {
+        // 传的是密文，直接查询tokenSign（密文保存在这里）
+        authToken = gatewayAuthTokenService.selectTokenBySign(token);
+      } else {
+        // 传入明文，首次执行模糊查询（兼容明文token未被加密，TokenSign为空，导致查询token异常）
+        List<GatewayAuthTokenEntity> tokenList =
+            gatewayAuthTokenService.selectTokenByNameWithLike(token);
+        if (CollectionUtils.isNotEmpty(tokenList)) {
+          for (GatewayAuthTokenEntity tokenTmp : tokenList) {
+            if (tokenTmp != null
+                && StringUtils.isBlank(tokenTmp.getTokenSign())
+                && token.equals(tokenTmp.getTokenName())) {
+              authToken = tokenTmp;
+            }
+          }
+        }
+        if (null == authToken) {
+          // 兼容token被加密后，传入明文场景，需要执行截取规则后，查询tokenName
+          authToken = gatewayAuthTokenService.getEntityByToken(RSAUtils.tokenSubRule(token));
+          if (authToken != null) {
+            String realToken = RSAUtils.dncryptWithLinkisPublicKey(authToken.getTokenSign());
+            if (!token.equals(realToken)) {
+              return Message.error("Invalid Token(数据库中未配置的无效令牌)").data("result", checkResult);
+            }
+          }
+        }
+      }
+    } else {
+      // 开关没有打开情况下，旧数据没有加密，维持明文查询tokenName
+      authToken = gatewayAuthTokenService.getEntityByToken(token);
+    }
     if (null != authToken) {
       // token expired
       Long elapseDay = authToken.getElapseDay();

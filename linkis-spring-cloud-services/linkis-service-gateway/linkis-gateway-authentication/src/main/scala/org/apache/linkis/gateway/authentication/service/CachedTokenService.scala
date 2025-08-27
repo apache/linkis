@@ -78,8 +78,15 @@ class CachedTokenService extends TokenService {
             if (null == token) {
               // 兼容token被加密后，传入明文场景，需要执行截取规则后，查询tokenName
               token = tokenDao.selectTokenByName(RSAUtils.tokenSubRule(tokenName))
-              val realToken = RSAUtils.dncryptWithLinkisPublicKey(token.getTokenSign)
-              if (!tokenName.equals(realToken)) {
+              if (token != null) {
+                val realToken = RSAUtils.dncryptWithLinkisPublicKey(token.getTokenSign)
+                if (!tokenName.equals(realToken)) {
+                  throw new TokenNotExistException(
+                    INVALID_TOKEN.getErrorCode,
+                    INVALID_TOKEN.getErrorDesc
+                  )
+                }
+              } else {
                 throw new TokenNotExistException(
                   INVALID_TOKEN.getErrorCode,
                   INVALID_TOKEN.getErrorDesc

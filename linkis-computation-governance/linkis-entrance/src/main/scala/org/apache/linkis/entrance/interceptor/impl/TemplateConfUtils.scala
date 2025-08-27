@@ -23,6 +23,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.entity.TemplateConfKey
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
@@ -242,9 +243,9 @@ object TemplateConfUtils extends Logging {
         var templateConflist: util.List[TemplateConfKey] = new util.ArrayList[TemplateConfKey]()
         var templateName: String = ""
         // only for Creator:IDE, try to get template conf name from code string. eg:---@set ec.resource.name=xxxx
+        val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
         val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
         if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
-          val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
           templateName = getCustomTemplateConfName(jobRequest, codeType, logAppender)
           if (StringUtils.isNotBlank(templateName)) {
             logAppender.append(
@@ -328,12 +329,9 @@ object TemplateConfUtils extends Logging {
         }
 
         // 针对aisql处理模板参数
-        val codeType: String = LabelUtil.getCodeType(jobRequest.getLabels)
-
+        val isAisql = LANGUAGE_TYPE_AI_SQL.equals(codeType)
         if (
-            LANGUAGE_TYPE_AI_SQL.equals(
-              codeType
-            ) && runtimeTemplateFlag && templateConflist != null && templateConflist
+            isAisql && runtimeTemplateFlag && templateConflist != null && templateConflist
               .size() > 0
         ) {
           logger.info("aisql deal with template in runtime params.")
@@ -379,6 +377,8 @@ object TemplateConfUtils extends Logging {
             )
             TaskUtils.addStartupMap(params, keyList)
           }
+        } else if (!isAisql) {
+          EntranceUtils.dealsparkDynamicConf(jobRequest, logAppender, jobRequest.getParams)
         }
       case _ =>
     }

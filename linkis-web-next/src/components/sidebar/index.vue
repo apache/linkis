@@ -17,12 +17,14 @@
 
 <template>
     <div class="menu-wrapper">
-        <f-menu mode="vertical" id="menu">
+        <f-menu mode="vertical" id="menu" :collapsed="collapsed" accordion v-model="activePath">
             <template v-for="menuItem in menuItemsConfig" :key="menuItem.title">
                 <template v-if="menuItem.items">
-                    <f-sub-menu :value="menuItem.title">
-                        <template #label>
+                    <f-sub-menu :value="menuItem.path">
+                        <template #icon>
                             <img :src="menuItem.icon" />
+                        </template>
+                        <template #label>
                             <div class="title-text">
                                 {{ $t(menuItem.title) }}
                             </div>
@@ -33,9 +35,9 @@
                                 :key="subMenuItem.title"
                             >
                                 <f-menu-item
-                                    :value="menuItem.title + subMenuItem.title"
+                                    :value="subMenuItem.path"
                                     @click="
-                                        handleClick(subMenuItem?.path ?? '/')
+                                        handleClick(subMenuItem.path ?? '/')
                                     "
                                 >
                                     <template #label>
@@ -50,11 +52,13 @@
                 </template>
                 <template v-else>
                     <f-menu-item
-                        :value="menuItem.title"
+                        :value="menuItem.path"
                         @click="handleClick(menuItem?.path ?? '/')"
                     >
-                        <template #label>
+                        <template #icon>
                             <img :src="menuItem.icon" />
+                        </template>
+                        <template #label>
                             <div class="title-text">
                                 {{ $t(menuItem.title) }}
                             </div>
@@ -67,9 +71,15 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
+defineProps<{
+    collapsed: boolean
+}>();
+
 const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.globalHistory',
@@ -87,51 +97,95 @@ const menuItemsConfig = [
         path: '/console/parameterConfig',
     },
     {
-        title: 'message.linkis.sideNavList.function.children.dateReport',
-        icon: '/sidebar/dateReport.svg',
-        path: '',
+        title: 'message.linkis.sideNavList.function.children.globalVariable',
+        icon: '/sidebar/globalVariable.svg',
+        path: '/console/globalVariables',
     },
     {
         title: 'message.linkis.sideNavList.function.children.ECMManage',
         icon: '/sidebar/ECMManage.svg',
-        path: '',
+        path: '/console/ECMManagement',
     },
     {
         title: 'message.linkis.sideNavList.function.children.microserviceManage',
         icon: '/sidebar/microserviceManage.svg',
-        path: '',
+        path: '/console/microServiceManagement',
     },
     {
         title: 'message.linkis.sideNavList.function.children.dataSourceManage',
         icon: '/sidebar/dataSourceManage.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/console/dataSourceManage',
+        items: [
+            { title: 'message.linkis.sideNavList.function.children.dataSourceManage', path: '/console/dataSourceManage/dataSourceManagement' },
+            { title: 'message.linkis.sideNavList.function.children.datasourceEnv', path: '/console/dataSourceManage/datasourceEnv' },
+            { title: 'message.linkis.sideNavList.function.children.datasourceType', path: '/console/dataSourceManage/datasourceType' },
+            { title: 'message.linkis.sideNavList.function.children.datasourceAccess', path: '/console/dataSourceManage/datasourceAccess' },
+            { title: 'message.linkis.sideNavList.function.children.datasourceTypeKey', path: '/console/dataSourceManage/datasourceTypeKey' },
+        ],
     },
     {
         title: 'message.linkis.sideNavList.function.children.udfFunctionTitle',
         icon: '/sidebar/udfFunctionTitle.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/console/udfFunctionTitle',
+        items: [
+            { title: 'message.linkis.sideNavList.function.children.udfFunctionManage', path: '/console/udfFunctionTitle/udfFunctionManage' },
+            { title: 'message.linkis.sideNavList.function.children.functionManagement', path: '/console/udfFunctionTitle/functionManagement' },
+            { title: 'message.linkis.sideNavList.function.children.udfManager', path: '/console/udfFunctionTitle/udfManager' },
+            { title: 'message.linkis.sideNavList.function.children.udfTree', path: '/console/udfFunctionTitle/udfTree' },
+        ],
     },
     {
         title: 'message.linkis.sideNavList.function.children.basedataManagement',
         icon: '/sidebar/basedataManagement.svg',
-        items: [{ title: 'xxx', path: '' }],
+        path: '/console/basedataManagement',
+        items: [
+            { title: 'message.linkis.sideNavList.function.children.gatewayAuthToken', path: '/console/basedataManagement/gatewayAuthToken' },
+            { title: 'message.linkis.sideNavList.function.children.errorCode', path: '/console/basedataManagement/errorCode' },
+            { title: 'message.linkis.sideNavList.function.children.rmExternalResourceProvider', path: '/console/basedataManagement/rmExternalResourceProvider' },
+            { title: 'message.linkis.sideNavList.function.children.EnginePluginManagement', path: '/console/basedataManagement/EnginePluginManagement' },
+            { title: 'message.linkis.sideNavList.function.children.tenantTagManagement', path: '/console/basedataManagement/tenantTagManagement' },
+            { title: 'message.linkis.sideNavList.function.children.ipListManagement', path: '/console/basedataManagement/ipListManagement' },
+            { title: 'message.linkis.sideNavList.function.children.configManagement', path: '/console/basedataManagement/configManagement' },
+        ],
     },
     {
         title: 'message.linkis.sideNavList.function.children.codeQuery',
         icon: '/sidebar/codeQuery.svg',
-        path: '',
+        path: '/xxxxxxxxx',
     },
 ];
+
+// 获取当前路径，使得sidebar显示的当前菜单能够与当前路径相匹配
+const getActivePath = () => {
+    const currentPath = router.currentRoute.value.path;
+    let activePath = currentPath;
+    menuItemsConfig.forEach(config => {
+        if(currentPath.startsWith(config.path)){
+            activePath = config.path;
+            if(config.items){
+                config.items.forEach(subItem => {
+                    if(currentPath.startsWith(subItem.path)){
+                        activePath = subItem.path;
+                    }
+                })
+            }
+        }
+    })
+    return activePath;
+}
+
+const activePath = ref(getActivePath());
 
 const handleClick = (path: string) => {
     router.push(path);
 };
+
+watch(
+    () => router.currentRoute.value.path,
+    () => {
+        activePath.value = getActivePath();
+    }
+);
 </script>
 
 <style src="./index.less" scoped></style>
-<style scoped>
-.submenu-item {
-    height: 54px;
-    line-height: 54px;
-}
-</style>

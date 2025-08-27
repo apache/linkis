@@ -38,7 +38,9 @@ object ResultSetAction {
     // default value is :org.apache.linkis.storage.domain.Dolphin.LINKIS_NULL
     private var nullValue: String = "LINKIS_NULL"
 
-    private var enableLimit: Boolean = false
+    private var enableLimit: Option[Boolean] = None
+    private var columnPage: Int = _
+    private var columnPageSize: Int = _
 
     def setUser(user: String): Builder = {
       this.user = user
@@ -71,7 +73,17 @@ object ResultSetAction {
     }
 
     def setEnableLimit(enableLimit: Boolean): Builder = {
-      this.enableLimit = enableLimit
+      this.enableLimit = Some(enableLimit)
+      this
+    }
+
+    def setColumnPage(columnPage: Int): Builder = {
+      this.columnPage = columnPage
+      this
+    }
+
+    def setColumnPageSize(columnPageSize: Int): Builder = {
+      this.columnPageSize = columnPageSize
       this
     }
 
@@ -83,8 +95,18 @@ object ResultSetAction {
       if (page > 0) resultSetAction.setParameter("page", page)
       if (pageSize > 0) resultSetAction.setParameter("pageSize", pageSize)
       resultSetAction.setParameter("charset", charset)
-      resultSetAction.setParameter("enableLimit", enableLimit)
+      if (enableLimit.isDefined) resultSetAction.setParameter("enableLimit", true)
       resultSetAction.setParameter("nullValue", nullValue)
+      if (columnPage > 0) {
+        resultSetAction.setParameter("columnPage", columnPage)
+      } else {
+        resultSetAction.setParameter("columnPage", null)
+      }
+      if (columnPageSize > 0) {
+        resultSetAction.setParameter("columnPageSize", columnPageSize)
+      } else {
+        resultSetAction.setParameter("columnPageSize", null)
+      }
       resultSetAction.setUser(user)
       resultSetAction
     }

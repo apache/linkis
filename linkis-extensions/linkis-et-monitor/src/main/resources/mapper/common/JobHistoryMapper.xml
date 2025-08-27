@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  ~ Copyright 2019 WeBank
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
   ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~  you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~   http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +15,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
@@ -41,16 +41,18 @@
         <result property="engineType" column="engine_type"/>
         <result property="executionCode" column="execution_code"/>
         <result property="observeInfo" column="observe_info"/>
+        <result property="orgId" column="org_id"/>
+        <result property="orgName" column="org_name"/>
     </resultMap>
 
     <sql id="jobhistory_query">
-        `id`,`job_req_id`,`submit_user`,`execute_user`,`labels`,`params`,`status`,`error_code`,`created_time`,
-        `updated_time`,`instances`,`observe_info`
+        job.`id`,job.`job_req_id`,job.`submit_user`,job.`execute_user`,job.`labels`,job.`params`,job.`status`,job.`error_code`,job.`created_time`,
+        job.`updated_time`,job.`instances`,job.`observe_info`,org.`org_id`,org.`org_name`
     </sql>
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"
             parameterType="org.apache.linkis.monitor.jobhistory.entity.JobHistory">
-        SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
             <if test="job_req_id != null">and job_req_id = #{job_req_id}</if>
@@ -74,22 +76,22 @@
     </select>
 
     <select id="search" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/ SELECT
         <include refid="jobhistory_query"/>
-        FROM linkis_ps_job_history_group_history
+        FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]>#{endDate}
             </if>
             <if test="status != null">and
-                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                <foreach collection="status" item="element" close=")" separator="," open="job.status in (">
                     #{element}
                 </foreach>
             </if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <update id="updateIncompleteJobStatusGivenIDList">
@@ -121,45 +123,45 @@
     </update>
 
     <select id="searchByCache" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/  SELECT
         <include refid="jobhistory_query"/>
-        FROM linkis_ps_job_history_group_history
+        FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
-            <if test="id != null">id > #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            <if test="id != null">job.id > #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]>#{endDate}
             </if>
             <if test="status != null">and
-                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                <foreach collection="status" item="element" close=")" separator="," open="job.status in (">
                     #{element}
                 </foreach>
             </if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.id
+        ORDER BY job.id
     </select>
 
     <select id="searchByCacheAndUpdateTime" useCache="true" resultMap="jobHistoryMap">
-        SELECT
+        /*slave*/  SELECT
         <include refid="jobhistory_query"/>
-        FROM linkis_ps_job_history_group_history
+        FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
-            <if test="id != null">id > #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and updated_time >= #{startDate} AND updated_time <![CDATA[<=]]>#{endDate}
+            <if test="id != null">job.id > #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.updated_time >= #{startDate} AND job.updated_time <![CDATA[<=]]>#{endDate}
             </if>
             <if test="status != null">and
-                <foreach collection="status" item="element" close=")" separator="," open="status in (">
+                <foreach collection="status" item="element" close=")" separator="," open="job.status in (">
                     #{element}
                 </foreach>
             </if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.id
+        ORDER BY job.id
     </select>
 
     <select id="selectIdByHalfDay" resultType="java.lang.Long">
-        SELECT MIN(id) FROM linkis_ps_job_history_group_history
+        /*slave*/   SELECT MIN(id) FROM linkis_ps_job_history_group_history
         <where>
             updated_time >= date_sub(now(),interval 12 hour)
             <if test="id != null">and id > #{id}</if>
@@ -167,6 +169,6 @@
     </select>
 
     <select id="selectMaxId" resultType="java.lang.Long">
-        SELECT MAX(id) FROM linkis_ps_job_history_group_history
+        /*slave*/  SELECT MAX(id) FROM linkis_ps_job_history_group_history
     </select>
 </mapper>

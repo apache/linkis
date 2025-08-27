@@ -128,7 +128,7 @@ public class CPUResource extends Resource {
 
   @Override
   public String toJson() {
-    return String.format(" \"cpu\":%s ", cores);
+    return String.format("{\"cpu\":%s}", cores);
   }
 
   @Override

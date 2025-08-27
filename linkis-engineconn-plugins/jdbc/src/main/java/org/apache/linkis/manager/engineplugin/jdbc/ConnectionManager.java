@@ -19,6 +19,7 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration$;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 import org.apache.linkis.manager.engineplugin.jdbc.utils.JdbcParamUtils;
@@ -187,6 +188,14 @@ public class ConnectionManager {
         JDBCPropertiesParser.getInt(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
 
+    int connectionTimeout =
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_CONNECTION_TIMEOUT, 0);
+    int socketTimeout =
+        JDBCPropertiesParser.getInt(properties, JDBCEngineConnConstant.JDBC_SOCKET_TIMEOUT, 0);
+    int queryTimeout =
+        JDBCPropertiesParser.getInt(
+            properties, JDBCConfiguration$.MODULE$.JDBC_QUERY_TIMEOUT().key(), 0);
+
     DruidDataSource datasource = new DruidDataSource();
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
@@ -207,6 +216,9 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+    if (queryTimeout > 0) {
+      datasource.setQueryTimeout(queryTimeout);
+    }
     return datasource;
   }
 

@@ -34,7 +34,7 @@ public class AMEngineNodeVo {
 
   private String lock;
 
-  private List<Label<?>> labels;
+  private List<Label> labels;
 
   private String applicationName;
 
@@ -80,6 +80,10 @@ public class AMEngineNodeVo {
 
   private String engineType;
 
+  private String mappingPorts;
+
+  private String mappingHost;
+
   public String getEmInstance() {
     return emInstance;
   }
@@ -104,11 +108,11 @@ public class AMEngineNodeVo {
     this.lock = lock;
   }
 
-  public List<Label<?>> getLabels() {
+  public List<Label> getLabels() {
     return labels;
   }
 
-  public void setLabels(List<Label<?>> labels) {
+  public void setLabels(List<Label> labels) {
     this.labels = labels;
   }
 
@@ -129,6 +133,7 @@ public class AMEngineNodeVo {
   }
 
   public ResourceType getResourceType() {
+
     return resourceType;
   }
 
@@ -286,5 +291,21 @@ public class AMEngineNodeVo {
 
   public void setEngineType(String engineType) {
     this.engineType = engineType;
+  }
+
+  public String getMappingPorts() {
+    return mappingPorts;
+  }
+
+  public void setMappingPorts(String mappingPorts) {
+    this.mappingPorts = mappingPorts;
+  }
+
+  public String getMappingHost() {
+    return mappingHost;
+  }
+
+  public void setMappingHost(String mappingHost) {
+    this.mappingHost = mappingHost;
   }
 }

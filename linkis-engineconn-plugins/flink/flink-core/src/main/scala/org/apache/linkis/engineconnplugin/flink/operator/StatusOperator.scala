@@ -17,18 +17,19 @@
 
 package org.apache.linkis.engineconnplugin.flink.operator
 
+import org.apache.linkis.common.exception.{LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
+import org.apache.linkis.engineconn.common.exception.EngineConnException
+import org.apache.linkis.engineconnplugin.flink.util.{ManagerUtil, YarnUtil}
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
 import org.apache.linkis.governance.common.constant.ec.ECConstants
+import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.operator.Operator
-import org.apache.linkis.server.toScalaMap
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.yarn.api.records.{ApplicationId, ApplicationReport, FinalApplicationStatus}
 import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException
-
-import java.util
 
 import scala.collection.mutable
 
@@ -36,7 +37,7 @@ class StatusOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("status")
 
-  override def apply(params: util.Map[String, Object]): util.Map[String, Object] = {
+  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
 
     val appIdStr = params.getOrElse(ECConstants.YARN_APPID_NAME_KEY, "").asInstanceOf[String]
 
@@ -57,10 +58,9 @@ class StatusOperator extends Operator with Logging {
       }
     } { case notExist: ApplicationNotFoundException =>
       logger.error(s"Application : ${appIdStr} not exists, will set the status to failed.")
-      val map = new util.HashMap[String, Object]()
-      map.put(ECConstants.NODE_STATUS_KEY, NodeStatus.Failed.toString)
-      map.put(ECConstants.YARN_APPID_NAME_KEY, appIdStr)
-      return map
+      rsMap += (ECConstants.NODE_STATUS_KEY -> NodeStatus.Failed.toString)
+      rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
+      return rsMap.toMap[String, String]
     }
 
     // Get the application status (YarnApplicationState)
@@ -75,9 +75,7 @@ class StatusOperator extends Operator with Logging {
     logger.info(s"try to get appid: ${appIdStr}, status ${nodeStatus.toString}.")
     rsMap += (ECConstants.NODE_STATUS_KEY -> nodeStatus.toString)
     rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
-    val map = new util.HashMap[String, Object]()
-    rsMap.foreach(entry => map.put(entry._1, entry._2))
-    map
+    rsMap.toMap[String, String]
   }
 
 }

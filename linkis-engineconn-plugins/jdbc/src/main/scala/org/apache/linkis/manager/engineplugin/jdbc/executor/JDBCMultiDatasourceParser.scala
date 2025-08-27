@@ -22,9 +22,16 @@ import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
+  CHANGE_DS_TYPE_TO_MYSQL,
+  DS_TYPES_TO_EXECUTE_TASK_BY_JDBC
+}
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary._
-import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{
+  JDBCGetDatasourceInfoException,
+  JDBCParamsIllegalException
+}
 
 import org.apache.commons.lang3.StringUtils
 
@@ -102,7 +109,7 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
 
-    val dbType = dataSource.getDataSourceType.getName
+    var dbType = dataSource.getDataSourceType.getName
     val dbConnParams = dataSource.getConnectParams
     if (dbConnParams == null || dbConnParams.isEmpty) {
       throw JDBCParamsIllegalException(
@@ -117,6 +124,10 @@ object JDBCMultiDatasourceParser extends Logging {
         JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorCode,
         JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorDesc
       )
+    }
+
+    if (CHANGE_DS_TYPE_TO_MYSQL) {
+      dbType = "mysql"
     }
 
     val jdbcUrl = createJdbcUrl(dbType, dbConnParams)

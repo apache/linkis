@@ -33,12 +33,13 @@ import org.apache.linkis.engineplugin.spark.imexport.CsvRelation
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.governance.common.utils.GovernanceUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.SPARK_PYTHON_VERSION_KEY
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import org.apache.linkis.storage.resultset.ResultSetWriterFactory
+import org.apache.linkis.storage.resultset.ResultSetWriter
 
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -77,7 +78,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
+
+  private lazy val py4jToken: String = if (SparkConfiguration.LINKIS_PYSPARK_USE_SECURE_RANDOM) {
+    SecureRandomStringUtils.randomAlphanumeric(256)
+  } else {
+    SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
+  }
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()
@@ -149,11 +155,10 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private def initGateway = {
     //  If the python version set by the user is obtained from the front end as python3, the environment variable of python3 is taken; otherwise, the default is python2
     logger.info(
-      s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}"
+      s"spark.python.version => ${engineCreationContext.getOptions.get(SPARK_PYTHON_VERSION_KEY)}"
     )
     val userDefinePythonVersion = engineCreationContext.getOptions
-      .getOrDefault("spark.python.version", "python")
-      .toString
+      .getOrDefault(SPARK_PYTHON_VERSION_KEY, "python")
       .toLowerCase()
     val sparkPythonVersion =
       if (
@@ -318,7 +323,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val outStr = lineOutputStream.toString()
     if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
-        ResultSetWriterFactory
+        ResultSetWriter
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""
@@ -437,9 +442,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def printLog(log: Any): Unit = {
     logger.info(log.toString)
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }

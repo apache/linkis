@@ -18,7 +18,9 @@
 package org.apache.linkis.manager.am.label;
 
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
-import org.apache.linkis.manager.label.entity.*;
+import org.apache.linkis.manager.label.entity.EMNodeLabel;
+import org.apache.linkis.manager.label.entity.EngineNodeLabel;
+import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
 import org.apache.linkis.manager.service.common.label.LabelFilter;
 

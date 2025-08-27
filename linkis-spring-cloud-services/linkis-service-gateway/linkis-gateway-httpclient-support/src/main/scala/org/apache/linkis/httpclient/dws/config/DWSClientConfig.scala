@@ -38,7 +38,8 @@ class DWSClientConfig private[config] (
     retryEnabled: Boolean,
     retryHandler: RetryHandler,
     authTokenKey: String,
-    authTokenValue: String
+    authTokenValue: String,
+    ssl: Boolean
 ) extends ClientConfig(
       serverUrl,
       discoveryEnabled,
@@ -53,7 +54,8 @@ class DWSClientConfig private[config] (
       retryEnabled,
       retryHandler,
       authTokenKey,
-      authTokenValue
+      authTokenValue,
+      ssl
     ) {
 
   def this(clientConfig: ClientConfig) = this(
@@ -70,7 +72,8 @@ class DWSClientConfig private[config] (
     clientConfig.isRetryEnabled,
     clientConfig.getRetryHandler,
     clientConfig.getAuthTokenKey,
-    clientConfig.getAuthTokenValue
+    clientConfig.getAuthTokenValue,
+    clientConfig.isSSL
   )
 
   private var dwsVersion: String = _

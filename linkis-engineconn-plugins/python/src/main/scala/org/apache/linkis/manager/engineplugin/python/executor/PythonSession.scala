@@ -21,6 +21,8 @@ import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.governance.common.utils.GovernanceUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.PYTHON_VERSION_KEY
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
@@ -30,15 +32,7 @@ import org.apache.linkis.manager.engineplugin.python.exception.{
 import org.apache.linkis.manager.engineplugin.python.utils.Kind
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain._
-import org.apache.linkis.storage.domain.DataType.{
-  BooleanType,
-  DoubleType,
-  FloatType,
-  IntType,
-  StringType,
-  TimestampType
-}
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.exec.CommandLine
@@ -76,7 +70,7 @@ class PythonSession extends Logging {
   private def getPyVersion(): String = {
     if (null != EngineConnServer.getEngineCreationContext.getOptions) {
       EngineConnServer.getEngineCreationContext.getOptions
-        .getOrDefault("python.version", "python")
+        .getOrDefault(PYTHON_VERSION_KEY, "python")
     } else {
       PythonEngineConfiguration.PYTHON_VERSION.getValue
     }
@@ -169,11 +163,9 @@ class PythonSession extends Logging {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            val errMsg =
-              s"initialize python executor failed, please ask administrator for help! errMsg: ${t.getMessage}"
-            logger.error(errMsg, t)
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
-            throw new IllegalStateException(errMsg, t)
+            throw t
           }
         }
       }
@@ -194,7 +186,7 @@ class PythonSession extends Logging {
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>
-        val exception = new ExecuteException(PYSPARK_PROCESSS_STOPPED.getErrorCode, t.getMessage)
+        val exception = new ExecuteException(desc = t.getMessage)
         exception.initCause(t)
         throw t
     } finally {
@@ -202,9 +194,9 @@ class PythonSession extends Logging {
       val outStr = outputStream.toString()
       if (StringUtils.isNotBlank(outStr)) {
         val output = Utils.tryQuietly(
-          ResultSetWriterFactory.getRecordByRes(
+          ResultSetWriter.getRecordByRes(
             outStr,
-            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue.longValue()
+            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
           )
         )
         val res = if (output != null) output.toString else ""
@@ -264,9 +256,7 @@ class PythonSession extends Logging {
 
   def printLog(log: Any): Unit = {
     if (engineExecutionContext != null) {
-      engineExecutionContext.appendStdout("+++++++++++++++")
-      engineExecutionContext.appendStdout(log.toString)
-      engineExecutionContext.appendStdout("+++++++++++++++")
+      engineExecutionContext.appendStdout(s"+++++++++++++++\n${log.toString}\n+++++++++++++++")
     } else {
       logger.warn("engine context is null can not send log")
     }
@@ -281,9 +271,15 @@ class PythonSession extends Logging {
       }
       IOUtils.closeQuietly(outputStream)
       Utils.tryAndErrorMsg {
-        pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L))
-        process.destroy()
+        // invoke kill process method  to kill all tree process
+        pid.foreach(p => {
+          logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
+          GovernanceUtils.killProcess(String.valueOf(p), s"kill pyspark process,pid: $pid", false)
+        })
+
+        Utils.tryQuietly(process.destroy())
         process = null
+
         this.pythonScriptInitialized = false
       }("process close failed")
     }
@@ -314,16 +310,14 @@ class PythonSession extends Logging {
     val length = schema.size() - 1
     var list: List[Column] = List[Column]()
     for (i <- 0 to length) {
-      val col = new Column(header.get(i), changeDT(schema.get(i)), null)
+      val col = Column(header.get(i), changeDT(schema.get(i)), null)
       list = list :+ col
     }
     val metaData = new TableMetaData(list.toArray[Column])
     writer.addMetaData(metaData)
     val size = data.size() - 1
     for (i <- 0 to size) {
-      writer.addRecord(
-        new TableRecord(data.get(i).asScala.toArray[Any].asInstanceOf[Array[AnyRef]])
-      )
+      writer.addRecord(new TableRecord(data.get(i).asScala.toArray[Any]))
     }
     // generate table data
     engineExecutionContext.sendResultSet(writer)

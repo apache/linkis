@@ -108,8 +108,8 @@
                 <exclude>org.apache.logging.log4j:*:jar</exclude>
                 <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
-                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
-                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk18on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk18on:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
@@ -187,7 +187,7 @@
         <fileSet>
             <directory>${basedir}/../service/elasticsearch/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/elasticsearch</outputDirectory>
+            <outputDirectory>service/elasticsearch</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -198,7 +198,7 @@
         <fileSet>
             <directory>${basedir}/../service/hive/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/hive</outputDirectory>
+            <outputDirectory>service/hive</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -209,7 +209,7 @@
         <fileSet>
             <directory>${basedir}/../service/kafka/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/kafka</outputDirectory>
+            <outputDirectory>service/kafka</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -220,7 +220,7 @@
         <fileSet>
             <directory>${basedir}/../service/jdbc/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/jdbc</outputDirectory>
+            <outputDirectory>service/jdbc</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -231,7 +231,7 @@
         <fileSet>
             <directory>${basedir}/../service/hdfs/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/hdfs</outputDirectory>
+            <outputDirectory>service/hdfs</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -242,7 +242,7 @@
         <fileSet>
             <directory>${basedir}/../service/mongodb/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/mongodb</outputDirectory>
+            <outputDirectory>service/mongodb</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

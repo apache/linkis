@@ -45,7 +45,7 @@ jobs:
       TAG: ${{ github.sha }}
       SKIP_TEST: true
       HUB: ghcr.io/apache/linkis
-      LINKIS_VERSION: 1.6.0
+      LINKIS_VERSION: 1.8.0
     steps:
       - name: Free up disk space
         run: |
@@ -75,24 +75,24 @@ jobs:
           df -h
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: true
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: 8
       - name: Cache local Maven repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Set up Docker Buildx
@@ -166,7 +166,7 @@ jobs:
           # Show port-forward list
           bash ./linkis-dist/helm/scripts/remote-proxy.sh list
           # Check if the web service is available
-          curl http://127.0.0.1:8088/indexhtml
+          curl http://127.0.0.1:8088/
 
           # Execute test by linkis-cli
           POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-mg-gateway -o jsonpath='{.items[0].metadata.name}'`
@@ -182,5 +182,4 @@ jobs:
 
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           #sh /opt/linkis/bin/linkis-cli -engineType spark-3.2.1 -codeType sql -code   'show databases' "
-
         shell: bash

@@ -52,27 +52,28 @@ class JobHistoryErrCodeRule(errorCodes: util.Set[String], hitObserver: Observer)
     }
 
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
-    for (sd <- data.asScala) {
-      if (sd != null && sd.getData() != null) {
-        for (d <- sd.getData().asScala) {
-          d match {
-            case history: JobHistory =>
-              if (errorCodes.contains(String.valueOf(history.getErrorCode))) {
-                alertData.add(history)
+    for (dataList <- data.asScala) {
+      if (dataList != null && dataList.getData() != null) {
+        logger.info("JobHistoryErrCodeRule Begin scan")
+        for (historyList <- dataList.getData().asScala) {
+          historyList match {
+            case jobHistory: JobHistory =>
+              logger.info("JobHistoryErrCodeRule JobHistory data : {}", jobHistory.getId)
+              if (errorCodes.contains(String.valueOf(jobHistory.getErrorCode))) {
+                alertData.add(jobHistory)
               }
-              scanRuleList.put("jobHistoryId", history.getId)
+              scanRuleList.put("jobHistoryId", jobHistory.getId)
             case _ =>
               logger.warn(
-                "Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName
+                "Ignored wrong input data Type : " + historyList + ", " + historyList.getClass.getCanonicalName
               )
           }
         }
       } else {
-        logger.warn("Ignored null scanned data")
+        logger.warn("Errorcode scan,dataList is null")
       }
-
     }
-    logger.info("hit " + alertData.size() + " data in one iteration")
+    logger.info("Errorcode scan hit " + alertData.size() + " data will be alter")
     if (alertData.size() > 0) {
       getHitEvent().notifyObserver(getHitEvent(), alertData)
       true

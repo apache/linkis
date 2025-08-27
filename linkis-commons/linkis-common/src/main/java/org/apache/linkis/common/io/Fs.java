@@ -44,6 +44,8 @@ public interface Fs extends Closeable {
 
   boolean canRead(FsPath dest) throws IOException;
 
+  boolean canRead(FsPath dest, String user) throws IOException;
+
   boolean canWrite(FsPath dest) throws IOException;
 
   boolean exists(FsPath dest) throws IOException;

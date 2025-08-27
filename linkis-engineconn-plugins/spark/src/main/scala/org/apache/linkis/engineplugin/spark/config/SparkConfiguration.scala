@@ -86,6 +86,9 @@ object SparkConfiguration extends Logging {
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
 
+  val SPARK_SCALA_KILL_COLSE_THREAD_ENABLE =
+    CommonVars[Boolean]("linkis.spark.scala.kill.close.thread.enable", true)
+
   val SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH = CommonVars[String](
     "linkis.spark.python.mix.pyshell.path",
     "/appcom/Install/linkis/mix_pyspark.py"
@@ -118,7 +121,7 @@ object SparkConfiguration extends Logging {
   val LINKIS_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
 
   val DEFAULT_SPARK_JAR_NAME =
-    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.2.jar")
+    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.7.0.jar")
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
@@ -179,8 +182,48 @@ object SparkConfiguration extends Logging {
 
   val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
 
+  val LINKIS_PYSPARK_USE_SECURE_RANDOM =
+    CommonVars[Boolean]("linkis.pyspark.use.secure.random", false).getValue
+
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
+
+  val SPARKMEASURE_AGGREGATE_TYPE = "linkis.sparkmeasure.aggregate.type"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_TYPE =
+    CommonVars[String]("linkis.sparkmeasure.flight.recorder.type", "")
+
+  val SPARKMEASURE_OUTPUT_PREFIX =
+    CommonVars[String]("linkis.sparkmeasure.output.prefix", "/appcom/sparkmeasure")
+
+  val SPARKMEASURE_FLIGHT_STAGE_CLASS =
+    "ch.cern.sparkmeasure.FlightRecorderStageMetrics"
+
+  val SPARKMEASURE_FLIGHT_TASK_CLASS = "ch.cern.sparkmeasure.FlightRecorderTaskMetrics"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_KEY = "spark.extraListeners"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_KEY = "spark.sparkmeasure.outputFormat"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON = "json"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON_HADOOP = "json_to_hadoop"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FILENAME_KEY = "spark.sparkmeasure.outputFilename"
+
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST =
+    CommonVars("linkis.engine.containerization.mapping.host", "")
+
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS =
+    CommonVars("linkis.engine.containerization.mapping.ports", "")
+
+  val SPARK_DRIVER_HOST = CommonVars[String]("spark.driver.host", "")
+
+  val SPARK_DRIVER_PORT = CommonVars[String]("spark.driver.port", "")
+
+  val SPARK_DRIVER_BIND_ADDRESS = CommonVars[String]("spark.driver.bindAddress", "0.0.0.0")
+
+  val SPARK_DRIVER_BLOCK_MANAGER_PORT = CommonVars[String]("spark.driver.blockManager.port", "")
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

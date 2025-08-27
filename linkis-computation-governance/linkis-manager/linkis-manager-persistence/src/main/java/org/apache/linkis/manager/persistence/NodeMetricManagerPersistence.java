@@ -31,7 +31,7 @@ public interface NodeMetricManagerPersistence {
    * @param nodeMetrics
    * @throws PersistenceErrorException
    */
-  void addNodeMetrics(NodeMetrics nodeMetrics);
+  void addNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException;
 
   /**
    * 保存或更新节点的metric
@@ -48,7 +48,7 @@ public interface NodeMetricManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes);
+  List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes) throws PersistenceErrorException;
 
   /**
    * 获取节点的nodemetrics
@@ -57,7 +57,7 @@ public interface NodeMetricManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  NodeMetrics getNodeMetrics(Node node);
+  NodeMetrics getNodeMetrics(Node node) throws PersistenceErrorException;
 
   /**
    * 删除节点的metric信息
@@ -65,7 +65,9 @@ public interface NodeMetricManagerPersistence {
    * @param node
    * @throws PersistenceErrorException
    */
-  void deleteNodeMetrics(Node node);
+  void deleteNodeMetrics(Node node) throws PersistenceErrorException;
 
-  List<NodeMetrics> getAllNodeMetrics();
+  List<NodeMetrics> getAllNodeMetrics() throws PersistenceErrorException;
+
+  void updateNodeMetricDescription(String description, String instance);
 }

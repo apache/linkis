@@ -81,6 +81,16 @@ public class OSSFileSystem extends FileSystem {
   }
 
   @Override
+  public long getLength(FsPath dest) throws IOException {
+    return 0;
+  }
+
+  @Override
+  public String checkSum(FsPath dest) throws IOException {
+    return null;
+  }
+
+  @Override
   public boolean canExecute(FsPath dest) throws IOException {
     return true;
   }
@@ -135,8 +145,8 @@ public class OSSFileSystem extends FileSystem {
       fsPaths.add(
           fillStorageFile(
               new FsPath(
-                  StorageUtils.OSS_SCHEMA
-                      + StorageConfiguration.OSS_ACCESS_BUCKET_NAME.getValue()
+                  StorageUtils.OSS_SCHEMA()
+                      + StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()
                       + "/"
                       + f.getPath().toUri().getPath()),
               f));
@@ -152,18 +162,17 @@ public class OSSFileSystem extends FileSystem {
   public void init(Map<String, String> properties) throws IOException {
     // read origin configs from hadoop conf
     if (label == null
-        && (boolean)
-            org.apache.linkis.common.conf.Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
-      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
+        && (boolean) org.apache.linkis.common.conf.Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
+      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
     }
     conf = HDFSUtils.getConfigurationByLabel(user, label);
 
     // origin configs
     Map<String, String> originProperties = Maps.newHashMap();
-    originProperties.put("fs.oss.endpoint", StorageConfiguration.OSS_ENDPOINT.getValue());
-    originProperties.put("fs.oss.accessKeyId", StorageConfiguration.OSS_ACCESS_KEY_ID.getValue());
+    originProperties.put("fs.oss.endpoint", StorageConfiguration.OSS_ENDPOINT().getValue());
+    originProperties.put("fs.oss.accessKeyId", StorageConfiguration.OSS_ACCESS_KEY_ID().getValue());
     originProperties.put(
-        "fs.oss.accessKeySecret", StorageConfiguration.OSS_ACCESS_KEY_SECRET.getValue());
+        "fs.oss.accessKeySecret", StorageConfiguration.OSS_ACCESS_KEY_SECRET().getValue());
     for (String key : originProperties.keySet()) {
       String value = originProperties.get(key);
       if (StringUtils.isNotBlank(value)) {
@@ -183,7 +192,8 @@ public class OSSFileSystem extends FileSystem {
     fs = new AliyunOSSFileSystem();
     try {
       fs.initialize(
-          new URI(StorageUtils.OSS_SCHEMA + StorageConfiguration.OSS_ACCESS_BUCKET_NAME.getValue()),
+          new URI(
+              StorageUtils.OSS_SCHEMA() + StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()),
           conf);
     } catch (URISyntaxException e) {
       throw new IOException("init OSS FileSystem failed!");
@@ -195,7 +205,7 @@ public class OSSFileSystem extends FileSystem {
 
   @Override
   public String fsName() {
-    return StorageUtils.OSS;
+    return StorageUtils.OSS();
   }
 
   @Override
@@ -287,6 +297,11 @@ public class OSSFileSystem extends FileSystem {
   }
 
   @Override
+  public boolean canRead(FsPath dest, String user) throws IOException {
+    return false;
+  }
+
+  @Override
   public boolean canWrite(FsPath dest) throws IOException {
     return true;
   }
@@ -298,9 +313,9 @@ public class OSSFileSystem extends FileSystem {
     } catch (IOException e) {
       String message = e.getMessage();
       String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-      if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS))
+      if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
           || (rootCauseMessage != null
-              && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS))) {
+              && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
         logger.info("Failed to execute exists, retry", e);
         resetRootOSS();
         return fs.exists(new Path(checkOSSPath(dest.getPath())));
@@ -363,9 +378,9 @@ public class OSSFileSystem extends FileSystem {
 
   private static String checkOSSPath(String path) {
     try {
-      boolean checkOSSPath = (boolean) StorageConfiguration.OSS_PATH_PREFIX_CHECK_ON.getValue();
+      boolean checkOSSPath = (boolean) StorageConfiguration.OSS_PATH_PREFIX_CHECK_ON().getValue();
       if (checkOSSPath) {
-        boolean rmOSSPrefix = (boolean) StorageConfiguration.OSS_PATH_PREFIX_REMOVE.getValue();
+        boolean rmOSSPrefix = (boolean) StorageConfiguration.OSS_PATH_PREFIX_REMOVE().getValue();
         if (rmOSSPrefix) {
           if (StringUtils.isBlank(path)) {
             return path;

@@ -131,9 +131,10 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "creator", required = false) String creator)
       throws ConfigurationException {
     if (creator != null
-        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
+        && (creator.equals(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_NAME())
+            || creator.equals(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_OLDNAME())
+            || creator.equals(
+                org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
       engineType = "*";
       version = "*";
       creator = "*";
@@ -286,9 +287,10 @@ public class ConfigurationRestfulApi {
     String creator = JsonNodeUtil.getStringValue(json.get("creator"));
     String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
     if (creator != null
-        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
+        && (creator.equals(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_NAME())
+            || creator.equals(org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_OLDNAME())
+            || creator.equals(
+                org.apache.linkis.common.conf.Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
       creator = "*";
     }
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");

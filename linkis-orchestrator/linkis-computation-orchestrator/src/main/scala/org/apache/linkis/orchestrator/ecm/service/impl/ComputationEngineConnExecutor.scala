@@ -44,6 +44,8 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
 
   override def getServiceInstance: ServiceInstance = engineNode.getServiceInstance
 
+  def getEngineNode: EngineNode = engineNode
+
   private def getEngineConnSender: Sender = Sender.getSender(getServiceInstance)
 
   override def getTicketId: String = engineNode.getTicketId
@@ -51,7 +53,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   override def close(): Unit = {
     logger.info("Start to release engineConn {}", getServiceInstance)
     val requestManagerUnlock =
-      new RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
+      RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
     killAll()
     getManagerSender.send(requestManagerUnlock)
     logger.debug("Finished to release engineConn {}", getServiceInstance)

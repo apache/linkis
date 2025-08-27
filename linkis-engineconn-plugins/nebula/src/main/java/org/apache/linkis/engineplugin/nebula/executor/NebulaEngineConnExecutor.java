@@ -47,7 +47,6 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
-import org.apache.linkis.storage.resultset.ResultSetFactory;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 
@@ -279,13 +278,16 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
         && sessionCache.get(taskId).ping()) {
       return sessionCache.get(taskId);
     } else {
-      Session session;
+      Session session = null;
       String username = NebulaConfiguration.NEBULA_USER_NAME.getValue(configMap);
       String password = NebulaConfiguration.NEBULA_PASSWORD.getValue(configMap);
       Boolean reconnect = NebulaConfiguration.NEBULA_RECONNECT_ENABLED.getValue(configMap);
-
+      String space = NebulaConfiguration.NEBULA_SPACE.getValue(configMap);
       try {
         session = nebulaPool.getSession(username, password, reconnect);
+        if (StringUtils.isNotBlank(space)) {
+          session.execute("use " + space);
+        }
       } catch (Exception e) {
         logger.error("Nebula Session initialization failed.");
         throw new NebulaClientException(
@@ -308,8 +310,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
   private void queryOutput(
       String taskId, EngineExecutionContext engineExecutorContext, ResultSet resultSet) {
     int columnCount = 0;
-    ResultSetWriter resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE);
+    ResultSetWriter resultSetWriter = engineExecutorContext.createResultSetWriter("2");
 
     try {
       List<String> colNames = resultSet.keys();

@@ -19,8 +19,6 @@ package org.apache.linkis.manager.common.entity.resource;
 
 import org.apache.linkis.manager.common.exception.ResourceWarnException;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,39 +84,20 @@ public class DriverAndYarnResource extends Resource {
     return yarnResource;
   }
 
-  public boolean isModuleOperate(Resource r) {
-    return false; // TODO This method needs to return false by default, and this method needs to be
-    // removed later
-  }
-
-  public boolean isModuleOperate() {
-    return yarnResource != null && !StringUtils.isEmpty(yarnResource.getQueueName());
-  }
-
   @Override
   public DriverAndYarnResource add(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return new DriverAndYarnResource(
-          loadInstanceResource.add(r.getLoadInstanceResource()), yarnResource);
-    } else {
-      return new DriverAndYarnResource(
-          loadInstanceResource.add(r.getLoadInstanceResource()),
-          yarnResource.add(r.getYarnResource()));
-    }
+    return new DriverAndYarnResource(
+        loadInstanceResource.add(r.getLoadInstanceResource()),
+        yarnResource.add(r.getYarnResource()));
   }
 
   @Override
   public DriverAndYarnResource minus(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return new DriverAndYarnResource(
-          loadInstanceResource.minus(r.getLoadInstanceResource()), yarnResource);
-    } else {
-      return new DriverAndYarnResource(
-          loadInstanceResource.minus(r.getLoadInstanceResource()),
-          yarnResource.minus(r.getYarnResource()));
-    }
+    return new DriverAndYarnResource(
+        loadInstanceResource.minus(r.getLoadInstanceResource()),
+        yarnResource.minus(r.getYarnResource()));
   }
 
   @Override
@@ -129,12 +108,8 @@ public class DriverAndYarnResource extends Resource {
 
   @Override
   public Resource multiplied(float rate) {
-    if (isModuleOperate()) {
-      return new DriverAndYarnResource(loadInstanceResource.multiplied(rate), yarnResource);
-    } else {
-      return new DriverAndYarnResource(
-          loadInstanceResource.multiplied(rate), yarnResource.multiplied(rate));
-    }
+    return new DriverAndYarnResource(
+        loadInstanceResource.multiplied(rate), yarnResource.multiplied(rate));
   }
 
   @Override
@@ -145,56 +120,35 @@ public class DriverAndYarnResource extends Resource {
 
   @Override
   public Resource divide(int rate) {
-    if (isModuleOperate()) {
-      return new DriverAndYarnResource(loadInstanceResource.divide(rate), yarnResource);
-    } else {
-      return new DriverAndYarnResource(
-          loadInstanceResource.divide(rate), yarnResource.divide(rate));
-    }
+    return new DriverAndYarnResource(loadInstanceResource.divide(rate), yarnResource.divide(rate));
   }
 
   @Override
   public boolean moreThan(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return loadInstanceResource.moreThan(r.loadInstanceResource);
-    } else {
-      return loadInstanceResource.moreThan(r.loadInstanceResource)
-          && yarnResource.moreThan(r.yarnResource);
-    }
+    return loadInstanceResource.moreThan(r.loadInstanceResource)
+        && yarnResource.moreThan(r.yarnResource);
   }
 
   @Override
   public boolean caseMore(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return loadInstanceResource.caseMore(r.loadInstanceResource);
-    } else {
-      return loadInstanceResource.caseMore(r.loadInstanceResource)
-          || yarnResource.caseMore(r.yarnResource);
-    }
+    return loadInstanceResource.caseMore(r.loadInstanceResource)
+        || yarnResource.caseMore(r.yarnResource);
   }
 
   @Override
   public boolean equalsTo(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return loadInstanceResource.equalsTo(r.loadInstanceResource);
-    } else {
-      return loadInstanceResource.equalsTo(r.loadInstanceResource)
-          && yarnResource.equalsTo(r.yarnResource);
-    }
+    return loadInstanceResource.equalsTo(r.loadInstanceResource)
+        && yarnResource.equalsTo(r.yarnResource);
   }
 
   @Override
   public boolean notLess(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-    if (isModuleOperate(r)) {
-      return loadInstanceResource.notLess(r.loadInstanceResource);
-    } else {
-      return loadInstanceResource.notLess(r.loadInstanceResource)
-          && yarnResource.notLess(r.yarnResource);
-    }
+    return loadInstanceResource.notLess(r.loadInstanceResource)
+        && yarnResource.notLess(r.yarnResource);
   }
 
   @Override
@@ -205,34 +159,29 @@ public class DriverAndYarnResource extends Resource {
   @Override
   public int compare(Resource resource) {
     DriverAndYarnResource r = new DriverAndYarnResource(resource);
-
-    if (isModuleOperate(r)) {
-      return loadInstanceResource.compare(r.loadInstanceResource);
+    if (loadInstanceResource.getMemory() > r.loadInstanceResource.getMemory()) {
+      return 1;
+    } else if (loadInstanceResource.getMemory() < r.loadInstanceResource.getMemory()) {
+      return -1;
     } else {
-      if (loadInstanceResource.getMemory() > r.loadInstanceResource.getMemory()) {
+      // If memory is equal, compare cores
+      if (loadInstanceResource.getCores() > r.loadInstanceResource.getCores()) {
         return 1;
-      } else if (loadInstanceResource.getMemory() < r.loadInstanceResource.getMemory()) {
+      } else if (loadInstanceResource.getCores() < r.loadInstanceResource.getCores()) {
         return -1;
       } else {
-        // If memory is equal, compare cores
-        if (loadInstanceResource.getCores() > r.loadInstanceResource.getCores()) {
+        // If cores are equal, compare instances
+        if (loadInstanceResource.getInstances() > r.loadInstanceResource.getInstances()) {
           return 1;
-        } else if (loadInstanceResource.getCores() < r.loadInstanceResource.getCores()) {
+        } else if (loadInstanceResource.getInstances() < r.loadInstanceResource.getInstances()) {
           return -1;
         } else {
-          // If cores are equal, compare instances
-          if (loadInstanceResource.getInstances() > r.loadInstanceResource.getInstances()) {
+          if (yarnResource.getQueueMemory() > r.yarnResource.getQueueMemory()) {
             return 1;
-          } else if (loadInstanceResource.getInstances() < r.loadInstanceResource.getInstances()) {
+          } else if (yarnResource.getQueueMemory() < r.yarnResource.getQueueMemory()) {
             return -1;
           } else {
-            if (yarnResource.getQueueMemory() > r.yarnResource.getQueueMemory()) {
-              return 1;
-            } else if (yarnResource.getQueueMemory() < r.yarnResource.getQueueMemory()) {
-              return -1;
-            } else {
-              return Integer.compare(yarnResource.getQueueCores(), r.yarnResource.getQueueCores());
-            }
+            return Integer.compare(yarnResource.getQueueCores(), r.yarnResource.getQueueCores());
           }
         }
       }

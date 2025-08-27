@@ -57,6 +57,6 @@ public class BuildS3FileSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return StorageUtils.S3;
+    return StorageUtils.S3();
   }
 }

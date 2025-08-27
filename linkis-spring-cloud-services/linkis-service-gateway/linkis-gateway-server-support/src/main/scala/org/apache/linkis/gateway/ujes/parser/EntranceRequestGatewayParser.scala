@@ -84,7 +84,19 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
 
   def buildJobInstance(taskId: Long, gatewayContext: GatewayContext): JobInstance = {
     val histories =
-      jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null, null)
+      jobHistoryQueryService.search(
+        taskId,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      )
     if (histories.isEmpty) {
       sendErrorResponse(s"taskId $taskId is not exists.", gatewayContext)
       return null

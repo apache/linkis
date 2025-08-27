@@ -47,9 +47,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc
  * 4, in your browser,add dataworkcloud_inner_request=true, bdp-user-ticket-id's value and  workspaceId's value into cookie
  * </pre>
  */
-@EnableSwagger2WebMvc
-@EnableKnife4j
-@Configuration
+
 class Knife4jConfig extends WebMvcConfigurer {
 
   @Value("${spring.application.name}") private var appName = "linkis service"

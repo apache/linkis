@@ -137,11 +137,12 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       }
     }
     if (StringUtils.isNotBlank(engineVersion)) {
-      EngineTypeLabelCreator.registerVersion(engineType, engineVersion)
+      val label = EngineTypeLabelCreator.createEngineTypeLabel(engineType)
+      label.setVersion(engineVersion)
+      label
+    } else {
+      EngineTypeLabelCreator.createEngineTypeLabel(engineType)
     }
-
-    EngineTypeLabelCreator.createEngineTypeLabel(engineType)
-
   }
 
   private[jdbc] def throwWhenClosed[T](op: => T): T =
@@ -448,8 +449,6 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     val runType = EngineType.mapStringToEngineType(engine) match {
       case EngineType.SPARK => RunType.SQL
       case EngineType.HIVE => RunType.HIVE
-      case EngineType.REPL => RunType.REPL
-      case EngineType.DORIS => RunType.DORIS
       case EngineType.TRINO => RunType.TRINO_SQL
       case EngineType.PRESTO => RunType.PRESTO_SQL
       case EngineType.NEBULA => RunType.NEBULA_SQL

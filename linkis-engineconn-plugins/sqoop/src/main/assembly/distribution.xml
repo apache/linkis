@@ -84,7 +84,6 @@
                 <exclude>com.netflix.ribbon:ribbon-transport:jar</exclude>
                 <exclude>com.netflix.servo:servo-core:jar</exclude>
                 <exclude>com.ning:async-http-client:jar</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
                 <exclude>com.sun.jersey:jersey-client:jar</exclude>
                 <exclude>com.sun.jersey:jersey-core:jar</exclude>
                 <exclude>com.sun.jersey:jersey-json:jar</exclude>
@@ -165,8 +164,8 @@
                 <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
                 <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
-                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
-                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk18on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk18on:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-jaxrs:jar</exclude>
                 <exclude>org.codehaus.jackson:jackson-xc:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
@@ -246,9 +245,6 @@
                 <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
                 <exclude>org.slf4j:slf4j-api:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-actuator:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-actuator-autoconfigure:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-autoconfigure:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-actuator:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-aop:jar</exclude>

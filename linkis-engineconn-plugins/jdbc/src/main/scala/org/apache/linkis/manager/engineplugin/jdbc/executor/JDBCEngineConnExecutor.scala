@@ -41,7 +41,10 @@ import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
-import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCGetDatasourceInfoException
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{
+  JDBCGetDatasourceInfoException,
+  JDBCParamsIllegalException
+}
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -146,7 +149,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     try {
       statement = connection.createStatement()
-      statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
+      if (statement.getQueryTimeout == 0) {
+        statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
+      }
       statement.setFetchSize(outputPrintLimit)
       statement.setMaxRows(outputPrintLimit)
 
@@ -230,11 +235,17 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
           dataSourceQuerySystemParam
         )
       } { e: Throwable =>
-        throw new JDBCGetDatasourceInfoException(
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
-          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc.concat(" ").concat(s"[$dataSourceName]"),
-          e
-        )
+        e match {
+          case jpe: JDBCParamsIllegalException =>
+            throw new JDBCGetDatasourceInfoException(jpe.getErrCode, jpe.getDesc, e)
+          case _ =>
+            throw new JDBCGetDatasourceInfoException(
+              JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
+              e.getMessage,
+              e
+            )
+        }
+
       }
     }
     if (StringUtils.isBlank(dataSourceName)) {
@@ -264,7 +275,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   ): ExecuteResponse = {
     if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
       logger.info(s"current result is a ResultSet Object , but there are no more results!")
-      engineExecutorContext.appendStdout("Query executed successfully.")
       SuccessExecuteResponse()
     } else {
       val md = resultSet.getMetaData
@@ -292,7 +302,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             }
             data
           }.toArray
-          resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[AnyRef]]))
+          resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[Any]]))
           count += 1
         }
       }) { case e: Exception =>

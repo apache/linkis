@@ -21,12 +21,14 @@ import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   TaskLogUpdateEvent,
   TaskProgressUpdateEvent,
   TaskResultCreateEvent,
   TaskResultSizeCreatedEvent
 }
+import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.cs.CSTableResultSetWriter
 import org.apache.linkis.engineconn.executor.ExecutorExecutionContext
@@ -40,7 +42,7 @@ import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecut
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.table.TableResultSet
 
 import org.apache.commons.io.IOUtils
@@ -55,8 +57,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   private val resultSetFactory = ResultSetFactory.getInstance
 
-  private var defaultResultSetWriter
-      : org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] = _
+  private var defaultResultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record] = _
 
   private var resultSize = 0
 
@@ -67,6 +68,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   private var totalParagraph = 0
   private var currentParagraph = 0
+  private var enableDirectPush = false
 
   def getTotalParagraph: Int = totalParagraph
 
@@ -75,6 +77,11 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   def getCurrentParagraph: Int = currentParagraph
 
   def setCurrentParagraph(currentParagraph: Int): Unit = this.currentParagraph = currentParagraph
+
+  def setEnableDirectPush(enable: Boolean): Unit =
+    this.enableDirectPush = enable
+
+  def isEnableDirectPush: Boolean = enableDirectPush
 
   def pushProgress(progress: Float, progressInfo: Array[JobProgressInfo]): Unit =
     if (!executor.isInternalExecute) {
@@ -88,12 +95,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
    * Note: the writer will be closed at the end of the method
    * @param resultSetWriter
    */
-  def sendResultSet(
-      resultSetWriter: org.apache.linkis.common.io.resultset.ResultSetWriter[
-        _ <: MetaData,
-        _ <: Record
-      ]
-  ): Unit = {
+  def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
     logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName
     val index = if (fileName.indexOf(".") < 0) fileName.length else fileName.indexOf(".")
@@ -148,13 +150,13 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   ): ResultSet[_ <: MetaData, _ <: Record] =
     resultSetFactory.getResultSetByType(resultSetType)
 
-  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType()(0)
+  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType(0)
 
   def newResultSetWriter(
       resultSet: ResultSet[_ <: MetaData, _ <: Record],
       resultSetPath: FsPath,
       alias: String
-  ): org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] = {
+  ): ResultSetWriter[_ <: MetaData, _ <: Record] = {
     // update by 20200402
     resultSet match {
       case result: TableResultSet =>
@@ -172,7 +174,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           csWriter.setProxyUser(executorUser)
           csWriter
         } else {
-          ResultSetWriterFactory.getResultSetWriter(
+          ResultSetWriter.getResultSetWriter(
             resultSet,
             ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
             resultSetPath,
@@ -180,7 +182,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           )
         }
       case _ =>
-        ResultSetWriterFactory.getResultSetWriter(
+        ResultSetWriter.getResultSetWriter(
           resultSet,
           ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
           resultSetPath,
@@ -194,15 +196,20 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     logger.info(log)
   } else {
     var taskLog = log
+    val limitLength = ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue
     if (
         ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_ENABLED.getValue &&
-        log.length > ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue
+        log.length > limitLength
     ) {
-      taskLog =
-        s"${log.substring(0, ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue)}..."
+      taskLog = s"${log.substring(0, limitLength)}..."
+      logger.info("The log is too long and will be intercepted,log limit length : {}", limitLength)
     }
-    val listenerBus = getEngineSyncListenerBus
-    getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))
+    if (!AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
+      LogHelper.cacheLog(taskLog)
+    } else {
+      val listenerBus = getEngineSyncListenerBus
+      getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))
+    }
   }
 
   override def close(): Unit = {

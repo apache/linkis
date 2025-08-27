@@ -193,6 +193,7 @@ data:
     `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
     `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
     `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+    `observe_info` varchar(500) DEFAULT NULL COMMENT 'The notification information configuration of this job',
     PRIMARY KEY (`id`),
     KEY `created_time` (`created_time`),
     KEY `submit_user` (`submit_user`)
@@ -723,6 +724,9 @@ data:
     `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `mapping_host` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `mapping_ports` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -1424,16 +1428,8 @@ data:
     -- ----------------------------
     -- Default Tokens
     -- ----------------------------
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('QML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('BML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('WS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('dss-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('QUALITIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('VALIDATOR-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKISCLI-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DSM-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS_CLI_TEST','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
-
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+  
     INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);
     INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2);
     INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('presto', 'presto SQL', 'presto', '大数据存储', '', 3);

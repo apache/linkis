@@ -47,7 +47,7 @@
     <sql id="job_list">
         `id`, `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
         `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`,
-        `instances`, `metrics`,`engine_type`, `execution_code`, `result_location`
+        `instances`, `metrics`,`engine_type`, `result_location`
     </sql>
 
     <sql id="insert_job_list">
@@ -64,8 +64,26 @@
     </insert>
 
 
-    <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+  <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         SELECT * FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="jobReqId != null">and job_req_id = #{jobReqId}</if>
+            <if test="submitUser != null">and submit_user = #{submitUser}</if>
+            <if test="executeUser != null">and execute_user = #{executeUser}</if>
+            <if test="progress != null">and progress = #{progress}</if>
+            <if test="status != null">and status = #{status}</if>
+            <if test="createdTime != null">and created_time = #{createdTime}</if>
+            <if test="updatedTime != null">and updated_time = #{updatedTime}</if>
+            <if test="instances != null">and instances = #{instances}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+        </where>
+    </select>
+
+    <select id="selectJobHistoryNoCode" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        SELECT
+        <include refid="job_list"/>
+        FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>
             <if test="jobReqId != null">and job_req_id = #{jobReqId}</if>
@@ -82,67 +100,91 @@
 
 
     <select id="search" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
-    <select id="searchWithIdOrderAsc" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+    <select id="searchWithIdOrderAsc" useCache="true" resultType="java.lang.Integer" >
+        /*slave*/ SELECT id FROM linkis_ps_job_history_group_history
         <where>
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="startId != null">and id >= #{startId}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+        </where>
+        limit 2
+    </select>
+
+    <select id="maxID" useCache="true" resultType="java.lang.Integer" >
+        /*slave*/ SELECT id FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="startId != null">and id >= #{startId}</if>
         </where>
         ORDER BY linkis_ps_job_history_group_history.created_time
     </select>
 
     <select id="searchWithUserCreator" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), job.labels) > 0
             </if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <select id="searchWithCreatorOnly" useCache="true" resultMap="jobHistoryMap" >
-        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
+        <if test="departmentId != null">
+            JOIN linkis_org_user dept ON job.submit_user = dept.user_name
+        </if>
         <where>
-            <if test="id != null">id = #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
-            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
-            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="id != null">job.id = #{id}</if>
+            <if test="umUser != null">and job.submit_user = #{umUser}</if>
+            <if test="engineType != null">and job.engine_type = #{engineType}</if>
+            <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="job.status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
+                and job.labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
-            <if test="startId != null">and id >= #{startId}</if>
-            <if test="instances != null">and instances = #{instances}</if>
+            <if test="startId != null">and job.id >= #{startId}</if>
+            <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
+            <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
+            <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+        ORDER BY job.created_time DESC
     </select>
 
     <!-- // todo check -->
     <update id="updateJobHistory" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         UPDATE linkis_ps_job_history_group_history
-        <set>
+        <trim prefix="set" suffixOverrides=",">
             <if test="updatedTime != null">updated_time = #{updateTimeMills},</if>
             <if test="jobReqId != null">job_req_id = #{jobReqId},</if>
             <if test="submitUser != null">submit_user = #{submitUser},</if>
@@ -162,19 +204,19 @@
             <if test="engineType != null">engine_type = #{engineType},</if>
             <if test="executionCode != null">execution_code = #{executionCode},</if>
             <if test="observeInfo != null">observe_info = #{observeInfo},</if>
-        </set>
-
-        WHERE id = #{id} AND updated_time <![CDATA[<=]]> #{updateTimeMills}
-
+        </trim>
+        <![CDATA[
+        WHERE id = #{id} AND updated_time <= #{updateTimeMills}
+        ]]>
     </update>
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
         SELECT
-            bdt.status
+        bdt.status
         FROM
-            linkis_ps_job_history_group_history bdt
+        linkis_ps_job_history_group_history bdt
         WHERE
-            id = #{jobId} FOR UPDATE
+        id = #{jobId} FOR UPDATE
     </select>
 
     <select id="countUndoneTaskNoCreator" useCache="true" resultType="java.lang.Integer" >
@@ -229,6 +271,16 @@
             #{id}
         </foreach>
     </update>
+    <select id="selectJobHistoryByTaskidList" useCache="true" resultMap="jobHistoryMap">
+        /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+        <if test="umUser != null">and submit_user = #{umUser}</if>
+        ORDER BY linkis_ps_job_history_group_history.created_time DESC
+    </select>
+
     <select id="selectFailoverJobHistory" resultMap="jobHistoryMap" >
         SELECT a.* FROM linkis_ps_job_history_group_history a
         WHERE (

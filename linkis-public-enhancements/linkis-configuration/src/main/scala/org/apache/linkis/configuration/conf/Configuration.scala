@@ -32,14 +32,6 @@ object Configuration {
   val MANAGER_SPRING_NAME =
     CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
 
-  val GLOBAL_CONF_CHN_NAME = "全局设置"
-
-  val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
-
-  val GLOBAL_CONF_CHN_EN_NAME = "GlobalSettings"
-
-  val GLOBAL_CONF_LABEL = "*-*,*-*"
-
   val USE_CREATOR_DEFAULE_VALUE =
     CommonVars.apply("wds.linkis.configuration.use.creator.default.value", true).getValue
 

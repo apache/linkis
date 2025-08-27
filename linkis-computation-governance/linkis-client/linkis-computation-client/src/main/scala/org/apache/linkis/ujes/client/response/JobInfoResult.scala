@@ -27,8 +27,12 @@ import org.apache.linkis.ujes.client.request.{ResultSetListAction, UserAction}
 
 import org.apache.commons.beanutils.BeanUtils
 
+import java.io.File
+import java.nio.file.Files
 import java.util
 import java.util.Date
+
+import scala.util.matching.Regex
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/\\S+/get")
 class JobInfoResult extends DWSResult with UserAction with Status {
@@ -78,7 +82,10 @@ class JobInfoResult extends DWSResult with UserAction with Status {
         ujesClient.executeUJESJob(ResultSetListAction.builder().set(this).build()) match {
           case resultSetList: ResultSetListResult => resultSetList.getResultSetList
         }
-      resultSetList
+      val numberRegex: Regex = """(\d+)""".r
+      return resultSetList.sortBy { fileName =>
+        numberRegex.findFirstIn(fileName.split(File.separator).last).getOrElse("0").toInt
+      }
     }
     else if (resultSetList != null) resultSetList
     else if (isFailed) {

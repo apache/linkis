@@ -16,19 +16,38 @@
   -->
 
 <template>
-  <div class="wd-page" @click="changeMenusDisplay">
+  <div class="wd-page">
     <div class="wrapper">
-      <f-layout style="margin-top: 20px">
-        <!-- <f-header></f-header> -->
+      <f-layout>
+        <f-header class="header">
+          <div class="header-left">
+            <f-button class="collapse-btn" @click="handleCollapse">
+              <template #icon>
+                <div v-if="collapsed"><IndentOutlined :size="24"/></div>
+                <div v-else><OutdentOutlined :size="24"/></div>
+              </template>
+            </f-button>
+            <img src="@/dss/assets/images/Linkis.svg" @click="handleClickImage" />
+          </div>
+          <div class="header-right">
+            <FDropdown trigger="click" :options="userOptions" @visible-change="handleVisibleChange" placement="bottom-end">
+              <div class="user-options">
+                {{ userName }}
+                <DownOutlined v-if="!isShowUserOptions" class="icon" />
+                <UpOutlined v-else class="icon" />
+              </div>
+            </FDropdown>
+          </div>
+        </f-header>
         <f-layout>
-          <f-aside style="margin-right: 16px">
-            <Sidebar></Sidebar>
+          <f-aside class="side" width="250px" collapsedWidth="48px" >
+            <Sidebar :collapsed="collapsed" />
           </f-aside>
-          <f-main
-            style="margin-top: 16px; padding: 24px; background-color: #fff"
-          >
-            <router-view></router-view>
-          </f-main>
+          <f-layout fixed :style="{ left: collapsed ? '48px' : '250px' }">
+            <f-main class="main">
+              <router-view />
+            </f-main>
+          </f-layout>
         </f-layout>
       </f-layout>
     </div>
@@ -36,211 +55,126 @@
 </template>
 <script setup lang="ts">
 import Sidebar from "@/components/sidebar/index.vue";
+import { FDropdown, FMessage } from "@fesjs/fes-design";
+import { DownOutlined, UpOutlined, IndentOutlined, OutdentOutlined, SwapOutlined, QuitOutlined } from '@fesjs/fes-design/icon';
+import { h, reactive, ref } from "vue";
+import { useI18n } from 'vue-i18n';
+import storage from "./helper/storage";
+import router from "./router";
+import api from "./service/api";
+const { t } = useI18n();
 
-const changeMenusDisplay = () => {};
+const collapsed = ref(false);
+const isShowUserOptions = ref(false);
+const userName = storage.get('userName', 'session');
+const userOptions = reactive([
+  {
+    value: 'changeLang',
+    label: () => h('div', {
+      onClick: handleChangeLang
+    }, t('message.common.lang')),
+    icon: () => h(SwapOutlined),
+  },
+  {
+    value: 'logout',
+    label: () => h('div', {
+      onClick: handleLogOut
+    }, t('message.common.logOut')),
+    icon: () => h(QuitOutlined),
+  },
+])
+
+const handleCollapse = () => {
+  collapsed.value = !collapsed.value;
+}
+
+const handleClickImage = () => {
+  router.push('/console/globalHistoryManagement');
+}
+
+const handleVisibleChange = (visible: boolean) => {
+  isShowUserOptions.value = visible;
+}
+
+const handleChangeLang = () => {
+  const lang = storage.get('locale', 'local');
+  if (!lang || lang === 'zh') {
+    storage.set('locale', 'en', 'local');
+  } else {
+    storage.set('locale', 'zh', 'local');
+  }
+  window.location.reload();
+}
+
+const handleLogOut = () => {
+  api.fetch('/user/logout', {}).then(() => {
+    storage.set('need-refresh-proposals-hql', true);
+    storage.set('need-refresh-proposals-python', true);
+    router.push({ path: '/login' });
+    FMessage.success(t('message.common.login.logoutSuccess'));
+  });
+}
 </script>
 <style lang="less" scoped>
-@import "@/style/variable.less";
-
-* {
-  overflow: hidden;
-}
-
-.wrapper {
-  width: 100%;
-  height: 100vh;
-}
-
-.wd-side-menus {
-  position: relative;
-  width: 220px;
-  // display: grid;
-  grid-template-rows: 64px 1fr 48px;
-  background: #fff;
-  transition: all ease 0.2s;
-
-  &.collapse {
-    width: 56px;
-    flex: 0 0 56px;
-
-    .collapse-btn {
-      .collapse-icon {
-        transform: rotate(-90deg);
-      }
-    }
-
-    .wd-logo {
-      background: none;
-    }
-
-    .wd-menu-text {
-      display: none;
-    }
-
-    .copyright {
-      display: none;
-    }
-  }
-
-  .collapse-btn {
-    position: absolute;
-    right: 16px;
-    bottom: 70px;
-    width: 24px;
-    height: 24px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.08);
-    text-align: center;
-    cursor: pointer;
-    user-select: none;
-
-    .collapse-icon {
-      transform: rotate(90deg);
-      transition: transform ease 0.2s;
-    }
-  }
-
-  .wd-logo {
-    position: relative;
-    background: url(@/assets/images/logo.svg) 16px center no-repeat;
-    background-size: 110px;
-    height: 64px;
-
-    .simulator-badge {
-      font-size: 12px;
-      color: #b7b7bc;
-    }
-
-    .avatar {
-      position: absolute;
-      top: 4px;
-      right: 0;
-      z-index: 10;
-      width: 56px;
-      height: 40px;
-      padding: 14px 16px 0;
-      cursor: pointer;
+.wd-page {
+  height: 100%;
+  background: #f7f8fa;
+  .wrapper {
+    width: 100%;
+    height: 100%;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       background: #fff;
-
-      .user-menus-list {
-        &.active {
-          display: block;
+      border: 1px solid rgba(15,18,34,0.06);
+      box-shadow: 0 2px 12px 0 rgba(15,18,34,0.10);
+      z-index: 10;
+      .header-left {
+        display: flex;
+        align-items: center;
+        .collapse-btn {
+          border-radius: 0;
+          border: 0;
+          background: #5384ff;
+          color: #fff;
+          height: 56px;
+          transform: translate(-1px, -1px);
         }
-
-        display: none;
-        position: absolute;
-        top: 40px;
-        left: 16px;
-        min-width: 160px;
-        background: #fff;
-        border-radius: 4px;
-        box-shadow: 0 2px 12px rgba(15, 18, 34, 0.1);
-
-        .user-name {
-          padding: 16px;
-          border-bottom: 1px solid rgba(15, 18, 34, 0.06);
+        img {
+          width: 200px;
+          height: 56px;
+          padding: 0 36px;
+          cursor: pointer;
+          background-color: #5384ff;
+          transform: translateY(-1px);
+        }
+      }
+      .header-right {
+        margin-right: 16px;
+        cursor: pointer;
+        .user-options {
+          margin-right: 6px;
+          font-weight: 640;
+          font-size: 18px;
+          .icon {
+            transform: translateY(2px);
+          }
         }
       }
     }
-  }
-
-  .wd-menus-list {
-    height: calc(100% - 112px);
-  }
-
-  .wd-menu-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    height: 54px;
-    line-height: 54px;
-    color: #0f1222;
-    cursor: pointer;
-    transition: background ease 0.3s;
-    user-select: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &.small {
-      height: 36px;
-      line-height: 36px;
-
-      &::after {
-        display: none;
-      }
+    .side {
+      min-height: calc(100vh - 54px);
     }
-
-    &::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      display: block;
-      width: 2px;
-      height: 22px;
-      background: transparent;
-      transition: all ease 0.3s;
+    :deep(.fes-layout-container) {
+      background: #f7f8fa;
     }
-
-    &:hover,
-    &.router-link-active {
-      color: #5384ff;
-      background: rgba(83, 132, 255, 0.06);
-
-      .wd-menu-icon {
-        filter: invert(45%) sepia(13%) saturate(4258%) hue-rotate(197deg)
-          brightness(108%) contrast(100%);
-      }
-
-      &::after {
-        background: #5384ff;
-      }
+    .main {
+      min-width: calc(100vw - 300px);
+      margin: 16px;
+      padding: 24px;
+      background: #fff;
     }
-
-    .wd-menu-icon {
-      margin-right: 8px;
-      width: 14px;
-    }
-
-    .s-user-ctn {
-      position: relative;
-      padding-right: 50px;
-
-      .user-logout-btn {
-        position: absolute;
-        z-index: 10;
-        top: 0;
-        right: 0;
-        padding: 0 8px;
-        // color: @blue-color;
-      }
-    }
-  }
-
-  .copyright {
-    height: 48px;
-    line-height: 48px;
-    font-size: 12px;
-    color: rgba(15, 18, 34, 0.2);
-    text-align: center;
-  }
-}
-
-.simulator-user-list {
-  display: flex;
-  align-items: center;
-
-  .list-label {
-    width: 80px;
-    padding-right: 16px;
-  }
-
-  .list-ctn {
-    flex: 1;
   }
 }
 </style>

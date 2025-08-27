@@ -60,7 +60,7 @@ object ComputationExecutorConf {
     ).getValue
 
   val ENGINE_CONCURRENT_THREAD_NUM = CommonVars(
-    "wds.linkis.engineconn.concurrent.thread.num",
+    "linkis.engineconn.concurrent.thread.num",
     20,
     "Maximum thread pool of the concurrent EC"
   )
@@ -129,5 +129,11 @@ object ComputationExecutorConf {
 
   val ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH =
     CommonVars("linkis.ec.send.log.entrance.limit.length", 2000)
+
+  val ENGINE_KERBEROS_AUTO_REFRESH_ENABLED =
+    CommonVars("linkis.ec.kerberos.auto.refresh.enabled", false).getValue
+
+  val CLOSE_RS_OUTPUT_WHEN_RESET_BY_DEFAULT_ENABLED =
+    CommonVars("linkis.ec.rs.close.when.reset.enabled", true).getValue
 
 }

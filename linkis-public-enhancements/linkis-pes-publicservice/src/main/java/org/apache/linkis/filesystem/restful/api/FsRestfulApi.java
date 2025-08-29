@@ -1588,12 +1588,11 @@ public class FsRestfulApi {
       response = Message.class)
   @RequestMapping(path = "/copy-keytab-files", method = RequestMethod.GET)
   public Message copyAndEncryptKeytab(HttpServletRequest req, String user) {
-    final String operation = "copy-and-encrypt-keytab";
-    final String owner = "hadoop";
-    final String group = "hadoop";
-    final String permission = "rw-r-----";
+    final String owner = LINKIS_KEYTAB_FILE_OWNER.getValue();
+    final String group = LINKIS_KEYTAB_FILE_OWNER.getValue();
+    final String permission = LINKIS_KEYTAB_FILE_PEIMISSION.getValue();
     // 1. 获取用户信息并校验功能开关
-    String username = ModuleUserUtils.getOperationUser(req, operation);
+    String username = ModuleUserUtils.getOperationUser(req, "copy-and-encrypt-keytab");
     if (!Configuration.LINKIS_KEYTAB_SWITCH()) {
       logger.info("Keytab copy feature is disabled for user: {}", username);
       return Message.ok("Keytab copy feature is disabled");
@@ -1620,7 +1619,7 @@ public class FsRestfulApi {
         fs.mkdirs(linkisKeytabPath);
         // 设置目标目录权限
         fs.setOwner(linkisKeytabPath, owner);
-        fs.setPermission(linkisKeytabPath, "rwxr-x---");
+        fs.setPermission(linkisKeytabPath, permission);
         fs.setGroup(linkisKeytabPath, group);
       }
       // 5. 处理每个keytab文件

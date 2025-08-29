@@ -19,6 +19,7 @@ package org.apache.linkis.gateway.security
 
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.config.GatewayConfiguration.PROHIBIT_LOGIN_PREFIX
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
 import org.apache.linkis.gateway.security.token.TokenAuthentication
@@ -292,11 +293,14 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     }
 
     if (
-        GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && userName
-          .toLowerCase()
-          .startsWith("hduser") && (!getRequestSource(gatewayContext).equals("client"))
+        GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && (!getRequestSource(gatewayContext)
+          .equals("client"))
     ) {
-      return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
+      PROHIBIT_LOGIN_PREFIX.split(",").foreach { prefix =>
+        if (userName.toLowerCase().startsWith(prefix)) {
+          return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
+        }
+      }
     }
     if (
         GatewayConfiguration.ADMIN_USER.getValue.equals(

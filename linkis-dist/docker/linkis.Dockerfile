@@ -56,7 +56,7 @@ ENV TZ="Asia/Shanghai"
 ######################################################################
 FROM linkis-base as linkis
 
-ARG LINKIS_VERSION=1.7.0
+ARG LINKIS_VERSION=1.8.0
 ARG LINKIS_SYSTEM_USER="hadoop"
 ARG LINKIS_SYSTEM_UID="9001"
 
@@ -106,7 +106,7 @@ ENTRYPOINT ["/bin/bash"]
 ######################################################################
 FROM ${IMAGE_BASE_WEB} as linkis-web
 
-ARG LINKIS_VERSION=1.7.0
+ARG LINKIS_VERSION=1.8.0
 ARG LINKIS_HOME=/opt/linkis
 
 ENV LINKIS_WEB_ROOT ${LINKIS_HOME}-web

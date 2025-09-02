@@ -50,7 +50,8 @@ object StorageConfiguration {
   val STORAGE_BUILD_FS_CLASSES = CommonVars(
     "wds.linkis.storage.build.fs.classes",
     "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
-      "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem"
+    "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem," +
+    "org.apache.linkis.storage.factory.impl.BuildAzureBlobFileSystem"
   )
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
@@ -117,4 +118,7 @@ object StorageConfiguration {
 
   val S3_BUCKET = CommonVars[String]("linkis.storage.s3.bucket", "", null, null)
 
+  val AZURE_ACCT_NAME = CommonVars[String]("linkis.storage.azure.acctName", "", null, null)
+
+  val AZURE_ACCT_CONNECT_STR = CommonVars[String]("linkis.storage.azure.connectstr", "", null, null)
 }

@@ -167,7 +167,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.7.0
+LINKIS_VERSION=1.8.0
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

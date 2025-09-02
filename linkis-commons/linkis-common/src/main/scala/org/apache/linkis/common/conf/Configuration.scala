@@ -94,6 +94,8 @@ object Configuration extends Logging {
 
   val LINKIS_TOKEN = CommonVars("wds.linkis.token", "")
 
+  val HDFS_HOUR_DIR_SWITCH = CommonVars("linkis.hdfs.hour.dir.switch", false).getValue
+
   val LINKIS_KEYTAB_SWITCH: Boolean = CommonVars("linkis.keytab.switch", false).getValue
 
   val GLOBAL_CONF_CHN_NAME = "全局设置"

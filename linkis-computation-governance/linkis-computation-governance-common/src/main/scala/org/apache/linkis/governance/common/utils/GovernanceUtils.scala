@@ -143,15 +143,23 @@ object GovernanceUtils extends Logging {
     val date = new Date(System.currentTimeMillis)
     val dateString = dateFormat.format(date)
     val hourString = hourFormat.format(date) // 新增：当前小时（如 "08", "14"）
-    resStb
-      .append("result")
-      .append("/")
-      .append(dateString)
-      .append("/")
-      .append(hourString)
-      .append("/") // 新增：小时层级
-      .append(creator)
-      .toString()
+    if (Configuration.HDFS_HOUR_DIR_SWITCH) {
+      resStb.append("result")
+        .append("/")
+        .append(dateString)
+        .append("/")
+        .append(hourString)
+        .append("/") // 新增：小时层级
+        .append(creator)
+        .toString()
+    } else {
+      resStb.append("result")
+        .append("/")
+        .append(dateString)
+        .append("/")
+        .append(creator)
+        .toString()
+    }
   }
 
 }

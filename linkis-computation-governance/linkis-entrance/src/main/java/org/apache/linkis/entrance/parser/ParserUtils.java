@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.parser;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.utils.CommonLogPathUtils;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
@@ -53,26 +54,21 @@ public final class ParserUtils {
     String umUser = jobRequest.getExecuteUser();
     FsPath lopPrefixPath = new FsPath(logPathPrefix);
     if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
-      String commonLogPath =
-          logPathPrefix + "/" + "log" + "/" + dateString + "/" + hourString + "/" + creator;
+      String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/";
+      if (Configuration.HDFS_HOUR_DIR_SWITCH()) {
+        commonLogPath = commonLogPath + hourString + "/" + creator;
+      } else {
+        commonLogPath = commonLogPath + creator;
+      }
       logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
       CommonLogPathUtils.buildCommonPath(commonLogPath, false);
     } else {
-      logPath =
-          logPathPrefix
-              + "/"
-              + umUser
-              + "/"
-              + "log"
-              + "/"
-              + creator
-              + "/"
-              + dateString
-              + "/"
-              + hourString
-              + "/"
-              + jobRequest.getId()
-              + ".log";
+      logPath = logPathPrefix + "/" + umUser + "/log/" + creator + "/";
+      if (Configuration.HDFS_HOUR_DIR_SWITCH()) {
+        logPath = logPath + dateString + "/" + hourString + "/" + jobRequest.getId() + ".log";
+      } else {
+        logPath = logPath + hourString + "/" + jobRequest.getId() + ".log";
+      }
     }
     jobRequest.setLogPath(logPath);
   }

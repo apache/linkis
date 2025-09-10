@@ -90,4 +90,36 @@ class VariableUtilsTest {
     assertEquals(nameAndValue.size, 2)
   }
 
+  @Test def testReplaceBigDecimal(): Unit = {
+    val sql = """select
+                |${num} as num,
+                |${num-2} as num_sub2,
+                |${num+2} as num_add2,
+                |${long_num} as long_num,
+                |${long_num-1} as long_num_sub1,
+                |${long_num+1} as long_num_add1,
+                |${big_num} as big_num,
+                |${big_num-1} as big_num_sub1,
+                |${big_num+1} as big_num_add1,
+                |'${str_num}' as str_num""".stripMargin
+    val varMap = new util.HashMap[String, String]()
+    varMap.put("num", "301")
+    varMap.put("long_num", "9223372036854775807")
+    varMap.put("big_num", "3000102010000000000000000200001")
+    varMap.put("str_num", "03000102010000000000000000200001")
+
+    val resultSql = """select
+                      |301 as num,
+                      |299 as num_sub2,
+                      |303 as num_add2,
+                      |9223372036854775807 as long_num,
+                      |9223372036854775806 as long_num_sub1,
+                      |9223372036854775808 as long_num_add1,
+                      |3000102010000000000000000200001 as big_num,
+                      |3000102010000000000000000200000 as big_num_sub1,
+                      |3000102010000000000000000200002 as big_num_add1,
+                      |'03000102010000000000000000200001' as str_num""".stripMargin
+    assertEquals(VariableUtils.replace(sql, "sql", varMap), resultSql)
+  }
+
 }

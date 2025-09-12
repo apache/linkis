@@ -17,6 +17,11 @@
 
 package org.apache.linkis.manager.am.utils
 
+import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobRespProtocol}
 import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
@@ -26,6 +31,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType
 }
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
@@ -39,6 +45,8 @@ import com.google.gson.JsonObject
 object AMUtils {
 
   lazy val GSON = BDPJettyServerHelper.gson
+
+  private val SUCCESS_FLAG = 0
 
   val mapper = BDPJettyServerHelper.jacksonJson
 
@@ -307,6 +315,25 @@ object AMUtils {
     } catch {
       case _ => false
     }
+  }
+
+  def getTaskByTaskID(taskID: Long): JobRequest = Utils.tryCatch {
+    val jobRequest = new JobRequest()
+    jobRequest.setId(taskID)
+    jobRequest.setSource(null)
+    val jobReqQuery = JobReqQuery(jobRequest)
+    Sender
+      .getSender("linkis-ps-jobhistory")
+      .ask(jobReqQuery) match {
+      case response: JobRespProtocol if response.getStatus == SUCCESS_FLAG =>
+        response.getData.get(JobRequestConstants.JOB_HISTORY_LIST) match {
+          case tasks: util.List[JobRequest] if !tasks.isEmpty => tasks.get(0)
+          case _ => null
+        }
+      case _ => null
+    }
+  } { case e: Exception =>
+    throw new RuntimeException(s"Failed to get task by ID: $taskID", e)
   }
 
 }

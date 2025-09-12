@@ -23,11 +23,14 @@ import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.{EngineReuseLabelChooser, LabelChecker}
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
+import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -51,6 +54,7 @@ import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.label.LabelFilter
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
@@ -285,7 +289,34 @@ class DefaultEngineCreateService
       )
     }
 
-    // 8. Add the Label of EngineConn, and add the Alias of engineConn
+    // 8. Update job history metrics after successful engine creation
+    Utils.tryCatch {
+      if (taskId != null) {
+        val job = AMUtils.getTaskByTaskID(taskId.toLong)
+        val engineMetrics = job.getMetrics
+        val engineconnMap = new util.HashMap[String, Object]
+        val ticketIdMap = new util.HashMap[String, Object]
+        ticketIdMap.put(TaskConstant.ENGINE_INSTANCE, engineNode.getServiceInstance.getInstance)
+        engineconnMap.put(resourceTicketId, ticketIdMap)
+        engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
+        engineMetrics.put("ecmInstance", engineNode.getEMNode.getServiceInstance.getInstance)
+        engineMetrics.put(TaskConstant.ENGINE_INSTANCE, engineNode.getServiceInstance.getInstance)
+        // 通过RPC调用JobHistory服务更新metrics
+        job.setMetrics(engineMetrics)
+        val jobReqUpdate = JobReqUpdate(job)
+        // 发送RPC请求到JobHistory服务
+        val sender: Sender = Sender.getSender("linkis-ps-jobhistory")
+        sender.ask(jobReqUpdate)
+      } else {
+        logger.debug("No taskId found in properties, skip updating job history metrics")
+      }
+    } { t =>
+      logger.warn(
+        s"Failed to update job history metrics for engine ${engineNode.getServiceInstance}",
+        t
+      )
+    }
+    // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)

@@ -40,6 +40,7 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -128,6 +129,15 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           )
         }
       }
+
+      // metrics 增量更新逻辑
+      if (
+          JobhistoryConfiguration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
+          jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
+      ) {
+        mergeMetrics(jobReq)
+      }
+
       val jobUpdate = jobRequest2JobHistory(jobReq)
       if (jobUpdate.getUpdatedTime == null) {
         throw new QueryException(
@@ -570,6 +580,61 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       )
     }
     result
+  }
+
+  /**
+   * Merge metrics incrementally to avoid overwriting existing metrics data
+   * 增量合并metrics，避免覆盖现有的metrics数据
+   *
+   * @param jobReq
+   *   The job request to be updated
+   */
+  private def mergeMetrics(jobReq: JobRequest): Unit = {
+    Utils.tryCatch {
+      // Get existing job history from database
+      val existingJobHistory = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
+      if (existingJobHistory != null) {
+        // Get existing job data
+        val existingJob = getJobHistoryByIdAndName(jobReq.getId, null)
+        if (existingJob != null && StringUtils.isNotBlank(existingJob.getMetrics)) {
+
+          // Parse existing metrics from database
+          val existingMetricsMap = Utils.tryCatch {
+            BDPJettyServerHelper.gson.fromJson(
+              existingJob.getMetrics,
+              classOf[util.Map[String, AnyRef]]
+            )
+          } { t =>
+            logger.warn(
+              s"Failed to parse existing metrics for job ${jobReq.getId}: ${t.getMessage}"
+            )
+            new util.HashMap[String, AnyRef]()
+          }
+
+          // Get new metrics from jobReq
+          val newMetricsMap = jobReq.getMetrics
+
+          // Merge: existing metrics + new metrics (new metrics override if key exists)
+          if (existingMetricsMap != null) {
+            val mergedMetrics = new util.HashMap[String, AnyRef](existingMetricsMap)
+            if (newMetricsMap != null) {
+              mergedMetrics.putAll(newMetricsMap)
+            }
+
+            // Set merged metrics back to jobReq
+            jobReq.setMetrics(mergedMetrics)
+
+            logger.info(s"Merged metrics for job ${jobReq.getId}: added ${newMetricsMap
+              .size()} new entries to ${existingMetricsMap.size()} existing entries")
+          }
+        }
+      }
+    } { t =>
+      logger.warn(
+        s"Failed to merge metrics for job ${jobReq.getId}, falling back to replace mode: ${t.getMessage}"
+      )
+    // If merge fails, keep the original behavior (replace)
+    }
   }
 
 }

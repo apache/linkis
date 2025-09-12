@@ -20,8 +20,8 @@
 <template>
   <div class="global-history">
     <Tabs v-model="tabName" @on-click="onClickTabs">
-      <TabPane 
-        v-for="tab in tabs" 
+      <TabPane
+        v-for="tab in tabs"
         :key="tab.name"
         :name="tab.name"
         :label="$t(tab.label)">
@@ -50,7 +50,7 @@
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
     <logWithPage ref="udfLog" logType="udfLog" v-show="tabName === 'udfLog' && showUDF && hasEngine" />
-    
+
     <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" :loading="termLogLoading" />
   </div>
 </template>
@@ -130,7 +130,7 @@ export default {
   async created() {
     this.hasResultData = false
     let engineInstance = this.$route.query.engineInstance
-    
+
     const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
     // 仅管理员可以查看引擎日志
     const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin') || storage.get('isLogDeptAdmin')))
@@ -193,12 +193,12 @@ export default {
             this.tabName = this.preName;
           }, 0);
           window.open(`http://${window.location.host}/#/results?parentPath=${this.jobhistoryTask.resultLocation}&taskId=${this.$route.query.taskID}&fileName=example.${this.jobhistoryTask.runType}`, '_blank')
-          
+
           return;
         } catch (error) {
           window.console.error(error)
         }
-        
+
       }
       this.tabName = name
       this.preName = name
@@ -218,11 +218,11 @@ export default {
         if(this.param) {
           this.$refs.logPanel.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
-            emInstance: this.param?.ecmInstance || '',
-            instance: this.param?.serviceInstance || '',
+            emInstance: this.jobhistoryTask?.ecmInstance || '',
+            instance: this.jobhistoryTask?.engineInstance || '',
             ticketId: this.param?.ticketId || '',
             engineType: this.param?.engineType || '',
-            logDirSuffix: this.param?.logDirSuffix || '',
+            logDirSuffix: this.jobhistoryTask?.engineLogPath || '',
           })
         }
 
@@ -230,11 +230,11 @@ export default {
         if(this.param) {
           this.$refs.udfLog.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
-            emInstance: this.param?.ecmInstance || '',
-            instance: this.param?.serviceInstance || '',
+            emInstance: this.jobhistoryTask?.ecmInstance || '',
+            instance: this.jobhistoryTask?.engineInstance || '',
             ticketId: this.param?.ticketId || '',
             engineType: this.param?.engineType || '',
-            logDirSuffix: this.param?.logDirSuffix || '',
+            logDirSuffix: this.jobhistoryTask?.udfLogPath || '',
           })
         }
 
@@ -256,15 +256,15 @@ export default {
             window.console.error(err);
             this.termLogs = '';
           }
-          
+
         }
-        
+
       } else {
         this.$nextTick(() => {
           this.$refs.logRef.fold();
           this.foldFlag = true;
         })
-        
+
       }
     },
     changeResultSet(data, cb) {
@@ -519,7 +519,7 @@ export default {
           return
         }
         await this.getLogs(jobhistory);
-        
+
         this.isLoading = false
       } catch (errorMsg) {
         window.console.error(errorMsg)

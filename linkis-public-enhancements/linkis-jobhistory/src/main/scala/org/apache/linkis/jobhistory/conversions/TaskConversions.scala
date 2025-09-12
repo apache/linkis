@@ -20,6 +20,7 @@ package org.apache.linkis.jobhistory.conversions
 import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.{
   JobAiHistory,
@@ -37,10 +38,12 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.{BooleanUtils, StringUtils}
 
 import org.springframework.beans.BeanUtils
 
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Date, Map}
@@ -351,6 +354,24 @@ object TaskConversions extends Logging {
     }
     taskVO.setObserveInfo(job.getObserveInfo)
     taskVO.setMetrics(job.getMetrics)
+
+    // 从metrics中提取引擎日志路径信息
+    if (null != metrics && metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
+      val engineconnMap = MapUtils.getMap(metrics, TaskConstant.JOB_ENGINECONN_MAP)
+      if (MapUtils.isNotEmpty(engineconnMap)) {
+        val ticketId = engineconnMap.keySet().toArray.head.toString
+        val pathSuffix =
+          ECPathUtils.getECWOrkDirPathSuffix(job.getExecuteUser, ticketId, engineType)
+        taskVO.setEngineLogPath(pathSuffix + File.separator + "logs")
+        taskVO.setUdfLogPath(pathSuffix + File.separator + "logs")
+        val ecmInstance = if (null == metrics.get("ecmInstance")) {
+          null
+        } else {
+          metrics.get("ecmInstance").toString
+        }
+        taskVO.setEcmInstance(ecmInstance)
+      }
+    }
     taskVO
   }
 

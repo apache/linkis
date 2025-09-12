@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+
 import com.google.common.cache.{Cache, CacheBuilder}
 
 class EntranceGroupFactory extends GroupFactory with Logging {

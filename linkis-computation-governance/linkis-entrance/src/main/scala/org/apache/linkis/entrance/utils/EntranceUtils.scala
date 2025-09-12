@@ -137,7 +137,10 @@ object EntranceUtils extends Logging {
     }
   }
 
-  def getUserDeapartmentId(username: String): String = {
+  /**
+   * 获取用户部门ID
+   */
+  def getUserDepartmentId(username: String): String = {
     var departmentId = ""
     val sender: Sender =
       Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
@@ -152,102 +155,33 @@ object EntranceUtils extends Logging {
     departmentId
   }
 
+  /**
+   * 动态引擎类型选择
+   */
   def getDynamicEngineType(sql: String, logAppender: java.lang.StringBuilder): String = {
-    var engineType = "spark"
+    val defaultEngineType = "spark"
+
     if (!EntranceConfiguration.AI_SQL_DYNAMIC_ENGINE_SWITCH) {
-      return engineType
+      return defaultEngineType
     }
-    // 参数校验
-    if (
-        StringUtils.isBlank(EntranceConfiguration.LINKIS_SYSTEM_NAME) ||
-        StringUtils.isBlank(EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN) ||
-        StringUtils.isBlank(EntranceConfiguration.DOCTOR_CLUSTER) ||
-        StringUtils.isBlank(EntranceConfiguration.DOCTOR_URL)
-    ) {
-      return engineType
-    }
+
     logger.info(s"AISQL automatically switches engines and begins to call Doctoris")
-    // 组装请求url
-    var printlog = s"Dynamic engine switching, using the engine's default values：$engineType"
-    var url = EntranceConfiguration.DOCTOR_URL + EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL
-    val timestampStr = String.valueOf(System.currentTimeMillis)
-    val signature = SHAUtils.Encrypt(
-      SHAUtils.Encrypt(
-        EntranceConfiguration.LINKIS_SYSTEM_NAME + EntranceConfiguration.DOCTOR_NONCE + timestampStr,
-        null
-      ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
-      null
+
+    val params = new util.HashMap[String, AnyRef]()
+    params.put("sql", sql)
+    params.put("highStability", "")
+    params.put("queueResourceUsage", "")
+
+    val request = DoctorRequest(
+      apiUrl = EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL,
+      params = params,
+      defaultValue = defaultEngineType,
+      successMessage = "Aisql intelligent selection engines, Suggest",
+      exceptionMessage = "Aisql intelligent selection component exception"
     )
-    url = url
-      .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
-      .replace("$timestamp", timestampStr)
-      .replace("$nonce", EntranceConfiguration.DOCTOR_NONCE)
-      .replace("$signature", signature)
-    // 组装请求
-    val httpPost = new HttpPost(url)
-    val parm = new util.HashMap[String, AnyRef]
-    parm.put("sql", sql)
-    parm.put("highStability", "")
-    parm.put("queueResourceUsage", "")
-    parm.put("cluster", EntranceConfiguration.DOCTOR_CLUSTER)
-    val json = BDPJettyServerHelper.gson.toJson(parm)
-    val requestConfig = RequestConfig
-      .custom()
-      .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .setConnectionRequestTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .setSocketTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .build()
-    val entity = new StringEntity(
-      json,
-      ContentType.create(ContentType.APPLICATION_JSON.getMimeType, StandardCharsets.UTF_8.toString)
-    )
-    entity.setContentEncoding(StandardCharsets.UTF_8.toString)
-    httpPost.setConfig(requestConfig)
-    httpPost.setEntity(entity)
-    val startTime = System.currentTimeMillis()
-    var responseStr = ""
-    // 捕获Doctoris端异常信息
-    try {
-      val execute = httpClient.execute(httpPost)
-      responseStr = EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
-    } catch {
-      case e: Exception =>
-        logger.warn(s"调用智能选择接口异常：sql: $sql ,entity: $entity,responseStr: $responseStr", e)
-        printlog =
-          s"Aisql intelligent selection component exception, using default engine：$engineType"
-        logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
-    }
-    if (StringUtils.isNotBlank(responseStr)) {
-      // 捕获Doctoris端数据异常信息
-      try {
-        // 请求结果处理
-        val endTime = System.currentTimeMillis()
-        val responseMapJson: Map[String, Object] =
-          BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
-        if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
-          val dataMap = MapUtils.getMap(responseMapJson, "data")
-          engineType = dataMap.get("engine").toString
-          // 获取命中规则
-          val reason = dataMap.get("reason").toString
-          val duration = (endTime - startTime) / 1000.0 // 计算耗时（单位：秒）
-          printlog =
-            s"Aisql intelligent selection engines, Suggest $engineType to execute tasks,Hit rules: $reason ,This decision took $duration seconds"
-        } else {
-          throw new EntranceRPCException(
-            EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
-            EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorDesc
-          )
-        }
-      } catch {
-        case e: Exception =>
-          logger.warn(s"Doctoris返回数据解析失败：josn: $responseStr", e)
-          printlog =
-            s"Aisql intelligent selection data parse exception, using the engine's default values：$engineType"
-      } finally {
-        logAppender.append(LogUtils.generateInfo(s"$printlog\n"))
-      }
-    }
-    engineType
+
+    val response = callDoctorService(request, logAppender)
+    response.result
   }
 
   def dealsparkDynamicConf(
@@ -308,6 +242,201 @@ object EntranceUtils extends Logging {
       )
       TaskUtils.addStartupMap(params, properties)
     }
+  }
+
+  /**
+   * 敏感信息SQL检查
+   */
+  def sensitiveSqlCheck(
+      sql: String,
+      user: String,
+      logAppender: java.lang.StringBuilder
+  ): (Boolean, String) = {
+    val params = new util.HashMap[String, AnyRef]()
+    params.put("sql", sql)
+    params.put("user", user)
+
+    val request = DoctorRequest(
+      apiUrl = EntranceConfiguration.DOCTOR_ENCRYPT_SQL_URL,
+      params = params,
+      defaultValue = "false",
+      successMessage = "Sensitive SQL Check result",
+      exceptionMessage = "Sensitive SQL Check exception"
+    )
+
+    val response = callDoctorService(request, logAppender)
+    (response.result.toBoolean, response.reason)
+  }
+
+  /**
+   * Doctor服务调用通用框架
+   */
+  case class DoctorRequest(
+      apiUrl: String,
+      params: util.Map[String, AnyRef],
+      defaultValue: String,
+      successMessage: String,
+      exceptionMessage: String
+  )
+
+  case class DoctorResponse(
+      success: Boolean,
+      result: String,
+      reason: String = "",
+      duration: Double = 0.0
+  )
+
+  /**
+   * 通用Doctor服务调用方法
+   */
+  private def callDoctorService(
+      request: DoctorRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    // 检查必要的配置参数
+    if (!isValidDoctorConfiguration()) {
+      logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+      return DoctorResponse(success = false, result = request.defaultValue)
+    }
+
+    try {
+      val startTime = System.currentTimeMillis()
+      val url = buildDoctorRequestUrl(request.apiUrl)
+      val response = executeDoctorHttpRequest(url, request.params)
+
+      if (StringUtils.isBlank(response)) {
+        return DoctorResponse(success = false, result = request.defaultValue)
+      }
+
+      parseDoctorResponse(response, startTime, request, logAppender)
+    } catch {
+      case e: Exception =>
+        logger.warn(s"${request.exceptionMessage}: params: ${request.params}", e)
+        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+        DoctorResponse(success = false, result = request.defaultValue)
+    }
+  }
+
+  /**
+   * 检查Doctor配置参数是否有效
+   */
+  private def isValidDoctorConfiguration(): Boolean = {
+    StringUtils.isNotBlank(EntranceConfiguration.LINKIS_SYSTEM_NAME) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_CLUSTER) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_URL)
+  }
+
+  /**
+   * 构建Doctor请求URL
+   */
+  private def buildDoctorRequestUrl(apiUrl: String): String = {
+    val timestampStr = String.valueOf(System.currentTimeMillis)
+    val signature = SHAUtils.Encrypt(
+      SHAUtils.Encrypt(
+        EntranceConfiguration.LINKIS_SYSTEM_NAME + EntranceConfiguration.DOCTOR_NONCE + timestampStr,
+        null
+      ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
+      null
+    )
+
+    (EntranceConfiguration.DOCTOR_URL + apiUrl)
+      .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
+      .replace("$timestamp", timestampStr)
+      .replace("$nonce", EntranceConfiguration.DOCTOR_NONCE)
+      .replace("$signature", signature)
+  }
+
+  /**
+   * 执行Doctor HTTP请求
+   */
+  private def executeDoctorHttpRequest(url: String, params: util.Map[String, AnyRef]): String = {
+    val httpPost = new HttpPost(url)
+    // 添加通用参数
+    params.put("cluster", EntranceConfiguration.DOCTOR_CLUSTER)
+
+    val json = BDPJettyServerHelper.gson.toJson(params)
+    val requestConfig = RequestConfig
+      .custom()
+      .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setConnectionRequestTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setSocketTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .build()
+
+    val entity = new StringEntity(
+      json,
+      ContentType.create(ContentType.APPLICATION_JSON.getMimeType, StandardCharsets.UTF_8.toString)
+    )
+    entity.setContentEncoding(StandardCharsets.UTF_8.toString)
+    httpPost.setConfig(requestConfig)
+    httpPost.setEntity(entity)
+
+    val execute = httpClient.execute(httpPost)
+    EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
+  }
+
+  /**
+   * 解析Doctor响应结果
+   */
+  private def parseDoctorResponse(
+      responseStr: String,
+      startTime: Long,
+      request: DoctorRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    try {
+      val endTime = System.currentTimeMillis()
+      val responseMapJson: Map[String, Object] =
+        BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
+
+      if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
+        val dataMap = MapUtils.getMap(responseMapJson, "data")
+        val duration = (endTime - startTime) / 1000.0
+
+        // 根据不同的API返回不同的结果
+        if (request.apiUrl.contains("encrypt")) {
+          // 敏感信息检查API
+          val sensitive = dataMap.get("sensitive").toString.toBoolean
+          val reason = dataMap.get("reason").toString
+          logInfo(
+            s"${request.successMessage}: $sensitive, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(
+            success = true,
+            result = sensitive.toString,
+            reason = reason,
+            duration = duration
+          )
+        } else {
+          // 动态引擎选择API
+          val engineType = dataMap.get("engine").toString
+          val reason = dataMap.get("reason").toString
+          logInfo(
+            s"${request.successMessage}: $engineType, Hit rules: $reason, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
+        }
+      } else {
+        throw new EntranceRPCException(
+          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
+          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorDesc
+        )
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn(s"Doctoris返回数据解析失败：json: $responseStr", e)
+        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+        DoctorResponse(success = false, result = request.defaultValue)
+    }
+  }
+
+  /**
+   * 记录日志信息
+   */
+  private def logInfo(message: String, logAppender: java.lang.StringBuilder): Unit = {
+    logAppender.append(LogUtils.generateInfo(s"$message\n"))
   }
 
 }

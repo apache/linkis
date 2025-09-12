@@ -352,6 +352,11 @@ object EntranceConfiguration {
     "/api/v1/external/engine/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
   ).getValue
 
+  val DOCTOR_ENCRYPT_SQL_URL = CommonVars(
+    "linkis.encrypt.doctor.api",
+    "/api/v1/external/encrypt/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+  ).getValue
+
   val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
 
   val DOCTOR_NONCE = CommonVars.apply("linkis.doctor.signature.nonce", "").getValue
@@ -385,5 +390,23 @@ object EntranceConfiguration {
 
   var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
     CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_SWITCH =
+    CommonVars[Boolean]("linkis.doctor.sensitive.sql.check.switch", false).getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_RUNTYPE =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.run.Type", "sql,python").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_CREATOR =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "IDE").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.department", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.whitelist", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark").getValue
 
 }

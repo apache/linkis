@@ -386,8 +386,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
             )
             return labels
           }
-          val executeUserDepartmentId = EntranceUtils.getUserDeapartmentId(executeUser)
-          val submitUserDepartmentId = EntranceUtils.getUserDeapartmentId(submitUser)
+          val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(executeUser)
+          val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(submitUser)
           if (
               (StringUtils.isNotBlank(executeUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
                 .contains(executeUserDepartmentId)) ||

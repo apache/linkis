@@ -58,5 +58,5 @@ public interface JobHistoryQueryService {
 
     List<JobHistory> taskDurationTopN(Date sDate, Date eDate, String username, String creator, String engineType);
 
-
+    JobHistory getJobHistoryByIdAndNameBrief(Long jobId, String username);
 }

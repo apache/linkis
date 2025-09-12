@@ -354,6 +354,26 @@ object TaskConversions extends Logging {
     taskVO
   }
 
+  /**
+   * status、progress、id、execid、log_path、result_location、umUser、executeUser、errDesc、errCode
+   */
+  def jobHistory2BriefTaskVO(job: JobHistory): QueryTaskVO = {
+    if (null == job) return null
+    val taskVO = new QueryTaskVO
+    // 需求中指定的字段
+    taskVO.setStatus(job.getStatus)
+    taskVO.setProgress(job.getProgress)
+    taskVO.setTaskID(job.getId) // id
+    taskVO.setExecId(job.getJobReqId) // execid
+    taskVO.setLogPath(job.getLogPath) // log_path
+    taskVO.setResultLocation(job.getResultLocation) // result_location
+    taskVO.setUmUser(job.getSubmitUser) // umUser
+    taskVO.setExecuteUser(job.getExecuteUser) // executeUser
+    taskVO.setErrDesc(job.getErrorDesc) // errDesc
+    taskVO.setErrCode(job.getErrorCode) // errCode
+    taskVO
+  }
+
   def getLabelListFromJson(labelJson: String): util.List[Label[_]] = {
     val labelMap =
       BDPJettyServerHelper.gson.fromJson(labelJson, classOf[util.HashMap[String, String]])

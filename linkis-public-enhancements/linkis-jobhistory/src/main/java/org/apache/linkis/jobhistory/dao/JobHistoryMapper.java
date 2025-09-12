@@ -139,6 +139,8 @@ public interface JobHistoryMapper {
 
   List<JobHistory> selectJobHistoryNoCode(JobHistory jobReq);
 
+  List<JobHistory> selectJobHistoryBrief(JobHistory jobReq);
+
   /**
    * query wait for failover job
    *

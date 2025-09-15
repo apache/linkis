@@ -136,9 +136,9 @@ export default {
     let taskID = this.$route.query.taskID
     await this.initHistory(taskID);
     if(engineInstance && isAdminShowEngineLog) {
-      this.hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance);
+      this.hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance && !!this.jobhistoryTask.engineLogPath);
+      this.showUDF = this.hasEngine && ['spark', 'hive'].includes(this.jobhistoryTask?.engineType || '')
     }
-    this.showUDF = ['spark', 'hive'].includes(this.jobhistoryTask?.engineType || '')
     this.tabs = [
       { name: 'log', label: 'message.linkis.log' },
       { name: 'code', label: 'message.linkis.executionCode' },

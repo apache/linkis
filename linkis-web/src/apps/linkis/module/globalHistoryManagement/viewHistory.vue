@@ -119,7 +119,6 @@ export default {
       isAdminModel: false,
       jobhistoryTask: null,
       hasEngine: false,
-      param: {},
       yarnAddress: '',
       logTimer: null,
       preName: 'log',
@@ -134,20 +133,12 @@ export default {
     const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
     // 仅管理员可以查看引擎日志
     const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin') || storage.get('isLogDeptAdmin')))
-
+    let taskID = this.$route.query.taskID
+    await this.initHistory(taskID);
     if(engineInstance && isAdminShowEngineLog) {
-      let url = '/linkisManager/ecinfo/ecrHistoryList?';
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 3);
-      url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
-      const res = await api.fetch(url,'get')
-      const param = res.engineList[0]
-      this.param = param;
-      this.hasEngine = !!param;
-
+      this.hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance);
     }
-    this.showUDF = ['spark', 'hive'].includes(this.param?.engineType || '')
+    this.showUDF = ['spark', 'hive'].includes(this.jobhistoryTask?.engineType || '')
     this.tabs = [
       { name: 'log', label: 'message.linkis.log' },
       { name: 'code', label: 'message.linkis.executionCode' },
@@ -170,8 +161,6 @@ export default {
     }
   },
   async mounted() {
-    let taskID = this.$route.query.taskID
-    await this.initHistory(taskID);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85;
   },
@@ -215,26 +204,26 @@ export default {
           })
         }
       } else if(name === 'engineLog') {
-        if(this.param) {
+        if(this.jobhistoryTask) {
           this.$refs.logPanel.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
-            emInstance: this.jobhistoryTask?.ecmInstance || '',
-            instance: this.jobhistoryTask?.engineInstance || '',
-            ticketId: this.param?.ticketId || '',
-            engineType: this.param?.engineType || '',
-            logDirSuffix: this.jobhistoryTask?.engineLogPath || '',
+            emInstance: this.jobhistoryTask.ecmInstance || '',
+            instance: this.jobhistoryTask.engineInstance || '',
+            ticketId: this.jobhistoryTask.ticketId || '',
+            engineType: this.jobhistoryTask.engineType || '',
+            logDirSuffix: this.jobhistoryTask.engineLogPath || '',
           })
         }
 
       } else if(name === 'udfLog') {
-        if(this.param) {
+        if(this.jobhistoryTask) {
           this.$refs.udfLog.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
-            emInstance: this.jobhistoryTask?.ecmInstance || '',
-            instance: this.jobhistoryTask?.engineInstance || '',
-            ticketId: this.param?.ticketId || '',
-            engineType: this.param?.engineType || '',
-            logDirSuffix: this.jobhistoryTask?.udfLogPath || '',
+            emInstance: this.jobhistoryTask.ecmInstance || '',
+            instance: this.jobhistoryTask.engineInstance || '',
+            ticketId: this.jobhistoryTask.ticketId || '',
+            engineType: this.jobhistoryTask.engineType || '',
+            logDirSuffix: this.jobhistoryTask.engineLogPath || '',
           })
         }
 

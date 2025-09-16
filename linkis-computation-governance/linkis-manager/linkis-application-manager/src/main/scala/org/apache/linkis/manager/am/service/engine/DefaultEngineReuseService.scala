@@ -24,6 +24,7 @@ import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.NodeSelector
+import org.apache.linkis.manager.am.service.ECResourceInfoService
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -90,6 +91,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
   @Autowired
   private var nodeManagerPersistence: NodeManagerPersistence = _
+
+  @Autowired
+  private var ecResourceInfoService: ECResourceInfoService = _
 
   private val instanceCache: Cache[String, util.Map[ScoreServiceInstance, util.List[Label[_]]]] =
     CacheBuilder
@@ -378,6 +382,14 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           .toJson(engine) + " from engineLabelMap : " + AMUtils.GSON.toJson(instances)
       )
     }
+    val engineNode =
+      ecResourceInfoService.getECResourceInfoRecordByInstance(engine.getServiceInstance.getInstance)
+    AMUtils.updateMetrics(
+      taskId,
+      engineNode.getTicketId,
+      engineNode.getServiceInstance,
+      engineNode.getEcmInstance
+    )
     engine
   }
 

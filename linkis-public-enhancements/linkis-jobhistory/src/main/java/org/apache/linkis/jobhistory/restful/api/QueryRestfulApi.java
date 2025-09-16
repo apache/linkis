@@ -109,7 +109,7 @@ public class QueryRestfulApi {
   public Message getTaskByID(
       HttpServletRequest req,
       @PathVariable("id") Long jobId,
-      @RequestParam(value = "brief", required = false, defaultValue = "false") Boolean brief) {
+      @RequestParam(value = "brief", required = false) String brief) {
     String username = SecurityFilter.getLoginUsername(req);
     if (Configuration.isJobHistoryAdmin(username)
         || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()
@@ -117,7 +117,7 @@ public class QueryRestfulApi {
       username = null;
     }
     JobHistory jobHistory = null;
-    if (brief) {
+    if (Boolean.parseBoolean(brief)) {
       jobHistory = jobHistoryQueryService.getJobHistoryByIdAndNameBrief(jobId, username);
     } else if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
       // 简要模式或配置为不查询执行代码时，使用NoCode方法
@@ -134,7 +134,7 @@ public class QueryRestfulApi {
     }
 
     QueryTaskVO taskVO;
-    if (brief) {
+    if (Boolean.parseBoolean(brief)) {
       taskVO = TaskConversions.jobHistory2BriefTaskVO(jobHistory);
     } else {
       taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);

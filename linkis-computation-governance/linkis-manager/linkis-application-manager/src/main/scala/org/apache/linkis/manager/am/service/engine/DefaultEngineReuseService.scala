@@ -25,19 +25,23 @@ import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.NodeSelector
 import org.apache.linkis.manager.am.utils.AMUtils
+import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
   PYTHON_VERSION_KEY,
   SPARK_PYTHON_VERSION_KEY
 }
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineTypeLabel,
+  ReuseExclusionLabel,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
@@ -57,6 +61,8 @@ import java.util.concurrent.{TimeoutException, TimeUnit}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
+
+import com.google.common.cache.{Cache, CacheBuilder}
 
 @Service
 class DefaultEngineReuseService extends AbstractEngineService with EngineReuseService with Logging {
@@ -85,6 +91,26 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   @Autowired
   private var nodeManagerPersistence: NodeManagerPersistence = _
 
+  private val instanceCache: Cache[String, util.Map[ScoreServiceInstance, util.List[Label[_]]]] =
+    CacheBuilder
+      .newBuilder()
+      .maximumSize(AMConfiguration.ENGINE_REUSE_CACHE_MAX_SIZE.getValue)
+      .expireAfterWrite(
+        AMConfiguration.ENGINE_REUSE_CACHE_EXPIRE_TIME.getValue.toLong,
+        TimeUnit.MILLISECONDS
+      )
+      .build()
+
+  private val engineNodesCache: Cache[String, Array[EngineNode]] =
+    CacheBuilder
+      .newBuilder()
+      .maximumSize(AMConfiguration.ENGINE_REUSE_CACHE_MAX_SIZE.getValue)
+      .expireAfterWrite(
+        AMConfiguration.ENGINE_REUSE_CACHE_EXPIRE_TIME.getValue.toLong,
+        TimeUnit.MILLISECONDS
+      )
+      .build()
+
   /**
    *   1. Obtain the EC corresponding to all labels 2. Judging reuse exclusion tags and fixed engine
    *      labels 3. Select the EC with the lowest load available 4. Lock the corresponding EC
@@ -99,11 +125,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     val taskId = JobUtils.getJobIdFromStringMap(engineReuseRequest.getProperties)
     logger.info(s"Task $taskId Start to reuse Engine for request: $engineReuseRequest")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+    val labels: util.List[Label[_]] = labelBuilderFactory.getLabels(engineReuseRequest.getLabels)
     val labelList = LabelUtils
-      .distinctLabel(
-        labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
-        userLabelService.getUserLabels(engineReuseRequest.getUser)
-      )
+      .distinctLabel(labels, userLabelService.getUserLabels(engineReuseRequest.getUser))
       .asScala
     logger.info(s"Task ${taskId} labelList size: ${labelList.size}");
     val exclusionInstances: Array[String] =
@@ -139,8 +163,31 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       }
     }
 
-    val instances = nodeLabelService.getScoredNodeMapsByLabels(filterLabelList)
-    logger.info(s"Task ${taskId} instances size: ${instances.size}");
+    val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
+    val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
+    val cacheKey: String = userCreatorLabel.getStringValue + "_" + engineTypeLabel.getEngineType
+
+    val cacheEnable: Boolean = AMConfiguration.ENGINE_REUSE_CACHE_SUPPORT_ENGINES.getValue.contains(
+      engineTypeLabel.getEngineType
+    ) && AMConfiguration.ENGINE_REUSE_ENABLE_CACHE.getValue
+
+    val shuffEnable: Boolean = AMConfiguration.ENGINE_REUSE_SHUFF_SUPPORT_ENGINES.getValue.contains(
+      engineTypeLabel.getEngineType
+    ) && RMConfiguration.LABEL_SERVICE_INSTANCE_SHUFF_SWITCH.getValue
+
+    val instances = if (cacheEnable) {
+      var localInstances: util.Map[ScoreServiceInstance, util.List[Label[_]]] =
+        instanceCache.getIfPresent(cacheKey)
+      if (localInstances == null) this synchronized {
+        localInstances = instanceCache.getIfPresent(cacheKey)
+        if (localInstances == null) {
+          localInstances =
+            nodeLabelService.getScoredNodeMapsByLabelsReuse(filterLabelList, shuffEnable)
+          instanceCache.put(cacheKey, localInstances)
+        }
+      }
+      localInstances
+    } else nodeLabelService.getScoredNodeMapsByLabelsReuse(filterLabelList, shuffEnable)
 
     if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
       val instancesKeys = instances.asScala.keys.toArray
@@ -161,9 +208,37 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         s"No engine can be reused, cause from db is null"
       )
     }
-    var engineScoreList =
-      getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
-    logger.info(s"Task ${taskId} engineScoreList size: ${engineScoreList.length}");
+
+    var engineScoreList = if (cacheEnable) {
+      var localEngineList: Array[EngineNode] = engineNodesCache.getIfPresent(cacheKey)
+      if (localEngineList == null) this synchronized {
+        localEngineList = engineNodesCache.getIfPresent(cacheKey)
+        if (localEngineList == null) {
+          localEngineList =
+            getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
+          engineNodesCache.put(cacheKey, localEngineList)
+        }
+      }
+      localEngineList
+    } else getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
+    logger.info(s"Task ${taskId} engineScoreList size: ${engineScoreList.length}")
+
+    // reuse EC according to template name
+    val confTemplateNameKey = "ec.resource.name"
+    val templateName: String =
+      getValueByKeyFromProps(confTemplateNameKey, engineReuseRequest.getProperties)
+    if (
+        StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
+    ) {
+      engineScoreList = engineScoreList
+        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
+        .filter(engine => {
+          val oldTemplateName: String =
+            getValueByKeyFromProps(confTemplateNameKey, parseParamsToMap(engine.getParams))
+          templateName.equalsIgnoreCase(oldTemplateName)
+        })
+      logger.info(s"${engineScoreList.length} engine by templateName can be reused.")
+    }
 
     // 获取需要的资源
     if (AMConfiguration.EC_REUSE_WITH_RESOURCE_RULE_ENABLE) {
@@ -198,10 +273,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         engineScoreList = engineScoreList
           .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
           .filter(engine => {
-            val params: String = engine.getParams
-            val paramsMap: util.Map[String, String] =
-              AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
-            val enginePythonVersion: String = getPythonVersion(paramsMap)
+            val enginePythonVersion: String = getPythonVersion(parseParamsToMap(engine.getParams))
             var pythonVersionMatch: Boolean = true
             if (
                 StringUtils.isNotBlank(pythonVersion) && StringUtils
@@ -309,16 +381,26 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     engine
   }
 
-  private def getPythonVersion(prop: util.Map[String, String]): String = {
-    var pythonVersion: String = null
-    if (prop == null) {
-      return null
+  private def parseParamsToMap(params: String) = {
+    if (StringUtils.isNotBlank(params)) {
+      AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
+    } else {
+      null
     }
+  }
 
-    if (prop.containsKey(PYTHON_VERSION_KEY)) {
-      pythonVersion = prop.get(PYTHON_VERSION_KEY)
-    } else if (prop.containsKey(SPARK_PYTHON_VERSION_KEY)) {
-      pythonVersion = prop.get(SPARK_PYTHON_VERSION_KEY)
+  private def getValueByKeyFromProps(key: String, paramsMap: util.Map[String, String]) = {
+    if (paramsMap != null) {
+      paramsMap.getOrDefault(key, "")
+    } else {
+      ""
+    }
+  }
+
+  private def getPythonVersion(prop: util.Map[String, String]): String = {
+    var pythonVersion: String = getValueByKeyFromProps(PYTHON_VERSION_KEY, prop)
+    if (StringUtils.isBlank(pythonVersion)) {
+      pythonVersion = getValueByKeyFromProps(SPARK_PYTHON_VERSION_KEY, prop)
     }
     pythonVersion
   }

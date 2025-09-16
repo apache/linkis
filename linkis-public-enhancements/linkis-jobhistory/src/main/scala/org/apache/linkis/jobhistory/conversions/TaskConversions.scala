@@ -359,18 +359,24 @@ object TaskConversions extends Logging {
     if (null != metrics && metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       val engineconnMap = MapUtils.getMap(metrics, TaskConstant.JOB_ENGINECONN_MAP)
       if (MapUtils.isNotEmpty(engineconnMap)) {
-        val ticketId = engineconnMap.keySet().toArray.head.toString
-        val pathSuffix =
-          ECPathUtils.getECWOrkDirPathSuffix(job.getExecuteUser, ticketId, engineType)
-        taskVO.setEngineLogPath(pathSuffix + File.separator + "logs")
-        taskVO.setUdfLogPath(pathSuffix + File.separator + "logs")
-        val ecmInstance = if (null == metrics.get("ecmInstance")) {
-          null
-        } else {
-          metrics.get("ecmInstance").toString
-        }
-        taskVO.setEcmInstance(ecmInstance)
+        // 兼容复用引擎Engine connMap存在两个对象，过滤无TicketId对象
+        val keyList = engineconnMap.keySet().toArray
+        keyList.foreach(key => {
+          val keyMap = MapUtils.getMap(engineconnMap, key)
+          val ticketId = MapUtils.getString(keyMap, TaskConstant.TICKET_ID)
+          val engineInstance = MapUtils.getString(metrics, TaskConstant.ENGINE_INSTANCE)
+          if (null != ticketId && (!ticketId.contains(engineInstance))) {
+            taskVO.setTicketId(ticketId)
+            val pathSuffix =
+              ECPathUtils.getECWOrkDirPathSuffix(job.getExecuteUser, ticketId, engineType)
+            taskVO.setEngineLogPath(pathSuffix + File.separator + "logs")
+          }
+        })
       }
+    }
+    if (null != metrics && metrics.containsKey(TaskConstant.ECM_INSTANCE)) {
+      val ecmInstance = MapUtils.getString(metrics, TaskConstant.ECM_INSTANCE)
+      taskVO.setEcmInstance(ecmInstance)
     }
     taskVO
   }

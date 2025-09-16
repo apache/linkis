@@ -18,10 +18,10 @@
 package org.apache.linkis.manager.am.utils
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobRespProtocol}
+import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate, JobRespProtocol}
 import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
@@ -31,6 +31,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType
 }
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 
@@ -42,7 +43,7 @@ import scala.collection.JavaConverters._
 
 import com.google.gson.JsonObject
 
-object AMUtils {
+object AMUtils extends Logging {
 
   lazy val GSON = BDPJettyServerHelper.gson
 
@@ -335,5 +336,36 @@ object AMUtils {
   } { case e: Exception =>
     throw new RuntimeException(s"Failed to get task by ID: $taskID", e)
   }
+
+  def updateMetrics(
+      taskId: String,
+      resourceTicketId: String,
+      emInstance: String,
+      ecmInstance: String
+  ): Unit =
+    Utils.tryCatch {
+      if (taskId != null) {
+        val job = getTaskByTaskID(taskId.toLong)
+        val engineMetrics = job.getMetrics
+        val engineconnMap = new util.HashMap[String, Object]
+        val ticketIdMap = new util.HashMap[String, Object]
+        ticketIdMap.put(TaskConstant.ENGINE_INSTANCE, emInstance)
+        ticketIdMap.put(TaskConstant.TICKET_ID, resourceTicketId)
+        engineconnMap.put(resourceTicketId, ticketIdMap)
+        engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
+        engineMetrics.put(TaskConstant.ECM_INSTANCE, ecmInstance: String)
+        engineMetrics.put(TaskConstant.ENGINE_INSTANCE, emInstance)
+        // 通过RPC调用JobHistory服务更新metrics
+        job.setMetrics(engineMetrics)
+        val jobReqUpdate = JobReqUpdate(job)
+        // 发送RPC请求到JobHistory服务
+        val sender: Sender = Sender.getSender("linkis-ps-jobhistory")
+        sender.ask(jobReqUpdate)
+      } else {
+        logger.debug("No taskId found in properties, skip updating job history metrics")
+      }
+    } { t =>
+      logger.warn(s"Failed to update job history metrics for engine ${emInstance}", t)
+    }
 
 }

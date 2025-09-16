@@ -288,34 +288,10 @@ class DefaultEngineCreateService
         s"Failed to update engineNode: ${t.getMessage}"
       )
     }
-
+    val emInstance = engineNode.getServiceInstance.getInstance
+    val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
     // 8. Update job history metrics after successful engine creation
-    Utils.tryCatch {
-      if (taskId != null) {
-        val job = AMUtils.getTaskByTaskID(taskId.toLong)
-        val engineMetrics = job.getMetrics
-        val engineconnMap = new util.HashMap[String, Object]
-        val ticketIdMap = new util.HashMap[String, Object]
-        ticketIdMap.put(TaskConstant.ENGINE_INSTANCE, engineNode.getServiceInstance.getInstance)
-        engineconnMap.put(resourceTicketId, ticketIdMap)
-        engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
-        engineMetrics.put("ecmInstance", engineNode.getEMNode.getServiceInstance.getInstance)
-        engineMetrics.put(TaskConstant.ENGINE_INSTANCE, engineNode.getServiceInstance.getInstance)
-        // 通过RPC调用JobHistory服务更新metrics
-        job.setMetrics(engineMetrics)
-        val jobReqUpdate = JobReqUpdate(job)
-        // 发送RPC请求到JobHistory服务
-        val sender: Sender = Sender.getSender("linkis-ps-jobhistory")
-        sender.ask(jobReqUpdate)
-      } else {
-        logger.debug("No taskId found in properties, skip updating job history metrics")
-      }
-    } { t =>
-      logger.warn(
-        s"Failed to update job history metrics for engine ${engineNode.getServiceInstance}",
-        t
-      )
-    }
+    AMUtils.updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance)
     // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)

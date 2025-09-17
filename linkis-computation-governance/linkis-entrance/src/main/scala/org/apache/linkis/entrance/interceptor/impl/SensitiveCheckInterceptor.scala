@@ -76,9 +76,17 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
       logAppender: lang.StringBuilder
   ): Unit = {
     val departmentId = EntranceUtils.getUserDepartmentId(user)
+    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val engine = LabelUtil.getEngineType(jobRequest.getLabels)
     if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(departmentId)) {
       val (result, reason) =
-        EntranceUtils.sensitiveSqlCheck(jobRequest.getExecutionCode, user, logAppender)
+        EntranceUtils.sensitiveSqlCheck(
+          jobRequest.getExecutionCode,
+          codeType,
+          engine,
+          user,
+          logAppender
+        )
       if (result && !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(user)) {
         throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
       }

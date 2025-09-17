@@ -37,11 +37,13 @@ import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateUtils
@@ -618,7 +620,16 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           if (existingMetricsMap != null) {
             val mergedMetrics = new util.HashMap[String, AnyRef](existingMetricsMap)
             if (newMetricsMap != null) {
+              // 基于已存在的Metrics和engineconnMap，使用新job的Metrics和engineconnMap进行增量修改，存量更新
+              val existingEngineConnMap = MapUtils
+                .getMap(existingMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
+                .asInstanceOf[util.Map[String, AnyRef]]
+              val newJobEngineConnMap = MapUtils
+                .getMap(newMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
+                .asInstanceOf[util.Map[String, AnyRef]]
+              existingEngineConnMap.putAll(newJobEngineConnMap)
               mergedMetrics.putAll(newMetricsMap)
+              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, existingEngineConnMap)
             }
 
             // Set merged metrics back to jobReq

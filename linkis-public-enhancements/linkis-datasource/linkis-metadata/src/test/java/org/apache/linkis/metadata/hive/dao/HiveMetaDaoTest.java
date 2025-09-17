@@ -136,7 +136,8 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     queryParam.setDbName("default");
     queryParam.setTableName("employee");
     queryParam.setUserName("admin");
-    Map<String, Object> list = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+    Map<String, Object> list =
+        hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
     Assertions.assertNull(list);
   }
 

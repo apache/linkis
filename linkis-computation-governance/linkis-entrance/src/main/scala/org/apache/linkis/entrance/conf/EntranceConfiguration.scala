@@ -398,7 +398,7 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.doctor.sensitive.sql.check.run.Type", "sql,python").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_CREATOR =
-    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "IDE").getValue
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT =
     CommonVars[String]("linkis.doctor.sensitive.sql.check.department", "").getValue

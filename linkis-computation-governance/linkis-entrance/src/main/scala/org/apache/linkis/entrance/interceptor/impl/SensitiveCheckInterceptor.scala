@@ -61,48 +61,38 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
     }
 
     // 检查执行用户和提交用户
-    checkUserSensitivity(
-      jobRequest.getExecuteUser,
-      jobRequest,
-      engineType,
-      languageType,
-      logAppender
-    )
-    checkUserSensitivity(
-      jobRequest.getSubmitUser,
-      jobRequest,
-      engineType,
-      languageType,
-      logAppender
-    )
+    val executeUserDept = EntranceUtils.getUserDepartmentId(jobRequest.getExecuteUser)
+    val submitUserDept = EntranceUtils.getUserDepartmentId(jobRequest.getSubmitUser)
+    val isWhiteList = !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getExecuteUser)
+    !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getExecuteUser)
+    val (executeUserResult: Boolean, executeUserReason: String) = if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(executeUserDept)) {
+      EntranceUtils.sensitiveSqlCheck(
+        jobRequest.getExecutionCode,
+        languageType,
+        engineType,
+        jobRequest.getExecuteUser,
+        logAppender
+      )
+    }
+    val (submitUserResult: Boolean, submitUserReason: String) = if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(submitUserDept)) {
+      EntranceUtils.sensitiveSqlCheck(
+        jobRequest.getExecutionCode,
+        languageType,
+        engineType,
+        jobRequest.getSubmitUser,
+        logAppender
+      )
+    }
+    if (executeUserResult && !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getExecuteUser)) {
+
+    }
+
+    if ((executeUserResult || submitUserResult)&&
+      ((!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getExecuteUser))
+      ||(!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getSubmitUser)))) {
+      throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
+    }
 
     jobRequest
   }
-
-  /**
-   * 检查用户敏感信息
-   */
-  private def checkUserSensitivity(
-      user: String,
-      jobRequest: JobRequest,
-      engineType: String,
-      languageType: String,
-      logAppender: lang.StringBuilder
-  ): Unit = {
-    val departmentId = EntranceUtils.getUserDepartmentId(user)
-    if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(departmentId)) {
-      val (result, reason) =
-        EntranceUtils.sensitiveSqlCheck(
-          jobRequest.getExecutionCode,
-          languageType,
-          engineType,
-          user,
-          logAppender
-        )
-      if (result && !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(user)) {
-        throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
-      }
-    }
-  }
-
 }

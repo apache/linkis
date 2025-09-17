@@ -354,7 +354,7 @@ object EntranceConfiguration {
 
   val DOCTOR_ENCRYPT_SQL_URL = CommonVars(
     "linkis.encrypt.doctor.api",
-    "/api/v1/external/encrypt/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+    "/api/v1/external/plaintext/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
   ).getValue
 
   val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue

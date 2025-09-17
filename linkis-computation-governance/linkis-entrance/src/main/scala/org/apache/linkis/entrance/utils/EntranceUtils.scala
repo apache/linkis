@@ -248,13 +248,17 @@ object EntranceUtils extends Logging {
    * 敏感信息SQL检查
    */
   def sensitiveSqlCheck(
-      sql: String,
+      code: String,
+      codeType: String,
+      engine: String,
       user: String,
       logAppender: java.lang.StringBuilder
   ): (Boolean, String) = {
     val params = new util.HashMap[String, AnyRef]()
-    params.put("sql", sql)
+    params.put("code", code)
     params.put("user", user)
+    params.put("engine", engine)
+    params.put("codeType", codeType)
 
     val request = DoctorRequest(
       apiUrl = EntranceConfiguration.DOCTOR_ENCRYPT_SQL_URL,
@@ -394,7 +398,7 @@ object EntranceUtils extends Logging {
         val duration = (endTime - startTime) / 1000.0
 
         // 根据不同的API返回不同的结果
-        if (request.apiUrl.contains("encrypt")) {
+        if (request.apiUrl.contains("plaintext")) {
           // 敏感信息检查API
           val sensitive = dataMap.get("sensitive").toString.toBoolean
           val reason = dataMap.get("reason").toString

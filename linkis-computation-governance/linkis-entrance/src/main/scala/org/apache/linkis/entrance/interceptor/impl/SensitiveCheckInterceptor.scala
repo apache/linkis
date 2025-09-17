@@ -61,8 +61,20 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
     }
 
     // 检查执行用户和提交用户
-    checkUserSensitivity(jobRequest.getExecuteUser, jobRequest, engineType, logAppender)
-    checkUserSensitivity(jobRequest.getSubmitUser, jobRequest, engineType, logAppender)
+    checkUserSensitivity(
+      jobRequest.getExecuteUser,
+      jobRequest,
+      engineType,
+      languageType,
+      logAppender
+    )
+    checkUserSensitivity(
+      jobRequest.getSubmitUser,
+      jobRequest,
+      engineType,
+      languageType,
+      logAppender
+    )
 
     jobRequest
   }
@@ -74,15 +86,15 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
       user: String,
       jobRequest: JobRequest,
       engineType: String,
+      languageType: String,
       logAppender: lang.StringBuilder
   ): Unit = {
     val departmentId = EntranceUtils.getUserDepartmentId(user)
-    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
     if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(departmentId)) {
       val (result, reason) =
         EntranceUtils.sensitiveSqlCheck(
           jobRequest.getExecutionCode,
-          codeType,
+          languageType,
           engineType,
           user,
           logAppender

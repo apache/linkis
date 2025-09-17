@@ -32,17 +32,10 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
-  PYTHON_VERSION_KEY,
-  SPARK_PYTHON_VERSION_KEY
-}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{PYTHON_VERSION_KEY, SPARK_PYTHON_VERSION_KEY}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.{
-  EngineTypeLabel,
-  ReuseExclusionLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, ReuseExclusionLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
@@ -50,20 +43,17 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeoutException, TimeUnit}
-
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
-
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.linkis.common.conf.Configuration
 
 @Service
 class DefaultEngineReuseService extends AbstractEngineService with EngineReuseService with Logging {
@@ -382,14 +372,16 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           .toJson(engine) + " from engineLabelMap : " + AMUtils.GSON.toJson(instances)
       )
     }
-    val engineNode =
-      ecResourceInfoService.getECResourceInfoRecordByInstance(engine.getServiceInstance.getInstance)
-    AMUtils.updateMetrics(
-      taskId,
-      engineNode.getTicketId,
-      engineNode.getServiceInstance,
-      engineNode.getEcmInstance
-    )
+    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+      val engineNode =
+        ecResourceInfoService.getECResourceInfoRecordByInstance(engine.getServiceInstance.getInstance)
+      AMUtils.updateMetrics(
+        taskId,
+        engineNode.getTicketId,
+        engineNode.getServiceInstance,
+        engineNode.getEcmInstance
+      )
+    }
     engine
   }
 

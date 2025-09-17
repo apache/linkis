@@ -38,10 +38,7 @@ import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequestImpl,
-  EngineConnCreationDescImpl
-}
+import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequestImpl, EngineConnCreationDescImpl}
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.conf.LabelCommonConfig
@@ -58,15 +55,13 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
-
 import org.apache.commons.lang3.StringUtils
-
+import org.apache.linkis.common.conf.Configuration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeoutException, TimeUnit}
-
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
@@ -288,10 +283,12 @@ class DefaultEngineCreateService
         s"Failed to update engineNode: ${t.getMessage}"
       )
     }
-    val emInstance = engineNode.getServiceInstance.getInstance
-    val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
-    // 8. Update job history metrics after successful engine creation
-    AMUtils.updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance)
+    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+      val emInstance = engineNode.getServiceInstance.getInstance
+      val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
+      // 8. Update job history metrics after successful engine creation
+      AMUtils.updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance)
+    }
     // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)

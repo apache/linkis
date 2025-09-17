@@ -27,15 +27,13 @@ import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.metadata.utils.MdqConstants;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -172,15 +170,33 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
     }
     if (flag) {
       List<String> roles;
-      Map<String, Object> tableMap;
+      Map<String, Object> tableMap = new HashMap<>();
       if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
         roles = hiveMetaDao.getRolesByUser(userName);
         queryParam.withRoles(roles);
-        tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+        Map<String, Object> dbMap =
+            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
+        if (MapUtils.isNotEmpty(dbMap)) {
+          tableMap.putAll(dbMap);
+        }
+        Map<String, Object> tblMap =
+            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromTBL(queryParam);
+        if (MapUtils.isNotEmpty(tblMap)) {
+          tableMap.putAll(tblMap);
+        }
       } else {
         roles = hiveMetaDao.getRolesByUserSlave(userName);
         queryParam.withRoles(roles);
-        tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlave(queryParam);
+        Map<String, Object> dbMap =
+            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromDB(queryParam);
+        if (MapUtils.isNotEmpty(dbMap)) {
+          tableMap.putAll(dbMap);
+        }
+        Map<String, Object> tblMap =
+            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromTBL(queryParam);
+        if (MapUtils.isNotEmpty(tblMap)) {
+          tableMap.putAll(tblMap);
+        }
       }
       if (null != tableMap
           && !tableMap.isEmpty()

@@ -43,7 +43,4 @@ object JobhistoryConfiguration {
   val JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH =
     CommonVars[Boolean]("linkis.jobhistory.query.execution.code.switch", true).getValue
 
-  val METRICS_INCREMENTAL_UPDATE_ENABLE =
-    CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", true)
-
 }

@@ -354,7 +354,7 @@ object EntranceConfiguration {
 
   val DOCTOR_ENCRYPT_SQL_URL = CommonVars(
     "linkis.encrypt.doctor.api",
-    "/api/v1/external/encrypt/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+    "/api/v1/external/plaintext/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
   ).getValue
 
   val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
@@ -398,7 +398,7 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.doctor.sensitive.sql.check.run.Type", "sql,python").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_CREATOR =
-    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "IDE").getValue
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT =
     CommonVars[String]("linkis.doctor.sensitive.sql.check.department", "").getValue

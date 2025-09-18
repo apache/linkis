@@ -367,9 +367,6 @@ object TaskConversions extends Logging {
           val engineInstance = MapUtils.getString(metrics, TaskConstant.ENGINE_INSTANCE)
           if (null != ticketId && (!ticketId.contains(engineInstance))) {
             taskVO.setTicketId(ticketId)
-            val pathSuffix =
-              ECPathUtils.getECWOrkDirPathSuffix(job.getExecuteUser, ticketId, engineType)
-            taskVO.setEngineLogPath(pathSuffix + File.separator + "logs")
           }
         })
       }
@@ -377,6 +374,10 @@ object TaskConversions extends Logging {
     if (null != metrics && metrics.containsKey(TaskConstant.ECM_INSTANCE)) {
       val ecmInstance = MapUtils.getString(metrics, TaskConstant.ECM_INSTANCE)
       taskVO.setEcmInstance(ecmInstance)
+    }
+    if (null != metrics && metrics.containsKey(TaskConstant.ENGINE_LOG_PATH)) {
+      val engine_log_path = MapUtils.getString(metrics, TaskConstant.ENGINE_LOG_PATH)
+      taskVO.setEngineLogPath(engine_log_path)
     }
     taskVO
   }

@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate, JobRespProtocol}
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
@@ -31,12 +32,14 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType
 }
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
+import java.io.File
 import java.util
 
 import scala.collection.JavaConverters._
@@ -353,6 +356,13 @@ object AMUtils extends Logging {
         engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
         engineMetrics.put(TaskConstant.ECM_INSTANCE, ecmInstance: String)
         engineMetrics.put(TaskConstant.ENGINE_INSTANCE, emInstance)
+        val pathSuffix =
+          ECPathUtils.getECWOrkDirPathSuffix(
+            job.getExecuteUser,
+            resourceTicketId,
+            LabelUtil.getEngineType(job.getLabels)
+          ) + File.separator + "logs"
+        engineMetrics.put(TaskConstant.ENGINE_LOG_PATH, pathSuffix)
         // 通过RPC调用JobHistory服务更新metrics
         job.setMetrics(engineMetrics)
         val jobReqUpdate = JobReqUpdate(job)

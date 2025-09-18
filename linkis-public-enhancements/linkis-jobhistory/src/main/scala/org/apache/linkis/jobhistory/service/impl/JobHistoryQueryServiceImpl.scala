@@ -17,10 +17,16 @@
 
 package org.apache.linkis.jobhistory.service.impl
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
+import org.apache.linkis.governance.common.entity.job.{
+  JobRequest,
+  JobRequestWithDetail,
+  QueryException,
+  SubJobDetail
+}
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -37,10 +43,12 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
+
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -48,10 +56,11 @@ import java.{lang, util}
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
 import java.util.concurrent.{Callable, TimeUnit}
+
 import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
 import com.google.common.collect.{Iterables, Lists}
-import org.apache.linkis.common.conf.Configuration
 
 @Service
 class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {

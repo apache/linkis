@@ -136,6 +136,25 @@ export default {
     let taskID = this.$route.query.taskID
     await this.initHistory(taskID);
     if(engineInstance && isAdminShowEngineLog) {
+      let hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance && !!this.jobhistoryTask.engineLogPath);
+      if(!hasEngine){
+        // 可能是因为老数据在get里面没有 再查一下ecrHistoryList试试
+        let url = '/linkisManager/ecinfo/ecrHistoryList?';
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 3);
+        url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+        const res = await api.fetch(url,'get')
+        const param = res.engineList[0]
+        if(param){
+          this.jobhistoryTask.ticketId = param.ticketId;
+          this.jobhistoryTask.engineType = param.engineType;
+          this.jobhistoryTask.ecmInstance = param.ecmInstance;
+          this.jobhistoryTask.engineInstance = param.serviceInstance;
+          this.jobhistoryTask.engineLogPath = param.logDirSuffix;
+          this.jobhistoryTask.udfLogPath = param.logDirSuffix;
+        }
+      }
       this.hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance && !!this.jobhistoryTask.engineLogPath);
       this.showUDF = this.hasEngine && ['spark', 'hive'].includes(this.jobhistoryTask?.engineType || '')
     }

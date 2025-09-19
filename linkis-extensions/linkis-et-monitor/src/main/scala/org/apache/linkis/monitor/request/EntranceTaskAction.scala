@@ -21,7 +21,7 @@ import org.apache.linkis.httpclient.request.GetAction
 
 import org.apache.commons.lang3.StringUtils
 
-class EntranceTaskAction extends GetAction with MonitorResourceAction {
+class EntranceTaskAction extends GetAction with MonitorAction {
   override def suffixURLs: Array[String] = Array("entrance/operation/metrics", "taskinfo")
 }
 

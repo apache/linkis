@@ -17,10 +17,10 @@
 
 package org.apache.linkis.entrance.persistence;
 
+import org.apache.linkis.common.conf.Configuration$;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
-import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.exception.EntranceRPCException;
 import org.apache.linkis.entrance.exception.QueryFailedException;
@@ -65,8 +65,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
        Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
     */
     sender =
-        Sender.getSender(
-            EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
+        Sender.getSender(Configuration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
   }
 
   private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)

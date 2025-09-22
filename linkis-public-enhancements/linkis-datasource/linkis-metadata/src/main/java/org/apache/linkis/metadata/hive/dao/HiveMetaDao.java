@@ -106,6 +106,11 @@ public interface HiveMetaDao {
 
   List<Map<String, Object>> getColumnsSlave(MetadataQueryParam queryParam);
 
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
+
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlave(
+      MetadataQueryParam queryParam);
+
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserFromDB(
       MetadataQueryParam queryParam);
 

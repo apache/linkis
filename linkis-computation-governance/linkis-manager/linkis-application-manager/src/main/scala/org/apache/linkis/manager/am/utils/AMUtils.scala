@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.am.utils
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -325,7 +326,7 @@ object AMUtils extends Logging {
     jobRequest.setSource(null)
     val jobReqQuery = JobReqQuery(jobRequest)
     Sender
-      .getSender("linkis-ps-jobhistory")
+      .getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
       .ask(jobReqQuery) match {
       case response: JobRespProtocol if response.getStatus == SUCCESS_FLAG =>
         response.getData.get(JobRequestConstants.JOB_HISTORY_LIST) match {
@@ -372,7 +373,8 @@ object AMUtils extends Logging {
         job.setMetrics(engineMetrics)
         val jobReqUpdate = JobReqUpdate(job)
         // 发送RPC请求到JobHistory服务
-        val sender: Sender = Sender.getSender("linkis-ps-jobhistory")
+        val sender: Sender =
+          Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
         sender.ask(jobReqUpdate)
       } else {
         logger.debug("No taskId found in properties, skip updating job history metrics")
@@ -380,5 +382,41 @@ object AMUtils extends Logging {
     } { t =>
       logger.warn(s"Failed to update job history metrics for engine ${emInstance}", t)
     }
+
+  /**
+   * 异步更新job history metrics
+   * @param taskId
+   *   任务ID
+   * @param resourceTicketId
+   *   资源票据ID
+   * @param emInstance
+   *   引擎实例
+   * @param ecmInstance
+   *   ECM实例
+   * @param engineLogPath
+   *   引擎日志路径
+   * @param isReuse
+   *   是否复用引擎
+   */
+  def updateMetricsAsync(
+      taskId: String,
+      resourceTicketId: String,
+      emInstance: String,
+      ecmInstance: String,
+      engineLogPath: String,
+      isReuse: Boolean
+  ): Unit = {
+    import scala.concurrent.Future
+    import scala.util.{Failure, Success}
+
+    Future {
+      updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance, engineLogPath, isReuse)
+    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-")).onComplete {
+      case Success(_) =>
+        logger.debug(s"Task: $taskId metrics update completed successfully for engine: $emInstance")
+      case Failure(t) =>
+        logger.warn(s"Task: $taskId metrics update failed for engine: $emInstance", t)
+    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-"))
+  }
 
 }

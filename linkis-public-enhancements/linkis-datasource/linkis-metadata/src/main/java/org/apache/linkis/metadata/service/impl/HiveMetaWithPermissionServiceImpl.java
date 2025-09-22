@@ -174,28 +174,36 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
       if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
         roles = hiveMetaDao.getRolesByUser(userName);
         queryParam.withRoles(roles);
-        Map<String, Object> dbMap =
-            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
-        if (MapUtils.isNotEmpty(dbMap)) {
-          tableMap.putAll(dbMap);
-        }
-        Map<String, Object> tblMap =
-            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromTBL(queryParam);
-        if (MapUtils.isNotEmpty(tblMap)) {
-          tableMap.putAll(tblMap);
+        if (MdqConfiguration.HIVE_METADATA_SLOW_SQL_SWITCH()) {
+          Map<String, Object> dbMap =
+              hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
+          if (MapUtils.isNotEmpty(dbMap)) {
+            tableMap.putAll(dbMap);
+          }
+          Map<String, Object> tblMap =
+              hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromTBL(queryParam);
+          if (MapUtils.isNotEmpty(tblMap)) {
+            tableMap.putAll(tblMap);
+          }
+        } else {
+          tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
         }
       } else {
         roles = hiveMetaDao.getRolesByUserSlave(userName);
         queryParam.withRoles(roles);
-        Map<String, Object> dbMap =
-            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromDB(queryParam);
-        if (MapUtils.isNotEmpty(dbMap)) {
-          tableMap.putAll(dbMap);
-        }
-        Map<String, Object> tblMap =
-            hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromTBL(queryParam);
-        if (MapUtils.isNotEmpty(tblMap)) {
-          tableMap.putAll(tblMap);
+        if (MdqConfiguration.HIVE_METADATA_SLOW_SQL_SWITCH()) {
+          Map<String, Object> dbMap =
+              hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromDB(queryParam);
+          if (MapUtils.isNotEmpty(dbMap)) {
+            tableMap.putAll(dbMap);
+          }
+          Map<String, Object> tblMap =
+              hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlaveFromTBL(queryParam);
+          if (MapUtils.isNotEmpty(tblMap)) {
+            tableMap.putAll(tblMap);
+          }
+        } else {
+          tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserSlave(queryParam);
         }
       }
       if (null != tableMap

@@ -292,8 +292,8 @@ class DefaultEngineCreateService
     if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
       val emInstance = engineNode.getServiceInstance.getInstance
       val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
-      // 8. Update job history metrics after successful engine creation
-      AMUtils.updateMetrics(
+      // 8. Update job history metrics after successful engine creation - 异步执行
+      AMUtils.updateMetricsAsync(
         taskId,
         resourceTicketId,
         emInstance,

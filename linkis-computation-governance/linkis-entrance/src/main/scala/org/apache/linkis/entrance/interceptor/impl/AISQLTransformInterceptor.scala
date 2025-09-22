@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
@@ -134,7 +135,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
 
   private def persist(jobRequest: JobRequest) = {
     val sender: Sender =
-      Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
+      Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
     val jobAiRequest: JobAiRequest = new JobAiRequest
     BeanUtils.copyProperties(jobRequest, jobAiRequest)
     jobAiRequest.setId(null)

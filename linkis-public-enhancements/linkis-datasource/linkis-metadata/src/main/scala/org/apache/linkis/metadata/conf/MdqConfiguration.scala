@@ -34,4 +34,7 @@ object MdqConfiguration {
   val HIVE_METADATA_SALVE_SWITCH: Boolean =
     CommonVars.apply("linkis.hive.metadata.slave.switch", false).getValue
 
+  val HIVE_METADATA_SLOW_SQL_SWITCH: Boolean =
+    CommonVars.apply("linkis.hive.metadata.slow.sql.switch", true).getValue
+
 }

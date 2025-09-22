@@ -124,6 +124,19 @@ public abstract class SecurityUtils {
 
     // 4. Check url security, especially for the possibility of malicious characters appearing on
     // the host
+    try {
+      while (url.contains("%")) {
+        String decodedUrl = URLDecoder.decode(url, "UTF-8");
+        if (decodedUrl.equals(url)) {
+          // If the decomposition is the same as the original, avoid infinite loop
+          break;
+        }
+        url = decodedUrl;
+      }
+    } catch (UnsupportedEncodingException e) {
+      logger.error("URL decode failed: {}", e.getMessage());
+      throw new LinkisSecurityException(35001, "URL decode failed.");
+    }
     checkUrlIsSafe(url);
   }
 

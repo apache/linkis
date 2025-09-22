@@ -49,7 +49,7 @@ public class HiveUtils {
     try {
       res = new String(decoder.decode(str));
     } catch (Throwable e) {
-      logger.error(str + " decode failed", e);
+      logger.error("decode failed", e);
     }
     return res;
   }

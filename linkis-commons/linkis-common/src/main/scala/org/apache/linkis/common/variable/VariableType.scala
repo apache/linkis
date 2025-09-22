@@ -110,6 +110,44 @@ case class YearType(value: CustomYearType) extends VariableType {
 
 }
 
+case class BigDecimalValue(value: BigDecimal) extends VariableType {
+  override def getValue: String = {
+    val result = bigDecimalOrLong(value)
+    result match {
+      case bd: BigDecimal => bd.bigDecimal.toPlainString
+      case _ => result.toString
+    }
+  }
+
+  def calculator(signal: String, bValue: String): String = {
+    signal match {
+      case "+" => val res = value + BigDecimal(bValue); formatResult(res)
+      case "-" => val res = value - BigDecimal(bValue); formatResult(res)
+      case "*" => val res = value * BigDecimal(bValue); formatResult(res)
+      case "/" => val res = value / BigDecimal(bValue); formatResult(res)
+      case _ =>
+        throw new LinkisCommonErrorException(20050, s"BigDecimal class is not supported to use:$signal")
+    }
+  }
+
+  private def formatResult(bd: BigDecimal): String = {
+    val result = bigDecimalOrLong(bd)
+    result match {
+      case bd: BigDecimal => bd.bigDecimal.toPlainString
+      case _ => result.toString
+    }
+  }
+
+  private def bigDecimalOrLong(bd: BigDecimal): BigDecimal = {
+    // 检查是否为整数且在 Long 范围内
+    if (bd.isWhole && bd.isValidLong) {
+      bd.longValue
+    } else {
+      bd
+    }
+  }
+}
+
 case class LongType(value: Long) extends VariableType {
   override def getValue: String = value.toString
 

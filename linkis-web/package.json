@@ -25,7 +25,7 @@
     },
     "dependencies": {
         "@form-create/iview": "2.5.27",
-        "axios": "1.8.3",
+        "axios": "1.12.2",
         "dexie": "3.2.3",
         "dt-sql-parser": "3.0.5",
         "highlight.js": "10.7.0",

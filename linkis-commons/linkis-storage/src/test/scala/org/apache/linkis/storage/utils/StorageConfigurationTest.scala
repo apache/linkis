@@ -60,6 +60,11 @@ class StorageConfigurationTest {
       "txt.TextResultSet,table.TableResultSet,io.IOResultSet,html.HtmlResultSet,picture.PictureResultSet",
       storageresultsetclasses
     )
+    Assertions.assertEquals(
+      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
+        "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem",
+      storagebuildfsclasses
+    )
     Assertions.assertTrue(issharenode)
     Assertions.assertFalse(enableioproxy)
     Assertions.assertEquals("root", ioUser)

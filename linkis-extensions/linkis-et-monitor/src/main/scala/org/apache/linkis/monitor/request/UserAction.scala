@@ -15,12 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.request
+package org.apache.linkis.monitor.jobhistory.jobtime
 
-trait UserAction extends org.apache.linkis.httpclient.request.UserAction {
-  private var user: String = _
+import org.apache.linkis.monitor.core.ob.SingleObserverEvent
 
-  override def setUser(user: String): Unit = this.user = user
-
-  override def getUser: String = user
-}
+class StarrocksTimeKillHitEvent extends SingleObserverEvent

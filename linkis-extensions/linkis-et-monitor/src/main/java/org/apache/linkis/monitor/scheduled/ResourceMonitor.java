@@ -61,7 +61,7 @@ public class ResourceMonitor {
     // 获取emNode资源信息
     List<Map<String, Object>> emNodeVoList = new ArrayList<>();
     try {
-      Map<String, Object> resultmap = HttpsUntils.sendHttp(null, null);
+      Map<String, Object> resultmap = HttpsUntils.getEmsResourceList();
       // got interface data
       Map<String, List<Map<String, Object>>> data = MapUtils.getMap(resultmap, "data");
       emNodeVoList = data.getOrDefault("EMs", new ArrayList<>());

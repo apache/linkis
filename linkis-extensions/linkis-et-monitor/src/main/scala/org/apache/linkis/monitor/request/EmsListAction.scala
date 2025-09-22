@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 
-class EmsListAction extends GetAction with MonitorResourceAction {
+class EmsListAction extends GetAction with MonitorAction {
 
   override def suffixURLs: Array[String] = Array("linkisManager", "listAllEMs")
 

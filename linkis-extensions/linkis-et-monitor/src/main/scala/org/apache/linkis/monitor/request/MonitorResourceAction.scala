@@ -18,5 +18,6 @@
 package org.apache.linkis.monitor.request
 
 import org.apache.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.ujes.client.request.UserAction
 
-trait MonitorResourceAction extends DWSHttpAction with UserAction
+trait MonitorAction extends DWSHttpAction with UserAction

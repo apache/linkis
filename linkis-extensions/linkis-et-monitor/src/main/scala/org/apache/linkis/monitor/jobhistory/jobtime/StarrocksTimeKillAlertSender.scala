@@ -15,25 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.client
+package org.apache.linkis.monitor.jobhistory.jobtime
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
-import org.apache.linkis.httpclient.request.Action
-import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.monitor.request.MonitorAction
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.core.ob.{Event, Observer}
 
-class MonitorResourceClientImpl(clientConfig: DWSClientConfig) extends MonitorResourceClient {
+class StarrocksTimeKillAlertSender extends Observer with Logging {
 
-  private val dwsHttpClient =
-    new DWSHttpClient(clientConfig, "Linkis-MonitorResource-Execution-Thread")
+  /**
+   * Observer Pattern
+   */
+  override def update(e: Event, jobHistroyList: scala.Any): Unit = {}
 
-  override protected[client] def executeJob(monitorAction: MonitorAction): Result =
-    monitorAction match {
-
-      case action: Action => dwsHttpClient.execute(action)
-
-    }
-
-  override def close(): Unit = dwsHttpClient.close()
 }

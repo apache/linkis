@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor
 
+import org.apache.linkis.monitor.department.dao.UserDepartmentInfoMapper
 import org.apache.linkis.monitor.factory.MapperFactory
 import org.apache.linkis.monitor.instance.dao.InstanceInfoDao
 import org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper
@@ -39,10 +40,14 @@ class LinkisJobHistoryScanSpringConfiguration {
   @Autowired
   private var instanceInfoMapper: InstanceInfoDao = _
 
+  @Autowired
+  private var userDepartmentInfoMapper: UserDepartmentInfoMapper = _
+
   @PostConstruct
   def init(): Unit = {
     MapperFactory.setJobHistoryMapper(jobHistoryMapper)
     MapperFactory.setInstanceInfoMapper(instanceInfoMapper)
+    MapperFactory.setUserDepartmentInfoMapper(userDepartmentInfoMapper)
   }
 
 }

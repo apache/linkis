@@ -24,7 +24,7 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.monitor.config.MonitorConfig;
 import org.apache.linkis.monitor.constants.Constants;
-import org.apache.linkis.monitor.until.HttpsUntils;
+import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
 import org.apache.linkis.monitor.utils.alert.ims.PooledImsAlertUtils;
@@ -57,7 +57,8 @@ public class UserModeMonitor {
 
   private static final Logger logger = LoggerFactory.getLogger(UserModeMonitor.class);
 
-  private static final DWSClientConfig clientConfig = HttpsUntils.dwsClientConfig;
+  private static final DWSClientConfig clientConfig =
+      ClientSingleton.createClientConfig(null, null);
 
   private static final UJESClient client = new UJESClientImpl(clientConfig);
 
@@ -138,7 +139,7 @@ public class UserModeMonitor {
   public void dbJob() {
     Map<String, Object> properties = new HashMap<>();
     properties.put("readTimeout", MonitorConfig.USER_MODE_INTERFACE_TIMEOUT.getValue());
-    DWSClientConfig clientConfig = HttpsUntils.createClientConfig(null, properties);
+    DWSClientConfig clientConfig = ClientSingleton.createClientConfig(null, properties);
     UJESClientImpl ujesClient = new UJESClientImpl(clientConfig);
     GetTableStatisticInfoAction builder =
         GetTableStatisticInfoAction.builder()

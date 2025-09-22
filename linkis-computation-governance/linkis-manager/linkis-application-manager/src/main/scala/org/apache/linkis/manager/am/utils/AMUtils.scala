@@ -342,7 +342,9 @@ object AMUtils extends Logging {
       taskId: String,
       resourceTicketId: String,
       emInstance: String,
-      ecmInstance: String
+      ecmInstance: String,
+      engineLogPath: String,
+      isReuse: Boolean
   ): Unit =
     Utils.tryCatch {
       if (taskId != null) {
@@ -356,12 +358,15 @@ object AMUtils extends Logging {
         engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
         engineMetrics.put(TaskConstant.ECM_INSTANCE, ecmInstance: String)
         engineMetrics.put(TaskConstant.ENGINE_INSTANCE, emInstance)
-        val pathSuffix =
+        val pathSuffix = if (isReuse && StringUtils.isNotBlank(engineLogPath)) {
+          engineLogPath
+        } else {
           ECPathUtils.getECWOrkDirPathSuffix(
             job.getExecuteUser,
             resourceTicketId,
             LabelUtil.getEngineType(job.getLabels)
           ) + File.separator + "logs"
+        }
         engineMetrics.put(TaskConstant.ENGINE_LOG_PATH, pathSuffix)
         // 通过RPC调用JobHistory服务更新metrics
         job.setMetrics(engineMetrics)

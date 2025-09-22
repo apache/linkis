@@ -392,7 +392,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         taskId,
         engineNode.getTicketId,
         engineNode.getServiceInstance,
-        engineNode.getEcmInstance
+        engineNode.getEcmInstance,
+        engineNode.getLogDirSuffix,
+        isReuse = true
       )
     }
     engine

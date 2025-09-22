@@ -594,54 +594,49 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
    */
   private def mergeMetrics(jobReq: JobRequest): Unit = {
     Utils.tryCatch {
-      // Get existing job history from database
-      val existingJobHistory = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-      if (existingJobHistory != null) {
-        // Get existing job data
-        val existingJob = getJobHistoryByIdAndName(jobReq.getId, null)
-        if (existingJob != null && StringUtils.isNotBlank(existingJob.getMetrics)) {
-
-          // Parse existing metrics from database
-          val existingMetricsMap = Utils.tryCatch {
+      Option(getJobHistoryByIdAndName(jobReq.getId, null))
+        .filter(job => StringUtils.isNotBlank(job.getMetrics))
+        .foreach { jobInfo =>
+          val oldMetricsMap = Utils.tryCatch {
             BDPJettyServerHelper.gson.fromJson(
-              existingJob.getMetrics,
+              jobInfo.getMetrics,
               classOf[util.Map[String, AnyRef]]
             )
-          } { t =>
+          } { case t: Throwable =>
             logger.warn(
               s"Failed to parse existing metrics for job ${jobReq.getId}: ${t.getMessage}"
             )
             new util.HashMap[String, AnyRef]()
           }
 
-          // Get new metrics from jobReq
-          val newMetricsMap = jobReq.getMetrics
+          Option(jobReq.getMetrics).foreach { requestMetrics =>
+            if (oldMetricsMap != null) {
+              val mergedMetrics = new util.HashMap[String, AnyRef](oldMetricsMap)
 
-          // Merge: existing metrics + new metrics (new metrics override if key exists)
-          if (existingMetricsMap != null) {
-            val mergedMetrics = new util.HashMap[String, AnyRef](existingMetricsMap)
-            if (newMetricsMap != null) {
-              // 基于已存在的Metrics和engineconnMap，使用新job的Metrics和engineconnMap进行增量修改，存量更新
-              val existingEngineConnMap = MapUtils
-                .getMap(existingMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
-                .asInstanceOf[util.Map[String, AnyRef]]
-              val newJobEngineConnMap = MapUtils
-                .getMap(newMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
-                .asInstanceOf[util.Map[String, AnyRef]]
-              existingEngineConnMap.putAll(newJobEngineConnMap)
-              mergedMetrics.putAll(newMetricsMap)
-              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, existingEngineConnMap)
+              val oldEngineConnMap =
+                Option(MapUtils.getMap(oldMetricsMap, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              val requestJobEngineConnMap =
+                Option(MapUtils.getMap(requestMetrics, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              oldEngineConnMap.putAll(requestJobEngineConnMap)
+
+              mergedMetrics.putAll(requestMetrics)
+              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, oldEngineConnMap)
+
+              jobReq.setMetrics(mergedMetrics)
+
+              logger.info(s"""Merged metrics for job ${jobReq.getId}:
+                 |added ${requestMetrics.size()} new entries to ${oldMetricsMap
+                .size()} existing entries""".stripMargin)
             }
-
-            // Set merged metrics back to jobReq
-            jobReq.setMetrics(mergedMetrics)
-
-            logger.info(s"Merged metrics for job ${jobReq.getId}: added ${newMetricsMap
-              .size()} new entries to ${existingMetricsMap.size()} existing entries")
           }
         }
-      }
-    } { t =>
+    } { case t: Throwable =>
       logger.warn(
         s"Failed to merge metrics for job ${jobReq.getId}, falling back to replace mode: ${t.getMessage}"
       )

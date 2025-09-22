@@ -36,3 +36,11 @@
 |linkis-gateway-core|wds.linkis.gateway.this.schema|   | gateway.this.schema|
 |linkis-gateway-core|wds.linkis.web.enable.water.mark|true| web.enable.water.mark|
 |linkis-gateway-core|wds.linkis.entrance.name|   |linkis.entrance.name|
+|linkis-gateway-core|wds.linkis.gateway.conf.enable.oauth.auth| false  |wds.linkis.gateway.conf.enable.oauth.auth|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.authentication.url|  |wds.linkis.gateway.auth.oauth.authentication.url|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.exchange.url|  |wds.linkis.gateway.auth.oauth.exchange.url|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.validate.url|  |wds.linkis.gateway.auth.oauth.validate.url|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.validate.field|  |wds.linkis.gateway.auth.oauth.validate.field|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.client.id|  |wds.linkis.gateway.auth.oauth.client.id|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.client.secret|  |wds.linkis.gateway.auth.oauth.client.secret|
+|linkis-gateway-core|wds.linkis.gateway.auth.oauth.scope|  |wds.linkis.gateway.auth.oauth.scope|

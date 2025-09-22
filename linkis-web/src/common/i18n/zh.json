@@ -266,6 +266,7 @@
         "userName": "请输入用户名",
         "remenber": "记住当前用户",
         "login": "登录",
+        "oauthLogin": "OAuth 登录",
         "passwordHint": "请输入密码！",
         "loginSuccess": "登录成功",
         "haveLogin": "您已经登录，请不要重复登录",

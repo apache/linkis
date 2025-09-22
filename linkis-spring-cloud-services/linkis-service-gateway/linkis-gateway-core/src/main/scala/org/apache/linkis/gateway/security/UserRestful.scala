@@ -20,6 +20,7 @@ package org.apache.linkis.gateway.security
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
 import org.apache.linkis.gateway.security.token.TokenAuthentication
 import org.apache.linkis.protocol.usercontrol.{
@@ -87,6 +88,20 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
           TokenAuthentication.tokenAuth(gatewayContext, true)
           return
         }
+      case "oauth-login" =>
+        Utils.tryCatch {
+          val loginUser = GatewaySSOUtils.getLoginUsername(gatewayContext)
+          Message
+            .ok(loginUser + " already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
+            .data("userName", loginUser)
+        }(_ => {
+          OAuth2Authentication.OAuth2Auth(gatewayContext, true)
+          return
+        })
+      case "oauth-redirect" => {
+        OAuth2Authentication.OAuth2Redirect(gatewayContext)
+        return
+      }
       case "logout" => logout(gatewayContext)
       case "userInfo" => userInfo(gatewayContext)
       case "publicKey" => publicKey(gatewayContext)

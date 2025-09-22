@@ -1,0 +1,124 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish-jar:
+    name: Publish JAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup JDK 8
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 8
+          server-id: apache.releases.https
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          cache: maven
+
+      - name: Publish
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: |
+          ./mvnw versions:set -Drevision=${{ github.ref_name }} -DgenerateBackupPoms=false
+          ./mvnw deploy --batch-mode -DskipTests -Prelease -Dmaven.javadoc.skip=true -DretryFailedDeploymentCount=10
+          mv linkis-dist/target/apache-linkis-*-bin.tar.gz .
+
+      - name: Archive git repository
+        run: |
+          git archive --format=tar.gz -o apache-linkis-${{ github.ref_name }}-src.tar.gz --prefix=apache-linkis-${{ github.ref_name }}-src/ HEAD
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar
+          if-no-files-found: error
+          path: |
+            apache-linkis-*-src.tar.gz
+            apache-linkis-*-bin.tar.gz
+
+  publish-web:
+    name: Publish Web
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 16.x
+          cache: npm
+          cache-dependency-path: linkis-web/package-lock.json
+
+      - name: Build frontend by node.js
+        run: |
+          cd linkis-web
+          npm install
+          npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web
+          if-no-files-found: error
+          path: |
+            linkis-web/apache-linkis-*-web-bin.tar.gz
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs:
+      - publish-jar
+      - publish-web
+    steps:
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v3
+        with:
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v5
+        with:
+          merge-multiple: true
+
+      - name: Make signatures
+        run: |
+          for i in *.tar.gz; do echo $i; gpg --armor --output $i.asc --detach-sig $i ; done
+          for i in *.tar.gz; do echo $i; sha512sum  $i > $i.sha512 ; done
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Apache Linkis Release-${{ github.ref_name }}
+          draft: true
+          files: "*"

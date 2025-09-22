@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.utils
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -45,7 +46,7 @@ import com.google.common.net.InetAddresses
 object JobHistoryHelper extends Logging {
 
   private val sender =
-    Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
+    Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
 
   private val SUCCESS_FLAG = 0
 

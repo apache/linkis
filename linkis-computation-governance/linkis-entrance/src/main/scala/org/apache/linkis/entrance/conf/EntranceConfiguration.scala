@@ -30,9 +30,6 @@ object EntranceConfiguration {
   val JOB_MAX_PERSIST_WAIT_TIME =
     CommonVars("wds.linkis.entrance.job.persist.wait.max", new TimeType("5m"))
 
-  val JOBHISTORY_SPRING_APPLICATION_NAME =
-    CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
-
   /**
    * Default_Cache_Max is used to specify the size of the LoopArray of the CacheLogWriter
    * Default_Cache_Max 是用来指定CacheLogWriter的LoopArray的大小

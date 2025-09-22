@@ -38,7 +38,24 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
       return jobRequest
     }
 
+    val isWhiteList = EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(
+      jobRequest.getExecuteUser
+    ) ||
+      EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getSubmitUser)
+    if (isWhiteList) {
+      logAppender.append(
+        LogUtils
+          .generateInfo(s"Sensitive SQL Check: whiteList contains user ！ Skip Check\n")
+      )
+      return jobRequest
+    }
     val labellist = jobRequest.getLabels
+
+    val engineType = LabelUtil.getEngineTypeLabel(labellist).getEngineType
+    if (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE.contains(engineType)) {
+      return jobRequest
+    }
+
     val codeType = Option(LabelUtil.getCodeType(labellist))
       .map(_.toLowerCase())
       .getOrElse("")
@@ -57,16 +74,20 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
       return jobRequest
     }
 
-    val engineType = LabelUtil.getEngineTypeLabel(labellist).getEngineType
-    if (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE.contains(engineType)) {
-      return jobRequest
-    }
-
-    val departmentId = EntranceUtils.getUserDepartmentId(jobRequest.getExecuteUser)
+    val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getExecuteUser)
+    val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getSubmitUser)
     if (
-        StringUtils.isNotBlank(
-          departmentId
-        ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(departmentId)
+        (StringUtils.isNotBlank(
+          executeUserDepartmentId
+        ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
+          executeUserDepartmentId
+        )) || (
+          StringUtils.isNotBlank(
+            submitUserDepartmentId
+          ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
+            submitUserDepartmentId
+          )
+        )
     ) {
       val (result, reason) =
         EntranceUtils.sensitiveSqlCheck(
@@ -77,20 +98,7 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
           logAppender
         )
       if (result) {
-        val isWhiteList = EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(
-          jobRequest.getExecuteUser
-        ) ||
-          EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(
-            jobRequest.getSubmitUser
-          )
-        if (isWhiteList) {
-          logAppender.append(
-            LogUtils
-              .generateInfo(s"Sensitive SQL Check result is true，but whiteList contains user ！\n")
-          )
-        } else {
-          throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
-        }
+        throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
       }
     }
     jobRequest

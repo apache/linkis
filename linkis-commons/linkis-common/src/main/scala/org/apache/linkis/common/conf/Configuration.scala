@@ -57,6 +57,9 @@ object Configuration extends Logging {
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
+  val JOBHISTORY_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
+
   // read from env
   val PREFER_IP_ADDRESS: Boolean = CommonVars(
     "linkis.discovery.prefer-ip-address",

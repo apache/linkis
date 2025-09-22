@@ -44,14 +44,14 @@ public class JobMonitorUtils {
   }
 
   public static List<DataFetcher> generateFetchers(
-      long startTime, long endTime, long maxIntervalMs, long id, String timeType) {
+      long startTime, long endTime, long maxIntervalMs, long id, String jobStatus) {
     List<DataFetcher> ret = new ArrayList<>();
     long pe = endTime;
     long ps;
     while (pe > startTime) {
       ps = Math.max(pe - maxIntervalMs, startTime);
       String[] fetcherArgs =
-          new String[] {String.valueOf(ps), String.valueOf(pe), String.valueOf(id), timeType};
+          new String[] {String.valueOf(ps), String.valueOf(pe), String.valueOf(id), jobStatus};
       ret.add(new JobHistoryDataFetcher(fetcherArgs, MapperFactory.getJobHistoryMapper()));
       logger.info(
           "Generated dataFetcher for startTime: " + new Date(ps) + ". EndTime: " + new Date(pe));
@@ -61,11 +61,11 @@ public class JobMonitorUtils {
   }
 
   public static List<DataFetcher> generateFetchersfortime(
-      long startTime, long endTime, long id, String timeType) {
+      long startTime, long endTime, long id, String jobStatus) {
     List<DataFetcher> fetchers = new ArrayList<>();
     String[] fetcherArgs =
         new String[] {
-          String.valueOf(startTime), String.valueOf(endTime), String.valueOf(id), timeType
+          String.valueOf(startTime), String.valueOf(endTime), String.valueOf(id), jobStatus
         };
     fetchers.add(new JobHistoryDataFetcher(fetcherArgs, MapperFactory.getJobHistoryMapper()));
     logger.info(

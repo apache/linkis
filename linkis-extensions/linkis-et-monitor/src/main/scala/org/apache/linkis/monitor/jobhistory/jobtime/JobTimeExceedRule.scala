@@ -18,6 +18,7 @@
 package org.apache.linkis.monitor.jobhistory.jobtime
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.config.MonitorConfig
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
@@ -26,7 +27,7 @@ import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.until.CacheUtils
 
 import java.util
-import java.util.Locale
+import java.util.{Locale, Optional}
 
 import scala.collection.JavaConverters._
 

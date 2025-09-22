@@ -120,7 +120,10 @@ object MonitorAlertUtils extends Logging {
 
         val eccReceivers = {
           val set: util.Set[String] = new util.HashSet[String]
-          if (StringUtils.isNotBlank(data.eccReceivers)) {
+          if (
+              StringUtils
+                .isNotBlank(data.eccReceivers) && (!data.eccReceivers.equals("$eccAlertUser"))
+          ) {
             data.eccReceivers.split(",").map(r => set.add(r))
           }
           if (!repaceParams.containsKey("$eccAlertUser")) {
@@ -130,10 +133,7 @@ object MonitorAlertUtils extends Logging {
               }
             })
           } else {
-            set.add(repaceParams.get("$eccAlertUser"))
-          }
-          if (StringUtils.isNotBlank(repaceParams.get("eccReceiver"))) {
-            repaceParams.get("eccReceiver").split(",").map(r => set.add(r))
+            repaceParams.get("$eccAlertUser").split(",").map(r => set.add(r))
           }
           set
         }
@@ -141,14 +141,25 @@ object MonitorAlertUtils extends Logging {
         val subSystemId = repaceParams.getOrDefault("subSystemId", Constants.ALERT_SUB_SYSTEM_ID)
         val alertTitle = "集群[" + Constants.LINKIS_CLUSTER_NAME + "]" + repaceParams
           .getOrDefault("title", data.alertTitle)
-        val alertLevel =
-          if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
-            ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
-          } else {
+        val alertLevel = {
+          if (
+              repaceParams.containsKey("$alterLevel") && StringUtils.isNumeric(
+                repaceParams.get("$alterLevel")
+              )
+          ) {
             ImsAlertLevel.withName(
-              repaceParams.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString)
+              repaceParams.getOrDefault("monitorLevel", repaceParams.get("$alterLevel"))
             )
+          } else {
+            if (StringUtils.isNotBlank(data.alertLevel) && StringUtils.isNumeric(data.alertLevel)) {
+              ImsAlertLevel.withName(repaceParams.getOrDefault("monitorLevel", data.alertLevel))
+            } else {
+              ImsAlertLevel.withName(
+                repaceParams.getOrDefault("monitorLevel", ImsAlertLevel.WARN.toString)
+              )
+            }
           }
+        }
 
         val alertDesc = Utils.tryAndWarn(
           ImsAlertDesc(

@@ -51,9 +51,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>5.1.3.Final</version>
     </dependency>
 
     <!--bml client-->

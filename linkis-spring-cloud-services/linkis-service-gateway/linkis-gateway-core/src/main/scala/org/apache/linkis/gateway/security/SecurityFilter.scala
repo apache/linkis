@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
 import org.apache.linkis.gateway.security.token.TokenAuthentication
 import org.apache.linkis.server.{validateFailed, Message}
@@ -127,6 +128,8 @@ object SecurityFilter extends Logging {
       logger.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
     } else if (TokenAuthentication.isTokenRequest(gatewayContext)) {
       TokenAuthentication.tokenAuth(gatewayContext)
+    } else if (OAuth2Authentication.isOAuth2Request(gatewayContext)) {
+      OAuth2Authentication.OAuth2Entry(gatewayContext)
     } else {
       val userName = Utils.tryCatch(GatewaySSOUtils.getLoginUser(gatewayContext)) {
         case n @ (_: NonLoginException | _: LoginExpireException) =>

@@ -265,6 +265,7 @@
         "userName": "Please enter your username",
         "remenber": "Remember me",
         "login": "Login",
+        "oauthLogin": "OAuth Login",
         "passwordHint": "Please enter your password",
         "password": "Please enter password！",
         "loginSuccess": "Login Success",

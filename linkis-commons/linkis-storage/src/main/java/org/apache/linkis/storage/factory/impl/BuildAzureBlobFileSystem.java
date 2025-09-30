@@ -14,46 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.storage.factory.impl;
 
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
 import org.apache.linkis.storage.fs.impl.AzureBlobFileSystem;
 import org.apache.linkis.storage.utils.StorageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BuildAzureBlobFileSystem implements BuildFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(BuildAzureBlobFileSystem.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BuildAzureBlobFileSystem.class);
 
-    @Override
-    public Fs getFs(String user, String proxyUser) {
-        AzureBlobFileSystem fs = new AzureBlobFileSystem();
-        try {
-            fs.init(null);
-        } catch (IOException e) {
-            LOG.warn("get file system failed", e);
-        }
-        fs.setUser(user);
-        return fs;
+  @Override
+  public Fs getFs(String user, String proxyUser) {
+    AzureBlobFileSystem fs = new AzureBlobFileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
     }
+    fs.setUser(user);
+    return fs;
+  }
 
-    @Override
-    public Fs getFs(String user, String proxyUser, String label) {
-        AzureBlobFileSystem fs = new AzureBlobFileSystem();
-        try {
-            fs.init(null);
-        } catch (IOException e) {
-            LOG.warn("get file system failed", e);
-        }
-        fs.setUser(user);
-        return fs;
+  @Override
+  public Fs getFs(String user, String proxyUser, String label) {
+    AzureBlobFileSystem fs = new AzureBlobFileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
     }
+    fs.setUser(user);
+    return fs;
+  }
 
-    @Override
-    public String fsName() {
-        return StorageUtils.BLOB;
-    }
+  @Override
+  public String fsName() {
+    return StorageUtils.BLOB();
+  }
 }

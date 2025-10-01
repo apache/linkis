@@ -18,8 +18,10 @@
 package org.apache.linkis.gateway.authentication.dao;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
+import org.glassfish.jersey.model.internal.CommonConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -36,7 +38,7 @@ class TokenDaoTest extends BaseDaoTest {
   private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
   private static String TokenName =
-      CommonVars.apply("wds.linkis.bml.auth.token.value", "LINKIS-AUTH").getValue();
+      CommonVars.apply("wds.linkis.bml.auth.token.value", Configuration.LINKIS_TOKEN().getValue()).getValue();
 
   @Autowired TokenDao tokenDao;
 

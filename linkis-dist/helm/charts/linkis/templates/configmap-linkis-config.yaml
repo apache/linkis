@@ -69,7 +69,7 @@ data:
     ## Token-Code=Token-User
     ## eg:TEST-AUTH=hadoop,root,user01
     ### http request with header { Token-Code:TEST-AUTH,Token-User:user01 }
-    LINKIS-AUTH=*
+    LINKIS-UNAVAILABLE-TOKEN=*
 
   application-linkis.yml: |
     debug: {{ .Values.linkis.featureGates.testMode }}
@@ -212,7 +212,7 @@ data:
     wds.linkis.client.common.gatewayUrl={{- include "linkis.gateway.url" . }}
     wds.linkis.client.common.authStrategy=token
     wds.linkis.client.common.tokenKey=Validation-Code
-    wds.linkis.client.common.tokenValue=LINKIS-AUTH
+    wds.linkis.client.common.tokenValue=LINKIS-UNAVAILABLE-TOKE
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false

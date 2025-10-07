@@ -81,7 +81,7 @@ object Configuration extends Logging {
       "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
     )
 
-  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-AUTH")
+  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "")
 
   val GLOBAL_CONF_CHN_NAME = "全局设置"
 

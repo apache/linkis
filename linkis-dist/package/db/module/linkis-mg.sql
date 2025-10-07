@@ -32,18 +32,3 @@ CREATE TABLE `linkis_mg_gateway_auth_token` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-INSERT INTO `linkis_mg_gateway_auth_token`(
-  `token_name`,
-  `legal_users`,
-  `legal_hosts`,
-  `business_owner`,
-  `create_time`,
-  `update_time`,
-  `elapse_day`,
-  `update_by`
-) VALUES
-('LINKIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('BML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('WS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('dss-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'),
-('QUALITIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS'));

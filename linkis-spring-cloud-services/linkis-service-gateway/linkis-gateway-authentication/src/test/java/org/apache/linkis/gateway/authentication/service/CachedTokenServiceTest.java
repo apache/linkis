@@ -23,10 +23,13 @@ import org.apache.linkis.gateway.authentication.Scan;
 import org.apache.linkis.gateway.authentication.WebApplicationServer;
 import org.apache.linkis.gateway.authentication.exception.TokenAuthException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -40,9 +43,17 @@ public class CachedTokenServiceTest {
   private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
 
   private static String TokenName =
-      CommonVars.apply("wds.linkis.bml.auth.token.value", Configuration.LINKIS_TOKEN().getValue()).getValue();
+      CommonVars.apply("wds.linkis.bml.auth.token.value", Configuration.LINKIS_TOKEN().getValue())
+          .getValue();
 
   @Autowired CachedTokenService tokenService;
+
+  @BeforeAll
+  static void before() {
+    if (StringUtils.isBlank(TokenName)) {
+      TokenName = "LINKIS-UNAVAILABLE-TOKE";
+    }
+  }
 
   @Test
   void testIsTokenValid() {

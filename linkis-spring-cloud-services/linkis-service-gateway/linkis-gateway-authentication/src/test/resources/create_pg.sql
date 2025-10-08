@@ -34,9 +34,4 @@ delete from linkis_mg_gateway_auth_token;
 -- ----------------------------
 -- Default Tokens
 -- ----------------------------
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES (concat('QML-', md5(cast(random() as varchar))),'*','*','BDP',now(),now(),-1,'LINKIS');
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES ('LINKIS-UNAVAILABLE-TOKE','*','*','BDP',now(),now(),-1,'LINKIS');
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES (concat('DSS-', md5(cast(random() as varchar))),'*','*','BDP',now(),now(),-1,'LINKIS');
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES (concat('QUALITIS-', md5(cast(random() as varchar))),'*','*','BDP',now(),now(),-1,'LINKIS');
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES (concat('VALIDATOR-', md5(cast(random() as varchar))),'*','*','BDP',now(),now(),-1,'LINKIS');
-INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES (concat('LINKISCLI-', md5(cast(random() as varchar))),'*','*','BDP',now(),now(),-1,'LINKIS');
+INSERT INTO "linkis_mg_gateway_auth_token"("token_name","legal_users","legal_hosts","business_owner","create_time","update_time","elapse_day","update_by") VALUES ('LINKIS-UNAVAILABLE-TOKE','test','127.0.0.1','BDP',now(),now(),-1,'LINKIS');

@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
@@ -30,12 +30,18 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{EngineReuseRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
+  PYTHON_VERSION_KEY,
+  SPARK_PYTHON_VERSION_KEY
+}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
+import org.apache.linkis.manager.persistence.NodeManagerPersistence
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
@@ -76,6 +82,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   @Autowired
   private var labelFilter: LabelFilter = _
 
+  @Autowired
+  private var nodeManagerPersistence: NodeManagerPersistence = _
+
   /**
    *   1. Obtain the EC corresponding to all labels 2. Judging reuse exclusion tags and fixed engine
    *      labels 3. Select the EC with the lowest load available 4. Lock the corresponding EC
@@ -106,9 +115,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       }
 
     if (
-        exclusionInstances.length == 1 && exclusionInstances(
-          0
-        ) == GovernanceCommonConf.WILDCARD_CONSTANT
+      exclusionInstances.length == 1 && exclusionInstances(
+        0
+      ) == GovernanceCommonConf.WILDCARD_CONSTANT
     ) {
       logger.info(
         s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC"
@@ -163,8 +172,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
       val engineType: String = LabelUtil.getEngineType(labels)
       if (
-          StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
-            .contains(engineType.toLowerCase())
+        StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
+          .contains(engineType.toLowerCase())
       ) {
         val resource = engineCreateService.generateResource(
           engineReuseRequest.getProperties,
@@ -172,17 +181,39 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           labelFilter.choseEngineLabel(labels),
           AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
         )
+        val pythonVersion: String = getPythonVersion(engineReuseRequest.getProperties)
+
+        // 只对python相关的引擎做python版本匹配
+        val codeType = LabelUtil.getCodeType(labels)
+        val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+        val pythonFlag: Boolean = languageType == CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON
 
         // 过滤掉资源不满足的引擎
         engineScoreList = engineScoreList
           .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
           .filter(engine => {
+            val params: String = engine.getParams
+            val paramsMap: util.Map[String, String] =
+              AMUtils.GSON.fromJson(params, classOf[util.Map[String, String]])
+            val enginePythonVersion: String = getPythonVersion(paramsMap)
+            var pythonVersionMatch: Boolean = true
+            if (
+              StringUtils.isNotBlank(pythonVersion) && StringUtils
+                .isNotBlank(enginePythonVersion) && pythonFlag
+            ) {
+              pythonVersionMatch = pythonVersion.equalsIgnoreCase(enginePythonVersion)
+            }
+            if (!pythonVersionMatch) {
+              logger.info(
+                s"will be not reuse ${engine.getServiceInstance}, cause engine python version: $enginePythonVersion , param python version $pythonVersion is not match"
+              )
+            }
             if (engine.getNodeResource.getUsedResource != null) {
               // 引擎资源只有满足需要的资源才复用
-              engine.getNodeResource.getUsedResource.notLess(resource.getMaxResource)
+              pythonVersionMatch && engine.getNodeResource.getUsedResource >= resource.getMaxResource
             } else {
               // 引擎正在启动中，比较锁住的资源，最终是否复用沿用之前复用逻辑
-              engine.getNodeResource.getLockedResource.notLess(resource.getMaxResource)
+              pythonVersionMatch && engine.getNodeResource.getLockedResource >= resource.getMaxResource
             }
           })
       }
@@ -201,8 +232,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       if (engineReuseRequest.getTimeOut <= 0) {
         AMConfiguration.ENGINE_REUSE_MAX_TIME.getValue.toLong
       } else engineReuseRequest.getTimeOut
-    val reuseLimit: Int =
-      if (engineReuseRequest.getReuseCount <= 0) AMConfiguration.ENGINE_REUSE_COUNT_LIMIT
+    val reuseLimit =
+      if (engineReuseRequest.getReuseCount <= 0) AMConfiguration.ENGINE_REUSE_COUNT_LIMIT.getValue
       else engineReuseRequest.getReuseCount
 
     def selectEngineToReuse: Boolean = {
@@ -265,6 +296,20 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       )
     }
     engine
+  }
+
+  private def getPythonVersion(prop: util.Map[String, String]): String = {
+    var pythonVersion: String = null
+    if (prop == null) {
+      return null
+    }
+
+    if (prop.containsKey(PYTHON_VERSION_KEY)) {
+      pythonVersion = prop.get(PYTHON_VERSION_KEY)
+    } else if (prop.containsKey(SPARK_PYTHON_VERSION_KEY)) {
+      pythonVersion = prop.get(SPARK_PYTHON_VERSION_KEY)
+    }
+    pythonVersion
   }
 
 }

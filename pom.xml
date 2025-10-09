@@ -247,7 +247,7 @@
     <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
     <maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
-    <maven-gpg-plugin.version>1.5</maven-gpg-plugin.version>
+    <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
     <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
     <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
     <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
@@ -1952,6 +1952,12 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>${maven-gpg-plugin.version}</version>
+            <configuration>
+              <gpgArguments>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+            </configuration>
             <executions>
               <execution>
                 <id>sign-artifacts</id>

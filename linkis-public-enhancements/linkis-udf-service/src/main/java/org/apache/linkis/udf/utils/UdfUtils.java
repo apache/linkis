@@ -96,25 +96,24 @@ public class UdfUtils {
    * @throws IOException 如果文件读取失败。
    */
   private static String getRootPath(InputStream inputStream, String folder) throws IOException {
-    String rootPathStr = "";
     try (TarArchiveInputStream tarInput =
         new TarArchiveInputStream(new GzipCompressorInputStream(inputStream))) {
       TarArchiveEntry entry;
-      String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
       while ((entry = tarInput.getNextTarEntry()) != null) {
-        if (entry.isDirectory() && entry.getName().endsWith(delimiter)) {
-          rootPathStr = entry.getName().replace(folder + FsPath.SEPARATOR, "");
-          return rootPathStr;
+        if (entry.isDirectory()
+            && entry.getName().endsWith(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
+          return entry.getName().replace(folder + FsPath.SEPARATOR, "");
         }
-        if (entry.getName().contains(delimiter)) {
-          rootPathStr = entry.getName().substring(0, entry.getName().indexOf(delimiter));
-          return rootPathStr;
+        if (entry.getName().contains(FsPath.SEPARATOR + folder + FsPath.SEPARATOR)) {
+          String delimiter = FsPath.SEPARATOR + folder + FsPath.SEPARATOR;
+          int delimiterIndex = entry.getName().indexOf(delimiter);
+          return entry.getName().substring(0, delimiterIndex);
         }
       }
     } catch (Exception e) {
       throw new UdfException(80039, "File upload failed, error message:", e);
     }
-    return rootPathStr;
+    return null;
   }
 
   /**
@@ -158,9 +157,7 @@ public class UdfUtils {
   public static InputStream getZipInputStreamByTarInputStream(
       MultipartFile file, String packageName) throws IOException {
     String rootPath = getRootPath(file.getInputStream(), packageName);
-    if (StringUtils.isNotBlank(packageName) && StringUtils.isNotBlank(rootPath)) {
-      return createZipFile(file.getInputStream(), packageName, rootPath);
-    } else {
+    if (StringUtils.isBlank(rootPath)) {
       throw new UdfException(
           80038,
           "The name directory "
@@ -173,39 +170,25 @@ public class UdfUtils {
               + packageName
               + "和实际文件夹名称一致)");
     }
+    return createZipFile(file.getInputStream(), packageName, rootPath);
   }
 
   public static Boolean checkModuleIsExistEnv(String module) {
     // 获取整个pip list
-    try {
-      if (CollectionUtils.isEmpty(moduleSet)) {
-        String piplist = Utils.exec((new String[] {"pip3", "list", "--format=legacy"}));
-        String[] split = piplist.split("\\n");
-        moduleSet.addAll(Arrays.asList(split));
-      }
-      if (moduleSet.stream().anyMatch(s -> s.startsWith(module))) {
-        return true;
-      }
-    } catch (Exception e) {
-      logger.info("get pip3 list error", e);
+    if (CollectionUtils.isEmpty(moduleSet)) {
+      String piplist = Utils.exec((new String[] {"pip", "list", "--format=legacy"}));
+      String[] split = piplist.split("\\n");
+      moduleSet.addAll(Arrays.asList(split));
     }
-    try {
-      if (module == null || !module.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
-        throw new IllegalArgumentException("Invalid module name: " + module);
-      }
-      String exec =
-          Utils.exec(
-              (new String[] {
-                Constants.PYTHON_COMMAND.getValue(),
-                Configuration.getLinkisHome() + "/admin/" + "check_modules.py",
-                Constants.PYTHON_PATH.getValue(),
-                module
-              }));
-      return Boolean.parseBoolean(exec);
-    } catch (Exception e) {
-      logger.info("get python3 env check error", e);
-      return false;
+    if (moduleSet.stream().anyMatch(s -> s.startsWith(module))) {
+      return true;
     }
+    String exec =
+        Utils.exec(
+            (new String[] {
+              "python3", Configuration.getLinkisHome() + "/admin/" + "check_modules.py", module
+            }));
+    return Boolean.parseBoolean(exec);
   }
 
   public static List<String> getInstallRequestPythonModules(MultipartFile file) throws IOException {
@@ -220,11 +203,10 @@ public class UdfUtils {
           new TarArchiveInputStream(new GzipCompressorInputStream(file.getInputStream()))) {
         TarArchiveEntry entry;
         while ((entry = tarInput.getNextTarEntry()) != null) {
-          if (entry.getName().endsWith(setuppyFileName)
-              || entry.getName().endsWith(pyprojecttomlFileName)) {
+          if (entry.getName().endsWith("setup.py") || entry.getName().endsWith("pyproject.toml")) {
             findSetup = 1;
             String content = IOUtils.toString(tarInput, StandardCharsets.UTF_8);
-            modules = extractDependencies(content, entry.getName());
+            modules = extractDependencies(content);
             break;
           }
         }
@@ -240,7 +222,7 @@ public class UdfUtils {
     return modules;
   }
 
-  public static List<String> extractDependencies(String content, String name) {
+  public static List<String> extractDependencies(String content) {
     String trim =
         content
             .replaceAll("#.*?\\n", "")
@@ -250,19 +232,15 @@ public class UdfUtils {
             .trim();
     List<String> modules = new ArrayList<>();
     String moduleStr = "";
-    if (name.endsWith(setuppyFileName)) {
-      Matcher setupMatcher =
-          Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
-      if (setupMatcher.find()) {
-        moduleStr = setupMatcher.group(1);
-      }
+    Matcher setupMatcher =
+        Pattern.compile("install_requires=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+    if (setupMatcher.find()) {
+      moduleStr = setupMatcher.group(1);
     }
-    if (name.endsWith(pyprojecttomlFileName)) {
-      Matcher pyprojectMatcher =
-          Pattern.compile("dependencies=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
-      if (pyprojectMatcher.find()) {
-        moduleStr = pyprojectMatcher.group(1);
-      }
+    Matcher pyprojectMatcher =
+        Pattern.compile("dependencies=\\[(.*?)\\]", Pattern.DOTALL).matcher(trim);
+    if (pyprojectMatcher.find()) {
+      moduleStr = pyprojectMatcher.group(1);
     }
     String[] packages = moduleStr.split(",");
     for (String pkg : packages) {
@@ -279,7 +257,7 @@ public class UdfUtils {
         }
       }
       if (StringUtils.isNotBlank(pkg)) {
-        modules.add(pkg.toLowerCase());
+        modules.add(pkg);
       }
     }
     return modules;

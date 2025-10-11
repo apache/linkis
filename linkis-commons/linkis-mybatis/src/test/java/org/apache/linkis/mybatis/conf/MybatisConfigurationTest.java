@@ -66,7 +66,7 @@ public class MybatisConfigurationTest {
     Assertions.assertTrue(1 == bdpServerMybatisDatasourceInitialsize.intValue());
     Assertions.assertTrue(1 == bdpServerMybatisDatasourceMinidle.intValue());
     Assertions.assertTrue(20 == bdpServerMybatisDatasourceMaxactive.intValue());
-    Assertions.assertTrue(6000 == bdpServerMybatisDatasourceMaxwait.intValue());
+    Assertions.assertTrue(60000 == bdpServerMybatisDatasourceMaxwait.intValue());
     Assertions.assertTrue(60000 == bdpServerMybatisDatasourceTberm.intValue());
     Assertions.assertTrue(300000 == bdpServerMybatisDatasourceMeitm.intValue());
     Assertions.assertEquals("SELECT 1", bdpServerMybatisDatasourceValidationquery);

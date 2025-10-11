@@ -19,7 +19,6 @@ package org.apache.linkis.manager.rm.restful
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
 import org.apache.linkis.governance.common.protocol.conf.{
   AcrossClusterRequest,
   AcrossClusterResponse
@@ -132,8 +131,6 @@ class RMMonitorRest extends Logging {
   var userResourceService: UserResourceService = _
 
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
-
-  private val queuePrefix = EngineConnPluginConfiguration.QUEUE_PREFIX.getValue
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = {
     val result = mapper.writeValueAsString(value)
@@ -374,17 +371,7 @@ class RMMonitorRest extends Logging {
   ): Message = {
     ModuleUserUtils.getOperationUser(request, "getQueueResource")
     val message = Message.ok("")
-    var queueName: String = param.get("queuename").asInstanceOf[String]
-    if (StringUtils.isNotBlank(queueName) && queueName.startsWith(queuePrefix)) {
-      logger.info(
-        "Queue name {} starts with '{}', remove '{}'",
-        queueName,
-        queuePrefix,
-        queuePrefix
-      )
-      queueName = queueName.substring(queuePrefix.length)
-    }
-    val yarnIdentifier = new YarnResourceIdentifier(queueName)
+    val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
     var clustername = param.get("clustername").asInstanceOf[String]
     val crossCluster = java.lang.Boolean.parseBoolean(
       param.getOrDefault("crossCluster", "false").asInstanceOf[String]

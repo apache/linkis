@@ -119,18 +119,6 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
           )
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
       }
-      val params = codeExecutor.getEngineConnExecutor
-        .asInstanceOf[ComputationEngineConnExecutor]
-        .getEngineNode
-        .getParams
-      val paramsMap: util.Map[String, String] =
-        BDPJettyServerHelper.gson.fromJson(params, classOf[util.Map[String, String]])
-      val enginePythonVersion: String = getPythonVersion(paramsMap)
-      if (StringUtils.isNotBlank(enginePythonVersion)) {
-        getPhysicalContext.pushLog(
-          TaskLogEvent(this, LogUtils.generateInfo("Your Python Version: " + enginePythonVersion))
-        )
-      }
       response match {
         case SubmitResponse(engineConnExecId) =>
           codeExecutor.setEngineConnTaskId(engineConnExecId)
@@ -205,19 +193,6 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       )
     }
 
-  }
-
-  private def getPythonVersion(prop: util.Map[String, String]): String = {
-    var pythonVersion: String = null
-    if (prop == null) {
-      return null
-    }
-    if (prop.containsKey("python.version")) {
-      pythonVersion = prop.get("python.version")
-    } else if (prop.containsKey("spark.python.version")) {
-      pythonVersion = prop.get("spark.python.version")
-    }
-    pythonVersion
   }
 
   private def toRequestTask: RequestTask = {

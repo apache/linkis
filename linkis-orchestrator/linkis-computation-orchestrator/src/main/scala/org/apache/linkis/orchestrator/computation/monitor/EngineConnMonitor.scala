@@ -225,15 +225,6 @@ object EngineConnMonitor extends Logging {
     }
   }
 
-  private def getEngineType(labels: Array[Label[_]]): String = {
-    val labelArray: Array[Label[_]] = labels.filter(_.getLabelKey.equals(engineTypeKey))
-    var engineType = ""
-    if (labelArray != null && labelArray.size > 0) {
-      engineType = labelArray(0).asInstanceOf[EngineTypeLabel].getEngineType
-    }
-    engineType
-  }
-
   private def updateExecutorActivityTime(
       serviceInstance: ServiceInstance,
       engineConnExecutorCache: mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]]

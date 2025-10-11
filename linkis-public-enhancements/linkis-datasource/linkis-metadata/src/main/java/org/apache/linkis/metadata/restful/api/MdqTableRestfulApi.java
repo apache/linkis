@@ -21,15 +21,17 @@ import org.apache.linkis.metadata.ddl.ImportDDLCreator;
 import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableImportInfoBO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.*;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.MdqService;
+import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,9 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -66,6 +66,8 @@ public class MdqTableRestfulApi {
   private static final String ASC = "asc";
 
   @Autowired private MdqService mdqService;
+
+  @Autowired private DataSourceService dataSourceService;
   ObjectMapper mapper = new ObjectMapper();
 
   @ApiOperation(value = "getTableBaseInfo", notes = "get table base info", response = Message.class)
@@ -81,11 +83,31 @@ public class MdqTableRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
-    MdqTableBaseInfoVO tableBaseInfo;
+    MdqTableBaseInfoVO tableBaseInfo = null;
     if (mdqService.isExistInMdq(database, tableName, userName)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
-    } else {
+    } else if (mdqService.isExistInHive(queryParam)) {
       tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
+    } else {
+      // 可能是存在于ranger，先查看该用户是否有表权限
+      if (dataSourceService.checkRangerConnectionConfig()) {
+        try {
+          List<String> rangerTables = dataSourceService.queryRangerTables(queryParam);
+          if (rangerTables.contains(tableName)) {
+            // 用管理员权限获取表基础信息
+            MetadataQueryParam queryAllParam =
+                MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                    .withDbName(database)
+                    .withTableName(tableName);
+            tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryAllParam);
+          }
+        } catch (Exception e) {
+          logger.error("get ranger columns failed", e);
+        }
+      }
+      if (null == tableBaseInfo) {
+        return Message.error("table not exist");
+      }
     }
     return Message.ok().data("tableBaseInfo", tableBaseInfo);
   }
@@ -107,10 +129,19 @@ public class MdqTableRestfulApi {
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
     List<MdqTableFieldsInfoVO> tableFieldsInfo;
-    if (mdqService.isExistInMdq(database, tableName, userName)) {
+    tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
+    if (CollectionUtils.isEmpty(tableFieldsInfo)
+        && mdqService.isExistInMdq(database, tableName, userName)) {
       tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
-    } else {
-      tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
+    }
+    if (dataSourceService.checkRangerConnectionConfig()) {
+      List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+      if (null != rangerColumns) {
+        tableFieldsInfo =
+            tableFieldsInfo.stream()
+                .filter(tableFields -> rangerColumns.contains(tableFields.getName()))
+                .collect(Collectors.toList());
+      }
     }
     return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
   }
@@ -179,6 +210,30 @@ public class MdqTableRestfulApi {
             .data("pageNow", pageNow)
             .data("pageSize", pageSize);
     return data;
+  }
+
+  @ApiOperation(value = "getTableInfo", notes = "get table info", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+    @ApiImplicitParam(name = "tableName", dataType = "String")
+  })
+  @RequestMapping(path = "getTableInfo", method = RequestMethod.GET)
+  public Message getTableInfo(
+      @RequestParam(value = "database", required = false) String database,
+      @RequestParam(value = "tableName", required = false) String tableName,
+      HttpServletRequest req)
+      throws IOException {
+    String userName = ModuleUserUtils.getOperationUser(req, "getTableInfo " + tableName);
+    if (StringUtils.isBlank(tableName)) {
+      Message.error("param tableName can not be empty");
+    }
+    if (StringUtils.isBlank(database)) {
+      Message.error("param database can not be empty");
+    }
+    MetadataQueryParam queryParam =
+        MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
+    MdqTableStatisticInfoDTO tableStatisticInfo = mdqService.getTableInfo(queryParam);
+    return Message.ok().data("tableInfo", tableStatisticInfo);
   }
 
   @ApiOperation(

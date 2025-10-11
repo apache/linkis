@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -50,7 +51,7 @@ public interface MetadataDbService extends BaseMetadataService {
    * @return
    */
   Map<String, String> getTableProps(
-      String operator, Map<String, Object> params, String database, String table);
+          String operator, Map<String, Object> params, String database, String table);
   /**
    * Get all partitions from table specified
    *
@@ -61,7 +62,7 @@ public interface MetadataDbService extends BaseMetadataService {
    * @return
    */
   MetaPartitionInfo getPartitions(
-      String operator, Map<String, Object> params, String database, String table, boolean traverse);
+          String operator, Map<String, Object> params, String database, String table, boolean traverse);
 
   /**
    * Get partition properties
@@ -73,7 +74,7 @@ public interface MetadataDbService extends BaseMetadataService {
    * @return
    */
   Map<String, String> getPartitionProps(
-      String operator, Map<String, Object> params, String database, String table, String partition);
+          String operator, Map<String, Object> params, String database, String table, String partition);
   /**
    * Get all field information from table specified
    *
@@ -83,5 +84,24 @@ public interface MetadataDbService extends BaseMetadataService {
    * @return
    */
   List<MetaColumnInfo> getColumns(
-      String operator, Map<String, Object> params, String database, String table);
+          String operator, Map<String, Object> params, String database, String table);
+
+  /**
+   * Get sql connect url
+   *
+   * @param params connect params
+   * @return
+   */
+  public String getSqlConnectUrl(String operator, Map<String, Object> params);
+
+  /**
+   * Get jdbc ddl sql
+   *
+   * @param params
+   * @param database
+   * @param table
+   * @return
+   */
+  GenerateSqlInfo getJdbcSql(
+          String operator, Map<String, Object> params, String database, String table);
 }

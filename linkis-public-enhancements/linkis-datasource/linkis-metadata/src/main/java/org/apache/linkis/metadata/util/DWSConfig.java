@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.util;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 
 public class DWSConfig {
 
@@ -45,8 +46,14 @@ public class DWSConfig {
       CommonVars.apply("wds.linkis.metadata.hive.db.admin", "hadoop");
 
   public static final String HDFS_FILE_SYSTEM_REST_ERRS =
-      CommonVars.apply(
-              "wds.linkis.hdfs.rest.errs",
-              ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
-          .getValue();
+      LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS();
+
+  public static CommonVars<Boolean> RANGER_DB_ENABLE =
+      CommonVars$.MODULE$.apply("ranger.db.enable", false);
+  public static CommonVars<String> RANGER_DB_URL = CommonVars$.MODULE$.apply("ranger.db.url", "");
+  public static CommonVars<String> RANGER_DB_USER = CommonVars$.MODULE$.apply("ranger.db.user", "");
+  public static CommonVars<String> RANGER_DB_PASSWORD =
+      CommonVars$.MODULE$.apply("ranger.db.password", "");
+  public static CommonVars<Long> RANGER_DB_MAX_WAIT =
+      CommonVars$.MODULE$.apply("ranger.db.max.wait", 5000L);
 }

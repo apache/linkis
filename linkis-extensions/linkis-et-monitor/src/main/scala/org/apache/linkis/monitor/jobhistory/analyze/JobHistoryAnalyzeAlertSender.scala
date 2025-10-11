@@ -28,7 +28,6 @@ import java.util
 
 import scala.collection.JavaConverters._
 
-
 class JobHistoryAnalyzeAlertSender() extends Observer with Logging {
   override def update(e: Event, jobHistroyList: scala.Any): Unit = {}
 

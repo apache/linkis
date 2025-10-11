@@ -46,10 +46,9 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 public class UdfUtils {
   private static final Logger logger = LoggerFactory.getLogger(UdfUtils.class);
@@ -105,11 +104,11 @@ public class UdfUtils {
       while ((entry = tarInput.getNextTarEntry()) != null) {
         if (entry.isDirectory() && entry.getName().endsWith(delimiter)) {
           rootPathStr = entry.getName().replace(folder + FsPath.SEPARATOR, "");
-          return  rootPathStr;
+          return rootPathStr;
         }
         if (entry.getName().contains(delimiter)) {
           rootPathStr = entry.getName().substring(0, entry.getName().indexOf(delimiter));
-          return  rootPathStr;
+          return rootPathStr;
         }
       }
     } catch (Exception e) {
@@ -163,16 +162,16 @@ public class UdfUtils {
       return createZipFile(file.getInputStream(), packageName, rootPath);
     } else {
       throw new UdfException(
-              80038,
-              "The name directory "
-                      + packageName
-                      + " specified by PKG-INFO does not exist. Please confirm that the "
-                      + packageName
-                      + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
-                      + packageName
-                      + "不存在，请确认包中PKG-INFO指定"
-                      + packageName
-                      + "和实际文件夹名称一致)");
+          80038,
+          "The name directory "
+              + packageName
+              + " specified by PKG-INFO does not exist. Please confirm that the "
+              + packageName
+              + " specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录"
+              + packageName
+              + "不存在，请确认包中PKG-INFO指定"
+              + packageName
+              + "和实际文件夹名称一致)");
     }
   }
 

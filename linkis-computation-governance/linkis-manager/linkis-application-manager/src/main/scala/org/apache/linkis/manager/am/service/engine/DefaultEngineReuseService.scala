@@ -115,9 +115,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       }
 
     if (
-      exclusionInstances.length == 1 && exclusionInstances(
-        0
-      ) == GovernanceCommonConf.WILDCARD_CONSTANT
+        exclusionInstances.length == 1 && exclusionInstances(
+          0
+        ) == GovernanceCommonConf.WILDCARD_CONSTANT
     ) {
       logger.info(
         s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC"
@@ -172,8 +172,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
       val engineType: String = LabelUtil.getEngineType(labels)
       if (
-        StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
-          .contains(engineType.toLowerCase())
+          StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
+            .contains(engineType.toLowerCase())
       ) {
         val resource = engineCreateService.generateResource(
           engineReuseRequest.getProperties,
@@ -198,8 +198,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
             val enginePythonVersion: String = getPythonVersion(paramsMap)
             var pythonVersionMatch: Boolean = true
             if (
-              StringUtils.isNotBlank(pythonVersion) && StringUtils
-                .isNotBlank(enginePythonVersion) && pythonFlag
+                StringUtils.isNotBlank(pythonVersion) && StringUtils
+                  .isNotBlank(enginePythonVersion) && pythonFlag
             ) {
               pythonVersionMatch = pythonVersion.equalsIgnoreCase(enginePythonVersion)
             }

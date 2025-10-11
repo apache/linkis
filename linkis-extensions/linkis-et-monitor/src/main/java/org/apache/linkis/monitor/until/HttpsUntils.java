@@ -191,7 +191,8 @@ public class HttpsUntils {
             .setDataSourceName(datasourceName)
             .setUser(user)
             .build();
-    GetInfoPublishedByDataSourceNameResult result = client.getInfoByDataSourceInfo(dataSourceParamsAction);
+    GetInfoPublishedByDataSourceNameResult result =
+        client.getInfoByDataSourceInfo(dataSourceParamsAction);
     Map data = MapUtils.getMap(result.getResultMap(), "data", new HashMap<>());
     Map datasourceInfoMap = MapUtils.getMap(data, "info", new HashMap<>());
     return datasourceInfoMap;

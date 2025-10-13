@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
 import org.apache.linkis.governance.common.utils.LoggerUtils
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -47,6 +48,7 @@ import org.apache.linkis.orchestrator.execution.{
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.server.BDPJettyServerHelper
 
@@ -55,8 +57,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util
 import java.util.Date
 
+import scala.collection.JavaConverters.mapAsScalaMapConverter
+
 class DefaultEntranceExecutor(id: Long)
-    extends EntranceExecutor(id)
+  extends EntranceExecutor(id)
     with SingleTaskOperateSupport
     with Logging {
 
@@ -76,9 +80,9 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   def dealProgressWithResource(
-      orchestratorFuture: OrchestrationFuture,
-      entranceJob: EntranceJob
-  ): ProgressProcessor = {
+                                orchestratorFuture: OrchestrationFuture,
+                                entranceJob: EntranceJob
+                              ): ProgressProcessor = {
     val progressProcessor =
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
@@ -103,11 +107,10 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   def dealResponse(
-      orchestrationResponse: OrchestrationResponse,
-      entranceExecuteRequest: EntranceExecuteRequest,
-      orchestration: Orchestration
-  ): Unit = {
-    LoggerUtils.setJobIdMDC(getId.toString)
+                    orchestrationResponse: OrchestrationResponse,
+                    entranceExecuteRequest: EntranceExecuteRequest,
+                    orchestration: Orchestration
+                  ): Unit = {
     orchestrationResponse match {
       case succeedResponse: SucceedTaskResponse =>
         succeedResponse match {
@@ -127,37 +130,12 @@ class DefaultEntranceExecutor(id: Long)
               s"JobRequest :  ${entranceExecuteRequest.jobId()} succeed to execute task, and get result array."
             )
             if (
-                null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0
+              null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0
             ) {
               val resultsetSize = arrayResultSetPathResp.getResultSets.length
-              entranceExecuteRequest.getJob.setResultSize(resultsetSize)
               entranceExecuteRequest.getJob
                 .asInstanceOf[EntranceJob]
                 .addAndGetResultSize(resultsetSize)
-            }
-            val firstResultSet = arrayResultSetPathResp.getResultSets.headOption.orNull
-            if (null != firstResultSet) {
-              // assert that all result set files have same parent path, so we get the first
-              Utils.tryCatch {
-                entranceExecuteRequest.getJob
-                  .asInstanceOf[EntranceJob]
-                  .getEntranceContext
-                  .getOrCreatePersistenceManager()
-                  .onResultSetCreated(
-                    entranceExecuteRequest.getJob,
-                    AliasOutputExecuteResponse(firstResultSet.alias, firstResultSet.result)
-                  )
-              } { case e: Exception =>
-                val msg = s"Persist resultSet error. ${e.getMessage}"
-                logger.error(msg)
-                val errorExecuteResponse = new DefaultFailedTaskResponse(
-                  msg,
-                  EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
-                  e
-                )
-                dealResponse(errorExecuteResponse, entranceExecuteRequest, orchestration)
-                return
-              }
             }
           case _ =>
             logger.info(
@@ -186,7 +164,6 @@ class DefaultEntranceExecutor(id: Long)
           _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
         )
     }
-    LoggerUtils.removeJobIdMDC()
   }
 
   def requestToComputationJobReq(entranceExecuteRequest: EntranceExecuteRequest): JobReq = {
@@ -227,10 +204,10 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   private def doOnFailed(
-      entranceExecuteRequest: EntranceExecuteRequest,
-      orchestration: Orchestration,
-      failedResponse: FailedTaskResponse
-  ) = {
+                          entranceExecuteRequest: EntranceExecuteRequest,
+                          orchestration: Orchestration,
+                          failedResponse: FailedTaskResponse
+                        ) = {
     val msg: String = failedResponse.getErrorCode + ", " + failedResponse.getErrorMsg
     var canRetry = false
     val props: util.Map[String, AnyRef] = entranceExecuteRequest.properties()
@@ -246,15 +223,40 @@ class DefaultEntranceExecutor(id: Long)
     })
     // 无法重试，更新失败状态
     if (canRetry) {
+      // 可以重试，重置任务进度为0
       logger.info(s"task: ${job.getId} reset progress from ${job.getProgress} to 0.0")
       job.getProgressListener.foreach(_.onProgressUpdate(job, 0.0f, null))
+
+      // 如果有模板参数，则需要按模板参数重启动引擎
+      val params: util.Map[String, AnyRef] = entranceExecuteRequest.getJob.getJobRequest.getParams
+      val runtimeMap: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
+      val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(params)
+      if (runtimeMap.containsKey(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY)) {
+        val tempConf: AnyRef = runtimeMap
+          .getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, new util.HashMap[String, AnyRef]())
+        tempConf match {
+          case map: util.HashMap[String, AnyRef] =>
+            map.asScala.foreach { case (key, value) =>
+              // 保留原有已经设置的spark3相关参数
+              if (!startMap.containsKey(key)) {
+                startMap.put(key, value)
+              }
+            }
+          case _ =>
+        }
+      }
 
       // 处理失败任务
       failedResponse match {
         case rte: DefaultFailedTaskResponse =>
           if (rte.errorIndex >= 0) {
             logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
-            props.put("execute.error.code.index", rte.errorIndex.toString)
+            val newParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+            newParams.put("execute.error.code.index", rte.errorIndex.toString)
+            LogUtils.generateInfo(
+              s"tasks execute error with error index: ${rte.errorIndex} and will retry."
+            )
+            TaskUtils.addRuntimeMap(props, newParams)
           }
         case _ =>
       }
@@ -290,15 +292,6 @@ class DefaultEntranceExecutor(id: Long)
     true
   }
 
-  def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
-    val asyncReturn = getEngineExecuteAsyncReturn
-    if (asyncReturn.isDefined) {
-      asyncReturn.get.getOrchestrationFuture()
-    } else {
-      None
-    }
-  }
-
   override protected def callExecute(request: ExecuteRequest): ExecuteResponse = {
 
     val entranceExecuteRequest: EntranceExecuteRequest = request match {
@@ -330,9 +323,9 @@ class DefaultEntranceExecutor(id: Long)
         logger.warn("Job Metrics has not been initialized")
       } else {
         if (
-            !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
-              TaskConstant.JOB_TO_ORCHESTRATOR
-            )
+          !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
+            TaskConstant.JOB_TO_ORCHESTRATOR
+          )
         ) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics
             .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))

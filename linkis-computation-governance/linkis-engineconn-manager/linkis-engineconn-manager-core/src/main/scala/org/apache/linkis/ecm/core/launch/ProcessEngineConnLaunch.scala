@@ -46,6 +46,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.manager.label.conf.LabelCommonConfig
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.io.FileUtils
@@ -271,24 +272,26 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     )
 
     var engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
-    if (
-        LabelUtil
-          .getEngineTypeLabel(request.labels)
-          .getVersion
-          .contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
-    ) {
-      processBuilder.setEnv(
-        LabelCommonConfig.SPARK_ENGINE_HOME_CONF,
-        LabelCommonConfig.SPARK3_ENGINE_HOME.getValue
-      )
-      processBuilder.setEnv(
-        LabelCommonConfig.SPARK_ENGINE_CMD_CONF,
-        LabelCommonConfig.SPARK3_ENGINE_CMD.getValue
-      )
-      processBuilder.setEnv(
-        LabelCommonConfig.SPARK_ENGINE_PATH_CONF,
-        LabelCommonConfig.SPARK3_ENGINE_PATH.getValue
-      )
+    //  处理spark环境问题，兼容spark切换spark-cmd后spark2能正常使用
+    val engineTypeLabel = LabelUtil.getEngineTypeLabel(request.labels)
+    if (engineTypeLabel.getEngineType.equals(EngineType.SPARK.toString)) {
+      val (sparkHome, sparkCmd, sparkEnginePath) =
+        if (engineTypeLabel.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)) {
+          (
+            LabelCommonConfig.SPARK3_ENGINE_HOME.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_CMD.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_PATH.getValue
+          )
+        } else {
+          (
+            LabelCommonConfig.SPARK_ENGINE_HOME.getValue,
+            LabelCommonConfig.SPARK_ENGINE_CMD.getValue,
+            LabelCommonConfig.SPARK_ENGINE_PATH.getValue
+          )
+        }
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_HOME_CONF, sparkHome)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_CMD_CONF, sparkCmd)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_PATH_CONF, sparkEnginePath)
     }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env

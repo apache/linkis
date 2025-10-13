@@ -138,6 +138,8 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
     jobAiRequest.setId(null)
     jobAiRequest.setJobHistoryId(jobRequest.getId + "")
     jobAiRequest.setChangeTime(new Date())
+    jobAiRequest.setEngineType(LabelUtil.getEngineType(jobRequest.getLabels))
+    jobAiRequest.setSubmitCode(jobRequest.getExecutionCode)
     val jobAiReqInsert: JobAiReqInsert = JobAiReqInsert(jobAiRequest)
     logger.info(s"${jobRequest.getId} insert into ai_history: ${jobAiRequest}")
     sender.ask(jobAiReqInsert)

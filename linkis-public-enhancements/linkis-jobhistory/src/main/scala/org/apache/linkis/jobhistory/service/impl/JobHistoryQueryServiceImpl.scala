@@ -17,6 +17,7 @@
 
 package org.apache.linkis.jobhistory.service.impl
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -134,7 +135,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
       // metrics 增量更新逻辑
       if (
-          JobhistoryConfiguration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
+        Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
           jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
       ) {
         mergeMetrics(jobReq)
@@ -273,9 +274,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def getJobHistoryByIdAndNameNoCode(
-      jobId: java.lang.Long,
-      userName: String
-  ): JobHistory = {
+                                               jobId: java.lang.Long,
+                                               userName: String
+                                             ): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
@@ -284,9 +285,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def getJobHistoryByIdAndNameBrief(
-      jobId: java.lang.Long,
-      userName: String
-  ): JobHistory = {
+                                              jobId: java.lang.Long,
+                                              userName: String
+                                            ): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
@@ -295,19 +296,19 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(
-      jobId: lang.Long,
-      username: String,
-      status: String,
-      creator: String,
-      sDate: Date,
-      eDate: Date,
-      engineType: String,
-      startJobId: lang.Long,
-      instance: String,
-      departmentId: String,
-      engineInstance: String,
-      runType: String
-  ): util.List[JobHistory] = {
+                       jobId: lang.Long,
+                       username: String,
+                       status: String,
+                       creator: String,
+                       sDate: Date,
+                       eDate: Date,
+                       engineType: String,
+                       startJobId: lang.Long,
+                       instance: String,
+                       departmentId: String,
+                       engineInstance: String,
+                       runType: String
+                     ): util.List[JobHistory] = {
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(
@@ -402,13 +403,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def countUndoneTasks(
-      username: String,
-      creator: String,
-      sDate: Date,
-      eDate: Date,
-      engineType: String,
-      startJobId: lang.Long
-  ): Integer = {
+                                 username: String,
+                                 creator: String,
+                                 sDate: Date,
+                                 eDate: Date,
+                                 engineType: String,
+                                 startJobId: lang.Long
+                               ): Integer = {
     val cacheKey =
       if (StringUtils.isNoneBlank(username, creator, engineType)) {
         s"${username}_${creator}_${engineType}"
@@ -435,13 +436,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   private def getCountUndoneTasks(
-      username: String,
-      creator: String,
-      sDate: Date,
-      eDate: Date,
-      engineType: String,
-      startJobId: lang.Long
-  ): Integer = {
+                                   username: String,
+                                   creator: String,
+                                   sDate: Date,
+                                   eDate: Date,
+                                   engineType: String,
+                                   startJobId: lang.Long
+                                 ): Integer = {
     logger.info("Get count undone Tasks {}, {}, {}, {}", username, creator, engineType, startJobId)
     val statusList: util.List[String] = new util.ArrayList[String]()
     statusList.add(TaskStatus.Running.toString)
@@ -498,9 +499,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Receiver
   override def clearUndoneTasksByEntranceInstance(
-      request: EntranceInstanceConfRequest,
-      sender: Sender
-  ): Unit = {
+                                                   request: EntranceInstanceConfRequest,
+                                                   sender: Sender
+                                                 ): Unit = {
     // Query incomplete tasks
     logger.info("Request Entrance Instance :{}", request.instance)
     val statusList: util.List[String] = new util.ArrayList[String]()
@@ -538,19 +539,19 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def searchByTasks(
-      taskidList: util.List[String],
-      username: String
-  ): util.List[JobHistory] = {
+                              taskidList: util.List[String],
+                              username: String
+                            ): util.List[JobHistory] = {
     jobHistoryMapper.selectJobHistoryByTaskidList(taskidList, username)
   }
 
   override def taskDurationTopN(
-      sDate: Date,
-      eDate: Date,
-      username: String,
-      creator: String,
-      engineType: String
-  ): util.List[JobHistory] = {
+                                 sDate: Date,
+                                 eDate: Date,
+                                 username: String,
+                                 creator: String,
+                                 engineType: String
+                               ): util.List[JobHistory] = {
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
     } else if (StringUtils.isBlank(username)) {
@@ -593,58 +594,53 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
    */
   private def mergeMetrics(jobReq: JobRequest): Unit = {
     Utils.tryCatch {
-      // Get existing job history from database
-      val existingJobHistory = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-      if (existingJobHistory != null) {
-        // Get existing job data
-        val existingJob = getJobHistoryByIdAndName(jobReq.getId, null)
-        if (existingJob != null && StringUtils.isNotBlank(existingJob.getMetrics)) {
-
-          // Parse existing metrics from database
-          val existingMetricsMap = Utils.tryCatch {
+      Option(getJobHistoryByIdAndName(jobReq.getId, null))
+        .filter(job => StringUtils.isNotBlank(job.getMetrics))
+        .foreach { jobInfo =>
+          val oldMetricsMap = Utils.tryCatch {
             BDPJettyServerHelper.gson.fromJson(
-              existingJob.getMetrics,
+              jobInfo.getMetrics,
               classOf[util.Map[String, AnyRef]]
             )
-          } { t =>
+          } { case t: Throwable =>
             logger.warn(
               s"Failed to parse existing metrics for job ${jobReq.getId}: ${t.getMessage}"
             )
             new util.HashMap[String, AnyRef]()
           }
 
-          // Get new metrics from jobReq
-          val newMetricsMap = jobReq.getMetrics
+          Option(jobReq.getMetrics).foreach { requestMetrics =>
+            if (oldMetricsMap != null) {
+              val mergedMetrics = new util.HashMap[String, AnyRef](oldMetricsMap)
 
-          // Merge: existing metrics + new metrics (new metrics override if key exists)
-          if (existingMetricsMap != null) {
-            val mergedMetrics = new util.HashMap[String, AnyRef](existingMetricsMap)
-            if (newMetricsMap != null) {
-              // 基于已存在的Metrics和engineconnMap，使用新job的Metrics和engineconnMap进行增量修改，存量更新
-              val existingEngineConnMap = MapUtils
-                .getMap(existingMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
-                .asInstanceOf[util.Map[String, AnyRef]]
-              val newJobEngineConnMap = MapUtils
-                .getMap(newMetricsMap, TaskConstant.JOB_ENGINECONN_MAP)
-                .asInstanceOf[util.Map[String, AnyRef]]
-              existingEngineConnMap.putAll(newJobEngineConnMap)
-              mergedMetrics.putAll(newMetricsMap)
-              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, existingEngineConnMap)
+              val oldEngineConnMap =
+                Option(MapUtils.getMap(oldMetricsMap, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              val requestJobEngineConnMap =
+                Option(MapUtils.getMap(requestMetrics, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              oldEngineConnMap.putAll(requestJobEngineConnMap)
+
+              mergedMetrics.putAll(requestMetrics)
+              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, oldEngineConnMap)
+
+              jobReq.setMetrics(mergedMetrics)
+
+              logger.info(s"""Merged metrics for job ${jobReq.getId}:
+                             |added ${requestMetrics.size()} new entries to ${oldMetricsMap
+                .size()} existing entries""".stripMargin)
             }
-
-            // Set merged metrics back to jobReq
-            jobReq.setMetrics(mergedMetrics)
-
-            logger.info(s"Merged metrics for job ${jobReq.getId}: added ${newMetricsMap
-              .size()} new entries to ${existingMetricsMap.size()} existing entries")
           }
         }
-      }
-    } { t =>
+    } { case t: Throwable =>
       logger.warn(
         s"Failed to merge metrics for job ${jobReq.getId}, falling back to replace mode: ${t.getMessage}"
       )
-    // If merge fails, keep the original behavior (replace)
+      // If merge fails, keep the original behavior (replace)
     }
   }
 

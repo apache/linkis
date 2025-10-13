@@ -70,9 +70,9 @@ object TaskConversions extends Logging {
 
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
-    TaskStatus.Failed.toString.equals(status) ||
-    TaskStatus.Cancelled.toString.equals(status) ||
-    TaskStatus.Timeout.toString.equals(status)
+      TaskStatus.Failed.toString.equals(status) ||
+      TaskStatus.Cancelled.toString.equals(status) ||
+      TaskStatus.Timeout.toString.equals(status)
   }
 
   def jobHistory2JobRequest(jobHistoryList: util.List[JobHistory]): util.List[JobRequest] = {
@@ -271,21 +271,21 @@ object TaskConversions extends Logging {
       BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.JOB_COMPLETE_TIME) && metrics
-          .get(TaskConstant.JOB_COMPLETE_TIME) != null
+      null != metrics && metrics.containsKey(TaskConstant.JOB_COMPLETE_TIME) && metrics
+        .get(TaskConstant.JOB_COMPLETE_TIME) != null
     ) {
       completeTime = dealString2Date(metrics.get(TaskConstant.JOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.JOB_SUBMIT_TIME) != null
+      null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+        .get(TaskConstant.JOB_SUBMIT_TIME) != null
     ) {
       createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
     if (
-        null != metrics && metrics.containsKey(TaskConstant.JOB_IS_REUSE) && metrics
-          .get(TaskConstant.JOB_IS_REUSE) != null
+      null != metrics && metrics.containsKey(TaskConstant.JOB_IS_REUSE) && metrics
+        .get(TaskConstant.JOB_IS_REUSE) != null
     ) {
 
       taskVO.setIsReuse(BooleanUtils.toBoolean(metrics.get(TaskConstant.JOB_IS_REUSE).toString))
@@ -295,15 +295,15 @@ object TaskConversions extends Logging {
     var requestStartTime: Date = null
     var requestEndTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.JOB_SUBMIT_TIME) != null
+      null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+        .get(TaskConstant.JOB_SUBMIT_TIME) != null
     ) {
       requestStartTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
       taskVO.setRequestStartTime(requestStartTime)
     }
     if (
-        null != metrics && metrics.containsKey(TaskConstant.JOB_SCHEDULE_TIME) && metrics
-          .get(TaskConstant.JOB_SCHEDULE_TIME) != null
+      null != metrics && metrics.containsKey(TaskConstant.JOB_SCHEDULE_TIME) && metrics
+        .get(TaskConstant.JOB_SCHEDULE_TIME) != null
     ) {
       requestEndTime = dealString2Date(metrics.get(TaskConstant.JOB_SCHEDULE_TIME).toString)
       taskVO.setRequestEndTime(requestEndTime)
@@ -367,9 +367,6 @@ object TaskConversions extends Logging {
           val engineInstance = MapUtils.getString(metrics, TaskConstant.ENGINE_INSTANCE)
           if (null != ticketId && (!ticketId.contains(engineInstance))) {
             taskVO.setTicketId(ticketId)
-            val pathSuffix =
-              ECPathUtils.getECWOrkDirPathSuffix(job.getExecuteUser, ticketId, engineType)
-            taskVO.setEngineLogPath(pathSuffix + File.separator + "logs")
           }
         })
       }
@@ -377,6 +374,10 @@ object TaskConversions extends Logging {
     if (null != metrics && metrics.containsKey(TaskConstant.ECM_INSTANCE)) {
       val ecmInstance = MapUtils.getString(metrics, TaskConstant.ECM_INSTANCE)
       taskVO.setEcmInstance(ecmInstance)
+    }
+    if (null != metrics && metrics.containsKey(TaskConstant.ENGINE_LOG_PATH)) {
+      val engine_log_path = MapUtils.getString(metrics, TaskConstant.ENGINE_LOG_PATH)
+      taskVO.setEngineLogPath(engine_log_path)
     }
     taskVO
   }

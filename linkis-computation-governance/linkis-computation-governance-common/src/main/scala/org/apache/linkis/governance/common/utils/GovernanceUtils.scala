@@ -17,10 +17,11 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+
+import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.text.SimpleDateFormat
@@ -34,8 +35,8 @@ object GovernanceUtils extends Logging {
   def killProcess(pid: String, desc: String, isSudo: Boolean): Unit = {
     val subProcessKillScriptPath = Configuration.getLinkisHome() + "/sbin/kill-process-by-pid.sh"
     if (
-        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
-          .exists()
+      StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+        .exists()
     ) {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(pid)) {
@@ -79,8 +80,8 @@ object GovernanceUtils extends Logging {
     val subProcessKillScriptPath =
       Configuration.getLinkisHome() + "/sbin/kill-ec-process-by-port.sh"
     if (
-        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
-          .exists()
+      StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+        .exists()
     ) {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(port)) {
@@ -131,7 +132,7 @@ object GovernanceUtils extends Logging {
    * @return
    */
   def getResultParentPath(creator: String): String = {
-    val resPrefix = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
+    val resPrefix = GovernanceCommonConf.DEFAULT_LOGPATH_PREFIX
     val resStb = new StringBuilder()
     if (resStb.endsWith("/")) {
       resStb.append(resPrefix)
@@ -144,7 +145,8 @@ object GovernanceUtils extends Logging {
     val dateString = dateFormat.format(date)
     val hourString = hourFormat.format(date) // 新增：当前小时（如 "08", "14"）
     if (Configuration.HDFS_HOUR_DIR_SWITCH) {
-      resStb.append("result")
+      resStb
+        .append("result")
         .append("/")
         .append(dateString)
         .append("/")
@@ -153,7 +155,8 @@ object GovernanceUtils extends Logging {
         .append(creator)
         .toString()
     } else {
-      resStb.append("result")
+      resStb
+        .append("result")
         .append("/")
         .append(dateString)
         .append("/")

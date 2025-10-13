@@ -17,11 +17,13 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
 import org.apache.linkis.entrance.utils.EntranceUtils
+import org.apache.linkis.entrance.utils.EntranceUtils.logInfo
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 
@@ -36,7 +38,24 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
       return jobRequest
     }
 
+    val isWhiteList = EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(
+      jobRequest.getExecuteUser
+    ) ||
+      EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(jobRequest.getSubmitUser)
+    if (isWhiteList) {
+      logAppender.append(
+        LogUtils
+          .generateInfo(s"Sensitive SQL Check: whiteList contains user ！ Skip Check\n")
+      )
+      return jobRequest
+    }
     val labellist = jobRequest.getLabels
+
+    val engineType = LabelUtil.getEngineTypeLabel(labellist).getEngineType
+    if (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE.contains(engineType)) {
+      return jobRequest
+    }
+
     val codeType = Option(LabelUtil.getCodeType(labellist))
       .map(_.toLowerCase())
       .getOrElse("")
@@ -48,49 +67,41 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
 
     val creator = LabelUtil.getUserCreatorLabel(labellist).getCreator
     if (
-        StringUtils.isNotBlank(
-          EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR
-        ) && (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR.contains(creator))
+      StringUtils.isNotBlank(
+        EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR
+      ) && (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR.contains(creator))
     ) {
       return jobRequest
     }
 
-    val engineType = LabelUtil.getEngineTypeLabel(labellist).getEngineType
-    if (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE.contains(engineType)) {
-      return jobRequest
-    }
-
-    // 检查执行用户和提交用户
-    checkUserSensitivity(jobRequest.getExecuteUser, jobRequest, logAppender)
-    checkUserSensitivity(jobRequest.getSubmitUser, jobRequest, logAppender)
-
-    jobRequest
-  }
-
-  /**
-   * 检查用户敏感信息
-   */
-  private def checkUserSensitivity(
-      user: String,
-      jobRequest: JobRequest,
-      logAppender: lang.StringBuilder
-  ): Unit = {
-    val departmentId = EntranceUtils.getUserDepartmentId(user)
-    val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-    val engine = LabelUtil.getEngineType(jobRequest.getLabels)
-    if (EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(departmentId)) {
+    val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getExecuteUser)
+    val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getSubmitUser)
+    if (
+      (StringUtils.isNotBlank(
+        executeUserDepartmentId
+      ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
+        executeUserDepartmentId
+      )) || (
+        StringUtils.isNotBlank(
+          submitUserDepartmentId
+        ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
+          submitUserDepartmentId
+        )
+        )
+    ) {
       val (result, reason) =
         EntranceUtils.sensitiveSqlCheck(
           jobRequest.getExecutionCode,
-          codeType,
-          engine,
-          user,
+          languageType,
+          engineType,
+          jobRequest.getExecuteUser,
           logAppender
         )
-      if (result && !EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST.contains(user)) {
+      if (result) {
         throw CodeCheckException(20054, "当前操作涉及明文信息读取，禁止执行该操作, 原因：" + reason)
       }
     }
+    jobRequest
   }
 
 }

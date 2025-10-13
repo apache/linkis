@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
@@ -72,7 +73,7 @@ import scala.concurrent.duration.Duration
 
 @Service
 class DefaultEngineCreateService
-    extends AbstractEngineService
+  extends AbstractEngineService
     with EngineCreateService
     with Logging {
 
@@ -137,9 +138,9 @@ class DefaultEngineCreateService
   }
 
   private def selectECM(
-      engineCreateRequest: EngineCreateRequest,
-      labelList: util.List[Label[_]]
-  ): EMNode = {
+                         engineCreateRequest: EngineCreateRequest,
+                         labelList: util.List[Label[_]]
+                       ): EMNode = {
     val emLabelList = new util.ArrayList[Label[_]](labelList)
     val emInstanceLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     emInstanceLabel.setAlias(ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
@@ -170,9 +171,9 @@ class DefaultEngineCreateService
   @Receiver
   @throws[LinkisRetryException]
   override def createEngine(
-      engineCreateRequest: EngineCreateRequest,
-      sender: Sender
-  ): EngineNode = {
+                             engineCreateRequest: EngineCreateRequest,
+                             sender: Sender
+                           ): EngineNode = {
     val startTime = System.currentTimeMillis
     val taskId = JobUtils.getJobIdFromStringMap(engineCreateRequest.getProperties)
     logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
@@ -288,10 +289,19 @@ class DefaultEngineCreateService
         s"Failed to update engineNode: ${t.getMessage}"
       )
     }
-    val emInstance = engineNode.getServiceInstance.getInstance
-    val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
-    // 8. Update job history metrics after successful engine creation
-    AMUtils.updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance)
+    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+      val emInstance = engineNode.getServiceInstance.getInstance
+      val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
+      // 8. Update job history metrics after successful engine creation - 异步执行
+      AMUtils.updateMetricsAsync(
+        taskId,
+        resourceTicketId,
+        emInstance,
+        ecmInstance,
+        null,
+        isReuse = false
+      )
+    }
     // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
@@ -359,11 +369,11 @@ class DefaultEngineCreateService
    * @return
    */
   def generateResource(
-      props: util.Map[String, String],
-      user: String,
-      labelList: util.List[Label[_]],
-      timeout: Long
-  ): NodeResource = {
+                        props: util.Map[String, String],
+                        user: String,
+                        labelList: util.List[Label[_]],
+                        timeout: Long
+                      ): NodeResource = {
     val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
     if (null != configProp && configProp.asScala.nonEmpty) {
       configProp.asScala.foreach(keyValue => {
@@ -448,10 +458,10 @@ class DefaultEngineCreateService
    * @return
    */
   def ensureECAvailable(
-      engineNode: EngineNode,
-      resourceTicketId: String,
-      timeout: Long
-  ): EngineNode = {
+                         engineNode: EngineNode,
+                         resourceTicketId: String,
+                         timeout: Long
+                       ): EngineNode = {
     Utils.tryCatch {
       logger.info(
         s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left."

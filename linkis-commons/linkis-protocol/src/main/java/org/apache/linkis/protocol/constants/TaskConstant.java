@@ -69,7 +69,6 @@ public interface TaskConstant {
   String TICKET_ID = "ticketId";
   String ENGINE_CONN_TASK_ID = "engineConnTaskId";
   String ENGINE_CONN_SUBMIT_TIME = "engineConnSubmitTime";
-  String FAILOVER_FLAG = "failoverFlag";
   String DEBUG_ENBALE = "debug.enable";
 
   String PARAMS_DATA_SOURCE = "dataSources";
@@ -86,4 +85,5 @@ public interface TaskConstant {
   String SUB_SYSTEM_ID = "subSystemId";
   String EXTRA = "extra";
   String ECM_INSTANCE = "ecmInstance";
+  String ENGINE_LOG_PATH = "engineLogPath";
 }

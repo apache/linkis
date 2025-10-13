@@ -17,11 +17,13 @@
 
 package org.apache.linkis.manager.am.utils
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate, JobRespProtocol}
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
@@ -31,12 +33,14 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType
 }
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
+import java.io.File
 import java.util
 
 import scala.collection.JavaConverters._
@@ -167,8 +171,8 @@ object AMUtils extends Logging {
   }
 
   def copyToAMEngineNodeVo(
-      AMEngineNode: java.util.List[EngineNode]
-  ): java.util.ArrayList[AMEngineNodeVo] = {
+                            AMEngineNode: java.util.List[EngineNode]
+                          ): java.util.ArrayList[AMEngineNodeVo] = {
     val AMEngineNodeVos = new util.ArrayList[AMEngineNodeVo]()
     if (!AMEngineNode.isEmpty) {
       AMEngineNode.asScala.foreach(node => {
@@ -176,8 +180,6 @@ object AMUtils extends Logging {
         AMEngineNodeVo.setLabels(node.getLabels)
         AMEngineNodeVo.setApplicationName(node.getServiceInstance.getApplicationName)
         AMEngineNodeVo.setInstance(node.getServiceInstance.getInstance)
-        AMEngineNodeVo.setMappingHost(node.getServiceInstance.getMappingHost)
-        AMEngineNodeVo.setMappingPorts(node.getServiceInstance.getMappingPorts)
         if (null != node.getEMNode) {
           AMEngineNodeVo.setEmInstance(node.getEMNode.getServiceInstance.getInstance)
         }
@@ -324,7 +326,7 @@ object AMUtils extends Logging {
     jobRequest.setSource(null)
     val jobReqQuery = JobReqQuery(jobRequest)
     Sender
-      .getSender("linkis-ps-jobhistory")
+      .getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
       .ask(jobReqQuery) match {
       case response: JobRespProtocol if response.getStatus == SUCCESS_FLAG =>
         response.getData.get(JobRequestConstants.JOB_HISTORY_LIST) match {
@@ -338,11 +340,13 @@ object AMUtils extends Logging {
   }
 
   def updateMetrics(
-      taskId: String,
-      resourceTicketId: String,
-      emInstance: String,
-      ecmInstance: String
-  ): Unit =
+                     taskId: String,
+                     resourceTicketId: String,
+                     emInstance: String,
+                     ecmInstance: String,
+                     engineLogPath: String,
+                     isReuse: Boolean
+                   ): Unit =
     Utils.tryCatch {
       if (taskId != null) {
         val job = getTaskByTaskID(taskId.toLong)
@@ -355,11 +359,22 @@ object AMUtils extends Logging {
         engineMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, engineconnMap)
         engineMetrics.put(TaskConstant.ECM_INSTANCE, ecmInstance: String)
         engineMetrics.put(TaskConstant.ENGINE_INSTANCE, emInstance)
+        val pathSuffix = if (isReuse && StringUtils.isNotBlank(engineLogPath)) {
+          engineLogPath
+        } else {
+          ECPathUtils.getECWOrkDirPathSuffix(
+            job.getExecuteUser,
+            resourceTicketId,
+            LabelUtil.getEngineType(job.getLabels)
+          ) + File.separator + "logs"
+        }
+        engineMetrics.put(TaskConstant.ENGINE_LOG_PATH, pathSuffix)
         // 通过RPC调用JobHistory服务更新metrics
         job.setMetrics(engineMetrics)
         val jobReqUpdate = JobReqUpdate(job)
         // 发送RPC请求到JobHistory服务
-        val sender: Sender = Sender.getSender("linkis-ps-jobhistory")
+        val sender: Sender =
+          Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
         sender.ask(jobReqUpdate)
       } else {
         logger.debug("No taskId found in properties, skip updating job history metrics")
@@ -367,5 +382,41 @@ object AMUtils extends Logging {
     } { t =>
       logger.warn(s"Failed to update job history metrics for engine ${emInstance}", t)
     }
+
+  /**
+   * 异步更新job history metrics
+   * @param taskId
+   *   任务ID
+   * @param resourceTicketId
+   *   资源票据ID
+   * @param emInstance
+   *   引擎实例
+   * @param ecmInstance
+   *   ECM实例
+   * @param engineLogPath
+   *   引擎日志路径
+   * @param isReuse
+   *   是否复用引擎
+   */
+  def updateMetricsAsync(
+                          taskId: String,
+                          resourceTicketId: String,
+                          emInstance: String,
+                          ecmInstance: String,
+                          engineLogPath: String,
+                          isReuse: Boolean
+                        ): Unit = {
+    import scala.concurrent.Future
+    import scala.util.{Failure, Success}
+
+    Future {
+      updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance, engineLogPath, isReuse)
+    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-")).onComplete {
+      case Success(_) =>
+        logger.debug(s"Task: $taskId metrics update completed successfully for engine: $emInstance")
+      case Failure(t) =>
+        logger.warn(s"Task: $taskId metrics update failed for engine: $emInstance", t)
+    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-"))
+  }
 
 }

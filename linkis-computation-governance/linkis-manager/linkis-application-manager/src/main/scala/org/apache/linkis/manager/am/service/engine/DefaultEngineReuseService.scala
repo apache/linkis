@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.am.service.engine
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -24,6 +25,7 @@ import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.NodeSelector
+import org.apache.linkis.manager.am.service.ECResourceInfoService
 import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -91,6 +93,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   @Autowired
   private var nodeManagerPersistence: NodeManagerPersistence = _
 
+  @Autowired
+  private var ecResourceInfoService: ECResourceInfoService = _
+
   private val instanceCache: Cache[String, util.Map[ScoreServiceInstance, util.List[Label[_]]]] =
     CacheBuilder
       .newBuilder()
@@ -139,9 +144,9 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       }
 
     if (
-        exclusionInstances.length == 1 && exclusionInstances(
-          0
-        ) == GovernanceCommonConf.WILDCARD_CONSTANT
+      exclusionInstances.length == 1 && exclusionInstances(
+        0
+      ) == GovernanceCommonConf.WILDCARD_CONSTANT
     ) {
       logger.info(
         s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC"
@@ -228,7 +233,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
     val templateName: String =
       getValueByKeyFromProps(confTemplateNameKey, engineReuseRequest.getProperties)
     if (
-        StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
+      StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
     ) {
       engineScoreList = engineScoreList
         .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
@@ -253,8 +258,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
       val engineType: String = LabelUtil.getEngineType(labels)
       if (
-          StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
-            .contains(engineType.toLowerCase())
+        StringUtils.isNotBlank(engineType) && AMConfiguration.EC_REUSE_WITH_RESOURCE_WITH_ECS
+          .contains(engineType.toLowerCase())
       ) {
         val resource = engineCreateService.generateResource(
           engineReuseRequest.getProperties,
@@ -276,8 +281,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
             val enginePythonVersion: String = getPythonVersion(parseParamsToMap(engine.getParams))
             var pythonVersionMatch: Boolean = true
             if (
-                StringUtils.isNotBlank(pythonVersion) && StringUtils
-                  .isNotBlank(enginePythonVersion) && pythonFlag
+              StringUtils.isNotBlank(pythonVersion) && StringUtils
+                .isNotBlank(enginePythonVersion) && pythonFlag
             ) {
               pythonVersionMatch = pythonVersion.equalsIgnoreCase(enginePythonVersion)
             }
@@ -376,6 +381,21 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       logger.info(
         "Get choosen engineNode : " + AMUtils.GSON
           .toJson(engine) + " from engineLabelMap : " + AMUtils.GSON.toJson(instances)
+      )
+    }
+    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+      val engineNode =
+        ecResourceInfoService.getECResourceInfoRecordByInstance(
+          engine.getServiceInstance.getInstance
+        )
+      // 异步更新 metrics
+      AMUtils.updateMetricsAsync(
+        taskId,
+        engineNode.getTicketId,
+        engineNode.getServiceInstance,
+        engineNode.getEcmInstance,
+        engineNode.getLogDirSuffix,
+        isReuse = true
       )
     }
     engine

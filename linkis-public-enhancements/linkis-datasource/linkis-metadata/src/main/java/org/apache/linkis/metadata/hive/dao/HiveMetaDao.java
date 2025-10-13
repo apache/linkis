@@ -52,10 +52,10 @@ public interface HiveMetaDao {
    * @return the db name list
    */
   List<String> getDbsByUserAndRoles(
-      @Param("userName") String userName, @Param("roles") List<String> roles);
+          @Param("userName") String userName, @Param("roles") List<String> roles);
 
   List<String> getDbsByUserAndRolesSlave(
-      @Param("userName") String userName, @Param("roles") List<String> roles);
+          @Param("userName") String userName, @Param("roles") List<String> roles);
 
   /**
    * get all list of DBS NAME
@@ -67,26 +67,26 @@ public interface HiveMetaDao {
   List<String> getAllDbsSlave();
 
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromDbPrvs(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromDbPrvsSlave(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromTblPrvs(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbNameAndUserAndRolesFromTblPrvsSlave(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getTablesByDbNameSlave(MetadataQueryParam queryParam);
 
   Map<String, Object> getTableInfoByTableNameAndDbName(
-      @Param("tableName") String tableName, @Param("dbName") String dbName);
+          @Param("tableName") String tableName, @Param("dbName") String dbName);
 
   Map<String, Object> getTableInfoByTableNameAndDbNameSlave(
-      @Param("tableName") String tableName, @Param("dbName") String dbName);
+          @Param("tableName") String tableName, @Param("dbName") String dbName);
 
   /**
    * get the table partition's size
@@ -106,29 +106,22 @@ public interface HiveMetaDao {
 
   List<Map<String, Object>> getColumnsSlave(MetadataQueryParam queryParam);
 
-  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserFromDB(
-      MetadataQueryParam queryParam);
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
 
-  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserFromTBL(
-      MetadataQueryParam queryParam);
-
-  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlaveFromDB(
-      MetadataQueryParam queryParam);
-
-  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlaveFromTBL(
-      MetadataQueryParam queryParam);
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlave(
+          MetadataQueryParam queryParam);
 
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserFromDB(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserFromTBL(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlaveFromDB(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   Map<String, Object> getStorageDescriptionIDByDbTableNameAndUserSlaveFromTBL(
-      MetadataQueryParam queryParam);
+          MetadataQueryParam queryParam);
 
   List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
 

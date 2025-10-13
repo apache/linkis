@@ -78,12 +78,11 @@ public interface DataSourceInfoService {
    * @param datasourceTypeName
    * @param ip
    * @param port
-   * @param owner
    * @param datasourceUser
    * @return
    */
   DataSource getDataSourcePublishInfo(
-          String datasourceTypeName, String ip, String port, String owner, String datasourceUser);
+          String datasourceTypeName, String ip, String port, String datasourceUser);
 
   /**
    * Get data source
@@ -196,7 +195,7 @@ public interface DataSourceInfoService {
   List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo);
 
   /**
-   * expire data source
+   * exoire data source
    *
    * @param dataSourceId
    * @return
@@ -221,12 +220,12 @@ public interface DataSourceInfoService {
    * @return
    */
   long insertDataSourceParameter(
-      List<DataSourceParamKeyDefinition> keyDefinitionList,
-      Long datasourceId,
-      Map<String, Object> connectParams,
-      String username,
-      String comment)
-      throws ErrorException;
+          List<DataSourceParamKeyDefinition> keyDefinitionList,
+          Long datasourceId,
+          Map<String, Object> connectParams,
+          String username,
+          String comment)
+          throws ErrorException;
 
   /**
    * get datasource version list
@@ -264,7 +263,7 @@ public interface DataSourceInfoService {
    * @throws JsonErrorException
    */
   DataSource getDataSourceInfoForConnect(String dataSourceName, String envId)
-      throws JsonErrorException;
+          throws JsonErrorException;
 
   /**
    * get datasource info for connect, if there is a dependency environment, merge datasource

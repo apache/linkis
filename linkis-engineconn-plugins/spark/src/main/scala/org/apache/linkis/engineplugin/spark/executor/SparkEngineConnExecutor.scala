@@ -424,19 +424,18 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
   override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
     super.beforeExecute(engineConnTask)
     if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty) {
-      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
-      sparkTmpConf = sqlContext.getAllConfs
+      sparkTmpConf = sc.getConf.getAll.toMap
+      // 维护spark扩展配置,防止不同版本的sprk 默认配置与用户配置匹配不上，导致配置无法回滚
+      SparkConfiguration.SPARK_ENGINE_EXTENSION_CONF
+        .split(',')
+        .foreach(keyValue => {
+          val key = keyValue.split("=")(0).trim
+          val value = keyValue.split("=")(1).trim
+          if (!sparkTmpConf.containsKey(key)) {
+            sparkTmpConf += key -> value
+          }
+        })
     }
-// 维护spark扩展配置,防止不同版本的sprk 默认配置与用户配置匹配不上，导致配置无法回滚
-    SparkConfiguration.SPARK_ENGINE_EXTENSION_CONF
-      .split(',')
-      .foreach(keyValue => {
-        val key = keyValue.split("=")(0).trim
-        val value = keyValue.split("=")(1).trim
-        if (!sparkTmpConf.containsKey(key)) {
-          sparkTmpConf += key -> value
-        }
-      })
   }
 
   override protected def afterExecute(

@@ -45,6 +45,8 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
 import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
@@ -268,7 +270,26 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       )
     )
 
-    val engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    var engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    if (
+        LabelUtil
+          .getEngineTypeLabel(request.labels)
+          .getVersion
+          .contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
+    ) {
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_HOME_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_HOME.getValue
+      )
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_CMD_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_CMD.getValue
+      )
+      processBuilder.setEnv(
+        LabelCommonConfig.SPARK_ENGINE_PATH_CONF,
+        LabelCommonConfig.SPARK3_ENGINE_PATH.getValue
+      )
+    }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env
     val engineConnEnvKeyArray = engineConnEnvKeys.split(",")

@@ -35,7 +35,21 @@ public class LabelCommonConfig {
 
   public static final CommonVars<String> SPARK_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.spark.engine.version", "3.2.1");
+  public static final String SPARK3_ENGINE_VERSION_CONF = "sparkVersion";
+  public static final String SPARK_ENGINE_HOME_CONF = "SPARK_HOME";
+  public static final String SPARK_ENGINE_CMD_CONF = "SPARK_CMD";
+  public static final String SPARK_ENGINE_PATH_CONF = "PATH";
+  public static final CommonVars<String> SPARK3_ENGINE_VERSION =
+      CommonVars.apply("linkis.spark3.engine.version", "3.4.4");
 
+  public static final CommonVars<String> SPARK3_ENGINE_HOME =
+      CommonVars.apply("linkis.spark3.engine.home", "/appcom/Install/spark3");
+
+  public static final CommonVars<String> SPARK3_ENGINE_CMD =
+      CommonVars.apply("linkis.spark3.engine.cmd", "/appcom/Install/spark3-cmd");
+
+  public static final CommonVars<String> SPARK3_ENGINE_PATH =
+      CommonVars.apply("linkis.spark3.engine.path", "$SPARK_CMD/bin:$PATH");
   public static final CommonVars<String> HIVE_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.hive.engine.version", "3.1.3");
 

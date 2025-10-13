@@ -218,6 +218,8 @@ object TemplateConfUtils extends Logging {
                   s"Can not get any template conf data with template uid:$templateUuid\n"
                 )
               )
+            } else {
+              templateName = templateConflist.get(0).getTemplateName
             }
           }
         } else {

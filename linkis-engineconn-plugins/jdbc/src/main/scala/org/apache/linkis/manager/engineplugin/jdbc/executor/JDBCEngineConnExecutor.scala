@@ -35,10 +35,13 @@ import org.apache.linkis.manager.common.entity.resource.{
   LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
+  NOT_SUPPORT_LIMIT_DBS,
+  SUPPORT_CONN_PARAM_EXECUTE_ENABLE
+}
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
 import org.apache.linkis.manager.engineplugin.jdbc.exception.{
@@ -49,6 +52,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.{RPCMapCache, Sender}
 import org.apache.linkis.scheduler.executer.{
@@ -61,20 +65,20 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.util.CollectionUtils
 
-import java.sql.{Connection, ResultSet, SQLException, Statement}
+import java.sql.{Connection, ResultSet, Statement}
 import java.util
-import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
-    extends ConcurrentComputationExecutor(outputPrintLimit) {
+  extends ConcurrentComputationExecutor(outputPrintLimit) {
 
   private val connectionManager = ConnectionManager.getInstance()
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
@@ -130,6 +134,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     if (StringUtils.isNotBlank(dataSourceName)) {
       dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
     }
+    // deal with url param for ds conn
+    parseJdbcUrl(jdbcUrl, properties)
     val connection = connectionManager.getConnection(dataSourceIdentifier, properties)
     if (StringUtils.isNotBlank(taskId)) {
       connectionCache.put(taskId, connection)
@@ -137,10 +143,35 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     connection
   }
 
+  def parseJdbcUrl(jdbcUrl: String, parameters: util.Map[String, String]): Unit = {
+    if (StringUtils.isEmpty(jdbcUrl)) {
+      return None
+    }
+    val queryIndex = jdbcUrl.indexOf('?')
+    if (queryIndex != -1) {
+      val query = jdbcUrl.substring(queryIndex + 1)
+      val pairs = query.split("&")
+
+      pairs.foreach { pair =>
+        try {
+          val keyValue = pair.split("=", 2)
+          if (keyValue.length == 2) {
+            val key = keyValue(0)
+            val value = keyValue(1)
+            parameters.put(key, value)
+          }
+        } catch {
+          case e: Exception =>
+            logger.info(s"wrong link parameters: ${pair}")
+        }
+      }
+    }
+  }
+
   override def executeLine(
-      engineExecutorContext: EngineExecutionContext,
-      code: String
-  ): ExecuteResponse = {
+                            engineExecutorContext: EngineExecutionContext,
+                            code: String
+                          ): ExecuteResponse = {
 
     val taskId = engineExecutorContext.getJobId.get
     val connection: Connection = getConnection(engineExecutorContext)
@@ -153,7 +184,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
       }
       statement.setFetchSize(outputPrintLimit)
-      statement.setMaxRows(outputPrintLimit)
 
       val monitor = ProgressMonitor.attachMonitor(statement)
       if (monitor != null) {
@@ -166,7 +196,18 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       }
       logger.info(s"create statement is:  $statement")
       connectionManager.saveStatement(taskId, statement)
-      val isResultSetAvailable = statement.execute(code)
+      val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
+      val jdbcUrl: String = properties.get(JDBCEngineConnConstant.JDBC_URL)
+      var newCode = code
+      val dbs: Array[String] = NOT_SUPPORT_LIMIT_DBS.split(",")
+      if (StringUtils.isNotBlank(jdbcUrl) && dbs.length > 0) {
+        dbs.foreach(dbName => {
+          if (jdbcUrl.toLowerCase().contains(dbName.toLowerCase())) {
+            newCode = code.replaceAll("(?i)limit[^;]*;?$", "").trim
+          }
+        })
+      }
+      val isResultSetAvailable = statement.execute(newCode)
       logger.info(s"Is ResultSet available ? : $isResultSetAvailable")
       if (monitor != null) {
         /* refresh progress */
@@ -202,8 +243,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   private def getJDBCRuntimeParams(
-      engineExecutorContext: EngineExecutionContext
-  ): util.Map[String, String] = {
+                                    engineExecutorContext: EngineExecutionContext
+                                  ): util.Map[String, String] = {
     // todo Improve the more detailed configuration of jdbc parameters, such as: connection pool parameters, etc.
     val execSqlUser = getExecSqlUser(engineExecutorContext)
     // jdbc parameters specified at runtime
@@ -251,6 +292,43 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     if (StringUtils.isBlank(dataSourceName)) {
       dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG
     }
+    if (MapUtils.isEmpty(dataSourceInfo) && SUPPORT_CONN_PARAM_EXECUTE_ENABLE) {
+      val connHost: String =
+        executorProperties.getOrDefault(
+          JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST,
+          ""
+        )
+      val connPort: String =
+        executorProperties.getOrDefault(
+          JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_PARAM_PORT,
+          ""
+        )
+      val connDsType: String =
+        executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_TYPE, "")
+      val submitUser: String = executorProperties.getOrDefault(TaskConstant.SUBMIT_USER, "")
+      val executeUser: String =
+        executorProperties.getOrDefault(TaskConstant.EXECUTE_USER, submitUser)
+
+      if (
+        StringUtils.isNotBlank(connHost) && StringUtils
+          .isNotBlank(connPort) && StringUtils
+          .isNotBlank(connDsType) && StringUtils.isNotBlank(executeUser)
+      ) {
+        logger.info(
+          s"use conn ip and port get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, " +
+            s"port:${connPort}, dsType:${connDsType}, " +
+            s"createUser:${submitUser} connUser: ${executeUser}"
+        )
+        dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByConnParams(
+          executeUser,
+          executeUser,
+          connHost,
+          connPort,
+          connDsType
+        )
+      }
+    }
+
     // runtime jdbc params > jdbc datasource info > jdbc engine global config
     if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
       globalConfig.putAll(dataSourceInfo)
@@ -269,10 +347,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   private def getExecResultSetOutput(
-      engineExecutorContext: EngineExecutionContext,
-      statement: Statement,
-      resultSet: ResultSet
-  ): ExecuteResponse = {
+                                      engineExecutorContext: EngineExecutionContext,
+                                      statement: Statement,
+                                      resultSet: ResultSet
+                                    ): ExecuteResponse = {
     if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
       logger.info(s"current result is a ResultSet Object , but there are no more results!")
       SuccessExecuteResponse()
@@ -290,9 +368,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
       resultSetWriter.addMetaData(metaData)
-      var count = 0
       Utils.tryCatch({
-        while (count < outputPrintLimit && resultSet.next()) {
+        while (resultSet.next()) {
           val r: Array[Any] = columns.indices.map { i =>
             val data = resultSet.getObject(i + 1) match {
               case value: Array[Byte] =>
@@ -303,7 +380,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             data
           }.toArray
           resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[Any]]))
-          count += 1
         }
       }) { case e: Exception =>
         return ErrorExecuteResponse("query jdbc failed", e)
@@ -361,10 +437,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def executeCompletely(
-      engineExecutorContext: EngineExecutionContext,
-      code: String,
-      completedLine: String
-  ): ExecuteResponse = null
+                                  engineExecutorContext: EngineExecutionContext,
+                                  code: String,
+                                  completedLine: String
+                                ): ExecuteResponse = null
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -410,9 +486,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 }
 
 object JDBCEngineConfig
-    extends RPCMapCache[Array[Label[_]], String, String](
-      Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
-    ) {
+  extends RPCMapCache[Array[Label[_]], String, String](
+    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
+  ) {
 
   override protected def createRequest(labels: Array[Label[_]]): CacheableProtocol = {
     val userCreatorLabel =

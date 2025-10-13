@@ -19,7 +19,10 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
-import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
+import org.apache.linkis.datasource.client.request.{
+  GetInfoPublishedByDataSourceNameAction,
+  GetInfoPublishedByUserIpPortAction
+}
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
@@ -47,10 +50,10 @@ object JDBCMultiDatasourceParser extends Logging {
   private val POSTGRESQL_SQL_CONNECT_URL = "jdbc:postgresql://%s:%s/%s"
 
   def queryDatasourceInfoByName(
-      datasourceName: String,
-      username: String,
-      system: String
-  ): util.Map[String, String] = {
+                                 datasourceName: String,
+                                 username: String,
+                                 system: String
+                               ): util.Map[String, String] = {
     logger.info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     var dataSource: DataSource = null
@@ -70,9 +73,9 @@ object JDBCMultiDatasourceParser extends Logging {
   }
 
   def queryDatasourceInfo(
-      datasourceName: String,
-      dataSource: DataSource
-  ): util.Map[String, String] = {
+                           datasourceName: String,
+                           dataSource: DataSource
+                         ): util.Map[String, String] = {
     val dsConnInfo = new util.HashMap[String, String]()
 
     if (strObjIsBlank(dataSource)) {
@@ -103,9 +106,9 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     if (
-        dataSource.getDataSourceType == null || StringUtils.isBlank(
-          dataSource.getDataSourceType.getName
-        )
+      dataSource.getDataSourceType == null || StringUtils.isBlank(
+        dataSource.getDataSourceType.getName
+      )
     ) {
       throw JDBCParamsIllegalException(
         DATA_SOURCE_JDBC_TYPE_NOT_NULL.getErrorCode,
@@ -164,19 +167,24 @@ object JDBCMultiDatasourceParser extends Logging {
       )
     }
     var jdbcUrl = s"jdbc:$dbType://$host:$port"
+    val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
     dbType match {
       case "oracle" =>
         val instance: Object = dbConnParams.get("instance")
         jdbcUrl = String.format(ORACLE_SQL_CONNECT_URL, host, port, instance)
+      case "postgresql" =>
+        var instance: Object = dbConnParams.get("instance")
+        if (strObjIsBlank(instance) && strObjIsNotBlank(dbName)) {
+          instance = dbName
+        }
+        jdbcUrl = String.format(POSTGRESQL_SQL_CONNECT_URL, host, port, instance)
       case _ =>
         jdbcUrl = s"jdbc:$dbType://$host:$port"
+        if (strObjIsNotBlank(dbName)) {
+          jdbcUrl = s"$jdbcUrl/$dbName"
+        }
     }
     logger.info(s"jdbc ${dbType} connection_url: $jdbcUrl")
-
-    val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
-    if (strObjIsNotBlank(dbName)) {
-      jdbcUrl = s"$jdbcUrl/$dbName"
-    }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)
     val paramsMap =
@@ -199,9 +207,9 @@ object JDBCMultiDatasourceParser extends Logging {
   }
 
   def appendJdbcAuthType(
-      dbConnParams: util.Map[String, Object],
-      dsConnInfo: util.HashMap[String, String]
-  ): util.HashMap[String, String] = {
+                          dbConnParams: util.Map[String, Object],
+                          dsConnInfo: util.HashMap[String, String]
+                        ): util.HashMap[String, String] = {
     val username = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_USERNAME)
     val password = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PASSWORD)
     val enableKerberos = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_ENABLE_KERBEROS)
@@ -282,6 +290,31 @@ object JDBCMultiDatasourceParser extends Logging {
 
   private def strObjIsBlank(str: Object): Boolean = {
     !strObjIsNotBlank(str)
+  }
+
+  def queryDatasourceInfoByConnParams(
+                                       createUser: String,
+                                       proxyUser: String,
+                                       ip: String,
+                                       port: String,
+                                       datasourceTypeName: String
+                                     ): util.Map[String, String] = {
+    val dataSourceClient = new LinkisDataSourceRemoteClient()
+    val action: GetInfoPublishedByUserIpPortAction = GetInfoPublishedByUserIpPortAction.builder
+      .setDatasourceTypeName(datasourceTypeName)
+      .setUser(createUser)
+      .setDatasourceUser(proxyUser)
+      .setIp(ip)
+      .setPort(port)
+      .build // ignore parameter 'system'
+
+    val dataSource: DataSource = dataSourceClient.getInfoPublishedByIpPort(action).getDataSource
+    if (dataSource != null) {
+      queryDatasourceInfo(dataSource.getDataSourceName, dataSource)
+    } else {
+      null
+    }
+
   }
 
 }

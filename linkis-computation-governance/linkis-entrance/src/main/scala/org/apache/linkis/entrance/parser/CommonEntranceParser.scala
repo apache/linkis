@@ -277,6 +277,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       val pattern = Pattern.compile(EntranceUtils.sparkVersionRegex).matcher(version)
       if (pattern.matches()) {
         version = LabelCommonConfig.SPARK3_ENGINE_VERSION
+      } else {
+        version = LabelCommonConfig.SPARK_ENGINE_VERSION.getValue
       }
       engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(
         EngineType.SPARK.toString,

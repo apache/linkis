@@ -29,9 +29,9 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_AUTH_TYPE = "wds.linkis.jdbc.auth.type";
   public static final String JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL = "wds.linkis.jdbc.principal";
   public static final String JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION =
-      "wds.linkis.jdbc.keytab.location";
+          "wds.linkis.jdbc.keytab.location";
   public static final String JDBC_KERBEROS_AUTH_PROXY_ENABLE =
-      "wds.linkis.jdbc.auth.kerberos.proxy.enable";
+          "wds.linkis.jdbc.auth.kerberos.proxy.enable";
   public static final String JDBC_PROXY_USER_PROPERTY = "wds.linkis.jdbc.proxy.user.property";
   public static final String JDBC_PROXY_USER = "wds.linkis.jdbc.proxy.user";
 
@@ -42,9 +42,15 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_SCRIPTS_EXEC_USER = "execUser";
   public static final String JDBC_ENGINE_RUN_TIME_DS = "wds.linkis.engine.runtime.datasource";
   public static final String JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID =
-      "wds.linkis.engine.runtime.datasource.maxVersionId";
+          "wds.linkis.engine.runtime.datasource.maxVersionId";
   public static final String JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM =
-      "wds.linkis.engine.runtime.datasource.systemQueryParam";
+          "wds.linkis.engine.runtime.datasource.systemQueryParam";
+
+  public static final String JDBC_ENGINE_RUN_TIME_DS_TYPE = "linkis.datasource.type";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST = "linkis.datasource.params.host";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_PORT = "linkis.datasource.params.port";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME =
+          "linkis.datasource.params.username";
 
   public static final String JDBC_POOL_TEST_ON_BORROW = "wds.linkis.jdbc.pool.testOnBorrow";
   public static final String JDBC_POOL_TEST_ON_RETURN = "wds.linkis.jdbc.pool.testOnReturn";
@@ -52,21 +58,20 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_POOL_VALIDATION_QUERY = "wds.linkis.jdbc.pool.validationQuery";
   public static final String JDBC_POOL_DEFAULT_VALIDATION_QUERY = "SELECT 1";
   public static final String JDBC_POOL_TIME_BETWEEN_MIN_EVIC_IDLE_MS =
-      "wds.linkis.jdbc.pool.minEvictableIdleTimeMillis";
+          "wds.linkis.jdbc.pool.minEvictableIdleTimeMillis";
   public static final String JDBC_POOL_TIME_BETWEEN_EVIC_RUNS_MS =
-      "wds.linkis.jdbc.pool.timeBetweenEvictionRunsMillis";
+          "wds.linkis.jdbc.pool.timeBetweenEvictionRunsMillis";
   public static final String JDBC_POOL_MAX_WAIT = "wds.linkis.jdbc.pool.maxWaitMillis";
   public static final String JDBC_POOL_MAX_ACTIVE = "wds.linkis.jdbc.pool.maxActive";
   public static final String JDBC_POOL_INIT_SIZE = "wds.linkis.jdbc.pool.initialSize";
   public static final String JDBC_POOL_MIN_IDLE = "wds.linkis.jdbc.pool.minIdle";
   public static final String JDBC_POOL_PREPARED_STATEMENTS =
-      "wds.linkis.jdbc.pool.poolPreparedStatements";
+          "wds.linkis.jdbc.pool.poolPreparedStatements";
   public static final String JDBC_POOL_REMOVE_ABANDONED_ENABLED =
-      "wds.linkis.jdbc.pool.remove.abandoned.enabled";
+          "wds.linkis.jdbc.pool.remove.abandoned.enabled";
   public static final String JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED =
-      "wds.linkis.jdbc.pool.remove.abandoned.log.enabled";
-  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT =
-      "wds.linkis.jdbc.pool.remove.abandoned.timeout";
+          "wds.linkis.jdbc.pool.remove.abandoned.log.enabled";
+  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT = "linkisJDBCPoolAbandonedTimeout";
 
   public static final String DS_JDBC_HOST = "host";
   public static final String DS_JDBC_PORT = "port";

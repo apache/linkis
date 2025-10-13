@@ -32,7 +32,7 @@ import java.util.Map;
  * @param <C>
  */
 public abstract class AbstractDbMetaService<C extends Closeable> extends AbstractCacheMetaService<C>
-        implements MetadataDbService {
+    implements MetadataDbService {
 
   @Override
   public List<String> getDatabases(String operator, Map<String, Object> params) {
@@ -46,7 +46,7 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
 
   @Override
   public GenerateSqlInfo getJdbcSql(
-          String operator, Map<String, Object> params, String database, String table) {
+      String operator, Map<String, Object> params, String database, String table) {
     return this.getConnAndRun(operator, params, conn -> this.queryJdbcSql(conn, database, table));
   }
 
@@ -57,37 +57,37 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
 
   @Override
   public Map<String, String> getTableProps(
-          String operator, Map<String, Object> params, String database, String table) {
+      String operator, Map<String, Object> params, String database, String table) {
     return this.getConnAndRun(
-            operator, params, conn -> this.queryTableProps(conn, database, table));
+        operator, params, conn -> this.queryTableProps(conn, database, table));
   }
 
   @Override
   public MetaPartitionInfo getPartitions(
-          String operator,
-          Map<String, Object> params,
-          String database,
-          String table,
-          boolean traverse) {
+      String operator,
+      Map<String, Object> params,
+      String database,
+      String table,
+      boolean traverse) {
     return this.getConnAndRun(
-            operator, params, conn -> this.queryPartitions(conn, database, table, traverse));
+        operator, params, conn -> this.queryPartitions(conn, database, table, traverse));
   }
 
   @Override
   public List<MetaColumnInfo> getColumns(
-          String operator, Map<String, Object> params, String database, String table) {
+      String operator, Map<String, Object> params, String database, String table) {
     return this.getConnAndRun(operator, params, conn -> this.queryColumns(conn, database, table));
   }
 
   @Override
   public Map<String, String> getPartitionProps(
-          String operator,
-          Map<String, Object> params,
-          String database,
-          String table,
-          String partition) {
+      String operator,
+      Map<String, Object> params,
+      String database,
+      String table,
+      String partition) {
     return this.getConnAndRun(
-            operator, params, conn -> this.queryPartitionProps(conn, database, table, partition));
+        operator, params, conn -> this.queryPartitionProps(conn, database, table, partition));
   }
 
   /**
@@ -142,7 +142,7 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @return
    */
   public MetaPartitionInfo queryPartitions(
-          C connection, String database, String table, boolean traverse) {
+      C connection, String database, String table, boolean traverse) {
     throw new WarnException(-1, "This method is no supported");
   }
 
@@ -168,7 +168,7 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @return
    */
   public Map<String, String> queryPartitionProps(
-          C connection, String database, String table, String partition) {
+      C connection, String database, String table, String partition) {
     throw new WarnException(-1, "This method is no supported");
   }
 

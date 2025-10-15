@@ -76,7 +76,7 @@ class TestSparkSqlExecutor {
 //    val engineExecutionContext = new EngineExecutionContext(sparkSqlExecutor, Utils.getJvmUser)
 //    val code = "select * from temp"
 //    val response = sparkSqlExecutor.executeLine(engineExecutionContext, code)
-//    Assertions.assertNotNull(response)
+    // Assertions.assertNotNull(response)
   }
 
   @Test

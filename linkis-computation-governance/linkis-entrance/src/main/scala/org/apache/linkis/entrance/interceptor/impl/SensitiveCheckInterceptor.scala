@@ -67,9 +67,9 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
 
     val creator = LabelUtil.getUserCreatorLabel(labellist).getCreator
     if (
-      StringUtils.isNotBlank(
-        EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR
-      ) && (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR.contains(creator))
+        StringUtils.isNotBlank(
+          EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR
+        ) && (!EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_CREATOR.contains(creator))
     ) {
       return jobRequest
     }
@@ -77,16 +77,16 @@ class SensitiveCheckInterceptor extends EntranceInterceptor {
     val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getExecuteUser)
     val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(jobRequest.getSubmitUser)
     if (
-      (StringUtils.isNotBlank(
-        executeUserDepartmentId
-      ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
-        executeUserDepartmentId
-      )) || (
-        StringUtils.isNotBlank(
-          submitUserDepartmentId
+        (StringUtils.isNotBlank(
+          executeUserDepartmentId
         ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
-          submitUserDepartmentId
-        )
+          executeUserDepartmentId
+        )) || (
+          StringUtils.isNotBlank(
+            submitUserDepartmentId
+          ) && EntranceConfiguration.DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT.contains(
+            submitUserDepartmentId
+          )
         )
     ) {
       val (result, reason) =

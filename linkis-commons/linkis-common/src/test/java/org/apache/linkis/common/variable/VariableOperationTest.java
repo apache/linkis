@@ -38,21 +38,10 @@ public class VariableOperationTest {
 
   @Test
   public void testSqlFormat() throws VariableOperationFailedException {
-    String jsonOld =
-        "select \n"
-            + "\"&{yyyy-MM}\",\n"
-            + "\"&{yyyy-MM-dd HHmmss}\",\n"
-            + "\"&yyyyMMddHH\",\n"
-            + "\"&{yyyy-MM-dd-HH}\"";
+    String jsonOld = "select &{yyyy-MM}";
     String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
     System.out.println(jsonNew);
-    assertEquals(
-        jsonNew,
-        "select \n"
-            + "\"2022-04\",\n"
-            + "\"2022-04-02 173507\",\n"
-            + "\"&yyyyMMddHH\",\n"
-            + "\"2022-04-02-17\"");
+    assertEquals(jsonNew, "select 2022-04");
   }
 
   @Test

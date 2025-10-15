@@ -29,12 +29,8 @@ trait DataSourceRemoteClient extends RemoteClient {
   def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult
 
   def getInfoPublishedByDataSourceName(
-                                        action: GetInfoPublishedByDataSourceNameAction
-                                      ): GetInfoPublishedByDataSourceNameResult
-
-  def getInfoPublishedByIpPort(
-                                action: GetInfoPublishedByUserIpPortAction
-                              ): GetInfoPublishedByUserIpPortResult
+      action: GetInfoPublishedByDataSourceNameAction
+  ): GetInfoPublishedByDataSourceNameResult
 
   def getInfoPublishedByIpPort(
       action: GetInfoPublishedByUserIpPortAction
@@ -43,12 +39,12 @@ trait DataSourceRemoteClient extends RemoteClient {
   def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult
 
   def getConnectParams(
-                        action: GetConnectParamsByDataSourceIdAction
-                      ): GetConnectParamsByDataSourceIdResult
+      action: GetConnectParamsByDataSourceIdAction
+  ): GetConnectParamsByDataSourceIdResult
 
   def getConnectParamsByName(
-                              action: GetConnectParamsByDataSourceNameAction
-                            ): GetConnectParamsByDataSourceNameResult
+      action: GetConnectParamsByDataSourceNameAction
+  ): GetConnectParamsByDataSourceNameResult
 
   def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult
 
@@ -61,14 +57,14 @@ trait DataSourceRemoteClient extends RemoteClient {
   def getDataSourceVersions(action: GetDataSourceVersionsAction): GetDataSourceVersionsResult
 
   def publishDataSourceVersion(
-                                action: PublishDataSourceVersionAction
-                              ): PublishDataSourceVersionResult
+      action: PublishDataSourceVersionAction
+  ): PublishDataSourceVersionResult
 
   def updateDataSource(action: UpdateDataSourceAction): UpdateDataSourceResult
 
   def updateDataSourceParameter(
-                                 action: UpdateDataSourceParameterAction
-                               ): UpdateDataSourceParameterResult
+      action: UpdateDataSourceParameterAction
+  ): UpdateDataSourceParameterResult
 
   def getKeyDefinitionsByType(action: GetKeyTypeDatasourceAction): GetKeyTypeDatasourceResult
 }

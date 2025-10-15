@@ -182,7 +182,7 @@ object Configuration extends Logging {
 
   def getGlobalCreator(creator: String): String = creator match {
     case Configuration.GLOBAL_CONF_CHN_NAME | Configuration.GLOBAL_CONF_CHN_OLDNAME |
-         Configuration.GLOBAL_CONF_CHN_EN_NAME =>
+        Configuration.GLOBAL_CONF_CHN_EN_NAME =>
       GLOBAL_CONF_SYMBOL
     case _ => creator
   }

@@ -35,8 +35,8 @@ object GovernanceUtils extends Logging {
   def killProcess(pid: String, desc: String, isSudo: Boolean): Unit = {
     val subProcessKillScriptPath = Configuration.getLinkisHome() + "/sbin/kill-process-by-pid.sh"
     if (
-      StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
-        .exists()
+        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+          .exists()
     ) {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(pid)) {
@@ -80,8 +80,8 @@ object GovernanceUtils extends Logging {
     val subProcessKillScriptPath =
       Configuration.getLinkisHome() + "/sbin/kill-ec-process-by-port.sh"
     if (
-      StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
-        .exists()
+        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+          .exists()
     ) {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(port)) {

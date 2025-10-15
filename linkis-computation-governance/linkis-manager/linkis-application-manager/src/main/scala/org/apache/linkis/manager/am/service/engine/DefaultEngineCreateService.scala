@@ -73,7 +73,7 @@ import scala.concurrent.duration.Duration
 
 @Service
 class DefaultEngineCreateService
-  extends AbstractEngineService
+    extends AbstractEngineService
     with EngineCreateService
     with Logging {
 
@@ -138,9 +138,9 @@ class DefaultEngineCreateService
   }
 
   private def selectECM(
-                         engineCreateRequest: EngineCreateRequest,
-                         labelList: util.List[Label[_]]
-                       ): EMNode = {
+      engineCreateRequest: EngineCreateRequest,
+      labelList: util.List[Label[_]]
+  ): EMNode = {
     val emLabelList = new util.ArrayList[Label[_]](labelList)
     val emInstanceLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     emInstanceLabel.setAlias(ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
@@ -171,9 +171,9 @@ class DefaultEngineCreateService
   @Receiver
   @throws[LinkisRetryException]
   override def createEngine(
-                             engineCreateRequest: EngineCreateRequest,
-                             sender: Sender
-                           ): EngineNode = {
+      engineCreateRequest: EngineCreateRequest,
+      sender: Sender
+  ): EngineNode = {
     val startTime = System.currentTimeMillis
     val taskId = JobUtils.getJobIdFromStringMap(engineCreateRequest.getProperties)
     logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
@@ -369,11 +369,11 @@ class DefaultEngineCreateService
    * @return
    */
   def generateResource(
-                        props: util.Map[String, String],
-                        user: String,
-                        labelList: util.List[Label[_]],
-                        timeout: Long
-                      ): NodeResource = {
+      props: util.Map[String, String],
+      user: String,
+      labelList: util.List[Label[_]],
+      timeout: Long
+  ): NodeResource = {
     val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
     if (null != configProp && configProp.asScala.nonEmpty) {
       configProp.asScala.foreach(keyValue => {
@@ -458,10 +458,10 @@ class DefaultEngineCreateService
    * @return
    */
   def ensureECAvailable(
-                         engineNode: EngineNode,
-                         resourceTicketId: String,
-                         timeout: Long
-                       ): EngineNode = {
+      engineNode: EngineNode,
+      resourceTicketId: String,
+      timeout: Long
+  ): EngineNode = {
     Utils.tryCatch {
       logger.info(
         s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left."

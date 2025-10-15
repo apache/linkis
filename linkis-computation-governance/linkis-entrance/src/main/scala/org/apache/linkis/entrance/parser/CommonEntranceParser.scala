@@ -62,7 +62,7 @@ import java.util.regex.Pattern
 import scala.collection.JavaConverters._
 
 class CommonEntranceParser(val persistenceManager: PersistenceManager)
-  extends AbstractEntranceParser
+    extends AbstractEntranceParser
     with Logging {
 
   private val labelBuilderFactory: LabelBuilderFactory =
@@ -169,9 +169,9 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
    * @param labels
    */
   private def generateAndVerifyCodeLanguageLabel(
-                                                  runType: String,
-                                                  labels: util.Map[String, Label[_]]
-                                                ): Unit = {
+      runType: String,
+      labels: util.Map[String, Label[_]]
+  ): Unit = {
     val engineRunTypeLabel = labels.getOrDefault(LabelKeyConstant.CODE_TYPE_KEY, null)
     if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
       val msg = "You need to specify runType in execution content, such as sql"
@@ -195,9 +195,9 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
    * @param labels
    */
   private def generateAndVerifyUserCreatorLabel(
-                                                 executeUser: String,
-                                                 labels: util.Map[String, Label[_]]
-                                               ): Unit = {
+      executeUser: String,
+      labels: util.Map[String, Label[_]]
+  ): Unit = {
     var userCreatorLabel = labels
       .getOrDefault(LabelKeyConstant.USER_CREATOR_TYPE_KEY, null)
       .asInstanceOf[UserCreatorLabel]
@@ -263,9 +263,9 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     }
     // When the execution type is IDE, executioncode and scriptpath cannot be empty at the same time
     if (
-      EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME
-        .getHotValue()
-        .equals(creator) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
+        EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME
+          .getHotValue()
+          .equals(creator) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
         StringUtils.isEmpty(executionCode)
     ) {
       throw new EntranceIllegalParamException(
@@ -289,7 +289,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     val variableMap =
       jobReq.getParams.get(VariableParser.VARIABLE).asInstanceOf[util.Map[String, String]]
     if (
-      null != variableMap && variableMap.containsKey(LabelCommonConfig.SPARK3_ENGINE_VERSION_CONF)
+        null != variableMap && variableMap.containsKey(LabelCommonConfig.SPARK3_ENGINE_VERSION_CONF)
     ) {
       var version = variableMap.get(LabelCommonConfig.SPARK3_ENGINE_VERSION_CONF)
       val pattern = Pattern.compile(EntranceUtils.sparkVersionRegex).matcher(version)
@@ -353,10 +353,10 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   }
 
   private def sparkVersionCoercion(
-                                    labels: util.HashMap[String, Label[_]],
-                                    executeUser: String,
-                                    submitUser: String
-                                  ): util.HashMap[String, Label[_]] = {
+      labels: util.HashMap[String, Label[_]],
+      executeUser: String,
+      submitUser: String
+  ): util.HashMap[String, Label[_]] = {
     // 个人>部门
     // 是否强制转换
     if (SPARK3_VERSION_COERCION_SWITCH && (null != labels && !labels.isEmpty)) {
@@ -364,15 +364,15 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       val engineType = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "engine")
       val version = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "version")
       if (
-        engineType.equals(EngineType.SPARK.toString) && (!version.equals(
-          LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
-        ))
+          engineType.equals(EngineType.SPARK.toString) && (!version.equals(
+            LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+          ))
       ) {
         Utils.tryAndWarnMsg {
           // 判断用户是否是个人配置中的一员
           if (
-            SPARK3_VERSION_COERCION_USERS.contains(executeUser) || SPARK3_VERSION_COERCION_USERS
-              .contains(submitUser)
+              SPARK3_VERSION_COERCION_USERS.contains(executeUser) || SPARK3_VERSION_COERCION_USERS
+                .contains(submitUser)
           ) {
             logger.info(
               s"Spark version will be change 3.4.4,submitUser:${submitUser},executeUser:${executeUser} "
@@ -389,8 +389,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
           val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(executeUser)
           val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(submitUser)
           if (
-            (StringUtils.isNotBlank(executeUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
-              .contains(executeUserDepartmentId)) ||
+              (StringUtils.isNotBlank(executeUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
+                .contains(executeUserDepartmentId)) ||
               (StringUtils.isNotBlank(submitUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
                 .contains(submitUserDepartmentId))
           ) {

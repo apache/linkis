@@ -73,9 +73,9 @@ object EntranceUtils extends Logging {
     .build()
 
   def getUserCreatorEcTypeKey(
-                               userCreatorLabel: UserCreatorLabel,
-                               engineTypeLabel: EngineTypeLabel
-                             ): String = {
+      userCreatorLabel: UserCreatorLabel,
+      engineTypeLabel: EngineTypeLabel
+  ): String = {
     userCreatorLabel.getStringValue + SPLIT + engineTypeLabel.getStringValue
   }
 
@@ -185,265 +185,6 @@ object EntranceUtils extends Logging {
   }
 
   def dealsparkDynamicConf(
-                            jobRequest: JobRequest,
-                            logAppender: lang.StringBuilder,
-                            params: util.Map[String, AnyRef]
-                          ): Unit = {
-    // deal with spark3 dynamic allocation conf
-    // 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
-    val properties = new util.HashMap[String, AnyRef]()
-    val label: EngineTypeLabel = LabelUtil.getEngineTypeLabel(jobRequest.getLabels)
-    val sparkDynamicAllocationEnabled: Boolean =
-      EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
-    if (
-      sparkDynamicAllocationEnabled && label.getEngineType.equals(
-        EngineType.SPARK.toString
-      ) && label.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
-    ) {
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_CORES.key,
-        EntranceConfiguration.SPARK_EXECUTOR_CORES.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY.key,
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
-        EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.key,
-        EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
-        EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
-      )
-      Utils.tryAndWarn {
-        val extraConfs: String =
-          EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
-        if (StringUtils.isNotBlank(extraConfs)) {
-          val confs: Array[String] = extraConfs.split(",")
-          for (conf <- confs) {
-            val confKey: String = conf.split("=")(0)
-            val confValue: String = conf.split("=")(1)
-            properties.put(confKey, confValue)
-          }
-        }
-      }
-      logAppender.append(
-        LogUtils
-          .generateInfo(s"use spark3 default conf. \n")
-      )
-      TaskUtils.addStartupMap(params, properties)
-    }
-  }
-
-  /**
-   * 敏感信息SQL检查
-   */
-  def sensitiveSqlCheck(
-                         code: String,
-                         codeType: String,
-                         engine: String,
-                         user: String,
-                         logAppender: java.lang.StringBuilder
-                       ): (Boolean, String) = {
-    val params = new util.HashMap[String, AnyRef]()
-    params.put("code", code)
-    params.put("user", user)
-    params.put("engine", engine)
-    params.put("codeType", codeType)
-
-    val request = DoctorRequest(
-      apiUrl = EntranceConfiguration.DOCTOR_ENCRYPT_SQL_URL,
-      params = params,
-      defaultValue = "false",
-      successMessage = "Sensitive SQL Check result",
-      exceptionMessage = "Sensitive SQL Check exception"
-    )
-
-    val response = callDoctorService(request, logAppender)
-    (response.result.toBoolean, response.reason)
-  }
-
-  /**
-   * Doctor服务调用通用框架
-   */
-  case class DoctorRequest(
-                            apiUrl: String,
-                            params: util.Map[String, AnyRef],
-                            defaultValue: String,
-                            successMessage: String,
-                            exceptionMessage: String
-                          )
-
-  case class DoctorResponse(
-                             success: Boolean,
-                             result: String,
-                             reason: String = "",
-                             duration: Double = 0.0
-                           )
-
-  /**
-   * 通用Doctor服务调用方法
-   */
-  private def callDoctorService(
-                                 request: DoctorRequest,
-                                 logAppender: java.lang.StringBuilder
-                               ): DoctorResponse = {
-    // 检查必要的配置参数
-    if (!isValidDoctorConfiguration()) {
-      logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
-      return DoctorResponse(success = false, result = request.defaultValue)
-    }
-
-    try {
-      val startTime = System.currentTimeMillis()
-      val url = buildDoctorRequestUrl(request.apiUrl)
-      val response = executeDoctorHttpRequest(url, request.params)
-
-      if (StringUtils.isBlank(response)) {
-        return DoctorResponse(success = false, result = request.defaultValue)
-      }
-
-      parseDoctorResponse(response, startTime, request, logAppender)
-    } catch {
-      case e: Exception =>
-        logger.warn(s"${request.exceptionMessage}: params: ${request.params}", e)
-        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
-        DoctorResponse(success = false, result = request.defaultValue)
-    }
-  }
-
-  /**
-   * 检查Doctor配置参数是否有效
-   */
-  private def isValidDoctorConfiguration(): Boolean = {
-    StringUtils.isNotBlank(EntranceConfiguration.LINKIS_SYSTEM_NAME) &&
-      StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN) &&
-      StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_CLUSTER) &&
-      StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_URL)
-  }
-
-  /**
-   * 构建Doctor请求URL
-   */
-  private def buildDoctorRequestUrl(apiUrl: String): String = {
-    val timestampStr = String.valueOf(System.currentTimeMillis)
-    val signature = SHAUtils.Encrypt(
-      SHAUtils.Encrypt(
-        EntranceConfiguration.LINKIS_SYSTEM_NAME + EntranceConfiguration.DOCTOR_NONCE + timestampStr,
-        null
-      ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
-      null
-    )
-
-    (EntranceConfiguration.DOCTOR_URL + apiUrl)
-      .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
-      .replace("$timestamp", timestampStr)
-      .replace("$nonce", EntranceConfiguration.DOCTOR_NONCE)
-      .replace("$signature", signature)
-  }
-
-  /**
-   * 执行Doctor HTTP请求
-   */
-  private def executeDoctorHttpRequest(url: String, params: util.Map[String, AnyRef]): String = {
-    val httpPost = new HttpPost(url)
-    // 添加通用参数
-    params.put("cluster", EntranceConfiguration.DOCTOR_CLUSTER)
-
-    val json = BDPJettyServerHelper.gson.toJson(params)
-    val requestConfig = RequestConfig
-      .custom()
-      .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .setConnectionRequestTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .setSocketTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
-      .build()
-
-    val entity = new StringEntity(
-      json,
-      ContentType.create(ContentType.APPLICATION_JSON.getMimeType, StandardCharsets.UTF_8.toString)
-    )
-    entity.setContentEncoding(StandardCharsets.UTF_8.toString)
-    httpPost.setConfig(requestConfig)
-    httpPost.setEntity(entity)
-
-    val execute = httpClient.execute(httpPost)
-    EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
-  }
-
-  /**
-   * 解析Doctor响应结果
-   */
-  private def parseDoctorResponse(
-                                   responseStr: String,
-                                   startTime: Long,
-                                   request: DoctorRequest,
-                                   logAppender: java.lang.StringBuilder
-                                 ): DoctorResponse = {
-    try {
-      val endTime = System.currentTimeMillis()
-      val responseMapJson: Map[String, Object] =
-        BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
-
-      if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
-        val dataMap = MapUtils.getMap(responseMapJson, "data")
-        val duration = (endTime - startTime) / 1000.0
-
-        // 根据不同的API返回不同的结果
-        if (request.apiUrl.contains("plaintext")) {
-          // 敏感信息检查API
-          val sensitive = dataMap.get("sensitive").toString.toBoolean
-          val reason = dataMap.get("reason").toString
-          logInfo(
-            s"${request.successMessage}: $sensitive, This decision took $duration seconds",
-            logAppender
-          )
-          DoctorResponse(
-            success = true,
-            result = sensitive.toString,
-            reason = reason,
-            duration = duration
-          )
-        } else {
-          // 动态引擎选择API
-          val engineType = dataMap.get("engine").toString
-          val reason = dataMap.get("reason").toString
-          logInfo(
-            s"${request.successMessage}: $engineType, Hit rules: $reason, This decision took $duration seconds",
-            logAppender
-          )
-          DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
-        }
-      } else {
-        throw new EntranceRPCException(
-          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
-          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorDesc
-        )
-      }
-    } catch {
-      case e: Exception =>
-        logger.warn(s"Doctoris返回数据解析失败：json: $responseStr", e)
-        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
-        DoctorResponse(success = false, result = request.defaultValue)
-    }
-  }
-
-  /**
-   * 记录日志信息
-   */
-  private def logInfo(message: String, logAppender: java.lang.StringBuilder): Unit = {
-    logAppender.append(LogUtils.generateInfo(s"$message\n"))
-  }
-
-  def dealsparkDynamicConf(
       jobRequest: JobRequest,
       logAppender: lang.StringBuilder,
       params: util.Map[String, AnyRef]
@@ -501,6 +242,205 @@ object EntranceUtils extends Logging {
       )
       TaskUtils.addStartupMap(params, properties)
     }
+  }
+
+  /**
+   * 敏感信息SQL检查
+   */
+  def sensitiveSqlCheck(
+      code: String,
+      codeType: String,
+      engine: String,
+      user: String,
+      logAppender: java.lang.StringBuilder
+  ): (Boolean, String) = {
+    val params = new util.HashMap[String, AnyRef]()
+    params.put("code", code)
+    params.put("user", user)
+    params.put("engine", engine)
+    params.put("codeType", codeType)
+
+    val request = DoctorRequest(
+      apiUrl = EntranceConfiguration.DOCTOR_ENCRYPT_SQL_URL,
+      params = params,
+      defaultValue = "false",
+      successMessage = "Sensitive SQL Check result",
+      exceptionMessage = "Sensitive SQL Check exception"
+    )
+
+    val response = callDoctorService(request, logAppender)
+    (response.result.toBoolean, response.reason)
+  }
+
+  /**
+   * Doctor服务调用通用框架
+   */
+  case class DoctorRequest(
+      apiUrl: String,
+      params: util.Map[String, AnyRef],
+      defaultValue: String,
+      successMessage: String,
+      exceptionMessage: String
+  )
+
+  case class DoctorResponse(
+      success: Boolean,
+      result: String,
+      reason: String = "",
+      duration: Double = 0.0
+  )
+
+  /**
+   * 通用Doctor服务调用方法
+   */
+  private def callDoctorService(
+      request: DoctorRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    // 检查必要的配置参数
+    if (!isValidDoctorConfiguration()) {
+      logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+      return DoctorResponse(success = false, result = request.defaultValue)
+    }
+
+    try {
+      val startTime = System.currentTimeMillis()
+      val url = buildDoctorRequestUrl(request.apiUrl)
+      val response = executeDoctorHttpRequest(url, request.params)
+
+      if (StringUtils.isBlank(response)) {
+        return DoctorResponse(success = false, result = request.defaultValue)
+      }
+
+      parseDoctorResponse(response, startTime, request, logAppender)
+    } catch {
+      case e: Exception =>
+        logger.warn(s"${request.exceptionMessage}: params: ${request.params}", e)
+        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+        DoctorResponse(success = false, result = request.defaultValue)
+    }
+  }
+
+  /**
+   * 检查Doctor配置参数是否有效
+   */
+  private def isValidDoctorConfiguration(): Boolean = {
+    StringUtils.isNotBlank(EntranceConfiguration.LINKIS_SYSTEM_NAME) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_CLUSTER) &&
+    StringUtils.isNotBlank(EntranceConfiguration.DOCTOR_URL)
+  }
+
+  /**
+   * 构建Doctor请求URL
+   */
+  private def buildDoctorRequestUrl(apiUrl: String): String = {
+    val timestampStr = String.valueOf(System.currentTimeMillis)
+    val signature = SHAUtils.Encrypt(
+      SHAUtils.Encrypt(
+        EntranceConfiguration.LINKIS_SYSTEM_NAME + EntranceConfiguration.DOCTOR_NONCE + timestampStr,
+        null
+      ) + EntranceConfiguration.DOCTOR_SIGNATURE_TOKEN,
+      null
+    )
+
+    (EntranceConfiguration.DOCTOR_URL + apiUrl)
+      .replace("$app_id", EntranceConfiguration.LINKIS_SYSTEM_NAME)
+      .replace("$timestamp", timestampStr)
+      .replace("$nonce", EntranceConfiguration.DOCTOR_NONCE)
+      .replace("$signature", signature)
+  }
+
+  /**
+   * 执行Doctor HTTP请求
+   */
+  private def executeDoctorHttpRequest(url: String, params: util.Map[String, AnyRef]): String = {
+    val httpPost = new HttpPost(url)
+    // 添加通用参数
+    params.put("cluster", EntranceConfiguration.DOCTOR_CLUSTER)
+
+    val json = BDPJettyServerHelper.gson.toJson(params)
+    val requestConfig = RequestConfig
+      .custom()
+      .setConnectTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setConnectionRequestTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .setSocketTimeout(EntranceConfiguration.DOCTOR_REQUEST_TIMEOUT)
+      .build()
+
+    val entity = new StringEntity(
+      json,
+      ContentType.create(ContentType.APPLICATION_JSON.getMimeType, StandardCharsets.UTF_8.toString)
+    )
+    entity.setContentEncoding(StandardCharsets.UTF_8.toString)
+    httpPost.setConfig(requestConfig)
+    httpPost.setEntity(entity)
+
+    val execute = httpClient.execute(httpPost)
+    EntityUtils.toString(execute.getEntity, StandardCharsets.UTF_8.toString)
+  }
+
+  /**
+   * 解析Doctor响应结果
+   */
+  private def parseDoctorResponse(
+      responseStr: String,
+      startTime: Long,
+      request: DoctorRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    try {
+      val endTime = System.currentTimeMillis()
+      val responseMapJson: Map[String, Object] =
+        BDPJettyServerHelper.gson.fromJson(responseStr, classOf[Map[_, _]])
+
+      if (MapUtils.isNotEmpty(responseMapJson) && responseMapJson.containsKey("data")) {
+        val dataMap = MapUtils.getMap(responseMapJson, "data")
+        val duration = (endTime - startTime) / 1000.0
+
+        // 根据不同的API返回不同的结果
+        if (request.apiUrl.contains("plaintext")) {
+          // 敏感信息检查API
+          val sensitive = dataMap.get("sensitive").toString.toBoolean
+          val reason = dataMap.get("reason").toString
+          logInfo(
+            s"${request.successMessage}: $sensitive, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(
+            success = true,
+            result = sensitive.toString,
+            reason = reason,
+            duration = duration
+          )
+        } else {
+          // 动态引擎选择API
+          val engineType = dataMap.get("engine").toString
+          val reason = dataMap.get("reason").toString
+          logInfo(
+            s"${request.successMessage}: $engineType, Hit rules: $reason, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
+        }
+      } else {
+        throw new EntranceRPCException(
+          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorCode,
+          EntranceErrorCodeSummary.DOCTORIS_ERROR.getErrorDesc
+        )
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn(s"Doctoris返回数据解析失败：json: $responseStr", e)
+        logInfo(s"${request.exceptionMessage}, using default: ${request.defaultValue}", logAppender)
+        DoctorResponse(success = false, result = request.defaultValue)
+    }
+  }
+
+  /**
+   * 记录日志信息
+   */
+  private def logInfo(message: String, logAppender: java.lang.StringBuilder): Unit = {
+    logAppender.append(LogUtils.generateInfo(s"$message\n"))
   }
 
 }

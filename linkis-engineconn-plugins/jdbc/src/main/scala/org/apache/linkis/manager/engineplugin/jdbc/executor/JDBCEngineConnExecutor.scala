@@ -78,7 +78,7 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
-  extends ConcurrentComputationExecutor(outputPrintLimit) {
+    extends ConcurrentComputationExecutor(outputPrintLimit) {
 
   private val connectionManager = ConnectionManager.getInstance()
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
@@ -169,9 +169,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def executeLine(
-                            engineExecutorContext: EngineExecutionContext,
-                            code: String
-                          ): ExecuteResponse = {
+      engineExecutorContext: EngineExecutionContext,
+      code: String
+  ): ExecuteResponse = {
 
     val taskId = engineExecutorContext.getJobId.get
     val connection: Connection = getConnection(engineExecutorContext)
@@ -243,8 +243,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   private def getJDBCRuntimeParams(
-                                    engineExecutorContext: EngineExecutionContext
-                                  ): util.Map[String, String] = {
+      engineExecutorContext: EngineExecutionContext
+  ): util.Map[String, String] = {
     // todo Improve the more detailed configuration of jdbc parameters, such as: connection pool parameters, etc.
     val execSqlUser = getExecSqlUser(engineExecutorContext)
     // jdbc parameters specified at runtime
@@ -310,9 +310,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         executorProperties.getOrDefault(TaskConstant.EXECUTE_USER, submitUser)
 
       if (
-        StringUtils.isNotBlank(connHost) && StringUtils
-          .isNotBlank(connPort) && StringUtils
-          .isNotBlank(connDsType) && StringUtils.isNotBlank(executeUser)
+          StringUtils.isNotBlank(connHost) && StringUtils
+            .isNotBlank(connPort) && StringUtils
+            .isNotBlank(connDsType) && StringUtils.isNotBlank(executeUser)
       ) {
         logger.info(
           s"use conn ip and port get dataSourceInfo: executeUser:${execSqlUser} ip:${connHost}, " +
@@ -347,10 +347,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   private def getExecResultSetOutput(
-                                      engineExecutorContext: EngineExecutionContext,
-                                      statement: Statement,
-                                      resultSet: ResultSet
-                                    ): ExecuteResponse = {
+      engineExecutorContext: EngineExecutionContext,
+      statement: Statement,
+      resultSet: ResultSet
+  ): ExecuteResponse = {
     if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
       logger.info(s"current result is a ResultSet Object , but there are no more results!")
       SuccessExecuteResponse()
@@ -437,10 +437,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def executeCompletely(
-                                  engineExecutorContext: EngineExecutionContext,
-                                  code: String,
-                                  completedLine: String
-                                ): ExecuteResponse = null
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse = null
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -486,9 +486,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 }
 
 object JDBCEngineConfig
-  extends RPCMapCache[Array[Label[_]], String, String](
-    Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
-  ) {
+    extends RPCMapCache[Array[Label[_]], String, String](
+      Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
+    ) {
 
   override protected def createRequest(labels: Array[Label[_]]): CacheableProtocol = {
     val userCreatorLabel =

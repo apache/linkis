@@ -49,9 +49,9 @@ trait NodeLabelService {
   def updateLabelsToNode(instance: ServiceInstance, label: util.List[Label[_]]): Unit
 
   def labelsFromInstanceToNewInstance(
-                                       oldServiceInstance: ServiceInstance,
-                                       newServiceInstance: ServiceInstance
-                                     ): Unit
+      oldServiceInstance: ServiceInstance,
+      newServiceInstance: ServiceInstance
+  ): Unit
 
   /**
    * Remove the labels related by node instance
@@ -88,21 +88,21 @@ trait NodeLabelService {
   def getScoredNodesByLabels(labels: util.List[Label[_]]): util.List[ScoreServiceInstance]
 
   def getScoredNodeMapsByLabels(
-                                 labels: util.List[Label[_]]
-                               ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
+      labels: util.List[Label[_]]
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
 
   def getScoredNodeMapsByLabelsReuse(
-                                      labels: util.List[Label[_]],
-                                      shuffEnable: Boolean
-                                    ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
+      labels: util.List[Label[_]],
+      shuffEnable: Boolean
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
 
   def getNodeLabelsByInstanceList(
-                                   instanceList: util.List[ServiceInstance]
-                                 ): util.HashMap[String, util.List[Label[_]]]
+      instanceList: util.List[ServiceInstance]
+  ): util.HashMap[String, util.List[Label[_]]]
 
   def getEngineNodesWithResourceByUser(
-                                        user: String,
-                                        withResource: Boolean = false
-                                      ): Array[EngineNode]
+      user: String,
+      withResource: Boolean = false
+  ): Array[EngineNode]
 
 }

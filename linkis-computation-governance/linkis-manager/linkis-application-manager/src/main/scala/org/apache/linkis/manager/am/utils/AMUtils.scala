@@ -171,8 +171,8 @@ object AMUtils extends Logging {
   }
 
   def copyToAMEngineNodeVo(
-                            AMEngineNode: java.util.List[EngineNode]
-                          ): java.util.ArrayList[AMEngineNodeVo] = {
+      AMEngineNode: java.util.List[EngineNode]
+  ): java.util.ArrayList[AMEngineNodeVo] = {
     val AMEngineNodeVos = new util.ArrayList[AMEngineNodeVo]()
     if (!AMEngineNode.isEmpty) {
       AMEngineNode.asScala.foreach(node => {
@@ -340,13 +340,13 @@ object AMUtils extends Logging {
   }
 
   def updateMetrics(
-                     taskId: String,
-                     resourceTicketId: String,
-                     emInstance: String,
-                     ecmInstance: String,
-                     engineLogPath: String,
-                     isReuse: Boolean
-                   ): Unit =
+      taskId: String,
+      resourceTicketId: String,
+      emInstance: String,
+      ecmInstance: String,
+      engineLogPath: String,
+      isReuse: Boolean
+  ): Unit =
     Utils.tryCatch {
       if (taskId != null) {
         val job = getTaskByTaskID(taskId.toLong)
@@ -399,13 +399,13 @@ object AMUtils extends Logging {
    *   是否复用引擎
    */
   def updateMetricsAsync(
-                          taskId: String,
-                          resourceTicketId: String,
-                          emInstance: String,
-                          ecmInstance: String,
-                          engineLogPath: String,
-                          isReuse: Boolean
-                        ): Unit = {
+      taskId: String,
+      resourceTicketId: String,
+      emInstance: String,
+      ecmInstance: String,
+      engineLogPath: String,
+      isReuse: Boolean
+  ): Unit = {
     import scala.concurrent.Future
     import scala.util.{Failure, Success}
 

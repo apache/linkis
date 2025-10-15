@@ -71,8 +71,8 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
      */
     var currentEngineType: String = engineTypeLabel.getStringValue
     if (
-      aiSqlEnable && sqlLanguage
-        .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
+        aiSqlEnable && sqlLanguage
+          .equals(codeType) && supportAISQLCreator.contains(creator.toLowerCase())
     ) {
 
       logger.info(s"aisql enable for ${jobRequest.getId}")

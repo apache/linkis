@@ -60,7 +60,7 @@ import java.util.Date
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 class DefaultEntranceExecutor(id: Long)
-  extends EntranceExecutor(id)
+    extends EntranceExecutor(id)
     with SingleTaskOperateSupport
     with Logging {
 
@@ -80,9 +80,9 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   def dealProgressWithResource(
-                                orchestratorFuture: OrchestrationFuture,
-                                entranceJob: EntranceJob
-                              ): ProgressProcessor = {
+      orchestratorFuture: OrchestrationFuture,
+      entranceJob: EntranceJob
+  ): ProgressProcessor = {
     val progressProcessor =
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
@@ -107,10 +107,10 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   def dealResponse(
-                    orchestrationResponse: OrchestrationResponse,
-                    entranceExecuteRequest: EntranceExecuteRequest,
-                    orchestration: Orchestration
-                  ): Unit = {
+      orchestrationResponse: OrchestrationResponse,
+      entranceExecuteRequest: EntranceExecuteRequest,
+      orchestration: Orchestration
+  ): Unit = {
     orchestrationResponse match {
       case succeedResponse: SucceedTaskResponse =>
         succeedResponse match {
@@ -130,7 +130,7 @@ class DefaultEntranceExecutor(id: Long)
               s"JobRequest :  ${entranceExecuteRequest.jobId()} succeed to execute task, and get result array."
             )
             if (
-              null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0
+                null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0
             ) {
               val resultsetSize = arrayResultSetPathResp.getResultSets.length
               entranceExecuteRequest.getJob
@@ -204,10 +204,10 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   private def doOnFailed(
-                          entranceExecuteRequest: EntranceExecuteRequest,
-                          orchestration: Orchestration,
-                          failedResponse: FailedTaskResponse
-                        ) = {
+      entranceExecuteRequest: EntranceExecuteRequest,
+      orchestration: Orchestration,
+      failedResponse: FailedTaskResponse
+  ) = {
     val msg: String = failedResponse.getErrorCode + ", " + failedResponse.getErrorMsg
     var canRetry = false
     val props: util.Map[String, AnyRef] = entranceExecuteRequest.properties()
@@ -323,9 +323,9 @@ class DefaultEntranceExecutor(id: Long)
         logger.warn("Job Metrics has not been initialized")
       } else {
         if (
-          !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
-            TaskConstant.JOB_TO_ORCHESTRATOR
-          )
+            !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
+              TaskConstant.JOB_TO_ORCHESTRATOR
+            )
         ) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics
             .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))

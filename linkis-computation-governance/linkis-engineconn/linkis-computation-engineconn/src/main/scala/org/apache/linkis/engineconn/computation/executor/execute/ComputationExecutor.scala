@@ -61,7 +61,7 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{Cache, CacheBuilder}
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
-  extends AccessibleExecutor
+    extends AccessibleExecutor
     with ResourceExecutor
     with LabelExecutor
     with Logging {
@@ -91,9 +91,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   protected var lastTask: EngineConnTask = _
 
-  private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
-    EngineConnObject.getEngineCreationContext.getOptions
-  )
+  private val MAX_TASK_EXECUTE_NUM = if (null != EngineConnObject.getEngineCreationContext) {
+    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue(
+      EngineConnObject.getEngineCreationContext.getOptions
+    )
+  } else {
+    ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
+  }
 
   private val CLOSE_LOCKER = new Object
 
@@ -168,9 +172,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {}
 
   protected def afterExecute(
-                              engineConnTask: EngineConnTask,
-                              executeResponse: ExecuteResponse
-                            ): Unit = {
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {
     Utils.tryAndWarn {
       ComputationExecutorHook.getComputationExecutorHooks.foreach { hook =>
         hook.afterExecutorExecute(engineConnTask, executeResponse)
@@ -178,8 +182,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
     val executorNumber = getSucceedNum + getFailedNum
     if (
-      MAX_TASK_EXECUTE_NUM > 0 && runningTasks
-        .getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM
+        MAX_TASK_EXECUTE_NUM > 0 && runningTasks
+          .getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM
     ) {
       logger.error(s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. ")
       ExecutorManager.getInstance.getReportExecutor.tryShutdown()
@@ -194,9 +198,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   }
 
   def toExecuteTask(
-                     engineConnTask: EngineConnTask,
-                     internalExecute: Boolean = false
-                   ): ExecuteResponse = {
+      engineConnTask: EngineConnTask,
+      internalExecute: Boolean = false
+  ): ExecuteResponse = {
     runningTasks.increase()
     this.internalExecute = internalExecute
     Utils.tryFinally {
@@ -391,18 +395,18 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   protected def incompleteSplitter = "\n"
 
   def executeCompletely(
-                         engineExecutorContext: EngineExecutionContext,
-                         code: String,
-                         completedLine: String
-                       ): ExecuteResponse
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse
 
   def progress(taskID: String): Float
 
   def getProgressInfo(taskID: String): Array[JobProgressInfo]
 
   protected def createEngineExecutionContext(
-                                              engineConnTask: EngineConnTask
-                                            ): EngineExecutionContext = {
+      engineConnTask: EngineConnTask
+  ): EngineExecutionContext = {
     val userCreator = engineConnTask.getLables
       .find(_.isInstanceOf[UserCreatorLabel])
       .map { case label: UserCreatorLabel => label }
@@ -448,9 +452,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       // skip log jobId because it corresponding jobid when the ec created
       if (
-        !ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue
-          .split(",")
-          .exists(_.equals(key))
+          !ComputationExecutorConf.PRINT_TASK_PARAMS_SKIP_KEYS.getValue
+            .split(",")
+            .exists(_.equals(key))
       ) {
         sb.append(s"${key}=${value}\n")
       }
@@ -472,7 +476,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
       case ExecutionNodeStatus.Running =>
         if (
-          newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
+            newStatus == ExecutionNodeStatus.Succeed || newStatus == ExecutionNodeStatus.Failed || newStatus == ExecutionNodeStatus.Cancelled
         ) {
           task.setStatus(newStatus)
         } else {

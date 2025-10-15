@@ -138,10 +138,10 @@ object TemplateConfUtils extends Logging {
    *   String the last one of template conf name
    */
   def getCustomTemplateConfName(
-                                 jobRequest: JobRequest,
-                                 codeType: String,
-                                 logAppender: lang.StringBuilder
-                               ): String = {
+      jobRequest: JobRequest,
+      codeType: String,
+      logAppender: lang.StringBuilder
+  ): String = {
     var code = jobRequest.getExecutionCode
     var templateConfName = "";
 
@@ -258,8 +258,8 @@ object TemplateConfUtils extends Logging {
         // 处理runtime参数中的模板名称，用于失败任务重试的时候使用模板参数重试
         var runtimeTemplateFlag = false
         if (
-          EntranceConfiguration.SUPPORT_TEMPLATE_CONF_RETRY_ENABLE.getValue && StringUtils
-            .isBlank(templateName)
+            EntranceConfiguration.SUPPORT_TEMPLATE_CONF_RETRY_ENABLE.getValue && StringUtils
+              .isBlank(templateName)
         ) {
           templateName =
             runtimeMap.getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, "").toString
@@ -331,8 +331,8 @@ object TemplateConfUtils extends Logging {
         // 针对aisql处理模板参数
         val isAisql = LANGUAGE_TYPE_AI_SQL.equals(codeType)
         if (
-          isAisql && runtimeTemplateFlag && templateConflist != null && templateConflist
-            .size() > 0
+            isAisql && runtimeTemplateFlag && templateConflist != null && templateConflist
+              .size() > 0
         ) {
           logger.info("aisql deal with template in runtime params.")
           logAppender.append(

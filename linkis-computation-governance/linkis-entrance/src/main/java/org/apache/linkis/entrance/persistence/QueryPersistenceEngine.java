@@ -65,34 +65,34 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
        Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
     */
     sender =
-            Sender.getSender(Configuration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
+        Sender.getSender(Configuration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
   }
 
   private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)
-          throws QueryFailedException {
+      throws QueryFailedException {
     JobRespProtocol jobRespProtocol = null;
     int retryTimes = 0;
     boolean retry = true;
     while (retry
-            && retryTimes < EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue()) {
+        && retryTimes < EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue()) {
       try {
         retryTimes++;
         jobRespProtocol = (JobRespProtocol) sender.ask(jobReq);
         if (jobRespProtocol.getStatus() == 2) {
           logger.warn(
-                  "Request jobHistory failed, joReq msg{}, retry times: {}, reason {}",
-                  msg,
-                  retryTimes,
-                  jobRespProtocol.getMsg());
+              "Request jobHistory failed, joReq msg{}, retry times: {}, reason {}",
+              msg,
+              retryTimes,
+              jobRespProtocol.getMsg());
         } else {
           retry = false;
         }
       } catch (Exception e) {
         logger.warn(
-                "Request jobHistory failed, joReq msg{}, retry times: {}, reason {}",
-                msg,
-                retryTimes,
-                e);
+            "Request jobHistory failed, joReq msg{}, retry times: {}, reason {}",
+            msg,
+            retryTimes,
+            e);
       }
       if (retry) {
         try {
@@ -107,12 +107,12 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       String message = jobRespProtocol.getMsg();
       if (status != 0) {
         throw new QueryFailedException(
-                REQUEST_JOBHISTORY_FAILED.getErrorCode(),
-                MessageFormat.format(REQUEST_JOBHISTORY_FAILED.getErrorDesc(), message));
+            REQUEST_JOBHISTORY_FAILED.getErrorCode(),
+            MessageFormat.format(REQUEST_JOBHISTORY_FAILED.getErrorDesc(), message));
       }
     } else {
       throw new QueryFailedException(
-              JOBRESP_PROTOCOL_NULL.getErrorCode(), JOBRESP_PROTOCOL_NULL.getErrorDesc());
+          JOBRESP_PROTOCOL_NULL.getErrorCode(), JOBRESP_PROTOCOL_NULL.getErrorDesc());
     }
     return jobRespProtocol;
   }
@@ -121,7 +121,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   public void updateIfNeeded(JobRequest jobReq) throws ErrorException, QueryFailedException {
     if (null == jobReq) {
       throw new EntranceIllegalParamException(
-              JOBREQ_NOT_NULL.getErrorCode(), JOBREQ_NOT_NULL.getErrorDesc());
+          JOBREQ_NOT_NULL.getErrorCode(), JOBREQ_NOT_NULL.getErrorDesc());
     }
     JobRequest jobReqForUpdate = new JobRequest();
     BeanUtils.copyProperties(jobReq, jobReqForUpdate);
@@ -135,15 +135,15 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     jobReqForUpdate.setUpdatedTime(new Date());
     JobReqUpdate jobReqUpdate = new JobReqUpdate(jobReqForUpdate);
     JobRespProtocol jobRespProtocol =
-            sendToJobHistoryAndRetry(
-                    jobReqUpdate, "job:" + jobReq.getReqId() + "status:" + jobReq.getStatus());
+        sendToJobHistoryAndRetry(
+            jobReqUpdate, "job:" + jobReq.getReqId() + "status:" + jobReq.getStatus());
   }
 
   @Override
   public void persist(JobRequest jobReq) throws ErrorException {
     if (null == jobReq) {
       throw new EntranceIllegalParamException(
-              JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
+          JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
     }
     if (logger.isDebugEnabled()) {
       try {
@@ -161,7 +161,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       Object object = data.get(JobRequestConstants.JOB_ID());
       if (null == object) {
         throw new QueryFailedException(
-                20011, "Insert JobReq failed, reason : " + jobRespProtocol.getMsg());
+            20011, "Insert JobReq failed, reason : " + jobRespProtocol.getMsg());
       }
       String jobIdStr = object.toString();
       Long jobId = Long.parseLong(jobIdStr);
@@ -171,13 +171,13 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
 
   @Override
   public Task[] readAll(String instance)
-          throws EntranceIllegalParamException, EntranceRPCException, QueryFailedException {
+      throws EntranceIllegalParamException, EntranceRPCException, QueryFailedException {
 
     List<Task> retList = new ArrayList<>();
 
     if (instance == null || "".equals(instance)) {
       throw new EntranceIllegalParamException(
-              INSTANCE_NOT_NULL.getErrorCode(), INSTANCE_NOT_NULL.getErrorDesc());
+          INSTANCE_NOT_NULL.getErrorCode(), INSTANCE_NOT_NULL.getErrorDesc());
     }
 
     RequestReadAllTask requestReadAllTask = new RequestReadAllTask(instance);
@@ -186,15 +186,15 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       responsePersist = (ResponsePersist) sender.ask(requestReadAllTask);
     } catch (Exception e) {
       throw new EntranceRPCException(
-              SENDER_RPC_FAILED.getErrorCode(), SENDER_RPC_FAILED.getErrorDesc(), e);
+          SENDER_RPC_FAILED.getErrorCode(), SENDER_RPC_FAILED.getErrorDesc(), e);
     }
     if (responsePersist != null) {
       int status = responsePersist.getStatus();
       String message = responsePersist.getMsg();
       if (status != 0) {
         throw new QueryFailedException(
-                READ_TASKS_FAILED.getErrorCode(),
-                MessageFormat.format(READ_TASKS_FAILED.getErrorDesc(), message));
+            READ_TASKS_FAILED.getErrorCode(),
+            MessageFormat.format(READ_TASKS_FAILED.getErrorDesc(), message));
       }
       Map<String, Object> data = responsePersist.getData();
       Object object = data.get(TaskConstant.TASK);

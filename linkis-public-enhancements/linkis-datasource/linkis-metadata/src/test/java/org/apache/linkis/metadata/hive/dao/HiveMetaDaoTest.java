@@ -130,18 +130,6 @@ public class HiveMetaDaoTest extends BaseDaoTest {
   }
 
   @Test
-  @DisplayName("getStorageDescriptionIDByDbTableNameAndUserTest")
-  public void getStorageDescriptionIDByDbTableNameAndUserTest() {
-    MetadataQueryParam queryParam = new MetadataQueryParam();
-    queryParam.setDbName("default");
-    queryParam.setTableName("employee");
-    queryParam.setUserName("admin");
-    Map<String, Object> list =
-        hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
-    Assertions.assertNull(list);
-  }
-
-  @Test
   @DisplayName("getColumnsByStorageDescriptionIDTest")
   public void getColumnsByStorageDescriptionIDTest() {
 

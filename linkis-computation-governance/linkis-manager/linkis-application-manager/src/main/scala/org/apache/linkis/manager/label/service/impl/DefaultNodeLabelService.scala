@@ -150,8 +150,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     if (null != willBeDelete && willBeDelete.nonEmpty) {
       nodeLabels.asScala.foreach(nodeLabel => {
         if (
-          modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete
-            .contains(nodeLabel.getLabelKey)
+            modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete
+              .contains(nodeLabel.getLabelKey)
         ) {
           val labelIds = new util.ArrayList[Integer]()
           labelIds.add(nodeLabel.getId)
@@ -167,8 +167,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     if (null != willBeUpdate && willBeUpdate.nonEmpty) {
       labels.asScala.foreach(label => {
         if (
-          modifiableKeyList.contains(label.getLabelKey) && willBeUpdate
-            .contains(label.getLabelKey)
+            modifiableKeyList.contains(label.getLabelKey) && willBeUpdate
+              .contains(label.getLabelKey)
         ) {
           nodeLabels.asScala
             .filter(_.getLabelKey.equals(label.getLabelKey))
@@ -203,9 +203,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   override def labelsFromInstanceToNewInstance(
-                                                oldServiceInstance: ServiceInstance,
-                                                newServiceInstance: ServiceInstance
-                                              ): Unit = {
+      oldServiceInstance: ServiceInstance,
+      newServiceInstance: ServiceInstance
+  ): Unit = {
     val labels = labelManagerPersistence.getLabelByServiceInstance(newServiceInstance)
     val newKeyList = if (null != labels) {
       labels.map(_.getLabelKey).asJava
@@ -248,9 +248,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
    */
   @Transactional(rollbackFor = Array(classOf[Exception]))
   override def removeLabelsFromNode(
-                                     instance: ServiceInstance,
-                                     labels: util.List[Label[_]]
-                                   ): Unit = {
+      instance: ServiceInstance,
+      labels: util.List[Label[_]]
+  ): Unit = {
     // 这里前提是表中保证了同个key，只会有最新的value保存在数据库中
     val dbLabels = labelManagerPersistence
       .getLabelByServiceInstance(instance)
@@ -320,8 +320,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
    * @return
    */
   override def getScoredNodesByLabels(
-                                       labels: util.List[Label[_]]
-                                     ): util.List[ScoreServiceInstance] = {
+      labels: util.List[Label[_]]
+  ): util.List[ScoreServiceInstance] = {
     getScoredNodeMapsByLabels(labels).asScala.map(_._1).toList
   }.asJava
 
@@ -331,8 +331,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
    * @return
    */
   override def getScoredNodeMapsByLabels(
-                                          labels: util.List[Label[_]]
-                                        ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
+      labels: util.List[Label[_]]
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
     // Try to convert the label list to key value list
     if (null != labels && labels.asScala.nonEmpty) {
       // Get the persistence labels by kvList
@@ -346,9 +346,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   override def getScoredNodeMapsByLabelsReuse(
-                                               labels: util.List[Label[_]],
-                                               shuffEnable: Boolean
-                                             ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
+      labels: util.List[Label[_]],
+      shuffEnable: Boolean
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
     // Try to convert the label list to key value list
     if (null != labels && labels.asScala.nonEmpty) {
       // Get the persistence labels by kvList
@@ -369,10 +369,10 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
    * @return
    */
   private def getScoredNodeMapsByLabels(
-                                         labels: util.List[PersistenceLabel],
-                                         necessaryLabels: util.List[PersistenceLabel],
-                                         shuffEnable: Boolean = false
-                                       ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
+      labels: util.List[PersistenceLabel],
+      necessaryLabels: util.List[PersistenceLabel],
+      shuffEnable: Boolean = false
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]] = {
     // Get the in-degree relations ( Label -> Nodes )
     logger.info(s"get node relations by labels size: ${labels.size()}")
     val inNodeDegree = labelManagerPersistence.getNodeRelationsByLabels(
@@ -433,9 +433,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
             .map(_.getLabelKey)
             .toSet
           if (
-            necessaryLabelKeys.asJava.containsAll(
-              coreLabelKeys.asJava
-            ) && coreLabelKeys.size == necessaryLabelKeys.size
+              necessaryLabelKeys.asJava.containsAll(
+                coreLabelKeys.asJava
+              ) && coreLabelKeys.size == necessaryLabelKeys.size
           ) {
             matchInstanceAndLabels.put(
               new LabelScoreServiceInstance(node),
@@ -473,8 +473,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   override def getNodeLabelsByInstanceList(
-                                            serviceInstanceList: util.List[ServiceInstance]
-                                          ): util.HashMap[String, util.List[Label[_]]] = {
+      serviceInstanceList: util.List[ServiceInstance]
+  ): util.HashMap[String, util.List[Label[_]]] = {
     val resultMap = new util.HashMap[String, util.List[Label[_]]]()
     val map = labelManagerPersistence.getLabelRelationsByServiceInstance(serviceInstanceList)
     serviceInstanceList.asScala.foreach(serviceInstance => {
@@ -500,9 +500,9 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   override def getEngineNodesWithResourceByUser(
-                                                 user: String,
-                                                 withResource: Boolean
-                                               ): Array[EngineNode] = {
+      user: String,
+      withResource: Boolean
+  ): Array[EngineNode] = {
     val serviceInstancelist = nodeManagerPersistence
       .getNodes(user)
       .map(_.getServiceInstance)
@@ -533,7 +533,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
             val engineInstanceOption =
               node.getLabels.asScala.find(_.isInstanceOf[EngineInstanceLabel])
             if (
-              userCreatorLabelOption.isDefined && engineTypeLabelOption.isDefined && engineInstanceOption.isDefined
+                userCreatorLabelOption.isDefined && engineTypeLabelOption.isDefined && engineInstanceOption.isDefined
             ) {
               val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
               val engineTypeLabel = engineTypeLabelOption.get.asInstanceOf[EngineTypeLabel]
@@ -576,8 +576,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   private def serviceInstanceShuff(
-                                    serviceInstances: java.util.List[ServiceInstance]
-                                  ): util.List[ServiceInstance] = {
+      serviceInstances: java.util.List[ServiceInstance]
+  ): util.List[ServiceInstance] = {
     var shuffledInstances = new util.ArrayList[ServiceInstance](serviceInstances)
     if (shuffledInstances.size > RMConfiguration.LABEL_SERVICE_INSTANCE_SHUFF_NUM.getValue) {
       Collections.shuffle(shuffledInstances)

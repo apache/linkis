@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util.concurrent.TimeUnit
 
 class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: String)
-  extends AbstractRemoteClient
+    extends AbstractRemoteClient
     with DataSourceRemoteClient {
   def this() = this(null, null)
 
@@ -76,28 +76,28 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
   }
 
   override def getAllDataSourceTypes(
-                                      action: GetAllDataSourceTypesAction
-                                    ): GetAllDataSourceTypesResult = execute(action).asInstanceOf[GetAllDataSourceTypesResult]
+      action: GetAllDataSourceTypesAction
+  ): GetAllDataSourceTypesResult = execute(action).asInstanceOf[GetAllDataSourceTypesResult]
 
   override def queryDataSourceEnv(action: QueryDataSourceEnvAction): QueryDataSourceEnvResult =
     execute(action).asInstanceOf[QueryDataSourceEnvResult]
 
   override def getInfoByDataSourceId(
-                                      action: GetInfoByDataSourceIdAction
-                                    ): GetInfoByDataSourceIdResult = execute(action).asInstanceOf[GetInfoByDataSourceIdResult]
+      action: GetInfoByDataSourceIdAction
+  ): GetInfoByDataSourceIdResult = execute(action).asInstanceOf[GetInfoByDataSourceIdResult]
 
   override def getInfoByDataSourceName(
-                                        action: GetInfoByDataSourceNameAction
-                                      ): GetInfoByDataSourceNameResult = execute(action).asInstanceOf[GetInfoByDataSourceNameResult]
+      action: GetInfoByDataSourceNameAction
+  ): GetInfoByDataSourceNameResult = execute(action).asInstanceOf[GetInfoByDataSourceNameResult]
 
   override def getInfoPublishedByDataSourceName(
-                                                 action: GetInfoPublishedByDataSourceNameAction
-                                               ): GetInfoPublishedByDataSourceNameResult =
+      action: GetInfoPublishedByDataSourceNameAction
+  ): GetInfoPublishedByDataSourceNameResult =
     execute(action).asInstanceOf[GetInfoPublishedByDataSourceNameResult]
 
   override def getInfoPublishedByIpPort(
-                                         action: GetInfoPublishedByUserIpPortAction
-                                       ): GetInfoPublishedByUserIpPortResult =
+      action: GetInfoPublishedByUserIpPortAction
+  ): GetInfoPublishedByUserIpPortResult =
     execute(action).asInstanceOf[GetInfoPublishedByUserIpPortResult]
 
   override def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult = execute(
@@ -105,13 +105,13 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
   ).asInstanceOf[QueryDataSourceResult]
 
   override def getConnectParams(
-                                 action: GetConnectParamsByDataSourceIdAction
-                               ): GetConnectParamsByDataSourceIdResult =
+      action: GetConnectParamsByDataSourceIdAction
+  ): GetConnectParamsByDataSourceIdResult =
     execute(action).asInstanceOf[GetConnectParamsByDataSourceIdResult]
 
   override def getConnectParamsByName(
-                                       action: GetConnectParamsByDataSourceNameAction
-                                     ): GetConnectParamsByDataSourceNameResult =
+      action: GetConnectParamsByDataSourceNameAction
+  ): GetConnectParamsByDataSourceNameResult =
     execute(action).asInstanceOf[GetConnectParamsByDataSourceNameResult]
 
   override def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult = execute(
@@ -119,8 +119,8 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
   ).asInstanceOf[CreateDataSourceResult]
 
   override def getDataSourceTestConnect(
-                                         action: DataSourceTestConnectAction
-                                       ): DataSourceTestConnectResult = execute(action).asInstanceOf[DataSourceTestConnectResult]
+      action: DataSourceTestConnectAction
+  ): DataSourceTestConnectResult = execute(action).asInstanceOf[DataSourceTestConnectResult]
 
   override def deleteDataSource(action: DeleteDataSourceAction): DeleteDataSourceResult = execute(
     action
@@ -131,24 +131,24 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
   ).asInstanceOf[ExpireDataSourceResult]
 
   override def getDataSourceVersions(
-                                      action: GetDataSourceVersionsAction
-                                    ): GetDataSourceVersionsResult = execute(action).asInstanceOf[GetDataSourceVersionsResult]
+      action: GetDataSourceVersionsAction
+  ): GetDataSourceVersionsResult = execute(action).asInstanceOf[GetDataSourceVersionsResult]
 
   override def publishDataSourceVersion(
-                                         action: PublishDataSourceVersionAction
-                                       ): PublishDataSourceVersionResult = execute(action).asInstanceOf[PublishDataSourceVersionResult]
+      action: PublishDataSourceVersionAction
+  ): PublishDataSourceVersionResult = execute(action).asInstanceOf[PublishDataSourceVersionResult]
 
   override def updateDataSource(action: UpdateDataSourceAction): UpdateDataSourceResult = execute(
     action
   ).asInstanceOf[UpdateDataSourceResult]
 
   override def updateDataSourceParameter(
-                                          action: UpdateDataSourceParameterAction
-                                        ): UpdateDataSourceParameterResult =
+      action: UpdateDataSourceParameterAction
+  ): UpdateDataSourceParameterResult =
     execute(action).asInstanceOf[UpdateDataSourceParameterResult]
 
   override def getKeyDefinitionsByType(
-                                        action: GetKeyTypeDatasourceAction
-                                      ): GetKeyTypeDatasourceResult = execute(action).asInstanceOf[GetKeyTypeDatasourceResult]
+      action: GetKeyTypeDatasourceAction
+  ): GetKeyTypeDatasourceResult = execute(action).asInstanceOf[GetKeyTypeDatasourceResult]
 
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.config;
 
-import de.codecentric.boot.admin.server.utils.jackson.AdminServerModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

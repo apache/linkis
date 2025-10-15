@@ -129,10 +129,10 @@ abstract class EntranceExecutor(val id: Long) extends Executor with Logging {
 }
 
 class EngineExecuteAsyncReturn(
-                                val request: ExecuteRequest,
-                                callback: EngineExecuteAsyncReturn => Unit
-                              ) extends AsynReturnExecuteResponse
-  with Logging {
+    val request: ExecuteRequest,
+    callback: EngineExecuteAsyncReturn => Unit
+) extends AsynReturnExecuteResponse
+    with Logging {
 
   private var notifyJob: ExecuteResponse => Unit = _
 
@@ -151,10 +151,10 @@ class EngineExecuteAsyncReturn(
   def getLastNotifyTime: Long = lastNotifyTime
 
   def setOrchestrationObjects(
-                               orchestrationFuture: OrchestrationFuture,
-                               logProcessor: LogProcessor,
-                               progressProcessor: ProgressProcessor
-                             ): Unit = {
+      orchestrationFuture: OrchestrationFuture,
+      logProcessor: LogProcessor,
+      progressProcessor: ProgressProcessor
+  ): Unit = {
     this.orchestrationFuture = orchestrationFuture
     this.logProcessor = logProcessor
     this.progressProcessor = progressProcessor

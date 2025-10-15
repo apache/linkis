@@ -135,7 +135,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
       // metrics 增量更新逻辑
       if (
-        Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
+          Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
           jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
       ) {
         mergeMetrics(jobReq)
@@ -274,9 +274,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def getJobHistoryByIdAndNameNoCode(
-                                               jobId: java.lang.Long,
-                                               userName: String
-                                             ): JobHistory = {
+      jobId: java.lang.Long,
+      userName: String
+  ): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
@@ -285,9 +285,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def getJobHistoryByIdAndNameBrief(
-                                              jobId: java.lang.Long,
-                                              userName: String
-                                            ): JobHistory = {
+      jobId: java.lang.Long,
+      userName: String
+  ): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
@@ -296,19 +296,19 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(
-                       jobId: lang.Long,
-                       username: String,
-                       status: String,
-                       creator: String,
-                       sDate: Date,
-                       eDate: Date,
-                       engineType: String,
-                       startJobId: lang.Long,
-                       instance: String,
-                       departmentId: String,
-                       engineInstance: String,
-                       runType: String
-                     ): util.List[JobHistory] = {
+      jobId: lang.Long,
+      username: String,
+      status: String,
+      creator: String,
+      sDate: Date,
+      eDate: Date,
+      engineType: String,
+      startJobId: lang.Long,
+      instance: String,
+      departmentId: String,
+      engineInstance: String,
+      runType: String
+  ): util.List[JobHistory] = {
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(
@@ -403,13 +403,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def countUndoneTasks(
-                                 username: String,
-                                 creator: String,
-                                 sDate: Date,
-                                 eDate: Date,
-                                 engineType: String,
-                                 startJobId: lang.Long
-                               ): Integer = {
+      username: String,
+      creator: String,
+      sDate: Date,
+      eDate: Date,
+      engineType: String,
+      startJobId: lang.Long
+  ): Integer = {
     val cacheKey =
       if (StringUtils.isNoneBlank(username, creator, engineType)) {
         s"${username}_${creator}_${engineType}"
@@ -436,13 +436,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   private def getCountUndoneTasks(
-                                   username: String,
-                                   creator: String,
-                                   sDate: Date,
-                                   eDate: Date,
-                                   engineType: String,
-                                   startJobId: lang.Long
-                                 ): Integer = {
+      username: String,
+      creator: String,
+      sDate: Date,
+      eDate: Date,
+      engineType: String,
+      startJobId: lang.Long
+  ): Integer = {
     logger.info("Get count undone Tasks {}, {}, {}, {}", username, creator, engineType, startJobId)
     val statusList: util.List[String] = new util.ArrayList[String]()
     statusList.add(TaskStatus.Running.toString)
@@ -499,9 +499,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Receiver
   override def clearUndoneTasksByEntranceInstance(
-                                                   request: EntranceInstanceConfRequest,
-                                                   sender: Sender
-                                                 ): Unit = {
+      request: EntranceInstanceConfRequest,
+      sender: Sender
+  ): Unit = {
     // Query incomplete tasks
     logger.info("Request Entrance Instance :{}", request.instance)
     val statusList: util.List[String] = new util.ArrayList[String]()
@@ -539,19 +539,19 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def searchByTasks(
-                              taskidList: util.List[String],
-                              username: String
-                            ): util.List[JobHistory] = {
+      taskidList: util.List[String],
+      username: String
+  ): util.List[JobHistory] = {
     jobHistoryMapper.selectJobHistoryByTaskidList(taskidList, username)
   }
 
   override def taskDurationTopN(
-                                 sDate: Date,
-                                 eDate: Date,
-                                 username: String,
-                                 creator: String,
-                                 engineType: String
-                               ): util.List[JobHistory] = {
+      sDate: Date,
+      eDate: Date,
+      username: String,
+      creator: String,
+      engineType: String
+  ): util.List[JobHistory] = {
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.taskDurationTopN(sDate, eDate, username, engineType)
     } else if (StringUtils.isBlank(username)) {
@@ -640,7 +640,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       logger.warn(
         s"Failed to merge metrics for job ${jobReq.getId}, falling back to replace mode: ${t.getMessage}"
       )
-      // If merge fails, keep the original behavior (replace)
+    // If merge fails, keep the original behavior (replace)
     }
   }
 

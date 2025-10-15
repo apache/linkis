@@ -92,7 +92,6 @@ class DefaultEngineAskEngineService
       "CreateEngineService-Thread-"
     )
 
-
   private val (errorSendExecutor, errorSendThreadPool)
       : (ExecutionContextExecutorService, ThreadPoolExecutor) =
     Utils.newCachedExecutionContextWithExecutor(

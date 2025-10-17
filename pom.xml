@@ -199,7 +199,7 @@
     <commons-cli.version>1.3.1</commons-cli.version>
     <jline.version>3.9.0</jline.version>
 
-    <bouncycastle.version>1.78.1</bouncycastle.version>
+    <bouncycastle.version>1.79</bouncycastle.version>
 
     <!-- java byte code modification -->
     <javassist.version>3.27.0-GA</javassist.version>

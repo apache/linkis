@@ -18,13 +18,12 @@
 package org.apache.linkis.metadata.query.service.mysql;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlConnection extends AbstractSqlConnection {
+public class SqlConnection implements Closeable {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
@@ -48,6 +47,13 @@ public class SqlConnection extends AbstractSqlConnection {
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
 
+  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars.apply("linkis.mysql.strong.security.enable", false);
+
+  private Connection conn;
+
+  private ConnectMessage connectMessage;
+
   public SqlConnection(
       String host,
       Integer port,
@@ -56,9 +62,34 @@ public class SqlConnection extends AbstractSqlConnection {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    super(host, port, username, password, database, extraParams);
-    connectMessage.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
-    connectMessage.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
+    // Handle mysql security vulnerabilities
+    validateParams(extraParams);
+    connectMessage = new ConnectMessage(host, port, username, password, extraParams);
+    conn = getDBConnection(connectMessage, database);
+    // Try to create statement
+    Statement statement = conn.createStatement();
+    statement.close();
+  }
+
+  /**
+   * Handle mysql security vulnerabilities
+   *
+   * @param extraParams
+   */
+  private void validateParams(Map<String, Object> extraParams) {
+    if (extraParams == null) {
+      return;
+    }
+
+    // security check
+    // SecurityUtils.checkJdbcSecurity(extraParams);
+
+    // append force params
+    SecurityUtils.appendMysqlForceParams(extraParams);
+
+    // print extraParams
+    String logStr = SecurityUtils.parseParamsMapToMysqlParamUrl(extraParams);
+    LOG.info("mysql metadata url extraParams: {}", logStr);
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -101,7 +132,7 @@ public class SqlConnection extends AbstractSqlConnection {
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -109,8 +140,6 @@ public class SqlConnection extends AbstractSqlConnection {
       for (int i = 1; i < columnCount + 1; i++) {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
-        info.setLength(meta.getColumnDisplaySize(i));
-        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
@@ -125,66 +154,106 @@ public class SqlConnection extends AbstractSqlConnection {
   }
 
   /**
+   * Get primary keys
+   *
+   * @param connection connection
+   * @param table table name
+   * @return
+   * @throws SQLException
+   */
+  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+    ResultSet rs = null;
+    List<String> primaryKeys = new ArrayList<>();
+    try {
+      DatabaseMetaData dbMeta = connection.getMetaData();
+      rs = dbMeta.getPrimaryKeys(null, null, table);
+      while (rs.next()) {
+        primaryKeys.add(rs.getString("column_name"));
+      }
+      return primaryKeys;
+    } finally {
+      if (null != rs) {
+        closeResource(connection, null, rs);
+      }
+    }
+  }
+
+  /**
+   * close database resource
+   *
+   * @param connection connection
+   * @param statement statement
+   * @param resultSet result set
+   */
+  private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
+    try {
+      if (null != resultSet && !resultSet.isClosed()) {
+        resultSet.close();
+      }
+      if (null != statement && !statement.isClosed()) {
+        statement.close();
+      }
+      if (null != connection && !connection.isClosed()) {
+        connection.close();
+      }
+    } catch (SQLException e) {
+      LOG.warn("Fail to release resource [" + e.getMessage() + "]", e);
+    }
+  }
+
+  @Override
+  public void close() throws IOException {
+    closeResource(conn, null, null);
+  }
+
+  /**
    * @param connectMessage
    * @param database
    * @return
    * @throws ClassNotFoundException
    */
-  public Connection getDBConnection(ConnectMessage connectMessage, String database)
+  private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
+    String extraParamString =
+        connectMessage.extraParams.entrySet().stream()
+            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
-    // security check
-    SecurityUtils.checkJdbcConnParams(
-        connectMessage.host,
-        connectMessage.port,
-        connectMessage.username,
-        connectMessage.password,
-        database,
-        connectMessage.extraParams);
-    SecurityUtils.appendMysqlForceParams(connectMessage.extraParams);
-
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    // deal with empty database
-    if (StringUtils.isBlank(database)) {
-      url = url.substring(0, url.length() - 1);
-    }
-    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
-      String extraParamString =
-          connectMessage.extraParams.entrySet().stream()
-              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-              .collect(Collectors.joining("&"));
+    if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
-    LOG.info("jdbc connection url: {}", url);
-    Properties properties = SecurityUtils.getMysqlSecurityParams();
-    properties.setProperty("user", connectMessage.username);
-    properties.setProperty("password", connectMessage.password);
-    return DriverManager.getConnection(url, properties);
+    return DriverManager.getConnection(
+        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
   }
 
-  public String getSqlConnectUrl() {
-    return SQL_CONNECT_URL.getValue();
-  }
+  /** Connect message */
+  private static class ConnectMessage {
+    private String host;
 
-  @Override
-  public String generateJdbcDdlSql(String database, String table) {
-    String columnSql = String.format("SHOW CREATE TABLE %s.%s", database, table);
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    String ddl = "";
-    try {
-      ps = conn.prepareStatement(columnSql);
-      rs = ps.executeQuery();
-      if (rs.next()) {
-        ddl = rs.getString("Create Table");
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    } finally {
-      closeResource(null, ps, rs);
+    private Integer port;
+
+    private String username;
+
+    private String password;
+
+    private Map<String, Object> extraParams;
+
+    public ConnectMessage(
+        String host,
+        Integer port,
+        String username,
+        String password,
+        Map<String, Object> extraParams) {
+      this.host = host;
+      this.port = port;
+      this.username = username;
+      this.password = password;
+      this.extraParams = extraParams;
+      this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
+      this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
     }
-    return ddl.replaceAll("\n", "\n\t");
   }
 }

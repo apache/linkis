@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util
-import java.util.{ArrayList, Date, List}
+import java.util.Date
 
 object GovernanceUtils extends Logging {
 
@@ -132,7 +132,7 @@ object GovernanceUtils extends Logging {
    * @return
    */
   def getResultParentPath(creator: String): String = {
-    val resPrefix = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
+    val resPrefix = GovernanceCommonConf.DEFAULT_LOGPATH_PREFIX
     val resStb = new StringBuilder()
     if (resStb.endsWith("/")) {
       resStb.append(resPrefix)
@@ -140,10 +140,29 @@ object GovernanceUtils extends Logging {
       resStb.append(resPrefix).append("/")
     }
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    val hourFormat = new SimpleDateFormat("HH") // 新增：24小时制
     val date = new Date(System.currentTimeMillis)
     val dateString = dateFormat.format(date)
-    resStb.append("result").append("/").append(dateString).append("/").append(creator)
-    resStb.toString()
+    val hourString = hourFormat.format(date) // 新增：当前小时（如 "08", "14"）
+    if (Configuration.HDFS_HOUR_DIR_SWITCH) {
+      resStb
+        .append("result")
+        .append("/")
+        .append(dateString)
+        .append("/")
+        .append(hourString)
+        .append("/") // 新增：小时层级
+        .append(creator)
+        .toString()
+    } else {
+      resStb
+        .append("result")
+        .append("/")
+        .append(dateString)
+        .append("/")
+        .append(creator)
+        .toString()
+    }
   }
 
 }

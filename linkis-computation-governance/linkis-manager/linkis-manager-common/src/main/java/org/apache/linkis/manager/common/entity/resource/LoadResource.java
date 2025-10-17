@@ -125,7 +125,7 @@ public class LoadResource extends Resource {
   @Override
   public String toJson() {
     return String.format(
-        "{\"memory\":%s,\"cpu\":%d}", ByteTimeUtils.bytesToString(this.memory), this.cores);
+        "{\"memory\":\"%s\",\"cpu\":%d}", ByteTimeUtils.bytesToString(this.memory), this.cores);
   }
 
   @Override

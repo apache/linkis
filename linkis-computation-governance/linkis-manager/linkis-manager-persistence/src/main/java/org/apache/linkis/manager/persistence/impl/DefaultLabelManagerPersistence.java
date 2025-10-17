@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabelRel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
@@ -42,6 +43,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -329,38 +331,40 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
   public Map<ServiceInstance, List<PersistenceLabel>> getLabelRelationsByServiceInstance(
       List<ServiceInstance> serviceInstances) {
     if (CollectionUtils.isEmpty(serviceInstances)) return Collections.emptyMap();
-    try {
-      List<Map<String, Object>> nodeRelationsByLabels =
-          labelManagerMapper.listLabelRelationByServiceInstance(serviceInstances);
-      List<Tunple<ServiceInstance, PersistenceLabel>> arrays =
-          new ArrayList<Tunple<ServiceInstance, PersistenceLabel>>();
-      for (Map<String, Object> nodeRelationsByLabel : nodeRelationsByLabels) {
-        Optional<ServiceInstance> instanceOption =
-            serviceInstances.stream()
-                .filter(
-                    serviceInstance1 ->
-                        serviceInstance1
-                            .getInstance()
-                            .equalsIgnoreCase(String.valueOf(nodeRelationsByLabel.get("instance"))))
-                .findFirst();
-        PersistenceLabel persistenceLabel = new PersistenceLabel();
-        BeanUtils.populate(persistenceLabel, nodeRelationsByLabel);
-        PersistenceUtils.setValue(persistenceLabel);
-        instanceOption.ifPresent(
-            serviceInstance -> arrays.add(new Tunple(serviceInstance, persistenceLabel)));
-      }
-      return arrays.stream()
-          .collect(Collectors.groupingBy(Tunple::getKey))
-          .entrySet()
-          .stream()
-          .collect(
-              Collectors.toMap(
-                  Map.Entry::getKey,
-                  f -> f.getValue().stream().map(Tunple::getValue).collect(Collectors.toList())));
-    } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new PersistenceWarnException(
-          BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
-    }
+    Map<ServiceInstance, List<PersistenceLabel>> resultMap = new HashMap<>();
+    List<Map<String, Object>> nodeRelationsByLabels =
+        listLabelRelationByServiceInstance(
+            serviceInstances, RMConfiguration.LABEL_SERVICE_PARTITION_NUM.getValue());
+    logger.info("list label relation end, with size: {}", nodeRelationsByLabels.size());
+    Map<String, List<Map<String, Object>>> groupByInstanceMap =
+        nodeRelationsByLabels.stream()
+            .collect(
+                Collectors.groupingBy(
+                    nodeRelationsByLabel -> nodeRelationsByLabel.get("instance").toString()));
+    serviceInstances.stream()
+        .filter(serviceInstance -> groupByInstanceMap.containsKey(serviceInstance.getInstance()))
+        .forEach(
+            serviceInstance -> {
+              List<PersistenceLabel> persistenceLabelList = new ArrayList<>();
+              groupByInstanceMap
+                  .get(serviceInstance.getInstance())
+                  .forEach(
+                      map -> {
+                        try {
+                          PersistenceLabel persistenceLabel = new PersistenceLabel();
+                          BeanUtils.populate(persistenceLabel, map);
+                          PersistenceUtils.setValue(persistenceLabel);
+                          persistenceLabelList.add(persistenceLabel);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                          throw new PersistenceWarnException(
+                              BEANUTILS_POPULATE_FAILED.getErrorCode(),
+                              BEANUTILS_POPULATE_FAILED.getErrorDesc(),
+                              e);
+                        }
+                      });
+              resultMap.put(serviceInstance, persistenceLabelList);
+            });
+    return resultMap;
   }
 
   @Override
@@ -371,5 +375,14 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
   @Override
   public List<ServiceInstance> getNodeByLabelKeyValue(String labelKey, String stringValue) {
     return labelManagerMapper.getNodeByLabelKeyValue(labelKey, stringValue);
+  }
+
+  public List<Map<String, Object>> listLabelRelationByServiceInstance(
+      List<ServiceInstance> nodes, int batchSize) {
+
+    return Lists.partition(nodes, batchSize).stream()
+        .map(batch -> labelManagerMapper.listLabelRelationByServiceInstance(batch))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
   }
 }

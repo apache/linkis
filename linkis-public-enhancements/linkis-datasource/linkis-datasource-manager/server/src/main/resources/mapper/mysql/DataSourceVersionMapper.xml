@@ -30,6 +30,10 @@
     <sql id="datasource_version_insert_columns">
         `version_id`, `datasource_id`, `parameter`, `comment`, `create_time`, `create_user`
     </sql>
+    <update id="updateByDatasourceVersion">
+        update linkis_ps_dm_datasource_version set parameter = #{parameter}
+        where datasource_id = #{datasourceId} and version_id = #{versionId}
+    </update>
 
     <select id="getLatestVersion" resultType="java.lang.Long">
         SELECT ifnull(max(version_id),0 ) FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId};

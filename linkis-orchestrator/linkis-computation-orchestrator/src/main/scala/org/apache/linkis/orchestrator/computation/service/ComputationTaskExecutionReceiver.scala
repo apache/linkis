@@ -27,6 +27,7 @@ import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.ecm.service.TaskExecutionReceiver
 import org.apache.linkis.orchestrator.listener.task._
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorLoggerUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
@@ -92,6 +93,15 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
         .foreach { codeExecutor =>
           OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
+          val task: ExecTask = codeExecutor.getExecTask.getPhysicalContext.getRootTask
+          taskStatus match {
+            case rte: ResponseTaskStatusWithExecuteCodeIndex =>
+              logger.info(s"execute error with index: ${rte.errorIndex}")
+              task.updateParams("execute.error.code.index", rte.errorIndex.toString)
+            case _ =>
+          }
+          // 标识当前方法执行过，该方法是异步的，处理失败任务需要该方法执行完
+          task.updateParams("task.error.receiver.flag", "true")
           val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
           logger.info(
             s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"

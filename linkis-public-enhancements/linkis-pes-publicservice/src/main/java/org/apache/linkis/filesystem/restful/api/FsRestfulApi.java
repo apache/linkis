@@ -20,18 +20,21 @@ package org.apache.linkis.filesystem.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.common.utils.ResultSetUtils;
-import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
 import org.apache.linkis.filesystem.entity.LogLevel;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 import org.apache.linkis.filesystem.service.FsService;
+import org.apache.linkis.filesystem.util.FilesystemUtils;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.utils.UserGroupUtils;
 import org.apache.linkis.filesystem.validator.PathValidator$;
 import org.apache.linkis.governance.common.utils.LoggerUtils;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
+import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
@@ -45,6 +48,7 @@ import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -62,9 +66,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -77,6 +86,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
+import static org.apache.linkis.manager.label.utils.LabelUtils.logger;
 
 @Api(tags = "file system")
 @RestController
@@ -98,7 +108,7 @@ public class FsRestfulApi {
     // 配置文件默认关闭检查，withadmin默认true，特殊情况传false 开启权限检查（
     // The configuration file defaults to disable checking, with admin defaulting to true, and in
     // special cases, false is passed to enable permission checking）
-    boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
+    boolean ownerCheck = FILESYSTEM_PATH_CHECK_OWNER.getValue();
     if (!ownerCheck && withAdmin) {
       LOGGER.debug("not check filesystem owner.");
       return true;
@@ -482,7 +492,7 @@ public class FsRestfulApi {
       byte[] buffer = new byte[1024];
       int bytesRead = 0;
       response.setCharacterEncoding(charset);
-      java.nio.file.Path source = Paths.get(fsPath.getPath());
+      Path source = Paths.get(fsPath.getPath());
       response.addHeader("Content-Type", Files.probeContentType(source));
       response.addHeader("Content-Disposition", "attachment;filename=" + new File(path).getName());
       outputStream = response.getOutputStream();
@@ -611,7 +621,8 @@ public class FsRestfulApi {
         name = "pageSize",
         required = true,
         dataType = "Integer",
-        defaultValue = "5000")
+        defaultValue = "5000"),
+    @ApiImplicitParam(name = "maskedFieldNames", required = false, dataType = "String")
   })
   @RequestMapping(path = "/openFile", method = RequestMethod.GET)
   public Message openFile(
@@ -623,7 +634,8 @@ public class FsRestfulApi {
       @RequestParam(value = "enableLimit", defaultValue = "") String enableLimit,
       @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
       @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
-          Integer columnPageSize)
+          Integer columnPageSize,
+      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -631,7 +643,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
 
-    if (columnPage < 1 || columnPageSize < 1 || columnPageSize > 500) {
+    if (columnPage < 0 || columnPageSize < 0 || columnPageSize > 500) {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
@@ -665,7 +677,7 @@ public class FsRestfulApi {
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
 
-        if (StringUtils.isNotBlank(enableLimit)) {
+        if (StringUtils.isNotBlank(enableLimit) && "true".equals(enableLimit)) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
           // 组装列索引
@@ -679,7 +691,6 @@ public class FsRestfulApi {
         // Increase file size limit, making it easy to OOM without limitation
         throw WorkspaceExceptionManager.createException(80032);
       }
-
       try {
         Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
         LOGGER.info(
@@ -696,7 +707,6 @@ public class FsRestfulApi {
             if ((columnPage - 1) * columnPageSize > realSize) {
               throw WorkspaceExceptionManager.createException(80036, path);
             }
-
             message.data("totalColumn", realSize);
             if (realSize > FILESYSTEM_RESULT_SET_COLUMN_LIMIT.getValue()) {
               message.data("column_limit_display", true);
@@ -725,10 +735,20 @@ public class FsRestfulApi {
         } catch (Exception e) {
           LOGGER.info("Failed to set flag", e);
         }
-
-        message
-            .data("metadata", newMap == null ? metaMap : newMap)
-            .data("fileContent", result.getSecond());
+        // 增加字段屏蔽
+        Object resultmap = newMap == null ? metaMap : newMap;
+        if (FileSource$.MODULE$.isResultSet(fsPath.getPath())
+            && StringUtils.isNotBlank(maskedFieldNames)) {
+          // 如果结果集并且屏蔽字段不为空，则执行屏蔽逻辑，反之则保持原逻辑
+          Set<String> maskedFields =
+              new HashSet<>(Arrays.asList(maskedFieldNames.toLowerCase().split(",")));
+          Map[] metadata = filterMaskedFieldsFromMetadata(resultmap, maskedFields);
+          List<String[]> fileContent =
+              removeFieldsFromContent(resultmap, result.getSecond(), maskedFields);
+          message.data("metadata", metadata).data("fileContent", fileContent);
+        } else {
+          message.data("metadata", resultmap).data("fileContent", result.getSecond());
+        }
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
         return message.data("page", page).data("totalPage", 0);
@@ -757,6 +777,87 @@ public class FsRestfulApi {
       LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);
     }
+  }
+  /**
+   * 删除指定字段的内容
+   *
+   * @param metadata 元数据数组，包含字段信息
+   * @param contentList 需要处理的二维字符串数组
+   * @param fieldsToRemove 需要删除的字段集合
+   * @return 处理后的字符串数组，若输入无效返回空集合而非null
+   */
+  @SuppressWarnings("unchecked")
+  private List<String[]> removeFieldsFromContent(
+      Object metadata, List<String[]> contentList, Set<String> fieldsToRemove) {
+    // 1. 参数校验
+    if (metadata == null
+        || fieldsToRemove == null
+        || fieldsToRemove.isEmpty()
+        || contentList == null
+        || !(metadata instanceof Map[])) {
+      return contentList;
+    }
+
+    // 2. 安全类型转换
+    Map<String, Object>[] fieldMetadata = (Map<String, Object>[]) metadata;
+
+    // 3. 收集需要删除的列索引（去重并排序）
+    List<Integer> columnsToRemove =
+        IntStream.range(0, fieldMetadata.length)
+            .filter(
+                i -> {
+                  Map<String, Object> meta = fieldMetadata[i];
+                  Object columnName = meta.get("columnName");
+                  return columnName != null
+                      && fieldsToRemove.contains(columnName.toString().toLowerCase());
+                })
+            .distinct()
+            .boxed()
+            .sorted((a, b) -> Integer.compare(b, a))
+            .collect(Collectors.toList());
+
+    // 如果没有需要删除的列，直接返回副本
+    if (columnsToRemove.isEmpty()) {
+      return new ArrayList<>(contentList);
+    }
+    // 4. 对每行数据进行处理（删除指定列）
+    return contentList.stream()
+        .map(
+            row -> {
+              if (row == null || row.length == 0) {
+                return row;
+              }
+              // 创建可变列表以便删除元素
+              List<String> rowList = new ArrayList<>(Arrays.asList(row));
+              // 从后向前删除列，避免索引变化问题
+              for (int columnIndex : columnsToRemove) {
+                if (columnIndex < rowList.size()) {
+                  rowList.remove(columnIndex);
+                }
+              }
+              return rowList.toArray(new String[0]);
+            })
+        .collect(Collectors.toList());
+  }
+
+  @SuppressWarnings("unchecked")
+  private Map[] filterMaskedFieldsFromMetadata(Object metadata, Set<String> maskedFields) {
+    // 1. 参数校验
+    if (metadata == null || maskedFields == null || !(metadata instanceof Map[])) {
+      return new Map[0];
+    }
+
+    // 2. 类型转换（已通过校验，可安全强转）
+    Map<String, Object>[] originalMaps = (Map<String, Object>[]) metadata;
+
+    // 3. 过滤逻辑（提取谓词增强可读性）
+    Predicate<Map<String, Object>> isNotMaskedField =
+        map -> !maskedFields.contains(map.get("columnName").toString().toLowerCase());
+
+    // 4. 流处理 + 结果转换
+    return Arrays.stream(originalMaps)
+        .filter(isNotMaskedField)
+        .toArray(Map[]::new); // 等价于 toArray(new Map[0])
   }
 
   /**
@@ -961,7 +1062,7 @@ public class FsRestfulApi {
           }
           break;
         default:
-          WorkspaceExceptionManager.createException(80015);
+          throw WorkspaceExceptionManager.createException(80015);
       }
       fileSource.write(fsWriter);
       fsWriter.flush();
@@ -1149,31 +1250,31 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            }
-            column[1][i] = "string";
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            column[0][i] = "col_" + (i + 1);
-            column[1][i] = "string";
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  column[0][i] = column[0][i].substring(1, column[0][i].length() - 1);
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              }
+              column[1][i] = "string";
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              column[0][i] = "col_" + (i + 1);
+              column[1][i] = "string";
+            }
           }
         }
         res.put("columnName", column[0]);
@@ -1243,35 +1344,35 @@ public class FsRestfulApi {
         String[][] column = null;
         // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
-        BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
-
-        String header = reader.readLine();
-        if (StringUtils.isEmpty(header)) {
-          throw WorkspaceExceptionManager.createException(80016);
-        }
-        String[] line = header.split(fieldDelimiter, -1);
-        int colNum = line.length;
-        column = new String[2][colNum];
-        if (hasHeader) {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            column[0][i] = line[i];
-            if (escapeQuotes) {
-              try {
-                csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
-              } catch (StringIndexOutOfBoundsException e) {
-                throw WorkspaceExceptionManager.createException(80017);
-              }
-            } else {
-              csvMap.put(column[0][i], "string");
-            }
-            csvMapList.add(csvMap);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding))) {
+          String header = reader.readLine();
+          if (StringUtils.isEmpty(header)) {
+            throw WorkspaceExceptionManager.createException(80016);
           }
-        } else {
-          for (int i = 0; i < colNum; i++) {
-            HashMap<String, String> csvMap = new HashMap<>();
-            csvMap.put("col_" + (i + 1), "string");
-            csvMapList.add(csvMap);
+          String[] line = header.split(fieldDelimiter, -1);
+          int colNum = line.length;
+          column = new String[2][colNum];
+          if (hasHeader) {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              column[0][i] = line[i];
+              if (escapeQuotes) {
+                try {
+                  csvMap.put(column[0][i].substring(1, column[0][i].length() - 1), "string");
+                } catch (StringIndexOutOfBoundsException e) {
+                  throw WorkspaceExceptionManager.createException(80017);
+                }
+              } else {
+                csvMap.put(column[0][i], "string");
+              }
+              csvMapList.add(csvMap);
+            }
+          } else {
+            for (int i = 0; i < colNum; i++) {
+              HashMap<String, String> csvMap = new HashMap<>();
+              csvMap.put("col_" + (i + 1), "string");
+              csvMapList.add(csvMap);
+            }
           }
         }
         sheetInfo = new HashMap<>(1);
@@ -1389,12 +1490,12 @@ public class FsRestfulApi {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     } else {
       // Prohibit users from modifying their own unreadable content
-      if (checkFilePermissions(filePermission)) {
+      if (FilesystemUtils.checkFilePermissions(filePermission)) {
         FileSystem fileSystem = fsService.getFileSystem(userName, new FsPath(filePath));
         Stack<FsPath> dirsToChmod = new Stack<>();
         dirsToChmod.push(new FsPath(filePath));
         if (isRecursion) {
-          traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
+          FilesystemUtils.traverseFolder(new FsPath(filePath), fileSystem, dirsToChmod);
         }
         while (!dirsToChmod.empty()) {
           fileSystem.setPermission(dirsToChmod.pop(), filePermission);
@@ -1416,112 +1517,162 @@ public class FsRestfulApi {
       throws WorkSpaceException, IOException {
     String username = ModuleUserUtils.getOperationUser(req, "encrypt-path " + filePath);
     if (StringUtils.isEmpty(filePath)) {
-      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "restultPath"));
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
     }
     if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
       return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
     FileSystem fs = fsService.getFileSystem(username, new FsPath(filePath));
-    String fileMD5Str = fs.checkSum(new FsPath(filePath));
+    String fileMD5Str = fs.getChecksumWithMD5(new FsPath(filePath));
     return Message.ok().data("data", fileMD5Str);
   }
 
-  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
+  @ApiOperation(value = "check-hdfs-files", notes = "encrypt file path", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
-    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+    @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "Path")
   })
-  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
-  public Message pythonUpload(
-      HttpServletRequest req,
-      @RequestParam("file") MultipartFile file,
-      @RequestParam(value = "fileName", required = false) String fileName)
+  @RequestMapping(path = "/check-hdfs-files", method = RequestMethod.GET)
+  public Message checkHdfsFiles(
+      HttpServletRequest req, @RequestParam(value = "filePath", required = false) String filePath)
       throws WorkSpaceException, IOException {
-
-    // 获取登录用户
-    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
-
-    // 校验文件名称
-    if (StringUtils.isBlank(fileName)) {
-      return Message.error("文件名称不能为空");
+    String username = ModuleUserUtils.getOperationUser(req, "check-hdfs-files " + filePath);
+    if (StringUtils.isEmpty(filePath)) {
+      return Message.error(MessageFormat.format(PARAMETER_NOT_BLANK, "filePath"));
     }
-    // 获取文件名称
-    String fileNameSuffix = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameSuffix.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
-      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
+    if (!WorkspaceUtil.filePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
 
-    // 校验文件类型
-    if (!file.getOriginalFilename().endsWith(".py")
-        && !file.getOriginalFilename().endsWith(".zip")) {
-      return Message.error("仅支持.py和.zip格式模块文件");
+    if (!WorkspaceUtil.hiveFilePathRegexPattern.matcher(filePath).find()) {
+      return Message.error(MessageFormat.format(HIVE_FILEPATH_ILLEGAL_SYMBOLS, filePath));
     }
 
-    // 校验文件大小
-    if (file.getSize() > 50 * 1024 * 1024) {
-      return Message.error("限制最大单个文件50M");
+    FsPath fsPath = new FsPath(filePath);
+    FileSystem fs = fsService.getFileSystem(username, fsPath);
+    if (!fs.exists(fsPath)) {
+      return Message.error(MessageFormat.format(FILEPATH_ILLEGALITY, filePath));
     }
+    List<Map<String, Object>> resultMap = new ArrayList<>();
+    List<FsPath> list = fs.getAllFilePaths(fsPath);
+    if (CollectionUtils.isNotEmpty(list)) {
+      List<CompletableFuture<Void>> futures =
+          list.stream()
+              .map(
+                  path ->
+                      CompletableFuture.runAsync(
+                          () -> {
+                            try {
+                              Map<String, Object> dataMap = new HashMap<>();
+                              dataMap.put("checkSum", fs.getChecksum(path));
+                              dataMap.put("blockSize", fs.getBlockSize(path));
+                              dataMap.put("path", path.getPath());
+                              synchronized (resultMap) {
+                                resultMap.add(dataMap);
+                              }
+                            } catch (IOException e) {
+                              LOGGER.error(e.getMessage(), e);
+                              throw new RuntimeException(e);
+                            }
+                          },
+                          FilesystemUtils.executorService))
+              .collect(Collectors.toList());
 
-    // 定义目录路径
-    String path = "hdfs:///appcom/linkis/udf/" + username;
-    FsPath fsPath = new FsPath(path);
-
-    // 获取文件系统实例
-    FileSystem fileSystem = fsService.getFileSystem(username, fsPath);
-
-    // 确认目录是否存在，不存在则创建新目录
-    if (!fileSystem.exists(fsPath)) {
-      try {
-        fileSystem.mkdirs(fsPath);
-        fileSystem.setPermission(fsPath, "770");
-      } catch (IOException e) {
-        return Message.error("创建目录失败：" + e.getMessage());
-      }
+      CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
     }
-
-    // 构建新的文件路径
-    String newPath = fsPath.getPath() + "/" + file.getOriginalFilename();
-    FsPath fsPathNew = new FsPath(newPath);
-
-    // 上传文件
-    try (InputStream is = file.getInputStream();
-        OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
-      IOUtils.copy(is, outputStream);
-    } catch (IOException e) {
-      return Message.error("文件上传失败：" + e.getMessage());
-    }
-    // 返回成功消息并包含文件地址
-    return Message.ok().data("filePath", newPath);
+    return Message.ok().data("fileDataList", resultMap);
   }
 
-  /**
-   * *
-   *
-   * @param filePermission: 700,744 Prohibit users from modifying their own unreadable content
-   */
-  private static boolean checkFilePermissions(String filePermission) {
-    boolean result = false;
-    if (StringUtils.isNumeric(filePermission)) {
-      char[] ps = filePermission.toCharArray();
-      int ownerPermissions = Integer.parseInt(String.valueOf(ps[0]));
-      if (ownerPermissions >= 4) {
-        result = true;
-      }
+  @ApiOperation(
+      value = "copy-keytab-files",
+      notes = "copy keytab file from hdfs",
+      response = Message.class)
+  @RequestMapping(path = "/copy-keytab-files", method = RequestMethod.GET)
+  public Message copyAndEncryptKeytab(HttpServletRequest req, String user) {
+    final String owner = LINKIS_KEYTAB_FILE_OWNER.getValue();
+    final String group = LINKIS_KEYTAB_FILE_OWNER.getValue();
+    final String permission = LINKIS_KEYTAB_FILE_PEIMISSION.getValue();
+    // 1. 获取用户信息并校验功能开关
+    String username = ModuleUserUtils.getOperationUser(req, "copy-and-encrypt-keytab");
+    if (!Configuration.LINKIS_KEYTAB_SWITCH()) {
+      logger.info("Keytab copy feature is disabled for user: {}", username);
+      return Message.ok("Keytab copy feature is disabled");
     }
-    return result;
-  }
-
-  private static void traverseFolder(
-      FsPath fsPath, FileSystem fileSystem, Stack<FsPath> dirsToChmod) throws IOException {
-    List<FsPath> list = fileSystem.list(fsPath);
-    if (list == null) {
-      return;
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
     }
-    for (FsPath path : list) {
-      if (path.isdir()) {
-        traverseFolder(path, fileSystem, dirsToChmod);
+    try {
+      // 2. 初始化路径和文件系统
+      String sourcePath = HadoopConf.KEYTAB_FILE().getValue();
+      String targetPath = HadoopConf.LINKIS_KEYTAB_FILE().getValue();
+      FsPath hdfsKeytabPath = new FsPath(sourcePath);
+      FsPath linkisKeytabPath = new FsPath(targetPath);
+      FileSystem fs = fsService.getFileSystem(username, hdfsKeytabPath);
+      // 3. 验证源路径
+      if (!fs.exists(hdfsKeytabPath)) {
+        String errorMsg = String.format("Source path does not exist: %s", sourcePath);
+        logger.error(errorMsg);
+        return Message.error(errorMsg);
       }
-      dirsToChmod.push(path);
+      // 4. 确保目标目录存在
+      if (!fs.exists(linkisKeytabPath)) {
+        logger.info("Creating target directory: {}", targetPath);
+        fs.mkdirs(linkisKeytabPath);
+        // 设置目标目录权限
+        fs.setOwner(linkisKeytabPath, owner);
+        fs.setPermission(linkisKeytabPath, permission);
+        fs.setGroup(linkisKeytabPath, group);
+      }
+      // 5. 处理每个keytab文件
+      List<FsPath> sourceFiles = fs.list(hdfsKeytabPath);
+      if (StringUtils.isNotBlank(user)) {
+        sourceFiles =
+            sourceFiles.stream()
+                .filter(fsPath -> fsPath.getPath().endsWith(user + HDFSUtils.KEYTAB_SUFFIX()))
+                .collect(Collectors.toList());
+      }
+      if (sourceFiles.isEmpty()) {
+        logger.warn("No keytab files found in source directory: {}", sourcePath);
+        return Message.ok("No keytab files to copy");
+      }
+      int successCount = 0;
+      for (FsPath sourceFile : sourceFiles) {
+        try {
+          String fileName = sourceFile.getPath().replace(sourcePath, targetPath);
+          FsPath targetFile = new FsPath(fileName);
+          // 读取源文件内容
+          byte[] keyTabFileByte = IOUtils.toByteArray(fs.read(sourceFile));
+          // 加密内容
+          String encryptedContent = AESUtils.encrypt(keyTabFileByte, AESUtils.PASSWORD);
+          // 写入目标文件
+          try (OutputStream out = new BufferedOutputStream(fs.write(targetFile, true))) {
+            out.write(encryptedContent.getBytes(Configuration.BDP_ENCODING().getValue()));
+          }
+          // 设置文件权限
+          fs.setOwner(targetFile, owner);
+          fs.setPermission(targetFile, permission);
+          fs.setGroup(targetFile, group);
+          successCount++;
+          logger.debug("Successfully processed keytab file: {}", fileName);
+        } catch (Exception e) {
+          logger.error("Failed to process keytab file: {}", sourceFile.getPath(), e);
+          // 继续处理下一个文件
+        }
+      }
+      // 6. 返回处理结果
+      if (successCount == sourceFiles.size()) {
+        logger.info("Successfully processed all {} keytab files", successCount);
+        return Message.ok(String.format("Successfully processed %d keytab files", successCount));
+      } else {
+        String msg =
+            String.format(
+                "Processed %d of %d keytab files, some failed", successCount, sourceFiles.size());
+        logger.warn(msg);
+        return Message.warn(msg);
+      }
+    } catch (Exception e) {
+      String errorMsg = "Failed to copy and encrypt keytab files";
+      logger.error(errorMsg, e);
+      return Message.error(errorMsg + ": " + e.getMessage());
     }
   }
 }

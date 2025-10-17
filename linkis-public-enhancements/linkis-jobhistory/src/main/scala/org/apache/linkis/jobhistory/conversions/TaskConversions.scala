@@ -18,10 +18,17 @@
 package org.apache.linkis.jobhistory.conversions
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging, Utils}
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
+import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
-import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
+import org.apache.linkis.jobhistory.entity.{
+  JobAiHistory,
+  JobDetail,
+  JobHistory,
+  QueryTask,
+  QueryTaskVO
+}
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -31,10 +38,12 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.{BooleanUtils, StringUtils}
 
 import org.springframework.beans.BeanUtils
 
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Date, Map}
@@ -345,6 +354,51 @@ object TaskConversions extends Logging {
     }
     taskVO.setObserveInfo(job.getObserveInfo)
     taskVO.setMetrics(job.getMetrics)
+
+    // 从metrics中提取引擎日志路径信息
+    if (null != metrics && metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
+      val engineconnMap = MapUtils.getMap(metrics, TaskConstant.JOB_ENGINECONN_MAP)
+      if (MapUtils.isNotEmpty(engineconnMap)) {
+        // 兼容复用引擎Engine connMap存在两个对象，过滤无TicketId对象
+        val keyList = engineconnMap.keySet().toArray
+        keyList.foreach(key => {
+          val keyMap = MapUtils.getMap(engineconnMap, key)
+          val ticketId = MapUtils.getString(keyMap, TaskConstant.TICKET_ID)
+          val engineInstance = MapUtils.getString(metrics, TaskConstant.ENGINE_INSTANCE)
+          if (null != ticketId && (!ticketId.contains(engineInstance))) {
+            taskVO.setTicketId(ticketId)
+          }
+        })
+      }
+    }
+    if (null != metrics && metrics.containsKey(TaskConstant.ECM_INSTANCE)) {
+      val ecmInstance = MapUtils.getString(metrics, TaskConstant.ECM_INSTANCE)
+      taskVO.setEcmInstance(ecmInstance)
+    }
+    if (null != metrics && metrics.containsKey(TaskConstant.ENGINE_LOG_PATH)) {
+      val engine_log_path = MapUtils.getString(metrics, TaskConstant.ENGINE_LOG_PATH)
+      taskVO.setEngineLogPath(engine_log_path)
+    }
+    taskVO
+  }
+
+  /**
+   * status、progress、id、execid、log_path、result_location、umUser、executeUser、errDesc、errCode
+   */
+  def jobHistory2BriefTaskVO(job: JobHistory): QueryTaskVO = {
+    if (null == job) return null
+    val taskVO = new QueryTaskVO
+    // 需求中指定的字段
+    taskVO.setStatus(job.getStatus)
+    taskVO.setProgress(job.getProgress)
+    taskVO.setTaskID(job.getId) // id
+    taskVO.setExecId(job.getJobReqId) // execid
+    taskVO.setLogPath(job.getLogPath) // log_path
+    taskVO.setResultLocation(job.getResultLocation) // result_location
+    taskVO.setUmUser(job.getSubmitUser) // umUser
+    taskVO.setExecuteUser(job.getExecuteUser) // executeUser
+    taskVO.setErrDesc(job.getErrorDesc) // errDesc
+    taskVO.setErrCode(job.getErrorCode) // errCode
     taskVO
   }
 
@@ -395,6 +449,25 @@ object TaskConversions extends Logging {
         "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)"
     }
     runTime
+  }
+
+  def JobAiReqToJobAiHistory(jobAiRequest: JobAiRequest): JobAiHistory = {
+    val jobAiHistory = new JobAiHistory
+    BeanUtils.copyProperties(jobAiRequest, jobAiHistory)
+    if (null != jobAiRequest.getMetrics) {
+      jobAiHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobAiRequest.getMetrics))
+    }
+    if (null != jobAiRequest.getParams) {
+      jobAiHistory.setParams(BDPJettyServerHelper.gson.toJson(jobAiRequest.getParams))
+    }
+    if (null != jobAiRequest.getLabels) {
+      val labelMap = new util.HashMap[String, String](jobAiRequest.getLabels.size())
+      jobAiRequest.getLabels.asScala
+        .map(l => l.getLabelKey -> l.getStringValue)
+        .foreach(kv => labelMap.put(kv._1, kv._2))
+      jobAiHistory.setLabels(BDPJettyServerHelper.gson.toJson(labelMap))
+    }
+    jobAiHistory
   }
 
 }

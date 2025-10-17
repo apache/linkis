@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.orchestrator.plugin
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.scheduler.EntranceGroupFactory
 import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.protocol.conf.{
   RequestQueryEngineConfigWithGlobalConfig,
@@ -68,10 +69,11 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
               .containsKey(EntranceConfiguration.WDS_LINKIS_INSTANCE.key)
         ) {
           logger.warn(
-            s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," + s"will use default value "
+            s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}, will use default value "
           )
         }
-        val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue, true)
+        val maxRunningJobs = EntranceGroupFactory.getUserMaxRunningJobs(keyAndValue)
+        logger.info(s"$key load orchestrator user maxRunningJobs=$maxRunningJobs")
         maxRunningJobs
       }
 

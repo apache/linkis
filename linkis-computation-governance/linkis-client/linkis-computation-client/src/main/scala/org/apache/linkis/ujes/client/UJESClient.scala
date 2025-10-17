@@ -24,7 +24,7 @@ import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfig
 import org.apache.linkis.httpclient.response.Result
 import org.apache.linkis.ujes.client.request._
 import org.apache.linkis.ujes.client.request.JobExecIdAction.JobServiceType
-import org.apache.linkis.ujes.client.response._
+import org.apache.linkis.ujes.client.response.{EncryptTokenResult, _}
 import org.apache.linkis.ujes.client.utils.UJESClientUtils
 
 import java.io.Closeable
@@ -181,6 +181,13 @@ abstract class UJESClient extends Closeable with Logging {
 
   def deleteJobObserve(jobDeleteObserveAction: JobDeleteObserveAction): JobDeleteObserveResult = {
     executeUJESJob(jobDeleteObserveAction).asInstanceOf[JobDeleteObserveResult]
+  }
+
+  def getEncryptToken(token: String, user: String): String = {
+    val encryptTokenResult = executeUJESJob(
+      EncryptTokenAction.newBuilder().setUser(user).setToken(token).build()
+    ).asInstanceOf[EncryptTokenResult]
+    encryptTokenResult.encryptToken
   }
 
 }

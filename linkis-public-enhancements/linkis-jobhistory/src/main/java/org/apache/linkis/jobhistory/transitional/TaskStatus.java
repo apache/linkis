@@ -40,4 +40,15 @@ public enum TaskStatus {
       return false;
     }
   }
+
+  public static boolean isUnComplete(TaskStatus taskStatus) {
+    if (taskStatus == Inited
+        || taskStatus == WaitForRetry
+        || taskStatus == Scheduled
+        || taskStatus == Running) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -18,7 +18,10 @@
 package org.apache.linkis.common.utils;
 
 import org.apache.linkis.common.conf.BDPConfiguration;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisSecurityException;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +112,18 @@ public class SecurityUtilsTest {
     Assertions.assertEquals(baseUrl + "?k1=v1&" + securityStr, SecurityUtils.getJdbcUrl(url2));
     String url3 = "jdbc:mysql://127.0.0.1:10000/db_name?k1=v1&k2";
     Assertions.assertEquals(baseUrl + "?k1=v1&" + securityStr, SecurityUtils.getJdbcUrl(url3));
+  }
+
+  @Test
+  public void testRSA() {
+    String originalData = "rsa-test-str";
+    String pubKey = Configuration.LINKIS_RSA_PUBLIC_KEY().getValue();
+    String privKey = Configuration.LINKIS_RSA_PRIVATE_KEY().getValue();
+    if (StringUtils.isNotEmpty(pubKey) && StringUtils.isNotEmpty(privKey)) {
+      String encryptData = RSAUtils.encryptWithLinkisPublicKey(originalData);
+      String dncryptData = RSAUtils.dncryptWithLinkisPublicKey(encryptData);
+      Assertions.assertEquals(dncryptData, originalData);
+    }
   }
 
   @Test

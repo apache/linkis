@@ -17,15 +17,18 @@
 
 package org.apache.linkis.gateway.security.token
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, MD5Utils, Utils}
 import org.apache.linkis.gateway.authentication.service.TokenService
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
 import org.apache.linkis.server.Message
+import org.apache.linkis.server.utils.ModuleUserUtils
 
 import org.apache.commons.lang3.StringUtils
+
+import scala.util.Try
 
 object TokenAuthentication extends Logging {
 
@@ -50,21 +53,32 @@ object TokenAuthentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, message)
       return false
     }
-    var token = gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)(0)
-    var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
+    val tokenOpt = Option(gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)).map(_.head)
+    val tokenUserOpt = Option(gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)).map(_.head)
+    var token = tokenOpt.getOrElse("")
+    var tokenUser = tokenUserOpt.getOrElse("")
 
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
-
+    logger.info(
+      String
+        .format("Use Linkis Auth : %s,User : %s,Ip : %s", encryptToken(token), tokenUser, host)
+    )
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
-      token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
-      tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue
-      if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
+      val cookieTokenOpt = Option(gatewayContext.getRequest.getCookies.get(TOKEN_KEY)).map(_.head)
+      val cookieTokenUserOpt =
+        Option(gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)).map(_.head)
+      val isValid = cookieTokenOpt.nonEmpty && StringUtils.isNotBlank(
+        cookieTokenOpt.get.getValue
+      ) && cookieTokenUserOpt.nonEmpty && StringUtils.isNotBlank(cookieTokenUserOpt.get.getValue)
+      if (!isValid) {
         val message = Message.noLogin(
           s"请在Header或Cookie中同时指定$TOKEN_KEY 和 $TOKEN_USER_KEY，以便完成token认证！"
         ) << gatewayContext.getRequest.getRequestURI
         SecurityFilter.filterResponse(gatewayContext, message)
         return false
       }
+      token = cookieTokenOpt.get.getValue
+      tokenUser = cookieTokenUserOpt.get.getValue
     }
     var tokenAlive = false
     val tokenAliveArr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)
@@ -121,6 +135,11 @@ object TokenAuthentication extends Logging {
       SecurityFilter.filterResponse(gatewayContext, authMsg)
       false
     }
+  }
+
+  def encryptToken(token: String): String = {
+    if (StringUtils.isBlank(token)) ""
+    else MD5Utils.encrypt(token)
   }
 
 }

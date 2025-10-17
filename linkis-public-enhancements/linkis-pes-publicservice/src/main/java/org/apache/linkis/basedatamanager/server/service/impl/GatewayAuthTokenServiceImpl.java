@@ -48,4 +48,18 @@ public class GatewayAuthTokenServiceImpl
     queryWrapper.eq("token_name", token);
     return this.getBaseMapper().selectOne(queryWrapper);
   }
+
+  @Override
+  public GatewayAuthTokenEntity selectTokenBySign(String token) {
+    QueryWrapper<GatewayAuthTokenEntity> queryWrapper = new QueryWrapper<>();
+    queryWrapper.eq("token_sign", token);
+    return this.getBaseMapper().selectOne(queryWrapper);
+  }
+
+  @Override
+  public List<GatewayAuthTokenEntity> selectTokenByNameWithLike(String token) {
+    QueryWrapper<GatewayAuthTokenEntity> queryWrapper = new QueryWrapper<>();
+    queryWrapper.like("token_name", token);
+    return this.getBaseMapper().selectList(queryWrapper);
+  }
 }

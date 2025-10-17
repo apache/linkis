@@ -396,7 +396,7 @@ class RMMonitorRest extends Logging {
         queueInfo.put("queuename", maxResource)
         queueInfo.put(
           "maxResources",
-          Map("memory" -> maxResource.getQueueName, "cores" -> maxResource.getQueueCores)
+          Map("memory" -> maxResource.getQueueMemory, "cores" -> maxResource.getQueueCores)
         )
         queueInfo.put(
           "usedResources",

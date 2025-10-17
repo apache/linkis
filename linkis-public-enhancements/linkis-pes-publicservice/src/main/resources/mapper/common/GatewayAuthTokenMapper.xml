@@ -23,6 +23,7 @@
     <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="tokenName" column="token_name" jdbcType="VARCHAR"/>
+            <result property="tokenSign" column="token_sign" jdbcType="VARCHAR"/>
             <result property="legalUsers" column="legal_users" jdbcType="VARCHAR"/>
             <result property="legalHosts" column="legal_hosts" jdbcType="VARCHAR"/>
             <result property="businessOwner" column="business_owner" jdbcType="VARCHAR"/>
@@ -33,7 +34,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,token_name,legal_users,
+        id,token_name,token_sign,legal_users,
         legal_hosts,business_owner,create_time,
         update_time,elapse_day,update_by
     </sql>

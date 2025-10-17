@@ -99,6 +99,7 @@ public class DataSource {
   /** Data source env */
   private DataSourceEnv dataSourceEnv;
 
+  private String dataSourceTypeName;
   @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
 
   public DataSource() {
@@ -278,5 +279,13 @@ public class DataSource {
 
   public void setPublishedVersionId(Long publishedVersionId) {
     this.publishedVersionId = publishedVersionId;
+  }
+
+  public String getDataSourceTypeName() {
+    return dataSourceTypeName;
+  }
+
+  public void setDataSourceTypeName(String dataSourceTypeName) {
+    this.dataSourceTypeName = dataSourceTypeName;
   }
 }

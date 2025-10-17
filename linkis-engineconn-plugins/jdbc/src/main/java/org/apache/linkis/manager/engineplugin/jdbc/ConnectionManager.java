@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration$;
@@ -200,6 +201,10 @@ public class ConnectionManager {
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
     datasource.setUsername(username);
+    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+      // decrypt
+      password = AESUtils.decrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+    }
     datasource.setPassword(password);
     datasource.setConnectProperties(SecurityUtils.getMysqlSecurityParams());
     datasource.setDriverClassName(driverClassName);

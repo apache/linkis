@@ -21,16 +21,25 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.entity.TemplateConfKey
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineType,
+  EngineTypeLabel,
+  FixedEngineConnLabel
+}
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 
@@ -38,13 +47,18 @@ import java.{lang, util}
 import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
+import scala.util.matching.{Regex, UnanchoredRegex}
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 object TemplateConfUtils extends Logging {
 
   val confTemplateNameKey = "ec.resource.name"
+  val confFixedEngineConnLabelKey = "ec.fixed.sessionId"
 
+  /**
+   * 按模板uuid缓存模板配置
+   */
   private val templateCache: LoadingCache[String, util.List[TemplateConfKey]] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
@@ -77,6 +91,9 @@ object TemplateConfUtils extends Logging {
 
     })
 
+  /**
+   * 按模板名称缓存模板配置
+   */
   private val templateCacheName: LoadingCache[String, util.List[TemplateConfKey]] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
@@ -120,62 +137,98 @@ object TemplateConfUtils extends Logging {
    * @return
    *   String the last one of template conf name
    */
-  def getCustomTemplateConfName(code: String, codeType: String): String = {
+  def getCustomTemplateConfName(
+      jobRequest: JobRequest,
+      codeType: String,
+      logAppender: lang.StringBuilder
+  ): String = {
+    var code = jobRequest.getExecutionCode
     var templateConfName = "";
 
     var varString: String = null
     var errString: String = null
-    var rightVarString: String = null
+    var fixECString: String = null
 
     val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         varString = s"""\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*---@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*---@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
         varString = s"""\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*##@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*##@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         varString = s"""\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        fixECString = s"""\\s*///@set\\s+${confFixedEngineConnLabelKey}\\s*=\\s*([^;]+)(?:\\s*;)?"""
         errString = """\s*///@.+"""
       case _ =>
         return templateConfName
     }
 
     val customRegex = varString.r.unanchored
+    val fixECRegex: UnanchoredRegex = fixECString.r.unanchored
     val errRegex = errString.r.unanchored
     var codeRes = code.replaceAll("\r\n", "\n")
-    // only allow set at fisrt line
-    val res = codeRes.split("\n")
-    if (res.size > 0) {
-      val str = res(0)
-      str match {
-        case customRegex() =>
-          val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
-          val res: Array[String] = clearStr.split("=")
-          if (res != null && res.length == 2) {
-            templateConfName = res(1).trim
-            logger.info(s"get template conf name $templateConfName")
-          } else {
-            if (res.length > 2) {
-              throw new LinkisCommonErrorException(
-                20044,
-                s"$str template conf name var defined uncorrectly"
+
+    // 匹配任意行，只能是单独的行
+    if (codeRes.contains(confTemplateNameKey) || codeRes.contains(confFixedEngineConnLabelKey)) {
+      val res = codeRes.split("\n")
+      // 用于标识，匹配到就退出
+      var matchFlag = false
+      res.foreach(str => {
+        if (matchFlag) {
+          return templateConfName
+        }
+        str match {
+          case customRegex() =>
+            val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
+            val res: Array[String] = clearStr.split("=")
+            if (res != null && res.length == 2) {
+              templateConfName = res(1).trim
+              logger.info(s"get template conf name $templateConfName")
+            } else {
+              if (res.length > 2) {
+                throw new LinkisCommonErrorException(
+                  20044,
+                  s"$str template conf name var defined uncorrectly"
+                )
+              } else {
+                throw new LinkisCommonErrorException(
+                  20045,
+                  s"template conf name var  was defined uncorrectly:$str"
+                )
+              }
+            }
+            matchFlag = true
+          case fixECRegex(sessionId) =>
+            // deal with fixedEngineConn configuration, add fixedEngineConn label if setting @set ec.fixed.sessionId=xxx
+            if (StringUtils.isNotBlank(sessionId)) {
+              val fixedEngineConnLabel =
+                LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                  classOf[FixedEngineConnLabel]
+                )
+              fixedEngineConnLabel.setSessionId(sessionId)
+              jobRequest.getLabels.add(fixedEngineConnLabel)
+              logger.info(
+                s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
+              )
+              logAppender.append(
+                s"The task ${jobRequest.getId} is set to fixed engine conn, labelValue: ${sessionId}"
               )
             } else {
-              throw new LinkisCommonErrorException(
-                20045,
-                s"template conf name var  was defined uncorrectly:$str"
-              )
+              logger.info(s"The task ${jobRequest.getId} not set fixed engine conn")
             }
-          }
-        case errRegex() =>
-          logger.warn(
-            s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
-          )
-        case _ =>
-      }
+            matchFlag = true
+          case errRegex() =>
+            logger.warn(
+              s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
+            )
+          case _ =>
+        }
+      })
     }
     templateConfName
   }
@@ -185,15 +238,39 @@ object TemplateConfUtils extends Logging {
       case requestPersistTask: JobRequest =>
         val params = requestPersistTask.getParams
         val startMap = TaskUtils.getStartupMap(params)
+        val runtimeMap: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(params)
 
         var templateConflist: util.List[TemplateConfKey] = new util.ArrayList[TemplateConfKey]()
         var templateName: String = ""
         // only for Creator:IDE, try to get template conf name from code string. eg:---@set ec.resource.name=xxxx
+        val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
         val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
         if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
-          val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+          templateName = getCustomTemplateConfName(jobRequest, codeType, logAppender)
+          if (StringUtils.isNotBlank(templateName)) {
+            logAppender.append(
+              LogUtils
+                .generateInfo(s"Try to execute task with template: $templateName in script.\n")
+            )
+          }
+        }
+
+        // 处理runtime参数中的模板名称，用于失败任务重试的时候使用模板参数重试
+        var runtimeTemplateFlag = false
+        if (
+            EntranceConfiguration.SUPPORT_TEMPLATE_CONF_RETRY_ENABLE.getValue && StringUtils
+              .isBlank(templateName)
+        ) {
           templateName =
-            TemplateConfUtils.getCustomTemplateConfName(jobRequest.getExecutionCode, codeType)
+            runtimeMap.getOrDefault(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, "").toString
+          if (StringUtils.isNotBlank(templateName)) {
+            runtimeTemplateFlag = true
+            logAppender.append(
+              LogUtils.generateInfo(
+                s"Try to execute task with template: $templateName in runtime params.\n"
+              )
+            )
+          }
         }
 
         // code template name > start params template uuid
@@ -209,15 +286,17 @@ object TemplateConfUtils extends Logging {
             logger.info("try to get template conf list with template uid:{} ", templateUuid)
             logAppender.append(
               LogUtils
-                .generateInfo(s"Try to get template conf data with template uid:$templateUuid\nn")
+                .generateInfo(s"Try to get template conf data with template uid:$templateUuid\n")
             )
             templateConflist = templateCache.get(templateUuid)
             if (templateConflist == null || templateConflist.size() == 0) {
               logAppender.append(
-                LogUtils.generateWarn(
+                LogUtils.generateInfo(
                   s"Can not get any template conf data with template uid:$templateUuid\n"
                 )
               )
+            } else {
+              templateName = templateConflist.get(0).getTemplateName
             }
           }
         } else {
@@ -226,10 +305,11 @@ object TemplateConfUtils extends Logging {
             LogUtils
               .generateInfo(s"Try to get template conf data with template name:[$templateName]\n")
           )
-          templateConflist = templateCacheName.get(templateName)
+          val cacheList: util.List[TemplateConfKey] = templateCacheName.get(templateName)
+          templateConflist.addAll(cacheList)
           if (templateConflist == null || templateConflist.size() == 0) {
             logAppender.append(
-              LogUtils.generateWarn(
+              LogUtils.generateInfo(
                 s"Can not get any template conf data with template name:$templateName\n"
               )
             )
@@ -248,6 +328,30 @@ object TemplateConfUtils extends Logging {
           }
         }
 
+        // 针对aisql处理模板参数
+        val isAisql = LANGUAGE_TYPE_AI_SQL.equals(codeType)
+        if (
+            isAisql && runtimeTemplateFlag && templateConflist != null && templateConflist
+              .size() > 0
+        ) {
+          logger.info("aisql deal with template in runtime params.")
+          logAppender.append(
+            LogUtils.generateInfo(
+              s"If task execution fails, the template $templateName configuration parameters will be used to rerun the task\n"
+            )
+          )
+          val keyList = new util.HashMap[String, AnyRef]()
+          templateConflist.asScala.foreach(ele => {
+            keyList.put(ele.getKey, ele.getConfigValue)
+          })
+          val confRuntimeMap = new util.HashMap[String, AnyRef]()
+          confRuntimeMap.put(LabelKeyConstant.TEMPLATE_CONF_NAME_KEY, keyList)
+          // 缓存配置到runtime
+          TaskUtils.addRuntimeMap(params, confRuntimeMap)
+          // 如果是aisql则不需要手动处理模板参数
+          templateConflist.clear()
+        }
+
         if (templateConflist != null && templateConflist.size() > 0) {
           val keyList = new util.HashMap[String, AnyRef]()
           templateConflist.asScala.foreach(ele => {
@@ -263,13 +367,19 @@ object TemplateConfUtils extends Logging {
               }
               keyList.put(key, newValue)
             }
-
           })
           if (keyList.size() > 0) {
+            logger.info(s"use template conf for templateName: ${templateName}")
+            keyList.put(confTemplateNameKey, templateName)
+            logAppender.append(
+              LogUtils
+                .generateInfo(s"use template conf with templateName: ${templateName} \n")
+            )
             TaskUtils.addStartupMap(params, keyList)
           }
+        } else if (!isAisql) {
+          EntranceUtils.dealsparkDynamicConf(jobRequest, logAppender, jobRequest.getParams)
         }
-
       case _ =>
     }
     jobRequest

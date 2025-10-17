@@ -567,12 +567,12 @@ export default {
       } else {
         if (yarn) {
           const yarnType = type === 'memory' ? 'queueMemory' : 'queueCores'
-          data = row[field].DriverAndYarnResource.yarnResource[yarnType]
+          data = row[field].yarnResource[yarnType]
         } else {
           // if(type === 'instance') {
           //   type = instances;
           // }
-          data = row[field].DriverAndYarnResource.loadInstanceResource[type] || row[field].DriverAndYarnResource.loadInstanceResource['instances']
+          data = row[field].loadInstanceResource[type] || row[field].loadInstanceResource['instances']
         }
       }
       if (type === 'memory' && data !== ' -- ') {

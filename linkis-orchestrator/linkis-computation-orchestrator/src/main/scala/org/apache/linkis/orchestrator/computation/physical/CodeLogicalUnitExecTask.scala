@@ -29,6 +29,7 @@ import org.apache.linkis.orchestrator.computation.execute.{
   CodeExecTaskExecutorManager
 }
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
+import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 import org.apache.linkis.orchestrator.exception.{
   OrchestratorErrorCodeSummary,
   OrchestratorErrorException,
@@ -46,6 +47,7 @@ import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 

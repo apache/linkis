@@ -85,4 +85,6 @@ public interface TaskConstant {
   String RECEIVER = "receiver";
   String SUB_SYSTEM_ID = "subSystemId";
   String EXTRA = "extra";
+  String ECM_INSTANCE = "ecmInstance";
+  String ENGINE_LOG_PATH = "engineLogPath";
 }

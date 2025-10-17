@@ -17,7 +17,7 @@
 
 package org.apache.linkis.governance.common.protocol.job
 
-import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
 import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.protocol.message.RequestProtocol
 
@@ -37,6 +37,8 @@ case class JobReqBatchUpdate(jobReq: util.ArrayList[JobRequest]) extends JobReq
 case class JobReqQuery(jobReq: JobRequest) extends JobReq
 
 case class JobReqReadAll(jobReq: JobRequest) extends JobReq
+
+case class JobAiReqInsert(jobReq: JobAiRequest) extends JobReq
 
 class RequestOneJob extends JobReq {
 

@@ -35,7 +35,20 @@
         :color="item.modifiable ? 'primary' : 'default'"
         @on-close="handleClose2"
         @on-change="handleTagChange"
-      >{{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
+      >
+        <span
+          style="
+          display: inline-block;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 270px;
+          height: 14px;
+          line-height: 14px;
+          vertical-align: middle;
+          margin-bottom: 2px">
+          {{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
+        </span>
       </Tag>
       <!-- Edit tags(编辑标签) -->
       <div class="addAndCancel" v-else>

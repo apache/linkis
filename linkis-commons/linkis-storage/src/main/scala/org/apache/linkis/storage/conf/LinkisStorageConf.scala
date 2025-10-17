@@ -37,13 +37,18 @@ object LinkisStorageConf {
       )
       .getValue
 
+  val HDFS_FILE_SYSTEM_REFRESHE_INTERVAL: Int =
+    CommonVars
+      .apply("wds.linkis.hdfs.rest.interval", 10)
+      .getValue
+
   val ROW_BYTE_MAX_LEN_STR = CommonVars("wds.linkis.resultset.row.max.str", "2m").getValue
 
   val ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR)
 
   val FILE_TYPE = CommonVars(
     "wds.linkis.storage.file.type",
-    "dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql,txt"
+    "dolphin,sql,scala,py,py3,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql,txt,aisql"
   ).getValue
 
   private var fileTypeArr: Array[String] = null

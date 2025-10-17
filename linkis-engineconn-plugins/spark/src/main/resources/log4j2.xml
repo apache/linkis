@@ -31,7 +31,10 @@
             <RegexFilter regex=".* application .*" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
         </File>
-
+        <File name="UDFOutputFile" append="true" fileName="${env:LOG_DIRS:-logs}/udfLog">
+            <RegexFilter regex=".*SpringBoot.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
+        </File>
         <Send name="Send" >
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
@@ -83,6 +86,9 @@
         </logger>
         <logger name="org.apache.spark.deploy.yarn.Client" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
+        </logger>
+        <logger name="org.apache.linkis.engineconn.computation.executor.hook" level="INFO" additivity="true">
+            <appender-ref ref="UDFOutputFile"/>
         </logger>
     </loggers>
 </configuration>

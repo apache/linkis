@@ -24,6 +24,8 @@ import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.udf.entity.{PythonModuleInfo, PythonModuleInfoVO}
 import org.apache.linkis.udf.service.{PythonModuleInfoService, UDFService, UDFTreeService}
 
+import org.apache.commons.beanutils.BeanUtils
+
 import java.{lang, util}
 
 import scala.collection.JavaConverters.asScalaBufferConverter

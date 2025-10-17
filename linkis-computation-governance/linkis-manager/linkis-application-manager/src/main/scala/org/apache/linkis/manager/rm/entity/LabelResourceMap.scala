@@ -24,7 +24,8 @@ import org.apache.linkis.manager.rm.entity.ResourceOperationType.ResourceOperati
 class LabelResourceMapping(
     label: Label[_],
     resource: Resource,
-    resourceOperationType: ResourceOperationType
+    resourceOperationType: ResourceOperationType,
+    user: String
 ) {
 
   override def equals(obj: Any): Boolean = {
@@ -44,6 +45,8 @@ class LabelResourceMapping(
   def getResource(): Resource = resource
 
   def getResourceOperationType: ResourceOperationType = resourceOperationType
+
+  def getUser: String = user
 
   override def toString: String = {
     s"Label ${label.getStringValue} mapping resource ${resource}"

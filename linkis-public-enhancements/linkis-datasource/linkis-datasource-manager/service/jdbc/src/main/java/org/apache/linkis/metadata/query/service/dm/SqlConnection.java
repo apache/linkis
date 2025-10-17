@@ -18,12 +18,13 @@
 package org.apache.linkis.metadata.query.service.dm;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlConnection extends AbstractSqlConnection {
+public class SqlConnection implements Closeable {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
@@ -41,6 +42,10 @@ public class SqlConnection extends AbstractSqlConnection {
   private static final CommonVars<String> SQL_CONNECT_URL =
       CommonVars.apply("wds.linkis.server.mdm.service.dameng.url", "jdbc:dm://%s:%s/%s");
 
+  private Connection conn;
+
+  private ConnectMessage connectMessage;
+
   public SqlConnection(
       String host,
       Integer port,
@@ -49,7 +54,11 @@ public class SqlConnection extends AbstractSqlConnection {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    super(host, port, username, password, database, extraParams);
+    connectMessage = new ConnectMessage(host, port, username, password, extraParams);
+    conn = getDBConnection(connectMessage, database);
+    // Try to create statement
+    Statement statement = conn.createStatement();
+    statement.close();
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -104,7 +113,6 @@ public class SqlConnection extends AbstractSqlConnection {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
         info.setLength(meta.getColumnDisplaySize(i));
-        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
@@ -124,15 +132,22 @@ public class SqlConnection extends AbstractSqlConnection {
     return columns;
   }
 
-  private List<String> getPrimaryKeys(String schema, String table) throws SQLException {
+  private List<String> getPrimaryKeys(
+      /*Connection connection, */ String schema, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
+    //        try {
     DatabaseMetaData dbMeta = conn.getMetaData();
     rs = dbMeta.getPrimaryKeys(null, schema, table);
     while (rs.next()) {
       primaryKeys.add(rs.getString("COLUMN_NAME"));
     }
     return primaryKeys;
+    /*}finally{
+        if(null != rs){
+            closeResource(connection, null, rs);
+        }
+    }*/
   }
   /**
    * Get Column Comment
@@ -154,28 +169,58 @@ public class SqlConnection extends AbstractSqlConnection {
   }
 
   /**
+   * close database resource
+   *
+   * @param connection connection
+   * @param statement statement
+   * @param resultSet result set
+   */
+  private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
+    try {
+      if (null != resultSet && !resultSet.isClosed()) {
+        resultSet.close();
+      }
+      if (null != statement && !statement.isClosed()) {
+        statement.close();
+      }
+      if (null != connection && !connection.isClosed()) {
+        connection.close();
+      }
+    } catch (SQLException e) {
+      LOG.warn("Fail to release resource [" + e.getMessage() + "]", e);
+    }
+  }
+
+  @Override
+  public void close() throws IOException {
+    closeResource(conn, null, null);
+  }
+
+  /**
    * @param connectMessage
    * @param database
    * @return
    * @throws ClassNotFoundException
    */
-  public Connection getDBConnection(ConnectMessage connectMessage, String database)
+  private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
+    String extraParamString =
+        connectMessage.extraParams.entrySet().stream()
+            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
-      String extraParamString =
-          connectMessage.extraParams.entrySet().stream()
-              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-              .collect(Collectors.joining("&"));
+    if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
     try {
+      //            return DriverManager.getConnection(url, connectMessage.username,
+      // connectMessage.password);
       Properties prop = new Properties();
       prop.put("user", connectMessage.username);
-      prop.put("password", connectMessage.password);
+      prop.put("password", AESUtils.isDecryptByConf(connectMessage.password));
       prop.put("remarksReporting", "true");
       return DriverManager.getConnection(url, prop);
     } catch (Exception e) {
@@ -184,30 +229,29 @@ public class SqlConnection extends AbstractSqlConnection {
     }
   }
 
-  public String getSqlConnectUrl() {
-    return SQL_CONNECT_URL.getValue();
-  }
+  /** Connect message */
+  private static class ConnectMessage {
+    private String host;
 
-  @Override
-  public String generateJdbcDdlSql(String database, String table) {
-    String columnSql =
-        String.format(
-            "SELECT DBMS_METADATA.GET_DDL('TABLE', '%s', '%s') AS DDL  FROM DUAL ",
-            table, database);
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-    String ddl = "";
-    try {
-      ps = conn.prepareStatement(columnSql);
-      rs = ps.executeQuery();
-      if (rs.next()) {
-        ddl = rs.getString("DDL");
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    } finally {
-      closeResource(null, ps, rs);
+    private Integer port;
+
+    private String username;
+
+    private String password;
+
+    private Map<String, Object> extraParams;
+
+    public ConnectMessage(
+        String host,
+        Integer port,
+        String username,
+        String password,
+        Map<String, Object> extraParams) {
+      this.host = host;
+      this.port = port;
+      this.username = username;
+      this.password = password;
+      this.extraParams = extraParams;
     }
-    return ddl;
   }
 }

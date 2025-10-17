@@ -53,6 +53,7 @@ public class PythonModuleInfoVO {
 
   // 修改时间，记录模块最后修改的时间
   private Timestamp updateTime;
+  private String pythonModule;
 
   // 默认构造函数
   public PythonModuleInfoVO() {}
@@ -172,6 +173,14 @@ public class PythonModuleInfoVO {
     this.updateTime = updateTime;
   }
 
+  public String getPythonModule() {
+    return pythonModule;
+  }
+
+  public void setPythonModule(String pythonModule) {
+    this.pythonModule = pythonModule;
+  }
+
   // 重写toString方法，用于调试和日志记录
   @Override
   public String toString() {
@@ -204,6 +213,8 @@ public class PythonModuleInfoVO {
         + createTime
         + ", updateTime="
         + updateTime
+        + ", pythonModule="
+        + pythonModule
         + '}';
   }
 }

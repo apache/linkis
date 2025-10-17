@@ -30,10 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 public interface DataSourceRestfulRemote {
 
   @GetMapping("/api/datasource/dbs")
-  public Message queryDatabaseInfo(HttpServletRequest req);
+  public Message queryDatabaseInfo(HttpServletRequest req, String permission);
 
   @GetMapping("/api/datasource/all")
   public Message queryDbsWithTables(HttpServletRequest req);
+
+  @GetMapping("/api/datasource/getByAccessTime")
+  public Message queryDbsWithTablesgetByAccessTime(HttpServletRequest req);
 
   @GetMapping("/api/datasource/tables")
   public Message queryTables(@RequestParam("database") String database, HttpServletRequest req);

@@ -55,6 +55,11 @@
         `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`, `execution_code`, `observe_info`
     </sql>
 
+    <sql id="job_brief">
+        `id`, `job_req_id`, `submit_user`, `execute_user`,
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `result_location`
+    </sql>
+
     <insert id="insertJobHistory" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         INSERT INTO linkis_ps_job_history_group_history(<include refid="insert_job_list"/>)
         VALUES (#{jobReqId},#{submitUser},#{executeUser},#{source},
@@ -98,6 +103,15 @@
         </where>
     </select>
 
+    <select id="selectJobHistoryBrief" useCache="false" resultMap="jobHistoryMap" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
+        SELECT
+        <include refid="job_brief"/>
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="id != null">id = #{id}</if>
+            <if test="submitUser != null">and submit_user = #{submitUser}</if>
+        </where>
+    </select>
 
     <select id="search" useCache="true" resultMap="jobHistoryMap" >
         /*slave*/ SELECT * FROM linkis_ps_job_history_group_history job
@@ -114,6 +128,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -155,6 +170,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>
@@ -177,6 +193,7 @@
             <if test="instances != null">and LOWER(job.instances) = LOWER(#{instances})</if>
             <if test="departmentId != null">and dept.org_id = #{departmentId}</if>
             <if test="engineInstance != null">and job.metrics LIKE CONCAT('%"engineInstance":"', #{engineInstance}, '%')</if>
+            <if test="runType != null">and job.labels LIKE CONCAT('%"codeType":"', #{runType}, '%')</if>
         </where>
         ORDER BY job.created_time DESC
     </select>

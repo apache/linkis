@@ -46,7 +46,7 @@ object LDAPUtils extends Logging {
   private val storeUser: Cache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .expireAfterWrite(60, TimeUnit.MINUTES)
+    .expireAfterWrite(20, TimeUnit.MINUTES)
     .removalListener(new RemovalListener[String, String] {
 
       override def onRemoval(removalNotification: RemovalNotification[String, String]): Unit = {

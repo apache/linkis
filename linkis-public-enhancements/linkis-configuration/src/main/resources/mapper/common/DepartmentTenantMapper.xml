@@ -58,6 +58,7 @@
         from linkis_cg_tenant_department_config
         <where>
             <if test="creator != null"> creator = #{creator}</if>
+            <if test="department != null">and department = #{department}</if>
             <if test="departmentId != null">and department_id = #{departmentId}</if>
             <if test="tenantValue != null">and tenant_value = #{tenantValue}</if>
         </where>
@@ -91,6 +92,7 @@
         <where>
             <if test="creator != null"> creator = #{creator}</if>
             <if test="departmentId != null"> and department_id = #{departmentId}</if>
+            <if test="department != null ">and department = #{department}</if>
         </where>
     </select>
 </mapper>

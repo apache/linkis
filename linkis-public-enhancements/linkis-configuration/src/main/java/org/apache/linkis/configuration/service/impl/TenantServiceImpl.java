@@ -64,18 +64,25 @@ public class TenantServiceImpl implements TenantService {
       DepartTenantRequest departTenantRequest, Sender sender) {
     DepartmentTenantVo departmentTenantVo =
         tenantConfigService.queryDepartTenant(
-            departTenantRequest.creator(), departTenantRequest.departmentId());
+            departTenantRequest.creator(),
+            departTenantRequest.departmentId(),
+            departTenantRequest.departmentName());
     if (null == departmentTenantVo) {
       logger.warn(
           "DepartTenant data loading failed creator {} department {},departTenant cache will set ''  ",
           departTenantRequest.creator(),
           departTenantRequest.departmentId());
       return new DepartTenantResponse(
-          departTenantRequest.creator(), departTenantRequest.departmentId(), "Y", "");
+          departTenantRequest.creator(),
+          departTenantRequest.departmentId(),
+          departTenantRequest.departmentName(),
+          "Y",
+          "");
     } else {
       return new DepartTenantResponse(
           departmentTenantVo.getCreator(),
           departmentTenantVo.getDepartmentId(),
+          departmentTenantVo.getDepartment(),
           departmentTenantVo.getIsValid(),
           departmentTenantVo.getTenantValue());
     }

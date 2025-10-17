@@ -18,8 +18,11 @@
 package org.apache.linkis.orchestrator.plans.physical
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
 import org.apache.linkis.orchestrator.execution.{
   CompletedTaskResponse,
@@ -31,9 +34,10 @@ import org.apache.linkis.orchestrator.listener._
 import org.apache.linkis.orchestrator.listener.task.{
   RootTaskResponseEvent,
   TaskLogEvent,
-  TaskRunningInfoEvent,
-  TaskYarnResourceEvent
+  TaskRunningInfoEvent
 }
+import org.apache.linkis.orchestrator.plans.ast.AbstractJob
+import org.apache.linkis.orchestrator.plans.logical.EndJobTaskDesc
 
 import java.util
 
@@ -41,7 +45,8 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks: Array[ExecTask])
-    extends PhysicalContext {
+    extends PhysicalContext
+    with Logging {
 
   private var syncListenerBus: OrchestratorSyncListenerBus = _
 
@@ -70,6 +75,33 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
       OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
       cause
     )
+    // 标识失败代码索引，以便重试的时候只执行未执行代码
+    this.rootTask.getTaskDesc match {
+      case taskDesc: EndJobTaskDesc =>
+        taskDesc.job match {
+          case job: AbstractJob =>
+            val labels: util.List[Label[_]] = job.getLabels
+            val codeType: String = LabelUtil.getCodeType(labels)
+            if ("aisql".equals(codeType)) {
+              val params: Map[String, String] = this.rootTask.params
+              var flag: Boolean = params.getOrElse("task.error.receiver.flag", "false").toBoolean
+              val startTime: Long = System.currentTimeMillis()
+              while (
+                  System
+                    .currentTimeMillis() - startTime < OrchestratorConfiguration.ERROR_TASK_RECEIVER_WAIT_TIME.getValue.toLong && !flag
+              ) {
+                logger.info("task error receiver not end.")
+                Thread.sleep(1000)
+                flag = params.getOrElse("task.error.receiver.flag", "false").toBoolean
+              }
+              logger.info("task error receiver end.")
+              failedResponse.errorIndex = params.getOrElse("execute.error.code.index", "-1").toInt
+            }
+          case _ =>
+        }
+      case _ =>
+    }
+
     this.response = failedResponse
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }

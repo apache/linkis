@@ -17,6 +17,7 @@
 
 package org.apache.linkis.jobhistory.service.impl
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -37,9 +38,13 @@ import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.server.BDPJettyServerHelper
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateUtils
@@ -116,7 +121,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       }
       if (jobReq.getStatus != null) {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
+        val startUpMap: util.Map[String, AnyRef] =
+          TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
+        val aiSqlEnable: AnyRef = startUpMap.getOrDefault("linkis.ai.sql.enable", "false")
+        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, aiSqlEnable.toString)) {
           throw new QueryException(
             120001,
             s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +
@@ -124,6 +132,15 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           )
         }
       }
+
+      // metrics 增量更新逻辑
+      if (
+          Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
+          jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
+      ) {
+        mergeMetrics(jobReq)
+      }
+
       val jobUpdate = jobRequest2JobHistory(jobReq)
       if (jobUpdate.getUpdatedTime == null) {
         throw new QueryException(
@@ -181,7 +198,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           }
           if (jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, "false")) {
               throw new QueryException(
                 120001,
                 s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}，" +
@@ -267,6 +284,17 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
+  override def getJobHistoryByIdAndNameBrief(
+      jobId: java.lang.Long,
+      userName: String
+  ): JobHistory = {
+    val jobReq = new JobHistory
+    jobReq.setId(jobId)
+    jobReq.setSubmitUser(userName)
+    val jobHistoryList = jobHistoryMapper.selectJobHistoryBrief(jobReq)
+    if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
+  }
+
   override def search(
       jobId: lang.Long,
       username: String,
@@ -278,9 +306,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       startJobId: lang.Long,
       instance: String,
       departmentId: String,
-      engineInstance: String
+      engineInstance: String,
+      runType: String
   ): util.List[JobHistory] = {
-
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(
@@ -293,7 +321,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
@@ -309,7 +338,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -332,7 +362,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         startJobId,
         instance,
         departmentId,
-        engineInstance
+        engineInstance,
+        runType
       )
     }
     result
@@ -342,9 +373,15 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobHistory2JobRequest(list)
   }
 
-  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = {
+  private def shouldUpdate(oldStatus: String, newStatus: String, aiSqlEnable: String): Boolean = {
     if (TaskStatus.valueOf(oldStatus) == TaskStatus.valueOf(newStatus)) {
       true
+    } else if ("true".equals(aiSqlEnable)) {
+      (TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus
+        .valueOf(newStatus)
+        .ordinal || (TaskStatus.Running.toString.equals(oldStatus) && (TaskStatus.Scheduled.toString
+        .equals(newStatus)) || TaskStatus.WaitForRetry.toString.equals(newStatus))) && !TaskStatus
+        .isComplete(TaskStatus.valueOf(oldStatus))
     } else {
       TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus
         .valueOf(newStatus)
@@ -354,7 +391,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null, null, null), {
+      jobHistoryMapper
+        .search(jobId, null, null, sDate, eDate, null, null, null, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
@@ -484,6 +522,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         null,
         request.instance,
         null,
+        null,
         null
       )
     val idlist = jobHistoryList.asScala.map(_.getId).asJava
@@ -544,6 +583,65 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       )
     }
     result
+  }
+
+  /**
+   * Merge metrics incrementally to avoid overwriting existing metrics data
+   * 增量合并metrics，避免覆盖现有的metrics数据
+   *
+   * @param jobReq
+   *   The job request to be updated
+   */
+  private def mergeMetrics(jobReq: JobRequest): Unit = {
+    Utils.tryCatch {
+      Option(getJobHistoryByIdAndName(jobReq.getId, null))
+        .filter(job => StringUtils.isNotBlank(job.getMetrics))
+        .foreach { jobInfo =>
+          val oldMetricsMap = Utils.tryCatch {
+            BDPJettyServerHelper.gson.fromJson(
+              jobInfo.getMetrics,
+              classOf[util.Map[String, AnyRef]]
+            )
+          } { case t: Throwable =>
+            logger.warn(
+              s"Failed to parse existing metrics for job ${jobReq.getId}: ${t.getMessage}"
+            )
+            new util.HashMap[String, AnyRef]()
+          }
+
+          Option(jobReq.getMetrics).foreach { requestMetrics =>
+            if (oldMetricsMap != null) {
+              val mergedMetrics = new util.HashMap[String, AnyRef](oldMetricsMap)
+
+              val oldEngineConnMap =
+                Option(MapUtils.getMap(oldMetricsMap, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              val requestJobEngineConnMap =
+                Option(MapUtils.getMap(requestMetrics, TaskConstant.JOB_ENGINECONN_MAP))
+                  .map(_.asInstanceOf[util.Map[String, AnyRef]])
+                  .getOrElse(new util.HashMap[String, AnyRef]())
+
+              oldEngineConnMap.putAll(requestJobEngineConnMap)
+
+              mergedMetrics.putAll(requestMetrics)
+              mergedMetrics.put(TaskConstant.JOB_ENGINECONN_MAP, oldEngineConnMap)
+
+              jobReq.setMetrics(mergedMetrics)
+
+              logger.info(s"""Merged metrics for job ${jobReq.getId}:
+                             |added ${requestMetrics.size()} new entries to ${oldMetricsMap
+                .size()} existing entries""".stripMargin)
+            }
+          }
+        }
+    } { case t: Throwable =>
+      logger.warn(
+        s"Failed to merge metrics for job ${jobReq.getId}, falling back to replace mode: ${t.getMessage}"
+      )
+    // If merge fails, keep the original behavior (replace)
+    }
   }
 
 }

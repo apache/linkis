@@ -36,6 +36,9 @@ public class GatewayAuthTokenEntity implements Serializable {
   private String tokenName;
 
   /** */
+  private String tokenSign;
+
+  /** */
   private String legalUsers;
 
   /** */
@@ -148,6 +151,14 @@ public class GatewayAuthTokenEntity implements Serializable {
     this.updateBy = updateBy;
   }
 
+  public String getTokenSign() {
+    return tokenSign;
+  }
+
+  public void setTokenSign(String tokenSign) {
+    this.tokenSign = tokenSign;
+  }
+
   @Override
   public boolean equals(Object that) {
     if (this == that) {
@@ -164,6 +175,9 @@ public class GatewayAuthTokenEntity implements Serializable {
         && (this.getTokenName() == null
             ? other.getTokenName() == null
             : this.getTokenName().equals(other.getTokenName()))
+        && (this.getTokenSign() == null
+            ? other.getTokenSign() == null
+            : this.getTokenSign().equals(other.getTokenSign()))
         && (this.getLegalUsers() == null
             ? other.getLegalUsers() == null
             : this.getLegalUsers().equals(other.getLegalUsers()))
@@ -193,6 +207,7 @@ public class GatewayAuthTokenEntity implements Serializable {
     int result = 1;
     result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
     result = prime * result + ((getTokenName() == null) ? 0 : getTokenName().hashCode());
+    result = prime * result + ((getTokenSign() == null) ? 0 : getTokenSign().hashCode());
     result = prime * result + ((getLegalUsers() == null) ? 0 : getLegalUsers().hashCode());
     result = prime * result + ((getLegalHosts() == null) ? 0 : getLegalHosts().hashCode());
     result = prime * result + ((getBusinessOwner() == null) ? 0 : getBusinessOwner().hashCode());
@@ -211,6 +226,7 @@ public class GatewayAuthTokenEntity implements Serializable {
     sb.append("Hash = ").append(hashCode());
     sb.append(", id=").append(id);
     sb.append(", tokenName=").append(tokenName);
+    sb.append(", tokenSign=").append(tokenSign);
     sb.append(", legalUsers=").append(legalUsers);
     sb.append(", legalHosts=").append(legalHosts);
     sb.append(", businessOwner=").append(businessOwner);

@@ -18,6 +18,7 @@
 package org.apache.linkis.bml.protocol
 
 import java.io.InputStream
+import java.util
 
 trait BmlProtocol {}
 
@@ -86,3 +87,8 @@ case class BmlCopyResourceResponse(isSuccess: Boolean, resourceId: String)
 
 case class BmlRollbackVersionResponse(isSuccess: Boolean, resourceId: String, version: String)
     extends BmlResponse(isSuccess)
+
+case class BmlClientConnectInfoResponse(
+    isSuccess: Boolean,
+    clientConnectInfo: util.HashMap[String, Int]
+) extends BmlResponse(isSuccess)

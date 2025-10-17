@@ -44,6 +44,8 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.io.FileUtils
@@ -268,7 +270,31 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       )
     )
 
-    val engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    var engineConnEnvKeys = request.environment.remove(ENGINECONN_ENVKEYS.toString)
+    //  处理spark环境问题，兼容spark切换spark-cmd后spark2能正常使用
+    val engineTypeLabel = LabelUtil.getEngineTypeLabel(request.labels)
+    if (engineTypeLabel.getEngineType.equals(EngineType.SPARK.toString)) {
+      val (sparkHome, sparkCmd, sparkEnginePath, sparkConfig) =
+        if (engineTypeLabel.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)) {
+          (
+            LabelCommonConfig.SPARK3_ENGINE_HOME.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_CMD.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_PATH.getValue,
+            LabelCommonConfig.SPARK3_ENGINE_CONFIG.getValue
+          )
+        } else {
+          (
+            LabelCommonConfig.SPARK_ENGINE_HOME.getValue,
+            LabelCommonConfig.SPARK_ENGINE_CMD.getValue,
+            LabelCommonConfig.SPARK_ENGINE_PATH.getValue,
+            LabelCommonConfig.SPARK_ENGINE_CONFIG.getValue
+          )
+        }
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_HOME_CONF, sparkHome)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_CMD_CONF, sparkCmd)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_PATH_CONF, sparkEnginePath)
+      processBuilder.setEnv(LabelCommonConfig.SPARK_ENGINE_CONF_DIR, sparkConfig)
+    }
     logger.debug(s"ENGINECONN_ENVKEYS: " + engineConnEnvKeys)
     // set other env
     val engineConnEnvKeyArray = engineConnEnvKeys.split(",")

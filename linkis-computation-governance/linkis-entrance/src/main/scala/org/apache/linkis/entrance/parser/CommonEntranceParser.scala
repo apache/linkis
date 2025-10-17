@@ -18,14 +18,20 @@
 package org.apache.linkis.entrance.parser
 
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.{
+  SPARK3_VERSION_COERCION_DEPARTMENT,
+  SPARK3_VERSION_COERCION_SWITCH,
+  SPARK3_VERSION_COERCION_USERS
+}
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
@@ -35,15 +41,23 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
-import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
-import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
+import org.apache.linkis.manager.label.entity.engine.{
+  CodeLanguageLabel,
+  EngineType,
+  UserCreatorLabel
+}
+import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtil}
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
+import org.apache.linkis.storage.script.VariableParser
 
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.Date
+import java.util.regex.Pattern
 
 import scala.collection.JavaConverters._
 
@@ -94,6 +108,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
         s"${EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc},  labels is null"
       )
     }
+    addUserToRuntime(submitUser, executeUser, configMap)
     // 3. set Code
     var code: String = null
     var runType: String = null
@@ -117,13 +132,14 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     if (formatCode) code = format(code)
     jobRequest.setExecutionCode(code)
     // 4. parse label
-    val labels: util.Map[String, Label[_]] = buildLabel(labelMap)
+    var labels: util.HashMap[String, Label[_]] = buildLabel(labelMap)
     JobTimeoutManager.checkTimeoutLabel(labels)
     checkEngineTypeLabel(labels)
     generateAndVerifyCodeLanguageLabel(runType, labels)
     generateAndVerifyUserCreatorLabel(executeUser, labels)
     generateAndVerifyClusterLabel(labels)
-
+    // sparkVersion cover,only spark use
+    labels = sparkVersionCoercion(labels, executeUser, submitUser)
     jobRequest.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobRequest.setSource(source)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
@@ -229,8 +245,10 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobReq.setExecuteUser(umUser)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)
+
+    addUserToRuntime(submitUser, umUser, _params)
     _params match {
-      case mapParams: java.util.Map[String, AnyRef] => jobReq.setParams(mapParams)
+      case mapParams: util.Map[String, AnyRef] => jobReq.setParams(mapParams)
       case _ =>
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
@@ -265,38 +283,62 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       if (formatCode) executionCode = format(executionCode)
       jobReq.setExecutionCode(executionCode)
     }
-    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(executeApplicationName)
+    var engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(executeApplicationName)
     val runTypeLabel =
       labelBuilderFactory.createLabel[Label[_]](LabelKeyConstant.CODE_TYPE_KEY, runType)
+    val variableMap =
+      jobReq.getParams.get(VariableParser.VARIABLE).asInstanceOf[util.Map[String, String]]
+    if (
+        null != variableMap && variableMap.containsKey(LabelCommonConfig.SPARK3_ENGINE_VERSION_CONF)
+    ) {
+      var version = variableMap.get(LabelCommonConfig.SPARK3_ENGINE_VERSION_CONF)
+      val pattern = Pattern.compile(EntranceUtils.sparkVersionRegex).matcher(version)
+      if (pattern.matches()) {
+        version = LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+      } else {
+        version = LabelCommonConfig.SPARK_ENGINE_VERSION.getValue
+      }
+      engineTypeLabel =
+        EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SPARK.toString, version)
+    }
     val userCreatorLabel = labelBuilderFactory
       .createLabel[Label[_]](LabelKeyConstant.USER_CREATOR_TYPE_KEY, umUser + "-" + creator)
 
-    val labelList = new util.ArrayList[Label[_]](3)
-    labelList.add(engineTypeLabel)
-    labelList.add(runTypeLabel)
-    labelList.add(userCreatorLabel)
+    var labels = new util.HashMap[String, Label[_]]()
+    labels.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
+    labels.put(LabelKeyConstant.CODE_TYPE_KEY, runTypeLabel)
+    labels.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, userCreatorLabel)
     if (jobReq.getParams != null) {
       val labelMap = params
         .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, AnyRef]())
         .asInstanceOf[util.Map[String, AnyRef]]
-      if (null != labelMap && !labelMap.isEmpty) {
-        val list: util.List[Label[_]] =
-          labelBuilderFactory.getLabels(labelMap)
-        labelList.addAll(list)
-      }
+      labels.putAll(buildLabel(labelMap))
     }
     jobReq.setProgress("0.0")
     jobReq.setSource(source)
     // In order to be compatible with the code, let enginetype and runtype have the same attribute
     jobReq.setStatus(SchedulerEventState.Inited.toString)
     // Package labels
-    jobReq.setLabels(labelList)
+    // sparkVersion cover,only spark use
+    labels = sparkVersionCoercion(labels, umUser, submitUser)
+    jobReq.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
     jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 
-  private def buildLabel(labelMap: util.Map[String, AnyRef]): util.Map[String, Label[_]] = {
+  private def addUserToRuntime(submitUser: String, umUser: String, _params: AnyRef): Unit = {
+    val runtimeMap: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+    runtimeMap.put(TaskConstant.SUBMIT_USER, submitUser)
+    runtimeMap.put(TaskConstant.EXECUTE_USER, umUser)
+    _params match {
+      case map: util.Map[String, AnyRef] =>
+        TaskUtils.addRuntimeMap(map, runtimeMap)
+      case _ =>
+    }
+  }
+
+  private def buildLabel(labelMap: util.Map[String, AnyRef]): util.HashMap[String, Label[_]] = {
     val labelKeyValueMap = new util.HashMap[String, Label[_]]()
     if (null != labelMap && !labelMap.isEmpty) {
       val list: util.List[Label[_]] =
@@ -308,6 +350,64 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       }
     }
     labelKeyValueMap
+  }
+
+  private def sparkVersionCoercion(
+      labels: util.HashMap[String, Label[_]],
+      executeUser: String,
+      submitUser: String
+  ): util.HashMap[String, Label[_]] = {
+    // 个人>部门
+    // 是否强制转换
+    if (SPARK3_VERSION_COERCION_SWITCH && (null != labels && !labels.isEmpty)) {
+      val engineTypeLabel = labels.get(LabelKeyConstant.ENGINE_TYPE_KEY)
+      val engineType = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "engine")
+      val version = LabelUtil.getFromLabelStr(engineTypeLabel.getStringValue, "version")
+      if (
+          engineType.equals(EngineType.SPARK.toString) && (!version.equals(
+            LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+          ))
+      ) {
+        Utils.tryAndWarnMsg {
+          // 判断用户是否是个人配置中的一员
+          if (
+              SPARK3_VERSION_COERCION_USERS.contains(executeUser) || SPARK3_VERSION_COERCION_USERS
+                .contains(submitUser)
+          ) {
+            logger.info(
+              s"Spark version will be change 3.4.4,submitUser:${submitUser},executeUser:${executeUser} "
+            )
+            labels.replace(
+              LabelKeyConstant.ENGINE_TYPE_KEY,
+              EngineTypeLabelCreator.createEngineTypeLabel(
+                EngineType.SPARK.toString,
+                LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+              )
+            )
+            return labels
+          }
+          val executeUserDepartmentId = EntranceUtils.getUserDepartmentId(executeUser)
+          val submitUserDepartmentId = EntranceUtils.getUserDepartmentId(submitUser)
+          if (
+              (StringUtils.isNotBlank(executeUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
+                .contains(executeUserDepartmentId)) ||
+              (StringUtils.isNotBlank(submitUserDepartmentId) && SPARK3_VERSION_COERCION_DEPARTMENT
+                .contains(submitUserDepartmentId))
+          ) {
+            logger.info(s"Spark version will be change 3.4.4 by department:${executeUser} ")
+            labels.replace(
+              LabelKeyConstant.ENGINE_TYPE_KEY,
+              EngineTypeLabelCreator.createEngineTypeLabel(
+                EngineType.SPARK.toString,
+                LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+              )
+            )
+            return labels
+          }
+        }(s"error to Spark 3 version coercion: ${executeUser}")
+      }
+    }
+    labels;
   }
 
   // todo to format code using proper way

@@ -27,5 +27,9 @@ public interface TokenDao {
 
   TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
 
+  List<TokenEntity> selectTokenByNameWithLike(@Param("tokenName") String tokenName);
+
+  TokenEntity selectTokenBySign(@Param("tokenSign") String tokenSign);
+
   List<TokenEntity> getAllTokens();
 }

@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.service.impl;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
+import org.apache.linkis.metadata.conf.MdqConfiguration;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
 import org.apache.linkis.metadata.domain.mdq.Tunple;
@@ -31,10 +32,7 @@ import org.apache.linkis.metadata.domain.mdq.po.MdqField;
 import org.apache.linkis.metadata.domain.mdq.po.MdqImport;
 import org.apache.linkis.metadata.domain.mdq.po.MdqLineage;
 import org.apache.linkis.metadata.domain.mdq.po.MdqTable;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableBaseInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
-import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
+import org.apache.linkis.metadata.domain.mdq.vo.*;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
@@ -206,10 +204,28 @@ public class MdqServiceImpl implements MdqService {
 
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
+  public boolean isExistInHive(MetadataQueryParam queryParam) {
+    List<Map<String, Object>> tables =
+        hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
+    Optional<Map<String, Object>> tableOptional =
+        tables
+            .parallelStream()
+            .filter(f -> queryParam.getTableName().equals(f.get("NAME")))
+            .findFirst();
+    return tableOptional.isPresent();
+  }
+
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  @Override
   public MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam) {
     List<Map<String, Object>> tables =
         hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
-    List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
+    List<Map<String, Object>> partitionKeys;
+    if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+      partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
+    } else {
+      partitionKeys = hiveMetaDao.getPartitionKeysSlave(queryParam);
+    }
     Optional<Map<String, Object>> tableOptional =
         tables
             .parallelStream()
@@ -219,8 +235,13 @@ public class MdqServiceImpl implements MdqService {
         tableOptional.orElseThrow(() -> new IllegalArgumentException("table不存在"));
     MdqTableBaseInfoVO mdqTableBaseInfoVO =
         DomainCoversionUtils.mapToMdqTableBaseInfoVO(table, queryParam.getDbName());
-    String tableComment =
-        hiveMetaDao.getTableComment(queryParam.getDbName(), queryParam.getTableName());
+    String tableComment;
+    if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+      tableComment = hiveMetaDao.getTableComment(queryParam.getDbName(), queryParam.getTableName());
+    } else {
+      tableComment =
+          hiveMetaDao.getTableCommentSlave(queryParam.getDbName(), queryParam.getTableName());
+    }
     mdqTableBaseInfoVO.getBase().setComment(tableComment);
     mdqTableBaseInfoVO.getBase().setPartitionTable(!partitionKeys.isEmpty());
     return mdqTableBaseInfoVO;
@@ -238,8 +259,15 @@ public class MdqServiceImpl implements MdqService {
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   @Override
   public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(MetadataQueryParam queryParam) {
-    List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
-    List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
+    List<Map<String, Object>> columns;
+    List<Map<String, Object>> partitionKeys;
+    if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+      columns = hiveMetaDao.getColumns(queryParam);
+      partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
+    } else {
+      columns = hiveMetaDao.getColumnsSlave(queryParam);
+      partitionKeys = hiveMetaDao.getPartitionKeysSlave(queryParam);
+    }
     List<MdqTableFieldsInfoVO> normalColumns =
         DomainCoversionUtils.normalColumnListToMdqTableFieldsInfoVOList(columns);
     List<MdqTableFieldsInfoVO> partitions =
@@ -252,7 +280,12 @@ public class MdqServiceImpl implements MdqService {
   @Override
   public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
       MetadataQueryParam queryParam, String partitionSort) throws IOException {
-    List<String> partitions = hiveMetaDao.getPartitions(queryParam);
+    List<String> partitions;
+    if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+      partitions = hiveMetaDao.getPartitions(queryParam);
+    } else {
+      partitions = hiveMetaDao.getPartitionsSlave(queryParam);
+    }
     MdqTableStatisticInfoVO mdqTableStatisticInfoVO = new MdqTableStatisticInfoVO();
     mdqTableStatisticInfoVO.setRowNum(0); // 下个版本
     mdqTableStatisticInfoVO.setTableLastUpdateTime(null);
@@ -321,6 +354,18 @@ public class MdqServiceImpl implements MdqService {
     return statisticInfoVOS;
   }
 
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  public MdqTableStatisticInfoDTO getTableInfo(MetadataQueryParam queryParam) throws IOException {
+    MdqTableStatisticInfoDTO mdqTableStatisticInfoDTO = new MdqTableStatisticInfoDTO();
+    mdqTableStatisticInfoDTO.setRowNum(0); // 下个版本
+    mdqTableStatisticInfoDTO.setTableLastUpdateTime(null);
+    mdqTableStatisticInfoDTO.setFieldsNum(getTableFieldsInfoFromHive(queryParam).size());
+    String tableLocation = getTableLocation(queryParam);
+    mdqTableStatisticInfoDTO.setTableSize(getTableSize(tableLocation));
+    mdqTableStatisticInfoDTO.setFileNum(getTableFileNum(tableLocation));
+    return mdqTableStatisticInfoDTO;
+  }
+
   /**
    * 将分区string year=2020/day=0605/time=006 转成Tunple(year=2020,day=0605/time=006) 这种形式
    *
@@ -351,7 +396,7 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private Date getTableModificationTime(String tableLocation) throws IOException {
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       return new Date(tableFile.getModificationTime());
     }
@@ -360,7 +405,7 @@ public class MdqServiceImpl implements MdqService {
 
   private int getPartitionsNum(String tableLocation) throws IOException {
     int partitionsNum = 0;
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       partitionsNum = getRootHdfs().listStatus(tableFile.getPath()).length;
     }
@@ -369,14 +414,19 @@ public class MdqServiceImpl implements MdqService {
 
   @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
   public String getTableLocation(MetadataQueryParam queryParam) {
-    String tableLocation = hiveMetaDao.getLocationByDbAndTable(queryParam);
+    String tableLocation;
+    if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
+      tableLocation = hiveMetaDao.getLocationByDbAndTable(queryParam);
+    } else {
+      tableLocation = hiveMetaDao.getLocationByDbAndTableSlave(queryParam);
+    }
     logger.info("tableLocation:" + tableLocation);
     return tableLocation;
   }
 
   private int getTableFileNum(String tableLocation) throws IOException {
     int tableFileNum = 0;
-    if (StringUtils.isNotBlank(tableLocation)) {
+    if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
       FileStatus tableFile = getFileStatus(tableLocation);
       tableFileNum = (int) getRootHdfs().getContentSummary(tableFile.getPath()).getFileCount();
     }
@@ -384,6 +434,10 @@ public class MdqServiceImpl implements MdqService {
   }
 
   private String getTableSize(String tableLocation) throws IOException {
+    return getTableSizeWithRetry(tableLocation, 0);
+  }
+
+  private String getTableSizeWithRetry(String tableLocation, int retryCount) throws IOException {
     try {
       String tableSize = "0B";
       if (StringUtils.isNotBlank(tableLocation) && getRootHdfs().exists(new Path(tableLocation))) {
@@ -396,11 +450,12 @@ public class MdqServiceImpl implements MdqService {
     } catch (IOException e) {
       String message = e.getMessage();
       String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-      if (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
-          || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)) {
+      if (retryCount <= MdqConfiguration.HDFS_INIT_MAX_RETRY_COUNT().getValue()
+          && (message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS)
+              || rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
         logger.info("Failed to get tableSize, retry", e);
         resetRootHdfs();
-        return getTableSize(tableLocation);
+        return getTableSizeWithRetry(tableLocation, retryCount + 1);
       } else {
         throw e;
       }

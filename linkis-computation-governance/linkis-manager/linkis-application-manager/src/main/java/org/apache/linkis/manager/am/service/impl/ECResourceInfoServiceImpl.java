@@ -31,6 +31,7 @@ import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.collections.MapUtils;
@@ -187,7 +188,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               }
               item.put("lastUnlockTimestamp", lastUnlockTimestamp);
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
-              item.put("ecmInstance", latestRecord.getEcmInstance());
+              item.put(TaskConstant.ECM_INSTANCE, latestRecord.getEcmInstance());
               String engineType = latestRecord.getEngineType();
               item.put("engineType", engineType);
               if (StringUtils.isNotBlank(queueName)) {
@@ -216,10 +217,10 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               .collect((Collectors.toMap(EMNodeVo::getInstance, item -> item)));
       for (Map<String, Object> stringObjectMap : resultList) {
         if (isCrossCluster
-            && clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+            && clusterMap.containsKey(stringObjectMap.get(TaskConstant.ECM_INSTANCE).toString())) {
           resultListByCluster.add(stringObjectMap);
         } else if (!isCrossCluster
-            && !clusterMap.containsKey(stringObjectMap.get("ecmInstance").toString())) {
+            && !clusterMap.containsKey(stringObjectMap.get(TaskConstant.ECM_INSTANCE).toString())) {
           resultListByCluster.add(stringObjectMap);
         }
       }

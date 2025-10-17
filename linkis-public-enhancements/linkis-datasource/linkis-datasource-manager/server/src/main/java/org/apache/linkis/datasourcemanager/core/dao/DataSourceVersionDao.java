@@ -64,4 +64,6 @@ public interface DataSourceVersionDao {
    * @return
    */
   int removeFromDataSourceId(Long dataSourceId);
+
+  void updateByDatasourceVersion(DatasourceVersion datasourceVersion);
 }

@@ -265,6 +265,11 @@ abstract class EntranceJob extends Job {
     transitionCompleted(executeCompleted)
   }
 
+  def transitionWaitForRetry(reason: String): Unit = {
+    logger.debug("Job failed with reason: " + reason)
+    super.transitionWaitForRetry()
+  }
+
   override protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean =
     isJobSupportRetry && errorExecuteResponse != null &&
       (if (RPCUtils.isReceiverNotExists(errorExecuteResponse.t)) {

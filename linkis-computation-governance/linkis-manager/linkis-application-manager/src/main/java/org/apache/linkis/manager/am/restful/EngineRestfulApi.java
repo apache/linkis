@@ -737,7 +737,7 @@ public class EngineRestfulApi {
 
   @ApiOperation(
       value = "kill egineconns of a ecm",
-      notes = "Kill engine after updating configuration",
+      notes = "Kill engine by cteator or engineType",
       response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "creator", dataType = "String", required = true, example = "IDE"),
@@ -748,7 +748,7 @@ public class EngineRestfulApi {
         example = "hive-2.3.3"),
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
-  @RequestMapping(path = "/rm/killEngineByUpdateConfig", method = RequestMethod.POST)
+  @RequestMapping(path = "/rm/killEngineByCreatorEngineType", method = RequestMethod.POST)
   public Message killEngineByUpdateConfig(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws AMErrorException {
     String userName = ModuleUserUtils.getOperationUser(req);
@@ -770,7 +770,15 @@ public class EngineRestfulApi {
         && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
       return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
     }
-    engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
+    if (Configuration.GLOBAL_CONF_SYMBOL().equals(engineType)) {
+      Arrays.stream(AMConfiguration.UDF_KILL_ENGINE_TYPE.split(","))
+          .forEach(
+              engine ->
+                  engineStopService.stopUnlockECByUserCreatorAndECType(
+                      userName, creatorStr, engine));
+    } else {
+      engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
+    }
     return Message.ok("Kill engineConn succeed");
   }
 

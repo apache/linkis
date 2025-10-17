@@ -17,6 +17,9 @@
 
 package org.apache.linkis.configuration.service.impl;
 
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.AESUtils;
+import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.dao.ConfigKeyLimitForUserMapper;
 import org.apache.linkis.configuration.dao.ConfigMapper;
 import org.apache.linkis.configuration.dao.LabelMapper;
@@ -35,6 +38,7 @@ import org.apache.linkis.governance.common.protocol.conf.TemplateConfResponse;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,6 +178,26 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       templateConfigKey.setTemplateName(templateName);
       templateConfigKey.setTemplateUuid(templateUid);
       templateConfigKey.setKeyId(keyId);
+      if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+          && Configuration.CONFIGURATION_AES_CONF().contains(key)
+          && StringUtils.isNotBlank(configValue)) {
+        List<TemplateConfigKey> oldList =
+            templateConfigKeyMapper.selectListByTemplateUuid(templateUid);
+        if (CollectionUtils.isEmpty(oldList)) {
+          // 代表新增数据
+          configValue =
+              AESUtils.encrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+        } else {
+          // 代表更新数据
+          for (TemplateConfigKey configKey : oldList) {
+            if (configKey.getKeyId().equals(keyId)
+                && !configKey.getConfigValue().equals(configValue)) {
+              configValue =
+                  AESUtils.encrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+            }
+          }
+        }
+      }
       templateConfigKey.setConfigValue(configValue);
       templateConfigKey.setMaxValue(maxValue);
       templateConfigKey.setCreateBy(operator);
@@ -497,5 +521,40 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
     }
     result.setList(data);
     return result;
+  }
+
+  @Override
+  public void dealDatasourcePwdByKeyId(Long keyId, String isEncrypt) {
+    Boolean aeswitch = AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue();
+    List<TemplateConfigKey> templateConfigKeyList =
+        templateConfigKeyMapper.selectListByKeyId(keyId);
+    templateConfigKeyList.forEach(
+        confKey -> {
+          String configValue = confKey.getConfigValue();
+          if (aeswitch && isEncrypt.equals("1")) {
+            // 加密之前先解密，解密失败才执行加密，目的是为了防止重复加密
+            try {
+              AESUtils.decrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+            } catch (ErrorException e) {
+              if (e.getErrCode() == 21304) {
+                configValue =
+                    AESUtils.encrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+                confKey.setConfigValue(configValue);
+                templateConfigKeyMapper.updateConfigValue(confKey);
+              }
+            }
+          }
+          if (!aeswitch && isEncrypt.equals("0")) {
+            // 解密失败维持原密码
+            try {
+              configValue =
+                  AESUtils.decrypt(configValue, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+              confKey.setConfigValue(configValue);
+              templateConfigKeyMapper.updateConfigValue(confKey);
+            } catch (Exception e) {
+              logger.warn("此密码无需解密，维持原密码:" + confKey.getKeyId());
+            }
+          }
+        });
   }
 }

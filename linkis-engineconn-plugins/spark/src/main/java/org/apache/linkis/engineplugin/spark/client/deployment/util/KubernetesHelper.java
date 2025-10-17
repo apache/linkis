@@ -60,7 +60,7 @@ public class KubernetesHelper {
         kubeConfigFile,
         k8sMasterUrl);
 
-    if (StringUtils.isBlank(kubeConfigFile) && StringUtils.isBlank(kubeConfigFile)) {
+    if (StringUtils.isBlank(kubeConfigFile)) {
       throw new KubernetesClientException(
           "Both kubeConfigFile and k8sMasterUrl are empty. Initializing KubernetesClient failed.");
     }

@@ -20,6 +20,7 @@ package org.apache.linkis.monitor.until;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.monitor.config.MonitorConfig;
 import org.apache.linkis.monitor.constants.Constants;
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
 import org.apache.linkis.monitor.utils.alert.ims.PooledImsAlertUtils;
@@ -42,13 +43,23 @@ public class ThreadUtils extends ApplicationContextEvent {
   public static ExecutionContextExecutorService executors =
       Utils.newCachedExecutionContext(5, "alert-pool-thread-", false);
 
+  public static ExecutionContextExecutorService executors_analyze =
+      Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);
+
+  public static ExecutionContextExecutorService executors_archive =
+      Utils.newCachedExecutionContext(10, "archive-pool-thread-", false);
+
   public ThreadUtils(ApplicationContext source) {
     super(source);
   }
 
   public static String run(List<String> cmdList, String shellName) {
     FutureTask future = new FutureTask(() -> Utils.exec(cmdList.toArray(new String[2]), -1));
-    executors.submit(future);
+    if (shellName.equals(Constants.TASK_ARCHIVE_SH())) {
+      executors_archive.submit(future);
+    } else {
+      executors.submit(future);
+    }
     String msg = "";
     try {
       msg = future.get(MonitorConfig.SHELL_TIMEOUT.getValue(), TimeUnit.MINUTES).toString();
@@ -63,5 +74,10 @@ public class ThreadUtils extends ApplicationContextEvent {
       logger.error("Thread error msg {}", e.getMessage());
     }
     return msg;
+  }
+
+  public static void analyzeRun(JobHistory jobHistory) {
+    FutureTask future = new FutureTask(() -> HttpsUntils.analyzeJob(jobHistory), -1);
+    executors_analyze.submit(future);
   }
 }

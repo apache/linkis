@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.request
+package org.apache.linkis.basedatamanager.server.service;
 
-trait UserAction extends org.apache.linkis.httpclient.request.UserAction {
-  private var user: String = _
+import org.apache.linkis.basedatamanager.server.domain.GatewayAuthRelationTokenEntity;
 
-  override def setUser(user: String): Unit = this.user = user
+import com.baomidou.mybatisplus.extension.service.IService;
 
-  override def getUser: String = user
-}
+/**
+ * @description Database operation Service for the [linkis_mg_gateway_auth_token] table
+ * @createDate 2022-07-13 10:42:13
+ */
+public interface GatewayAuthTokenRelationService extends IService<GatewayAuthRelationTokenEntity> {}

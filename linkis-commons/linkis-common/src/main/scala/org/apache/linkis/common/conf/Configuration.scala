@@ -17,7 +17,7 @@
 
 package org.apache.linkis.common.conf
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, RSAUtils}
 
 import org.apache.commons.lang3.StringUtils
 
@@ -30,6 +30,8 @@ object Configuration extends Logging {
   val FIELD_SPLIT = CommonVars("wds.linkis.field.split", "hadoop")
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
+
+  val LINKIS_SYS_NAME = CommonVars("linkis.system.name", "")
 
   val IS_PROMETHEUS_ENABLE = CommonVars("wds.linkis.prometheus.enable", false)
 
@@ -55,6 +57,9 @@ object Configuration extends Logging {
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
+  val JOBHISTORY_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
+
   // read from env
   val PREFER_IP_ADDRESS: Boolean = CommonVars(
     "linkis.discovery.prefer-ip-address",
@@ -67,6 +72,9 @@ object Configuration extends Logging {
 
   val JOB_HISTORY_DEPARTMENT_ADMIN = CommonVars("wds.linkis.jobhistory.department.admin", "hadoop")
 
+  val JOB_RESULT_DEPARTMENT_LIMIT =
+    CommonVars("linkis.jobhistory.result.limit.department", "")
+
   // Only the specified token has permission to call some api
   val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
 
@@ -75,6 +83,12 @@ object Configuration extends Logging {
 
   val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
 
+  val LINKIS_RSA_TOKEN_SWITCH = CommonVars("linkis.rsa.token.switch", false).getValue
+
+  val LINKIS_RSA_PUBLIC_KEY = CommonVars("linkis.rsa.public.key", "")
+
+  val LINKIS_RSA_PRIVATE_KEY = CommonVars("linkis.rsa.private.key", "")
+
   val ERROR_MSG_TIP =
     CommonVars(
       "linkis.jobhistory.error.msg.tip",
@@ -82,6 +96,13 @@ object Configuration extends Logging {
     )
 
   val LINKIS_TOKEN = CommonVars("wds.linkis.token", "")
+
+  val HDFS_HOUR_DIR_SWITCH = CommonVars("linkis.hdfs.hour.dir.switch", false).getValue
+
+  val LINKIS_KEYTAB_SWITCH: Boolean = CommonVars("linkis.keytab.switch", false).getValue
+
+  val METRICS_INCREMENTAL_UPDATE_ENABLE =
+    CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
 
   val GLOBAL_CONF_CHN_NAME = "全局设置"
 
@@ -97,7 +118,14 @@ object Configuration extends Logging {
     if (StringUtils.isBlank(token)) {
       false
     } else {
-      token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      if (Configuration.LINKIS_RSA_TOKEN_SWITCH && token.startsWith(RSAUtils.PREFIX)) {
+        RSAUtils
+          .dncryptWithLinkisPublicKey(token)
+          .toUpperCase()
+          .contains(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      } else {
+        token.toUpperCase().contains(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      }
     }
   }
 
@@ -157,6 +185,11 @@ object Configuration extends Logging {
         Configuration.GLOBAL_CONF_CHN_EN_NAME =>
       GLOBAL_CONF_SYMBOL
     case _ => creator
+  }
+
+  def canResultSetByDepartment(departmentId: String): Boolean = {
+    val jobResultLimit = JOB_RESULT_DEPARTMENT_LIMIT.getHotValue.split(",")
+    !jobResultLimit.exists(departmentId.equalsIgnoreCase)
   }
 
 }

@@ -48,4 +48,6 @@ public interface TemplateConfigKeyService {
       throws ConfigurationException;
 
   TemplateConfResponse queryKeyInfoList(TemplateConfRequest templateConfRequest);
+
+  void dealDatasourcePwdByKeyId(Long keyId, String isEncrypt) throws ConfigurationException;
 }

@@ -40,7 +40,6 @@ import java.net.InetAddress
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 
 import com.google.gson.reflect.TypeToken
 
@@ -48,7 +47,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
 
   @BeanProperty var ioClient: IOClient = _
 
-  private val properties: mutable.HashMap[String, String] = mutable.HashMap[String, String]()
+  private var properties: java.util.Map[String, String] = new java.util.HashMap[String, String]()
 
   private var inited = false
 
@@ -69,7 +68,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     label.setJobGroupId(IOClientUtils.generateJobGrupID())
   }
 
-  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties.asJava)
+  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties)
 
   def getCreatorUser: String = StorageUtils.getJvmUser
 
@@ -103,7 +102,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   }
 
   def initFS(methodName: String = "init"): Unit = {
-    if (!properties.contains(StorageConfiguration.PROXY_USER.key)) {
+    if (!properties.containsKey(StorageConfiguration.PROXY_USER.key)) {
       throw new StorageErrorException(NO_PROXY_USER.getErrorCode, NO_PROXY_USER.getErrorDesc)
     }
     bindEngineLabel.setIsJobGroupHead("true")
@@ -117,7 +116,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         getProxyUser,
         getLocalIP,
         methodName,
-        Array(properties.toMap)
+        Array(properties)
       ),
       bindEngineLabel
     )
@@ -172,7 +171,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         case "init" =>
         case "storageName" => return fsType
         case "setUser" =>
-          properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String];
+          properties.put(StorageConfiguration.PROXY_USER.key, args(0).asInstanceOf[String]);
           return Unit
         case _ =>
           if (inited) {
@@ -185,23 +184,23 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     method.getName match {
       case "init" =>
         val user =
-          if (properties.contains(StorageConfiguration.PROXY_USER.key)) {
-            StorageConfiguration.PROXY_USER.getValue(properties.toMap)
+          if (properties.containsKey(StorageConfiguration.PROXY_USER.key)) {
+            StorageConfiguration.PROXY_USER.getValue(properties)
           } else {
             null
           }
         if (args.length > 0 && args(0).isInstanceOf[java.util.Map[String, String]]) {
-          properties ++= args(0).asInstanceOf[java.util.Map[String, String]].asScala
+          properties.putAll(args(0).asInstanceOf[java.util.Map[String, String]])
         }
         if (StringUtils.isNoneBlank(user)) {
-          properties += StorageConfiguration.PROXY_USER.key -> user
+          properties.put(StorageConfiguration.PROXY_USER.key, user)
         }
         initFS()
         logger.warn(s"For user($user)inited a $fsType storage($id) .")
         Unit
       case "fsName" => fsType
       case "setUser" =>
-        properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String]; Unit
+        properties.put(StorageConfiguration.PROXY_USER.key, args(0).asInstanceOf[String]); Unit
       case "read" =>
         if (!inited) throw new IllegalAccessException("storage has not been inited.")
         new IOInputStream(args)

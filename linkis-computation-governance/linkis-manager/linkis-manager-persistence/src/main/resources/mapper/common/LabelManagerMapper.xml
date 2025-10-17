@@ -322,38 +322,21 @@
     </select>
 
     <select id="getNodeRelationsByLabels" resultType="java.util.HashMap">
-        <foreach collection="labels" index="index" item="label" separator="union all">
-            SELECT
-            t.id AS 'id',
-            t.label_value_size AS 'labelValueSize',
-            t.label_key AS 'labelKey',
-            t.label_value AS 'stringValue',
-            si.instance,
-            si.name AS 'applicationName'
-            FROM
-            (
-            SELECT
-            l.id,
-            l.label_value_size ,
-            l.label_key,
-            l.label_value,
-            lsi.service_instance
-            FROM
-            (
-            SELECT
-            id,
-            label_value_size,
-            label_key,
-            label_value
-            FROM
-            linkis_cg_manager_label
-            WHERE
-            label_key = #{label.labelKey}
-            and label_value = #{label.stringValue}
-            ) l
-            INNER JOIN linkis_cg_manager_label_service_instance lsi ON l.id = lsi.label_id
-            ) t
-            INNER JOIN linkis_cg_manager_service_instance si ON si.instance = t.service_instance
+        SELECT
+        l.id,
+        l.label_value_size AS 'labelValueSize',
+        l.label_key AS 'labelKey',
+        l.label_value AS 'stringValue',
+        si.instance,
+        si.name AS 'applicationName'
+        FROM
+        linkis_cg_manager_label l
+        INNER JOIN linkis_cg_manager_label_service_instance lsi ON l.id = lsi.label_id
+        INNER JOIN linkis_cg_manager_service_instance si ON si.instance = lsi.service_instance
+        WHERE
+        (l.label_key, l.label_value) IN
+        <foreach collection="labels" item="label" open="(" close=")" separator=",">
+            (#{label.labelKey}, #{label.stringValue})
         </foreach>
     </select>
 
@@ -366,7 +349,18 @@
         lr.resource_id = r.id
     </select>
 
-
+    <select id="getInstanceResourceByLabelValue"
+            resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        SELECT
+            r.*, l.label_key, l.label_value
+        FROM linkis_cg_manager_label l
+        JOIN linkis_cg_manager_label_resource lr ON l.id = lr.label_id
+        JOIN linkis_cg_manager_linkis_resources r ON lr.resource_id = r.id
+        WHERE l.label_value IN
+        <foreach collection="labelValues" item="value" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+    </select>
 
     <delete id="deleteResourceByLabelIdInDirect">
         delete r from linkis_cg_manager_linkis_resources r

@@ -247,6 +247,15 @@
         </where>
          ORDER BY create_time DESC
     </select>
+    <select id="selectDatasourcesByType" resultType="org.apache.linkis.datasourcemanager.common.domain.DataSource">
+        <![CDATA[SELECT ]]>
+        <include refid="data_source_join_type"/>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
+        INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <where>
+            t.`name` = #{datasourceTypeName} and d.`create_user`  = #{datasourceUser}
+        </where>
+    </select>
 
     <update id="setPublishedVersionId">
         UPDATE linkis_ps_dm_datasource

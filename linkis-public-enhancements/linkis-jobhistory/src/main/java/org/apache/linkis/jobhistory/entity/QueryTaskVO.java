@@ -66,6 +66,10 @@ public class QueryTaskVO {
 
   private String metrics;
 
+  private String engineLogPath;
+  private String ecmInstance;
+  private String ticketId;
+
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
   }
@@ -338,5 +342,29 @@ public class QueryTaskVO {
 
   public void setMetrics(String metrics) {
     this.metrics = metrics;
+  }
+
+  public String getEngineLogPath() {
+    return engineLogPath;
+  }
+
+  public void setEngineLogPath(String engineLogPath) {
+    this.engineLogPath = engineLogPath;
+  }
+
+  public String getEcmInstance() {
+    return ecmInstance;
+  }
+
+  public void setEcmInstance(String ecmInstance) {
+    this.ecmInstance = ecmInstance;
+  }
+
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 }

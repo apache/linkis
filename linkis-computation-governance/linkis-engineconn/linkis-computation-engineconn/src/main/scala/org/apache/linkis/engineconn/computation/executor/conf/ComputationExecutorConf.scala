@@ -35,7 +35,7 @@ object ComputationExecutorConf {
 
   val PRINT_TASK_PARAMS_SKIP_KEYS = CommonVars(
     "linkis.engineconn.print.task.params.skip.keys",
-    "jobId",
+    "jobId,wds.linkis.rm.yarnqueue",
     "skip to print params key at job logs"
   )
 
@@ -135,5 +135,24 @@ object ComputationExecutorConf {
 
   val CLOSE_RS_OUTPUT_WHEN_RESET_BY_DEFAULT_ENABLED =
     CommonVars("linkis.ec.rs.close.when.reset.enabled", true).getValue
+
+  val SPECIAL_UDF_CHECK_ENABLED =
+    CommonVars("linkis.ec.spacial.udf.check.enabled", false)
+
+  val SPECIAL_UDF_CHECK_BY_REGEX_ENABLED =
+    CommonVars("linkis.ec.spacial.udf.check.by.regex.enabled", false)
+
+  val SPECIAL_UDF_NAMES =
+    CommonVars("linkis.ec.spacial.udf.check.names", "")
+
+  val SUPPORT_SPECIAL_UDF_LANGUAGES =
+    CommonVars("linkis.ec.support.spacial.udf.languages", "sql,python")
+
+  val ONLY_SQL_USE_UDF_KEY = "load.only.sql.use.udf"
+
+  val CODE_TYPE = "codeType"
+
+  val SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED: Boolean =
+    CommonVars[Boolean]("linkis.partial.retry.for.failed.task.enabled", false).getValue
 
 }

@@ -34,4 +34,8 @@ public interface EngineNode extends AMNode, RMNode, LabelNode {
   String getEcMetrics();
 
   void setEcMetrics(String metrics);
+
+  String getParams();
+
+  void setParams(String params);
 }

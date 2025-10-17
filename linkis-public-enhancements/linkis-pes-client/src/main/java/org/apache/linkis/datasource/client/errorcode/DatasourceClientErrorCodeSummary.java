@@ -28,6 +28,10 @@ public enum DatasourceClientErrorCodeSummary implements LinkisErrorCode {
   DATASOURCENAME_NEEDED(31000, "dataSourceName is needed(需要dataSourceName)!"),
   USER_NEEDED(31000, "user is needed(用户为空)!"),
   SYSTEM_NEEDED(31000, "system is needed(系统为空)!"),
+  IP_NEEDED(31000, "ip is needed(ip为空)!"),
+  PORT_NEEDED(31000, "port is needed(port为空)!"),
+  OWNER_NEEDED(31000, "owner is needed(owner为空)!"),
+  DATASOURCE_NEEDED(31000, "datasourceTypeName is needed(datasourceTypeName为空)!"),
   CANNOT_SOURCE(
       31000, "Cannot encode the name of data source:{0} for request(无法对请求的数据源名称进行编码：{0})"),
   DATABASE_NEEDED(31000, "database is needed(数据库为空)!"),

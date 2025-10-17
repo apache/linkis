@@ -467,62 +467,6 @@ public class MetadataQueryRestful {
     }
   }
 
-  @ApiOperation(value = "getJdbcSql", notes = "get jdbc sql", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "envId", required = false, dataType = "String"),
-    @ApiImplicitParam(name = "system", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "database", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "table", required = true, dataType = "String")
-  })
-  @RequestMapping(value = "/getJdbcSql", method = RequestMethod.GET)
-  public Message getJdbcSql(
-      @RequestParam("dataSourceName") String dataSourceName,
-      @RequestParam(value = "envId", required = false) String envId,
-      @RequestParam("database") String database,
-      @RequestParam("table") String table,
-      @RequestParam("system") String system,
-      HttpServletRequest request) {
-    try {
-      if (StringUtils.isBlank(system)) {
-        return Message.error("'system' is missing[缺少系统名]");
-      }
-      if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
-        return Message.error("'system' is invalid[系统名错误]");
-      }
-      if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
-        return Message.error("'database' is invalid[数据库名错误]");
-      }
-      if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
-        return Message.error("'table' is invalid[表名错误]");
-      }
-      if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceName' is invalid[数据源错误]");
-      }
-
-      String userName =
-          ModuleUserUtils.getOperationUser(request, "getJdbcSql, dataSourceName:" + dataSourceName);
-
-      GenerateSqlInfo sparkSql =
-          metadataQueryService.getJdbcSqlByDsNameAndEnvId(
-              dataSourceName, database, table, system, userName, envId);
-      return Message.ok().data("jdbcSql", sparkSql);
-    } catch (Exception e) {
-      return errorToResponseMessage(
-          "Fail to jdbc sql[获取getJdbcSql信息失败], name:["
-              + dataSourceName
-              + "]"
-              + ", system:["
-              + system
-              + "], database:["
-              + database
-              + "], table:["
-              + table
-              + "]",
-          e);
-    }
-  }
-
   private Message errorToResponseMessage(String uiMessage, Exception e) {
     if (e instanceof MetaMethodInvokeException) {
       MetaMethodInvokeException invokeException = (MetaMethodInvokeException) e;

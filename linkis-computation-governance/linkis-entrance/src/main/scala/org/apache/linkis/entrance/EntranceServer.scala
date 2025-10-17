@@ -39,16 +39,22 @@ import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.scheduler.conf.SchedulerConfiguration.{
+  ENGINE_PRIORITY_RUNTIME_KEY,
+  FIFO_QUEUE_STRATEGY,
+  PFIFO_SCHEDULER_STRATEGY
+}
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-import java.{lang, util}
 import java.text.{MessageFormat, SimpleDateFormat}
+import java.util
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -98,7 +104,52 @@ abstract class EntranceServer extends Logging {
     LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
 
     val logAppender = new java.lang.StringBuilder()
-    jobRequest = dealInitedJobRequest(jobRequest, logAppender)
+    Utils.tryThrow(
+      getEntranceContext
+        .getOrCreateEntranceInterceptors()
+        .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
+    ) { t =>
+      LoggerUtils.removeJobIdMDC()
+      val error = t match {
+        case error: ErrorException => error
+        case t1: Throwable =>
+          val exception = new EntranceErrorException(
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
+          )
+          exception.initCause(t1)
+          exception
+        case _ =>
+          new EntranceErrorException(
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
+          )
+      }
+      jobRequest match {
+        case t: JobRequest =>
+          t.setErrorCode(error.getErrCode)
+          t.setErrorDesc(error.getDesc)
+          t.setStatus(SchedulerEventState.Failed.toString)
+          t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+          val infoMap = new util.HashMap[String, AnyRef]
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put(TaskConstant.TICKET_ID, "")
+          infoMap.put("message", "Task interception failed and cannot be retried")
+          JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
+        case _ =>
+      }
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(jobRequest)
+      error
+    }
 
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
     Utils.tryThrow {
@@ -106,6 +157,7 @@ abstract class EntranceServer extends Logging {
       job.setLogListener(getEntranceContext.getOrCreateLogManager())
       job.setProgressListener(getEntranceContext.getOrCreatePersistenceManager())
       job.setJobListener(getEntranceContext.getOrCreatePersistenceManager())
+      job.setJobRetryListener(getEntranceContext.getOrCreatePersistenceManager())
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
@@ -136,6 +188,36 @@ abstract class EntranceServer extends Logging {
           SUBMIT_CODE_ISEMPTY.getErrorDesc
         )
       }
+
+      Utils.tryAndWarn {
+        // 如果是使用优先级队列，设置下优先级
+        val configMap = params
+          .getOrDefault(TaskConstant.PARAMS, new util.HashMap[String, AnyRef]())
+          .asInstanceOf[util.Map[String, AnyRef]]
+        val properties: util.Map[String, AnyRef] = TaskUtils.getRuntimeMap(configMap)
+        val fifoStrategy: String = FIFO_QUEUE_STRATEGY
+        if (
+            PFIFO_SCHEDULER_STRATEGY.equalsIgnoreCase(
+              fifoStrategy
+            ) && properties != null && !properties.isEmpty
+        ) {
+          val priorityValue: AnyRef = properties.get(ENGINE_PRIORITY_RUNTIME_KEY)
+          if (priorityValue != null) {
+            val value: Int = getPriority(priorityValue.toString)
+            logAppender.append(LogUtils.generateInfo(s"The task set priority is ${value} \n"))
+            job.setPriority(value)
+          }
+        }
+      }
+
+      Utils.tryCatch {
+        if (logAppender.length() > 0) {
+          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
+        }
+      } { t =>
+        logger.error("Failed to write init log, reason: ", t)
+      }
+
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = LogUtils.generateInfo(
         s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
@@ -175,44 +257,30 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def logReader(execId: String): LogReader
+  def updateAllNotExecutionTaskInstances(retryWhenUpdateFail: Boolean): Unit = {
+    val consumeQueueTasks = getAllConsumeQueueTask()
 
-  def getJob(execId: String): Option[Job] =
-    getEntranceContext.getOrCreateScheduler().get(execId).map(_.asInstanceOf[Job])
+    clearAllConsumeQueue()
+    logger.info("Finished to clean all ConsumeQueue")
 
-  private[entrance] def getEntranceWebSocketService: Option[EntranceWebSocketService] =
-    if (ServerConfiguration.BDP_SERVER_SOCKET_MODE.getValue) {
-      if (entranceWebSocketService.isEmpty) synchronized {
-        if (entranceWebSocketService.isEmpty) {
-          entranceWebSocketService = Some(new EntranceWebSocketService)
-          entranceWebSocketService.foreach(_.setEntranceServer(this))
-          entranceWebSocketService.foreach(
-            getEntranceContext.getOrCreateEventListenerBus.addListener
-          )
+    if (consumeQueueTasks != null && consumeQueueTasks.length > 0) {
+      val taskIds = new util.ArrayList[Long]()
+      consumeQueueTasks.foreach(job => {
+        taskIds.add(job.getJobRequest.getId.asInstanceOf[Long])
+        job match {
+          case entranceExecutionJob: EntranceExecutionJob =>
+            val msg = LogUtils.generateWarn(
+              s"job ${job.getJobRequest.getId} clean from ConsumeQueue, wait for failover"
+            )
+            entranceExecutionJob.getLogListener.foreach(_.onLogUpdate(entranceExecutionJob, msg))
+            entranceExecutionJob.getLogWriter.foreach(_.close())
+          case _ =>
         }
-      }
-      entranceWebSocketService
-    } else None
+      })
 
-  def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
-    val consumers = getEntranceContext
-      .getOrCreateScheduler()
-      .getSchedulerContext
-      .getOrCreateConsumerManager
-      .listConsumers()
-      .toSet
-    val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
-      consumers.filter(_.getGroup.getGroupName.contains(filterWords))
-    } else {
-      consumers
+      JobHistoryHelper.updateAllConsumeQueueTask(taskIds, retryWhenUpdateFail)
+      logger.info("Finished to update all not execution task instances")
     }
-    filterConsumer
-      .flatMap { consumer =>
-        consumer.getRunningEvents ++ consumer.getConsumeQueue.getWaitingEvents
-      }
-      .filter(job => job != null && job.isInstanceOf[EntranceJob])
-      .map(_.asInstanceOf[EntranceJob])
-      .toArray
   }
 
   def getAllConsumeQueueTask(): Array[EntranceJob] = {
@@ -239,32 +307,6 @@ abstract class EntranceServer extends Logging {
       .getOrCreateConsumerManager
       .listConsumers()
       .foreach(_.getConsumeQueue.clearAll())
-  }
-
-  def updateAllNotExecutionTaskInstances(retryWhenUpdateFail: Boolean): Unit = {
-    val consumeQueueTasks = getAllConsumeQueueTask()
-
-    clearAllConsumeQueue()
-    logger.info("Finished to clean all ConsumeQueue")
-
-    if (consumeQueueTasks != null && consumeQueueTasks.length > 0) {
-      val taskIds = new util.ArrayList[Long]()
-      consumeQueueTasks.foreach(job => {
-        taskIds.add(job.getJobRequest.getId.asInstanceOf[Long])
-        job match {
-          case entranceExecutionJob: EntranceExecutionJob =>
-            val msg = LogUtils.generateWarn(
-              s"job ${job.getJobRequest.getId} clean from ConsumeQueue, wait for failover"
-            )
-            entranceExecutionJob.getLogListener.foreach(_.onLogUpdate(entranceExecutionJob, msg))
-            entranceExecutionJob.getLogWriter.foreach(_.close())
-          case _ =>
-        }
-      })
-
-      JobHistoryHelper.updateAllConsumeQueueTask(taskIds, retryWhenUpdateFail)
-      logger.info("Finished to update all not execution task instances")
-    }
   }
 
   /**
@@ -306,7 +348,7 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def killOldEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+  def killOldEC(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): Unit = {
     Utils.tryCatch {
       logAppender.append(
         LogUtils
@@ -384,7 +426,7 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def dealInitedJobRequest(jobReq: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+  def dealInitedJobRequest(jobReq: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     var jobRequest = jobReq
     Utils.tryThrow(
       getEntranceContext
@@ -435,7 +477,7 @@ abstract class EntranceServer extends Logging {
     jobRequest
   }
 
-  def dealRunningJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+  def dealRunningJobRequest(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): Unit = {
     Utils.tryCatch {
       // error_msg
       val msg =
@@ -480,7 +522,10 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def initAndSubmitJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+  def initAndSubmitJobRequest(
+      jobRequest: JobRequest,
+      logAppender: java.lang.StringBuilder
+  ): Unit = {
     // init properties
     initJobRequestProperties(jobRequest, logAppender)
 
@@ -569,7 +614,7 @@ abstract class EntranceServer extends Logging {
 
   private def initJobRequestProperties(
       jobRequest: JobRequest,
-      logAppender: lang.StringBuilder
+      logAppender: java.lang.StringBuilder
   ): Unit = {
     logger.info(s"job ${jobRequest.getId} start to initialize the properties")
     val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -643,6 +688,25 @@ abstract class EntranceServer extends Logging {
     logger.info(s"job ${jobRequest.getId} success to initialize the properties")
   }
 
+  def logReader(execId: String): LogReader
+
+  def getJob(execId: String): Option[Job] =
+    getEntranceContext.getOrCreateScheduler().get(execId).map(_.asInstanceOf[Job])
+
+  private[entrance] def getEntranceWebSocketService: Option[EntranceWebSocketService] =
+    if (ServerConfiguration.BDP_SERVER_SOCKET_MODE.getValue) {
+      if (entranceWebSocketService.isEmpty) synchronized {
+        if (entranceWebSocketService.isEmpty) {
+          entranceWebSocketService = Some(new EntranceWebSocketService)
+          entranceWebSocketService.foreach(_.setEntranceServer(this))
+          entranceWebSocketService.foreach(
+            getEntranceContext.getOrCreateEventListenerBus.addListener
+          )
+        }
+      }
+      entranceWebSocketService
+    } else None
+
   def getAllUndoneTask(filterWords: String, ecType: String = null): Array[EntranceJob] = {
     val consumers = getEntranceContext
       .getOrCreateScheduler()
@@ -703,6 +767,23 @@ abstract class EntranceServer extends Logging {
   if (timeoutCheck) {
     logger.info("Job time check is enabled")
     startTimeOutCheck()
+  }
+
+  val DOT = "."
+  val DEFAULT_PRIORITY = 100
+
+  private def getPriority(value: String): Int = {
+    var priority: Int = -1
+    Utils.tryAndWarn({
+      priority =
+        if (value.contains(DOT)) value.substring(0, value.indexOf(DOT)).toInt else value.toInt
+    })
+    if (priority < 0 || priority > Integer.MAX_VALUE - 1) {
+      logger.warn(s"illegal queue priority: ${value}")
+      DEFAULT_PRIORITY
+    } else {
+      priority
+    }
   }
 
 }

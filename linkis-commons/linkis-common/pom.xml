@@ -150,7 +150,7 @@
     <dependency>
       <groupId>com.github.oshi</groupId>
       <artifactId>oshi-core</artifactId>
-      <version>6.2.1</version>
+      <version>6.4.0</version>
     </dependency>
 
   </dependencies>
@@ -163,5 +163,17 @@
       </plugin>
     </plugins>
   </build>
-
+  <profiles>
+    <profile>
+      <id>spark-3</id>
+      <properties>
+        <json4s.version>3.7.0-M11</json4s.version>
+        <revision>1.11.0-wds-spark3</revision>
+        <spark.version>3.4.4</spark.version>
+        <scala.version>2.12.17</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <jackson-bom.version>2.14.2</jackson-bom.version>
+      </properties>
+    </profile>
+  </profiles>
 </project>

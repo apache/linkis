@@ -183,6 +183,15 @@ object Utils extends Logging {
   ): ExecutionContextExecutorService =
     ExecutionContext.fromExecutorService(newCachedThreadPool(threadNum, threadName, isDaemon))
 
+  def newCachedExecutionContextWithExecutor(
+      threadNum: Int,
+      threadName: String,
+      isDaemon: Boolean = true
+  ): (ExecutionContextExecutorService, ThreadPoolExecutor) = {
+    val threadPool: ThreadPoolExecutor = newCachedThreadPool(threadNum, threadName, isDaemon)
+    (ExecutionContext.fromExecutorService(threadPool), threadPool)
+  }
+
   def newFixedThreadPool(
       threadNum: Int,
       threadName: String,

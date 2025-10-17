@@ -17,7 +17,8 @@
 
 package org.apache.linkis.hadoop.common.utils
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.conf.Configuration.LINKIS_KEYTAB_SWITCH
+import org.apache.linkis.common.utils.{AESUtils, Logging, Utils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
@@ -29,8 +30,10 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
 
 import java.io.File
-import java.nio.file.Paths
+import java.nio.file.{Files, Paths}
+import java.nio.file.attribute.PosixFilePermissions
 import java.security.PrivilegedExceptionAction
+import java.util.Base64
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 import java.util.concurrent.atomic.AtomicLong
 
@@ -44,6 +47,7 @@ object HDFSUtils extends Logging {
   private val LOCKER_SUFFIX = "_HDFS"
   private val DEFAULT_CACHE_LABEL = "default"
   private val JOINT = "_"
+  val KEYTAB_SUFFIX = ".keytab"
 
   private val count = new AtomicLong
 
@@ -269,13 +273,13 @@ object HDFSUtils extends Logging {
   def getUserGroupInformation(userName: String, label: String): UserGroupInformation = {
     if (isKerberosEnabled(label)) {
       if (!isKeytabProxyUserEnabled(label)) {
-        val path = new File(getKeytabPath(label), userName + ".keytab").getPath
+        val path = getLinkisUserKeytabFile(userName, label)
         val user = getKerberosUser(userName, label)
         UserGroupInformation.setConfiguration(getConfigurationByLabel(userName, label))
         UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
       } else {
         val superUser = getKeytabSuperUser(label)
-        val path = new File(getKeytabPath(label), superUser + ".keytab").getPath
+        val path = getLinkisUserKeytabFile(superUser, label)
         val user = getKerberosUser(superUser, label)
         UserGroupInformation.setConfiguration(getConfigurationByLabel(superUser, label))
         UserGroupInformation.createProxyUser(
@@ -340,6 +344,19 @@ object HDFSUtils extends Logging {
     }
   }
 
+  def getLinkisKeytabPath(label: String): String = {
+    if (label == null) {
+      LINKIS_KEYTAB_FILE.getValue
+    } else {
+      val prefix = if (EXTERNAL_KEYTAB_FILE_PREFIX.getValue.endsWith("/")) {
+        EXTERNAL_KEYTAB_FILE_PREFIX.getValue
+      } else {
+        EXTERNAL_KEYTAB_FILE_PREFIX.getValue + "/"
+      }
+      prefix + label
+    }
+  }
+
   private def kerberosValueMapParser(configV: String): Map[String, String] = {
     val confDelimiter = ","
     if (configV == null || "".equals(configV)) {
@@ -361,6 +378,22 @@ object HDFSUtils extends Logging {
         )
         .toMap
     }
+  }
+
+  private def getLinkisUserKeytabFile(userName: String, label: String): String = {
+    val path = if (LINKIS_KEYTAB_SWITCH) {
+      // 读取文件
+      val byte = Files.readAllBytes(Paths.get(getLinkisKeytabPath(label), userName + KEYTAB_SUFFIX))
+      // 加密内容// 加密内容
+      val encryptedContent = AESUtils.decrypt(byte, AESUtils.PASSWORD)
+      val tempFile = Files.createTempFile(userName, KEYTAB_SUFFIX)
+      Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rw-------"))
+      Files.write(tempFile, encryptedContent)
+      tempFile.toString
+    } else {
+      new File(getKeytabPath(label), userName + KEYTAB_SUFFIX).getPath
+    }
+    path
   }
 
 }

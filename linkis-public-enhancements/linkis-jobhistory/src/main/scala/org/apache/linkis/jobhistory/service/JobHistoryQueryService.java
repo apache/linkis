@@ -42,7 +42,7 @@ public interface JobHistoryQueryService {
 
     JobHistory getJobHistoryByIdAndNameNoCode(Long jobID, String userName);
 
-    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance, String departmentId, String engineInstance);
+    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance, String departmentId, String engineInstance, String runType);
 
     Integer countUndoneTasks(String username, String creator, Date sDate, Date eDate, String engineType, Long startJobId);
 
@@ -58,5 +58,5 @@ public interface JobHistoryQueryService {
 
     List<JobHistory> taskDurationTopN(Date sDate, Date eDate, String username, String creator, String engineType);
 
-
+    JobHistory getJobHistoryByIdAndNameBrief(Long jobId, String username);
 }

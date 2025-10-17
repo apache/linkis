@@ -31,6 +31,9 @@ case class AliasOutputExecuteResponse(alias: String, output: String) extends Out
 
 case class ErrorExecuteResponse(message: String, t: Throwable) extends CompletedExecuteResponse
 
+case class ErrorRetryExecuteResponse(message: String, index: Int, t: Throwable)
+    extends ExecuteResponse
+
 case class IncompleteExecuteResponse(message: String) extends ExecuteResponse
 
 case class SubmitResponse(taskId: String) extends ExecuteResponse

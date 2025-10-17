@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.service
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.LogListener
 import org.apache.linkis.engineconn.acessible.executor.listener.event._
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
@@ -34,7 +34,6 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   ConcurrentComputationExecutor
 }
-import org.apache.linkis.engineconn.computation.executor.hook.ExecutorLabelsRestHook
 import org.apache.linkis.engineconn.computation.executor.listener.{
   ResultSetListener,
   TaskProgressListener,
@@ -50,7 +49,6 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
@@ -60,13 +58,12 @@ import org.apache.linkis.governance.common.exception.engineconn.{
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.hadoop.common.utils.KerberosUtils
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
   ResponseTaskYarnResource
 }
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
@@ -74,6 +71,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
+  ErrorRetryExecuteResponse,
   ExecuteResponse,
   IncompleteExecuteResponse,
   SubmitResponse
@@ -89,6 +87,7 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 import java.util
+import java.util.Map
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -223,6 +222,13 @@ class TaskExecutionServiceImpl
         System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
         logger.info(s"Received job with id ${jobId}.")
       }
+
+      // only sql can use udf check, udfName set in UDFLoad
+      val codeType: String = LabelUtil.getCodeType(requestTask.getLabels)
+      val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+      System.getProperties.put(ComputationExecutorConf.CODE_TYPE, languageType)
+      logger.info(s"add spacial udf check for job ${jobId} with codeType: {}", languageType)
+
       val task = new CommonEngineConnTask(taskId, retryAble)
       task.setCode(requestTask.getCode)
       task.setProperties(requestTask.getProperties)
@@ -243,6 +249,17 @@ class TaskExecutionServiceImpl
               sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
               logger.error(message, throwable)
               sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+            case ErrorRetryExecuteResponse(message, index, throwable) =>
+              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+              logger.error(message, throwable)
+              sendToEntrance(
+                task,
+                new ResponseTaskStatusWithExecuteCodeIndex(
+                  task.getTaskId,
+                  ExecutionNodeStatus.Failed,
+                  index
+                )
+              )
             case _ =>
           }
           LoggerUtils.removeJobIdMDC()
@@ -371,7 +388,9 @@ class TaskExecutionServiceImpl
     val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
     scheduler.submit(new Runnable {
       override def run(): Unit = {
-        logger.info(s"start daemon thread ${task.getTaskId}, ${task.getStatus}")
+        logger.info(
+          s"start progress daemon thread for task ${task.getTaskId}, status ${task.getStatus}"
+        )
         Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
         while (!ExecutionNodeStatus.isCompleted(task.getStatus)) {
           Utils.tryAndWarn {
@@ -414,7 +433,9 @@ class TaskExecutionServiceImpl
             Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
           )
         }
-        logger.info(s"daemon thread exit ${task.getTaskId}, ${task.getStatus}")
+        logger.info(
+          s"End progress daemon thread exit task ${task.getTaskId}, status ${task.getStatus}"
+        )
       }
     })
   }
@@ -535,7 +556,7 @@ class TaskExecutionServiceImpl
     } else {
       val msg =
         "Task null! requestTaskStatus: " + ComputationEngineUtils.GSON.toJson(requestTaskStatus)
-      logger.error(msg)
+      logger.info(msg)
       ResponseTaskStatus(requestTaskStatus.execId, ExecutionNodeStatus.Cancelled)
     }
   }
@@ -582,7 +603,7 @@ class TaskExecutionServiceImpl
         if (null != task) {
           sendToEntrance(task, ResponseTaskLog(logUpdateEvent.taskId, logUpdateEvent.log))
         } else {
-          logger.error("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
+          logger.info("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
         }
       } else if (null != lastTask) {
         val executor = executorManager.getReportExecutor
@@ -624,7 +645,7 @@ class TaskExecutionServiceImpl
         logger.info(s"task ${task.getTaskId} status $toStatus will not be send to entrance")
       }
     } else {
-      logger.error(
+      logger.info(
         "Task cannot null! taskStatusChangedEvent: " + ComputationEngineUtils.GSON
           .toJson(taskStatusChangedEvent)
       )
@@ -651,7 +672,7 @@ class TaskExecutionServiceImpl
 
           sendToEntrance(task, respRunningInfo)
         } else {
-          logger.error(
+          logger.info(
             "Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON
               .toJson(taskProgressUpdateEvent)
           )
@@ -672,7 +693,7 @@ class TaskExecutionServiceImpl
         )
       )
     } else {
-      logger.error(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
+      logger.info(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
     }
     logger.info(s"Finished  to deal result event ${taskResultCreateEvent.taskId}")
   }
@@ -683,7 +704,7 @@ class TaskExecutionServiceImpl
     if (null != executor) {
       executor.getTaskById(taskId)
     } else {
-      logger.error(s"Executor of taskId : $taskId is not cached.")
+      logger.info(s"Executor of taskId : $taskId is not cached.")
       null
     }
   }
@@ -699,7 +720,7 @@ class TaskExecutionServiceImpl
         )
       )
     } else {
-      logger.error(
+      logger.info(
         "Task cannot null! taskResultSizeCreatedEvent: " + ComputationEngineUtils.GSON
           .toJson(taskResultSizeCreatedEvent)
       )

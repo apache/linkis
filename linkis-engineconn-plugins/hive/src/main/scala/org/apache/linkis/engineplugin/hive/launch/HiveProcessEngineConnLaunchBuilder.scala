@@ -17,8 +17,11 @@
 
 package org.apache.linkis.engineplugin.hive.launch
 
+import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration.HIVE_ENGINE_CONN_JAVA_EXTRA_OPTS
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 
@@ -32,6 +35,15 @@ class HiveProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuil
       engineConnBuildRequest: EngineConnBuildRequest
   ): util.List[String] = {
     Lists.newArrayList("JarUDFLoadECMHook")
+  }
+
+  override protected def getExtractJavaOpts: String = {
+    val hiveExtraOpts: String = HIVE_ENGINE_CONN_JAVA_EXTRA_OPTS.getValue
+    if (StringUtils.isNotBlank(hiveExtraOpts)) {
+      super.getExtractJavaOpts + " " + hiveExtraOpts
+    } else {
+      super.getExtractJavaOpts
+    }
   }
 
 }

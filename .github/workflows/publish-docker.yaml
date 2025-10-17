@@ -33,8 +33,8 @@ jobs:
     env:
       TAG: ${{ github.sha }}
       SKIP_TEST: true
-      HUB: ghcr.io/apache/linkis
-      LINKIS_VERSION: 1.7.0
+      HUB: ghcr.io/${{ github.repository }}
+      LINKIS_VERSION: 1.8.0
     steps:
     - name: Checkout
       uses: actions/checkout@v4

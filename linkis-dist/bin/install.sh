@@ -124,17 +124,34 @@ cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 
-RANDOM_BML_TOKEN="LINKIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_WS_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_DSM_TOKEN="DSM-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_DSS_TOKEN="DSS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_QUALITIS_TOKEN="QUALITIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-RANDOM_VALIDATOR_TOKEN="VALIDATOR-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-if [ $DEBUG_MODE != "true" ];then
-  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
-  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
-  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/admin/configuration_helper.sh
-fi
+echo "======= SECURITY: Generating secure random tokens =========="
+
+# SECURITY: Generate secure random tokens for all services using new secure placeholders
+LINKIS_GATEWAY_TOKEN="LINKIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+WS_SERVICE_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+DSM_SERVICE_TOKEN="DSM-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+DSS_SERVICE_TOKEN="DSS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+QUALITIS_SERVICE_TOKEN="QUALITIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+VALIDATOR_SERVICE_TOKEN="VALIDATOR-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+CLI_SERVICE_TOKEN="CLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+
+# SECURITY: Set secure user and host restrictions (no wildcards)
+echo "Generated secure tokens:"
+echo "- LINKIS Gateway Token: $LINKIS_GATEWAY_TOKEN"
+echo "- WS Service Token: $WS_SERVICE_TOKEN"
+echo "- DSM Service Token: $DSM_SERVICE_TOKEN"
+echo "- DSS Service Token: $DSS_SERVICE_TOKEN"
+echo "- QUALITIS Service Token: $QUALITIS_SERVICE_TOKEN"
+echo "- VALIDATOR Service Token: $VALIDATOR_SERVICE_TOKEN"
+echo "- CLI Service Token: $CLI_SERVICE_TOKEN"
+
+# SECURITY: Replace secure placeholders in all configuration files
+echo "Replacing secure placeholders in configuration files..."
+sed -i ${txt}  "s#LINKIS-UNAVAILABLE-TOKEN#$LINKIS_GATEWAY_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties 2>/dev/null || true
+sed -i ${txt}  "s#CLI-UNAVAILABLE-TOKEN#$CLI_SERVICE_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties 2>/dev/null || true
+sed -i ${txt}  "s#LINKIS-UNAVAILABLE-TOKEN#$LINKIS_GATEWAY_TOKEN#g" $common_conf 2>/dev/null || true
+sed -i ${txt}  "s#DSM-UNAVAILABLE-TOKEN#$DSM_SERVICE_TOKEN#g" $common_conf 2>/dev/null || true
+sed -i ${txt}  "s#LINKIS-UNAVAILABLE-TOKEN#$LINKIS_GATEWAY_TOKEN#g" $LINKIS_HOME/admin/configuration_helper.sh 2>/dev/null || true
 
 echo "======= Step 3: Create necessary directory =========="
 
@@ -219,13 +236,60 @@ dml_file_name=linkis_dml.sql
 if [[ 'postgresql' = "$dbType" ]];then
   dml_file_name=linkis_dml_pg.sql
 fi
-if [ $DEBUG_MODE != "true" ];then
-  sed -i ${txt}  "s#LINKIS-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#DSS-AUTH#$RANDOM_DSS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#QUALITIS-AUTH#$RANDOM_QUALITIS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-  sed -i ${txt}  "s#VALIDATOR-AUTH#$RANDOM_VALIDATOR_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+echo "======= SECURITY: Replacing database placeholders with secure tokens =========="
+
+# SECURITY: Replace secure placeholders in database initialization file
+echo "Replacing secure placeholders in database file: $LINKIS_HOME/db/${dml_file_name}"
+sed -i ${txt}  "s#{{LINKIS_GATEWAY_TOKEN}}#$LINKIS_GATEWAY_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{WS_SERVICE_TOKEN}}#$WS_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{DSM_SERVICE_TOKEN}}#$DSM_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{DSS_SERVICE_TOKEN}}#$DSS_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{QUALITIS_SERVICE_TOKEN}}#$QUALITIS_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{VALIDATOR_SERVICE_TOKEN}}#$VALIDATOR_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{CLI_SERVICE_TOKEN}}#$CLI_SERVICE_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+# Replace old insecure placeholder token with secure gateway token
+sed -i ${txt}  "s#LINKIS-UNAVAILABLE-TOKEN#$LINKIS_GATEWAY_TOKEN#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+
+# SECURITY: Replace user and host placeholders with secure values
+sed -i ${txt}  "s#{{LINKIS_GATEWAY_USER}}#$LINKIS_GATEWAY_USER#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+sed -i ${txt}  "s#{{LINKIS_GATEWAY_HOST}}#$LINKIS_GATEWAY_HOST#g" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+
+echo "Database placeholder replacement completed."
+
+# SECURITY: Final verification - check for unreplaced placeholders
+remaining_placeholders=$(grep -o "{{[^}]*}}" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null | wc -l)
+if [ $remaining_placeholders -gt 0 ]; then
+  echo "WARNING: Found $remaining_placeholders unreplaced placeholders in database file!"
+  echo "SECURITY RISK: Please review $LINKIS_HOME/db/${dml_file_name} manually."
+  grep "{{[^}]*}}" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+else
+  echo "SUCCESS: All security placeholders in database file have been replaced with secure tokens."
+fi
+
+# SECURITY: Check for any remaining old insecure tokens
+old_tokens=$(grep -o "LINKIS-AUTH\|WS-AUTH\|DSS-AUTH\|QUALITIS-AUTH\|VALIDATOR-AUTH\|LINKISCLI-AUTH\|DSM-AUTH\|LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null | wc -l)
+if [ $old_tokens -gt 0 ]; then
+  echo "CRITICAL: Found $old_tokens old insecure tokens still in database file!"
+  echo "These should have been replaced with secure placeholders. Please check the file manually."
+  grep -o "LINKIS-AUTH\|WS-AUTH\|DSS-AUTH\|QUALITIS-AUTH\|VALIDATOR-AUTH\|LINKISCLI-AUTH\|DSM-AUTH\|LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/db/${dml_file_name} 2>/dev/null || true
+else
+  echo "SUCCESS: No old insecure tokens found in database file."
+fi
+
+# SECURITY: Final verification - check for unreplaced LINKIS-UNAVAILABLE-TOKEN in all configuration files
+echo "======= SECURITY: Final verification for remaining insecure tokens =========="
+remaining_insecure_config=$(grep -r "LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/conf/ 2>/dev/null | wc -l)
+remaining_insecure_admin=$(grep -o "LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/admin/configuration_helper.sh 2>/dev/null | wc -l)
+
+if [ $remaining_insecure_config -gt 0 ] || [ $remaining_insecure_admin -gt 0 ]; then
+  echo "WARNING: Found remaining LINKIS-UNAVAILABLE-TOKEN in configuration files!"
+  echo "Configuration files: $remaining_insecure_config occurrences"
+  echo "Admin scripts: $remaining_insecure_admin occurrences"
+  echo "SECURITY RISK: Please review these files manually:"
+  grep -r "LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/conf/ 2>/dev/null || true
+  grep -n "LINKIS-UNAVAILABLE-TOKEN" $LINKIS_HOME/admin/configuration_helper.sh 2>/dev/null || true
+else
+  echo "SUCCESS: All LINKIS-UNAVAILABLE-TOKEN placeholders have been replaced with secure tokens."
 fi
 
 

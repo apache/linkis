@@ -93,7 +93,7 @@ create_kind_cluster(){
 }
 #mysql installation
 install_mysql(){
-    ${ROOT_DIR}/helm/scripts/install-mysql.sh
+    ${ROOT_DIR}/helm/scripts/install-mysql.sh $USING_KIND
 }
 #ldh installation
 install_ldh(){

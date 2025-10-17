@@ -18,12 +18,16 @@
 package org.apache.linkis.gateway.authentication.dao;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +40,17 @@ class TokenDaoTest extends BaseDaoTest {
   private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
   private static String TokenName =
-      CommonVars.apply("wds.linkis.bml.auth.token.value", "LINKIS-AUTH").getValue();
+      CommonVars.apply("wds.linkis.bml.auth.token.value", Configuration.LINKIS_TOKEN().getValue())
+          .getValue();
 
   @Autowired TokenDao tokenDao;
+
+  @BeforeAll
+  static void before() {
+    if (StringUtils.isBlank(TokenName)) {
+      TokenName = "LINKIS-UNAVAILABLE-TOKE";
+    }
+  }
 
   @Test
   void testSelectTokenByName() {

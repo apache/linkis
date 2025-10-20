@@ -17,6 +17,8 @@
 
 package org.apache.linkis.common.conf
 
+import org.apache.linkis.common.utils.{ParameterUtils, Logging}
+
 import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
@@ -34,24 +36,13 @@ object DWCArgumentsParser {
   def getDWCOptionMap: Map[String, String] = dwcOptionMap
 
   def parse(args: Array[String]): DWCArgumentsParser = {
-    val keyValueRegex = "([^=]+)=(.+)".r
-    var i = 0
     val optionParser = new DWCArgumentsParser
-    while (i < args.length - 1) {
-      args(i) match {
-        case DWC_CONF | SPRING_CONF =>
-          args(i + 1) match {
-            case keyValueRegex(key, value) =>
-              optionParser.setConf(args(i), key, value)
-              i += 1
-            case _ =>
-              throw new IllegalArgumentException("illegal commond line, format: --conf key=value.")
-          }
-        case _ =>
-          throw new IllegalArgumentException(s"illegal commond line, ${args(i)} cannot recognize.")
+    ParameterUtils.parseStartupParams(
+      args,
+      (prefix, key, value) => {
+        optionParser.setConf(s"--$prefix-conf", key, value)
       }
-      i += 1
-    }
+    )
     optionParser.validate()
     optionParser
   }

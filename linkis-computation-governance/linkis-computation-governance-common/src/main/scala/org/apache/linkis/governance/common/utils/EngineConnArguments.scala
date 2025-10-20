@@ -17,6 +17,8 @@
 
 package org.apache.linkis.governance.common.utils
 
+import org.apache.linkis.common.utils.{ParameterUtils, Logging}
+
 import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
@@ -105,31 +107,13 @@ class DefaultEngineConnArgumentsParser extends EngineConnArgumentsParser {
   protected val keyValueRegex = "([^=]+)=(.+)".r
 
   override def parseToObj(args: Array[String]): EngineConnArguments = {
-    var i = 0
     val argumentsBuilder = new DefaultEngineConnArgumentsBuilder
-    while (i < args.length) {
-      args(i) match {
-        case ENGINE_CONN_CONF =>
-          addKeyValue(
-            args(i + 1),
-            (key, value) => {
-              argumentsBuilder.addEngineConnConf(key, value)
-              i += 1
-            }
-          )
-        case SPRING_CONF =>
-          addKeyValue(
-            args(i + 1),
-            (key, value) => {
-              argumentsBuilder.addSpringConf(key, value)
-              i += 1
-            }
-          )
-        case _ =>
-          throw new IllegalArgumentException(s"illegal command line, ${args(i)} cannot recognize.")
+    ParameterUtils.parseStartupParams(
+      args,
+      (prefix, key, value) => {
+        argumentsBuilder.addEngineConnConf(key, value)
       }
-      i += 1
-    }
+    )
     argumentsBuilder.build()
   }
 

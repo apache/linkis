@@ -161,19 +161,25 @@ class SparkSqlExecutor(
       code: String
   ): Option[SparkSqlMeasure] = {
     val sparkMeasureType = engineExecutionContext.getProperties
-      .getOrDefault(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE, "")
-      .toString
+      .get(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE)
 
-    if (sparkMeasureType.nonEmpty) {
+    if (sparkMeasureType != null) {
       val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
       val outputPath = FsPath.getFsPath(
         outputPrefix,
         LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1,
-        sparkMeasureType,
+        sparkMeasureType.toString,
         JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
         new Date().getTime.toString
       )
-      Some(new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath))
+      Some(
+        new SparkSqlMeasure(
+          sparkEngineSession.sparkSession,
+          code,
+          sparkMeasureType.toString,
+          outputPath
+        )
+      )
     } else {
       None
     }

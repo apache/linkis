@@ -160,29 +160,25 @@ class SparkSqlExecutor(
       sparkEngineSession: SparkEngineSession,
       code: String
   ): Option[SparkSqlMeasure] = {
-    val sparkMeasureType = engineExecutionContext.getProperties
-      .get(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE)
+    Option(engineExecutionContext.getProperties.get(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE))
+      .map(_.toString)
+      .flatMap { sparkMeasureType =>
+        val userName = LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1
+        val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
+        val timestamp = System.currentTimeMillis().toString
 
-    if (sparkMeasureType != null) {
-      val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
-      val outputPath = FsPath.getFsPath(
-        outputPrefix,
-        LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1,
-        sparkMeasureType.toString,
-        JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
-        new Date().getTime.toString
-      )
-      Some(
-        new SparkSqlMeasure(
-          sparkEngineSession.sparkSession,
-          code,
-          sparkMeasureType.toString,
-          outputPath
+        val outputPath = FsPath.getFsPath(
+          outputPrefix,
+          userName,
+          sparkMeasureType,
+          JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
+          timestamp
         )
-      )
-    } else {
-      None
-    }
+
+        Some(
+          new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath)
+        )
+      }
   }
 
   override protected def getExecutorIdPreFix: String = "SparkSqlExecutor_"

@@ -119,6 +119,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
         environment.put(PREFER_IP_ADDRESS.toString, Configuration.PREFER_IP_ADDRESS.toString)
       case ENGINECONN_ENVKEYS =>
         environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS)
+      case LINKIS_HOME => putIfExists(LINKIS_HOME)
       case _ =>
     }
   }

@@ -722,6 +722,313 @@ Response:
 }
 ```
 
+### Data Source Environment APIs
+
+#### Insert Data Source Environment (JSON)
+```
+POST /api/rest_j/v1/data-source-manager/env/json
+```
+
+Request Body:
+```json
+{
+  "envName": "test-env",
+  "envDesc": "Test Environment",
+  "dataSourceTypeId": 1,
+  "connectParams": {
+    "host": "localhost",
+    "port": "3306",
+    "username": "user",
+    "password": "password"
+  }
+}
+```
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/json",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "insertId": 12345
+  }
+}
+```
+
+#### Insert Data Source Environment Batch (JSON)
+```
+POST /api/rest_j/v1/data-source-manager/env/json/batch
+```
+
+Request Body:
+```json
+[
+  {
+    "envName": "test-env-1",
+    "envDesc": "Test Environment 1",
+    "dataSourceTypeId": 1,
+    "connectParams": {
+      "host": "localhost",
+      "port": "3306",
+      "username": "user",
+      "password": "password"
+    }
+  },
+  {
+    "envName": "test-env-2",
+    "envDesc": "Test Environment 2",
+    "dataSourceTypeId": 1,
+    "connectParams": {
+      "host": "localhost",
+      "port": "3307",
+      "username": "user",
+      "password": "password"
+    }
+  }
+]
+```
+
+Parameters:
+- `system`: System name (required)
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/json/batch",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "envs": [
+      {
+        "id": 12345,
+        "envName": "test-env-1",
+        "envDesc": "Test Environment 1",
+        "dataSourceTypeId": 1,
+        "parameter": "{\"host\":\"localhost\",\"port\":\"3306\",\"username\":\"user\",\"password\":\"password\"}",
+        "createTime": "2023-01-01 12:00:00",
+        "createUser": "testuser",
+        "modifyTime": "2023-01-01 12:00:00",
+        "modifyUser": "testuser"
+      },
+      {
+        "id": 12346,
+        "envName": "test-env-2",
+        "envDesc": "Test Environment 2",
+        "dataSourceTypeId": 1,
+        "parameter": "{\"host\":\"localhost\",\"port\":\"3307\",\"username\":\"user\",\"password\":\"password\"}",
+        "createTime": "2023-01-01 12:00:00",
+        "createUser": "testuser",
+        "modifyTime": "2023-01-01 12:00:00",
+        "modifyUser": "testuser"
+      }
+    ]
+  }
+}
+```
+
+#### Update Data Source Environment Batch (JSON)
+```
+PUT /api/rest_j/v1/data-source-manager/env/json/batch
+```
+
+Request Body:
+```json
+[
+  {
+    "id": 12345,
+    "envName": "test-env-1",
+    "envDesc": "Updated Test Environment 1",
+    "dataSourceTypeId": 1,
+    "connectParams": {
+      "host": "localhost",
+      "port": "3306",
+      "username": "user",
+      "password": "newpassword"
+    }
+  }
+]
+```
+
+Parameters:
+- `system`: System name (required)
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/json/batch",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "envs": [
+      {
+        "id": 12345,
+        "envName": "test-env-1",
+        "envDesc": "Updated Test Environment 1",
+        "dataSourceTypeId": 1,
+        "parameter": "{\"host\":\"localhost\",\"port\":\"3306\",\"username\":\"user\",\"password\":\"newpassword\"}",
+        "createTime": "2023-01-01 12:00:00",
+        "createUser": "testuser",
+        "modifyTime": "2023-01-01 12:00:00",
+        "modifyUser": "testuser"
+      }
+    ]
+  }
+}
+```
+
+#### Get All Environment List By Data Source Type
+```
+GET /api/rest_j/v1/data-source-manager/env-list/all/type/{typeId}
+```
+
+Parameters:
+- `typeId`: Data source type ID (required)
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env-list/all/type/{typeId}",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "envList": [
+      {
+        "id": 12345,
+        "envName": "test-env",
+        "envDesc": "Test Environment",
+        "dataSourceTypeId": 1,
+        "parameter": "{\"host\":\"localhost\",\"port\":\"3306\",\"username\":\"user\",\"password\":\"password\"}",
+        "createTime": "2023-01-01 12:00:00",
+        "createUser": "testuser",
+        "modifyTime": "2023-01-01 12:00:00",
+        "modifyUser": "testuser"
+      }
+    ]
+  }
+}
+```
+
+#### Get Environment Entity By ID
+```
+GET /api/rest_j/v1/data-source-manager/env/{envId}
+```
+
+Parameters:
+- `envId`: Environment ID (required)
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/{envId}",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "env": {
+      "id": 12345,
+      "envName": "test-env",
+      "envDesc": "Test Environment",
+      "dataSourceTypeId": 1,
+      "parameter": "{\"host\":\"localhost\",\"port\":\"3306\",\"username\":\"user\",\"password\":\"password\"}",
+      "createTime": "2023-01-01 12:00:00",
+      "createUser": "testuser",
+      "modifyTime": "2023-01-01 12:00:00",
+      "modifyUser": "testuser"
+    }
+  }
+}
+```
+
+#### Remove Environment Entity
+```
+DELETE /api/rest_j/v1/data-source-manager/env/{envId}
+```
+
+Parameters:
+- `envId`: Environment ID (required)
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/{envId}",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "removeId": 12345
+  }
+}
+```
+
+#### Update Data Source Environment (JSON)
+```
+PUT /api/rest_j/v1/data-source-manager/env/{envId}/json
+```
+
+Parameters:
+- `envId`: Environment ID (required)
+
+Request Body:
+```json
+{
+  "envName": "test-env",
+  "envDesc": "Updated Test Environment",
+  "dataSourceTypeId": 1,
+  "connectParams": {
+    "host": "localhost",
+    "port": "3306",
+    "username": "user",
+    "password": "newpassword"
+  }
+}
+```
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env/{envId}/json",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "updateId": 12345
+  }
+}
+```
+
+#### Query Data Source Environment
+```
+GET /api/rest_j/v1/data-source-manager/env
+```
+
+Parameters:
+- `name`: Environment name - optional
+- `typeId`: Data source type ID - optional
+- `currentPage`: Current page - optional, default 1
+- `pageSize`: Page size - optional, default 10
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/data-source-manager/env",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "queryList": [
+      {
+        "id": 12345,
+        "envName": "test-env",
+        "envDesc": "Test Environment",
+        "dataSourceTypeId": 1,
+        "parameter": "{\"host\":\"localhost\",\"port\":\"3306\",\"username\":\"user\",\"password\":\"password\"}",
+        "createTime": "2023-01-01 12:00:00",
+        "createUser": "testuser",
+        "modifyTime": "2023-01-01 12:00:00",
+        "modifyUser": "testuser"
+      }
+    ]
+  }
+}
+```
+
 ### Metadata Query APIs
 
 #### Query Database Info
@@ -956,6 +1263,515 @@ Response:
 }
 ```
 
+### Data Source Type Management APIs
+
+#### List Data Source Types
+```
+GET /api/rest_j/v1/basedata-manager/datasource-type
+```
+
+Parameters:
+- `searchName`: Search name - optional
+- `currentPage`: Current page - optional, default 1
+- `pageSize`: Page size - optional, default 10
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "list": {
+      "total": 1,
+      "list": [
+        {
+          "id": 1,
+          "name": "MySQL",
+          "description": "MySQL Database",
+          "option": "MySQL",
+          "classifier": "Database",
+          "icon": "",
+          "layers": 3,
+          "descriptionEn": "MySQL Database",
+          "optionEn": "MySQL",
+          "classifierEn": "Database"
+        }
+      ],
+      "pageNum": 1,
+      "pageSize": 10,
+      "size": 1,
+      "startRow": 1,
+      "endRow": 1,
+      "pages": 1,
+      "prePage": 0,
+      "nextPage": 0,
+      "isFirstPage": true,
+      "isLastPage": true,
+      "hasPreviousPage": false,
+      "hasNextPage": false,
+      "navigatePages": 8,
+      "navigatepageNums": [
+        1
+      ]
+    }
+  }
+}
+```
+
+#### Get Data Source Type
+```
+GET /api/rest_j/v1/basedata-manager/datasource-type/{id}
+```
+
+Parameters:
+- `id`: Data source type ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "item": {
+      "id": 1,
+      "name": "MySQL",
+      "description": "MySQL Database",
+      "option": "MySQL",
+      "classifier": "Database",
+      "icon": "",
+      "layers": 3,
+      "descriptionEn": "MySQL Database",
+      "optionEn": "MySQL",
+      "classifierEn": "Database"
+    }
+  }
+}
+```
+
+#### Add Data Source Type
+```
+POST /api/rest_j/v1/basedata-manager/datasource-type
+```
+
+Request Body:
+```json
+{
+  "name": "PostgreSQL",
+  "description": "PostgreSQL Database",
+  "option": "PostgreSQL",
+  "classifier": "Database",
+  "icon": "",
+  "layers": 3,
+  "descriptionEn": "PostgreSQL Database",
+  "optionEn": "PostgreSQL",
+  "classifierEn": "Database"
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Remove Data Source Type
+```
+DELETE /api/rest_j/v1/basedata-manager/datasource-type/{id}
+```
+
+Parameters:
+- `id`: Data source type ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Update Data Source Type
+```
+PUT /api/rest_j/v1/basedata-manager/datasource-type
+```
+
+Request Body:
+```json
+{
+  "id": 1,
+  "name": "MySQL",
+  "description": "Updated MySQL Database",
+  "option": "MySQL",
+  "classifier": "Database",
+  "icon": "",
+  "layers": 3,
+  "descriptionEn": "Updated MySQL Database",
+  "optionEn": "MySQL",
+  "classifierEn": "Database"
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+### Data Source Access Management APIs
+
+#### List Data Source Accesses
+```
+GET /api/rest_j/v1/basedata-manager/datasource-access
+```
+
+Parameters:
+- `searchName`: Search name - optional
+- `currentPage`: Current page - optional, default 1
+- `pageSize`: Page size - optional, default 10
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "list": {
+      "total": 1,
+      "list": [
+        {
+          "id": 1,
+          "tokenId": 1,
+          "serviceId": 1,
+          "accessTime": "2023-01-01 12:00:00"
+        }
+      ],
+      "pageNum": 1,
+      "pageSize": 10,
+      "size": 1,
+      "startRow": 1,
+      "endRow": 1,
+      "pages": 1,
+      "prePage": 0,
+      "nextPage": 0,
+      "isFirstPage": true,
+      "isLastPage": true,
+      "hasPreviousPage": false,
+      "hasNextPage": false,
+      "navigatePages": 8,
+      "navigatepageNums": [
+        1
+      ]
+    }
+  }
+}
+```
+
+#### Get Data Source Access
+```
+GET /api/rest_j/v1/basedata-manager/datasource-access/{id}
+```
+
+Parameters:
+- `id`: Data source access ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "item": {
+      "id": 1,
+      "tokenId": 1,
+      "serviceId": 1,
+      "accessTime": "2023-01-01 12:00:00"
+    }
+  }
+}
+```
+
+#### Add Data Source Access
+```
+POST /api/rest_j/v1/basedata-manager/datasource-access
+```
+
+Request Body:
+```json
+{
+  "tokenId": 1,
+  "serviceId": 1
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Remove Data Source Access
+```
+DELETE /api/rest_j/v1/basedata-manager/datasource-access/{id}
+```
+
+Parameters:
+- `id`: Data source access ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Update Data Source Access
+```
+PUT /api/rest_j/v1/basedata-manager/datasource-access
+```
+
+Request Body:
+```json
+{
+  "id": 1,
+  "tokenId": 1,
+  "serviceId": 2
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+### Data Source Type Key Management APIs
+
+#### List Data Source Type Keys
+```
+GET /api/rest_j/v1/basedata-manager/datasource-type-key
+```
+
+Parameters:
+- `searchName`: Search name - optional
+- `dataSourceTypeId`: Data source type ID - optional
+- `currentPage`: Current page - optional, default 1
+- `pageSize`: Page size - optional, default 10
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "list": {
+      "total": 1,
+      "list": [
+        {
+          "id": 1,
+          "dataSourceTypeId": 1,
+          "key": "host",
+          "name": "Host",
+          "nameEn": "Host",
+          "defaultValue": "",
+          "valueType": "String",
+          "scope": "ENV",
+          "require": 1,
+          "description": "Host IP",
+          "descriptionEn": "Host IP",
+          "valueRegex": "",
+          "refId": null,
+          "refValue": null,
+          "dataSource": null,
+          "updateTime": "2023-01-01 12:00:00",
+          "createTime": "2023-01-01 12:00:00"
+        }
+      ],
+      "pageNum": 1,
+      "pageSize": 10,
+      "size": 1,
+      "startRow": 1,
+      "endRow": 1,
+      "pages": 1,
+      "prePage": 0,
+      "nextPage": 0,
+      "isFirstPage": true,
+      "isLastPage": true,
+      "hasPreviousPage": false,
+      "hasNextPage": false,
+      "navigatePages": 8,
+      "navigatepageNums": [
+        1
+      ]
+    }
+  }
+}
+```
+
+#### Get Data Source Type Key
+```
+GET /api/rest_j/v1/basedata-manager/datasource-type-key/{id}
+```
+
+Parameters:
+- `id`: Data source type key ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "item": {
+      "id": 1,
+      "dataSourceTypeId": 1,
+      "key": "host",
+      "name": "Host",
+      "nameEn": "Host",
+      "defaultValue": "",
+      "valueType": "String",
+      "scope": "ENV",
+      "require": 1,
+      "description": "Host IP",
+      "descriptionEn": "Host IP",
+      "valueRegex": "",
+      "refId": null,
+      "refValue": null,
+      "dataSource": null,
+      "updateTime": "2023-01-01 12:00:00",
+      "createTime": "2023-01-01 12:00:00"
+    }
+  }
+}
+```
+
+#### Add Data Source Type Key
+```
+POST /api/rest_j/v1/basedata-manager/datasource-type-key
+```
+
+Request Body:
+```json
+{
+  "dataSourceTypeId": 1,
+  "key": "port",
+  "name": "Port",
+  "nameEn": "Port",
+  "defaultValue": "3306",
+  "valueType": "String",
+  "scope": "ENV",
+  "require": 1,
+  "description": "Port number",
+  "descriptionEn": "Port number",
+  "valueRegex": ""
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Remove Data Source Type Key
+```
+DELETE /api/rest_j/v1/basedata-manager/datasource-type-key/{id}
+```
+
+Parameters:
+- `id`: Data source type key ID (required)
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
+#### Update Data Source Type Key
+```
+PUT /api/rest_j/v1/basedata-manager/datasource-type-key
+```
+
+Request Body:
+```json
+{
+  "id": 1,
+  "dataSourceTypeId": 1,
+  "key": "host",
+  "name": "Host",
+  "nameEn": "Host",
+  "defaultValue": "",
+  "valueType": "String",
+  "scope": "ENV",
+  "require": 1,
+  "description": "Updated Host IP",
+  "descriptionEn": "Updated Host IP",
+  "valueRegex": ""
+}
+```
+
+Response:
+```json
+{
+  "method": "",
+  "status": 0,
+  "message": "",
+  "data": {
+    "result": true
+  }
+}
+```
+
 ## Database Table Structures
 
 The DataSource Service uses the following database tables from linkis_ddl.sql:
@@ -1059,6 +1875,18 @@ CREATE TABLE `linkis_ps_dm_datasource_version`
     `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
     PRIMARY KEY `uniq_vid_did` (`version_id`, `datasource_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+```
+
+### Data Source Access Table
+```sql
+CREATE TABLE `linkis_ps_dm_datasource_access`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `token_id`    int(11) NOT NULL,
+    `service_id`  int(11) NOT NULL,
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 ```
 
@@ -1199,3 +2027,6 @@ boolean checkAccess(String user, Long dataSourceId)
 - DataSourceParamKeyMapper: `linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/src/main/resources/mapper/mysql/DataSourceParamKeyMapper.xml`
 - DataSourceTypeMapper: `linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/src/main/resources/mapper/mysql/DataSourceTypeMapper.xml`
 - DataSourceVersionMapper: `linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/src/main/resources/mapper/mysql/DataSourceVersionMapper.xml`
+- DataSourceAccessMapper: `linkis-public-enhancements/linkis-pes-publicservice/src/main/resources/mapper/DataSourceAccessMapper.xml`
+- DatasourceTypeMapper: `linkis-public-enhancements/linkis-pes-publicservice/src/main/resources/mapper/DatasourceTypeMapper.xml`
+- DatasourceTypeKeyMapper: `linkis-public-enhancements/linkis-pes-publicservice/src/main/resources/mapper/DatasourceTypeKeyMapper.xml`

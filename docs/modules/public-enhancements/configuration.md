@@ -617,6 +617,23 @@ Response:
 }
 ```
 
+#### Encrypt Datasource Password
+```
+GET /api/rest_j/v1/configuration/template/encrypt
+```
+
+Parameters:
+- `isEncrypt`: Encrypt flag - optional
+
+Response:
+```json
+{
+  "method": "/api/rest_j/v1/configuration/template/encrypt",
+  "status": 0,
+  "message": "success"
+}
+```
+
 ### Tenant Configuration APIs
 
 #### Create Tenant

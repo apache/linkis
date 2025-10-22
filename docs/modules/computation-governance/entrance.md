@@ -30,29 +30,18 @@ This service is responsible for receiving user computation requests, parsing the
 POST /api/entrance/execute
 ```
 
-Request Body:
-```json
-{
-  "executionContent": {
-    "code": "SELECT * FROM table",
-    "runType": "sql"
-  },
-  "params": {
-    "variable": {},
-    "configuration": {
-      "runtime": {},
-      "special": {}
-    }
-  },
-  "source": {
-    "scriptPath": "/path/to/script"
-  },
-  "labels": {
-    "engineType": "spark-2.4.3",
-    "userCreator": "user-IDE"
-  }
-}
-```
+Parameters (in request body):
+- `executionContent`: Contains the code to execute and run type
+  - `code`: The actual code to execute
+  - `runType`: Type of execution (sql, python, scala, etc.)
+- `params`: Parameters for execution
+  - `variable`: Variables for the execution
+  - `configuration`: Configuration parameters (runtime, special)
+- `source`: Source information
+  - `scriptPath`: Path to the script file
+- `labels`: Labels for engine selection
+  - `engineType`: Type and version of engine (spark-2.4.3, hive-2.1.1, etc.)
+  - `userCreator`: User and creator information
 
 Response:
 ```json
@@ -67,34 +56,22 @@ Response:
 }
 ```
 
+Error Cases:
+- If parsing or execution fails, the error will be stored in the job request and returned in the response
+- Permission errors if user is not authorized to execute
+
+Notes:
+- Returns both taskID (database ID) and execID (execution ID)
+- The execID is used for subsequent operations on the task
+- User authentication is required
+
 ### Task Submission
 ```
 POST /api/entrance/submit
 ```
 
-Request Body:
-```json
-{
-  "executionContent": {
-    "code": "SELECT * FROM table",
-    "runType": "sql"
-  },
-  "params": {
-    "variable": {},
-    "configuration": {
-      "runtime": {},
-      "special": {}
-    }
-  },
-  "source": {
-    "scriptPath": "/path/to/script"
-  },
-  "labels": {
-    "engineType": "spark-2.4.3",
-    "userCreator": "user-IDE"
-  }
-}
-```
+Parameters (in request body):
+- Same as execute API
 
 Response:
 ```json
@@ -108,6 +85,15 @@ Response:
   }
 }
 ```
+
+Error Cases:
+- If parsing or execution fails, the error will be stored in the job request and returned in the response
+- Permission errors if user is not authorized to submit
+
+Notes:
+- Functionally similar to execute but with different endpoint
+- Returns both taskID (database ID) and execID (execution ID)
+- User authentication is required
 
 ### Task Status Query
 ```
@@ -131,6 +117,15 @@ Response:
   }
 }
 ```
+
+Error Cases:
+- If job cannot be found, appropriate error message is returned
+- If there's an exception during status retrieval, error is returned
+
+Notes:
+- Supports both execID and taskID as the path parameter
+- Status values include: Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout
+- For completed jobs, status is retrieved from job history
 
 ### Task Progress
 ```
@@ -162,6 +157,15 @@ Response:
   }
 }
 ```
+
+Error Cases:
+- If job cannot be found, appropriate error message is returned
+- If progress information is not yet available, error is returned
+
+Notes:
+- Progress is a value between 0 and 1
+- ProgressInfo provides detailed information about execution stages
+- For completed jobs, returns 1.0 progress
 
 ### Task Progress with Resource Info
 ```
@@ -206,6 +210,14 @@ Response:
 }
 ```
 
+Error Cases:
+- If job cannot be found, appropriate error message is returned
+- If progress information is not yet available, error is returned
+
+Notes:
+- Includes YARN resource metrics in addition to progress information
+- Provides detailed resource usage information for YARN-based engines
+
 ### Task Log Retrieval
 ```
 GET /api/entrance/{id}/log
@@ -232,6 +244,15 @@ Response:
 }
 ```
 
+Error Cases:
+- If job has completed, suggests downloading log file instead
+- If log cannot be retrieved, returns appropriate error
+
+Notes:
+- For distinctLevel=true, returns array with 4 elements (different log levels)
+- For distinctLevel=false, returns concatenated string of logs
+- Size parameter has a maximum limit (10000)
+
 ### Task Cancellation
 ```
 GET /api/entrance/{id}/kill
@@ -253,6 +274,15 @@ Response:
   }
 }
 ```
+
+Error Cases:
+- If job is already completed, returns error that kill is not supported
+- If user doesn't have permission to kill the job, returns permission error
+- If exception occurs during kill, returns error with exception details
+
+Notes:
+- Updates job status to Cancelled in database
+- For jobs not found in memory, performs force kill using job history
 
 ### Batch Task Cancellation
 ```
@@ -293,6 +323,15 @@ Response:
 }
 ```
 
+Error Cases:
+- If idList and taskIDList have different lengths, returns error
+- If parameters are not arrays, returns error
+- Individual job kill errors are returned in the messages array
+
+Notes:
+- Processes each job in the lists and returns individual results
+- For jobs not found in memory, performs force kill using job history
+
 ### Task Pause
 ```
 GET /api/entrance/{id}/pause
@@ -312,6 +351,207 @@ Response:
   }
 }
 ```
+
+Error Cases:
+- If job cannot be found, returns appropriate error
+- If exception occurs during pause, returns error
+
+Notes:
+- Pause functionality implementation may be incomplete (TODO in code)
+
+### Update Route Label
+```
+POST /api/entrance/operation/label/update
+```
+
+Request Body:
+```json
+{
+  "routeLabel": "new-route-label"
+}
+```
+
+Parameters:
+- Requires admin privileges
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/label/update",
+  "status": 0,
+  "message": "success"
+}
+```
+
+Error Cases:
+- If user is not admin, returns permission error
+
+Notes:
+- Updates the route label for the entrance instance
+- Used for routing purposes in distributed environments
+
+### Mark Offline
+```
+GET /api/entrance/operation/label/markoffline
+```
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/label/markoffline",
+  "status": 0,
+  "message": "success"
+}
+```
+
+Error Cases:
+- If user is not admin, returns permission error
+
+Notes:
+- Marks the entrance instance as offline
+- Updates all non-execution task instances
+
+### Back Online
+```
+GET /api/entrance/operation/label/backonline
+```
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/label/backonline",
+  "status": 0,
+  "message": "success"
+}
+```
+
+Error Cases:
+- If user is not admin, returns permission error
+
+Notes:
+- Removes the offline label from the entrance instance
+
+### Check Online Status
+```
+GET /api/entrance/operation/label/isOnline
+```
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/label/isOnline",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "isOnline": true
+  }
+}
+```
+
+Notes:
+- Checks if the entrance instance is currently online
+
+### Get Task Info
+```
+GET /api/entrance/operation/metrics/taskinfo
+```
+
+Parameters:
+- `user` (optional): Filter by user
+- `creator` (optional): Filter by creator
+- `ecType` (optional): Filter by engine type
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/metrics/taskinfo",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "taskNumber": 5,
+    "runningNumber": 2,
+    "queuedNumber": 3
+  }
+}
+```
+
+Error Cases:
+- Non-admin users cannot view other users' task information
+
+Notes:
+- For admin users, can view any user's task information
+- For non-admin users, can only view their own task information
+- Returns counts of total, running, and queued tasks
+
+### Get Running Task Count
+```
+GET /api/entrance/operation/metrics/runningtask
+```
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/metrics/runningtask",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "runningTaskNumber": 5,
+    "isCompleted": false
+  }
+}
+```
+
+Notes:
+- Returns the number of currently running tasks
+- isCompleted indicates if there are no running tasks
+
+### Kill Consumer
+```
+GET /api/entrance/operation/consumer/kill
+```
+
+Parameters:
+- `groupName`: Name of the consumer group to kill
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/consumer/kill",
+  "status": 0,
+  "message": "success"
+}
+```
+
+Error Cases:
+- If user is not admin, returns permission error
+
+Notes:
+- Destroys the specified consumer group
+- Requires admin privileges
+
+### Get Consumer Info
+```
+GET /api/entrance/operation/consumer/info
+```
+
+Response:
+```json
+{
+  "method": "/api/entrance/operation/consumer/info",
+  "status": 0,
+  "message": "success",
+  "data": {
+    "consumerNum": 3
+  }
+}
+```
+
+Error Cases:
+- If user is not admin, returns permission error
+
+Notes:
+- Returns the number of consumer groups
+- Requires admin privileges
 
 ## Database Table Structures
 

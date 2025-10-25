@@ -51,7 +51,7 @@ public class CachedTokenServiceTest {
   @BeforeAll
   static void before() {
     if (StringUtils.isBlank(TokenName)) {
-      TokenName = "LINKIS-UNAVAILABLE-TOKE";
+      TokenName = "LINKIS-UNAVAILABLE-TOKEN";
     }
   }
 

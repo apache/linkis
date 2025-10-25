@@ -68,6 +68,7 @@ import org.apache.http.impl.client.{
   HttpClientBuilder,
   HttpClients
 }
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.ssl.SSLContextBuilder
 import org.apache.http.util.EntityUtils
@@ -90,11 +91,14 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected val cookieStore = new BasicCookieStore
 
+  protected val connectionManager = new PoolingHttpClientConnectionManager
+
   private val httpClientBuilder: HttpClientBuilder = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
     .setMaxConnTotal(clientConfig.getMaxConnection)
     .setMaxConnPerRoute(clientConfig.getMaxConnection / 2)
+    .setConnectionManager(connectionManager)
 
   protected val httpClient: CloseableHttpClient = if (clientConfig.isSSL) {
     val sslContext: SSLContext =
@@ -161,7 +165,6 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     val prepareReqTime = System.currentTimeMillis - startTime
     prepareCookie(action)
     val attempts = new util.ArrayList[Long]()
-
     def addAttempt(): CloseableHttpResponse = {
       val req = prepareReq(action)
       val startTime = System.currentTimeMillis
@@ -600,6 +603,18 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       case _ =>
     }
     httpClient.close()
+  }
+
+  def getHttpConnectionStats: util.HashMap[String, Int] = {
+    val totalStats = connectionManager.getTotalStats
+    val clientConnectInfo = new util.HashMap[String, Int]()
+    clientConnectInfo.put("leased", totalStats.getLeased)
+    clientConnectInfo.put("avaiLabel", totalStats.getAvailable)
+    clientConnectInfo.put("maxTotal", connectionManager.getMaxTotal)
+    logger.info(s"BMLClient:总最大连接数：${connectionManager.getMaxTotal}")
+    logger.info(s"BMLClient:空闲连接数：${totalStats.getAvailable}")
+    logger.info(s"BMLClient:活跃连接数：${totalStats.getLeased}")
+    clientConnectInfo
   }
 
 }

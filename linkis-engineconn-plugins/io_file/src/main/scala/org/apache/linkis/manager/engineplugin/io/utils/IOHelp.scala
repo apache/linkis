@@ -62,16 +62,16 @@ object IOHelp {
         writer.toString()
       } else if (method.params.length == 3) {
         val position =
-          if (method.params(1).toString.toInt < 0) {
+          if (method.params(1).toString.toDouble.toInt < 0) {
             0
           } else {
-            method.params(1).toString.toInt
+            method.params(1).toString.toDouble.toInt
           }
         val fetchSize =
-          if (method.params(2).toString.toInt > maxPageSize) {
+          if (method.params(2).toString.toDouble.toInt > maxPageSize) {
             maxPageSize.toInt
           } else {
-            method.params(2).toString.toInt
+            method.params(2).toString.toDouble.toInt
           }
         if (position > 0) {
           inputStream.skip(position)

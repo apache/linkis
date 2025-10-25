@@ -72,6 +72,9 @@
             <if test="persistenceNode.mappingHost != null">
                 mapping_host = #{persistenceNode.mappingHost},
             </if>
+            <if test="persistenceNode.params != null">
+                params = #{persistenceNode.params},
+            </if>
         </set>
         WHERE instance = #{instance}
     </update>

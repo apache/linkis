@@ -79,6 +79,7 @@ object Constants {
   val BML_CLEAR_IM = "bml.clear.monitor.im."
   val THREAD_TIME_OUT_IM = "thread.monitor.timeout.im."
   val JOB_RESULT_IM = "jobhistory.result.monitor.im."
+  val DEPARTMENT_USER_IM = "department.user.sync.im."
 
   val BML_VERSION_MAX_NUM: CommonVars[Int] =
     CommonVars[Int]("linkis.monitor.bml.cleaner.version.max.num", 50)
@@ -97,5 +98,21 @@ object Constants {
 
   val LINKIS_CLUSTER_NAME =
     CommonVars.properties.getProperty("linkis.cluster.name", "")
+
+  val ADMIN_USER = "hadoop"
+
+  val SPLIT_DELIMITER = ";"
+
+  val JDBC_ALERT_TIME = "linkis.jdbc.task.timeout.alert.time"
+
+  val JDBC_ALERT_USER = "linkis.jdbc.task.timeout.alert.user"
+
+  val JDBC_ALERT_LEVEL = "linkis.jdbc.task.timeout.alert.level"
+
+  val JOB_DATASOURCE_CONF = "wds.linkis.engine.runtime.datasource"
+
+  val JDBC_ENGINE = "jdbc"
+
+  val TASK_ARCHIVE_SH = "linkis_task_archive.sh"
 
 }

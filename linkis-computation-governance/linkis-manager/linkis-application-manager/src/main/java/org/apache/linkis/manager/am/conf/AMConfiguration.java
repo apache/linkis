@@ -75,7 +75,7 @@ public class AMConfiguration {
       CommonVars.apply("wds.linkis.governance.admin.operations", "");
 
   public static final CommonVars<TimeType> ENGINE_START_MAX_TIME =
-      CommonVars.apply("wds.linkis.manager.am.engine.start.max.time", new TimeType("11m"));
+      CommonVars.apply("wds.linkis.manager.am.engine.start.max.time", new TimeType("8m"));
 
   public static final CommonVars<TimeType> ENGINE_CONN_START_REST_MAX_WAIT_TIME =
       CommonVars.apply("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"));
@@ -95,15 +95,18 @@ public class AMConfiguration {
   public static final CommonVars<String> MULTI_USER_ENGINE_TYPES =
       CommonVars.apply(
           "wds.linkis.multi.user.engine.types",
-          "jdbc,es,presto,io_file,appconn,openlookeng,trino,jobserver,nebula,hbase,doris");
+          "es,presto,io_file,appconn,openlookeng,trino,jobserver,nebula,hbase,doris");
 
   public static final CommonVars<String> ALLOW_BATCH_KILL_ENGINE_TYPES =
       CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python");
 
   public static final CommonVars<String> UNALLOW_BATCH_KILL_ENGINE_TYPES =
-      CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "trino,appconn,io_file,nebula");
+      CommonVars.apply(
+          "wds.linkis.unallow.batch.kill.engine.types", "trino,appconn,io_file,nebula,jdbc");
   public static final CommonVars<String> MULTI_USER_ENGINE_USER =
       CommonVars.apply("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser());
+  public static final String UDF_KILL_ENGINE_TYPE =
+      CommonVars.apply("linkis.udf.kill.engine.type", "spark,hive").getValue();
 
   public static final CommonVars<Integer> ENGINE_LOCKER_MAX_TIME =
       CommonVars.apply("wds.linkis.manager.am.engine.locker.max.time", 1000 * 60 * 5);
@@ -112,6 +115,15 @@ public class AMConfiguration {
       CommonVars.apply(
               "wds.linkis.manager.am.can.retry.logs", "already in use;Cannot allocate memory")
           .getValue();
+
+  public static final int REUSE_ENGINE_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.reuse.max.thread.size", 200).getValue();
+
+  public static final int CREATE_ENGINE_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.create.max.thread.size", 200).getValue();
+
+  public static final int ASK_ENGINE_ERROR_ASYNC_MAX_THREAD_SIZE =
+      CommonVars.apply("wds.linkis.manager.ask.error.max.thread.size", 100).getValue();
 
   public static final int ASK_ENGINE_ASYNC_MAX_THREAD_SIZE =
       CommonVars.apply("wds.linkis.ecm.launch.max.thread.size", 200).getValue();
@@ -131,8 +143,14 @@ public class AMConfiguration {
   public static final Boolean NODE_SELECT_HOTSPOT_EXCLUSION_RULE =
       CommonVars.apply("linkis.node.select.hotspot.exclusion.rule.enable", true).getValue();
 
+  public static final CommonVars<String> NODE_SELECT_HOTSPOT_EXCLUSION_SHUFFLE_RULER =
+      CommonVars.apply("linkis.node.select.hotspot.exclusion.shuffle.ruler", "size-limit");
+
   public static final boolean EC_REUSE_WITH_RESOURCE_RULE_ENABLE =
       CommonVars.apply("linkis.ec.reuse.with.resource.rule.enable", false).getValue();
+
+  public static final boolean EC_REUSE_WITH_TEMPLATE_RULE_ENABLE =
+      CommonVars.apply("linkis.ec.reuse.with.template.rule.enable", false).getValue();
 
   public static final String EC_REUSE_WITH_RESOURCE_WITH_ECS =
       CommonVars.apply("linkis.ec.reuse.with.resource.with.ecs", "spark,hive,shell,python")
@@ -176,6 +194,20 @@ public class AMConfiguration {
   public static final boolean AM_USER_RESET_RESOURCE =
       CommonVars.apply("linkis.am.user.reset.resource.enable", true).getValue();
 
+  public static final CommonVars<Boolean> ENGINE_REUSE_ENABLE_CACHE =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.enable.cache", false);
+
+  public static final CommonVars<TimeType> ENGINE_REUSE_CACHE_EXPIRE_TIME =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.expire.time", new TimeType("5s"));
+
+  public static final CommonVars<Long> ENGINE_REUSE_CACHE_MAX_SIZE =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.max.size", 1000L);
+
+  public static final CommonVars<String> ENGINE_REUSE_CACHE_SUPPORT_ENGINES =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.cache.support.engines", "shell");
+  public static final CommonVars<String> ENGINE_REUSE_SHUFF_SUPPORT_ENGINES =
+      CommonVars.apply("wds.linkis.manager.am.engine.reuse.shuff.support.engines", "shell");
+
   public static String getDefaultMultiEngineUser() {
     String jvmUser = Utils.getJvmUser();
     return String.format(
@@ -203,7 +235,7 @@ public class AMConfiguration {
         AMConfiguration.UNALLOW_BATCH_KILL_ENGINE_TYPES.getValue().split(",");
     Optional<String> findResult =
         Arrays.stream(unAllowBatchKillEngine)
-            .filter(e -> e.equalsIgnoreCase(engineType))
+            .filter(e -> engineType.toLowerCase().contains(e))
             .findFirst();
     return findResult.isPresent();
   }

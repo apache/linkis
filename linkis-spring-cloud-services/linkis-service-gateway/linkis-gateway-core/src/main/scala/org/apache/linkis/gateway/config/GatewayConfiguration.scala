@@ -135,4 +135,9 @@ object GatewayConfiguration {
 
   val ACCESS_CONTROL_USER_ENABLED = CommonVars("linkis.client.access.control.user.enable", false)
 
+  val PROHIBIT_LOGIN_SWITCH = CommonVars("linkis.system.user.prohibit.login.switch", false)
+
+  val PROHIBIT_LOGIN_PREFIX =
+    CommonVars("linkis.system.user.prohibit.login.prefix", "hduser,shduser").getValue.toLowerCase()
+
 }

@@ -35,6 +35,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
 
+import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.util
@@ -78,6 +79,9 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     val groupName = EntranceGroupFactory.getGroupNameByLabels(labels)
     val cacheGroup = groupNameToGroups.getIfPresent(groupName)
     if (null == cacheGroup) synchronized {
+      if (groupNameToGroups.getIfPresent(groupName) != null) {
+        return groupNameToGroups.getIfPresent(groupName)
+      }
       val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
       val sender: Sender =
         Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
@@ -94,7 +98,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       }(
         "Get user configurations from configuration server failed! Next use the default value to continue."
       )
-      val maxRunningJobs = getUserMaxRunningJobs(keyAndValue)
+      val maxRunningJobs = EntranceGroupFactory.getUserMaxRunningJobs(keyAndValue)
       val initCapacity = GROUP_INIT_CAPACITY.getValue(keyAndValue)
       val maxCapacity = if (null != specifiedUsernameRegexPattern) {
         if (specifiedUsernameRegexPattern.matcher(userCreatorLabel.getUser).find()) {
@@ -134,21 +138,6 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
-  /**
-   * User task concurrency control is controlled for multiple Entrances, which will be evenly
-   * distributed based on the number of existing Entrances
-   * @param keyAndValue
-   * @return
-   */
-  private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
-    val userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
-    val entranceNum = EntranceUtils.getRunningEntranceNumber()
-    Math.max(
-      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
-      userDefinedRunningJobs / entranceNum
-    )
-  }
-
 }
 
 object EntranceGroupFactory {
@@ -168,6 +157,30 @@ object EntranceGroupFactory {
     val groupName =
       userCreatorLabel.getCreator + "_" + userCreatorLabel.getUser + "_" + engineTypeLabel.getEngineType
     groupName
+  }
+
+  /**
+   * User task concurrency control is controlled for multiple Entrances, which will be evenly
+   * distributed based on the number of existing Entrances
+   * @param keyAndValue
+   * @return
+   */
+  def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
+    val userDefinedRunningJobs =
+      if (
+          MapUtils.isNotEmpty(keyAndValue) && keyAndValue.containsKey(
+            EntranceConfiguration.WDS_LINKIS_ENTRANCE_RUNNING_JOB.key
+          )
+      ) {
+        EntranceConfiguration.WDS_LINKIS_ENTRANCE_RUNNING_JOB.getValue(keyAndValue)
+      } else {
+        EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      }
+    val entranceNum = EntranceUtils.getRunningEntranceNumber()
+    Math.max(
+      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
+      userDefinedRunningJobs / entranceNum
+    )
   }
 
 }

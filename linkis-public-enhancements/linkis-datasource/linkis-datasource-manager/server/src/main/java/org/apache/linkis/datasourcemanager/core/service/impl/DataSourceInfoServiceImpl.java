@@ -125,6 +125,58 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
+  public DataSource getDataSourcePublishInfo(
+      String datasourceTypeName, String ip, String port, String datasourceUser) {
+    try {
+      // 1. 查询数据源列表
+      List<DataSource> dataSourceList =
+          dataSourceDao.selectDatasourcesByType(datasourceTypeName, datasourceUser);
+      if (CollectionUtils.isEmpty(dataSourceList)) {
+        LOG.debug(
+            "No datasource found for type:{} and owner:{}", datasourceTypeName, datasourceUser);
+        return null;
+      }
+      // 2. 筛选符合条件的已发布数据源
+      return dataSourceList.stream()
+          .filter(
+              dataSource ->
+                  (dataSource.getPublishedVersionId() != null) && (!dataSource.isExpire()))
+          .map(
+              dataSource -> {
+                String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                        dataSource.getId(), dataSource.getPublishedVersionId());
+                return new AbstractMap.SimpleEntry<>(dataSource, parameter);
+              })
+          .filter(
+              entry ->
+                  StringUtils.isNotBlank(entry.getValue())
+                      && entry.getValue().contains(ip)
+                      && entry.getValue().contains(port)
+                      && entry.getValue().contains(datasourceUser))
+          .sorted(
+              Comparator.comparing(
+                  entry -> entry.getKey().getCreateTime(), Comparator.reverseOrder()))
+          .findFirst()
+          .map(
+              entry -> {
+                DataSource result = entry.getKey();
+                result.setParameter(entry.getValue());
+                LOG.info("Found matched datasource:{}", result.getId());
+                return result;
+              })
+          .orElse(null);
+    } catch (Exception e) {
+      LOG.error(
+          "Get published datasource failed, type:{}, datasourceUser:{}",
+          datasourceTypeName,
+          datasourceUser,
+          e);
+      return null;
+    }
+  }
+
+  @Override
   public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {

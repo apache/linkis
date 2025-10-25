@@ -19,6 +19,8 @@ package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -127,6 +129,8 @@ class HiveEngineConnExecutor(
 
   private var readResByObject = false
 
+  private var hiveTmpConf = Map[String, String]()
+
   override def init(): Unit = {
     LOG.info(s"Ready to change engine state!")
     if (HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
@@ -140,7 +144,7 @@ class HiveEngineConnExecutor(
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    readResByObject = MapUtils.getBooleanValue(
+    readResByObject = MapUtils.getBoolean(
       engineExecutorContext.getProperties,
       JobRequestConstants.LINKIS_HIVE_EC_READ_RESULT_BY_OBJECT,
       false
@@ -663,6 +667,49 @@ class HiveEngineConnExecutor(
   }
 
   override def getId(): String = namePrefix + id
+
+  override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
+    super.beforeExecute(engineConnTask)
+    if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && hiveTmpConf.isEmpty) {
+      hiveTmpConf = sessionState.getConf.getAllProperties.asScala.toMap
+    }
+  }
+
+  override protected def afterExecute(
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {
+    try {
+      if (EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && hiveTmpConf.nonEmpty) {
+        val sessionConf = sessionState.getConf
+        if (sessionConf != null) {
+          val currentProps = Option(sessionConf.getAllProperties)
+            .map(_.asScala.toMap)
+            .getOrElse(Map.empty)
+          hiveTmpConf.foreach { case (key, value) =>
+            currentProps.get(key).filter(_ != value).foreach { userValue =>
+              logger.info(s"Resetting configuration key: $key,value: $value cover $userValue")
+              sessionConf.set(key, value)
+            }
+          }
+          // 清理多出来的配置
+          currentProps.keys.foreach { key =>
+            if (!hiveTmpConf.contains(key)) {
+              logger.info(s"Clearing extra configuration key: $key")
+              sessionConf.set(key, "")
+            }
+          }
+        } else {
+          logger.warn("Session configuration is null, cannot reset hive configurations")
+        }
+      }
+    } catch {
+      case e: Exception =>
+        logger.error("Error occurred while resetting hive configurations", e)
+    } finally {
+      super.afterExecute(engineConnTask, executeResponse)
+    }
+  }
 
 }
 

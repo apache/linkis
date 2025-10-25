@@ -49,7 +49,10 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   JOBRESP_PROTOCOL_NULL(
       20011,
       "Request jobHistory failed, because:jobRespProtocol is null (请求jobHistory失败,因为jobRespProtocol为null)"),
-  READ_TASKS_FAILED(20011, "Read all tasks failed, because:{0}(获取所有任务失败)"),
+  READ_TASKS_FAILED(20011, "Read all tasks failed, because:{0}(获取所有任`务失败)"),
+  EXEC_FAILED_TO_RETRY(
+      20503,
+      "Resources are tight, and the task is executing intelligent retry (资源紧张，当前任务正在进行智能重试)"),
 
   SENDER_RPC_FAILED(20020, "Sender rpc failed"),
 
@@ -77,6 +80,8 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   JOB_HISTORY_FAILED_ID(50081, ""),
 
   LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)"),
+
+  DOCTORIS_ERROR(20302, "Doctoris data retrieval is abnormal"),
 
   FAILOVER_RUNNING_TO_CANCELLED(
       30001,

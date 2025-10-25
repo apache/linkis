@@ -148,6 +148,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
 
     List<PersistenceNodeMetrics> persistenceNodeMetricsList =
         nodeMetricManagerMapper.getNodeMetricsByInstances(instances);
+    logger.info("persistenceNodeMetricsList size: {}", persistenceNodeMetricsList.size());
 
     for (PersistenceNodeMetrics persistenceNodeMetric : persistenceNodeMetricsList) {
       for (Node node : nodes) {

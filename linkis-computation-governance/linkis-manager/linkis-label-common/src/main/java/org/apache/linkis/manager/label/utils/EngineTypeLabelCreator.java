@@ -40,12 +40,17 @@ public class EngineTypeLabelCreator {
   }
 
   private static void init() {
-    if (null == defaultVersion) {
+    if (null == defaultVersion) { // NOSONAR
       synchronized (EngineTypeLabelCreator.class) {
         if (null == defaultVersion) {
           defaultVersion = new HashMap<>(16);
-          defaultVersion.put(
-              EngineType.SPARK().toString(), LabelCommonConfig.SPARK_ENGINE_VERSION.getValue());
+          if (LabelCommonConfig.USER_DEFAULT_SPAKR_SWITCH.getValue()) {
+            defaultVersion.put(
+                EngineType.SPARK().toString(), LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue());
+          } else {
+            defaultVersion.put(
+                EngineType.SPARK().toString(), LabelCommonConfig.SPARK_ENGINE_VERSION.getValue());
+          }
           defaultVersion.put(
               EngineType.HIVE().toString(), LabelCommonConfig.HIVE_ENGINE_VERSION.getValue());
           defaultVersion.put(
@@ -122,5 +127,19 @@ public class EngineTypeLabelCreator {
       init();
     }
     defaultVersion.put(type, version);
+  }
+
+  public static EngineTypeLabel createEngineTypeLabel(String type, String version) {
+    if (null == defaultVersion) {
+      init();
+    }
+    EngineTypeLabel label = labelBuilderFactory.createLabel(EngineTypeLabel.class);
+    label.setEngineType(type);
+    if (StringUtils.isNotBlank(version)) {
+      label.setVersion(version);
+    } else {
+      defaultVersion.get(type);
+    }
+    return label;
   }
 }

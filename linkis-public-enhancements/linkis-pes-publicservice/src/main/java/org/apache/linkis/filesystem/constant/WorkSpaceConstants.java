@@ -29,6 +29,7 @@ public class WorkSpaceConstants {
       "File permissions prohibit modification of unreadable files: {0}  （文件权限禁止修改不可读: {0}）";
   public static final String FILEPATH_ILLEGAL_SYMBOLS =
       "File path illegal symbols : {0} （文件路径结果集路径包含非法字符 : {0}）";
-  public static final String FILEPATH_ILLEGAL =
-      "Result set path encryption failed, please check if the path is legal : {0} （文件路径加密失败，请检查路径是否合法 : {0}）";
+
+  public static final String HIVE_FILEPATH_ILLEGAL_SYMBOLS =
+      "Hive file HDFS path is illegal: {0}, please use/live/workplace/related path （Hive文件hdfs路径非法: {0},请使用/hive/warehouse/相关路径并指定到表级别）";
 }

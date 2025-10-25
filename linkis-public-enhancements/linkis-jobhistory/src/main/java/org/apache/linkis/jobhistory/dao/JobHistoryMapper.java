@@ -66,7 +66,8 @@ public interface JobHistoryMapper {
       @Param("startId") Long startId,
       @Param("instances") String instances,
       @Param("departmentId") String departmentId,
-      @Param("engineInstance") String engineInstance);
+      @Param("engineInstance") String engineInstance,
+      @Param("runType") String runType);
 
   List<JobHistory> searchWithUserCreator(
       @Param("id") Long id,
@@ -80,7 +81,8 @@ public interface JobHistoryMapper {
       @Param("startId") Long startId,
       @Param("instances") String instances,
       @Param("departmentId") String departmentId,
-      @Param("engineInstance") String engineInstance);
+      @Param("engineInstance") String engineInstance,
+      @Param("runType") String runType);
 
   List<JobHistory> searchWithCreatorOnly(
       @Param("id") Long id,
@@ -94,7 +96,8 @@ public interface JobHistoryMapper {
       @Param("startId") Long startId,
       @Param("instances") String instances,
       @Param("departmentId") String departmentId,
-      @Param("engineInstance") String engineInstance);
+      @Param("engineInstance") String engineInstance,
+      @Param("runType") String runType);
 
   Integer countUndoneTaskNoCreator(
       @Param("umUser") String username,
@@ -135,6 +138,8 @@ public interface JobHistoryMapper {
       @Param("idList") List<String> idList, @Param("umUser") String username);
 
   List<JobHistory> selectJobHistoryNoCode(JobHistory jobReq);
+
+  List<JobHistory> selectJobHistoryBrief(JobHistory jobReq);
 
   /**
    * query wait for failover job

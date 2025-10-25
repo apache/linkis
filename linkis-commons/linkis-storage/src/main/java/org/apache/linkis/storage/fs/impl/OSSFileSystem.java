@@ -86,11 +86,6 @@ public class OSSFileSystem extends FileSystem {
   }
 
   @Override
-  public String checkSum(FsPath dest) throws IOException {
-    return null;
-  }
-
-  @Override
   public boolean canExecute(FsPath dest) throws IOException {
     return true;
   }

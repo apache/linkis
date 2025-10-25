@@ -18,9 +18,7 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
@@ -94,20 +92,6 @@ public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
       return connection.getColumns(database, table);
     } catch (SQLException | ClassNotFoundException e) {
       throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
-    }
-  }
-
-  @Override
-  public String querySqlConnectUrl(SqlConnection connection) {
-    return connection.getSqlConnectUrl();
-  }
-
-  @Override
-  public GenerateSqlInfo queryJdbcSql(SqlConnection connection, String database, String table) {
-    try {
-      return connection.queryJdbcSql(database, table);
-    } catch (Exception e) {
-      throw new MetaRuntimeException("Fail to get jdbc sql (获取jdbcSql失败)", e);
     }
   }
 }

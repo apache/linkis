@@ -85,4 +85,9 @@ public abstract class AbstractNodePointer implements NodePointer {
     }
     return false;
   }
+
+  @Override
+  public int hashCode() {
+    return getNode().getServiceInstance().hashCode();
+  }
 }

@@ -442,11 +442,6 @@ public class S3FileSystem extends FileSystem {
   }
 
   @Override
-  public String checkSum(FsPath dest) throws IOException {
-    return null;
-  }
-
-  @Override
   public boolean canExecute(FsPath dest) {
     return true;
   }

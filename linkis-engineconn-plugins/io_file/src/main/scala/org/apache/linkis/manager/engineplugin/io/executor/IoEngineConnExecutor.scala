@@ -60,6 +60,8 @@ import java.util.concurrent.atomic.AtomicLong
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
+import com.google.gson.internal.LinkedTreeMap
+
 class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     extends ConcurrentComputationExecutor(outputLimit)
     with Logging {
@@ -322,7 +324,8 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
       s"Creator ${methodEntity.creatorUser} for user ${methodEntity.proxyUser} init fs $methodEntity"
     )
     var fsId = methodEntity.id
-    val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
+    val properties =
+      methodEntity.params(0).asInstanceOf[LinkedTreeMap[String, String]].asScala.toMap
     val proxyUser = methodEntity.proxyUser
     if (!fsProxyService.canProxyUser(methodEntity.creatorUser, proxyUser, methodEntity.fsType)) {
       throw new StorageErrorException(

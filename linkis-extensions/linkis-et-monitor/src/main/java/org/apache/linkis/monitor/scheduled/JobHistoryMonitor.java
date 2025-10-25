@@ -29,6 +29,8 @@ import org.apache.linkis.monitor.jobhistory.index.JobIndexRule;
 import org.apache.linkis.monitor.jobhistory.index.JobIndexSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedAlertSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedRule;
+import org.apache.linkis.monitor.jobhistory.jobtime.StarrocksTimeExceedAlterSender;
+import org.apache.linkis.monitor.jobhistory.jobtime.StarrocksTimeExceedRule;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsAlertSender;
 import org.apache.linkis.monitor.jobhistory.labels.JobHistoryLabelsRule;
 import org.apache.linkis.monitor.jobhistory.runtime.CommonJobRunTimeRule;
@@ -213,6 +215,9 @@ public class JobHistoryMonitor {
               jobTimeAlerts.keySet(), new JobTimeExceedAlertSender(jobTimeAlerts));
       scanner.addScanRule(jobTimeExceedRule);
     }
+    StarrocksTimeExceedRule starrocksTimeExceedRule =
+        new StarrocksTimeExceedRule(new StarrocksTimeExceedAlterSender());
+    scanner.addScanRule(starrocksTimeExceedRule);
     JobMonitorUtils.run(scanner, fetchers, shouldStart);
   }
 }

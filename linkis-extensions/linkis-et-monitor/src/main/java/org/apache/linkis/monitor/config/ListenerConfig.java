@@ -17,7 +17,7 @@
 
 package org.apache.linkis.monitor.config;
 
-import org.apache.linkis.monitor.until.HttpsUntils;
+import org.apache.linkis.monitor.entity.ClientSingleton;
 import org.apache.linkis.monitor.until.ThreadUtils;
 import org.apache.linkis.monitor.utils.log.LogUtils;
 
@@ -38,7 +38,7 @@ public class ListenerConfig {
   private void shutdownEntrance(ContextClosedEvent event) {
     try {
       ThreadUtils.executors.shutdown();
-      HttpsUntils.client.close();
+      ClientSingleton.getInstance().close();
     } catch (IOException e) {
       logger.error("ListenerConfig error msg  {}", e.getMessage());
     }

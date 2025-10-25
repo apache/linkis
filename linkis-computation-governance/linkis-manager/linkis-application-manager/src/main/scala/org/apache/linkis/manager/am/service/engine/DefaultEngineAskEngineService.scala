@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service
 import java.net.SocketTimeoutException
 import java.util
 import java.util.Locale
-import java.util.concurrent.{ConcurrentHashMap, Semaphore}
+import java.util.concurrent.{ConcurrentHashMap, Semaphore, ThreadPoolExecutor}
 import java.util.concurrent.atomic.AtomicInteger
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -78,10 +78,25 @@ class DefaultEngineAskEngineService
 
   private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  private implicit val executor: ExecutionContextExecutorService =
-    Utils.newCachedExecutionContext(
-      AMConfiguration.ASK_ENGINE_ASYNC_MAX_THREAD_SIZE,
-      "AskEngineService-Thread-"
+  private val (reuseExecutor, reuseThreadPool)
+      : (ExecutionContextExecutorService, ThreadPoolExecutor) =
+    Utils.newCachedExecutionContextWithExecutor(
+      AMConfiguration.REUSE_ENGINE_ASYNC_MAX_THREAD_SIZE,
+      "ReuseEngineService-Thread-"
+    )
+
+  private val (createExecutor, createThreadPool)
+      : (ExecutionContextExecutorService, ThreadPoolExecutor) =
+    Utils.newCachedExecutionContextWithExecutor(
+      AMConfiguration.CREATE_ENGINE_ASYNC_MAX_THREAD_SIZE,
+      "CreateEngineService-Thread-"
+    )
+
+  private val (errorSendExecutor, errorSendThreadPool)
+      : (ExecutionContextExecutorService, ThreadPoolExecutor) =
+    Utils.newCachedExecutionContextWithExecutor(
+      AMConfiguration.ASK_ENGINE_ERROR_ASYNC_MAX_THREAD_SIZE,
+      "AskEngineErrorService-Thread-"
     )
 
   private val engineCreateSemaphoreMap: java.util.Map[String, Semaphore] =
@@ -122,11 +137,74 @@ class DefaultEngineAskEngineService
     }
 
     val engineAskAsyncId = getAsyncId
+    if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
+      val reuseNodeThread = Future {
+        LoggerUtils.setJobIdMDC(taskId)
+        val engineReuseRequest = new EngineReuseRequest()
+        engineReuseRequest.setLabels(engineAskRequest.getLabels)
+        engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
+        engineReuseRequest.setUser(engineAskRequest.getUser)
+        engineReuseRequest.setProperties(engineAskRequest.getProperties)
+        val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
+          t: Throwable =>
+            t match {
+              case retryException: LinkisRetryException =>
+                logger.info(
+                  s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
+                )
+              case _ =>
+                logger.info(
+                  s"Task: $taskId user ${engineAskRequest.getUser} reuse engine failed",
+                  t
+                )
+            }
+            null
+        }
+        if (reuseNode != null) {
+          logger.info(
+            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode"
+          )
+          if (null != sender) {
+            sender.send(EngineCreateSuccess(engineAskAsyncId, reuseNode, true))
+            logger.info(
+              s"Task: $taskId has sent EngineCreateSuccess($engineAskAsyncId, reuse=true) to Entrance."
+            )
+          } else {
+            logger.warn(f"Task: $taskId will not send async using null sender.")
+          }
+        } else {
+          logger.info(
+            s"Task: $taskId reuse engine failed, will try to start a thread to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
+          )
+          createEngine(engineAskRequest, taskId, engineAskAsyncId, sender)
+        }
+        LoggerUtils.removeJobIdMDC()
+      }(reuseExecutor)
+      logger.info(
+        s"reuseExecutor: poolSize: ${reuseThreadPool.getPoolSize}, activeCount: ${reuseThreadPool.getActiveCount}, queueSize: ${reuseThreadPool.getQueue.size()}"
+      )
+      futureDeal(reuseNodeThread, taskId, engineAskAsyncId, sender, "reuse")
+    } else {
+      createEngine(engineAskRequest, taskId, engineAskAsyncId, sender)
+    }
+    LoggerUtils.removeJobIdMDC()
+    EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
+  }
+
+  private def createEngine(
+      engineAskRequest: EngineAskRequest,
+      taskId: String,
+      engineAskAsyncId: String,
+      sender: Sender
+  ): Unit = {
     val createNodeThread = Future {
       LoggerUtils.setJobIdMDC(taskId)
       val (engineCreateKey, semaphore) =
         Utils.tryAndWarn(getKeyAndSemaphore(engineAskRequest.getLabels))
       Utils.tryFinally {
+        logger.info(
+          s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
+        )
         if (null != semaphore) {
           try {
             semaphore.acquire()
@@ -139,6 +217,13 @@ class DefaultEngineAskEngineService
               )
           }
         }
+        // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
+        engineAskRequest.getLabels.remove(LabelKeyConstant.ENGINE_INSTANCE_KEY)
+        // 添加引擎启动驱动任务id标签
+        val labels: util.Map[String, AnyRef] = engineAskRequest.getLabels
+        labels.put(LabelKeyConstant.DRIVER_TASK_KEY, taskId)
+
+        logger.info(s"Task: ${taskId} start to reuse engine.")
         var reuseNode: EngineNode = null
         if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
           val engineReuseRequest = new EngineReuseRequest()
@@ -163,45 +248,36 @@ class DefaultEngineAskEngineService
           }
         }
 
-        if (null != reuseNode) {
-          logger.info(
-            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode"
+        val engineCreateRequest = new EngineCreateRequest
+        engineCreateRequest.setLabels(engineAskRequest.getLabels)
+        engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
+        engineCreateRequest.setUser(engineAskRequest.getUser)
+        engineCreateRequest.setProperties(engineAskRequest.getProperties)
+        engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
+
+        val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
+        val timeout =
+          if (engineCreateRequest.getTimeout <= 0) {
+            AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+          } else engineCreateRequest.getTimeout
+        // UseEngine requires a timeout (useEngine 需要加上超时)
+        val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
+        if (null == createEngineNode) {
+          throw new LinkisRetryException(
+            AMConstant.EM_ERROR_CODE,
+            s"create engine${createNode.getServiceInstance} success, but to use engine failed"
           )
-          (reuseNode, true)
+        }
+        logger.info(
+          s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
+        )
+        if (null != sender) {
+          sender.send(EngineCreateSuccess(engineAskAsyncId, createEngineNode))
+          logger.info(
+            s"Task: $taskId has sent EngineCreateSuccess($engineAskAsyncId, reuse=false) to Entrance."
+          )
         } else {
-          logger.info(
-            s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
-          )
-          // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
-          engineAskRequest.getLabels.remove(LabelKeyConstant.ENGINE_INSTANCE_KEY)
-          // 添加引擎启动驱动任务id标签
-          val labels: util.Map[String, AnyRef] = engineAskRequest.getLabels
-          labels.put(LabelKeyConstant.DRIVER_TASK_KEY, taskId)
-
-          val engineCreateRequest = new EngineCreateRequest
-          engineCreateRequest.setLabels(engineAskRequest.getLabels)
-          engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
-          engineCreateRequest.setUser(engineAskRequest.getUser)
-          engineCreateRequest.setProperties(engineAskRequest.getProperties)
-          engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
-
-          val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
-          val timeout =
-            if (engineCreateRequest.getTimeout <= 0) {
-              AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-            } else engineCreateRequest.getTimeout
-          // UseEngine requires a timeout (useEngine 需要加上超时)
-          val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
-          if (null == createEngineNode) {
-            throw new LinkisRetryException(
-              AMConstant.EM_ERROR_CODE,
-              s"create engine${createNode.getServiceInstance} success, but to use engine failed"
-            )
-          }
-          logger.info(
-            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
-          )
-          (createEngineNode, false)
+          logger.warn(s"Task: $taskId will not send async using null sender.")
         }
       } {
         Utils.tryAndWarn {
@@ -213,30 +289,23 @@ class DefaultEngineAskEngineService
         LoggerUtils.removeJobIdMDC()
       }
 
-    }
+    }(createExecutor)
 
-    createNodeThread.onComplete {
-      case Success((engineNode, isReuse)) =>
-        LoggerUtils.setJobIdMDC(taskId)
-        Utils.tryFinally {
-          if (isReuse) {
-            logger.info(
-              s"Task: $taskId Success to async($engineAskAsyncId) reuseEngine $engineNode"
-            )
-          } else {
-            logger.info(
-              s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode"
-            )
-          }
-          if (null != sender) {
-            sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode, isReuse))
+    logger.info(
+      s"createExecutor: poolSize: ${createThreadPool.getPoolSize}, activeCount: ${createThreadPool.getActiveCount}, queueSize: ${createThreadPool.getQueue.size()}"
+    )
+    futureDeal(createNodeThread, taskId, engineAskAsyncId, sender, "create")
+  }
 
-          } else {
-            logger.info("Will not send async useing null sender.")
-          }
-        } {
-          LoggerUtils.removeJobIdMDC()
-        }
+  private def futureDeal(
+      future: Future[_],
+      taskId: String,
+      engineAskAsyncId: String,
+      sender: Sender,
+      functionStr: String
+  ): Unit = {
+    future.onComplete {
+      case Success(_) => ()
       case Failure(exception) =>
         LoggerUtils.setJobIdMDC(taskId)
         val retryFlag = exception match {
@@ -251,7 +320,7 @@ class DefaultEngineAskEngineService
             }
         }
         val msg =
-          s"Task: $taskId Failed  to async($engineAskAsyncId) create/reuse Engine, can Retry $retryFlag";
+          s"Task: $taskId Failed to async($engineAskAsyncId) $functionStr EngineConn, can Retry $retryFlag";
         if (!retryFlag) {
           logger.info(msg, exception)
         } else {
@@ -269,9 +338,10 @@ class DefaultEngineAskEngineService
         } {
           LoggerUtils.removeJobIdMDC()
         }
-    }
-    LoggerUtils.removeJobIdMDC()
-    EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
+    }(errorSendExecutor)
+    logger.info(
+      s"errorSendExecutor: poolSize: ${errorSendThreadPool.getPoolSize}, activeCount: ${errorSendThreadPool.getActiveCount}, queueSize: ${errorSendThreadPool.getQueue.size()}"
+    )
   }
 
   /**

@@ -147,6 +147,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
     jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobRequest.setParams(configMap)
+    // Set Progress
+    jobRequest.setProgress("0.0")
     jobRequest
   }
 

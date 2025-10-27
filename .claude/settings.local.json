@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:linkis.apache.org)",
+      "Bash(mkdir:*)",
+      "WebSearch",
+      "Read(//e/workspace/apache/linkis/**)",
+      "Bash(git checkout:*)",
+      "Bash(xargs:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

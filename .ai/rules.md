@@ -11,10 +11,50 @@
 - [代码边界约束](#代码边界约束)
 
 ### 需求实现步骤
-- 1.创建当前版本对应的文档目录docs/当前版本号（可以查看pom.xml文件中revision配置，如配置1.17.0-wds，则当前版本号为1.17.0），如果目录存在则不创建
-- 2.按项目标准需求文档格式创建markdown类型的需求文档，存放到docs/当前版本号/requirements目录下
-- 3.按项目标准设计文档格式创建markdown类型的设计文档，存放到docs/当前版本号/design目录下
-- 4.按需求和设计文档进行开发，需求文档、设计文档、开发必须遵循当前rules.md文件中的原则
+
+#### 步骤1：确定当前版本号
+- 查看pom.xml文件中的`<revision>`配置
+- 如配置为`1.17.0-wds`，则提取版本号为`1.17.0`
+- 后文用`${current_version}`代替
+
+#### 步骤2：分支检查（必须通过才能继续）
+**⚠️ 关键检查点：以下任一条件不满足，必须立即停止并提示用户手动处理**
+
+执行以下检查：
+1. 检查当前分支名称是否为`dev-${current_version}-webank`
+   - 命令：`git branch --show-current`
+   - 如果不是，停止并提示用户切换分支
+
+2. 检查工作目录是否有未提交的修改
+   - 命令：`git status`
+   - 如果显示`Changes not staged for commit`或`Changes to be committed`，停止并提示用户处理
+
+3. 检查分支是否与远程同步
+   - 命令：`git status`
+   - 如果显示`Your branch is behind`，执行`git pull`
+   - 如果pull失败或有冲突，停止并提示用户处理
+
+**只有以上3项检查全部通过后，才能继续后续步骤。**
+
+#### 步骤3：创建新的需求修改分支
+- 在确认的基础分支上创建新分支
+- 分支命名规则：`feature/${current_version}-<需求简述>`
+
+#### 步骤4：创建文档目录
+- 创建目录：`docs/${current_version}/requirements`和`docs/${current_version}/design`
+- 如果目录已存在则跳过
+
+#### 步骤5：创建需求文档
+- 按项目标准需求文档格式创建markdown文档
+- 存放路径：`docs/${current_version}/requirements/<需求名称>.md`
+
+#### 步骤6：创建设计文档
+- 按项目标准设计文档格式创建markdown文档
+- 存放路径：`docs/${current_version}/design/<需求名称>-design.md`
+
+#### 步骤7：代码开发
+- 按需求和设计文档进行开发
+- 必须遵循本文件中的所有原则（最小改动、功能可配置等）
 
 ### 最小改动原则
 - 所有功能实现必须遵循最小改动原则，修改内容尽量不影响现有功能。

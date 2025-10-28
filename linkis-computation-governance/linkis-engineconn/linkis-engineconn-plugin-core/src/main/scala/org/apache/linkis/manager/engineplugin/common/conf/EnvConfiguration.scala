@@ -74,10 +74,8 @@ object EnvConfiguration {
 
   val LOG4J2_XML_FILE = CommonVars[String]("wds.linkis.engineconn.log4j2.xml.file", "log4j2.xml")
 
-  val LINKIS_PUBLIC_MODULE_PATH = CommonVars(
-    "wds.linkis.public_module.path",
-    Configuration.getLinkisHome + "/lib/linkis-commons/public-module"
-  )
+  val LINKIS_PUBLIC_MODULE_PATH =
+    CommonVars("wds.linkis.public_module.path", "/lib/linkis-commons/public-module")
 
   val LINKIS_CONF_DIR = CommonVars("LINKIS_CONF_DIR", Configuration.getLinkisHome() + "/conf")
 }

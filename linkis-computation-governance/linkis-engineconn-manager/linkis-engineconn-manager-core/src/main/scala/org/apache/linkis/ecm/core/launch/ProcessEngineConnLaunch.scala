@@ -170,7 +170,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   protected def getCommandArgs: Array[String] = {
     if (
         request.creationDesc.properties.asScala.exists { case (k, v) =>
-          k.contains(" ") || (v != null && v.contains(" "))
+          k.contains(" ")
         }
     ) {
       throw new ErrorException(
@@ -223,6 +223,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS.key -> mappingPorts)
     engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST.key -> mappingHost)
 
+    engineConnConf = engineConnConf.map(m => (m._1, s""""${m._2}""""))
     arguments.addEngineConnConf(engineConnConf)
     EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToArgs(arguments.build())
   }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright 2019 WeBank
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.apache.linkis.monitor.department.dao.UserDepartmentInfoMapper">
+
+    <!-- 新增方法 -->
+    <insert id="insertUser">
+        INSERT INTO linkis_org_user(cluster_code, user_type, user_name, org_id, org_name, queue_name, db_name, interface_user, is_union_analyse, create_time, user_itsm_no)
+        VALUES (#{clusterCode}, #{userType}, #{userName}, #{orgId}, #{orgName}, #{queueName}, #{dbName}, #{interfaceUser}, #{isUnionAnalyse}, #{createTime}, #{userItsmNo})
+    </insert>
+
+    <!-- 批量新增方法 -->
+    <insert id="batchInsertUsers" parameterType="java.util.List">
+        INSERT INTO linkis_org_user (cluster_code, user_type, user_name, org_id, org_name, queue_name, db_name, interface_user, is_union_analyse, create_time, user_itsm_no)
+        VALUES
+        <foreach item="user" index="index" collection="userDepartmentInfos" separator=",">
+            (#{user.clusterCode}, #{user.userType}, #{user.userName}, #{user.orgId}, #{user.orgName}, #{user.queueName}, #{user.dbName}, #{user.interfaceUser}, #{user.isUnionAnalyse}, #{user.createTime}, #{user.userItsmNo})
+        </foreach>
+    </insert>
+
+    <!-- 修改方法 -->
+    <update id="updateUser">
+        UPDATE linkis_org_user
+        <set>
+            <if test="clusterCode != null">cluster_code = #{clusterCode},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+            <if test="orgId != null">org_id = #{orgId},</if>
+            <if test="orgName != null">org_name = #{orgName},</if>
+            <if test="queueName != null">queue_name = #{queueName},</if>
+            <if test="dbName != null">db_name = #{dbName},</if>
+            <if test="interfaceUser != null">interface_user = #{interfaceUser},</if>
+            <if test="isUnionAnalyse != null">is_union_analyse = #{isUnionAnalyse},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="userItsmNo != null">user_itsm_no = #{userItsmNo},</if>
+        </set>
+        WHERE user_name = #{userName}
+    </update>
+
+    <!-- 查询方法 -->
+    <select id="selectUser" resultType="org.apache.linkis.monitor.department.entity.UserDepartmentInfo">
+        SELECT * FROM linkis_org_user WHERE user_name = #{userName}
+    </select>
+
+    <!-- 删除方法 -->
+    <delete id="deleteUser">
+        DELETE FROM linkis_org_user
+    </delete>
+
+    <!-- 查询所有数据 -->
+    <select id="selectAllUsers" resultType="org.apache.linkis.monitor.department.entity.UserDepartmentInfo">
+        SELECT * FROM linkis_org_user_sync
+    </select>
+
+
+
+
+</mapper>

@@ -30,6 +30,10 @@ public class PersistenceResource {
 
   private String resourceType;
 
+  private String labelKey;
+
+  private String labelValue;
+
   public String getTicketId() {
     return ticketId;
   }
@@ -139,5 +143,21 @@ public class PersistenceResource {
 
   public void setCreator(String creator) {
     this.creator = creator;
+  }
+
+  public String getLabelKey() {
+    return labelKey;
+  }
+
+  public void setLabelKey(String labelKey) {
+    this.labelKey = labelKey;
+  }
+
+  public String getLabelValue() {
+    return labelValue;
+  }
+
+  public void setLabelValue(String labelValue) {
+    this.labelValue = labelValue;
   }
 }

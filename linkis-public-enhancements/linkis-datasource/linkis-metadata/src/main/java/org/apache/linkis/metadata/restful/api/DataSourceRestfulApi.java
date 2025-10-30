@@ -21,6 +21,7 @@ import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -33,6 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.Api;
@@ -59,10 +64,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
       response = Message.class)
   @Override
   @RequestMapping(path = "dbs", method = RequestMethod.GET)
-  public Message queryDatabaseInfo(HttpServletRequest req) {
+  public Message queryDatabaseInfo(
+      HttpServletRequest req,
+      @RequestParam(value = "permission", required = false) String permission) {
     String userName = ModuleUserUtils.getOperationUser(req, "get dbs");
     try {
-      JsonNode dbs = dataSourceService.getDbs(userName);
+      JsonNode dbs = dataSourceService.getDbs(userName, permission);
       return Message.ok("").data("dbs", dbs);
     } catch (Exception e) {
       logger.error("Failed to get database(获取数据库失败)", e);
@@ -126,6 +133,22 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
   }
 
+  @ApiOperation(
+      value = "queryDbsWithTablesgetByAccessTime",
+      notes = "query dbs with tables order by getByAccessTime",
+      response = Message.class)
+  @RequestMapping(path = "getByAccessTime", method = RequestMethod.GET)
+  public Message queryDbsWithTablesgetByAccessTime(HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "get all db and tables");
+    try {
+      JsonNode dbs = dataSourceService.getDbsWithTablesAndLastAccessAt(userName);
+      return Message.ok("").data("dbs", dbs);
+    } catch (Exception e) {
+      logger.error("Failed to queryDbsWithTables", e);
+      return Message.error("Failed to queryDbsWithTables", e);
+    }
+  }
+
   @ApiOperation(value = "queryTables", notes = "query tables", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "database", dataType = "String", value = "database")
@@ -159,9 +182,27 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
     MetadataQueryParam queryParam =
         MetadataQueryParam.of(userName).withDbName(database).withTableName(table);
+    JsonNode columns;
     try {
-      JsonNode columns =
-          hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+      if (dataSourceService.checkRangerConnectionConfig()) {
+        List<String> rangerColumns = dataSourceService.getRangerColumns(queryParam);
+        if (rangerColumns != null) {
+          MetadataQueryParam queryAllParam =
+              MetadataQueryParam.of(DWSConfig.HIVE_DB_ADMIN_USER.getValue())
+                  .withDbName(database)
+                  .withTableName(table);
+          columns =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
+                  queryAllParam);
+          columns = dataSourceService.filterRangerColumns(columns, rangerColumns);
+        } else {
+          columns =
+              hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+        }
+      } else {
+        columns =
+            hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+      }
       return Message.ok("").data("columns", columns);
     } catch (Exception e) {
       logger.error("Failed to get data table structure(获取数据表结构失败)", e);
@@ -199,6 +240,39 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     } catch (Exception e) {
       logger.error("Failed to get table partition size(获取表分区大小失败)", e);
       return Message.error("Failed to get table partition size(获取表分区大小失败)", e);
+    }
+  }
+
+  @ApiOperation(value = "getStorageInfo", notes = "getStorageInfo", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
+    @ApiImplicitParam(name = "table", dataType = "String", value = "table")
+  })
+  @RequestMapping(path = "storage-info", method = RequestMethod.GET)
+  public Message getStorageInfo(
+      @RequestParam(value = "database") String database,
+      @RequestParam(value = "table") String table,
+      HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "get size ");
+    if (StringUtils.isBlank(database)) {
+      return Message.error("'database' is missing[缺少数据库]");
+    }
+    if (StringUtils.isBlank(table)) {
+      return Message.error("'table' is missing[缺少表名]");
+    }
+    MetadataQueryParam queryParam =
+        MetadataQueryParam.of(userName).withDbName(database).withTableName(table);
+    try {
+      logger.info("Start to get storageInfo DB {}, table {}", database, table);
+      Map<String, Object> storageInfo = dataSourceService.getStorageInfo(queryParam);
+      Message message = Message.ok("");
+      HashMap<String, Object> data = message.getData();
+      data.putAll(storageInfo);
+      logger.info("Finished to get storageInfo DB {}, table {}", database, table);
+      return message;
+    } catch (Exception e) {
+      logger.error("Failed to get storageInfo DB {}, table {}", database, table, e);
+      return Message.error("Failed to get storageInfo", e);
     }
   }
 

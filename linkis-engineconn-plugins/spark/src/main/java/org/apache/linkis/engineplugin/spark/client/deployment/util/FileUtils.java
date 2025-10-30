@@ -63,6 +63,8 @@ public final class FileUtils {
 
   public static final String PACKAGE_SEPARATOR = ".";
 
+  public static final Random rnd = new Random();
+
   // ------------------------------------------------------------------------
 
   public static void writeCompletely(WritableByteChannel channel, ByteBuffer src)
@@ -91,7 +93,6 @@ public final class FileUtils {
    * @return the generated random filename with the given prefix
    */
   public static String getRandomFilename(final String prefix) {
-    final Random rnd = new Random();
     final StringBuilder stringBuilder = new StringBuilder(prefix);
 
     for (int i = 0; i < RANDOM_FILE_NAME_LENGTH; i++) {

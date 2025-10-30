@@ -73,6 +73,18 @@ public interface DataSourceInfoService {
   DataSource getDataSourcePublishInfo(String dataSourceName);
 
   /**
+   * * Get data source for latest published version by ip, port
+   *
+   * @param datasourceTypeName
+   * @param ip
+   * @param port
+   * @param datasourceUser
+   * @return
+   */
+  DataSource getDataSourcePublishInfo(
+      String datasourceTypeName, String ip, String port, String datasourceUser);
+
+  /**
    * Get data source
    *
    * @param dataSourceId id
@@ -183,7 +195,7 @@ public interface DataSourceInfoService {
   List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo);
 
   /**
-   * expire data source
+   * exoire data source
    *
    * @param dataSourceId
    * @return

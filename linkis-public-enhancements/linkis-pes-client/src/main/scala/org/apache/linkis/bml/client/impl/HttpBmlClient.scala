@@ -39,6 +39,7 @@ import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrate
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.storage.FSFactory
 
+import org.apache.commons.collections.{CollectionUtils, MapUtils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.methods.CloseableHttpResponse
@@ -802,4 +803,14 @@ class HttpBmlClient(
   }
 
   override def close(): Unit = dwsClient.close()
+
+  override def getBmlClientConnectInfo: BmlClientConnectInfoResponse = {
+    val clientConnectInfo = dwsClient.getHttpConnectionStats
+    var isSuccess = false
+    if (MapUtils.isNotEmpty(clientConnectInfo)) {
+      isSuccess = true
+    }
+    BmlClientConnectInfoResponse(isSuccess, clientConnectInfo)
+  }
+
 }

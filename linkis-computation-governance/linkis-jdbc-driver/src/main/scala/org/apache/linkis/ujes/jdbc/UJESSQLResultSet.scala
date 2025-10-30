@@ -175,13 +175,24 @@ class UJESSQLResultSet(
     if (null == resultSetResult) {
       return
     }
-    metaData = resultSetResult.getMetadata.asInstanceOf[util.List[util.Map[String, String]]]
-    if (null != metaData) {
-      for (cursor <- 1 to metaData.size()) {
-        val col = metaData.get(cursor - 1)
-        resultSetMetaData.setColumnNameProperties(cursor, col.get("columnName"))
-        resultSetMetaData.setDataTypeProperties(cursor, col.get("dataType"))
-        resultSetMetaData.setCommentPropreties(cursor, col.get("comment"))
+    val metaTmp = resultSetResult.getMetadata
+    if (NULL_VALUE.equals(String.valueOf(metaTmp))) {
+      val fileContentList =
+        resultSetResult.getFileContent.asInstanceOf[util.List[util.List[String]]]
+      if (null != fileContentList) {
+        resultSetMetaData.setColumnNameProperties(1, "linkis_string")
+        resultSetMetaData.setDataTypeProperties(1, "String")
+        resultSetMetaData.setCommentPropreties(1, NULL_VALUE)
+      }
+    } else {
+      metaData = metaTmp.asInstanceOf[util.List[util.Map[String, String]]]
+      if (null != metaData) {
+        for (cursor <- 1 to metaData.size()) {
+          val col = metaData.get(cursor - 1)
+          resultSetMetaData.setColumnNameProperties(cursor, col.get("columnName"))
+          resultSetMetaData.setDataTypeProperties(cursor, col.get("dataType"))
+          resultSetMetaData.setCommentPropreties(cursor, col.get("comment"))
+        }
       }
     }
   }

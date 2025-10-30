@@ -118,6 +118,14 @@ abstract class EntranceExecutor(val id: Long) extends Executor with Logging {
     super.hashCode()
   }
 
+  def getRunningOrchestrationFuture: Option[OrchestrationFuture] = {
+    if (null != engineReturn) {
+      engineReturn.getOrchestrationFuture()
+    } else {
+      None
+    }
+  }
+
 }
 
 class EngineExecuteAsyncReturn(

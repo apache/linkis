@@ -133,4 +133,6 @@ public interface BmlClient extends Closeable {
       String resourceId, String anotherUser, String originOwner);
 
   BmlRollbackVersionResponse rollbackVersion(String resourceId, String version, String user);
+
+  BmlClientConnectInfoResponse getBmlClientConnectInfo();
 }

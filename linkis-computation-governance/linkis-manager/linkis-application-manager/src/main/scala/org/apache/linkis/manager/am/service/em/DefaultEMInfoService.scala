@@ -292,18 +292,32 @@ class DefaultEMInfoService extends EMInfoService with Logging {
       resourceArray: Array[NodeResource],
       resourceType: ResourceType
   ): (Resource, Resource, Resource) = {
-    resourceArray.foldLeft(
-      (
+    if (resourceArray.isEmpty) {
+      return (
         Resource.initResource(resourceType),
         Resource.initResource(resourceType),
         Resource.initResource(resourceType)
       )
-    ) { case ((accSum, accUed, accLock), nodeResource) =>
-      (
-        accSum.add(nodeResource.getUsedResource.add(nodeResource.getLockedResource)),
-        accUed.add(nodeResource.getUsedResource),
-        accLock.add(nodeResource.getLockedResource)
-      )
+    } else {
+      resourceArray.foldLeft(
+        (
+          Resource.initResource(resourceType),
+          Resource.initResource(resourceType),
+          Resource.initResource(resourceType)
+        )
+      ) { case ((accSum, accUed, accLock), nodeResource) =>
+        if (null == nodeResource.getUsedResource) {
+          nodeResource.setUsedResource(Resource.initResource(resourceType))
+        }
+        if (null == nodeResource.getLockedResource) {
+          nodeResource.setLockedResource(Resource.initResource(resourceType))
+        }
+        (
+          accSum.add(nodeResource.getUsedResource.add(nodeResource.getLockedResource)),
+          accUed.add(nodeResource.getUsedResource),
+          accLock.add(nodeResource.getLockedResource)
+        )
+      }
     }
   }
 

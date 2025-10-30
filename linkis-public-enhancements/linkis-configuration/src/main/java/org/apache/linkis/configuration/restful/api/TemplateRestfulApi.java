@@ -19,19 +19,19 @@ package org.apache.linkis.configuration.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
+import org.apache.linkis.configuration.entity.ConfigKey;
 import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
+import org.apache.linkis.configuration.service.ConfigKeyService;
 import org.apache.linkis.configuration.service.TemplateConfigKeyService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,6 +57,7 @@ public class TemplateRestfulApi {
   private static final Logger logger = LoggerFactory.getLogger(TemplateRestfulApi.class);
 
   @Autowired private TemplateConfigKeyService templateConfigKeyService;
+  @Autowired private ConfigKeyService configKeyService;
 
   @ApiOperation(
       value = "updateKeyMapping",
@@ -164,7 +165,7 @@ public class TemplateRestfulApi {
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
         logger.warn("Token:{} has no permission to queryKeyInfoList.", token);
-        return Message.error("Token:" + token + " has no permission to queryKeyInfoList.");
+        return Message.error("Token has no permission to queryKeyInfoList.");
       }
     } else if (!Configuration.isAdmin(username)) {
       logger.warn("User:{} has no permission to queryKeyInfoList.", username);
@@ -276,5 +277,30 @@ public class TemplateRestfulApi {
     Message message = Message.ok();
     message.getData().putAll(result);
     return message;
+  }
+
+  @ApiOperation(
+      value = "encryptDatasourcePassword",
+      notes = "encrypt datasource password",
+      response = Message.class)
+  @RequestMapping(value = "/encrypt", method = RequestMethod.GET)
+  public Message encryptDatasourcePassword(
+      @RequestParam(value = "isEncrypt", required = false) String isEncrypt,
+      HttpServletRequest request) {
+    List<ConfigKey> jdbc =
+        configKeyService.getConfigBykey(
+            "jdbc", org.apache.linkis.configuration.conf.Configuration.JDBC_PASSWORD_CONF(), null);
+    List<ConfigKey> nebula =
+        configKeyService.getConfigBykey(
+            "nebula",
+            org.apache.linkis.configuration.conf.Configuration.NEBULA_PASSWORD_CONF(),
+            null);
+    if (CollectionUtils.isNotEmpty(jdbc)) {
+      templateConfigKeyService.dealDatasourcePwdByKeyId(jdbc.get(0).getId(), isEncrypt);
+    }
+    if (CollectionUtils.isNotEmpty(nebula)) {
+      templateConfigKeyService.dealDatasourcePwdByKeyId(nebula.get(0).getId(), isEncrypt);
+    }
+    return Message.ok();
   }
 }

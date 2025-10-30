@@ -120,4 +120,8 @@ public interface DataSourceDao {
    */
   void updateVersionId(
       @Param("dataSourceId") Long datasourceId, @Param("versionId") long versionId);
+
+  List<DataSource> selectDatasourcesByType(
+      @Param("datasourceTypeName") String datasourceTypeName,
+      @Param("datasourceUser") String datasourceUser);
 }

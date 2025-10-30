@@ -47,7 +47,7 @@
 
     <sql id="jobhistory_query">
         job.`id`,job.`job_req_id`,job.`submit_user`,job.`execute_user`,job.`labels`,job.`params`,job.`status`,job.`error_code`,job.`created_time`,
-        job.`updated_time`,job.`instances`,job.`observe_info`,org.`org_id`,org.`org_name`
+        job.`updated_time`,job.`instances`,job.`engine_type`,job.`observe_info`,org.`org_id`,org.`org_name`
     </sql>
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"
@@ -127,7 +127,7 @@
         <include refid="jobhistory_query"/>
         FROM linkis_ps_job_history_group_history job JOIN linkis_org_user org ON job.submit_user = org.user_name
         <where>
-            <if test="id != null">job.id > #{id}</if>
+            <if test="id != null">job.id >= #{id}</if>
             <if test="umUser != null">and job.submit_user = #{umUser}</if>
             <if test="engineType != null">and job.engine_type = #{engineType}</if>
             <if test="startDate != null">and job.created_time >= #{startDate} AND job.created_time <![CDATA[<=]]>#{endDate}

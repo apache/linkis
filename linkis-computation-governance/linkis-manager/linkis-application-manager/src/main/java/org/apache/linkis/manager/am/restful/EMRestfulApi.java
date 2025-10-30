@@ -438,6 +438,7 @@ public class EMRestfulApi {
       if (!logType.equals("stdout")
           && !logType.equals("stderr")
           && !logType.equals("gc")
+          && !logType.equals("udfLog")
           && !logType.equals("yarnApp")) {
         throw new AMErrorException(
             AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());

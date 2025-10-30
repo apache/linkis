@@ -17,7 +17,8 @@
 
 package org.apache.linkis.gateway.authentication.service
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.utils.{RSAUtils, Utils}
 import org.apache.linkis.gateway.authentication.bo.{Token, User}
 import org.apache.linkis.gateway.authentication.bo.impl.TokenImpl
 import org.apache.linkis.gateway.authentication.conf.TokenConfiguration
@@ -29,6 +30,10 @@ import org.apache.linkis.gateway.authentication.exception.{
   TokenAuthException,
   TokenNotExistException
 }
+import org.apache.linkis.server.toScalaBuffer
+
+import org.apache.commons.collections.CollectionUtils
+import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -51,7 +56,49 @@ class CachedTokenService extends TokenService {
     .build(new CacheLoader[String, Token]() {
 
       override def load(tokenName: String): Token = {
-        val tokenEntity: TokenEntity = tokenDao.selectTokenByName(tokenName)
+        val tokenEntity: TokenEntity = if (Configuration.LINKIS_RSA_TOKEN_SWITCH) {
+          // 开关打开情况下，对token进行判断
+          if (tokenName.startsWith(RSAUtils.PREFIX)) {
+            // 传的是密文，直接查询tokenSign（密文保存在这里）
+            tokenDao.selectTokenBySign(tokenName)
+          } else {
+            // 传入明文，首次执行模糊查询（兼容明文token未被加密，TokenSign为空，导致查询token异常）
+            val tokenList = tokenDao.selectTokenByNameWithLike(tokenName)
+            var token: TokenEntity = null
+            if (CollectionUtils.isNotEmpty(tokenList)) {
+              tokenList.foreach { tokenTmp =>
+                if (
+                    tokenTmp != null && StringUtils.isBlank(tokenTmp.getTokenSign) && tokenName
+                      .equals(tokenTmp.getTokenName)
+                ) {
+                  token = tokenTmp
+                }
+              }
+            }
+            if (null == token) {
+              // 兼容token被加密后，传入明文场景，需要执行截取规则后，查询tokenName
+              token = tokenDao.selectTokenByName(RSAUtils.tokenSubRule(tokenName))
+              if (token != null) {
+                val realToken = RSAUtils.dncryptWithLinkisPublicKey(token.getTokenSign)
+                if (!tokenName.equals(realToken)) {
+                  throw new TokenNotExistException(
+                    INVALID_TOKEN.getErrorCode,
+                    INVALID_TOKEN.getErrorDesc
+                  )
+                }
+              } else {
+                throw new TokenNotExistException(
+                  INVALID_TOKEN.getErrorCode,
+                  INVALID_TOKEN.getErrorDesc
+                )
+              }
+            }
+            token
+          }
+        } else {
+          // 开关没有打开情况下，旧数据没有加密，维持明文查询tokenName
+          tokenDao.selectTokenByName(tokenName)
+        }
         if (tokenEntity != null) {
           new TokenImpl().convertFrom(tokenEntity)
         } else {

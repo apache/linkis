@@ -112,7 +112,7 @@ public class MemoryResource extends Resource {
 
   @Override
   public String toJson() {
-    return " {\"memory\":\"" + ByteTimeUtils.bytesToString(memory) + " }";
+    return " {\"memory\":\"" + ByteTimeUtils.bytesToString(memory) + "\" }";
   }
 
   @Override

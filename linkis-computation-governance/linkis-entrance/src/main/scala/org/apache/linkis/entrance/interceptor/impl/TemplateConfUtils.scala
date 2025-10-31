@@ -55,6 +55,7 @@ object TemplateConfUtils extends Logging {
 
   val confTemplateNameKey = "ec.resource.name"
   val confFixedEngineConnLabelKey = "ec.fixed.sessionId"
+  val confEngineTypeKey = "ec.engine.type"
 
   /**
    * 按模板uuid缓存模板配置
@@ -231,6 +232,40 @@ object TemplateConfUtils extends Logging {
       })
     }
     templateConfName
+  }
+
+  /**
+   * Get user-defined engine type from script code
+   *
+   * @param code
+   *   :code
+   * @param languageType
+   *   :sql,hql,python,scala
+   * @return
+   *   String engine type, such as "starrocks", "spark", "hive", null if not found
+   */
+  def getCustomEngineType(code: String, languageType: String): String = {
+    if (StringUtils.isBlank(code) || StringUtils.isBlank(languageType)) {
+      return null
+    }
+
+    val confPattern = languageType.toLowerCase match {
+      case x if x.contains("python") || x.contains("shell") =>
+        s"##@set\\s+${confEngineTypeKey}\\s*=\\s*([^\\s#]+)".r
+      case x if x.contains("scala") =>
+        s"///@set\\s+${confEngineTypeKey}\\s*=\\s*([^\\s/]+)".r
+      case _ =>
+        s"---@set\\s+${confEngineTypeKey}\\s*=\\s*([^\\s-]+)".r
+    }
+
+    val codeRes = code.replaceAll("\r\n", "\n")
+    confPattern.findFirstMatchIn(codeRes) match {
+      case Some(m) =>
+        val engineType = m.group(1).trim
+        logger.info(s"Get custom engine type: $engineType from script")
+        engineType
+      case None => null
+    }
   }
 
   def dealWithTemplateConf(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {

@@ -157,9 +157,21 @@ object EntranceUtils extends Logging {
 
   /**
    * 动态引擎类型选择
+   * @param sql
+   *   SQL statement
+   * @param logAppender
+   *   log appender
+   * @param forceEngineType
+   *   force engine type (optional), such as "starrocks"
+   * @return
+   *   engine type
    */
-  def getDynamicEngineType(sql: String, logAppender: java.lang.StringBuilder): String = {
-    val defaultEngineType = "spark"
+  def getDynamicEngineType(
+      sql: String,
+      logAppender: java.lang.StringBuilder,
+      forceEngineType: String = null
+  ): String = {
+    val defaultEngineType = if (forceEngineType != null) forceEngineType else "spark"
 
     if (!EntranceConfiguration.AI_SQL_DYNAMIC_ENGINE_SWITCH) {
       return defaultEngineType
@@ -171,6 +183,11 @@ object EntranceUtils extends Logging {
     params.put("sql", sql)
     params.put("highStability", "")
     params.put("queueResourceUsage", "")
+
+    // Add force engine type parameter if specified
+    if (forceEngineType != null && forceEngineType.nonEmpty) {
+      params.put("forceEngineType", forceEngineType)
+    }
 
     val request = DoctorRequest(
       apiUrl = EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL,

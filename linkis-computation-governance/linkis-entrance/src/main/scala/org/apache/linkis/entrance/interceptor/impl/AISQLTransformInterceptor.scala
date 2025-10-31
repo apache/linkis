@@ -52,6 +52,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
     val sqlLanguage: String = LANGUAGE_TYPE_AI_SQL
     val sparkEngineType: String = AI_SQL_DEFAULT_SPARK_ENGINE_TYPE
     val hiveEngineType: String = AI_SQL_DEFAULT_HIVE_ENGINE_TYPE
+    val starrocksEngineType: String = AISQL_DEFAULT_STARROCKS_ENGINE_TYPE
     val labels: util.List[Label[_]] = jobRequest.getLabels
     val codeType: String = LabelUtil.getCodeType(labels)
     // engineType and creator have been verified in LabelCheckInterceptor.
@@ -105,23 +106,73 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
         )
       } else {
         logger.info(s"start intelligent selection execution engine for ${jobRequest.getId}")
-        val engineType: String =
-          EntranceUtils.getDynamicEngineType(jobRequest.getExecutionCode, logAppender)
+
+        /**
+         * Check for StarRocks engine switch if feature is enabled Priority: runtime parameters >
+         * script comment > template configuration
+         */
+        var forceEngineType: String = null
+        if (AISQL_STARROCKS_SWITCH.getValue) {
+          // 1. Check runtime parameters
+          val runtimeEngineType = getRuntimeEngineType(jobRequest.getParams)
+
+          // 2. Check script comment
+          val scriptEngineType = if (runtimeEngineType == null) {
+            TemplateConfUtils.getCustomEngineType(
+              jobRequest.getExecutionCode,
+              org.apache.linkis.common.utils.CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+            )
+          } else null
+
+          // Determine final engine type
+          val targetEngineType = Option(runtimeEngineType)
+            .orElse(Option(scriptEngineType))
+            .orNull
+
+          // If StarRocks engine is specified
+          if ("starrocks".equalsIgnoreCase(targetEngineType)) {
+            // Check whitelist
+            val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
+            if (!isUserInStarRocksWhitelist(user)) {
+              logger.warn(
+                s"User $user is not in StarRocks whitelist for task ${jobRequest.getId}, using default engine selection"
+              )
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"User $user is not in StarRocks whitelist, using default engine selection\n"
+                )
+              )
+            } else {
+              forceEngineType = "starrocks"
+            }
+          }
+        }
+        val engineType: String = {
+          EntranceUtils.getDynamicEngineType(
+            jobRequest.getExecutionCode,
+            logAppender,
+            forceEngineType
+          )
+        }
         if ("hive".equals(engineType)) {
           changeEngineLabel(hiveEngineType, labels)
-          logAppender.append(
-            LogUtils.generateInfo(s"use $hiveEngineType by intelligent selection.\n")
-          )
           currentEngineType = hiveEngineType
+        } else if ("starrocks".equals(engineType)) {
+          changeEngineLabel(starrocksEngineType, labels)
+          currentEngineType = starrocksEngineType
+          // TODO add datasource name param
+          // 1.根据代理用户名称查询数据源
+          // 2.如果数据源存在则设置数据源名称到runtime参数，后续流程会根据数据源名称查询相关信息执行任务
+          // 3.如果数据源不存在或者发生异常则切换为hive引擎执行
         } else {
           changeEngineLabel(sparkEngineType, labels)
-          logAppender.append(
-            LogUtils.generateInfo(s"use $sparkEngineType by intelligent selection.\n")
-          )
           currentEngineType = sparkEngineType
         }
         logger.info(
           s"end intelligent selection execution engine, and engineType is ${currentEngineType} for ${jobRequest.getId}."
+        )
+        logAppender.append(
+          LogUtils.generateInfo(s"use $currentEngineType by intelligent selection.\n")
         )
         EntranceUtils.dealsparkDynamicConf(jobRequest, logAppender, jobRequest.getParams)
       }
@@ -177,6 +228,66 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
     newEngineTypeLabel.setEngineType(sparkEngineType.split("-")(0))
     newEngineTypeLabel.setVersion(sparkEngineType.split("-")(1))
     labels.add(newEngineTypeLabel)
+  }
+
+  /**
+   * Get engine type from runtime parameters
+   * @param params
+   *   job request parameters
+   * @return
+   *   engine type, such as "starrocks", null if not found
+   */
+  private def getRuntimeEngineType(params: util.Map[String, AnyRef]): String = {
+    if (params == null) return null
+
+    val runtimeParams = TaskUtils.getRuntimeMap(params)
+    if (runtimeParams == null) return null
+
+    val engineType = runtimeParams.get(TemplateConfUtils.confEngineTypeKey)
+    if (engineType != null) engineType.toString else null
+  }
+
+  /**
+   * Check if user is in StarRocks whitelist
+   * @param submitUser
+   *   the user who submits the task
+   * @return
+   *   true if user is in whitelist or whitelist is empty (allow all users), false otherwise
+   */
+  private def isUserInStarRocksWhitelist(submitUser: String): Boolean = {
+    val whitelistUsers = AISQL_STARROCKS_WHITELIST_USERS.getValue
+    val whitelistDepartments = AISQL_STARROCKS_WHITELIST_DEPARTMENTS.getValue
+
+    // If both whitelists are empty, allow all users
+    if (StringUtils.isBlank(whitelistUsers) && StringUtils.isBlank(whitelistDepartments)) {
+      return true
+    }
+
+    // Check user whitelist
+    if (StringUtils.isNotBlank(whitelistUsers)) {
+      val users = whitelistUsers.split(",").map(_.trim)
+      if (users.contains(submitUser)) {
+        logger.info(s"User $submitUser is in StarRocks whitelist (user)")
+        return false
+      }
+    }
+
+    // Check department whitelist
+    if (StringUtils.isNotBlank(whitelistDepartments)) {
+      val userDepartmentId = EntranceUtils.getUserDepartmentId(submitUser)
+      if (StringUtils.isNotBlank(userDepartmentId)) {
+        val departments = whitelistDepartments.split(",").map(_.trim)
+        if (departments.contains(userDepartmentId)) {
+          logger.info(
+            s"User $submitUser (department: $userDepartmentId) is in StarRocks whitelist (department)"
+          )
+          return true
+        }
+      }
+    }
+
+    logger.warn(s"User $submitUser is not in StarRocks whitelist")
+    false
   }
 
 }

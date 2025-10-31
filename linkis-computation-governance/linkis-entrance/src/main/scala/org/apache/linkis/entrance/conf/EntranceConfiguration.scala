@@ -320,7 +320,7 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.ai.sql.hive.template.keys", "hive,mapreduce").getValue
 
   val AI_SQL_CREATORS: String =
-    CommonVars[String]("linkis.ai.sql.support.creators", "IDE,MCP").getValue
+    CommonVars[String]("linkis.ai.sql.support.creators", "IDE,MCP,nodeexecution").getValue
 
   val AI_SQL_KEY: CommonVars[String] =
     CommonVars[String]("linkis.ai.sql.enable", "true")

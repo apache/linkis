@@ -146,11 +146,13 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
           JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
     }
     if (logger.isDebugEnabled()) {
-      try {
-        logger.debug("jobReq:" + JsonUtils.jackson().writeValueAsString(jobReq));
-      } catch (JsonProcessingException e) {
-        logger.debug("convert jobReq to string with error:" + e.getMessage());
-      }
+      logger.debug(
+          "Persisting job request - id: {}, reqId: {}, submitUser: {}, executeUser: {}, status: {}",
+          jobReq.getId(),
+          jobReq.getReqId(),
+          jobReq.getSubmitUser(),
+          jobReq.getExecuteUser(),
+          jobReq.getStatus());
     }
 
     JobReqInsert jobReqInsert = new JobReqInsert(jobReq);

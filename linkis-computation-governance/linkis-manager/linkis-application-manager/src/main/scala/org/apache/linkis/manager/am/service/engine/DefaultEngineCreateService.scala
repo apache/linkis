@@ -236,10 +236,10 @@ class DefaultEngineCreateService
 
     val engineNode = Utils.tryCatch(getEMService().createEngine(engineBuildRequest, emNode)) {
       case t: Throwable =>
-        logger.info(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
+        logger.warn(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
         val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
         if (null == failedEcNode) {
-          logger.info(s" engineConn does not exist in db: $oldServiceInstance ")
+          logger.warn(s" engineConn does not exist in db: $oldServiceInstance ")
         } else {
           failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
           failedEcNode.getLabels.addAll(

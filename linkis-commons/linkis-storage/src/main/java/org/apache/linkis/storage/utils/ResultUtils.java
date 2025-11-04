@@ -327,9 +327,6 @@ public class ResultUtils {
 
     // Iterate through data rows
     for (int rowIndex = 0; rowIndex < dataList.size(); rowIndex++) {
-      if (oversizedFields.size() >= maxCount) {
-        break; // Stop if we've collected enough
-      }
 
       ArrayList<String> row = dataList.get(rowIndex);
       if (row == null) {
@@ -338,9 +335,6 @@ public class ResultUtils {
 
       // Check each field in the row
       for (int colIndex = 0; colIndex < row.size() && colIndex < metadata.size(); colIndex++) {
-        if (oversizedFields.size() >= maxCount) {
-          break;
-        }
 
         String fieldValue = row.get(colIndex);
         int fieldLength = getFieldLength(fieldValue);

@@ -787,6 +787,9 @@ public class FsRestfulApi {
             // 不执行字段屏蔽也不执行字段截取
             message.data("metadata", resultmap).data("fileContent", result.getSecond());
           }
+        } else {
+          // 不执行字段屏蔽也不执行字段截取
+          message.data("metadata", resultmap).data("fileContent", result.getSecond());
         }
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("totalLine", fileSource.getTotalLine());
@@ -1036,14 +1039,14 @@ public class FsRestfulApi {
           && truncateColumnSwitch) {
         // 同时执行字段屏蔽和字段截取
         ResultUtils.applyFieldMaskingAndTruncation(
-            maskedFieldNames, fsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH());
+            maskedFieldNames, fsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
       } else if (StringUtils.isNotBlank(maskedFieldNames)) {
         // 只执行字段屏蔽
         ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
       } else if (FIELD_TRUNCATION_ENABLED.getValue() && truncateColumnSwitch) {
         // 只执行字段截取
         ResultUtils.detectAndHandle(
-            fsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH());
+            fsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
       } else {
         // Original stream write logic
         fileSource.write(fsWriter);

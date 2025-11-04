@@ -21,6 +21,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.conf.EntranceConfiguration._
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
@@ -158,12 +159,43 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
           changeEngineLabel(hiveEngineType, labels)
           currentEngineType = hiveEngineType
         } else if ("starrocks".equals(engineType)) {
-          changeEngineLabel(starrocksEngineType, labels)
-          currentEngineType = starrocksEngineType
-          // TODO add datasource name param
-          // 1.根据代理用户名称查询数据源
-          // 2.如果数据源存在则设置数据源名称到runtime参数，后续流程会根据数据源名称查询相关信息执行任务
-          // 3.如果数据源不存在或者发生异常则切换为hive引擎执行
+
+          Utils.tryCatch {
+            val dataSource: DataSource = EntranceUtils.getDatasourceByDatasourceTypeAndUser(
+              "starrocks",
+              jobRequest.getSubmitUser,
+              jobRequest.getExecuteUser
+            )
+            if (dataSource != null) {
+              val dsParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
+              dsParams.put("wds.linkis.engine.runtime.datasource", dataSource.getDataSourceName)
+              TaskUtils.addRuntimeMap(TaskUtils.getRuntimeMap(jobRequest.getParams), dsParams)
+              changeEngineLabel(starrocksEngineType, labels)
+              currentEngineType = starrocksEngineType
+            } else {
+              // use hive for datasource not exists
+              changeEngineLabel(hiveEngineType, labels)
+              currentEngineType = hiveEngineType
+              logger.warn(
+                s"Failed to select starrocks engine, for user ${jobRequest.getExecuteUser} datasource not exists."
+              )
+              logAppender.append(
+                LogUtils.generateInfo(
+                  s"Failed to select starrocks engine, ${jobRequest.getExecuteUser} datasource does not exist. now use $currentEngineType"
+                )
+              )
+            }
+          } { t =>
+            // use hive for exception
+            changeEngineLabel(hiveEngineType, labels)
+            currentEngineType = hiveEngineType
+            logger.warn("Failed to select starrocks engine: ", t)
+            logAppender.append(
+              LogUtils.generateInfo(
+                s"Failed to select starrocks engine, service exception. now use $currentEngineType"
+              )
+            )
+          }
         } else {
           changeEngineLabel(sparkEngineType, labels)
           currentEngineType = sparkEngineType

@@ -19,7 +19,6 @@ package org.apache.linkis.entrance.persistence;
 
 import org.apache.linkis.common.conf.Configuration$;
 import org.apache.linkis.common.exception.ErrorException;
-import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.exception.EntranceRPCException;
@@ -47,7 +46,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1121,6 +1121,46 @@ public class DataSourceCoreRestfulApi {
         },
         "Fail to get all types of data source[获取数据源列表失败]");
   }
+
+  @ApiOperation(
+      value = "getPublishedDataSourceByType",
+      notes = "get published data source by type and proxy user",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "dataSourceType", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "proxyUser", required = true, dataType = "String")
+  })
+  @RequestMapping(value = "/published/type", method = RequestMethod.GET)
+  public Message getPublishedDataSourceByType(
+      @RequestParam("dataSourceType") String dataSourceType,
+      @RequestParam("proxyUser") String proxyUser,
+      HttpServletRequest request) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String userName =
+              ModuleUserUtils.getOperationUser(request, "getPublishedDataSourceByType");
+          DataSource dataSource =
+              dataSourceInfoService.getPublishedDataSourceByType(dataSourceType, proxyUser);
+          if (dataSource == null) {
+            return Message.error(
+                "No published data source found for type: "
+                    + dataSourceType
+                    + " and proxy user: "
+                    + proxyUser);
+          }
+          if (!AuthContext.hasPermission(dataSource, userName)) {
+            return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
+          }
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+          // Decrypt
+          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
+          }
+          return Message.ok().data("info", dataSource);
+        },
+        "Fail to get published data source[获取已发布数据源信息失败]");
+  }
   /**
    * Inner method to insert data source
    *

@@ -221,6 +221,7 @@ object EntranceUtils extends Logging {
           .builder()
           .setDataSourceType(dataSourceType)
           .setUser(user)
+          .setSystem("Linkis")
           .setProxyUser(proxyUser)
           .build()
       )

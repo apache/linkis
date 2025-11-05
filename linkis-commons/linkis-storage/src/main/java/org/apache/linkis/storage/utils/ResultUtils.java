@@ -168,26 +168,32 @@ public class ResultUtils {
             .collect(Collectors.toSet());
 
     // Collect data from file source
-    Pair<Object, ArrayList<String[]>> collectedData = fileSource.collect()[0];
-    Object metadata = collectedData.getFirst();
-    ArrayList<String[]> content = collectedData.getSecond();
+    Pair<Object, ArrayList<String[]>>[] collectedData = fileSource.collect();
 
-    // Filter metadata and content
-    Map[] filteredMetadata = filterMaskedFieldsFromMetadata(metadata, maskedFieldsSet);
-    List<String[]> filteredContent = removeFieldsFromContent(metadata, content, maskedFieldsSet);
+    // Process each result set
+    for (int i = 0; i < collectedData.length; i++) {
+      Pair<Object, ArrayList<String[]>> collectedDataSet = collectedData[i];
+      Object metadata = collectedDataSet.getFirst();
+      ArrayList<String[]> content = collectedDataSet.getSecond();
 
-    // Convert Map[] to TableMetaData
-    TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
+      // Filter metadata and content
+      Map[] filteredMetadata = filterMaskedFieldsFromMetadata(metadata, maskedFieldsSet);
+      List<String[]> filteredContent = removeFieldsFromContent(metadata, content, maskedFieldsSet);
 
-    // Write filtered data
-    fsWriter.addMetaData(tableMetaData);
-    for (String[] row : filteredContent) {
-      fsWriter.addRecord(new TableRecord(row));
+      // Convert Map[] to TableMetaData
+      TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
+
+      // Write filtered data
+      fsWriter.addMetaData(tableMetaData);
+      for (String[] row : filteredContent) {
+        fsWriter.addRecord(new TableRecord(row));
+      }
+      LOGGER.info(
+          "Field masking applied for result set {}. Original columns: {}, Filtered columns: {}",
+          i,
+          ((Map[]) metadata).length,
+          filteredMetadata.length);
     }
-    LOGGER.info(
-        "Field masking applied. Original columns: {}, Filtered columns: {}",
-        ((Map[]) metadata).length,
-        filteredMetadata.length);
   }
 
   /**
@@ -247,63 +253,68 @@ public class ResultUtils {
   public static void detectAndHandle(
       FsWriter<?, ?> fsWriter, FileSource fileSource, Integer maxLength) throws IOException {
     // Collect data from file source
-    Pair<Object, ArrayList<String[]>> collectedData = fileSource.collect()[0];
+    Pair<Object, ArrayList<String[]>>[] collectedData = fileSource.collect();
 
-    Object metadata = collectedData.getFirst();
+    // Process each result set
+    for (int i = 0; i < collectedData.length; i++) {
+      Pair<Object, ArrayList<String[]>> collectedDataSet = collectedData[i];
+      Object metadata = collectedDataSet.getFirst();
+      ArrayList<String[]> content = collectedDataSet.getSecond();
 
-    ArrayList<String[]> content = collectedData.getSecond();
+      FieldTruncationResult fieldTruncationResult =
+          detectAndHandle(metadata, content, maxLength, true);
 
-    FieldTruncationResult fieldTruncationResult =
-        detectAndHandle(metadata, content, maxLength, true);
+      List<String[]> data = fieldTruncationResult.getData();
 
-    List<String[]> data = fieldTruncationResult.getData();
+      // Convert Map[] to TableMetaData and add truncation markers for oversized fields
+      TableMetaData tableMetaData =
+          convertMapArrayToTableMetaData((Map<String, Object>[]) metadata);
 
-    // Convert Map[] to TableMetaData and add truncation markers for oversized fields
-    TableMetaData tableMetaData = convertMapArrayToTableMetaData((Map<String, Object>[]) metadata);
+      // If there are oversized fields, add markers to column names in the metadata
+      if (fieldTruncationResult.isHasOversizedFields()
+          && fieldTruncationResult.getOversizedFields() != null) {
+        // Create a set of oversized field names for quick lookup
+        Set<String> oversizedFieldNames =
+            fieldTruncationResult.getOversizedFields().stream()
+                .map(OversizedFieldInfo::getFieldName)
+                .collect(Collectors.toSet());
 
-    // If there are oversized fields, add markers to column names in the metadata
-    if (fieldTruncationResult.isHasOversizedFields()
-        && fieldTruncationResult.getOversizedFields() != null) {
-      // Create a set of oversized field names for quick lookup
-      Set<String> oversizedFieldNames =
-          fieldTruncationResult.getOversizedFields().stream()
-              .map(OversizedFieldInfo::getFieldName)
-              .collect(Collectors.toSet());
+        // Create a map to store max length for each oversized field
+        Map<String, Integer> fieldMaxLengthMap =
+            fieldTruncationResult.getOversizedFields().stream()
+                .collect(
+                    Collectors.toMap(
+                        OversizedFieldInfo::getFieldName,
+                        OversizedFieldInfo::getMaxLength,
+                        (existing, replacement) ->
+                            existing > replacement ? existing : replacement));
 
-      // Create a map to store max length for each oversized field
-      Map<String, Integer> fieldMaxLengthMap =
-          fieldTruncationResult.getOversizedFields().stream()
-              .collect(
-                  Collectors.toMap(
-                      OversizedFieldInfo::getFieldName,
-                      OversizedFieldInfo::getMaxLength,
-                      (existing, replacement) -> existing > replacement ? existing : replacement));
-
-      // Update column names to indicate truncation with max length
-      org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
-      for (int i = 0; i < columns.length; i++) {
-        if (oversizedFieldNames.contains(columns[i].columnName())) {
-          // Get the max length for this field
-          String truncatedInfo =
-              maxLength != null ? "(truncated to " + maxLength + " chars)" : "(truncated)";
-          // Create a new column with truncation info suffix to indicate truncation
-          columns[i] =
-              new org.apache.linkis.storage.domain.Column(
-                  columns[i].columnName() + truncatedInfo,
-                  columns[i].dataType(),
-                  columns[i].comment());
+        // Update column names to indicate truncation with max length
+        org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
+        for (int j = 0; j < columns.length; j++) {
+          if (oversizedFieldNames.contains(columns[j].columnName())) {
+            // Get the max length for this field
+            String truncatedInfo =
+                maxLength != null ? "(truncated to " + maxLength + " chars)" : "(truncated)";
+            // Create a new column with truncation info suffix to indicate truncation
+            columns[j] =
+                new org.apache.linkis.storage.domain.Column(
+                    columns[j].columnName() + truncatedInfo,
+                    columns[j].dataType(),
+                    columns[j].comment());
+          }
         }
+
+        // Create new TableMetaData with updated column names
+        tableMetaData = new TableMetaData(columns);
       }
 
-      // Create new TableMetaData with updated column names
-      tableMetaData = new TableMetaData(columns);
-    }
+      // Write filtered data
+      fsWriter.addMetaData(tableMetaData);
 
-    // Write filtered data
-    fsWriter.addMetaData(tableMetaData);
-
-    for (String[] row : data) {
-      fsWriter.addRecord(new TableRecord(row));
+      for (String[] row : data) {
+        fsWriter.addRecord(new TableRecord(row));
+      }
     }
   }
 
@@ -434,75 +445,82 @@ public class ResultUtils {
 
     LOGGER.info("Applying both field masking and truncation");
     // First collect data from file source
-    Pair<Object, ArrayList<String[]>> collectedData = fileSource.collect()[0];
-    Object metadata = collectedData.getFirst();
-    ArrayList<String[]> content = collectedData.getSecond();
+    Pair<Object, ArrayList<String[]>>[] collectedData = fileSource.collect();
 
-    // Apply field masking
-    Set<String> maskedFieldsSet =
-        Arrays.stream(maskedFieldNames.split(","))
-            .map(String::trim)
-            .map(String::toLowerCase)
-            .filter(StringUtils::isNotBlank)
-            .collect(Collectors.toSet());
+    // Process each result set
+    for (int i = 0; i < collectedData.length; i++) {
+      Pair<Object, ArrayList<String[]>> collectedDataSet = collectedData[i];
+      Object metadata = collectedDataSet.getFirst();
+      ArrayList<String[]> content = collectedDataSet.getSecond();
 
-    Map[] filteredMetadata = filterMaskedFieldsFromMetadata(metadata, maskedFieldsSet);
-    List<String[]> filteredContent = removeFieldsFromContent(metadata, content, maskedFieldsSet);
-
-    // Then apply field truncation
-    FieldTruncationResult fieldTruncationResult =
-        detectAndHandle(filteredMetadata, filteredContent, maxLength, true);
-    List<String[]> finalData = fieldTruncationResult.getData();
-
-    // Write data
-    TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
-
-    // If there are oversized fields, add markers to column names in the metadata
-    if (fieldTruncationResult.isHasOversizedFields()
-        && fieldTruncationResult.getOversizedFields() != null) {
-      // Create a set of oversized field names for quick lookup
-      Set<String> oversizedFieldNames =
-          fieldTruncationResult.getOversizedFields().stream()
-              .map(OversizedFieldInfo::getFieldName)
+      // Apply field masking
+      Set<String> maskedFieldsSet =
+          Arrays.stream(maskedFieldNames.split(","))
+              .map(String::trim)
+              .map(String::toLowerCase)
+              .filter(StringUtils::isNotBlank)
               .collect(Collectors.toSet());
 
-      // Create a map to store max length for each oversized field
-      Map<String, Integer> fieldMaxLengthMap =
-          fieldTruncationResult.getOversizedFields().stream()
-              .collect(
-                  Collectors.toMap(
-                      OversizedFieldInfo::getFieldName,
-                      OversizedFieldInfo::getMaxLength,
-                      (existing, replacement) -> existing > replacement ? existing : replacement));
+      Map[] filteredMetadata = filterMaskedFieldsFromMetadata(metadata, maskedFieldsSet);
+      List<String[]> filteredContent = removeFieldsFromContent(metadata, content, maskedFieldsSet);
 
-      // Update column names to indicate truncation with max length
-      org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
-      for (int i = 0; i < columns.length; i++) {
-        if (oversizedFieldNames.contains(columns[i].columnName())) {
-          // Get the max length for this field
-          String truncatedInfo =
-              maxLength != null ? "(truncated to " + maxLength + " chars)" : "(truncated)";
-          // Create a new column with truncation info suffix to indicate truncation
-          columns[i] =
-              new org.apache.linkis.storage.domain.Column(
-                  columns[i].columnName() + truncatedInfo,
-                  columns[i].dataType(),
-                  columns[i].comment());
+      // Then apply field truncation
+      FieldTruncationResult fieldTruncationResult =
+          detectAndHandle(filteredMetadata, filteredContent, maxLength, true);
+      List<String[]> finalData = fieldTruncationResult.getData();
+
+      // Write data
+      TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
+
+      // If there are oversized fields, add markers to column names in the metadata
+      if (fieldTruncationResult.isHasOversizedFields()
+          && fieldTruncationResult.getOversizedFields() != null) {
+        // Create a set of oversized field names for quick lookup
+        Set<String> oversizedFieldNames =
+            fieldTruncationResult.getOversizedFields().stream()
+                .map(OversizedFieldInfo::getFieldName)
+                .collect(Collectors.toSet());
+
+        // Create a map to store max length for each oversized field
+        Map<String, Integer> fieldMaxLengthMap =
+            fieldTruncationResult.getOversizedFields().stream()
+                .collect(
+                    Collectors.toMap(
+                        OversizedFieldInfo::getFieldName,
+                        OversizedFieldInfo::getMaxLength,
+                        (existing, replacement) ->
+                            existing > replacement ? existing : replacement));
+
+        // Update column names to indicate truncation with max length
+        org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
+        for (int j = 0; j < columns.length; j++) {
+          if (oversizedFieldNames.contains(columns[j].columnName())) {
+            // Get the max length for this field
+            String truncatedInfo =
+                maxLength != null ? "(truncated to " + maxLength + " chars)" : "(truncated)";
+            // Create a new column with truncation info suffix to indicate truncation
+            columns[j] =
+                new org.apache.linkis.storage.domain.Column(
+                    columns[j].columnName() + truncatedInfo,
+                    columns[j].dataType(),
+                    columns[j].comment());
+          }
         }
+
+        // Create new TableMetaData with updated column names
+        tableMetaData = new TableMetaData(columns);
       }
 
-      // Create new TableMetaData with updated column names
-      tableMetaData = new TableMetaData(columns);
+      fsWriter.addMetaData(tableMetaData);
+      for (String[] row : finalData) {
+        fsWriter.addRecord(new TableRecord(row));
+      }
+      LOGGER.info(
+          "Field masking and truncation applied for result set {}. Original columns: {}, Filtered columns: {}, Truncated fields: {}",
+          i,
+          ((Map[]) metadata).length,
+          filteredMetadata.length,
+          fieldTruncationResult.getOversizedFields().size());
     }
-
-    fsWriter.addMetaData(tableMetaData);
-    for (String[] row : finalData) {
-      fsWriter.addRecord(new TableRecord(row));
-    }
-    LOGGER.info(
-        "Field masking and truncation applied. Original columns: {}, Filtered columns: {}, Truncated fields: {}",
-        ((Map[]) metadata).length,
-        filteredMetadata.length,
-        fieldTruncationResult.getOversizedFields().size());
   }
 }

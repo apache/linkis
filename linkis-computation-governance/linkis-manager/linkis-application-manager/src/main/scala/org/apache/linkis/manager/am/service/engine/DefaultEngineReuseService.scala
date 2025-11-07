@@ -383,20 +383,27 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           .toJson(engine) + " from engineLabelMap : " + AMUtils.GSON.toJson(instances)
       )
     }
-    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
-      val engineNode =
-        ecResourceInfoService.getECResourceInfoRecordByInstance(
-          engine.getServiceInstance.getInstance
-        )
-      // 异步更新 metrics
-      AMUtils.updateMetricsAsync(
-        taskId,
-        engineNode.getTicketId,
-        engineNode.getServiceInstance,
-        engineNode.getEcmInstance,
-        engineNode.getLogDirSuffix,
-        isReuse = true
-      )
+    Utils.tryCatch {
+      if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+        val engineNode =
+          ecResourceInfoService.getECResourceInfoRecordByInstance(
+            engine.getServiceInstance.getInstance
+          )
+        if (null != engineNode) {
+          // 异步更新 metrics
+          AMUtils.updateMetricsAsync(
+            taskId,
+            engineNode.getTicketId,
+            engineNode.getServiceInstance,
+            engineNode.getEcmInstance,
+            engineNode.getLogDirSuffix,
+            isReuse = true
+          )
+        }
+
+      }
+    } { case e: Exception =>
+      logger.error(s"Failed to update metrics for taskId: $taskId, engineInstance: ${engine.getServiceInstance.getInstance}", e)
     }
     engine
   }

@@ -29,7 +29,7 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.conf.LinkisStorageConf.FIELD_TRUNCATION_ENABLED
-import org.apache.linkis.storage.excel.{ExcelFsWriter, StorageMultiExcelWriter}
+import org.apache.linkis.storage.excel.{ExcelFsWriter, StorageExcelWriter, StorageMultiExcelWriter}
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.source.FileSource
 import org.apache.linkis.storage.utils.ResultUtils
@@ -119,7 +119,7 @@ class ExcelExecutor extends PipeLineExecutor with Logging {
           // 同时执行字段屏蔽和字段截取
           ResultUtils.applyFieldMaskingAndTruncation(
             maskedFieldNames,
-            excelFsWriter,
+            excelFsWriter.asInstanceOf[StorageExcelWriter],
             fileSource,
             LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH
           )
@@ -129,7 +129,7 @@ class ExcelExecutor extends PipeLineExecutor with Logging {
         } else if (FIELD_TRUNCATION_ENABLED) {
           // 只执行字段截取
           ResultUtils.detectAndHandle(
-            excelFsWriter,
+            excelFsWriter.asInstanceOf[StorageExcelWriter],
             fileSource,
             LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH
           )

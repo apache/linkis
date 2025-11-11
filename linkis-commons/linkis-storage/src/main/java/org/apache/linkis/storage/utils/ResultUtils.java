@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.entity.FieldTruncationResult;
 import org.apache.linkis.storage.entity.OversizedFieldInfo;
+import org.apache.linkis.storage.excel.StorageExcelWriter;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.source.FileSource;
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -251,7 +253,7 @@ public class ResultUtils {
   }
 
   public static void detectAndHandle(
-      FsWriter<?, ?> fsWriter, FileSource fileSource, Integer maxLength) throws IOException {
+      StorageExcelWriter fsWriter, FileSource fileSource, Integer maxLength) throws IOException {
     // Collect data from file source
     Pair<Object, ArrayList<String[]>>[] collectedData = fileSource.collect();
 
@@ -269,26 +271,14 @@ public class ResultUtils {
       // Convert Map[] to TableMetaData and add truncation markers for oversized fields
       TableMetaData tableMetaData =
           convertMapArrayToTableMetaData((Map<String, Object>[]) metadata);
-
+      // Create a set of oversized field names for quick lookup
+      Set<String> oversizedFieldNames =
+          fieldTruncationResult.getOversizedFields().stream()
+              .map(OversizedFieldInfo::getFieldName)
+              .collect(Collectors.toSet());
       // If there are oversized fields, add markers to column names in the metadata
       if (fieldTruncationResult.isHasOversizedFields()
           && fieldTruncationResult.getOversizedFields() != null) {
-        // Create a set of oversized field names for quick lookup
-        Set<String> oversizedFieldNames =
-            fieldTruncationResult.getOversizedFields().stream()
-                .map(OversizedFieldInfo::getFieldName)
-                .collect(Collectors.toSet());
-
-        // Create a map to store max length for each oversized field
-        Map<String, Integer> fieldMaxLengthMap =
-            fieldTruncationResult.getOversizedFields().stream()
-                .collect(
-                    Collectors.toMap(
-                        OversizedFieldInfo::getFieldName,
-                        OversizedFieldInfo::getMaxLength,
-                        (existing, replacement) ->
-                            existing > replacement ? existing : replacement));
-
         // Update column names to indicate truncation with max length
         org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
         for (int j = 0; j < columns.length; j++) {
@@ -308,10 +298,18 @@ public class ResultUtils {
         // Create new TableMetaData with updated column names
         tableMetaData = new TableMetaData(columns);
       }
-
       // Write filtered data
-      fsWriter.addMetaData(tableMetaData);
-
+      if (oversizedFieldNames.isEmpty()) {
+        fsWriter.addMetaData(tableMetaData);
+      } else {
+        StringJoiner joiner = new StringJoiner(",");
+        oversizedFieldNames.forEach(joiner::add);
+        String note =
+            MessageFormat.format(
+                "结果集存在字段值超过{0}字符，无法全量下载，以下字段截取前{0}字符展示：{1}",
+                LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH(), joiner);
+        fsWriter.addMetaDataWithNote(tableMetaData, note);
+      }
       for (String[] row : data) {
         fsWriter.addRecord(new TableRecord(row));
       }
@@ -336,6 +334,9 @@ public class ResultUtils {
       return oversizedFields;
     }
 
+    // 使用Set来存储已经检查过的超长字段名，避免重复检查
+    Set<String> detectedOversizedFields = new HashSet<>();
+
     // Iterate through data rows
     for (int rowIndex = 0; rowIndex < dataList.size(); rowIndex++) {
 
@@ -347,12 +348,20 @@ public class ResultUtils {
       // Check each field in the row
       for (int colIndex = 0; colIndex < row.size() && colIndex < metadata.size(); colIndex++) {
 
+        String fieldName = metadata.get(colIndex);
+
+        // 如果该字段已经被检测为超长字段，则跳过检查，提高效率
+        if (detectedOversizedFields.contains(fieldName)) {
+          continue;
+        }
+
         String fieldValue = row.get(colIndex);
         int fieldLength = getFieldLength(fieldValue);
 
         if (fieldLength > maxLength) {
-          String fieldName = metadata.get(colIndex);
           oversizedFields.add(new OversizedFieldInfo(fieldName, rowIndex, fieldLength, maxLength));
+          // 将超长字段名加入Set，避免重复检查
+          detectedOversizedFields.add(fieldName);
           LOGGER.info(
               "Detected oversized field: field={}, row={}, actualLength={}, maxLength={}",
               fieldName,
@@ -440,7 +449,10 @@ public class ResultUtils {
    * @throws IOException
    */
   public static void applyFieldMaskingAndTruncation(
-      String maskedFieldNames, FsWriter<?, ?> fsWriter, FileSource fileSource, Integer maxLength)
+      String maskedFieldNames,
+      StorageExcelWriter fsWriter,
+      FileSource fileSource,
+      Integer maxLength)
       throws IOException {
 
     LOGGER.info("Applying both field masking and truncation");
@@ -471,26 +483,14 @@ public class ResultUtils {
 
       // Write data
       TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
-
+      // Create a set of oversized field names for quick lookup
+      Set<String> oversizedFieldNames =
+          fieldTruncationResult.getOversizedFields().stream()
+              .map(OversizedFieldInfo::getFieldName)
+              .collect(Collectors.toSet());
       // If there are oversized fields, add markers to column names in the metadata
       if (fieldTruncationResult.isHasOversizedFields()
           && fieldTruncationResult.getOversizedFields() != null) {
-        // Create a set of oversized field names for quick lookup
-        Set<String> oversizedFieldNames =
-            fieldTruncationResult.getOversizedFields().stream()
-                .map(OversizedFieldInfo::getFieldName)
-                .collect(Collectors.toSet());
-
-        // Create a map to store max length for each oversized field
-        Map<String, Integer> fieldMaxLengthMap =
-            fieldTruncationResult.getOversizedFields().stream()
-                .collect(
-                    Collectors.toMap(
-                        OversizedFieldInfo::getFieldName,
-                        OversizedFieldInfo::getMaxLength,
-                        (existing, replacement) ->
-                            existing > replacement ? existing : replacement));
-
         // Update column names to indicate truncation with max length
         org.apache.linkis.storage.domain.Column[] columns = tableMetaData.columns();
         for (int j = 0; j < columns.length; j++) {
@@ -510,8 +510,17 @@ public class ResultUtils {
         // Create new TableMetaData with updated column names
         tableMetaData = new TableMetaData(columns);
       }
-
-      fsWriter.addMetaData(tableMetaData);
+      if (oversizedFieldNames.isEmpty()) {
+        fsWriter.addMetaData(tableMetaData);
+      } else {
+        StringJoiner joiner = new StringJoiner(",");
+        oversizedFieldNames.forEach(joiner::add);
+        String note =
+            MessageFormat.format(
+                "结果集存在字段值超过{0}字符，无法全量下载，以下字段截取前{0}字符展示：{1}",
+                LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH(), joiner);
+        fsWriter.addMetaDataWithNote(tableMetaData, note);
+      }
       for (String[] row : finalData) {
         fsWriter.addRecord(new TableRecord(row));
       }

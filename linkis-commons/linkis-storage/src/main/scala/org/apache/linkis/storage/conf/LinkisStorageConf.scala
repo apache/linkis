@@ -89,7 +89,7 @@ object LinkisStorageConf {
   val FIELD_VIEW_MAX_LENGTH = CommonVars("linkis.resultset.field.view.max.length", 10000).getValue
 
   val FIELD_EXPORT_DOWNLOAD_LENGTH =
-    CommonVars("linkis.resultset.field.download.max.length", 10000).getValue
+    CommonVars("linkis.resultset.field.download.max.length", 32767).getValue
 
   val FIELD_EXPORT_MAX_LENGTH =
     CommonVars("linkis.resultset.field.export.max.length", 32767).getValue

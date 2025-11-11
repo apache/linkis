@@ -169,7 +169,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
             if (dataSource != null) {
               val dsParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
               dsParams.put("wds.linkis.engine.runtime.datasource", dataSource.getDataSourceName)
-              TaskUtils.addRuntimeMap(TaskUtils.getRuntimeMap(jobRequest.getParams), dsParams)
+              TaskUtils.addRuntimeMap(jobRequest.getParams, dsParams)
               changeEngineLabel(starrocksEngineType, labels)
               currentEngineType = starrocksEngineType
             } else {

@@ -103,7 +103,6 @@
   </distributionManagement>
   <properties>
     <revision>1.17.0-wds</revision>
-    <bes.version>9.5.5.0141</bes.version>
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>

@@ -172,6 +172,11 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
               TaskUtils.addRuntimeMap(jobRequest.getParams, dsParams)
               changeEngineLabel(starrocksEngineType, labels)
               currentEngineType = starrocksEngineType
+              logAppender.append(
+                LogUtils.generateInfo(
+                  s"use starrocks engine with datasource name : ${dataSource.getDataSourceName}"
+                )
+              )
             } else {
               // use hive for datasource not exists
               changeEngineLabel(hiveEngineType, labels)

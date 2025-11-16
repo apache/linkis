@@ -51,6 +51,11 @@
       <artifactId>kafka-clients</artifactId>
       <version>3.9.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

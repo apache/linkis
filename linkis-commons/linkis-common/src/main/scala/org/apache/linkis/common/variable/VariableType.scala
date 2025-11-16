@@ -111,6 +111,7 @@ case class YearType(value: CustomYearType) extends VariableType {
 }
 
 case class BigDecimalValue(value: BigDecimal) extends VariableType {
+
   override def getValue: String = {
     val result = bigDecimalOrLong(value)
     result match {
@@ -126,7 +127,10 @@ case class BigDecimalValue(value: BigDecimal) extends VariableType {
       case "*" => val res = value * BigDecimal(bValue); formatResult(res)
       case "/" => val res = value / BigDecimal(bValue); formatResult(res)
       case _ =>
-        throw new LinkisCommonErrorException(20050, s"BigDecimal class is not supported to use:$signal")
+        throw new LinkisCommonErrorException(
+          20050,
+          s"BigDecimal class is not supported to use:$signal"
+        )
     }
   }
 
@@ -146,6 +150,7 @@ case class BigDecimalValue(value: BigDecimal) extends VariableType {
       bd
     }
   }
+
 }
 
 case class LongType(value: Long) extends VariableType {

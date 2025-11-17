@@ -272,10 +272,11 @@ public class ResultUtils {
       TableMetaData tableMetaData =
           convertMapArrayToTableMetaData((Map<String, Object>[]) metadata);
       // Create a set of oversized field names for quick lookup
-      Set<String> oversizedFieldNames =
+      List<String> oversizedFieldNames =
           fieldTruncationResult.getOversizedFields().stream()
               .map(OversizedFieldInfo::getFieldName)
-              .collect(Collectors.toSet());
+              .distinct()
+              .collect(Collectors.toList());
       // If there are oversized fields, add markers to column names in the metadata
       if (fieldTruncationResult.isHasOversizedFields()
           && fieldTruncationResult.getOversizedFields() != null) {
@@ -484,10 +485,11 @@ public class ResultUtils {
       // Write data
       TableMetaData tableMetaData = convertMapArrayToTableMetaData(filteredMetadata);
       // Create a set of oversized field names for quick lookup
-      Set<String> oversizedFieldNames =
+      List<String> oversizedFieldNames =
           fieldTruncationResult.getOversizedFields().stream()
               .map(OversizedFieldInfo::getFieldName)
-              .collect(Collectors.toSet());
+              .distinct()
+              .collect(Collectors.toList());
       // If there are oversized fields, add markers to column names in the metadata
       if (fieldTruncationResult.isHasOversizedFields()
           && fieldTruncationResult.getOversizedFields() != null) {

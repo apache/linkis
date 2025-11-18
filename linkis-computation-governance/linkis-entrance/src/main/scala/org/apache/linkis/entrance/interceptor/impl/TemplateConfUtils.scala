@@ -280,7 +280,7 @@ object TemplateConfUtils extends Logging {
         // only for Creator:IDE, try to get template conf name from code string. eg:---@set ec.resource.name=xxxx
         val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
         val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
-        if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
+        if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.contains(creator)) {
           templateName = getCustomTemplateConfName(jobRequest, codeType, logAppender)
           if (StringUtils.isNotBlank(templateName)) {
             logAppender.append(

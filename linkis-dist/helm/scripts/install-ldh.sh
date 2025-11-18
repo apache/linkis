@@ -16,7 +16,7 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
-
+ROOT_DIR=${WORK_DIR}/../..
 . ${WORK_DIR}/common.sh
 
 set -e
@@ -27,6 +27,9 @@ echo "# LDH version: ${LINKIS_IMAGE_TAG}"
 
 # load image
 if [[ "X${USING_KIND}" == "Xtrue" ]]; then
+  echo "# Preparing LDH image ..."
+  ${ROOT_DIR}/docker/scripts/make-ldh-image-with-mysql-jdbc.sh
+  docker tag linkis-ldh:with-jdbc linkis-ldh:dev
   echo "# Loading LDH image ..."
   kind load docker-image linkis-ldh:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 fi

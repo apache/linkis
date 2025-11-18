@@ -21,11 +21,18 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.variable
 import org.apache.linkis.common.variable._
-import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getMonthDay, getToday, getYesterday}
-import org.apache.commons.lang3.{StringUtils, Strings}
+import org.apache.linkis.common.variable.DateTypeUtils.{
+  getCurHour,
+  getMonthDay,
+  getToday,
+  getYesterday
+}
+
+import org.apache.commons.lang3.{Strings, StringUtils}
 
 import java.time.ZonedDateTime
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.Exception.allCatch
@@ -115,7 +122,9 @@ object VariableUtils extends Logging {
           case _ =>
             if (!nameAndType.contains(key) && StringUtils.isNotEmpty(value)) {
 //              if ((allCatch opt value.toDouble).isDefined) {
-              if ((allCatch opt BigDecimal(value)).isDefined && !Strings.CS.startsWith(value, "0")) {
+              if (
+                  (allCatch opt BigDecimal(value)).isDefined && !Strings.CS.startsWith(value, "0")
+              ) {
                 nameAndType(key) = variable.BigDecimalValue(BigDecimal(value))
               } else {
                 nameAndType(key) = variable.StringType(value)

@@ -135,7 +135,7 @@ class HiveEngineConcurrentConnExecutor(
       code: String
   ): ExecuteResponse = {
     LOG.info(s"HiveEngineConcurrentConnExecutor Ready to executeLine: $code")
-    val taskId: String = engineExecutorContext.getJobId.get
+    val taskId: String = engineExecutorContext.getJobId.getOrElse("udf_init")
     CSHiveHelper.setContextIDInfoToHiveConf(engineExecutorContext, hiveConf)
 
     val realCode = code.trim()
@@ -166,12 +166,7 @@ class HiveEngineConcurrentConnExecutor(
 
                 val driver = new HiveDriverProxy(any)
                 driverCache.put(taskId, driver)
-                executeHQL(
-                  engineExecutorContext.getJobId.get,
-                  engineExecutorContext,
-                  realCode,
-                  driver
-                )
+                executeHQL(taskId, engineExecutorContext, realCode, driver)
               case _ =>
                 val resp = proc.run(realCode.substring(tokens(0).length).trim)
                 val result = new String(baos.toByteArray)

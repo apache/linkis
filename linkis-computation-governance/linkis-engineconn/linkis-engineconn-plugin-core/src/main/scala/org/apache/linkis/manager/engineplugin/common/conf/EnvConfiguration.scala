@@ -19,8 +19,6 @@ package org.apache.linkis.manager.engineplugin.common.conf
 
 import org.apache.linkis.common.conf.{ByteType, CommonVars, Configuration}
 
-import org.apache.commons.lang3.{JavaVersion, SystemUtils}
-
 object EnvConfiguration {
 
   val HIVE_CONF_DIR = CommonVars[String](

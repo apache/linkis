@@ -24,7 +24,10 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.hook.EngineConnHook
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
-import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import org.apache.linkis.engineplugin.hive.executor.{
+  HiveEngineConcurrentConnExecutor,
+  HiveEngineConnExecutor
+}
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
@@ -78,7 +81,10 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
           ExecutorManager.getInstance.getExecutorByLabels(labels) match {
             case executor: HiveEngineConnExecutor =>
               executor.executeLine(new EngineExecutionContext(executor), sql)
+            case executor: HiveEngineConcurrentConnExecutor =>
+              executor.executeLine(new EngineExecutionContext(executor), sql)
             case _ =>
+              logger.warn(s"Executor is not a ComputationExecutor, skip adding jar: $jar")
           }
         } catch {
           case t: Throwable => logger.error(s"run hive sql ${addSql + jar} failed", t)

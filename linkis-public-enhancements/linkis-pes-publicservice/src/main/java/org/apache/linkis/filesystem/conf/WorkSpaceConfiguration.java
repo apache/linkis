@@ -79,10 +79,6 @@ public class WorkSpaceConfiguration {
   public static final CommonVars<String> LINKIS_KEYTAB_FILE_PEIMISSION =
       CommonVars$.MODULE$.apply("linkis.keytab.file.permission", "640");
 
-  // Field truncation configurations for result set
-  public static final CommonVars<Boolean> FIELD_TRUNCATION_ENABLED =
-      CommonVars$.MODULE$.apply("linkis.resultset.field.truncation.enabled", false);
-
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(
           FILESYSTEM_FS_THREAD_NUM.getValue(),

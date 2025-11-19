@@ -24,6 +24,8 @@
 1. **代码复用**: 将字段过滤逻辑提取到`ResultUtils`工具类，实现Java和Scala代码共享
 2. **架构优化**: 将通用逻辑放在`linkis-storage`模块，提高可维护性
 3. **简化实现**: 使用`ResultUtils.dealMaskedField()`统一处理字段屏蔽，减少重复代码
+4. **性能优化**: 通过缓存机制和早期退出策略优化大结果集处理性能
+5. **内存保护**: 实现内存使用监控和限制机制，防止OOM问题
 
 ### 代码修改统计
 
@@ -359,9 +361,9 @@ if (StringUtils.isNotBlank(maskedFieldNames)) {
 ```scala
 // Pipeline - CSVExecutor.scala
 if (StringUtils.isNotBlank(maskedFieldNames)) {
-  ResultUtils.dealMaskedField(maskedFieldNames, cSVFsWriter, fileSource)
+  ResultUtils.dealMaskedField(maskedFieldNames, cSVFsWriter, fileSource);
 } else {
-  fileSource.addParams("nullValue", nullValue).write(cSVFsWriter)
+  fileSource.addParams("nullValue", nullValue).write(cSVFsWriter);
 }
 ```
 
@@ -1203,245 +1205,9 @@ http://apidesign.weoa.com
 
 ---
 
-## 7. 非功能性设计
+## 7. 专利点识别
 
-### 7.1 安全
-
-#### 7.1.1 敏感字段屏蔽机制
-
-**核心策略**: 完全移除敏感字段，而非替换为空值或掩码
-
-**字段匹配规则**:
-1. 不区分大小写
-2. 精确匹配字段名
-3. 支持多字段，逗号分隔
-
-**防注入措施**:
-```java
-// 参数校验
-if (maskedFieldNames != null) {
-  // 1. 长度限制
-  if (maskedFieldNames.length() > 1000) {
-    throw new IllegalArgumentException("屏蔽字段列表过长");
-  }
-
-  // 2. 字符白名单
-  if (!maskedFieldNames.matches("^[a-zA-Z0-9_,\\s]+$")) {
-    throw new IllegalArgumentException("字段名包含非法字符");
-  }
-}
-```
-
-#### 7.1.2 权限控制
-
-**现有机制**:
-- 文件系统级别权限检查 (`checkIsUsersDirectory`)
-- 用户只能访问自己目录下的文件
-
-**保持不变**: 本次设计不改变现有权限控制机制
-
-#### 7.1.3 审计日志
-
-**日志记录**:
-```java
-logger.info("User {} masked fields {} in result download",
-  userName, maskedFieldNames);
-```
-
-### 7.2 性能
-
-#### 7.2.1 性能指标
-
-| 场景 | 指标 | 目标值 | 说明 |
-|-----|------|-------|------|
-| 小结果集下载 (<1万行) | 响应时间 | <3秒 | 与原性能持平 |
-| 中结果集下载 (1-10万行) | 响应时间 | <10秒 | 允许30%性能损失 |
-| 大结果集下载 (>10万行) | 响应时间 | 限制或拒绝 | 防止内存溢出 |
-| 未启用屏蔽 | 响应时间 | 无影响 | 保持原流式性能 |
-
-#### 7.2.2 性能优化措施
-
-**方案A优化**:
-1. 仅在指定屏蔽字段时启用collect模式
-2. 未指定时保持原流式写入
-3. 添加性能日志监控
-
-**代码示例**:
-```scala
-val startTime = System.currentTimeMillis()
-
-if (StringUtils.isNotBlank(maskedFieldNames)) {
-  // collect模式
-  filterAndWriteData(...)
-} else {
-  // 流式模式
-  fileSource.write(writer)
-}
-
-val elapsedTime = System.currentTimeMillis() - startTime
-logger.info(s"Export completed in ${elapsedTime}ms")
-```
-
-### 7.3 容量
-
-#### 7.3.1 容量限制
-
-**下载功能**:
-- CSV最大行数: 5000 (配置: `resultset.download.maxsize.csv`)
-- Excel最大行数: 5000 (配置: `resultset.download.maxsize.excel`)
-
-**Pipeline导出** (方案A新增):
-- 启用屏蔽时最大行数: 100000 (配置: `pipeline.export.max.rows`)
-- 未启用屏蔽: 不限制
-
-#### 7.3.2 内存管理
-
-**内存检查机制**:
-```scala
-// 在collect()前检查结果集大小
-val totalLine = fileSource.getTotalLine
-if (totalLine > PIPELINE_EXPORT_MAX_ROWS.getValue) {
-  throw new PipeLineErrorException(
-    s"Result set too large: $totalLine rows, " +
-    s"max allowed: ${PIPELINE_EXPORT_MAX_ROWS.getValue}"
-  )
-}
-
-// collect()后检查内存使用
-val runtime = Runtime.getRuntime
-val usedMemory = runtime.totalMemory() - runtime.freeMemory()
-val maxMemory = runtime.maxMemory()
-val usageRatio = usedMemory.toDouble / maxMemory
-
-if (usageRatio > MEMORY_THRESHOLD.getValue) {
-  logger.warn(s"High memory usage: ${usageRatio * 100}%")
-  throw new PipeLineErrorException("Memory limit exceeded")
-}
-```
-
-#### 7.3.3 生产环境推荐配置
-
-```properties
-# 生产环境 (内存16GB)
-pipeline.export.max.rows=50000
-pipeline.export.memory.check.enabled=true
-pipeline.export.memory.threshold=0.75
-
-# 测试环境 (内存32GB+)
-pipeline.export.max.rows=100000
-pipeline.export.memory.threshold=0.85
-```
-
-### 7.4 高可用
-
-#### 7.4.1 异常处理
-
-**参数校验**:
-```java
-// 1. 空值检查
-if (StringUtils.isBlank(maskedFieldNames)) {
-  // 执行原逻辑
-}
-
-// 2. 格式校验
-if (!isValidFieldNames(maskedFieldNames)) {
-  throw new IllegalArgumentException("Invalid field names format");
-}
-
-// 3. 字段不存在
-if (!fieldExists(maskedFields)) {
-  // 不报错，忽略不存在的字段
-  logger.warn("Some masked fields not found: {}", maskedFieldNames);
-}
-```
-
-**降级策略**:
-```java
-try {
-  // 尝试屏蔽字段导出
-  filterAndWriteData(collectedData, maskedFields, writer);
-} catch (Exception e) {
-  logger.error("Field masking failed, fallback to normal export", e);
-  // 降级为不屏蔽
-  fileSource.write(writer);
-}
-```
-
-#### 7.4.2 向后兼容
-
-**100%向后兼容承诺**:
-1. 不传`maskedFieldNames`参数时，行为完全不变
-2. 原有API调用不受影响
-3. Pipeline原语法保持兼容
-
-#### 7.4.3 资源保护
-
-**超时控制**:
-```scala
-// 设置超时时间
-val futureTask = Future {
-  filterAndWriteData(collectedData, maskedFields, writer)
-}
-
-Try(Await.result(futureTask, Duration(30, SECONDS))) match {
-  case Success(_) => logger.info("Export completed")
-  case Failure(e: TimeoutException) =>
-    throw new PipeLineErrorException("Export timeout")
-  case Failure(e) =>
-    throw new PipeLineErrorException("Export failed", e)
-}
-```
-
-### 7.5 数据质量
-
-#### 7.5.1 数据完整性
-
-**元数据与数据一致性保证**:
-```scala
-// 确保元数据和数据列数一致
-val filteredMetadata = retainedIndices.map(i => metadata(i))
-val filteredRow = retainedIndices.map(i => row(i))
-
-assert(filteredMetadata.length == filteredRow.length,
-  "Metadata and data length mismatch")
-```
-
-#### 7.5.2 数据正确性
-
-**测试验证**:
-1. 单元测试：验证字段过滤逻辑正确性
-2. 集成测试：与`openFile`接口对比测试
-3. 边界测试：屏蔽所有字段、屏蔽不存在字段等
-
-**对比测试代码**:
-```java
-// 对比openFile和下载接口的结果一致性
-@Test
-public void testConsistency() {
-  String maskedFields = "password,apikey";
-
-  // 1. openFile结果
-  Map<String, Object> openFileResult =
-    callOpenFile(path, maskedFields);
-
-  // 2. 下载接口结果
-  String downloadedFile =
-    callResultsetToExcel(path, maskedFields);
-
-  // 3. 解析并对比
-  List<String> openFileColumns = extractColumns(openFileResult);
-  List<String> downloadColumns = extractColumns(downloadedFile);
-
-  assertEquals(openFileColumns, downloadColumns,
-    "Column mismatch between openFile and download");
-}
-```
-
----
-
-## 8. 专利点识别
-
-### 8.1 潜在专利点
+### 7.1 潜在专利点
 
 #### 专利点1: 基于Pipeline语法扩展的字段级数据脱敏方法
 
@@ -1467,16 +1233,16 @@ public void testConsistency() {
 - 基于运行时内存监控的容量保护
 - 性能与安全的平衡
 
-### 8.2 专利录入
+### 7.2 专利录入
 
 专利信息已录入到"BDP 专利"文档：
 http://docs.weoa.com/sheets/2wAlXOo1WBHwPrAP/zDmhC
 
 ---
 
-## 9. 附录
+## 8. 附录
 
-### 9.1 关键文件清单
+### 8.1 关键文件清单
 
 | 文件路径 | 说明 | 修改类型 |
 |---------|------|---------|
@@ -1486,7 +1252,7 @@ http://docs.weoa.com/sheets/2wAlXOo1WBHwPrAP/zDmhC
 | `linkis-engineconn-plugins/pipeline/src/main/scala/org/apache/linkis/manager/engineplugin/pipeline/executor/CSVExecutor.scala` | CSV导出 | 调用ResultUtils |
 | `linkis-engineconn-plugins/pipeline/src/main/scala/org/apache/linkis/manager/engineplugin/pipeline/executor/ExcelExecutor.scala` | Excel导出 | 调用ResultUtils |
 
-### 9.2 配置项清单
+### 8.2 配置项清单
 
 | 配置项 | 默认值 | 说明 | 模块 |
 |-------|-------|------|------|
@@ -1496,7 +1262,7 @@ http://docs.weoa.com/sheets/2wAlXOo1WBHwPrAP/zDmhC
 | `pipeline.export.memory.check.enabled` | true | 是否启用内存检查 | 导出 |
 | `pipeline.export.memory.threshold` | 0.8 | 内存使用阈值 | 导出 |
 
-### 9.3 测试用例清单
+### 8.3 测试用例清单
 
 #### 功能测试
 
@@ -1518,6 +1284,39 @@ http://docs.weoa.com/sheets/2wAlXOo1WBHwPrAP/zDmhC
 | PT001 | 1万行×10列 | 2 | <3秒 |
 | PT002 | 5万行×50列 | 5 | <8秒 |
 | PT003 | 10万行×100列 | 10 | <15秒 |
+
+---
+
+## 9. 性能优化策略
+
+### 9.1 字段长度检测优化
+在`getFieldLength`方法中，对已知类型的对象进行特殊处理，避免不必要的`toString()`调用：
+
+```java
+private static int getFieldLength(Object value) {
+  if (value == null) {
+    return 0;
+  }
+  if (value instanceof String) {
+    return ((String) value).length();
+  }
+  return value.toString().length();
+}
+```
+
+### 9.2 大结果集处理优化
+对于大结果集，采用分批处理策略：
+1. 设置内存使用阈值监控
+2. 超过阈值时采用流式处理
+3. 提供处理进度反馈机制
+
+### 9.3 缓存机制优化
+在字段处理过程中使用Set来存储已处理的字段名，避免重复处理：
+
+```java
+// 使用Set来存储已经处理过的字段名，避免重复处理
+Set<String> processedFields = new HashSet<>();
+```
 
 ---
 

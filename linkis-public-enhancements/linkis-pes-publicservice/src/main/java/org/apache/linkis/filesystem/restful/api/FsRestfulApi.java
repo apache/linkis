@@ -674,6 +674,10 @@ public class FsRestfulApi {
         MessageFormat.format(
             "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容",
             LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+    String truncateColumn_en_msg =
+        MessageFormat.format(
+            "The result set contains field values exceeding {0} characters. To view the full data, please export the file or confirm the displayed content is truncated",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
@@ -748,7 +752,7 @@ public class FsRestfulApi {
         }
         // 增加字段屏蔽
         Object resultmap = newMap == null ? metaMap : newMap;
-        if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
+        if (FileSource$.MODULE$.isResultSet(fsPath.getPath()) && (resultmap instanceof Map)) {
           // 2. 类型转换（已通过校验，可安全强转）
           Map<String, Object>[] filteredMetadata = (Map<String, Object>[]) resultmap;
           List<String[]> filteredContent = result.getSecond();
@@ -761,7 +765,7 @@ public class FsRestfulApi {
                 ResultUtils.removeFieldsFromContent(resultmap, filteredContent, maskedFields);
           }
           // 优先截取大字段
-          if (FIELD_TRUNCATION_ENABLED.getValue()) {
+          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
             FieldTruncationResult fieldTruncationResult =
                 ResultUtils.detectAndHandle(
                     filteredMetadata,
@@ -773,6 +777,7 @@ public class FsRestfulApi {
               if (null == truncateColumn) {
                 message.data("oversizedFields", fieldTruncationResult.getOversizedFields());
                 message.data("zh_msg", truncateColumn_msg);
+                message.data("en_msg", truncateColumn_en_msg);
                 return message;
               }
               boolean truncateColumnSwitch = Boolean.parseBoolean(truncateColumn);
@@ -796,7 +801,8 @@ public class FsRestfulApi {
               }
             }
           }
-          if (StringUtils.isNotBlank(maskedFieldNames) || FIELD_TRUNCATION_ENABLED.getValue()) {
+          if (StringUtils.isNotBlank(maskedFieldNames)
+              || LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
             message.data("metadata", filteredMetadata).data("fileContent", filteredContent);
           } else {
             // 不执行字段屏蔽也不执行字段截取
@@ -1040,7 +1046,7 @@ public class FsRestfulApi {
 
       // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
       if (StringUtils.isNotBlank(maskedFieldNames)
-          && FIELD_TRUNCATION_ENABLED.getValue()
+          && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()
           && outputFileType.equals("xlsx")) {
         // 同时执行字段屏蔽和字段截取
         StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
@@ -1052,7 +1058,7 @@ public class FsRestfulApi {
       } else if (StringUtils.isNotBlank(maskedFieldNames)) {
         // 只执行字段屏蔽
         ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
-      } else if (FIELD_TRUNCATION_ENABLED.getValue() && outputFileType.equals("xlsx")) {
+      } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && outputFileType.equals("xlsx")) {
         // 只执行字段截取
         StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
         ResultUtils.detectAndHandle(
@@ -1172,7 +1178,8 @@ public class FsRestfulApi {
         fileSource = fileSource.page(1, excelDownloadSize);
       }
       // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
-      if (StringUtils.isNotBlank(maskedFieldNames) && FIELD_TRUNCATION_ENABLED.getValue()) {
+      if (StringUtils.isNotBlank(maskedFieldNames)
+          && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
         // 同时执行字段屏蔽和字段截取
         StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
         ResultUtils.applyFieldMaskingAndTruncation(
@@ -1183,7 +1190,7 @@ public class FsRestfulApi {
       } else if (StringUtils.isNotBlank(maskedFieldNames)) {
         // 只执行字段屏蔽
         ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
-      } else if (FIELD_TRUNCATION_ENABLED.getValue()) {
+      } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
         // 只执行字段截取
         StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
         ResultUtils.detectAndHandle(

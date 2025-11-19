@@ -17,7 +17,7 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.linkis.common.utils.{ParameterUtils, Logging}
+import org.apache.linkis.common.utils.{Logging, ParameterUtils}
 
 import org.apache.commons.lang3.StringUtils
 

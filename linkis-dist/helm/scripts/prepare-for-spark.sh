@@ -21,22 +21,16 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 ## copy spark resource from ldh to linkis-cg-engineconnmanager
 
-LDH_POD_NAME=`kubectl get pods -n ldh -l app=ldh    -o jsonpath='{.items[0].metadata.name}'`
-kubectl cp -n ldh ${LDH_POD_NAME}:/opt/ldh/ ./ldh
-
+LDH_POD_NAME=`kubectl get pods -n ldh -l app=ldh -o jsonpath='{.items[0].metadata.name}'`
 ECM_POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].metadata.name}'`
-kubectl cp ./ldh  -n linkis ${ECM_POD_NAME}:/opt/ ;
 
+kubectl exec -n ldh ${LDH_POD_NAME} -- tar -C /opt -cf - ldh | \
+kubectl exec -i -n linkis ${ECM_POD_NAME} -- tar -C /opt -xf - --no-same-owner
 
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "chmod +x /opt/ldh/1.3.0/spark-3.2.1-bin-hadoop3.2/bin/*"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/spark-3.2.1-bin-hadoop3.2 /opt/ldh/current/spark"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/hadoop-3.3.4 /opt/ldh/current/hadoop"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/apache-hive-3.1.3-bin /opt/ldh/current/hive"
-
-
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export SPARK_HOME=/opt/ldh/current/spark' |sudo tee --append /etc/profile"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export PATH=\$SPARK_HOME/bin:\$PATH' |sudo tee --append  /etc/profile"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "source /etc/profile"
+kubectl exec -n linkis ${ECM_POD_NAME} -- bash -c "sudo mkdir -p /appcom/Install && sudo chmod 0777 /appcom/Install && ln -s /opt/ldh/current/spark /appcom/Install/spark"
+kubectl exec -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export SPARK_HOME=/opt/ldh/current/spark' |sudo tee --append /etc/profile"
+kubectl exec -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export PATH=\$SPARK_HOME/bin:\$PATH' |sudo tee --append  /etc/profile"
+kubectl exec -n linkis ${ECM_POD_NAME} -- bash -c "source /etc/profile"
 
 # add ecm dns for ldh pod
 ECM_POD_IP=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].status.podIP}'`
@@ -45,7 +39,4 @@ ECM_POD_SUBDOMAIN=`kubectl get pods -n linkis -l app.kubernetes.io/instance=link
 
 ECM_DNS="${ECM_POD_IP}   ${ECM_POD_NAME}.${ECM_POD_SUBDOMAIN}.linkis.svc.cluster.local"
 
-kubectl exec -it -n ldh ${LDH_POD_NAME} -- bash -c "echo ${ECM_DNS} |sudo tee --append  /etc/hosts"
-
-
-rm -rf ldh;
+kubectl exec -n ldh ${LDH_POD_NAME} -- bash -c "echo ${ECM_DNS} |sudo tee --append  /etc/hosts"

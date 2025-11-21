@@ -75,6 +75,10 @@ ADD ldh-tars/spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz /opt/l
 ADD ldh-tars/flink-${FLINK_VERSION}-bin-scala_2.11.tgz /opt/ldh/${LINKIS_VERSION}/
 ADD ldh-tars/apache-zookeeper-${ZOOKEEPER_VERSION}-bin.tar.gz /opt/ldh/${LINKIS_VERSION}/
 
+RUN ln -s /opt/ldh/${LINKIS_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION} /opt/ldh/current/spark \
+    && ln -s /opt/ldh/${LINKIS_VERSION}/hadoop-${HADOOP_VERSION} /opt/ldh/current/hadoop \
+    && ln -s /opt/ldh/${LINKIS_VERSION}/apache-hive-${HIVE_VERSION}-bin /opt/ldh/current/hive
+
 RUN mkdir -p /etc/ldh \
     && mkdir -p /var/log/hadoop && chmod 777 -R /var/log/hadoop \
     && mkdir -p /var/log/hive && chmod 777 -R /var/log/hive \
@@ -91,9 +95,10 @@ RUN mkdir -p /etc/ldh \
 #ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hive/lib/
 #ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
 
-ENV JAVA_HOME /etc/alternatives/jre
-ENV PATH /opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH
+ENV JAVA_HOME=/etc/alternatives/jre
+ENV PATH=/opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH
 ENV HADOOP_CONF_DIR=/etc/ldh/hadoop
+ENV YARN_CONF_DIR=/etc/ldh/hadoop
 ENV HIVE_CONF_DIR=/etc/ldh/hive
 ENV SPARK_CONF_DIR=/etc/ldh/spark
 ENV FLINK_CONF_DIR=/etc/ldh/flink

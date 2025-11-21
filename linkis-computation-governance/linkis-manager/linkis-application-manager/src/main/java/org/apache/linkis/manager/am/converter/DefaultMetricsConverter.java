@@ -136,6 +136,7 @@ public class DefaultMetricsConverter implements MetricsConverter {
     amNode.setNodeHealthyInfo(parseHealthyInfo(metrics));
     amNode.setNodeOverLoadInfo(parseOverLoadInfo(metrics));
     amNode.setUpdateTime(metrics.getUpdateTime());
+    amNode.setNodeDescription(metrics.getDescription());
     return amNode;
   }
 }

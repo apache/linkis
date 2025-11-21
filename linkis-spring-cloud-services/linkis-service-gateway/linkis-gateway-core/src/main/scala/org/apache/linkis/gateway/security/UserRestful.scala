@@ -19,6 +19,7 @@ package org.apache.linkis.gateway.security
 
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.config.GatewayConfiguration.PROHIBIT_LOGIN_PREFIX
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.oauth.OAuth2Authentication
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
@@ -209,6 +210,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   private val LINE_DELIMITER = "</br>"
   private val USERNAME_STR = "userName"
   private val PASSWD_STR = "password"
+  private val SOURCE_STR = "source"
   private val PASSWD_ENCRYPT_STR = "passwdEncrypt"
 
   private def getUserNameAndPWD(gatewayContext: GatewayContext): (String, String) = {
@@ -303,6 +305,17 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       return Message.error("Username can not be empty(用户名不能为空)！")
     } else if (StringUtils.isBlank(password)) {
       return Message.error("Password can not be blank(密码不能为空)！")
+    }
+
+    if (
+        GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && (!getRequestSource(gatewayContext)
+          .equals("client"))
+    ) {
+      PROHIBIT_LOGIN_PREFIX.split(",").foreach { prefix =>
+        if (userName.toLowerCase().startsWith(prefix)) {
+          return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
+        }
+      }
     }
     if (
         GatewayConfiguration.ADMIN_USER.getValue.equals(
@@ -443,6 +456,21 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       )
     }
     message
+  }
+
+  private def getRequestSource(gatewayContext: GatewayContext): String = {
+    var source = ""
+    if (StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
+      val json = BDPJettyServerHelper.gson.fromJson(
+        gatewayContext.getRequest.getRequestBody,
+        classOf[java.util.Map[String, Object]]
+      )
+      val tmpSource = json.getOrDefault(SOURCE_STR, null)
+      if (null != tmpSource) {
+        source = tmpSource.toString
+      }
+    }
+    source
   }
 
 }

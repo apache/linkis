@@ -158,7 +158,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     if (!runtimeMapTmp.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH().key())) {
       String resultParentPath = CommonLogPathUtils.getResultParentPath(jobRequest);
-      CommonLogPathUtils.buildCommonPath(resultParentPath);
+      CommonLogPathUtils.buildCommonPath(resultParentPath, true);
       resultSetPathRoot = CommonLogPathUtils.getResultPath(jobRequest);
     }
 

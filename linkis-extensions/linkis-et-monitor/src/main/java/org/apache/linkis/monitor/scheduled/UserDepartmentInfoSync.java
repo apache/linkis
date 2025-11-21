@@ -53,7 +53,7 @@ public class UserDepartmentInfoSync {
   private static final UserDepartmentInfoMapper userDepartmentInfoMapper =
       MapperFactory.getUserDepartmentInfoMapper();
 
-  @Scheduled(cron = "${linkis.monitor.org.user.sync.cron:0 0 11 1/7 * ?}")
+  @Scheduled(cron = "${linkis.monitor.org.user.sync.cron:0 0 0 1/7 * ?}")
   public static void DepartmentInfoSync() {
     // 获取linkis_org_user_sync信息
     // 收集异常用户

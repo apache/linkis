@@ -22,6 +22,7 @@ import java.util.Date;
 public class TokenEntity {
   private String id;
   private String tokenName;
+  private String tokenSign;
   private String legalUsersStr;
   private String legalHostsStr;
   private String businessOwner;
@@ -100,5 +101,13 @@ public class TokenEntity {
 
   public void setUpdateBy(String updateBy) {
     this.updateBy = updateBy;
+  }
+
+  public String getTokenSign() {
+    return tokenSign;
+  }
+
+  public void setTokenSign(String tokenSign) {
+    this.tokenSign = tokenSign;
   }
 }

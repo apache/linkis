@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.parser;
 
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.execute.EntranceJob;
@@ -90,6 +91,16 @@ public abstract class AbstractEntranceParser extends EntranceParser {
     jobRequest.setProgress("" + job.getProgress());
     jobRequest.setStatus(job.getState().toString());
     jobRequest.setUpdatedTime(new Date());
+
+    if (job.isCompleted()
+        && !job.isSucceed()
+        && EntranceConfiguration.TASK_RETRY_ENABLED()
+        && Integer.valueOf(20503).equals(jobRequest.getErrorCode())
+        && job.getErrorResponse() != null
+        && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
+      jobRequest.setErrorDesc(job.getErrorResponse().message());
+    }
+
     if (job.isCompleted()
         && !job.isSucceed()
         && job.getErrorResponse() != null

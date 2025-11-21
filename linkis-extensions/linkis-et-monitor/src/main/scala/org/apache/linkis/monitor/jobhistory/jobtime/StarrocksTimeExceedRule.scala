@@ -87,6 +87,26 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
               if (taskMinID == 0L || taskMinID > job.getId) {
                 taskMinID = job.getId
                 scanRuleList.put("jdbcUnfinishedAlertScan", taskMinID)
+                // 获取超时kill配置信息
+                if (StringUtils.isNotBlank(job.getParams)) {
+                  val connectParamsMap = MapUtils.getMap(
+                    datasourceConfMap,
+                    "connectParams",
+                    new util.HashMap[AnyRef, AnyRef]
+                  )
+                  val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                  logger.info("starock  killTime: {}", killTime)
+                  if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
+                    if (StringUtils.isNotBlank(killTime)) {
+                      val timeoutInSeconds = timeValue.toDouble
+                      val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                      if (elapse > timeoutInMillis) {
+                        // 触发kill任务
+                        HttpsUntils.killJob(job)
+                      }
+                    }
+                  }
+                }
               }
             case _ =>
               logger.warn(

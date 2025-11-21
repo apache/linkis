@@ -18,8 +18,13 @@
 package org.apache.linkis.udf.api;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageUtils$;
+import org.apache.linkis.udf.conf.Constants;
 import org.apache.linkis.udf.entity.PythonModuleInfo;
 import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFTree;
@@ -29,6 +34,7 @@ import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.utils.ConstantVar;
 import org.apache.linkis.udf.utils.UdfConfiguration;
+import org.apache.linkis.udf.utils.UdfUtils;
 import org.apache.linkis.udf.vo.*;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -41,6 +47,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +56,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -868,7 +877,7 @@ public class UDFRestfulApi {
       // filename表示文件的默认名称，因为网络传输只支持URL编码的相关支付，因此需要将文件名URL编码后进行传输,前端收到后需要反编码才能获取到真正的名称
       response.addHeader("Content-Disposition", "attachment;filename=" + downloadVo.getFileName());
       //            response.addHeader("Content-Length", "" + file.length());
-      outputStream = new BufferedOutputStream(response.getOutputStream());
+      outputStream = new BufferedOutputStream(response.getOutputStream()); // NOSONAR
       response.setContentType("application/octet-stream");
       byte[] buffer = new byte[1024];
       int hasRead = 0;
@@ -1089,7 +1098,7 @@ public class UDFRestfulApi {
       pythonModuleInfo.setEngineType(engineType);
       pythonModuleInfo.setCreateUser(username);
       pythonModuleInfo.setIsLoad(isLoad);
-      pythonModuleInfo.setIsExpire(isExpire);
+      pythonModuleInfo.setIsExpire(0);
       List<PythonModuleInfo> pythonList = pythonModuleInfoService.getByConditions(pythonModuleInfo);
       PageInfo<PythonModuleInfo> pageInfo = new PageInfo<>(pythonList);
       // 封装返回结果
@@ -1194,6 +1203,15 @@ public class UDFRestfulApi {
     if (pythonModuleInfo.getIsExpire() == null) {
       return Message.error("是否过期：不能为空");
     }
+    if (org.apache.commons.lang3.StringUtils.isNotBlank(pythonModuleInfo.getPythonModule())) {
+      // 使用正则表达式进行校验
+      Matcher matcher =
+          Pattern.compile("^[a-zA-Z][a-zA-Z0-9,_.-]{0,200}$")
+              .matcher(pythonModuleInfo.getPythonModule());
+      if (!matcher.matches()) {
+        return Message.error("模块名称：只允许英文、数字和英文逗号,点,下划线,横线组成，且长度不超过200个字符");
+      }
+    }
     String path = pythonModuleInfo.getPath();
     String fileName = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf("."));
     if (!pythonModuleInfo.getName().equals(fileName)) {
@@ -1275,14 +1293,14 @@ public class UDFRestfulApi {
     if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
       return Message.error("参数fileName不能为空");
     }
-    String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
-    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_]{0,49}$")) {
-      return Message.error("只支持数字字母下划线，且以字母开头，长度最大50");
+    String fileNameWithoutExtension = fileName.split("\\.")[0];
+    if (!fileNameWithoutExtension.matches("^[a-zA-Z][a-zA-Z0-9_-]{0,49}$")) {
+      return Message.error("只支持数字字母下划线，中划线，且以字母开头，长度最大50");
     }
-
+    String fileNameWithoutVersion = fileNameWithoutExtension.split("-")[0];
     // 封装PythonModuleInfo对象并查询数据库
     PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
-    pythonModuleInfo.setName(fileNameWithoutExtension);
+    pythonModuleInfo.setName(fileNameWithoutVersion);
     pythonModuleInfo.setCreateUser(userName);
     PythonModuleInfo moduleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
 
@@ -1291,6 +1309,174 @@ public class UDFRestfulApi {
       return Message.ok().data("result", true);
     } else {
       return Message.error("模块" + fileName + "已存在，如需重新上传请先删除旧的模块");
+    }
+  }
+
+  @ApiOperation(value = "Python模块上传", notes = "上传Python模块文件并返回文件地址", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "上传的文件"),
+    @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+  })
+  @RequestMapping(path = "/python-upload", method = RequestMethod.POST)
+  public Message pythonUpload(
+      HttpServletRequest req,
+      @RequestParam("file") MultipartFile file,
+      @RequestParam(value = "fileName", required = false) String fileName)
+      throws IOException {
+
+    // 获取登录用户
+    String username = ModuleUserUtils.getOperationUser(req, "pythonUpload");
+
+    // 校验文件名称
+    if (org.apache.commons.lang3.StringUtils.isBlank(fileName)) {
+      return Message.error("文件名称不能为空");
+    }
+    // 获取文件名称
+    if (!fileName.matches("^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$")) {
+      return Message.error("模块名称错误，仅支持数字字母下划线，且以字母开头，长度最大50");
+    }
+
+    // 校验文件类型
+    if (!file.getOriginalFilename().endsWith(Constants.FILE_EXTENSION_PY)
+        && !file.getOriginalFilename().endsWith(Constants.FILE_EXTENSION_ZIP)
+        && !file.getOriginalFilename().endsWith(Constants.FILE_EXTENSION_TAR_GZ)) {
+      return Message.error("仅支持.py和.zip和.tar.gz格式模块文件");
+    }
+
+    // 校验文件大小
+    if (file.getSize() > Constants.MAX_FILE_SIZE_MB) {
+      return Message.error("限制最大单个文件50M");
+    }
+
+    // tar.gz包依赖检查
+    // 获取install_requires中的python模块
+    List<String> pythonModules = UdfUtils.getInstallRequestPythonModules(file);
+    String dependencies = "";
+    if (CollectionUtils.isNotEmpty(pythonModules)) {
+      // 收集依赖信息
+      dependencies =
+          pythonModules.stream().distinct().collect(Collectors.joining(Constants.DELIMITER_COMMA));
+      // 收集不存在的依赖
+      StringJoiner notExistModulesStr = new StringJoiner(Constants.DELIMITER_COMMA);
+      // 检查pyhton环境中模块和数据库是否存在
+      pythonModules.stream()
+          .filter(s -> !UdfUtils.checkModuleIsExistEnv(s))
+          .forEach(
+              pythonModule -> {
+                PythonModuleInfo pythonModuleInfo = new PythonModuleInfo();
+                pythonModuleInfo.setCreateUser(username);
+                pythonModuleInfo.setName(pythonModule);
+                pythonModuleInfo.setIsLoad(1);
+                pythonModuleInfo = pythonModuleInfoService.getByUserAndNameAndId(pythonModuleInfo);
+                if (null == pythonModuleInfo) {
+                  notExistModulesStr.add(pythonModule);
+                }
+              });
+      if (org.apache.commons.lang3.StringUtils.isNotBlank(notExistModulesStr.toString())) {
+        return Message.error("部分依赖未加载，请检查并重新上传依赖包，依赖信息：" + notExistModulesStr);
+      }
+    }
+    // 定义目录路径
+    String path = Constants.HDFS_PATH_UDF + username;
+    FsPath fsPath = new FsPath(path);
+    // 获取文件系统实例
+    FileSystem fileSystem = (FileSystem) FSFactory.getFs(fsPath);
+    fileSystem.init(null);
+    // 确认目录是否存在，不存在则创建新目录
+    if (!fileSystem.exists(fsPath)) {
+      try {
+        fileSystem.mkdirs(fsPath);
+        fileSystem.setPermission(fsPath, Constants.FILE_PERMISSION);
+      } catch (IOException e) {
+        return Message.error("创建目录失败：" + e.getMessage());
+      }
+    }
+    fileSystem.setOwner(fsPath, username);
+    // 构建新的文件路径
+    String newPath = fsPath.getPath() + FsPath.SEPARATOR + file.getOriginalFilename();
+    // 上传文件,tar包需要单独解压处理
+    if (!file.getOriginalFilename().endsWith(Constants.FILE_EXTENSION_TAR_GZ)) {
+      FsPath fsPathNew = new FsPath(newPath);
+      try (InputStream is = file.getInputStream();
+          OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
+        IOUtils.copy(is, outputStream);
+      } catch (IOException e) {
+        return Message.error("文件上传失败：" + e.getMessage());
+      }
+    } else {
+      InputStream is = null;
+      OutputStream outputStream = null;
+      try {
+        String packageName = UdfUtils.findPackageName(file.getInputStream());
+        if (UdfUtils.checkModuleIsExistEnv(packageName)) {
+          return Message.error("python3环境中已存在模块：" + packageName + "请勿重复上传");
+        }
+        fileName = packageName + Constants.FILE_EXTENSION_ZIP;
+        if (org.apache.commons.lang3.StringUtils.isBlank(packageName)) {
+          return Message.error("文件上传失败：PKG-INFO 文件不存在");
+        }
+        is = UdfUtils.getZipInputStreamByTarInputStream(file, packageName);
+        newPath = fsPath.getPath() + FsPath.SEPARATOR + fileName;
+        FsPath fsPathNew = new FsPath(newPath);
+        outputStream = fileSystem.write(fsPathNew, true);
+        IOUtils.copy(is, outputStream);
+      } catch (Exception e) {
+        return Message.error("文件上传失败：" + e.getMessage());
+      } finally {
+        if (outputStream != null) {
+          IOUtils.closeQuietly(outputStream);
+        }
+        if (is != null) {
+          IOUtils.closeQuietly(is);
+        }
+        fileSystem.close();
+      }
+    }
+    // 返回成功消息并包含文件地址
+    return Message.ok()
+        .data("filePath", newPath)
+        .data("dependencies", dependencies)
+        .data("fileName", fileName);
+  }
+
+  @ApiImplicitParam(
+      name = "path",
+      dataType = "String",
+      value = "path",
+      example = "file:///test-dir/test-sub-dir/test1012_01.py")
+  @RequestMapping(path = "/get-register-functions", method = RequestMethod.GET)
+  public Message getRegisterFunctions(HttpServletRequest req, @RequestParam("path") String path)
+      throws IOException {
+    if (StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_PY)
+        || StringUtils.endsWithIgnoreCase(path, Constants.FILE_EXTENSION_SCALA)) {
+      if (StringUtils.startsWithIgnoreCase(path, StorageUtils$.MODULE$.FILE_SCHEMA())) {
+        FileSystem fileSystem = null;
+        try {
+          // 获取登录用户
+          String userName = ModuleUserUtils.getOperationUser(req, "get-register-functions");
+
+          FsPath fsPath = new FsPath(path);
+          // 获取文件系统实例
+          fileSystem = (FileSystem) FSFactory.getFsByProxyUser(fsPath, userName);
+          fileSystem.init(null);
+          if (fileSystem.canRead(fsPath)) {
+            return Message.ok()
+                .data("functions", UdfUtils.getRegisterFunctions(fileSystem, fsPath, path));
+          } else {
+            return Message.error("您没有权限访问该文件");
+          }
+        } catch (Exception e) {
+          return Message.error("解析文件失败，错误信息：" + e);
+        } finally {
+          if (fileSystem != null) {
+            fileSystem.close();
+          }
+        }
+      } else {
+        return Message.error("仅支持本地文件");
+      }
+    } else {
+      return Message.error("仅支持.py和.scala文件");
     }
   }
 }

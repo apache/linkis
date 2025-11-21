@@ -18,6 +18,7 @@
 package org.apache.linkis.datasourcemanager.core.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
@@ -115,6 +116,23 @@ public class DataSourceOperateRestfulApi {
       } catch (Exception e) {
         throw new ParameterValidateException(ENVID_ATYPICAL.getErrorDesc() + e);
       }
+    }
+    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+        && !dataSource.getConnectParams().containsKey(AESUtils.IS_ENCRYPT)
+        && dataSource.getConnectParams().containsKey("password")) {
+      String password = dataSource.getConnectParams().get("password").toString();
+      String encrypt = AESUtils.encrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+      Map<String, Object> connectParams = dataSource.getConnectParams();
+      connectParams.replace("password", encrypt);
+      dataSource.setConnectParams(connectParams);
+    }
+    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+        && !dataSource.getConnectParams().containsKey("isEncrypt")) {
+      String password = dataSource.getConnectParams().get("password").toString();
+      String encrypt = AESUtils.encrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+      Map<String, Object> connectParams = dataSource.getConnectParams();
+      connectParams.replace("password", encrypt);
+      dataSource.setConnectParams(connectParams);
     }
     List<DataSourceParamKeyDefinition> keyDefinitionList =
         dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());

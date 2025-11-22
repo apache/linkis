@@ -27,6 +27,9 @@ export const subAppRoutes = {
   children: []
 }
 
+// Check if Python Module is enabled via environment variable
+export const isPythonModuleEnabled = process.env.VUE_APP_ENABLE_PYTHON_MODULE === 'true'
+
 export default [
   {
     path: 'console',
@@ -268,7 +271,7 @@ export default [
         publicPage: true,
       },
     },
-    {
+    ...(isPythonModuleEnabled ? [{
       name: 'pythonModule',
       path: 'pythonModule',
       component: () =>
@@ -277,7 +280,7 @@ export default [
         title: 'pythonModule',
         publicPage: true,
       },
-    },
+    }] : []),
     {
       name: 'datasourceAccess',
       path: 'datasourceAccess',

@@ -22,48 +22,73 @@
       size="large"
       fix/>
     <Row class="search-bar">
-      <Col span="6" class="search-item">
+      
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.userName')" class="search-label">{{$t('message.linkis.ipListManagement.userName')}}</span>
         <Input
           v-model="queryData.username"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputUser')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.appName')" class="search-label">{{$t('message.linkis.ipListManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputApp')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col span="5" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.cluster')" class="search-label">{{$t('message.linkis.ipListManagement.cluster')}}</span>
         <Input
           v-model="queryData.clusterName"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputCluster')"
           @on-enter="search"
-          style="width: 290px"
+          style="width: 270px"
         ></Input>
       </Col>
-      <Col span="6">
-        <Button type="primary" class="button" @click="search">{{
+      <Col span="5" class="search-item">
+        <span :title="$t('message.linkis.ipListManagement.isValid')" class="search-label">{{$t('message.linkis.ipListManagement.isValid')}}</span>
+        <Select v-model="queryData.isValid" filterable clearable style="width: calc(100% - 105px);">
+          <Option v-for="item in validOptions" :value="item.value" :key="item.value" :label="item.label"/>
+        </Select>
+      </Col>
+      <Col span="4">
+        <Button :disabled="isBatch" type="primary" class="button" @click="search">{{
           $t('message.linkis.ipListManagement.search')
         }}</Button>
-        <Button type="warning" class="button" @click="clearSearch">{{
+        <Button :disabled="isBatch" type="warning" class="button" @click="clearSearch">{{
           $t('message.linkis.ipListManagement.clear')
         }}</Button>
-        <Button type="success" class="button" @click="createRules">{{
+        <Button v-if="isLogAdmin && !isBatch" type="success" class="button" @click="createRules">{{
           $t('message.linkis.ipListManagement.create')
         }}</Button>
+        <Dropdown v-if="isLogAdmin" @on-click="batch">
+          <Button type="primary" class="button">
+            {{ $t('message.linkis.ipListManagement.batchOperate')}}
+          </Button>
+          <template #list>
+            <DropdownMenu>
+              <DropdownItem name="enable">{{ $t('message.linkis.ipListManagement.batchEnable')}}</DropdownItem>
+              <DropdownItem name="disable">{{ $t('message.linkis.ipListManagement.batchDisable')}}</DropdownItem>
+              <DropdownItem name="delete">{{ $t('message.linkis.ipListManagement.batchDelete')}}</DropdownItem>
+              <DropdownItem name="modify">{{ $t('message.linkis.ipListManagement.batchModify')}}</DropdownItem>
+            </DropdownMenu>
+          </template>
+        </Dropdown>
       </Col>
     </Row>
+    <div v-if="isBatch" class="second-action-bar">
+      <Button class="action-btn" v-if="batchMode === 'modify'" type="primary" @click="createRules">{{ $t('message.linkis.ipListManagement.adjustConf')}}</Button>
+      <Button class="action-btn" type="primary" :disabled="!confirmable" @click="batchConfirm">{{ confirmBtnText}}</Button>
+      <Button class="action-btn" type="default" @click="batchCancel">{{ $t('message.linkis.ipListManagement.Cancel')}}</Button>
+    </div>
     <Table
       border
       size="small"
@@ -71,8 +96,8 @@
       :columns="tableColumns"
       :data="datalist"
       :loading="tableLoading"
-      class="table-content data-source-table">
-
+      class="table-content data-source-table"
+      @on-selection-change="handleSelectionChange">
     </Table>
     <Page
       :page-size="page.pageSize"
@@ -96,7 +121,7 @@
           <FormItem :label="$t('message.linkis.ipListManagement.cluster')" prop="clusterName">
             <Input class="input" v-model="modalData.clusterName"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.userName')" prop="username">
+          <FormItem v-if="!isBatch" :label="$t('message.linkis.ipListManagement.userName')" prop="username">
             <Input class="input" v-model="modalData.username"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.appName')" prop="creator">
@@ -108,17 +133,35 @@
           <FormItem :label="$t('message.linkis.ipListManagement.endTime')" prop="endTime">
             <Input class="input" v-model="modalData.endTime" placeholder="XX:XX"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.CPUThreshold')" prop="CPUThreshold">
+          <FormItem :label="$t('message.linkis.ipListManagement.acrossClusterQueue')" prop="crossQueue">
+            <Input class="input" v-model="modalData.crossQueue"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.priorityCluster')" prop="priorityCluster">
+            <Input class="input" v-model="modalData.priorityCluster"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetCPUThreshold')" prop="targetCPUThreshold">
+            <Input class="input" v-model="modalData.targetCPUThreshold"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetMemoryThreshold')" prop="targetMemoryThreshold">
+            <Input class="input" v-model="modalData.targetMemoryThreshold"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetCPUPercentageThreshold')" prop="targetCPUPercentageThreshold">
+            <Input class="input" v-model="modalData.targetCPUPercentageThreshold"  placeholder="0~1"></Input>
+          </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.targetMemoryPercentageThreshold')" prop="targetMemoryPercentageThreshold">
+            <Input class="input" v-model="modalData.targetMemoryPercentageThreshold"  placeholder="0~1"></Input>
+          </FormItem>
+          <!-- <FormItem :label="$t('message.linkis.ipListManagement.CPUThreshold')" prop="CPUThreshold">
             <Input class="input" v-model="modalData.CPUThreshold"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.MemoryThreshold')" prop="MemoryThreshold">
             <Input class="input" v-model="modalData.MemoryThreshold"></Input>
+          </FormItem> -->
+          <FormItem :label="$t('message.linkis.ipListManagement.originCPUPercentageThreshold')" prop="originCPUPercentageThreshold">
+            <Input class="input" v-model="modalData.originCPUPercentageThreshold"  placeholder="0~1"></Input>
           </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.CPUPercentageThreshold')" prop="CPUPercentageThreshold">
-            <Input class="input" v-model="modalData.CPUPercentageThreshold"  placeholder="0~1"></Input>
-          </FormItem>
-          <FormItem :label="$t('message.linkis.ipListManagement.MemoryPercentageThreshold')" prop="MemoryPercentageThreshold">
-            <Input class="input" v-model="modalData.MemoryPercentageThreshold"  placeholder="0~1"></Input>
+          <FormItem :label="$t('message.linkis.ipListManagement.originMemoryPercentageThreshold')" prop="originMemoryPercentageThreshold">
+            <Input class="input" v-model="modalData.originMemoryPercentageThreshold"  placeholder="0~1"></Input>
           </FormItem>
           <FormItem :label="$t('message.linkis.ipListManagement.isValid')" prop="isValid">
             <RadioGroup v-model="modalData.isValid">
@@ -151,17 +194,25 @@ export default {
   name: 'acrossClusterRule',
   data() {
     return {
+      isLogAdmin: false,
       modalTitle: '',
       loading: false,
       queryData: {
         username: '',
-        creator: ''
+        creator: '',
+        isValid: '',
       },
       confirmQuery: {
         username: '',
         creator: '',
+        isValid: '',
       },
       tableColumns: [
+        // {
+        //   type: 'selection', 
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: "ID",
           key: 'id',
@@ -179,19 +230,31 @@ export default {
         {
           title: this.$t('message.linkis.ipListManagement.userCreator'),
           key: 'userCreator',
-          width: 550,
+          width: 450,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.ipListManagement.isValid'),
           key: 'isValid',
-          width: 200,
+          width: 150,
           tooltip: true,
           align: 'center',
           render: (h, params) => {
             return h('div', [
               h('span', params.row.isValid === 'Y' ? this.$t('message.linkis.ipListManagement.yes') : this.$t('message.linkis.ipListManagement.no'))
+            ]);
+          }
+        },
+        {
+          title: this.$t('message.linkis.ipListManagement.priorityCluster'),
+          key: 'parsedRules',
+          width: 150,
+          tooltip: true,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('span', params.row?.parsedRules?.priorityClusterRule?.priorityCluster || '--')
             ]);
           }
         },
@@ -223,6 +286,21 @@ export default {
           width: 200,
           align: 'center',
           render: (h, params) => {
+            if(!this.isLogAdmin) {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: params.row.isValid === 'N' ? 'success' : 'warning',
+                    size: 'small'
+                  },
+                  on: {
+                    click: () => {
+                      this.enable(params.row)
+                    }
+                  }
+                }, params.row.isValid === 'N' ? this.$t('message.linkis.ipListManagement.enable') : this.$t('message.linkis.ipListManagement.disable')),
+              ]);
+            }
             return h('div', [
               h('Button', {
                 props: {
@@ -268,16 +346,22 @@ export default {
         }
       ],
       datalist: [],
+      isBatch: false,
+      batchMode: '',
       tableLoading: false,
       showCreateModal: false,
       modalData: {
         username: '',
         creator: '',
         clusterName: '',
-        CPUThreshold: '',
-        CPUPercentageThreshold: '',
-        MemoryThreshold: '',
-        MemoryPercentageThreshold: '',
+        crossQueue: '',
+        priorityCluster: '',
+        targetCPUThreshold: '',
+        targetMemoryThreshold: '',
+        targetCPUPercentageThreshold: '',
+        targetMemoryPercentageThreshold: '',
+        originCPUPercentageThreshold: '',
+        originMemoryPercentageThreshold: '',
         startTime: '',
         endTime: '',
         isValid: 'Y'
@@ -285,19 +369,22 @@ export default {
       modalDataRule: {
         username: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
-        parsedRules: [
-          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur', type: 'object'},
-          {validator: this.ruleJsonValidator, trigger: 'blur'}
-        ],
+        // parsedRules: [
+        //   {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur', type: 'object'},
+        //   {validator: this.ruleJsonValidator, trigger: 'blur'}
+        // ],
         clusterName: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
         startTime: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
@@ -307,23 +394,43 @@ export default {
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {pattern: /^([01]\d|2[0-3]):[0-5]\d$/, message: this.$t('message.linkis.ipListManagement.timeError'), type: 'string'}
         ],
-        MemoryThreshold: [
+        targetMemoryThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.thresholdValidator, trigger: 'blur'},
         ],
-        CPUThreshold: [
+        targetCPUThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.thresholdValidator, trigger: 'blur'},
         ],
-        MemoryPercentageThreshold: [
+        targetMemoryPercentageThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
         ],
-        CPUPercentageThreshold: [
+        targetCPUPercentageThreshold: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
           {validator: this.percentageThresholdValidator, trigger: 'blur'},
           {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        originMemoryPercentageThreshold: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        originCPUPercentageThreshold: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 4, message: this.$t('message.linkis.ipListManagement.customLen', {length: '4'})}
+        ],
+        crossQueue: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          // {validator: this.percentageThresholdValidator, trigger: 'blur'},
+          {type: 'string', max: 50, message: this.$t('message.linkis.ipListManagement.customLen', {length: '50'})}
+        ],
+        priorityCluster: [
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'},
+          {type: 'string', max: 20, message: this.$t('message.linkis.ipListManagement.customLen', {length: '20'})}
         ],
       },
       // tagIsExist: true,
@@ -344,11 +451,46 @@ export default {
       },
       showViewModal: false,
       errorJson: false,
+      batchList: [],
+      completeModifyInfo: false,
+      validOptions: [{label: this.$t('message.linkis.yes'), value: 'Y'}, {label: this.$t('message.linkis.no'), value: 'N'}],
     }
   },
   computed: {
-    mapping () {
+    mapping() {
       return (this.modalData.username || 'username') + '-' + (this.modalData.creator || 'creator') + '  -->  ' + (this.modalData.ipList || 'IPList')
+    },
+    confirmable() {
+      const pageCount = Math.ceil(this.page.totalPage / this.page.pageSize)
+      let hasItem = false;
+      for (let i = 0;i < pageCount; i++) {
+        if (this.batchList[i+1]?.length > 0) {
+          hasItem = true
+        }
+      }
+      return hasItem && (this.batchMode === 'modify' ? this.completeModifyInfo : true)
+    },
+    confirmBtnText() {
+      switch (this.batchMode) {
+        case 'enable':
+          return this.$t('message.linkis.ipListManagement.confirmEnableBtn')
+        case 'disable':
+          return this.$t('message.linkis.ipListManagement.confirmDisableBtn')
+        case 'delete':
+          return this.$t('message.linkis.ipListManagement.confirmDeleteBtn')
+        case 'modify':
+          return this.$t('message.linkis.ipListManagement.confirmModifyBtn')
+        default:
+          return '';
+      }
+    }
+  },
+  watch: {
+    modalData: {
+      handler() {
+        this.completeModifyInfo = false;
+      },
+      deep: true,
     }
   },
   methods: {
@@ -369,6 +511,9 @@ export default {
         this.datalist = res.acrossClusterRuleList.map((item) => {
           item.userCreator = item.username + "-" + item.creator;
           item.parsedRules = JSON.parse(item.rules)
+          if(!this.batchList[this.page.pageNow]) this.$set(this.batchList, this.page.pageNow, []);
+          // iview table cannot cache or bind selection
+          item._checked = this.batchList[this.page.pageNow].includes(item.id)
           // item.createTime = new Date(item.createTime).toLocaleString();
           return item;
         })
@@ -377,6 +522,7 @@ export default {
         this.tableLoading = false;
       } catch(err) {
         this.tableLoading = false;
+        window.console.warn(err);
       }
 
     },
@@ -390,6 +536,7 @@ export default {
         username: '',
         creator: '',
         clusterName: '',
+        isValid: '',
       };
       this.confirmQuery = {
         username: '',
@@ -402,24 +549,197 @@ export default {
     async createRules () {
       this.showCreateModal = true;
       this.mode = 'create';
-      this.modalTitle = this.$t('message.linkis.ipListManagement.createRules')
+      this.modalTitle = this.isBatch ? this.$t('message.linkis.ipListManagement.batchModify') : this.$t('message.linkis.ipListManagement.createRules');
+      if(this.isBatch) return;
       this.modalData.username = this.userName;
+    },
+    batch(mode) {
+      this.batchMode = mode;
+      if(this.isBatch) return;
+      this.isBatch = true;
+      this.tableColumns.unshift({
+        type: 'selection', 
+        width: 200,
+        align: 'center',
+        key: 'id'
+      })
+      this.tableColumns.pop()
+      
+    },
+    async batchConfirm() {
+      const ids = [];
+      const pageCount = Math.ceil(this.page.totalPage / this.page.pageSize)
+      for (let i = 0;i < pageCount; i++) {
+        if(this.batchList[i+1]) {
+          ids.push(...this.batchList[i+1])
+        }
+      }
+      let target;
+      if(this.batchMode === 'modify') {
+        target = '/configuration/acrossClusterRule/updateByBatch';
+        this.$Modal.confirm({
+          title: this.$t('message.linkis.ipListManagement.batchModify'),
+          content: this.$t('message.linkis.ipListManagement.confirmBatchModify'),
+          onOk: async () => {
+            try {
+              const body = cloneDeep(this.modalData);
+              delete body.username;
+              body.ids = ids;
+              await api.fetch(target, body, "put");
+              this.batchCancel()
+              await this.getTableData();
+            } catch (err) {
+              window.console.warn(err)
+            }
+            
+          }
+        })
+      } else if(this.batchMode === 'delete') {
+        target = '/configuration/acrossClusterRule/deleteByBatch';
+        this.$Modal.confirm({
+          title: this.$t('message.linkis.ipListManagement.batchDelete'),
+          content: this.$t('message.linkis.ipListManagement.confirmBatchDelete'),
+          onOk: async () => {
+            try {
+              await api.fetch(target, { ids }, "put");
+              this.batchCancel();
+              this.page.pageNow = 1;
+              await this.getTableData();
+            } catch (err) {
+              window.console.warn(err)
+            }
+            
+          }
+        })
+      } else {
+        let content;
+        let title;
+        const body = { ids };
+        if(this.batchMode === 'enable') {
+          content = this.$t('message.linkis.ipListManagement.batchEnable');
+          title = this.$t('message.linkis.ipListManagement.batchEnable');
+          body.isValid = 'Y';
+        } else {
+          content = this.$t('message.linkis.ipListManagement.confirmBatchDisable');
+          title = this.$t('message.linkis.ipListManagement.batchDisable');
+          body.isValid = 'N';
+        }
+        target = '/configuration/acrossClusterRule/isValidByBatch';
+        this.$Modal.confirm({
+          title,
+          content,
+          onOk: async () => {
+            try {
+              await api.fetch(target, body, "put");
+              this.batchCancel();
+              await this.getTableData();
+            } catch (err) {
+              window.console.warn(err)
+            }
+          }
+        })
+      }
+    },
+    batchCancel() {
+      this.isBatch = false;
+      this.tableColumns.shift();
+      this.tableColumns.push({
+        title: this.$t('message.linkis.ipListManagement.action'),
+        key: 'action',
+        width: 200,
+        align: 'center',
+        render: (h, params) => {
+          if(!this.isLogAdmin) {
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: params.row.isValid === 'N' ? 'success' : 'warning',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.enable(params.row)
+                  }
+                }
+              }, params.row.isValid === 'N' ? this.$t('message.linkis.ipListManagement.enable') : this.$t('message.linkis.ipListManagement.disable')),
+            ]);
+          }
+          return h('div', [
+            h('Button', {
+              props: {
+                type: 'primary',
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.edit(params.row)
+                }
+              }
+            }, this.$t('message.linkis.ipListManagement.edit')),
+            h('Button', {
+              props: {
+                type: 'error',
+                size: 'small'
+              },
+              style: {
+                marginRight: '5px'
+              },
+              on: {
+                click: () => {
+                  this.delete(params.row)
+                }
+              }
+            }, this.$t('message.linkis.ipListManagement.delete')),
+            h('Button', {
+              props: {
+                type: params.row.isValid === 'N' ? 'success' : 'warning',
+                size: 'small'
+              },
+              on: {
+                click: () => {
+                  this.enable(params.row)
+                }
+              }
+            }, params.row.isValid === 'N' ? this.$t('message.linkis.ipListManagement.enable') : this.$t('message.linkis.ipListManagement.disable')),
+          ]);
+        }
+      })
+      this.batchMode = '';
+      this.batchList = [];
+      this.datalist = this.datalist.map((item) => {
+        delete item._checked;
+        return item;
+      })
+      this.cancel();
+    },
+    handleSelectionChange(selection) {
+      this.$set(this.batchList, this.page.pageNow, selection.map(item => item.id));
     },
     cancel() {
       this.showCreateModal = false;
-      this.modalData = {
-        username: '',
-        creator: '',
-        clusterName: '',
-        CPUThreshold: '',
-        CPUPercentageThreshold: '',
-        MemoryThreshold: '',
-        MemoryPercentageThreshold: '',
-        startTime: '',
-        endTime: '',
-        isValid: 'Y'
+      if(!this.isBatch) {
+        this.modalData = {
+          username: '',
+          creator: '',
+          clusterName: '',
+          crossQueue: '',
+          priorityCluster: '',
+          targetCPUThreshold: '',
+          targetMemoryThreshold: '',
+          targetCPUPercentageThreshold: '',
+          targetMemoryPercentageThreshold: '',
+          originCPUPercentageThreshold: '',
+          originMemoryPercentageThreshold: '',
+          startTime: '',
+          endTime: '',
+          isValid: 'Y'
+        }
+        this.$refs.createRuleForm.resetFields();
       }
-      this.$refs.createRuleForm.resetFields();
+      
     },
     addRules() {
       if(this.isRequesting) return;
@@ -427,6 +747,11 @@ export default {
       const target = this.mode === 'edit' ? '/configuration/acrossClusterRule/update' : '/configuration/acrossClusterRule/add';
       this.$refs.createRuleForm.validate(async (valid) => {
         if(valid) {
+          if(this.isBatch) {
+            this.completeModifyInfo = true;
+            this.showCreateModal = false;
+            return;
+          }
           this.clearSearch();
           try {
             if(this.mode !== 'edit') {
@@ -455,12 +780,15 @@ export default {
     },
     edit(data) {
       const {
-        id, username, creator, clusterName, parsedRules, isValid
+        id, username, creator, clusterName, parsedRules, isValid,
       } = data
-      const { CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold } = parsedRules?.thresholdRule || {};
+      const { targetCPUPercentageThreshold, targetMemoryPercentageThreshold, targetMemoryThreshold, targetCPUThreshold } = parsedRules?.targetClusterRule || {};
+      const { originCPUPercentageThreshold, originMemoryPercentageThreshold } = parsedRules?.originClusterRule || {};
+      const { crossQueue } = parsedRules?.queueRule || {};
+      const { priorityCluster } = parsedRules?.priorityClusterRule || {};
       const { startTime, endTime } = parsedRules?.timeRule || {}
       this.modalData = {
-        id, username, creator, clusterName, CPUPercentageThreshold, MemoryPercentageThreshold, MemoryThreshold, CPUThreshold, startTime, endTime, isValid
+        id, username, creator, clusterName, crossQueue, targetCPUPercentageThreshold, targetMemoryPercentageThreshold, targetMemoryThreshold, targetCPUThreshold, originCPUPercentageThreshold, originMemoryPercentageThreshold, startTime, endTime, isValid, priorityCluster
       };
       this.showCreateModal = true;
       this.mode = 'edit';
@@ -509,8 +837,8 @@ export default {
     },
     async confirmDelete(data) {
       try {
-        const { username, creator } = data
-        await api.fetch('/configuration/acrossClusterRule/delete', { username, creator }, 'delete');
+        const { id } = data
+        await api.fetch('/configuration/acrossClusterRule/delete', { id }, 'delete');
         this.$Message.success(this.$t('message.linkis.ipListManagement.deleteSuccess'));
       } catch(err) {
         return;
@@ -537,8 +865,8 @@ export default {
       await this.getTableData();
     },
     async search() {
-      const { username, creator, clusterName } = this.queryData;
-      this.confirmQuery = { username, creator, clusterName };
+      const { username, creator, clusterName, isValid } = this.queryData;
+      this.confirmQuery = { username, creator, clusterName, isValid };
       this.page.pageNow = 1;
       await this.getTableData()
     },
@@ -550,7 +878,8 @@ export default {
     }
   },
   created() {
-    this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';
+    this.isLogAdmin = storage.get('isLogAdmin') || '';
+    this.userName = storage.get('userName') || storage.get('baseInfo', 'local')?.username || '';
     this.init();
   }
 
@@ -581,6 +910,13 @@ export default {
     .ivu-tooltip-inner-with-width {
       word-wrap: break-word;
     }
+  }
+}
+.second-action-bar {
+  margin-top: 10px;
+  margin-bottom: -15px;
+  .action-btn {
+    margin-right: 5px;
   }
 }
 </style>

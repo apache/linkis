@@ -290,16 +290,23 @@ export default {
           title: this.$t('message.linkis.EnginePluginManagement.resourceVersion'),
           key: 'resourceVersion',
           tooltip: true,
-          minWidth: 60,
+          minWidth: 100,
           align: 'center',
         },
         {
-          title: this.$t('message.linkis.EnginePluginManagement.user'),
-          key: 'user',
+          title: this.$t('message.linkis.EnginePluginManagement.resourceAddress'),
+          key: 'resourceAddress',
           tooltip: true,
-          minWidth: 60,
+          minWidth: 500,
           align: 'center',
         },
+        // {
+        //   title: this.$t('message.linkis.EnginePluginManagement.user'),
+        //   key: 'user',
+        //   tooltip: true,
+        //   minWidth: 60,
+        //   align: 'center',
+        // },
         // {
         //   title: this.$t('message.linkis.EnginePluginManagement.action'),
         //   key: 'action',
@@ -470,6 +477,7 @@ export default {
         for (let index = 0; index < response.ResourceVersions.versions.length; index++) {
           let element = {};
           element.resourceVersion = response.ResourceVersions.versions[index].version;
+          element.resourceAddress = response.ResourceVersions.versions[index].resource;
           element.user=userName;
           th.currentVersionList.push(element);
         }

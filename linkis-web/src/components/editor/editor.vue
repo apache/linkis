@@ -195,6 +195,12 @@ export default {
     undo() {
       this.editor.trigger('anyString', 'undo');
     },
+    fold() {
+      this.editor.trigger('fold', 'editor.foldAll');
+    },
+    unfold() {
+      this.editor.trigger('unfold', 'editor.unfoldAll');
+    },
     redo() {
       this.editor.trigger('anyString', 'redo');
     },

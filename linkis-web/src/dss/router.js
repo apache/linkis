@@ -61,16 +61,6 @@ export default [
     component: () =>
       import('./view/login/index.vue'),
   },
-  {
-    path: '/login/oauth/callback',
-    name: 'OAuthCallback',
-    meta: {
-      title: 'OAuthCallback',
-      publicPage: true,
-    },
-    component: () =>
-      import('./view/login/oauthCallback.vue'),
-  },
   // Public pages, not subject to permission control(公用页面，不受权限控制)
   {
     path: '/500',

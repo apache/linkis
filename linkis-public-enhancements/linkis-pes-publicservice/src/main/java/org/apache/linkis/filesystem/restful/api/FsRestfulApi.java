@@ -752,12 +752,13 @@ public class FsRestfulApi {
         }
         // 增加字段屏蔽
         Object resultmap = newMap == null ? metaMap : newMap;
-        if (FileSource$.MODULE$.isResultSet(fsPath.getPath()) && (resultmap instanceof Map)) {
+        if (FileSource$.MODULE$.isResultSet(fsPath.getPath()) && (resultmap instanceof Map[])) {
           // 2. 类型转换（已通过校验，可安全强转）
           Map<String, Object>[] filteredMetadata = (Map<String, Object>[]) resultmap;
           List<String[]> filteredContent = result.getSecond();
           // 优先过滤屏蔽字段
-          if (StringUtils.isNotBlank(maskedFieldNames)) {
+          if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+              && StringUtils.isNotBlank(maskedFieldNames)) {
             Set<String> maskedFields =
                 new HashSet<>(Arrays.asList(maskedFieldNames.toLowerCase().split(",")));
             filteredMetadata = ResultUtils.filterMaskedFieldsFromMetadata(resultmap, maskedFields);
@@ -1045,7 +1046,8 @@ public class FsRestfulApi {
       }
 
       // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
-      if (StringUtils.isNotBlank(maskedFieldNames)
+      if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)
           && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()
           && outputFileType.equals("xlsx")) {
         // 同时执行字段屏蔽和字段截取
@@ -1055,7 +1057,8 @@ public class FsRestfulApi {
             excelFsWriter,
             fileSource,
             LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
-      } else if (StringUtils.isNotBlank(maskedFieldNames)) {
+      } else if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)) {
         // 只执行字段屏蔽
         ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
       } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && outputFileType.equals("xlsx")) {
@@ -1178,7 +1181,8 @@ public class FsRestfulApi {
         fileSource = fileSource.page(1, excelDownloadSize);
       }
       // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
-      if (StringUtils.isNotBlank(maskedFieldNames)
+      if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)
           && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
         // 同时执行字段屏蔽和字段截取
         StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
@@ -1187,7 +1191,8 @@ public class FsRestfulApi {
             excelFsWriter,
             fileSource,
             LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH());
-      } else if (StringUtils.isNotBlank(maskedFieldNames)) {
+      } else if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)) {
         // 只执行字段屏蔽
         ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
       } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {

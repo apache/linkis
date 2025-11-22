@@ -1151,12 +1151,8 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
-          List<DataSourceParamKeyDefinition> keyDefinitionList =
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-          // Decrypt
-          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
-            RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
-          }
+          dataSource.setConnectParams(null);
+          dataSource.setParameter(null);
           return Message.ok().data("info", dataSource);
         },
         "Fail to get published data source[获取已发布数据源信息失败]");

@@ -303,6 +303,10 @@ class DefaultEngineCreateService
             null,
             isReuse = false
           )
+        } else {
+          logger.info(
+            s"CreateEngine:Failed to update metrics for emInstance: $emInstance, ecmInstance: $ecmInstance"
+          )
         }
       }
     } { case e: Exception =>

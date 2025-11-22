@@ -26,6 +26,7 @@ import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfig
   PIPELINE_OUTPUT_CHARSET_STR,
   PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
 }
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
 import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant._
 import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
@@ -62,7 +63,7 @@ class CSVExecutor extends PipeLineExecutor with Logging {
     }
 
     // Extract masked field names from options
-    val maskedFieldNames = options.getOrDefault("pipeline.masked.field.names", "")
+    val maskedFieldNames = options.getOrDefault(PipeLineConstant.PIPELINE_MASKED_CONF, "")
 
     val sourceFsPath = new FsPath(sourcePath)
     val destFsPath = new FsPath(destPath)

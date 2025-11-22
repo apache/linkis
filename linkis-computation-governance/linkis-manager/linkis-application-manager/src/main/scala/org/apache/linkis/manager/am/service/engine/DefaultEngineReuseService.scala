@@ -399,6 +399,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
             engineNode.getLogDirSuffix,
             isReuse = true
           )
+        } else {
+          logger.info(s"ReuseEngine:Failed to update metrics for engineNode: $engineNode")
         }
 
       }

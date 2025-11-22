@@ -30,12 +30,14 @@ import org.apache.linkis.manager.common.entity.resource.{
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
 import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.storage.conf.LinkisStorageConf
 
 import java.util
 
@@ -77,7 +79,9 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
         case regexWithMask(sourcePath, destPath, maskedFields) =>
           logger.info(s"Pipeline execution with field masking: $maskedFields")
           val enhancedOptions = new util.HashMap[String, String](newOptions)
-          enhancedOptions.put("pipeline.masked.field.names", maskedFields)
+          if (LinkisStorageConf.FIELD_MASKED_ENABLED) {
+            enhancedOptions.put(PipeLineConstant.PIPELINE_MASKED_CONF, maskedFields)
+          }
           PipelineExecutorSelector
             .select(sourcePath, destPath, enhancedOptions.asInstanceOf[util.Map[String, String]])
             .execute(sourcePath, destPath, engineExecutorContext)

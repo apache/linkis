@@ -86,6 +86,9 @@ object LinkisStorageConf {
   val FIELD_TRUNCATION_ENABLED =
     CommonVars("linkis.resultset.field.truncation.enabled", false).getValue
 
+  val FIELD_MASKED_ENABLED =
+    CommonVars("linkis.resultset.field.masked.enabled", false).getValue
+
   val FIELD_VIEW_MAX_LENGTH = CommonVars("linkis.resultset.field.view.max.length", 10000).getValue
 
   val FIELD_EXPORT_DOWNLOAD_LENGTH =
@@ -96,5 +99,17 @@ object LinkisStorageConf {
 
   val OVERSIZED_FIELD_MAX_COUNT =
     CommonVars("linkis.resultset.field.oversized.max.count", 20).getValue
+
+  val FIELD_TRUNCATION_NOTE =
+    CommonVars("linkis.resultset.field.truncation.excel.note", "(truncated to {0} chars)").getValue
+
+  val FIELD_NOT_TRUNCATION_NOTE =
+    CommonVars("linkis.resultset.field.truncation.default.note", "(truncated)").getValue
+
+  val FIELD_OPEN_FILE_TRUNCATION_NOTE =
+    CommonVars(
+      "linkis.resultset.field.truncation.note",
+      "结果集存在字段值超过{0}字符，无法全量下载，以下字段截取前{0}字符展示：{1}"
+    ).getValue
 
 }

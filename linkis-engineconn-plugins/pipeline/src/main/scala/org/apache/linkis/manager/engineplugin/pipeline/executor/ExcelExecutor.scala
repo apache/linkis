@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, ResultSetUtils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
 import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant._
 import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
@@ -50,7 +51,7 @@ class ExcelExecutor extends PipeLineExecutor with Logging {
       engineExecutorContext: EngineExecutionContext
   ): ExecuteResponse = {
     // Extract masked field names from options
-    val maskedFieldNames = options.getOrDefault("pipeline.masked.field.names", "")
+    val maskedFieldNames = options.getOrDefault(PipeLineConstant.PIPELINE_MASKED_CONF, "")
 
     var fileSource: FileSource = null
     var excelFsWriter: ExcelFsWriter = null

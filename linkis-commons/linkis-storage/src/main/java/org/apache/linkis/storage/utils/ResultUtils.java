@@ -97,6 +97,7 @@ public class ResultUtils {
               for (int columnIndex : columnsToRemove) {
                 if (columnIndex < rowList.size()) {
                   rowList.remove(columnIndex);
+                  LOGGER.info("MaskedField  Remove Data columnIndex:" + columnIndex);
                 }
               }
               return rowList.toArray(new String[0]);
@@ -208,7 +209,6 @@ public class ResultUtils {
    */
   public static FieldTruncationResult detectAndHandle(
       Object metadata, List<String[]> FileContent, Integer maxLength, boolean truncate) {
-
     if (metadata == null || !(metadata instanceof Map[])) {
       return new FieldTruncationResult();
     }
@@ -242,6 +242,10 @@ public class ResultUtils {
 
     // Truncate if requested
     List<ArrayList<String>> processedData = dataList;
+    LOGGER.info(
+        "Staring Field truncation detection function ,truncate is {},hasOversizedFields {}",
+        truncate,
+        hasOversizedFields);
     if (truncate && hasOversizedFields) {
       processedData = truncateFields(columnNames, dataList, maxLength);
     }
@@ -499,7 +503,9 @@ public class ResultUtils {
           if (oversizedFieldNames.contains(columns[j].columnName())) {
             // Get the max length for this field
             String truncatedInfo =
-                maxLength != null ? "(truncated to " + maxLength + " chars)" : "(truncated)";
+                maxLength != null
+                    ? MessageFormat.format(LinkisStorageConf.FIELD_TRUNCATION_NOTE(), maxLength)
+                    : LinkisStorageConf.FIELD_NOT_TRUNCATION_NOTE();
             // Create a new column with truncation info suffix to indicate truncation
             columns[j] =
                 new org.apache.linkis.storage.domain.Column(
@@ -519,8 +525,9 @@ public class ResultUtils {
         oversizedFieldNames.forEach(joiner::add);
         String note =
             MessageFormat.format(
-                "结果集存在字段值超过{0}字符，无法全量下载，以下字段截取前{0}字符展示：{1}",
-                LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH(), joiner);
+                LinkisStorageConf.FIELD_OPEN_FILE_TRUNCATION_NOTE(),
+                LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH(),
+                joiner);
         fsWriter.addMetaDataWithNote(tableMetaData, note);
       }
       for (String[] row : finalData) {

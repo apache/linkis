@@ -57,10 +57,14 @@
 #### 步骤5：创建需求文档
 - 按项目标准需求文档格式创建markdown文档
 - 存放路径：`docs/${current_version}/requirements/<需求名称>.md`
+- 需求文档需要流程图，时序图，泳道图必须使用drawio格式，代码使用markdown文档存放，一个图一个文档，
+- 流程图存放路径：`docs/${current_version}/requirements/flowchart/<需求名称>-<流程图类型>-flowchart.md`
 
 #### 步骤6：创建设计文档
 - 按项目标准设计文档格式创建markdown文档
-- 存放路径：`docs/${current_version}/design/<需求名称>-design.md`
+- 设计文档存放路径：`docs/${current_version}/design/<需求名称>-design.md`
+- 设计文档需要流程图，时序图，泳道图必须使用drawio格式，代码使用markdown文档存放，一个图一个文档，
+- 流程图存放路径：`docs/${current_version}/design/flowchart/<需求名称>-<流程图类型>-flowchart.md`
 
 #### 步骤7：代码开发
 - 按需求和设计文档进行开发

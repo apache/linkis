@@ -18,16 +18,20 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
+import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.{EngineReuseLabelChooser, LabelChecker}
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
+import org.apache.linkis.manager.am.utils.AMUtils
 import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -41,15 +45,17 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
-import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.label.LabelFilter
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
@@ -146,7 +152,7 @@ class DefaultEngineCreateService
     if (null == emScoreNodeList || emScoreNodeList.isEmpty) {
       throw new LinkisRetryException(
         AMConstant.EM_ERROR_CODE,
-        s" The em of labels ${engineCreateRequest.getLabels} not found"
+        s" The ecm of labels ${engineCreateRequest.getLabels} not found"
       )
     }
 
@@ -186,6 +192,7 @@ class DefaultEngineCreateService
     if (engineCreateRequest.getProperties == null) {
       engineCreateRequest.setProperties(new util.HashMap[String, String]())
     }
+
     val resource =
       generateResource(
         engineCreateRequest.getProperties,
@@ -249,6 +256,10 @@ class DefaultEngineCreateService
     )
     engineNode.setTicketId(resourceTicketId)
 
+    val params: String = BDPJettyServerHelper.gson.toJson(engineCreateRequest.getProperties)
+    logger.info(s"Task: $taskId finished to create  engineConn with params: $params")
+    engineNode.setParams(params)
+
     // 7.Update persistent information: including inserting engine/metrics
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)
@@ -278,8 +289,20 @@ class DefaultEngineCreateService
         s"Failed to update engineNode: ${t.getMessage}"
       )
     }
-
-    // 8. Add the Label of EngineConn, and add the Alias of engineConn
+    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+      val emInstance = engineNode.getServiceInstance.getInstance
+      val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
+      // 8. Update job history metrics after successful engine creation - 异步执行
+      AMUtils.updateMetricsAsync(
+        taskId,
+        resourceTicketId,
+        emInstance,
+        ecmInstance,
+        null,
+        isReuse = false
+      )
+    }
+    // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)

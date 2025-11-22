@@ -6,9 +6,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,6 +75,10 @@
                 <exclude>com.google.code.findbugs:jsr305:jar</exclude>
                 <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
                 <exclude>com.google.guava:listenablefuture:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
                 <exclude>io.micrometer:micrometer-core:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-commons-util:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-eventbus:jar</exclude>
@@ -140,4 +144,3 @@
     </fileSets>
 
 </assembly>
-

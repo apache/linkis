@@ -143,6 +143,12 @@ export default {
       this.errorNum = errorLogs.length;
       this.warnNum = warnLogs.length;
     },
+    unfold() {
+      this.$refs.logEditor.unfold();
+    },
+    fold() {
+      this.$refs.logEditor.fold();
+    },
     getSearchList(log) {
       let MatchText = '';
       const val = this.searchText;

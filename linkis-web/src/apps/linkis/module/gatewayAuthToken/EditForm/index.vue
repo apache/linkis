@@ -136,8 +136,8 @@ export default {
           value: false,
           hidden: false,
           options: [
-            {value: false,label: "否",disabled: false},
-            {value: true,label: "是",disabled: false},
+            {value: false,label: this.$t('message.linkis.no'),disabled: false},
+            {value: true,label: this.$t('message.linkis.yes'),disabled: false},
           ],
           on: {
             'on-change': () => {

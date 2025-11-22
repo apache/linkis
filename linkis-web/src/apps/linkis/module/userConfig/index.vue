@@ -121,6 +121,12 @@
           <FormItem :label="$t('message.linkis.userConfig.configValue')" :rules="{required: !!defaultValue , message: $t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'}" prop="configValue">
             <Input class="input" v-model="modalData.configValue" clearable  style="width: 319px" :placeholder="$t('message.linkis.userConfig.configValuePro')"></Input>
           </FormItem>
+          <FormItem :label="$t('message.linkis.userConfig.isForceVerify')" prop="force">
+            <RadioGroup v-model="modalData.force">
+              <Radio label="false">{{$t('message.linkis.userConfig.yes')}}</Radio>
+              <Radio label="true">{{$t('message.linkis.userConfig.no')}}</Radio>
+            </RadioGroup>
+          </FormItem>
         </Form>
       </div>
       <div slot="footer">
@@ -241,7 +247,9 @@ export default {
         engineType: '',
         version: '',
         configKey: '',
-        configValue: ''
+        configValue: '',
+        force: "false",
+        configKeyId: ''
       },
       modalDataRule: {
         user: [
@@ -305,7 +313,7 @@ export default {
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
         const res = await api.fetch("/configuration/userKeyValue", params, "get")
-          
+
         this.datalist = res.configValueList.map((item) => {
           const labelValue = item.labelValue;
           const baseArr = labelValue.split(',');
@@ -333,7 +341,7 @@ export default {
             });
             this.engineTypeOptions = [...res.engineType];
             this.allEngineTypeOptions = [...res.engineType];
-            this.allEngineTypeOptions.unshift({label: this.$t('message.linkis.all'),value: '*'});
+            this.allEngineTypeOptions.unshift({label: this.$t('message.linkis.EnginePluginManagement.globalConfig'),value: '*'});
           })
       } catch(err) {
         return;
@@ -368,7 +376,9 @@ export default {
         engineType: '',
         version: '',
         configKey: '',
-        configValue: ''
+        configValue: '',
+        configKeyId: '',
+        force: 'false'
       }
       this.configOption = [];
       this.versionOption = [];
@@ -384,7 +394,8 @@ export default {
               this.page.pageNow = 1;
             }
             this.isRequesting = true
-            await api.fetch(target, this.modalData, "post")
+            const { force, configKeyId } = this.modalData
+            await api.fetch(target, {...this.modalData, force: JSON.parse(force), configKeyId: String(configKeyId)}, "post")
             await this.getTableData();
             this.cancel();
             this.$Message.success(this.$t('message.linkis.udf.success'));
@@ -400,12 +411,12 @@ export default {
     },
     edit(data) {
       const {
-        user, creator, engineType, version, key, configValue, defaultValue
+        user, creator, engineType, version, key, configValue, defaultValue, configKeyId
       } = data;
       this.configOption.push({value: key, label: key});
       this.defaultValue = defaultValue
       this.modalData = {
-        user, creator, engineType, version, configKey: key, configValue,
+        user, creator, engineType, version, configKey: key, configValue, force: 'false', configKeyId
       };
       this.versionOption = [{label: version, value: version}];
       this.showCreateModal = true;
@@ -485,7 +496,7 @@ export default {
     }
   },
   created() {
-    this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';
+    this.userName = storage.get('userName') || storage.get('baseInfo', 'local')?.username || '';
     this.init();
     this.getEngineOptionsData();
   }

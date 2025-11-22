@@ -22,7 +22,9 @@ export default {
 
     monaco.languages.setMonarchTokensProvider('log', {
       tokenizer: {
+        // The earlier a rule is placed, the higher its priority. If a new rule does not take effect, try moving it to the top.(规则越靠前，优先级越高，如果新配置的规则不生效，尝试提到最前面去)
         root: [
+          [/^Caused by:\s.*/, 'log-caused'],
           [/(^[=a-zA-Z].*|\d\s.*)/, 'log-normal'],
           [/\sERROR\s.*/, 'log-error'],
           [/\sWARN\s.*/, 'log-warn'],

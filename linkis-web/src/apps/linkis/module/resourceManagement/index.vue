@@ -143,25 +143,25 @@
     <template v-if="isAdminModel">
       <Table class="table-content" border :width="tableWidth" :columns="admincolumns" :data="adminTableData">
         <template slot-scope="{row}" slot="usedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')},${calcCompanyAdmin(row, 'usedResource', 'instance')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')},${calcCompanyAdmin(row, 'usedResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="lockedResource">
-          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')},${calcCompanyAdmin(row, 'lockedResource', 'instance')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')},${calcCompanyAdmin(row, 'lockedResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')},${calcCompanyAdmin(row, 'maxResource', 'instance')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')},${calcCompanyAdmin(row, 'maxResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="leftResource">
-          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')},${calcCompanyAdmin(row, 'leftResource', 'instance')}`}}</span>
+          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')},${calcCompanyAdmin(row, 'leftResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnUsedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)},${calcCompanyAdmin(row, 'usedResource', 'instance', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)},${calcCompanyAdmin(row, 'usedResource', 'instances', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnMaxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)},${calcCompanyAdmin(row, 'maxResource', 'instance', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)},${calcCompanyAdmin(row, 'maxResource', 'instances', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnLeftResource">
-          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)},${calcCompanyAdmin(row, 'leftResource', 'instance', true)}`}}</span>
+          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)},${calcCompanyAdmin(row, 'leftResource', 'instances', true)}`}}</span>
         </template>
       </Table>
       <div class="page-bar">
@@ -567,12 +567,12 @@ export default {
       } else {
         if (yarn) {
           const yarnType = type === 'memory' ? 'queueMemory' : 'queueCores'
-          data = row[field].DriverAndYarnResource.yarnResource[yarnType]
+          data = row[field].yarnResource[yarnType]
         } else {
           // if(type === 'instance') {
           //   type = instances;
           // }
-          data = row[field].DriverAndYarnResource.loadInstanceResource[type] || row[field].DriverAndYarnResource.loadInstanceResource['instances']
+          data = row[field].loadInstanceResource[type] || row[field].loadInstanceResource['instances']
         }
       }
       if (type === 'memory' && data !== ' -- ') {

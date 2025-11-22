@@ -80,7 +80,7 @@
             }
         }
     }
-    /deep/ .ivu-select-dropdown {
+    ::v-deep .ivu-select-dropdown {
         padding: 0;
         margin: 0;
     }

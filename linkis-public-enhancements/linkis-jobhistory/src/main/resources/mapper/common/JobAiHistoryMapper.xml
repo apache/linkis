@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.jobhistory.dao.JobAiHistoryMapper">
+
+    <insert id="insert" parameterType="org.apache.linkis.jobhistory.entity.JobAiHistory">
+        INSERT INTO linkis_ps_ai_job_history (
+        job_history_id, submit_user, execute_user, submit_code,
+        execution_code, metrics, params, labels, error_code, error_desc,
+        engine_instances, engine_type, change_time, created_time, updated_time
+        ) VALUES (
+        #{jobHistoryId}, #{submitUser}, #{executeUser}, #{submitCode},
+        #{executionCode}, #{metrics}, #{params}, #{labels}, #{errorCode},
+        #{errorDesc}, #{engineInstances}, #{engineType}, #{changeTime}, #{createdTime}, #{updatedTime}
+        )
+    </insert>
+
+    <!-- 更新语句 -->
+    <update id="update" parameterType="org.apache.linkis.jobhistory.entity.JobAiHistory">
+        UPDATE linkis_ps_ai_job_history
+        <set>
+            <if test="jobHistoryId != null">job_history_id = #{jobHistoryId},</if>
+            <if test="submitUser != null">submit_user = #{submitUser},</if>
+            <if test="executeUser != null">execute_user = #{executeUser},</if>
+            <if test="submitCode != null">submit_code = #{submitCode},</if>
+            <if test="executionCode != null">execution_code = #{executionCode},</if>
+            <if test="metrics != null">metrics = #{metrics},</if>
+            <if test="params != null">params = #{params},</if>
+            <if test="labels != null">labels = #{labels},</if>
+            <if test="errorCode != null">error_code = #{errorCode},</if>
+            <if test="errorDesc != null">error_desc = #{errorDesc},</if>
+            <if test="engineInstances != null">engine_instances = #{engineInstances},</if>
+            <if test="engineType != null">engine_type = #{engineType},</if>
+            <if test="changeTime != null">change_time = #{changeTime},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updatedTime != null">updated_time = #{updatedTime}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

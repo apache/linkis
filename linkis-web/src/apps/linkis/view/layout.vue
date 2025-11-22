@@ -20,7 +20,7 @@
     <layout-header
       v-show="showHeader"
       @clear-session="clearSession"/>
-    <router-view/>
+    <router-view />
     <layout-footer v-show="showFooter"/>
   </div>
 </template>
@@ -28,6 +28,7 @@
 import headerModule from '../module/header';
 import footerModule from '@/dss/module/footer';
 import layoutMixin from '@/common/service/layoutMixin.js';
+import eventbus from '@/common/helper/eventbus';
 export default {
   components: {
     layoutFooter: footerModule.component,
@@ -41,6 +42,28 @@ export default {
     showFooter() {
       return this.$route.query.noFooter || location.search.indexOf('noFooter') < 0
     }
+  },
+  mounted() {
+    eventbus.on('show_app_update_notice', () => {
+      window.console.log('received message, update')
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.findNewVer'),
+        content: this.$t('message.linkis.updateNow'),
+        onOk: async () => {
+          try {
+            location.reload()
+          } catch (err) {
+            window.console.warn(err)
+          }
+        },
+        onCancel: () => {
+          // do nothing
+        }
+      })
+    })
+  },
+  unmounted() {
+    eventbus.off('show_app_update_notice')
   }
 };
 </script>

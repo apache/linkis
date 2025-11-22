@@ -35,10 +35,14 @@ const edit = (data)=> {
 const del = (params)=> {
   return api.fetch(`${authTokenBaseUrl}/${params.id}`,'delete')
 }
+const getDecryptToken = (params) => {
+  return api.fetch(`${authTokenBaseUrl}/decrypt-token?token=${encodeURIComponent(params.tokenSign)}`,'get')
+}
 
 export{
   getList,
   add,
   edit,
-  del
+  del,
+  getDecryptToken
 }

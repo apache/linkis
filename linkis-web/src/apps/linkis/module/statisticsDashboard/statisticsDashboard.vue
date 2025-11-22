@@ -434,7 +434,7 @@ export default {
   top: 0;
   right: 20px;
 }
-/deep/ .table-div {
+::v-deep .table-div {
   height: 100% !important;
 }
 </style>

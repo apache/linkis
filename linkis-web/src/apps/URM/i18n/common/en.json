@@ -60,6 +60,7 @@
         "no": "No",
         "sprak": "sprak",
         "jarPackage": "jar Package",
+        "registerFunc": "Register Function",
         "scriptPath": "Script Path",
         "registerFunction": "Register Function",
         "registerFormat": "Register Format",
@@ -88,7 +89,8 @@
         "XGHS": "Update Funtion",
         "XG": "Update",
         "QPZS": "View in Full Screen",
-        "QXQP": "Cancel Full Screen"
+        "QXQP": "Cancel Full Screen",
+        "XZHS": "Select Function"
       }
     }
   }

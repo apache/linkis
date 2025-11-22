@@ -97,7 +97,8 @@
           ref="watermask"></we-water-mask>
       </template>
       <div v-if="result.hugeData" :style="{height: resultHeight+'px', padding: '15px'}">
-        {{ $t('message.linkis.resultSet.prefixText') }}<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">{{ $t('message.linkis.resultSet.linkText') }}</a>
+        <p v-if="result.tipMsg">{{ result.tipMsg }}</p>
+        <p v-else>{{ $t('message.linkis.resultSet.prefixText') }}<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">{{ $t('message.linkis.resultSet.linkText') }}</a></p>
       </div>
     </div>
     <div v-else-if="['visual', 'dataWrangler'].includes(visualShow)  && resultType === '2'">
@@ -135,7 +136,8 @@
         :list="script.resultList"
         @change="changeSet">
       </result-set-list>
-      <div class="page-hint">
+      <div v-if="!result.hugeData" class="page-hint">
+        <p v-if="result.tipMsg" :title="result.tipMsg" style="margin-right: 20px;max-width: calc(100% - 250px);overflow: hidden;text-overflow: ellipsis;">{{ result.tipMsg }}</p>
         <Page
           :transfer="true"
           v-if="resultType === '2'"
@@ -737,7 +739,7 @@ export default {
 .result-normal-table .columnClass {
   height: 30px;
   line-height: 1.25;
-  /deep/.ivu-table-cell {
+  ::v-deep .ivu-table-cell {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;

@@ -1,13 +1,24 @@
 {
   "message": {
     "linkis": {
+      "tokenPlain": "Plaintext Token",
+      "tokenCipher": "Ciphertext Token",
+      "udfLog": "UDF Log",
+      "diagnosticLog": "Diagnostic Log",
       "refresh": "Refresh",
+      "tableSetting": "Table Setting",
+      "downloadLog": "Download",
+      "countinueDownload": "Countinue Download?",
+      "exceed10000": "The current data exceeds 10,000 records, and only up to 10,000 records are supported. Do you want to proceed with the download?",
       "noDescription": "No description",
       "placeholderZip": "Please enter the workspace Python package path (only zip is supported)!",
       "emptyString": "Empty String",
       "description": "Description",
       "name": "Name",
       "order": "Order",
+      "findNewVer": "New Version Found",
+      "whetherUpdateNow": "Do you want to update now?",
+      "downloadSucceed": "Download succeeded!",
       "addParameterConfig": "Add Parameter Configuration",
       "addEngineType": "Add Engine Type",
       "editDescriptionEngineConfig": "Edit Description Engine Config",
@@ -18,6 +29,7 @@
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
+      "jump": "Quick Jump",
       "jumpPage": "Please check in the jump page...",
       "initiator": "Created From",
       "inputOwnerHint": "Please input owner",
@@ -31,9 +43,11 @@
       "defaultValue": "Default",
       "noDefaultValue": "No default value",
       "stop": "Stop",
+      "batchUnhealth": "Batch change to unhealth",
       "tip": "Tip",
       "serverTip": "No Results（resultLocation:null）",
       "log": "Task Log",
+      "executionCode": "Execution Code",
       "detail": "Task Detail",
       "result": "Task Result",
       "engineLog": "Engine Log",
@@ -51,6 +65,12 @@
       "instanceNum": "Instance Number",
       "keyTip": "The key cannot be empty",
       "instanceName": "Instance Name",
+      "remark": "Remark",
+      "healthInfo": "Health Information",
+      "serviceName": "Service Name",
+      "IP": "IP",
+      "hostname": "Hostname",
+      "versionInfo": "Version Info",
       "resources": "Resources",
       "reset": "Reset",
       "clearSearch": "Clear",
@@ -66,6 +86,11 @@
       "create": "Create",
       "noDataText": "No data yet",
       "jobId": "JobID",
+      "remarkPlaceholder": "Please provide a description for adding or modifying labels, otherwise the labels will be cleaned up",
+      "engineInstance": {
+        "label": "ECM",
+        "placeholder": "Please input ECM"
+      },
       "userName": "Username",
       "password": "Password",
       "unselect": "Please select task",
@@ -75,6 +100,7 @@
       "showAdvancedSearch": "Advanced Search",
       "hideAdvancedSearch": "Hide Advanced Search",
       "manageView": "Switch to the Admin View",
+      "deptManageView": "Switch to the Dept Admin View",
       "back": "Back",
       "download": "Download Log",
       "confirmText": "Confirm downloading the log",
@@ -90,9 +116,6 @@
       "tenant": "Tenant",
       "inputTenant": "Please Input Tenant",
       "globalSettings": "GlobalSettings",
-      "taskOverTimeTop": "TaskDuration-TOP",
-      "taskTotalNum": "TaskTotalNum",
-      "engineTotalNum":"engineTotalNum",
       "resultSet": {
         "prefixText": "Because your result set is large, for a better experience, ",
         "linkText": "View result set",
@@ -110,7 +133,7 @@
       "resourceManagement": {
         "resourceUsage": "Resource usage",
         "applicationList": "Applications"
-      },
+    },
       "time": {
         "second": "Second",
         "minute": "Minute",
@@ -118,16 +141,22 @@
         "day": "Day"
       },
       "tableColumns": {
+        "isReuse": "Reuse",
+        "requestStartTime": "Request Start Time",
+        "requestEndTime": "Request End Time",
+        "requestSpendTime": "Request Spend Time",
+        "metrix": "Metrix",
         "instanceName": "Instance Name",
         "initiator": "Initiator",
         "engineInstance": "Engine Instance",
         "engineType": "Engine Type",
-        "serveType": "Serve Type",
+        "serveType": "Serve Name",
         "appType": "App Type",
         "taskID": "JobID",
         "fileName": "Source",
         "executionCode": "Execution Code",
         "status": "Status",
+        "healthInfo": "Health Information",
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
@@ -140,6 +169,7 @@
         "costTime": "Time Elapsed",
         "executeApplicationName": "Engine",
         "requestApplicationName": "App",
+        "runType": "RunType",
         "user": "User",
         "createdTime": "Created at",
         "updateTime": "Update Time",
@@ -155,7 +185,11 @@
         "engineUsed": "Engine Used",
         "engineTop": "Engine Max",
         "versioTips": "If no engine version is available, check whether the engine materials of the corresponding version are installed",
-        "applicationRole": "Application role"
+        "applicationRole": "Application role",
+        "serviceAddress": "IP:Port",
+        "hostname": "Hostname",
+        "registryTime": "Registration Time",
+        "versionInfo": "Version Info"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -178,12 +212,14 @@
             "dateReport": "Global Variables",
             "globalValiable": "Frequently Asked",
             "microserviceManage": "Microservice Management",
+            "eurekaService": "Eureka Service",
             "ECMManage": "ECM Management",
             "udfFunctionTitle": "UDF Function",
             "udfFunctionManage": "UDF Management",
             "dataSourceManage": "DataSource Management",
             "userResourceManagement": "User Resource Management",
             "tenantTagManagement": "Tenant Tag Management",
+            "departmentTagManagement": "Department Tag Management",
             "ipListManagement": "White List Management",
             "acrossClusterRule": "Across Cluster Rule Management",
             "errorCode": "Error Manage",
@@ -192,6 +228,8 @@
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
+            "pythonModule": "Python Module",
+            "taskResourceManage": "Task Resource Manage",
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "DataSource Environment",
             "datasourceType": "DataSource Type",
@@ -202,8 +240,7 @@
             "EngineConnList": "Engine Conn List",
             "opsTool": "OPS Tool",
             "userConfig": "User Configuration",
-            "configManagement": "Configuration Management",
-            "statisticsDashboard": "Statistics Dashboard"
+            "configManagement": "Configuration Management"
           }
         }
       },
@@ -223,11 +260,13 @@
         "update": "Update Engine Plugin",
         "updateFileOnly": "Update",
         "resourceVersion": "Engine Material BML Version",
+        "resourceAddress": "Material Address",
         "user": "Affiliated Person",
         "deleteCurrentbml": "Delete",
         "versionList": "Version List",
         "rollback": "Roll Back ",
-        "action": "Operation"
+        "action": "Operation",
+        "globalConfig": "global config"
       },
       "modal": {
         "modalTitle": "Prompt message ",
@@ -235,6 +274,7 @@
         "modalDeleteRecord": "Confirm whether to delete the record?",
         "modalDeleteTask": "Confirm whether to stop the selected task?",
         "modalDeleteInstance": "Determines whether to stop the current selected instance?",
+        "modalunheathyInstance": "Confirm whether to modify the status of instances in batches to unhealthy",
         "modalDeleteSuccess": "Deleted successfully",
         "modalDeleteFail": "Delete failed"
       },
@@ -249,10 +289,14 @@
         "instance": {
           "label": "Entrance Instance",
           "placeholder": "Please search by entering the instance"
-      },
+        },
         "creator": {
           "label": "App",
           "placeholder": "Please search by entering the application name"
+        },
+        "runType": {
+          "label": "RunType",
+          "placeholder": "Please search by entering the runType"
         },
         "engine": {
           "label": "Engine"
@@ -336,7 +380,9 @@
         "show": "Show",
         "advancedSetting": "Advanced Settings",
         "dataDev": "Data Development",
-        "maxLimit": "(The resource template specifies an upper limit value of {limit})"
+        "maxLimit": "(The resource template specifies an upper limit value of {limit})",
+        "killEngine": "The parameter changes have taken effect. Clicking 'OK' will stop the idle engines, and busy engines will stop after task execution",
+        "killEngineTitle": "Whether to stop idle engines"
       },
       "globalValiable": "Global Variables",
       "rules": {
@@ -420,6 +466,7 @@
         "inputTenant": "Please Input Tenant Tag",
         "inputDesc": "Please Input Description",
         "inputCreateUser": "Please Input Creare User",
+        "selectDepartment": "Please Select Department",
         "yourTagMapping": "Your Tag Mapping",
         "notEmpty": "Cannot be empty",
         "maxLen": "A maximum of 100 characters is allowed",
@@ -427,6 +474,7 @@
         "contentError1": "English, numbers and underline only",
         "contentError2": "English, numbers, underscores and dashes only",
         "check": "Check",
+        "department": "Department",
         "OK": "OK",
         "Cancel": "Cancel",
         "action": "Action",
@@ -477,10 +525,14 @@
         "rules": "Rules",
         "startTime": "Start Time",
         "endTime": "End Time",
-        "CPUThreshold": "CPU Threshold(Core)",
-        "MemoryThreshold": "Memory Threshold(G)",
-        "CPUPercentageThreshold": "CPU Percentage Threshold",
-        "MemoryPercentageThreshold": "Memory Percentage Threshold",
+        "priorityCluster": "Priority Cluster",
+        "targetCPUThreshold": "Target CPU Threshold(Core)",
+        "targetMemoryThreshold": "Target Memory Threshold(G)",
+        "targetCPUPercentageThreshold": "Target CPU Percentage Threshold",
+        "targetMemoryPercentageThreshold": "Target Memory Percentage Threshold",
+        "originCPUPercentageThreshold": "Origin CPU Percentage Threshold",
+        "originMemoryPercentageThreshold": "Origin Memory Percentage Threshold",
+        "acrossClusterQueue": "Across Cluster Queue",
         "timeError": "The time format should be XX:XX, please enter the correct time",
         "thresholdError": "Please enter an integer between 0 and 10000",
         "percentageThresholdError": "Please enter an integer between 0 and 1",
@@ -519,14 +571,28 @@
         "confirmDisable": "Confirm whether to disable the [{name}] option?",
         "enableSuccessfully": "Enable Successfully",
         "disableSuccessfully": "Disable Successfully",
-        "templateRequired": "Required"
+        "templateRequired": "Required",
+        "batchOperate": "Batch",
+        "batchDelete": "Batch Delete",
+        "batchEnable": "Batch Enable",
+        "batchDisable": "Batch Disable",
+        "batchModify": "Batch Modify",
+        "adjustConf": "Adjust Configuration",
+        "confirmBatchModify": "Confirm bulk modifications to these rules",
+        "confirmBatchDelete": "Confirm bulk deleteion of these rules",
+        "confirmBatchEnable": "Confirm bulk enabling of these rules",
+        "confirmBatchDisable": "Confirm bulk disabling of these rules",
+        "confirmModifyBtn": "Confirm Modify",
+        "confirmDeleteBtn": "Confirm Delete",
+        "confirmEnableBtn": "Confirm Enable",
+        "confirmDisableBtn": "Confirm Disable"
       },
       "codeQuery": {
         "executionCode": "Execution Code",
         "dateRange": "Date Range",
         "engineType": "Engine Type",
         "placeholder": {
-            "executionCode": "Please Input Execution Code",
+            "executionCode": "Please enter the execution code, which does not support special characters such as ', `, and can use % and _ as wildcards: % represents any character, and _ represents a single character.",
             "dateRange": "Please select date range",
             "status": "Please select status"
         },
@@ -539,13 +605,15 @@
         "status": "Status",
         "submitUser": "Submit User",
         "createdTime": "Created Time",
-        "searchRange": "Only T-1 history code can be queried"
-
+        "searchRange": "Only T-1 history code can be queried",
+        "fullMatch": "Full Match",
+        "keyword": "Keyword Match"
       },
       "basedataManagement": {
         "add": "Add",
         "remove": "Remove",
         "edit": "Edit",
+        "tokenInfo": "Token",
         "searchLabel": "Fuzzy Search:",
         "searchPlaceholder": "Please enter your search",
         "search": "Search",
@@ -725,7 +793,10 @@
         "configVKey": "Configuration",
         "configValue": "Configuration Value",
         "configValuePro": "Please Input Configuration Value",
-        "versionInputPro": "Please Input Engine Version"
+        "versionInputPro": "Please Input Engine Version",
+        "isForceVerify": "Whether to perform strong verification",
+        "yes": "yes",
+        "no": "no"
       }
     }
   }

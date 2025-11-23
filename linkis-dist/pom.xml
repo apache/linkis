@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.linkis</groupId>
+    <artifactId>linkis</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <artifactId>linkis-dist</artifactId>
+  <packaging>pom</packaging>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.install.skip>true</maven.install.skip>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-rpc</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>tomcat</groupId>
+          <artifactId>jasper-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>tomcat</groupId>
+          <artifactId>jasper-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.protostuff</groupId>
+          <artifactId>protostuff-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.protostuff</groupId>
+          <artifactId>protostuff-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-scheduler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-storage</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>tomcat</groupId>
+          <artifactId>jasper-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>tomcat</groupId>
+          <artifactId>jasper-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util-ajax</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.zookeeper</groupId>
+          <artifactId>zookeeper</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.protostuff</groupId>
+      <artifactId>protostuff-core</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-runtime -->
+    <dependency>
+      <groupId>io.protostuff</groupId>
+      <artifactId>protostuff-runtime</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.protostuff</groupId>
+      <artifactId>protostuff-api</artifactId>
+      <version>1.6.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>dist</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <skipAssembly>false</skipAssembly>
+              <finalName>apache-linkis-${project.version}-bin</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <attach>false</attach>
+              <descriptors>
+                <descriptor>src/main/assembly/distribution.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <properties>
+        <image.base>centos:7</image.base>
+        <image.base.web>nginx:1.19.6</image.base.web>
+        <jdk.version>1.8.0-openjdk</jdk.version>
+        <jdk.build.revision>1.8.0.332.b09-1.el7_9</jdk.build.revision>
+        <linkis.system.user>hadoop</linkis.system.user>
+        <linkis.system.uid>9001</linkis.system.uid>
+        <linkis.home>/opt/linkis</linkis.home>
+        <linkis.conf.dir>/etc/linkis-conf</linkis.conf.dir>
+        <linkis.log.dir>/var/logs/linkis</linkis.log.dir>
+        <ldh.hadoop.version>3.3.4</ldh.hadoop.version>
+        <ldh.hive.version>3.1.3</ldh.hive.version>
+        <ldh.spark.version>3.2.1</ldh.spark.version>
+        <ldh.spark.hadoop.version>3.2</ldh.spark.hadoop.version>
+        <ldh.flink.version>1.12.2</ldh.flink.version>
+        <ldh.zookeeper.version>3.5.9</ldh.zookeeper.version>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>build-linkis-image</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <target name="linkis-image">
+                    <exec executable="docker" failonerror="true">
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE=${image.base}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_VERSION=${jdk.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="BUILD_TYPE=${image.build.type}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"/>
+                      <arg value="${project.build.directory}"/>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}:${project.version}"/>
+                      <arg value="${project.parent.artifactId}:dev"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>build-linkis-web-image</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <target if="linkis.build.web" name="linkis-web-image">
+                    <echo message="Building linkis web image ..."/>
+                    <mkdir dir="${basedir}/target/apache-linkis-web-${project.version}-dist"/>
+                    <copy todir="${basedir}/target/apache-linkis-web-${project.version}-dist">
+                      <fileset dir="${basedir}/../linkis-web/dist" includes="**"/>
+                    </copy>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}-web:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis-web"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE_WEB=${image.base.web}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="${project.build.directory}"/>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}-web:${project.version}"/>
+                      <arg value="${project.parent.artifactId}-web:dev"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>build-linkis-ldh-image</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <target if="linkis.build.ldh" name="linkis-ldh-image">
+                    <echo message="Building linkis ldh (hadoop all in one) image ..."/>
+                    <exec executable="sh" failonerror="true">
+                      <env key="HADOOP_VERSION" value="${ldh.hadoop.version}"/>
+                      <env key="HIVE_VERSION" value="${ldh.hive.version}"/>
+                      <env key="SPARK_VERSION" value="${ldh.spark.version}"/>
+                      <env key="SPARK_HADOOP_VERSION" value="${ldh.spark.hadoop.version}"/>
+                      <env key="FLINK_VERSION" value="${ldh.flink.version}"/>
+                      <env key="ZOOKEEPER_VERSION" value="${ldh.zookeeper.version}"/>
+                      <arg value="${basedir}/docker/scripts/prepare-ldh-image.sh"/>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${basedir}/docker/ldh.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}-ldh:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis-ldh"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE=${image.base}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_VERSION=${jdk.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="BUILD_TYPE=${image.build.type}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="HADOOP_VERSION=${ldh.hadoop.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="HIVE_VERSION=${ldh.hive.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="SPARK_VERSION=${ldh.spark.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="SPARK_HADOOP_VERSION=${ldh.spark.hadoop.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="ZOOKEEPER_VERSION=${ldh.zookeeper.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="FLINK_VERSION=${ldh.flink.version}"/>
+                      <arg value="${project.build.directory}"/>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}-ldh:${project.version}"/>
+                      <arg value="${project.parent.artifactId}-ldh:dev"/>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

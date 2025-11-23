@@ -1,0 +1,433 @@
+#!/usr/bin/env bash
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# import
+declare -A sqoop_mode_opts_key_only=(\
+    # linkis-arguements
+    ['import']='import' \
+    ['export']='export' \
+)
+SQOOP_MODE="sqoop.mode"
+
+# -D k=v
+declare -A jvm_opts_kv=(\
+    ['-D']='sqoop.env' \
+)
+SQOOP_ENV="sqoop.env"
+
+# --query,-e 'xxxx'
+declare -A job_content_query_opts_kv=(\
+    ['-e']='sqoop.args.query' \
+    ['--query']='sqoop.args.query' \
+)
+# --option value
+declare -A job_content_opts_kv=(\
+# linkis-arguements
+    ['--datasource-name']='sqoop.args.datasource.name' \
+# common-arguements
+    ['--connect']='sqoop.args.connect' \
+    ['--connection-manager']='sqoop.args.connection.manager' \
+    ['--connection-param-file']='sqoop.args.connection.param.file' \
+    ['--driver']='sqoop.args.driver' \
+    ['--hadoop-home']='sqoop.args.hadoop.home' \
+    ['--hadoop-mapred-home']='sqoop.args.hadoop.mapred.home' \
+    # ['--help']='sqoop.args.help' \
+    ['--password']='sqoop.args.password' \
+    # ['--password-alias']='sqoop.args.password.alias' \
+    # ['--password-file']='sqoop.args.password.file' \
+    ['--username']='sqoop.args.username' \
+# export-control-arguments
+    ['--call']='sqoop.args.call' \
+    ['--columns']='sqoop.args.columns' \
+    ['--export-dir']='sqoop.args.export.dir' \
+    ['-m']='sqoop.args.num.mappers' \
+    ['--num-mappers']='sqoop.args.num.mappers' \
+    ['--mapreduce-job-name']='sqoop.args.mapreduce.job.name' \
+    ['--staging-table']='sqoop.args.staging.table' \
+    ['--table']='sqoop.args.table' \
+    ['--update-key']='sqoop.args.update.key' \
+    ['--update-mode']='sqoop.args.update.mode' \
+    ['--validation-failurehandler']='sqoop.args.validation.failurehandler' \
+    ['--validation-threshold']='sqoop.args.validation.threshold' \
+    ['--validator']='sqoop.args.validator' \
+# import-control-arguments
+    ['--boundary-query']='sqoop.args.boundary.query' \
+    ['--columns']='sqoop.args.columns' \
+    ['--compression-codec']='sqoop.args.compression.codec' \
+    ['--direct-split-size']='sqoop.args.direct.split.size' \
+    ['--fetch-size']='sqoop.args.fetch.size' \
+    ['--inline-lob-limit']='sqoop.args.inline.lob.limit' \
+    ['-m']='sqoop.args.num.mappers' \
+    ['--num-mappers']='sqoop.args.num.mappers' \
+    ['--mapreduce-job-name']='sqoop.args.mapreduce.job.name' \
+    ['--merge-key']='sqoop.args.merge.key' \
+    ['--split-by']='sqoop.args.split.by' \
+    ['--table']='sqoop.args.table' \
+    ['--target-dir']='sqoop.args.target.dir' \
+    ['--validation-failurehandler']='sqoop.args.validation.failurehandler' \
+    ['--validation-threshold']='sqoop.args.validation.threshold' \
+    ['--validator']='sqoop.args.validator' \
+    ['--warehouse-dir']='sqoop.args.warehouse.dir' \
+    ['--where']='sqoop.args.where' \
+# incremental-import-arguments
+    ['--check-column']='sqoop.args.check.column' \
+    ['--incremental']='sqoop.args.incremental' \
+    ['--last-value']='sqoop.args.last.value' \
+# output-line-formatting-arguments
+    ['--enclosed-by']='sqoop.args.enclosed.by' \
+    ['--escaped-by']='sqoop.args.escaped.by' \
+    ['--fields-terminated-by']='sqoop.args.fields.terminated.by' \
+    ['--lines-terminated-by']='sqoop.args.lines.terminated.by' \
+    ['--optionally-enclosed-by']='sqoop.args.optionally.enclosed.by' \
+# input-parsing-arguments
+    ['--input-enclosed-by']='sqoop.args.input.enclosed.by' \
+    ['--input-escaped-by']='sqoop.args.input.escaped.by' \
+    ['--input-fields-terminated-by']='sqoop.args.input.fields.terminated.by' \
+    ['--input-lines-terminated-by']='sqoop.args.input.lines.terminated.by' \
+    ['--input-optionally-enclosed-by']='sqoop.args.input.optionally.enclosed.by' \
+# hive arguments:
+    ['--hive-database']='sqoop.args.hive.database' \
+    ['--hive-delims-replacement']='sqoop.args.hive.delims.replacement' \
+    ['--hive-home']='sqoop.args.hive.home' \
+    ['--hive-partition-key']='sqoop.args.hive.partition.key' \
+    ['--hive-partition-value']='sqoop.args.hive.partition.value' \
+    ['--hive-table']='sqoop.args.hive.table' \
+    ['--map-column-hive']='sqoop.args.map.column.hive' \
+# hBase-arguments
+    ['--column-family']='sqoop.args.column.family' \
+    ['--hbase-row-key']='sqoop.args.hbase.row.key' \
+    ['--hbase-table']='sqoop.args.hbase.table' \
+# HCatalog arguments:
+    ['--hcatalog-database']='sqoop.args.hcatalog.database' \
+    ['--hcatalog-home']='sqoop.args.hcatalog.home' \
+    ['--hcatalog-partition-keys']='sqoop.args.hcatalog.partition.keys' \
+    ['--hcatalog-partition-values']='sqoop.args.hcatalog.partition.values' \
+    ['--hcatalog-table']='sqoop.args.hcatalog.table' \
+    ['--hive-home']='sqoop.args.hive.home' \
+    ['--hive-partition-key']='sqoop.args.hive.partition.key' \
+    ['--hive-partition-value']='sqoop.args.hive.partition.value' \
+    ['--map-column-hive']='sqoop.args.map.column.hive' \
+    ['--hcatalog-storage-stanza']='sqoop.args.hcatalog.storage.stanza' \
+# Accumulo arguments:
+    ['--accumulo-batch-size']='sqoop.args.accumulo.batch.size' \
+    ['--accumulo-column-family']='sqoop.args.accumulo.column.family' \
+    ['--accumulo-instance']='sqoop.args.accumulo.instance' \
+    ['--accumulo-max-latency']='sqoop.args.accumulo.max.latency' \
+    ['--accumulo-password']='sqoop.args.accumulo.password' \
+    ['--accumulo-row-key	sqoop.args.accumulo.row.key' \
+    ['--accumulo-table']='']='qoop.args.accumulo.table' \
+    ['--accumulo-user']='sqoop.args.accumulo.user' \
+    ['--accumulo-visibility']='sqoop.args.accumulo.visibility' \
+    ['--accumulo-zookeepers']='sqoop.args.accumulo.zookeepers' \
+# Code-generation-arguments
+    ['--bindir']='sqoop.args.bindir' \
+    ['--class-name']='sqoop.args.class.name' \
+    ['--input-null-non-string']='sqoop.args.input.null.non.string' \
+    ['--input-null-string']='sqoop.args.input.null.string' \
+    ['--jar-file']='sqoop.args.jar.file' \
+    ['--map-column-java']='sqoop.args.map.column.java' \
+    ['--null-non-string']='sqoop.args.null.non.string' \
+    ['--null-string']='sqoop.args.null.string' \
+    ['--outdir']='sqoop.args.outdir' \
+    ['--package-name']='sqoop.args.package.name' \
+# Generic Hadoop command-line arguments
+
+)
+
+# --option
+declare -A job_content_opts_key_only=(\
+# common-arguements
+    ['--relaxed-isolation']='sqoop.args.relaxed.isolation' \
+    ['--skip-dist-cache']='sqoop.args.skip.dist.cache' \
+    ['--verbose']='sqoop.args.verbose' \
+# export-control-arguments
+    ['--batch']='sqoop.args.batch' \
+    ['--clear-staging-table']='sqoop.args.clear.staging.table' \
+    ['--direct']='sqoop.args.direct' \
+    ['--validate']='sqoop.args.validate' \
+# import-control-arguments
+    ['--append']='sqoop.args.append' \
+    ['--as-avrodatafile']='sqoop.args.as.avrodatafile' \
+    ['--as-parquetfile']='sqoop.args.as.parquetfile' \
+    ['--as-sequencefile']='sqoop.args.as.sequencefile' \
+    ['--as-textfile']='sqoop.args.as.textfile' \
+    ['--autoreset-to-one-mapper']='sqoop.args.autoreset.to.one.mapper' \
+    ['--case-insensitive']='sqoop.args.case.insensitive' \
+    ['--delete-target-dir']='sqoop.args.delete.target.dir' \
+    ['--direct']='sqoop.args.direct' \
+    ['--validate']='sqoop.args.validate' \
+    ['-z']='sqoop.args.compress' \
+    ['--compress']='sqoop.args.compress' \
+# incremental-import-arguments
+#   none
+# output line formatting arguments
+    ['--mysql-delimiters']='sqoop.args.mysql.delimiters' \
+# input-parsing-arguments
+#   none
+# hive arguments:
+    ['--create-hive-table']='sqoop.args.create.hive.table' \
+    ['--hive-drop-import-delims']='sqoop.args.hive.drop.import.delims' \
+    ['--hive-import']='sqoop.args.hive.import' \
+    ['--hive-overwrite']='sqoop.args.hive.overwrite' \
+# hBase arguments
+    ['--hbase-bulkload']='sqoop.args.hbase.bulkload' \
+    ['--hbase-create-table']='sqoop.args.hbase.create.table' \
+# HCatalog arguments:
+    ['--create-hcatalog-table']='sqoop.args.create.hcatalog.table' \
+# Accumulo arguments:
+    ['--accumulo-create-table']='sqoop.args.accumulo.create.table' \
+# Generic Hadoop command-line arguments
+    ['-conf']='sqoop.args.conf' \
+    ['-fs']='sqoop.args.fs' \
+    ['-jt']='sqoop.args.jt' \
+    ['-files']='sqoop.args.files' \
+    ['-libjars']='sqoop.args.libjars' \
+    ['-archives']='sqoop.args.archives' \
+)
+
+declare -A help=(\
+    ['-h']='--help'
+    ['--help']='--help'
+)
+
+declare -A help_msg=(\
+    ['Common_arguments']='--connect <jdbc-uri>
+        --connection-manager <class-name>
+        --connection-param-file <properties-file>
+        --driver <class-name>
+        --hadoop-home <hdir>
+        --hadoop-mapred-home <dir>
+        --help
+        --password <password>
+        --password-alias <password-alias>
+        --password-file <password-file>
+        --relaxed-isolation
+        --skip-dist-cache
+        --username <username>
+        --verbose' \
+    ['Import_control_arguments:']='--append
+        --as-avrodatafile
+        --as-parquetfile
+        --as-sequencefile
+        --as-textfile
+        --autoreset-to-one-mapper
+        --boundary-query <statement>
+        --case-insensitive
+        --columns <col,col,col...>
+        --compression-codec <codec>
+        --delete-target-dir
+        --direct
+        --direct-split-size <n>
+        -e,--query <statement>
+        --fetch-size <n>
+        --inline-lob-limit <n>
+        -m,--num-mappers <n>
+        --mapreduce-job-name <name>
+        --split-by <column-name>
+        --table <table-name>
+        --target-dir <dir>
+        --validate
+        --validation-failurehandler <validation-failurehandler>
+        --validation-threshold <validation-threshold>
+        --validator <validator>
+        --warehouse-dir <dir>
+        --where <where clause>
+        -z,--compress' \
+    ['Incremental_import_arguments']='--check-column <column>
+        --incremental <import-type>
+        --last-value <value>' \
+    ['Output_line_formatting_arguments']='--enclosed-by <char>
+        --escaped-by <char>
+        --fields-terminated-by <char>
+        --lines-terminated-by <char>
+        --mysql-delimiters' \
+    ['Input_parsing_arguments']='--input-enclosed-by <char>
+        --input-escaped-by <char>
+        --input-fields-terminated-by <char>
+        --input-lines-terminated-by <char>
+        --input-optionally-enclosed-by <char>' \
+    ['Hive_arguments']='--create-hive-table
+        --hive-database <database-name>
+        --hive-delims-replacement <arg>
+        --hive-drop-import-delims
+        --hive-home <dir>
+        --hive-import
+        --hive-overwrite
+        --hive-partition-key <partition-key>
+        --hive-partition-value <partition-value>
+        --hive-table <table-name>
+        --map-column-hive <arg>' \
+    ['HBase_arguments']='--column-family <family>
+        --hbase-bulkload
+        --hbase-create-table
+        --hbase-row-key <col>
+        --hbase-table <table>' \
+    ['HCatalog_arguments']='--hcatalog-database <arg>
+        --hcatalog-home <hdir>
+        --hcatalog-partition-keys <partition-key>
+        --hcatalog-partition-values <partition-value>
+        --hcatalog-table <arg>
+        --hive-home <dir>
+        --hive-partition-key <partition-key>
+        --hive-partition-value <partition-value>
+        --map-column-hive <arg>
+        --create-hcatalog-table
+        --hcatalog-storage-stanza <arg>' \
+    ['Accumulo_arguments']='--accumulo-batch-size <size>
+        --accumulo-column-family <family>
+        --accumulo-create-table
+        --accumulo-instance <instance>
+        --accumulo-max-latency <latency>
+        --accumulo-password <password>
+        --accumulo-row-key <col>
+        --accumulo-table <table>
+        --accumulo-user <user>
+        --accumulo-visibility <vis>
+        --accumulo-zookeepers <zookeepers>' \
+    ['Code_generation_arguments']='--bindir <dir>
+        --class-name <name>
+        --input-null-non-string <null-str>
+        --input-null-string <null-str>
+        --jar-file <file>
+        --map-column-java <arg>
+        --null-non-string <null-str>
+        --null-string <null-str>
+        --outdir <dir>
+        --package-name <name>' \
+    ['Generic_Hadoop_command-line_arguments']='-conf <configuration file>
+        -D <property=value>
+        -fs <local|namenode:port>
+        -jt <local|resourcemanager:port>
+        -files <comma separated list of files>
+        -libjars <comma separated list of jars>
+        -archives <comma separated list of archives>'
+
+)
+
+i=0
+for arg in "$@"
+do
+    ARGS[i]=${arg}
+    ((i++))
+done
+
+NUM_ARGS=${#ARGS[@]}
+
+declare -a PARSED_CMD
+
+function print_help() {
+    printf "Usage:\n"
+    for key in $(echo ${!help_msg[*]})
+    do
+        if [ -n "${help_msg[${key}]}" ]; then
+            msg=${help_msg[${key}]}
+            len=${#msg}
+            printf " %-30s%-30s\n" "$key" "${msg: 0:50}"
+            for ((i=50;i<len;i+=50))
+            do
+                if (( i+50<len )); then
+                    printf " %-30s%-30s\n" "" "${msg: i:50}"
+                else
+                    printf " %-30s%-30s\n" "" "${msg: i}"
+                fi
+
+            done
+
+        fi
+    done
+}
+
+j=0
+function parse() {
+    for((i=0;i<NUM_ARGS;i++));
+    do
+        arg=${ARGS[$i]}
+        if [ -n "${help[${arg}]}" ];then
+            print_help
+            PARSED_CMD[$j]=${help_opts[${arg}]}
+            break
+        fi
+        if [ -n "${sqoop_mode_opts_key_only[$arg]}" ];then
+            key="-jobContentMap"
+            kv_str=$SQOOP_MODE"="${sqoop_mode_opts_key_only[$arg]}
+            PARSED_CMD[$j]=$key
+            PARSED_CMD[$j+1]=$kv_str
+            ((j=j+2))
+        elif [ -n "${jvm_opts_kv[$arg]}" ];then
+        #-D key=value
+            if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                key="-jobContentMap"
+                kv_str=$SQOOP_ENV"."${ARGS[$i+1]}
+                PARSED_CMD[$j]=$key
+                PARSED_CMD[$j+1]=$kv_str
+                ((i=i+1))
+                ((j=j+2))
+            else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+            fi
+        elif [[ $arg =~ -D[^\s]+ ]];then
+        #-Dkey=value
+            key="-jobContentMap"
+            kv_str=$SQOOP_ENV"."${arg:2}
+            PARSED_CMD[$j]=$key
+            PARSED_CMD[$j+1]=$kv_str
+            ((j=j+2))
+        elif [ -n "${job_content_opts_kv[$arg]}" ]; then
+            if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                key="-jobContentMap"
+                kv_str=${job_content_opts_kv[$arg]}"="${ARGS[$i+1]}
+                PARSED_CMD[$j]=$key
+                PARSED_CMD[$j+1]=$kv_str
+                ((i=i+1))
+                ((j=j+2))
+            else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+            fi
+        elif [ -n "${job_content_query_opts_kv[$arg]}" ];then
+        #--query xxxx
+            if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                key="-jobContentMap"
+                val=${ARGS[$i+1]}
+                PARSED_CMD[$j]=$key
+                PARSED_CMD[$j+1]=${job_content_query_opts_kv[$arg]}"="$val
+                ((i=i+1))
+                ((j=j+2))
+            else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+            fi
+        elif [ -n "${job_content_opts_key_only[$arg]}" ];then
+            key="-jobContentMap"
+            kv_str=${job_content_opts_key_only[$arg]}"="
+            PARSED_CMD[$j]=$key
+            PARSED_CMD[$j+1]=$kv_str
+            ((j=j+2))
+        else
+            PARSED_CMD[$j]=$arg
+            ((j++))
+        fi
+    done
+}
+
+current_dir=`pwd`
+work_dir=`dirname "$0"`/../
+export WORK_DIR=`cd ${work_dir};pwd`
+cd ${current_dir}/
+
+parse
+exec ${WORK_DIR}/bin/linkis-cli-pre --mode once -engineType sqoop-1.4.6 -codeType none "${PARSED_CMD[@]}"

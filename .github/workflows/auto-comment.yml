@@ -1,0 +1,55 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+name: Create Comment
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create comment
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ## :blush:  Welcome to the Apache Linkis community!!
+            We are glad that you are contributing by opening this issue.
+
+            Please make sure to include all the relevant context.
+            We will be here shortly.
+
+            If you are interested in contributing to our website project, please let us know!
+            You can check out our contributing guide on
+             :point_right:  [How to Participate in Project Contribution](https://linkis.apache.org/community/how-to-contribute).
+
+
+            ### Community
+
+            |WeChat Assistant|WeChat Public Account|
+            |-|-|
+            |<img src="https://linkis.apache.org/Images/wedatasphere_contact_01.png" width="128"/>|<img src="https://linkis.apache.org/Images/gzh_01.png" width="128"/>|
+
+
+            ### Mailing Lists
+            |Name|Description|Subscribe|Unsubscribe|Archive|
+            |:-----|:--------|:------|:-------|:-----|
+            | [dev@linkis.apache.org](mailto:dev@linkis.apache.org) | community activity information | [subscribe](mailto:dev-subscribe@linkis.apache.org) | [unsubscribe](mailto:dev-unsubscribe@linkis.apache.org) | [archive](http://mail-archives.apache.org/mod_mbox/linkis-dev) |

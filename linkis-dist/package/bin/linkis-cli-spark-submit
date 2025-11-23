@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+export LANG=en_US.utf-8
+#set -x
+#ordinary options
+declare -A ord_opts=(\
+        # ['--master']=true \ #not supported
+        # ['--deploy-mode']=true \ #not supported
+        # ['--class']=true \ #not supported
+        # ['--packages']=true \
+        # ['--exclude-packages']=true \
+        # ['--repositories']=true \
+        # ['--files']=true \
+        # ['--properties-file']=true \ #not supported
+        ['--proxy-user']='-proxyUser' \
+        # ['--version']=true \ #not supported
+        # ['--verbose']=true \ #not supported
+        # ['--supervise']=true \ #not supported
+        ['--kill']='--kill' \
+        ['--status']='--status' \
+        ['--conf']='-confMap' \
+)
+
+
+#options that should be put in confMap(startupMap)
+declare -A confMap_opts=(\
+        ['--name']='appName' \
+        ['--jars']='spark.jars' \
+        ['--py-files']='spark.submit.pyFiles' \
+        ['--driver-memory']='spark.driver.memory' \
+        # ['--driver-java-options']='spark.driver.extraJavaOptions' \
+        # ['--driver-library-path']='k3' \
+        ['--driver-class-path']='wds.linkis.spark.driver.extra.class.path' \
+        ['--executor-memory']='spark.executor.memory' \
+        #cluster mode
+        ['--driver-cores']='spark.driver.cores' \
+        #mesos
+        # ['--total-executor-cores']=true \ #not supported
+        #yarn
+        ['--executor-cores']='spark.executor.cores' \
+        ['--queue']='wds.linkis.rm.yarnqueue' \
+        ['--num-executors']='spark.executor.instances' \
+        # ['--archives']='k10' \
+        # ['--principal']=true \ #not supported
+        # ['--keytab']=true \ #not supported
+        ['--verbose']='wds.linkis.spark.verbose' \
+)
+
+#options that should be put in varMap(for variable substitution)
+declare -A varMap_opts=(\
+)
+
+#options that should be put in runtimeMap
+declare -A rtMap_opts=(\
+)
+
+#options that should be put in executionMap
+declare -A execMap_opts=(\
+)
+
+# for help
+declare -A help_opts=(\
+        ['-h']='--help' \
+        ['--help']='--help' \
+)
+
+declare -A help_msg=(\
+        ['--name']="A name of your application." \
+        ['--jars']="Comma-separated list of jars to include on the driver and executor classpaths." \
+        ['--py-files']="Comma-separated list of .zip, .egg, or .py files to place on the PYTHONPATH for Python apps." \
+        #['--proxy-user']="User to impersonate when submitting the application." \
+        ['--kill']="If given, kills the linkis job specified" \
+        ['--status']="If given, requests the status of the linkis job" \
+        ['--driver-memory']="Memory for driver, unit: G (e.g. 2) " \
+        # ['--driver-java-options']="Extra Java options to pass to the driver." \
+        # ['--driver-library-path']="Extra library path entries to pass to the driver." \
+        ['--driver-class-path']="Extra class path entries to pass to the driver." \
+        ['--conf']="Arbitrary Spark configuration property"
+        ['--executor-memory']="Memory per executor, unit: G (e.g. 2)" \
+        #cluster mode
+        ['--driver-cores']="Number of cores used by the driver" \
+        #mesos
+        # ['--total-executor-cores']=true \ #not supported
+        #yarn
+        ['--executor-cores']="Number of cores per executor" \
+        ['--queue']="The YARN queue to submit to (Default: "default")." \
+        ['--num-executors']="Number of executors to launch" \
+        # ['--archives']="true" \
+        # ['--principal']=true \ #not supported
+        # ['--keytab']=true \ #not supported
+        ['-h,--help']="Print help information" \
+)
+
+function print_help() {
+    printf "Usage:\n"
+    for key in $(echo ${!help_msg[*]})
+    do
+        if [ -n "${help_msg[${key}]}" ]; then
+            msg=${help_msg[${key}]}
+            len=${#msg}
+            printf " %-30s%-30s\n" "$key" "${msg: 0:50}"
+            for ((i=50;i<len;i+=50))
+            do
+                if (( i+50<len )); then
+                    printf " %-30s%-30s\n" "" "${msg: i:50}"
+                else
+                    printf " %-30s%-30s\n" "" "${msg: i}"
+                fi
+
+            done
+
+        fi
+    done
+}
+
+
+i=0
+for arg in "$@"
+do
+        ARGS[i]=${arg}
+        ((i++))
+done
+NUM_ARGS=$i
+
+declare -a PARSED_CMD
+j=0
+IS_PYSPARK="false"
+IS_SCALA="false"
+
+function parse() {
+    for((i=0;i<NUM_ARGS;i++));
+    do
+        arg=${ARGS[${i}]}
+        if [[ "$arg" =~ .*\.py$ ]] || [[ "$arg" =~ .*\.py3$ ]]; then
+            IS_PYSPARK="true"
+        fi
+        if [ -n "${help_opts[${arg}]}" ]; then
+            print_help
+            PARSED_CMD[$j]=${help_opts[${arg}]}
+            break
+        fi
+        if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                val=${ARGS[${i}+1]}
+                if [ -n "${ord_opts[${arg}]}" ]; then
+                        lks_opt=${ord_opts[${arg}]}
+                        PARSED_CMD[$j]=$lks_opt
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                elif [ -n "${confMap_opts[${arg}]}" ]; then
+                        key=${confMap_opts[${arg}]}
+                        kv_str=$key"="$val
+                        PARSED_CMD[$j]='-confMap'
+                        PARSED_CMD[$j+1]=$kv_str
+                        ((j=j+2))
+                else
+                        PARSED_CMD[$j]=$arg
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                fi
+                ((i++))
+        else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+        fi
+    done
+}
+
+current_dir=`pwd`
+work_dir=`dirname "$0"`/../
+export WORK_DIR=`cd ${work_dir};pwd`
+cd ${current_dir}/
+
+if (( NUM_ARGS == 0 )); then
+    PARSED_CMD[$j]='--help'
+    print_help
+else
+    parse
+fi
+
+if [ "$IS_PYSPARK"x == "true"x ]; then
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 -codeType py "${PARSED_CMD[@]}"
+elif [ "IS_SCALA"x == "true"x ]; then
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 -codeType scala "${PARSED_CMD[@]}"
+else
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 "${PARSED_CMD[@]}"
+fi

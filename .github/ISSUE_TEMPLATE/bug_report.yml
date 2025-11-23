@@ -1,0 +1,118 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: 🐛 Bug Report
+title: "[Bug] "
+description: Submit a bug report to help us improve
+labels: [bug, 'status: needs triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting the problem!
+        Please make sure what you are reporting is a bug with reproducible steps.
+        To ask questions or share ideas, pleae post on our [Discussion page](https://github.com/apache/linkis/discussions) instead.
+
+  - type: checkboxes
+    attributes:
+      label: Search before asking
+      description: >
+        Please make sure to search in the [issues](https://github.com/apache/linkis/issues) first to see
+        whether the same issue was reported already.
+      options:
+        - label: >
+            I searched the [issues](https://github.com/apache/linkis/issues) and found no similar issues.
+          required: true
+
+  - type: dropdown
+    attributes:
+      label: Linkis Component
+      description: |
+        What component are you using? Linkis has many modules, please make sure to choose the module that
+        you found the bug.
+      multiple: true
+      options:
+        - "linkis-commons"
+        - "linkis-computation-governance"
+        - "linkis-dist"
+        - "linkis-engineconnn-plugin"
+        - "linkis-extensions"
+        - "linkis-orchestrator"
+        - "linkis-public-enhancements"
+        - "linkis-spring-cloud-services"
+        - "linkis-web"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Write down the steps to reproduce the bug. You should start with a fresh installation, or your git repository linked above.
+      placeholder: |
+        1. Step 1...
+        2. Step 2...
+        3. Step 3...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: |
+        How did you expect your project to behave? It’s fine if you’re not sure your understanding is correct. Write down what you thought would happen.
+      placeholder: Write what you thought would happen.
+    validations:
+      required: true
+
+
+  - type: textarea
+    attributes:
+      label: Your environment
+      description: Include as many relevant details about the environment you experienced the bug in.
+      value: |
+        <!-- Please describe the linkis version you are using and basic environment information -->
+        <!-- 请描述您使用的linkis版本和基本环境信息 -->
+        - Linkis version used: 1.1.2
+        - Environment name and version:
+            - cdh-5.14.2
+            - hdp-3.1.5
+            - hive-2.1.1
+            - spark-3.2.1
+            - scala-2.12.2
+            - jdk 1.8.0_121
+            - ....
+
+
+  - type: textarea
+    attributes:
+      label: Anything else
+      description: Anything else we need to know?
+      placeholder: >
+        How often does this problem occur? (Once? Every time? Only when certain conditions are met?)
+        Any relevant logs to include? Are there other relevant issues?
+
+  - type: checkboxes
+    attributes:
+      label: Are you willing to submit a PR?
+      description: >
+        This is absolutely not required, but we are happy to guide you in the contribution process
+        especially if you already have a good understanding of how to implement the fix.
+      options:
+        - label: Yes I am willing to submit a PR!
+
+  - type: markdown
+    attributes:
+      value: "Thanks for completing our form!"

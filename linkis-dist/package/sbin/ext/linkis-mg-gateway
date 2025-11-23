@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# description:  gateway start cmd
+#
+# Modified for Linkis 1.0.0
+
+# get log directory
+
+source $LINKIS_CONF_DIR/linkis-env.sh
+SERVER_SUFFIX="linkis-spring-cloud-services/linkis-mg-gateway"
+
+#export DEBUG_PORT=
+
+if [ "$LINKIS_LOG_DIR" = "" ]; then
+  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+fi
+if [ ! -w "$LINKIS_LOG_DIR" ] ; then
+  mkdir -p "$LINKIS_LOG_DIR"
+fi
+
+if test -z "$GATEWAY_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$GATEWAY_HEAP_SIZE
+fi
+
+if [ "$DEBUG_PORT" ];
+then
+   export DEBUG_CMD="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
+fi
+
+
+if [[ -e "$SKYWALKING_AGENT_PATH" && -e $SKYWALKING_AGENT_PATH ]]; then
+    export JAVA_AGENT_OPTS="-javaagent:$SKYWALKING_AGENT_PATH=agent.service_name=$SERVER_NAME"
+fi
+
+if test -z "$SERVER_JAVA_OPTS"
+then
+  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
+fi
+
+export SERVER_CLASS=org.apache.linkis.gateway.springcloud.LinkisGatewayApplication
+
+## conf dir
+export SERVER_CONF_PATH=$LINKIS_CONF_DIR
+
+## server lib
+export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
+if [ ! -r "$SERVER_LIB" ] ; then
+    echo "server lib not exists $SERVER_LIB"
+    exit 1
+fi
+
+##The extended lib such mysql-connector-java-*.jar
+export LINKIS_EXTENDED_LIB=$LINKIS_EXTENDED_LIB
+if [ -r "$LINKIS_EXTENDED_LIB" ] ; then
+    echo "add extended lib $LINKIS_EXTENDED_LIB"
+fi
+
+## set class path
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*:$LINKIS_EXTENDED_LIB/*
+
+echo  "=====Java Start Command====="
+
+if [ "X${RUN_IN_FOREGROUND}" == "Xtrue" ]; then
+
+  echo  "java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1"
+  java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1
+
+else
+
+  echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS > $LINKIS_LOG_DIR/${SERVER_NAME}.out 2>&1 &"
+  nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS > $LINKIS_LOG_DIR/${SERVER_NAME}.out 2>&1 &
+
+  pid=$!
+  sleep 2
+  if [[ -z "${pid}" ]]; then
+      echo "server $SERVER_NAME start failed!"
+      exit 1
+  else
+      echo "server $SERVER_NAME start succeeded!"
+      echo $pid > $SERVER_PID
+
+      if [ "X${RUN_IN_FOREGROUND}" == "Xtrue" ]; then
+        wait $pid || exit -1
+      fi
+  fi
+
+fi

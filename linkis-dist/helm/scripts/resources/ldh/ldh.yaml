@@ -1,0 +1,180 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ldh
+spec:
+  selector:
+    app: ldh
+  clusterIP: None
+  ports:
+    # hdfs
+    - name: nn-webui
+      port: 50070
+    - name: nn-ipc
+      port: 9000
+    - name: dn-webui
+      port: 50075
+    - name: dn-ipc
+      port: 50020
+    - name: dn-tf
+      port: 50010
+    # yarn
+    - name: rm-scheduler
+      port: 8030
+    - name: rm-tracker
+      port: 8031
+    - name: rm-ipc
+      port: 8032
+    - name: rm-admin
+      port: 8033
+    - name: nm-localizer
+      port: 8040
+    - name: nm-webui
+      port: 8042
+    - name: rm-webui
+      port: 8088
+    # hive
+    - name: metastore
+      port: 9083
+    - name: hiveserver2
+      port: 10000
+    # spark
+    - name: spark-hs
+      port: 18081
+    # flink
+    - name: flink-yarn-jm
+      port: 8090
+    # zookeeper
+    - name: zk-client
+      port: 2181
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldh
+spec:
+  selector:
+    matchLabels:
+      app: ldh
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ldh
+    spec:
+      volumes:
+        - name: data-dir
+          emptyDir: {}
+        - name: hadoop-conf
+          projected:
+            sources:
+            - configMap:
+                name: hadoop-conf
+        - name: hive-conf
+          projected:
+            sources:
+            - configMap:
+                name: hive-conf
+        - name: spark-conf
+          projected:
+            sources:
+            - configMap:
+                name: spark-conf
+            - configMap:
+                name: hive-conf
+                items:
+                - key: hive-site.xml
+                  path: hive-site.xml
+        - name: flink-conf
+          projected:
+            sources:
+            - configMap:
+                name: flink-conf
+        - name: zookeeper-conf
+          projected:
+            sources:
+            - configMap:
+                name: zookeeper-conf
+        - name: mysql-jar
+          hostPath:
+            path: /opt/common/extendlib
+            type: DirectoryOrCreate
+      containers:
+        - name: ldh
+          image: linkis-ldh:${LDH_VERSION}
+          command:
+            - /bin/bash
+            - -ecx
+            - exec /usr/bin/start-all.sh
+          ports:
+            # hdfs
+            - name: nn-webui
+              containerPort: 50070
+            - name: nn-ipc
+              containerPort: 9000
+            - name: dn-webui
+              containerPort: 50075
+            - name: dn-ipc
+              containerPort: 50020
+            - name: dn-tf
+              containerPort: 50010
+            # yarn
+            - name: rm-scheduler
+              containerPort: 8030
+            - name: rm-tracker
+              containerPort: 8031
+            - name: rm-ipc
+              containerPort: 8032
+            - name: rm-admin
+              containerPort: 8033
+            - name: nm-localizer
+              containerPort: 8040
+            - name: nm-webui
+              containerPort: 8042
+            - name: rm-webui
+              containerPort: 8088
+            # hive
+            - name: metastore
+              containerPort: 9083
+            - name: hiveserver2
+              containerPort: 10000
+            # spark
+            - name: spark-hs
+              containerPort: 18081
+            # flink
+            - name: flink-yarn-jm
+              containerPort: 8090
+            # zookeeper
+            - name: zk-client
+              containerPort: 2181
+          volumeMounts:
+            - name: data-dir
+              mountPath: /data
+            - name: hadoop-conf
+              mountPath: /etc/ldh/hadoop
+            - name: hive-conf
+              mountPath: /etc/ldh/hive
+            - name: spark-conf
+              mountPath: /etc/ldh/spark
+            - name: flink-conf
+              mountPath: /etc/ldh/flink
+            - name: zookeeper-conf
+              mountPath: /etc/ldh/zookeeper
+            - name: mysql-jar
+              mountPath: /opt/common/extendlib

@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# set -x
+export LANG=en_US.utf-8
+declare -A ord_opts=(\
+        #cli options
+        ['-e']='-code' \
+        ['-f']='-codePath' \
+        # ['-i']=true \ #not supported
+        # ['-S']=true \ #not supported
+        # ['--silent']=true \ #not supported
+        # ['-v']=true \ #not supported
+        # ['--verbose']=true \ #not supported
+        # ['--hiveconf']='-confMap' \ # treated in another way
+        ['-d']='-varMap' \
+        ['--hivevar']='-varMap' \
+        #linkis opts
+
+)
+
+#options that should be put in confMap(startupMap)
+declare -A confMap_opts=(\
+        #cli options
+        # ['--database']='k_db' \
+        ['-v']='wds.linkis.hive.verbose' \
+        ['--verbose']='wds.linkis.hive.verbose' \
+)
+
+#options that should be put in confMap(startupMap) but in the form of kv-pairs
+declare -A confMap_kv_opts=(\
+        #cli options
+        ['--hiveconf']='-confMap' \
+)
+
+# for help
+declare -A help_opts=(\
+        ['-H']='--help' \
+        ['--help']='--help' \
+)
+
+declare -A help_msg=(\
+        ['-d']="Variable subsitution to apply to hive commands. e.g. -d A=B or --define A=B"
+        #['--database']="Specify the database to use" \
+        ['-e']="SQL from command line" \
+        ['-f']="SQL from files" \
+        ['-H,--help']="Print help information" \
+        ['--hiveconf']="Use value for given property" \
+        ['--hivevar']="Variable subsitution to apply to hive commands. e.g. --hivevar A=B" \
+)
+
+SPARK_HADOOP_PREFIX='spark.hadoop.'
+
+function print_help() {
+    printf "Usage:\n"
+    for key in $(echo ${!help_msg[*]})
+    do
+        if [ -n "${help_msg[${key}]}" ]; then
+            msg=${help_msg[${key}]}
+            len=${#msg}
+            printf " %-30s%-30s\n" "$key" "${msg: 0:50}"
+            for ((i=50;i<len;i+=50))
+            do
+                if (( i+50<len )); then
+                    printf " %-30s%-30s\n" "" "${msg: i:50}"
+                else
+                    printf " %-30s%-30s\n" "" "${msg: i}"
+                fi
+
+            done
+
+        fi
+    done
+}
+
+
+i=0
+for arg in "$@"
+do
+        ARGS[i]=${arg}
+        ((i++))
+done
+NUM_ARGS=$i
+
+declare -a PARSED_CMD
+j=0
+
+function parse() {
+    for((i=0;i<NUM_ARGS;i++));
+    do
+        arg=${ARGS[${i}]}
+        if [ -n "${help_opts[${arg}]}" ]; then
+            print_help
+            PARSED_CMD[$j]=${help_opts[${arg}]}
+            break
+        fi
+        if [ $((${i}+1)) -lt ${NUM_ARGS} ]; then
+                val=${ARGS[${i}+1]}
+                if [ -n "${ord_opts[${arg}]}" ]; then
+                        lks_opt=${ord_opts[${arg}]}
+                        PARSED_CMD[$j]=$lks_opt
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                elif [ -n "${confMap_kv_opts[${arg}]}" ]; then
+                        key=${confMap_kv_opts[${arg}]}
+                        if [ "${arg}"x == "--hiveconf"x ]; then
+                            kv_str=$SPARK_HADOOP_PREFIX$val
+                        else
+                            kv_str=$val
+                        fi
+                        PARSED_CMD[$j]='-confMap'
+                        PARSED_CMD[$j+1]=$kv_str
+                        ((j=j+2))
+                elif [ -n "${confMap_opts[${arg}]}" ]; then
+                        key=${confMap_opts[${arg}]}
+                        kv_str=$key"="$val
+                        PARSED_CMD[$j]='-confMap'
+                        PARSED_CMD[$j+1]=$kv_str
+                        ((j=j+2))
+                else
+                        PARSED_CMD[$j]=$arg
+                        PARSED_CMD[$j+1]=$val
+                        ((j=j+2))
+                fi
+                ((i++))
+        else
+                PARSED_CMD[$j]=$arg
+                ((j++))
+        fi
+    done
+}
+
+current_dir=`pwd`
+work_dir=`dirname "$0"`/../
+export WORK_DIR=`cd ${work_dir};pwd`
+cd ${current_dir}/
+
+if (( NUM_ARGS == 0 )); then
+    PARSED_CMD[$j]='--help'
+    print_help
+else
+    parse
+fi
+
+exec ${WORK_DIR}/bin/linkis-cli-spark-submit  -codeType sql "${PARSED_CMD[@]}"

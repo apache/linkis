@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.metadata.hive.dao.HiveMetaDao">
+
+    <select id="getLocationByDbAndTable" resultType="java.lang.String" parameterType="java.util.Map">
+        SELECT LOCATION
+        FROM SDS
+        WHERE SD_ID IN (
+        SELECT SD_ID
+        FROM TBLS
+        WHERE TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        AND DB_ID IN (
+        SELECT DB_ID
+        FROM `DBS`
+        WHERE NAME = #{dbName,jdbcType=VARCHAR}
+        )
+        )
+    </select>
+
+    <select id="getRolesByUser" resultType="java.lang.String" parameterType="java.util.Map">
+        SELECT ROLE_NAME
+        FROM ROLES r
+        INNER JOIN ROLE_MAP rm
+        ON r.ROLE_ID = rm.ROLE_ID
+        AND rm.PRINCIPAL_TYPE = 'USER'
+        AND rm.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getDbsByUserAndRoles" resultType="java.lang.String">
+        SELECT NAME
+        FROM DBS
+        WHERE (OWNER_TYPE = 'USER' AND OWNER_NAME = #{userName,jdbcType=VARCHAR})
+        <if test="roles != null and roles.size() > 0">
+        OR (OWNER_TYPE = 'ROLE' AND OWNER_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+               #{id}
+            </foreach>)
+        </if>
+        UNION
+        SELECT t2.NAME as NAME
+        FROM DB_PRIVS t1
+            INNER JOIN DBS t2 ON t1.DB_ID = t2.DB_ID and t1.DB_PRIV IN ('SELECT', 'ALL')
+        WHERE (t1.PRINCIPAL_TYPE = 'USER' AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR})
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        UNION
+        SELECT t3.NAME AS NAME
+        FROM TBL_PRIVS t1
+        INNER JOIN TBLS t2
+        ON t1.TBL_ID = t2.TBL_ID
+        AND t1.TBL_PRIV IN ('SELECT', 'ALL')
+        INNER JOIN DBS t3 ON t2.DB_ID = t3.DB_ID
+        WHERE t1.PRINCIPAL_TYPE = 'USER'
+        AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        ORDER BY NAME
+    </select>
+
+    <select id="getAllDbs" resultType="java.lang.String">
+        SELECT NAME
+        FROM DBS
+        GROUP BY NAME
+        ORDER BY NAME
+    </select>
+    <select id="getTablesByDbNameAndUserAndRoles" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t2.TBL_NAME AS NAME, t2.TBL_TYPE AS TYPE, t2.CREATE_TIME AS CREATE_TIME, t2.LAST_ACCESS_TIME AS LAST_ACCESS_TIME, t2.OWNER AS OWNER
+        FROM DB_PRIVS t1
+        INNER JOIN TBLS t2
+        ON t1.DB_ID = t2.DB_ID
+        AND t1.DB_PRIV IN ('SELECT', 'ALL')
+        INNER JOIN DBS t3
+        ON t1.DB_ID = t3.DB_ID
+        AND t3.NAME = #{dbName,jdbcType=VARCHAR}
+        WHERE t1.PRINCIPAL_TYPE = 'USER'
+        AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        UNION
+        SELECT t2.TBL_NAME AS NAME, t2.TBL_TYPE AS TYPE, t2.CREATE_TIME AS CREATE_TIME, t2.LAST_ACCESS_TIME AS LAST_ACCESS_TIME, t2.OWNER AS OWNER
+        FROM TBL_PRIVS t1
+        INNER JOIN TBLS t2
+        ON t1.TBL_ID = t2.TBL_ID
+        AND t1.TBL_PRIV IN ('SELECT', 'ALL')
+        INNER JOIN DBS t3
+        ON t2.DB_ID = t3.DB_ID
+        AND t3.NAME = #{dbName,jdbcType=VARCHAR}
+        WHERE t1.PRINCIPAL_TYPE = 'USER'
+        AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        ORDER BY NAME;
+    </select>
+
+    <select id="getTablesByDbName" resultType="java.util.Map"  parameterType="java.util.Map">
+        SELECT t2.TBL_NAME AS NAME, t2.TBL_TYPE AS TYPE, t2.CREATE_TIME AS CREATE_TIME, t2.LAST_ACCESS_TIME AS LAST_ACCESS_TIME, t2.OWNER AS OWNER
+        FROM TBLS t2
+        INNER JOIN DBS t3 ON t2.DB_ID = t3.DB_ID
+        WHERE t3.NAME = #{dbName,jdbcType=VARCHAR}
+        ORDER BY t2.TBL_NAME;
+    </select>
+
+    <select id="getPartitionSize" resultType="java.lang.Long"  parameterType="java.util.Map">
+        SELECT PARAM_VALUE
+        FROM PARTITION_PARAMS
+        WHERE PARAM_KEY = 'totalSize'
+        AND PART_ID IN (
+        SELECT PART_ID
+        FROM PARTITIONS
+        WHERE PART_NAME = #{partitionName,jdbcType=VARCHAR}
+        AND TBL_ID IN (
+        SELECT TBL_ID
+        FROM `TBLS`
+        WHERE TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        AND DB_ID IN (
+        SELECT DB_ID
+        FROM `DBS`
+        WHERE NAME = #{dbName,jdbcType=VARCHAR}
+        )
+        )
+        );
+    </select>
+
+    <select id="getPartitions" resultType="java.lang.String"  parameterType="java.util.Map">
+        SELECT PART_NAME
+        FROM PARTITIONS
+        WHERE TBL_ID IN (
+        SELECT TBL_ID
+        FROM `TBLS`
+        WHERE TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        AND DB_ID IN (
+        SELECT DB_ID
+        FROM `DBS`
+        WHERE NAME = #{dbName,jdbcType=VARCHAR}
+        )
+        );
+    </select>
+
+    <select id="getColumns" resultType="java.util.Map"  parameterType="java.util.Map">
+        SELECT COMMENT, COLUMN_NAME, TYPE_NAME
+        FROM COLUMNS_V2
+        WHERE CD_ID IN (
+        SELECT CD_ID
+        FROM SDS
+        WHERE SD_ID IN (
+        SELECT SD_ID
+        FROM `TBLS`
+        WHERE TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        AND DB_ID IN (
+        SELECT DB_ID
+        FROM `DBS`
+        WHERE NAME = #{dbName,jdbcType=VARCHAR}
+        )
+        )
+        )
+        ORDER BY INTEGER_IDX ASC;
+    </select>
+
+    <select id="getStorageDescriptionIDByDbTableNameAndUser" resultType="java.util.Map"  parameterType="java.util.Map">
+        SELECT t2.TBL_NAME AS NAME, t2.TBL_TYPE AS TYPE, t2.CREATE_TIME AS CREATE_TIME, t2.LAST_ACCESS_TIME AS LAST_ACCESS_TIME, t2.OWNER AS OWNER
+        , t2.SD_ID AS SD_ID
+        FROM DB_PRIVS t1
+        INNER JOIN TBLS t2
+        ON t1.DB_ID = t2.DB_ID
+        AND t1.DB_PRIV IN ('SELECT', 'ALL')
+        AND t2.TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        INNER JOIN DBS t3
+        ON t1.DB_ID = t3.DB_ID
+        AND t3.NAME = #{dbName,jdbcType=VARCHAR}
+        WHERE t1.PRINCIPAL_TYPE = 'USER'
+        AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        UNION
+        SELECT t2.TBL_NAME AS NAME, t2.TBL_TYPE AS TYPE, t2.CREATE_TIME AS CREATE_TIME, t2.LAST_ACCESS_TIME AS LAST_ACCESS_TIME, t2.OWNER AS OWNER
+        , t2.SD_ID AS SD_ID
+        FROM TBL_PRIVS t1
+        INNER JOIN TBLS t2
+        ON t1.TBL_ID = t2.TBL_ID
+        AND t1.TBL_PRIV IN ('SELECT', 'ALL')
+        AND t2.TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        INNER JOIN DBS t3
+        ON t2.DB_ID = t3.DB_ID
+        AND t3.NAME = #{dbName,jdbcType=VARCHAR}
+        WHERE t1.PRINCIPAL_TYPE = 'USER'
+        AND t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR}
+        <if test="roles != null and roles.size() > 0">
+            OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN
+            <foreach collection="roles" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>)
+        </if>
+        ORDER BY NAME;
+    </select>
+
+    <select id="getColumnsByStorageDescriptionID" resultType="java.util.Map"  parameterType="java.util.Map">
+        SELECT COMMENT, COLUMN_NAME, TYPE_NAME
+        FROM COLUMNS_V2
+        WHERE CD_ID IN (
+        SELECT CD_ID
+        FROM SDS
+        WHERE SD_ID = #{sdId,jdbcType=VARCHAR}
+        )
+        ORDER BY INTEGER_IDX ASC;
+    </select>
+
+    <select id="getPartitionKeys" resultType="java.util.Map"  parameterType="java.util.Map">
+        SELECT PKEY_COMMENT, PKEY_NAME, PKEY_TYPE
+        FROM PARTITION_KEYS
+        WHERE TBL_ID IN (
+        SELECT TBL_ID
+        FROM `TBLS`
+        WHERE TBL_NAME = #{tableName,jdbcType=VARCHAR}
+        AND DB_ID IN (
+        SELECT DB_ID
+        FROM `DBS`
+        WHERE NAME = #{dbName,jdbcType=VARCHAR}
+        )
+        );
+    </select>
+
+    <select id="getTableComment" resultType="java.lang.String">
+        SELECT
+        tp.PARAM_VALUE
+        FROM
+        `DBS` d
+        LEFT JOIN `TBLS` t ON d.DB_ID = t.DB_ID
+        LEFT JOIN `TABLE_PARAMS` tp ON t.TBL_ID = tp.TBL_ID
+        WHERE
+        tp.PARAM_KEY = 'comment'
+        AND d.`NAME` = #{DbName}
+        AND t.TBL_NAME = #{tableName}
+    </select>
+
+</mapper>

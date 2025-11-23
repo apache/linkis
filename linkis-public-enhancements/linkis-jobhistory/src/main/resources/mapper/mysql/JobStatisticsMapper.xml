@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="org.apache.linkis.jobhistory.dao.JobStatisticsMapper">
+
+    <select id="taskExecutionStatisticsWithCreatorOnly" useCache="true" resultMap="jobStatisticsMap">
+        SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Succeed' then 1 END) succeedcount,
+        COUNT(case WHEN status ='Failed' then 1 END) failedcount,
+        COUNT(case WHEN status ='Cancelled' then 1 END) cancelledcount
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="userCreatorKey != null and creator != null">
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="taskExecutionStatisticsWithUserCreator" useCache="true" resultMap="jobStatisticsMap">
+        SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Succeed' then 1 END) succeedcount,
+        COUNT(case WHEN status ='Failed' then 1 END) failedcount,
+        COUNT(case WHEN status ='Cancelled' then 1 END) cancelledcount
+        FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]>#{endDate}
+            </if>
+            <if test="userCreatorKey != null and userCreatorValue != null">
+                and LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
+            </if>
+        </where>
+    </select>
+
+    <select id="engineExecutionStatistics" useCache="true" resultMap="jobStatisticsMap">
+        SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Success' then 1 END) succeedcount,
+        COUNT(case WHEN status ='Failed' then 1 END) failedcount,
+        COUNT(case WHEN status ='ShuttingDown' then 1 END) cancelledcount FROM
+        linkis_cg_ec_resource_info_record
+        <where>
+            <if test="umUser != null">and create_user = #{umUser}</if>
+            <if test="engineType != null">and label_value like CONCAT('%', #{engineType},'%')</if>
+            <if test="startDate != null">and create_time >= #{startDate} AND create_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="creator != null">
+                and label_value like CONCAT('%-', #{creator}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="engineExecutionStatisticsWithUserCreator" useCache="true" resultMap="jobStatisticsMap">
+        SELECT COUNT(1) sumcount, COUNT(case WHEN status ='Success' then 1 END) succeedcount,
+        COUNT(case WHEN status ='Failed' then 1 END) failedcount,
+        COUNT(case WHEN status ='ShuttingDown' then 1 END) cancelledcount FROM
+        linkis_cg_ec_resource_info_record
+        <where>
+            <if test="umUser != null">and create_user = #{umUser}</if>
+            <if test="engineType != null">and label_value like CONCAT('%', #{engineType},'%')</if>
+            <if test="startDate != null">and create_time >= #{startDate} AND create_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="userCreatorValue != null">
+                and label_value like CONCAT('%',#{userCreatorValue}, '%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

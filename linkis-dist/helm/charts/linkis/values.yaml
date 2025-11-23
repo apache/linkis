@@ -1,0 +1,356 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Default values for linkis.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#############################################################################
+# Kubernetes Related Variables
+#############################################################################
+schedulerName: default-scheduler
+podSecurityContext: {}
+#  fsGroup: 2000
+securityContext: {}
+#  capabilities:
+#    drop:
+#     - ALL
+#  readOnlyRootFilesystem: true
+#  runAsNonRoot: true
+#  runAsUser: 1000
+image:
+  repository: linkis
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+imagePullSecrets: []
+withJdbcDriverJar: false
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "linkis"
+  automountToken: true
+svc:
+  # Kubernetes service type, can be:
+  # - ClusterIP:    Exposes the Service on a cluster-internal IP. Choosing this
+  #                 value makes the Service only reachable from within the cluster.
+  # - LoadBalancer: Exposes the Service externally using a cloud provider's load
+  #                 balancer. NodePort and ClusterIP Services, to which the external
+  #                 load balancer routes, are automatically created.
+  # - NodePort:     Exposes the Service on each Node's IP at a static port (the NodePort).
+  #                 A ClusterIP Service, to which the NodePort Service routes, is
+  #                 automatically created.
+  type: ClusterIP
+  publishNotReadyAddresses: false
+  # the externalTrafficPolicy field controls how traffic from external sources is routed.
+  # Valid values are Cluster and Local. Set the field to Cluster to route external traffic
+  # to all ready endpoints and Local to only route to ready node-local endpoints. If the
+  # traffic policy is Local and there are no node-local endpoints, the kube-proxy does not
+  # forward any traffic for the relevant Service.
+  #
+  # Note: externalTrafficPolicy can only be set on NodePort and LoadBalancer service
+  #
+  # externalTrafficPolicy: Cluster
+role:
+  create: true
+  annotations: {}
+  name: "linkis-role"
+  automountToken: true
+roleBinding:
+  create: true
+  annotations: {}
+  name: "linkis-role-binding"
+  automountToken: true
+
+linkis:
+  featureGates:
+    testMode: true
+    localMode: true
+    enableJvmRemoteDebug: true
+    enableEngineConnDebug: true
+    enableMetadataQuery: true
+  locations:
+    homeDir: /opt/linkis
+    confDir: /etc/linkis-conf
+    logDir: /var/logs/linkis
+    runtimeDir: /opt/linkis-runtime
+    commonDir: /opt/common
+    # hostPath is a directory on the host machine.
+    # In KinD cluster, it is actual a directory in KinD's
+    # node container, which is specialized in KinD cluster
+    # configuration: 'extraMounts'.
+    # Note that, `hostPath` is only used in LOCAL mode.
+    hostPath: /data
+  datasource:
+    # Variable `initSchema` is used to determine the way to initialize
+    # the database, the optional values are:
+    # - CreateIfNotExists: only create the tables that not exists
+    # - Reset: drop all the tables and re-create them
+    # - None: do nothing
+    initSchema: CreateIfNotExists
+    host: mysql.mysql.svc.cluster.local
+    port: 3306
+    database: linkis
+    username: root
+    password: 123456
+  deps:
+    mysql:
+      version: 5.7
+    python:
+      version: 2.7
+    hadoop:
+      version: 3.3.4
+      configMapName: hadoop-conf
+    yarn:
+      restfulUrl: http://ldh.ldh.svc.cluster.local:8088
+      authEnable: false
+      authUser: hadoop
+      authPassword: "123456"
+      kerberosEnable: false
+      principal: yarn/localhost@EXAMPLE.COM
+      keytab: /etc/hadoop-conf/yarn.keytab
+      krb5: /etc/krb5.keytab
+    spark:
+      version: 3.2.1
+      configMapName: spark-conf
+    hive:
+      version: 3.1.3
+      configMapName: hive-conf
+      meta:
+        url: "jdbc:mysql://mysql.mysql.svc.cluster.local:3306/hive_metadata?&amp;createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false"       # jdbc:mysql://localhost:3306/metastore?useUnicode=true
+        user: "root"        # root
+        password: "123456"  # 123456
+    zookeeper:
+      version: 3.5.9
+      configMapName: zookeeper-conf
+    flink:
+      version: 1.12.2
+      configMapName: flink-conf
+
+mgEureka:
+  replicas: 1
+  port: 20303
+  podManagementPolicy: Parallel
+  updateStrategy: RollingUpdate
+  terminationGracePeriod: 30
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+#    sample/annotations: mg-eureka
+  nodeSelector: {}
+#    sample/nodeSelector: mg-eureka
+  tolerations: []
+#    - key: sample/tolerations
+#      operator: Equal
+#      value: xxx
+#      effect: NoSchedule
+  affinity: {}
+#    nodeAffinity:
+#      requiredDuringSchedulingIgnoredDuringExecution:
+#        nodeSelectorTerms:
+#          - matchExpressions:
+#              - key: sample/nodeAffinity
+#                operator: In
+#                values:
+#                  - xxx
+#    podAntiAffinity:
+#      preferredDuringSchedulingIgnoredDuringExecution:
+#        - weight: 100
+#          podAffinityTerm:
+#            labelSelector:
+#              matchExpressions:
+#                - key: app.kubernetes.io/instance
+#                  operator: In
+#                  values:
+#                    - xxx
+#            topologyKey: kubernetes.io/hostname
+  resources: {}
+#    limits:
+#      cpu: 1000m
+#      memory: 2Gi
+#    requests:
+#      cpu: 1000m
+#      memory: 1Gi
+  envs:
+    extras: []
+#      - name: POD_NAME
+#        valueFrom:
+#          fieldRef:
+#            apiVersion: v1
+#            fieldPath: metadata.name
+#      - name: SAMPLE_ENV
+#        value: xxx
+    froms: []
+#      - configMapRef:
+#          name: xxx
+
+mgGateway:
+  replicas: 1
+  port: 9001
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+cgLinkisManager:
+  replicas: 1
+  port: 9101
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+cgEngineConnManager:
+  replicas: 1
+  port: 9102
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+cgEnginePlugin:
+  replicas: 1
+  port: 9103
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+cgEntrance:
+  replicas: 1
+  port: 9104
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+psPublicService:
+  replicas: 1
+  port: 9105
+  jvmHeapSize: "512M"
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+Web:
+  replicas: 1
+  port: 8088
+  prometheus:
+    metricsPath: metrics
+  annotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  resources: {}
+  envs:
+    extras: []
+    froms: []
+
+
+
+## Common vars
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+#   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

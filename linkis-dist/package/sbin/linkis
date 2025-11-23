@@ -1,0 +1,266 @@
+#!/bin/sh
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+source /etc/profile
+source ~/.bash_profile
+
+cd `dirname $0`
+cd ..
+INSTALL_HOME=`pwd`
+
+# set LINKIS_HOME
+if [ "$LINKIS_HOME" = "" ]; then
+  export LINKIS_HOME=$INSTALL_HOME
+fi
+
+source ${LINKIS_HOME}/sbin/common.sh
+
+# set LINKIS_CONF_DIR
+if [ "$LINKIS_CONF_DIR" = "" ]; then
+  export LINKIS_CONF_DIR=$LINKIS_HOME/conf
+fi
+source $LINKIS_CONF_DIR/linkis-env.sh
+
+export ENGINE_MANAGER=cg-engineconnmanager
+export ENTRANCE=cg-entrance
+export LINKISMANAGER=cg-linkismanager
+export GATEWAY=mg-gateway
+export EUREKA=mg-eureka
+export PUBLICSERVICE=ps-publicservice             
+
+YELLOW='\033[0;33m'
+
+help() {  
+  echo "<----------------------------------------------------------->"
+  echo "NAME"
+  echo "    linkis    manage the linkis service"
+  echo "SYNOPSIS"
+  echo "    linkis  [OPTION] [SERVICE-NAME | ALIAS]"
+  echo "DESCRIPTION"
+  echo ""
+  echo "    help,                    display this help and exit"
+  echo ""
+  echo "    start,                   start all service" 
+  echo ""
+  echo "    start [service-name],    start [service-name] service" 
+  echo ""
+  echo "    stop,                    stop all service" 
+  echo ""
+  echo "    stop [service-name],     stop [service-name] service" 
+  echo ""
+  echo "    status,                  show all service status" 
+  echo ""
+  echo "    status [service-name],   show [service-name] service status" 
+  echo ""
+  echo "    restart,                 restart all service" 
+  echo ""
+  echo "    restart [service-name],  restart [service-name] service" 
+  echo ""
+  echo "SERVICE-NAME"
+  echo "    cg-engineconnmanager    alias 1"
+  echo "    cg-entrance             alias 2"
+  echo "    cg-linkismanager        alias 3"
+  echo "    mg-eureka               alias 4"
+  echo "    mg-gateway              alias 5"
+  echo "    ps-publicservice        alias 6"
+  echo "<----------------------------------------------------------->"
+  exit 1  
+}  
+
+status(){  
+  sh $LINKIS_HOME/sbin/linkis-daemon.sh status $1
+}  
+
+function checkServer() {
+echo -e "<-------------- ${YELLOW}Linkis-$1 ${NC} ------------------>"
+echo "Begin to check $1"
+sh $LINKIS_HOME/sbin/linkis-daemon.sh status $1
+if [ $? -ne 0 ]; then
+      ALL_SERVER_NAME=linkis-$1
+      LOG_PATH=$LINKIS_HOME/logs/$ALL_SERVER_NAME.log
+      echo "ERROR: your $ALL_SERVER_NAME microservice does not start successful !!! ERROR logs as follows :"
+      echo "Please check detail log, log path :$LOG_PATH"
+else 
+     echo [OK]
+     echo ""
+     echo ""
+fi
+}
+
+status_all(){
+  checkServer cg-engineconnmanager
+  checkServer cg-entrance 
+  checkServer cg-linkismanager 
+  checkServer mg-gateway  
+  checkServer mg-eureka 
+  checkServer ps-publicservice  
+}
+
+stop(){  
+  sh $LINKIS_HOME/sbin/linkis-daemon.sh stop $1
+} 
+
+stop_all(){
+  sh $LINKIS_HOME/sbin/linkis-stop-all.sh
+}
+
+start(){ 
+  sh $LINKIS_HOME/sbin/linkis-daemon.sh start $1
+}
+
+start_all(){ 
+  sh $LINKIS_HOME/sbin/linkis-start-all.sh
+}
+
+restart(){
+  stop $1
+  start $1
+}
+
+restart_all(){
+  stop_all
+  start_all
+}
+
+
+#Select an execution method based on the input parameters. If you do not enter this parameter, follow the instructions
+case "$1" in
+  "start")
+    case "$2" in
+      "$ENGINE_MANAGER" | 1)
+         start $ENGINE_MANAGER
+         ;;
+      "$ENTRANCE" | 2)
+         start $ENTRANCE
+         ;; 
+      "$LINKISMANAGER" | 3)
+         start $LINKISMANAGER
+         ;; 
+      "$EUREKA" | 4)
+         start $EUREKA
+         ;; 
+      "$GATEWAY" | 5)
+         start $GATEWAY
+         ;; 
+      "$PUBLICSERVICE" | 6)
+         start $PUBLICSERVICE
+         ;; 
+      *)
+        if [ "$2" = "" ]; then
+          start_all
+        else
+          echo "Please enter the correct service name"  
+          echo "Run help to view the service name"  
+        fi
+        ;;
+    esac
+    ;;
+  "stop")
+    case "$2" in
+      "$ENGINE_MANAGER" | 1)
+         stop $ENGINE_MANAGER
+         ;;
+      "$ENTRANCE" | 2)
+         stop $ENTRANCE
+         ;; 
+      "$LINKISMANAGER" | 3)
+         stop $LINKISMANAGER
+         ;; 
+      "$EUREKA" | 4)
+         stop $EUREKA
+         ;; 
+      "$GATEWAY" | 5)
+         stop $GATEWAY
+         ;; 
+      "$PUBLICSERVICE" | 6)
+         stop $PUBLICSERVICE
+         ;; 
+      *)
+        if [ "$2" = "" ]; then
+          stop_all
+        else
+          echo "Please enter the correct service name"  
+          echo "Run help to view the service name"  
+        fi
+        ;;
+    esac
+    ;;
+  "status")
+    case "$2" in
+      "$ENGINE_MANAGER" | 1)
+         status $ENGINE_MANAGER
+         ;;
+      "$ENTRANCE" | 2)
+         status $ENTRANCE
+         ;; 
+      "$LINKISMANAGER" | 3)
+         status $LINKISMANAGER
+         ;; 
+      "$EUREKA" | 4)
+         status $EUREKA
+         ;; 
+      "$GATEWAY" | 5)
+         status $GATEWAY
+         ;; 
+      "$PUBLICSERVICE" | 6)
+         status $PUBLICSERVICE
+         ;; 
+      *)
+        if [ "$2" = "" ]; then
+          status_all
+        else
+          echo "Please enter the correct service name"  
+          echo "Run help to view the service name"  
+        fi
+        ;;
+    esac
+    ;;
+  "restart")
+    case "$2" in
+      "$ENGINE_MANAGER" | 1)
+         restart $ENGINE_MANAGER
+         ;;
+      "$ENTRANCE" | 2)
+         restart $ENTRANCE
+         ;; 
+      "$LINKISMANAGER" | 3)
+         restart $LINKISMANAGER
+         ;; 
+      "$EUREKA" | 4)
+         restart $EUREKA
+         ;; 
+      "$GATEWAY" | 5)
+         restart $GATEWAY
+         ;; 
+      "$PUBLICSERVICE" | 6)
+         restart $PUBLICSERVICE
+         ;; 
+      *)
+        if [ "$2" = "" ]; then
+          stop_all
+          restart_all
+        else
+          echo "Please enter the correct service name"  
+          echo "Run help to view the service name"  
+        fi
+        ;;
+    esac
+    ;;
+  *)
+    help
+    ;;
+esac
+

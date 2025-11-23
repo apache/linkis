@@ -1,0 +1,208 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-conf
+data:
+  spark-env.sh: |
+    # This file is sourced when running various Spark programs.
+    # Copy it as spark-env.sh and edit that to configure Spark for your site.
+
+    # Options read when launching programs locally with
+    # ./bin/run-example or ./bin/spark-submit
+    # - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files
+    # - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
+    # - SPARK_PUBLIC_DNS, to set the public dns name of the driver program
+
+    # Options read by executors and drivers running inside the cluster
+    # - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
+    # - SPARK_PUBLIC_DNS, to set the public DNS name of the driver program
+    # - SPARK_LOCAL_DIRS, storage directories to use on this node for shuffle and RDD data
+    # - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
+
+    # Options read in any mode
+    # - SPARK_CONF_DIR, Alternate conf dir. (Default: ${SPARK_HOME}/conf)
+    # - SPARK_EXECUTOR_CORES, Number of cores for the executors (Default: 1).
+    # - SPARK_EXECUTOR_MEMORY, Memory per Executor (e.g. 1000M, 2G) (Default: 1G)
+    # - SPARK_DRIVER_MEMORY, Memory for Driver (e.g. 1000M, 2G) (Default: 1G)
+
+    # Options read in any cluster manager using HDFS
+    # - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files
+
+    # Options read in YARN client/cluster mode
+    # - YARN_CONF_DIR, to point Spark towards YARN configuration files when you use YARN
+
+    # Options for the daemons used in the standalone deploy mode
+    # - SPARK_MASTER_HOST, to bind the master to a different IP address or hostname
+    # - SPARK_MASTER_PORT / SPARK_MASTER_WEBUI_PORT, to use non-default ports for the master
+    # - SPARK_MASTER_OPTS, to set config properties only for the master (e.g. "-Dx=y")
+    # - SPARK_WORKER_CORES, to set the number of cores to use on this machine
+    # - SPARK_WORKER_MEMORY, to set how much total memory workers have to give executors (e.g. 1000m, 2g)
+    # - SPARK_WORKER_PORT / SPARK_WORKER_WEBUI_PORT, to use non-default ports for the worker
+    # - SPARK_WORKER_DIR, to set the working directory of worker processes
+    # - SPARK_WORKER_OPTS, to set config properties only for the worker (e.g. "-Dx=y")
+    # - SPARK_DAEMON_MEMORY, to allocate to the master, worker and history server themselves (default: 1g).
+    # - SPARK_HISTORY_OPTS, to set config properties only for the history server (e.g. "-Dx=y")
+    # - SPARK_SHUFFLE_OPTS, to set config properties only for the external shuffle service (e.g. "-Dx=y")
+    # - SPARK_DAEMON_JAVA_OPTS, to set config properties for all daemons (e.g. "-Dx=y")
+    # - SPARK_DAEMON_CLASSPATH, to set the classpath for all daemons
+    # - SPARK_PUBLIC_DNS, to set the public dns name of the master or workers
+
+    # Options for launcher
+    # - SPARK_LAUNCHER_OPTS, to set config properties and Java options for the launcher (e.g. "-Dx=y")
+
+    # Generic options for the daemons used in the standalone deploy mode
+    # - SPARK_CONF_DIR      Alternate conf dir. (Default: ${SPARK_HOME}/conf)
+    # - SPARK_LOG_DIR       Where log files are stored.  (Default: ${SPARK_HOME}/logs)
+    # - SPARK_LOG_MAX_FILES Max log files of Spark daemons can rotate to. Default is 5.
+    # - SPARK_PID_DIR       Where the pid file is stored. (Default: /tmp)
+    # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
+    # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
+    # - SPARK_NO_DAEMONIZE  Run the proposed command in the foreground. It will not output a PID file.
+    SPARK_LOG_DIR=/var/log/spark
+
+    # Options for native BLAS, like Intel MKL, OpenBLAS, and so on.
+    # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
+    # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
+    # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
+
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+          <name>javax.jdo.option.ConnectionURL</name>
+          <value>jdbc:mysql://mysql.mysql.svc.cluster.local:3306/hive_metadata?&amp;createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionUserName</name>
+          <value>root</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionPassword</name>
+          <value>123456</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionDriverName</name>
+          <value>com.mysql.jdbc.Driver</value>
+      </property>
+      <property>
+          <name>datanucleus.schema.autoCreateAll</name>
+          <value>true</value>
+      </property>
+      <property>
+          <name>hive.metastore.schema.verification</name>
+          <value>false</value>
+      </property>
+      <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://ldh.ldh.svc.cluster.local:9083</value>
+      </property>
+    </configuration>
+
+  spark-defaults.conf: |
+    # Default system properties included when running spark-submit.
+    # This is useful for setting default environmental settings.
+
+    spark.master yarn
+    spark.driver.extraLibraryPath /opt/ldh/current/hadoop/lib/native/
+    spark.eventLog.dir hdfs:///spark2-history/
+    spark.eventLog.enabled true
+    spark.executor.extraJavaOptions -XX:+UseNUMA
+    spark.executor.extraLibraryPath /opt/ldh/current/hadoop/lib/native
+    spark.history.fs.cleaner.enabled true
+    spark.history.fs.cleaner.interval 7d
+    spark.history.fs.cleaner.maxAge 90d
+    spark.history.fs.logDirectory hdfs:///spark2-history/
+    spark.history.kerberos.keytab none
+    spark.history.kerberos.principal none
+    spark.history.provider org.apache.spark.deploy.history.FsHistoryProvider
+    spark.history.store.path /data/spark/shs_db
+    spark.history.ui.port 18081
+    spark.io.compression.lz4.blockSize 128kb
+    spark.shuffle.file.buffer 1m
+    spark.shuffle.io.backLog 8192
+    spark.shuffle.io.serverThreads 128
+    spark.shuffle.unsafe.file.output.buffer 5m
+    spark.sql.autoBroadcastJoinThreshold 26214400
+    spark.sql.hive.convertMetastoreOrc true
+    spark.sql.hive.metastore.jars /opt/ldh/current/spark/jars/*
+    spark.sql.hive.metastore.version 2.3.3
+    spark.sql.orc.filterPushdown true
+    spark.sql.orc.impl native
+    spark.sql.queryExecutionListeners
+    spark.sql.statistics.fallBackToHdfs true
+    spark.sql.streaming.streamingQueryListeners
+    spark.sql.warehouse.dir /warehouse/tablespace/managed/hive
+    spark.unsafe.sorter.spill.reader.buffer.size 1m
+    spark.yarn.dist.files
+    spark.yarn.historyServer.address ldh.ldh.svc.cluster.local:18081
+    spark.yarn.queue default
+
+  log4j2.properties: |
+    # Set everything to be logged to the console
+    rootLogger.level = info
+    rootLogger.appenderRef.stdout.ref = console
+
+    # In the pattern layout configuration below, we specify an explicit `%ex` conversion
+    # pattern for logging Throwables. If this was omitted, then (by default) Log4J would
+    # implicitly add an `%xEx` conversion pattern which logs stacktraces with additional
+    # class packaging information. That extra information can sometimes add a substantial
+    # performance overhead, so we disable it in our default logging config.
+    # For more information, see SPARK-39361.
+    appender.console.type = Console
+    appender.console.name = console
+    appender.console.target = SYSTEM_ERR
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern = %d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n%ex
+
+    # Set the default spark-shell/spark-sql log level to WARN. When running the
+    # spark-shell/spark-sql, the log level for these classes is used to overwrite
+    # the root logger's log level, so that the user can have different defaults
+    # for the shell and regular Spark apps.
+    logger.repl.name = org.apache.spark.repl.Main
+    logger.repl.level = warn
+
+    logger.thriftserver.name = org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver
+    logger.thriftserver.level = warn
+
+    # Settings to quiet third party logs that are too verbose
+    logger.jetty1.name = org.sparkproject.jetty
+    logger.jetty1.level = warn
+    logger.jetty2.name = org.sparkproject.jetty.util.component.AbstractLifeCycle
+    logger.jetty2.level = error
+    logger.replexprTyper.name = org.apache.spark.repl.SparkIMain$exprTyper
+    logger.replexprTyper.level = info
+    logger.replSparkILoopInterpreter.name = org.apache.spark.repl.SparkILoop$SparkILoopInterpreter
+    logger.replSparkILoopInterpreter.level = info
+    logger.parquet1.name = org.apache.parquet
+    logger.parquet1.level = error
+    logger.parquet2.name = parquet
+    logger.parquet2.level = error
+
+    # SPARK-9183: Settings to avoid annoying messages when looking up nonexistent UDFs in SparkSQL with Hive support
+    logger.RetryingHMSHandler.name = org.apache.hadoop.hive.metastore.RetryingHMSHandler
+    logger.RetryingHMSHandler.level = fatal
+    logger.FunctionRegistry.name = org.apache.hadoop.hive.ql.exec.FunctionRegistry
+    logger.FunctionRegistry.level = error
+
+    # For deploying Spark ThriftServer
+    # SPARK-34128: Suppress undesirable TTransportException warnings involved in THRIFT-4805
+    appender.console.filter.1.type = RegexFilter
+    appender.console.filter.1.regex = .*Thrift error occurred during processing of message.*
+    appender.console.filter.1.onMatch = deny
+    appender.console.filter.1.onMismatch = neutral

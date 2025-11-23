@@ -1,0 +1,109 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: ❓ Ask Questions
+title: "[Question] "
+description:  Need help, or to ask questions
+labels: [Question]
+body:
+
+  - type: checkboxes
+    attributes:
+      label: Before asking
+      options:
+        - label: >
+            I have read the [How to ask for help](https://linkis.apache.org/community/how-to-ask-for-help)
+            (我已阅读[如何寻求帮助](https://linkis.apache.org/zh-CN/community/how-to-ask-for-help)指引文档).
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Your environment
+      description: Include as many relevant details about the environment you used.
+      value: |
+        <!-- Please describe the linkis version you are using and basic environment information -->
+        <!-- 请描述您使用的linkis版本和基本环境信息 -->
+        - Linkis version used: 1.1.2
+        - Environment name and version:
+            - cdh-5.14.2
+            - hdp-3.1.5
+            - hive-2.1.1
+            - spark-3.2.1
+            - scala-2.12.2
+            - jdk 1.8.0_121
+            - ....
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Describe your questions
+      description: Write down the detail info of you question
+      value: |
+        <!-- Please describe your questions -->
+        <!-- 请描述您的问题 -->
+        Q1.  ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Eureka service list
+      description: Screenshot of the service instance displayed on the Eureka registry page
+      value: |
+        <!-- You can directly copy and paste the screenshot of the list of registered service instances displayed on the Eureka page here -->
+        <!--  可以将Eureka页面显示的注册服务实例列表的的截图 直接复制并粘贴到这里。 粘贴后，会自动生成如下格式的url-->
+
+        eg:![image](https://user-images.githubusercontent.com/7869972/183326205-381b4e30-c727-44ba-8197-9998da78b1e3.png)
+
+
+  - type: textarea
+    attributes:
+      label: Some logs info or acctch file
+      description: Some logs infomation
+      value: |
+        <!-- Please add the log in the following format, the key error log must be pasted in the code style, and the text as much as possible, the detailed log or other files can be dragged and uploaded as an attachment -->
+        <!-- 请按如下格式 添加日志，关键错误日志请贴到[````log][````]之间，尽可能贴文字，详细日志或则其它文件，可以拖拽上传作为附件 -->
+
+        linkis-xxx.log:
+        ````log
+
+        <!--日志文字贴到这里-->
+
+        ````
+        log file:
+         <!-- 拖拽上传后，会自动生成如下示例格式的附件url -->
+        [linkis-xxx.log](https://github.com/apache/linkis/files/9219529/yarn-error.log)
+
+    validations:
+      required: true
+
+
+  - type: markdown
+    attributes:
+      value: |
+        Note ❤️
+        English:
+        - Please ask questions in a standardized format, so that the community students can answer them. After asking questions, please continue to pay attention to your questions.
+        - Please pay special attention that in addition to the screenshots, you also need to paste the log text. Only the questions of the picture log will not be given priority to answer.
+        - If it is an error in the running phase, please attach the screenshot of Eureka registry service list
+        - It is recommended to ask questions in English; if there is an unclear description, you can use a mixture of Chinese and English; translate Chinese into English, and then fill in both Chinese and English into the issue
+
+        中文:
+        - 请按格式规范提问，方便社区同学解答，提问后请后续持续关注你的问题
+        - 请特别注意除了截图，还需要把日志文字贴入，只有图片日志的问题，不会优先安排回答
+        - 如果是运行阶段的报错，请将Eureka注册中心服务列表截图附上
+        - 建议使用英文提问；如果存在描述不清晰，可以使用中英文混合；把中文翻译为英文，然后中文和英文一同填入到issue中

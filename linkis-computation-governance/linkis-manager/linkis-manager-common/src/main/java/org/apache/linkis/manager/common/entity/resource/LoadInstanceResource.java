@@ -26,6 +26,8 @@ public class LoadInstanceResource extends Resource {
   private final long memory;
   private final int cores;
   private final int instances;
+  // 兼容性适配
+  private final int instance;
 
   private LoadInstanceResource(Resource r) {
     if (r instanceof LoadInstanceResource) {
@@ -33,35 +35,42 @@ public class LoadInstanceResource extends Resource {
       this.memory = t.memory;
       this.cores = t.cores;
       this.instances = t.instances;
+      this.instance = t.instances;
     } else if (r instanceof LoadResource) {
       LoadResource l = (LoadResource) r;
       this.memory = l.getMemory();
       this.cores = l.getCores();
       this.instances = 0;
+      this.instance = 0;
     } else if (r instanceof MemoryResource) {
       MemoryResource m = (MemoryResource) r;
       this.memory = m.getMemory();
       this.cores = 0;
       this.instances = 0;
+      this.instance = 0;
     } else if (r instanceof CPUResource) {
       CPUResource c = (CPUResource) r;
       this.memory = 0;
       this.cores = c.getCores();
       this.instances = 0;
+      this.instance = 0;
     } else if (r instanceof DriverAndYarnResource) {
       DriverAndYarnResource d = (DriverAndYarnResource) r;
       this.memory = d.getLoadInstanceResource().getMemory();
       this.cores = d.getLoadInstanceResource().getCores();
       this.instances = d.getLoadInstanceResource().getInstances();
+      this.instance = d.getLoadInstanceResource().getInstances();
     } else if (r instanceof DriverAndKubernetesResource) {
       DriverAndKubernetesResource d = (DriverAndKubernetesResource) r;
       this.memory = d.getLoadInstanceResource().getMemory();
       this.cores = d.getLoadInstanceResource().getCores();
       this.instances = d.getLoadInstanceResource().getInstances();
+      this.instance = d.getLoadInstanceResource().getInstances();
     } else {
       this.memory = Long.MAX_VALUE;
       this.cores = Integer.MAX_VALUE;
       this.instances = Integer.MAX_VALUE;
+      this.instance = Integer.MAX_VALUE;
     }
   }
 
@@ -73,6 +82,7 @@ public class LoadInstanceResource extends Resource {
     this.memory = memory;
     this.cores = cores;
     this.instances = instances;
+    this.instance = instances;
   }
 
   public LoadInstanceResource add(Resource r) {
@@ -182,6 +192,10 @@ public class LoadInstanceResource extends Resource {
   }
 
   public int getInstances() {
-    return instances;
+    return this.instances;
+  }
+
+  public int getInstance() { // NOSONAR
+    return this.instances; // NOSONAR
   }
 }

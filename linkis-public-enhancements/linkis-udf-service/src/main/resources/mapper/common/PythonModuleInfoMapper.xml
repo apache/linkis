@@ -54,6 +54,7 @@
             <if test="isExpire != null">is_expire = #{isExpire},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="pythonModule != null">python_module = #{pythonModule},</if>
         </set>
         WHERE id = #{id}
     </update>
@@ -61,9 +62,9 @@
     <!-- SQL 3: 新增 -->
     <insert id="insertPythonModuleInfo">
         INSERT INTO linkis_ps_python_module_info
-        (name, description, path, engine_type, create_user, update_user, is_load, is_expire, create_time, update_time)
+        (name, description, path, engine_type, create_user, update_user, is_load, is_expire, create_time, update_time, python_module)
         VALUES
-        (#{name}, #{description}, #{path}, #{engineType}, #{createUser}, #{updateUser}, #{isLoad}, #{isExpire}, #{createTime}, #{updateTime})
+        (#{name}, #{description}, #{path}, #{engineType}, #{createUser}, #{updateUser}, #{isLoad}, #{isExpire}, #{createTime}, #{updateTime}, #{pythonModule})
         <selectKey keyProperty="id" resultType="Long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -75,6 +76,7 @@
         <if test="createUser != null">AND create_user = #{createUser}</if>
         <if test="name != null">AND name = #{name}</if>
         <if test="id != null">AND  id = #{id}</if>
+        <if test="isLoad != null">AND  is_load = #{isLoad}</if>
     </select>
 
     <!-- SQL 5: 查询包含多个引擎类型的hdfs路径 -->

@@ -22,6 +22,7 @@
       v-model="fApi"
       :option="options"
       :value.sync="formData"
+      @change="handleFormChange"
     />
   </div>
 </template>
@@ -160,6 +161,7 @@ export default {
       options: {
         submitBtn: false,
       },
+      isEncrypt: '',
       rule: [
         {
           type: 'input',
@@ -219,11 +221,17 @@ export default {
     },
   },
   methods: {
+    handleFormChange(field, value, rule, api, setFlag) {
+      if(field === 'password' && !setFlag) {
+        this.isEncrypt = '';
+      }
+    },
     getDataSource(newV) {
       if (this.data.id) {
         getDataSourceByIdAndVersion(newV.id, newV.versionId || 0).then(
           (result) => {
             const mConnect = result.info.connectParams
+            this.isEncrypt = result.info.connectParams?.isEncrypt || '';
             this.sourceConnectData = mConnect
             delete result.info.connectParams
             this.dataSrc = { ...result.info, ...mConnect }

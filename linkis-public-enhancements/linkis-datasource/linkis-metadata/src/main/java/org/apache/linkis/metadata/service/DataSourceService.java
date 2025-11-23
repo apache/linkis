@@ -19,15 +19,37 @@ package org.apache.linkis.metadata.service;
 
 import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 public interface DataSourceService {
 
-  JsonNode getDbs(String userName) throws Exception;
+  JsonNode getDbs(String userName, String permission) throws Exception;
+
+  Set<String> getRangerDbs(String username) throws Exception;
+
+  Set<String> getHiveDbs(String userName, String permission) throws Exception;
+
+  Boolean checkRangerConnectionConfig();
 
   JsonNode getDbsWithTables(String userName) throws Exception;
 
+  JsonNode getDbsWithTablesAndLastAccessAt(String userName) throws Exception;
+
   JsonNode queryTables(MetadataQueryParam queryParam);
+
+  List<Map<String, Object>> queryHiveTables(MetadataQueryParam queryParam);
+
+  List<String> queryRangerTables(MetadataQueryParam queryParam);
+
+  List<String> getRangerColumns(MetadataQueryParam queryParam);
+
+  JsonNode filterRangerColumns(JsonNode hiveColumns, List<String> rangerColumns);
+
+  JsonNode queryTablesWithLastAccessAt(MetadataQueryParam queryParam);
 
   JsonNode queryTableMeta(MetadataQueryParam queryParam);
 
@@ -40,4 +62,6 @@ public interface DataSourceService {
   JsonNode getPartitions(MetadataQueryParam queryParam);
 
   boolean partitionExists(MetadataQueryParam queryParam);
+
+  Map<String, Object> getStorageInfo(MetadataQueryParam queryParam);
 }

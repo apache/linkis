@@ -93,18 +93,24 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
    */
   override def listEMEngines(em: EMNode): java.util.List[EngineNode] = {
     val nodes = emNodeManager.listEngines(em)
-    val resourceInfo =
-      resourceManager.getResourceInfo(nodes.asScala.map(_.getServiceInstance).toArray).resourceInfo
-    val resourceInfoMap = resourceInfo.asScala.map(r => (r.getServiceInstance.toString, r)).toMap
-    nodes.asScala.map { node =>
-      resourceInfoMap
-        .get(node.getServiceInstance.toString)
-        .map(_.getNodeResource)
-        .foreach(node.setNodeResource)
-      node.setLabels(labelService.getNodeLabels(node.getServiceInstance))
-      node
+    if (nodes.isEmpty) {
+      nodes
+    } else {
+      val resourceInfo =
+        resourceManager
+          .getResourceInfo(nodes.asScala.map(_.getServiceInstance).toArray)
+          .resourceInfo
+      val resourceInfoMap = resourceInfo.asScala.map(r => (r.getServiceInstance.toString, r)).toMap
+      nodes.asScala.map { node =>
+        resourceInfoMap
+          .get(node.getServiceInstance.toString)
+          .map(_.getNodeResource)
+          .foreach(node.setNodeResource)
+        node.setLabels(labelService.getNodeLabels(node.getServiceInstance))
+        node
+      }
+      nodes
     }
-    nodes
   }
 
   @Receiver

@@ -73,6 +73,12 @@ public class WorkSpaceConfiguration {
   public static final CommonVars<Boolean> FILESYSTEM_JVM_USER_SWITCH =
       CommonVars$.MODULE$.apply("linkis.filesystem.jvm.user.switch", true);
 
+  public static final CommonVars<String> LINKIS_KEYTAB_FILE_OWNER =
+      CommonVars$.MODULE$.apply("linkis.keytab.file.owner", "hadoop");
+
+  public static final CommonVars<String> LINKIS_KEYTAB_FILE_PEIMISSION =
+      CommonVars$.MODULE$.apply("linkis.keytab.file.permission", "640");
+
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(
           FILESYSTEM_FS_THREAD_NUM.getValue(),

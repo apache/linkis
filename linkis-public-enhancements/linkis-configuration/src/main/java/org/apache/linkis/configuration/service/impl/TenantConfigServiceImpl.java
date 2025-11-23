@@ -38,7 +38,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -218,12 +217,18 @@ public class TenantConfigServiceImpl implements TenantConfigService {
    */
   @Override
   public Map<String, Object> queryDepartmentTenant(
-      String departmentId, String creator, String tenantValue, Integer pageNow, Integer pageSize) {
+      String departmentId,
+      String department,
+      String creator,
+      String tenantValue,
+      Integer pageNow,
+      Integer pageSize) {
     Map<String, Object> result = new HashMap<>(2);
     List<DepartmentTenantVo> tenantVos = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
-      tenantVos = departmentTenantMapper.queryTenantList(creator, departmentId, tenantValue);
+      tenantVos =
+          departmentTenantMapper.queryTenantList(creator, departmentId, department, tenantValue);
     } finally {
       PageHelper.clearPage();
     }
@@ -238,20 +243,14 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public DepartmentTenantVo queryDepartTenant(String creator, String departmentId) {
-    return departmentTenantMapper.queryTenant(creator, departmentId);
+  public DepartmentTenantVo queryDepartTenant(
+      String creator, String departmentId, String department) {
+    return departmentTenantMapper.queryTenant(creator, departmentId, department);
   }
 
   @Override
   public List<DepartmentVo> queryDepartmentList() {
-    return new ArrayList<>(
-        departmentMapper.queryDepartmentList().stream()
-            .collect(
-                Collectors.toMap(
-                    DepartmentVo::getOrgId,
-                    department -> department,
-                    (existing, replacement) -> existing))
-            .values());
+    return departmentMapper.queryDepartmentList();
   }
 
   @Override

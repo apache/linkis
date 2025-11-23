@@ -27,6 +27,9 @@ export const subAppRoutes = {
   children: []
 }
 
+// Check if Python Module is enabled via environment variable
+export const isPythonModuleEnabled = process.env.VUE_APP_ENABLE_PYTHON_MODULE === 'true'
+
 export default [
   {
     path: 'console',
@@ -149,6 +152,16 @@ export default [
       },
     },
     {
+      name: 'eurekaService',
+      path: 'eurekaService',
+      component: () =>
+        import('./module/eurekaService/index.vue'),
+      meta: {
+        title: 'eurekaService',
+        publicPage: true,
+      },
+    },
+    {
       name: 'datasource',
       path: 'datasource',
       component: () =>
@@ -169,6 +182,16 @@ export default [
       }
     },
     {
+      name: 'departmentTagManagement',
+      path: 'departmentTagManagement',
+      component: () =>
+        import('./module/departmentTagManagement/index.vue'),
+      meta: {
+        title: 'departmentTagManagement',
+        publicPage: true,
+      }
+    },
+    {
       name: 'errorCode',
       path: 'errorCode',
       component: () =>
@@ -185,6 +208,16 @@ export default [
         import('./module/ipListManagement/index.vue'),
       meta: {
         title: 'ipListManagement',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'acrossClusterRule',
+      path: 'acrossClusterRule',
+      component: () =>
+        import('./module/acrossClusterRule/index.vue'),
+      meta: {
+        title: 'acrossClusterRule',
         publicPage: true,
       },
     },
@@ -238,6 +271,16 @@ export default [
         publicPage: true,
       },
     },
+    ...(isPythonModuleEnabled ? [{
+      name: 'pythonModule',
+      path: 'pythonModule',
+      component: () =>
+        import('./module/pythonModule/index.vue'),
+      meta: {
+        title: 'pythonModule',
+        publicPage: true,
+      },
+    }] : []),
     {
       name: 'datasourceAccess',
       path: 'datasourceAccess',
@@ -289,12 +332,32 @@ export default [
       },
     },
     {
+      name: 'codeQuery',
+      path: 'codeQuery',
+      component: () =>
+        import('./module/codeQuery/index.vue'),
+      meta: {
+        title: 'codeQuery',
+        publicPage: true,
+      },
+    },
+    {
       name: 'configManagement',
       path: 'configManagement',
       component: () =>
         import('./module/configManagement/index.vue'),
       meta: {
         title: 'configManagement',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'codeDetail',
+      path: 'codeDetail',
+      component: () =>
+        import('./module/codeQuery/codeDetail/index.vue'),
+      meta: {
+        title: 'codeDetail',
         publicPage: true,
       },
     },
@@ -316,26 +379,6 @@ export default [
         import('./module/userConfig/index.vue'),
       meta: {
         title: 'userConfig',
-        publicPage: true,
-      },
-    },
-    {
-      name: 'statisticsDashboard',
-      path: 'statisticsDashboard',
-      component: () =>
-        import('./module/statisticsDashboard/index.vue'),
-      meta: {
-        title: 'statisticsDashboard',
-        publicPage: true,
-      },
-    },
-    {
-      name: 'statisticsDashboardDetail',
-      path: 'statisticsDashboardDetail',
-      component: () =>
-        import('./module/statisticsDashboard/statisticsDashboard.vue'),
-      meta: {
-        title: 'statisticsDashboardHistory',
         publicPage: true,
       },
     },

@@ -84,6 +84,8 @@ object EngineConnConf {
   val JOB_YARN_TASK_URL = CommonVars("linkis.job.task.yarn.url", "");
 
   val JOB_YARN_CLUSTER_TASK_URL = CommonVars("linkis.job.task.yarn.cluster.url", "");
+
+  val ENGINE_CONF_REVENT_SWITCH = CommonVars("linkis.engine.conf.revent.switch", true)
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 
   def getEngineTmpDir: String = System.getenv(ENGINE_CONN_LOCAL_TMP_DIR.getValue)

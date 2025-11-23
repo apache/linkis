@@ -68,7 +68,7 @@
           cellpadding="0"
           cellspacing="0"
           border="0"
-          style="width:100%;table-layout:fixed;"
+          style="width:100%;table-layout:fixed;overflow:hidden"
           :style="{height:`${loadedNum*tdHeight}px`}"
         >
           <tbody>
@@ -95,7 +95,7 @@
                   v-if="item.key"
                   :key="`${index}-${indexs}`"
                   class="bottom-td"
-                  :class="[hasLineBreak(item.logic==undefined?items[item.key]:item.logic(items)) ? '' : 'hint--bottom hint--rounded']"
+                  :class="[hasLineBreak(item.logic==undefined?items[item.key]:item.logic(items)) ? '' : 'hint--right hint--rounded']"
                   :style="{width: item.width?`${item.width}px`:'auto'}"
                   :aria-label="item.logic==undefined?items[item.key]:item.logic(items)"
                 >

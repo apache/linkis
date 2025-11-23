@@ -19,7 +19,7 @@ package org.apache.linkis.storage.domain
 
 import java.lang.reflect.Type
 
-import com.google.gson.GsonBuilder
+import com.google.gson.{GsonBuilder, ToNumberPolicy}
 
 /**
  * @param id
@@ -56,7 +56,10 @@ case class MethodEntity(
 
 object MethodEntitySerializer {
 
-  val gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create
+  val gson = new GsonBuilder()
+    .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+    .setObjectToNumberStrategy(ToNumberPolicy.LAZILY_PARSED_NUMBER)
+    .create
 
   /**
    * Serialized to code as a MethodEntity object 序列化为code为MethodEntity对象

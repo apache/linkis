@@ -35,6 +35,6 @@ object TokenConfiguration {
     CommonVars[Int]("wds.linkis.token.cache.max.size", 5000).getValue
 
   val TOKEN_CACHE_EXPIRE_MINUTES: Int =
-    CommonVars[Int]("wds.linkis.token.cache.expire.minutes", 30).getValue
+    CommonVars[Int]("wds.linkis.token.cache.expire.minutes", 2).getValue
 
 }

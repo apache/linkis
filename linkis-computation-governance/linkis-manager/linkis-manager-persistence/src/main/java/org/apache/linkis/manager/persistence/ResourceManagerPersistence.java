@@ -55,6 +55,12 @@ public interface ResourceManagerPersistence {
       throws PersistenceErrorException;
 
   /**
+   * @param labelValues
+   * @return
+   */
+  List<PersistenceResource> getResourceByLabelValues(List<String> labelValues);
+
+  /**
    * 根据用户获取资源
    *
    * @param user

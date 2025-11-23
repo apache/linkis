@@ -19,6 +19,8 @@ package org.apache.linkis.basedatamanager.server.service;
 
 import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 
@@ -30,4 +32,8 @@ public interface GatewayAuthTokenService extends IService<GatewayAuthTokenEntity
   PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize);
 
   GatewayAuthTokenEntity getEntityByToken(String token);
+
+  GatewayAuthTokenEntity selectTokenBySign(String token);
+
+  List<GatewayAuthTokenEntity> selectTokenByNameWithLike(String token);
 }

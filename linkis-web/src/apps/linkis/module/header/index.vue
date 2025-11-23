@@ -99,13 +99,13 @@ export default {
     linkTo(type) {
       let url = "";
       if (type === "book") {
-        url = `https://linkis.apache.org/`;
+        url = `https://github.com/WeBankFinTech/DataSphereStudio/blob/master/docs/zh_CN/ch3/DSS_User_Manual.md`;
       } else if (type === "github") {
-        url = `https://linkis.apache.org/`;
+        url = `https://github.com/WeBankFinTech/DataSphereStudio`;
       } else if (type === "freedback") {
-        url = "https://linkis.apache.org/";
+        url = "https://wj.qq.com/s2/4943071/c037/ ";
         if (localStorage.getItem("locale") === "en") {
-          url = "https://linkis.apache.org/";
+          url = "https://wj.qq.com/s2/4943706/5a8b";
         }
       }
       util.windowOpen(url);

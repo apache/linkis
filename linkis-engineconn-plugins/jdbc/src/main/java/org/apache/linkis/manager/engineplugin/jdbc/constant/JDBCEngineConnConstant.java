@@ -46,6 +46,12 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM =
       "wds.linkis.engine.runtime.datasource.systemQueryParam";
 
+  public static final String JDBC_ENGINE_RUN_TIME_DS_TYPE = "linkis.datasource.type";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_HOST = "linkis.datasource.params.host";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_PORT = "linkis.datasource.params.port";
+  public static final String JDBC_ENGINE_RUN_TIME_DS_PARAM_USERNAME =
+      "linkis.datasource.params.username";
+
   public static final String JDBC_POOL_TEST_ON_BORROW = "wds.linkis.jdbc.pool.testOnBorrow";
   public static final String JDBC_POOL_TEST_ON_RETURN = "wds.linkis.jdbc.pool.testOnReturn";
   public static final String JDBC_POOL_TEST_WHILE_IDLE = "wds.linkis.jdbc.pool.testWhileIdle";
@@ -63,8 +69,9 @@ public class JDBCEngineConnConstant {
       "wds.linkis.jdbc.pool.poolPreparedStatements";
   public static final String JDBC_POOL_REMOVE_ABANDONED_ENABLED =
       "wds.linkis.jdbc.pool.remove.abandoned.enabled";
-  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT =
-      "wds.linkis.jdbc.pool.remove.abandoned.timeout";
+  public static final String JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED =
+      "wds.linkis.jdbc.pool.remove.abandoned.log.enabled";
+  public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT = "linkisJDBCPoolAbandonedTimeout";
 
   public static final String DS_JDBC_HOST = "host";
   public static final String DS_JDBC_PORT = "port";

@@ -252,7 +252,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 
-/deep/ .ivu-tree {
+::v-deep .ivu-tree {
   .ivu-tree-children {
     li {
       margin: 0px

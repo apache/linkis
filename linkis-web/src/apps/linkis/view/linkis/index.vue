@@ -30,28 +30,28 @@
             <CellGroup v-for="(item, index2) in sideNavList.children" :key="index2"
               @on-click="handleCellClick">
               <Cell
-                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10')&&(item.key !== '1-12'):true"
+                v-if="(!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true) && (item.key !== '1-13' || isPythonModuleEnabled)"
                 :key="index2" :class="{ crrentItem: crrentItem === item.key }" :title="item.name"
                 :name="item.key">
                 <div>
                   <span>{{item.name}}</span>
                   <div class="sub-menu-row">
                     <Icon
-                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
+                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
                       type="ios-arrow-down" class="user-icon" />
                     <Icon
-                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12')"
+                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
                       type="ios-arrow-up" class="user-icon" />
                   </div>
                 </div>
                 <div
-                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12') && !item.showSubMenu">
+                  v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13') && !item.showSubMenu">
                   <div @click.stop="">
                     <CellGroup
                       v-for="(item3, index3) in getChildMap(item.key).children"
                       :key="index3" @on-click="clickToRoute">
                       <div
-                        v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-1'">
+                        v-if="isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7', '1-13-1'].includes(item3.key)">
                         <Cell :key="index3" :class="{ crrentItem: crrentItem === item3.key }"
                           :title="item3.name" :name="item3.key" />
                       </div>
@@ -65,7 +65,7 @@
         <div class="content-body-side-right">
           <div class="content-body-side-right-title">
             <Breadcrumb
-              v-if="$route.name !== 'resource' && $route.name !== 'resourceEngineConnList'">
+              v-if="!['resource', 'resourceEngineConnList', 'microService', 'eurekaService'].includes($route.name)">
               <BreadcrumbItem :to="skipPath">
                 <Icon v-if="skipPath" type="ios-arrow-back" size="16" color="#338cf0"></Icon>
                 {{ breadcrumbSecondName }}
@@ -89,9 +89,21 @@
                 href="/resource">
               </Tab-pane>
             </Tabs>
+            <Tabs v-if="$route.name === 'microService' || $route.name === 'eurekaService'"
+              value="microService" @on-click="clickResourceTab" class="resource-tab">
+              <Tab-pane name="microService"
+                :label="$t('message.linkis.sideNavList.function.children.microserviceManage')"
+                href="/microService"></Tab-pane>
+              <Tab-pane name="eurekaService"
+                :label="$t('message.linkis.sideNavList.function.children.eurekaService')"
+                href="/eurekaService">
+              </Tab-pane>
+            </Tabs>
           </div>
           <div class="content-body-side-right-content">
-            <router-view></router-view>
+            <keep-alive :include="['codeQuery']">
+              <router-view />
+            </keep-alive>
           </div>
         </div>
       </div>
@@ -104,12 +116,42 @@
 <script>
 import storage from '@/common/helper/storage'
 import api from '@/common/service/api'
+import { isPythonModuleEnabled } from '../../router'
 export default {
   name: 'Layout',
+  mounted() {
+    window.addEventListener('message', (e) => {
+      if(e.data === 'Unauhorized') {
+        this.$emit('clear-session');
+        storage.set('need-refresh-proposals-hql', true);
+        storage.set('need-refresh-proposals-python', true);
+        this.$router.push({ path: '/login' });
+      }
+    })
+    if(!localStorage.getItem('hasRead')) {
+      // Jump to pythonModule if enabled, otherwise jump to globalHistory
+      if (isPythonModuleEnabled) {
+        this.clickToRoute('1-13-1')
+      } else {
+        this.clickToRoute('1-1')
+      }
+    }
+  },
+  unmounted() {
+    window.removeEventListener('message', (e) => {
+      if(e.data === 'Unauhorized') {
+        this.$emit('clear-session');
+        storage.set('need-refresh-proposals-hql', true);
+        storage.set('need-refresh-proposals-python', true);
+        this.$router.push({ path: '/login' });
+      }
+    })
+  },
   data() {
     return {
       crrentItem: '1-1',
       isLogAdmin: false,
+      isPythonModuleEnabled: isPythonModuleEnabled,
       sideNavList: {
         key: '1',
         name: this.$t('message.linkis.sideNavList.function.name'),
@@ -174,12 +216,20 @@ export default {
             showSubMenu: true,
           },
           {
+            key: '1-13',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.taskResourceManage'
+            ),
+            showSubMenu: true,
+          },
+          {
             key: '1-10',
             name: this.$t(
               'message.linkis.sideNavList.function.children.basedataManagement'
             ),
             showSubMenu: true,
           },
+          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
           {
             key: '1-12',
             name: this.$t(
@@ -187,13 +237,7 @@ export default {
             ),
             showSubMenu: true,
           },
-          {
-            key: '1-13',
-            name: this.$t(
-              'message.linkis.sideNavList.function.children.statisticsDashboard'
-            ),
-            path: '/console/statisticsDashboard',
-          },
+          // {key: '1-13', name: this.$t('message.linkis.sideNavList.function.children.pythonModule'), path: '/console/pythonModule' },
         ],
       },
       datasourceNavList: {
@@ -269,11 +313,25 @@ export default {
             path: '/console/tenantTagManagement',
           },
           {
+            key: '1-10-9',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.departmentTagManagement'
+            ),
+            path: '/console/departmentTagManagement',
+          },
+          {
             key: '1-10-6',
             name: this.$t(
               'message.linkis.sideNavList.function.children.ipListManagement'
             ),
             path: '/console/ipListManagement',
+          },
+          {
+            key: '1-10-7',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.acrossClusterRule'
+            ),
+            path: '/console/acrossClusterRule',
           },
           {
             key: '1-10-8',
@@ -306,6 +364,7 @@ export default {
           },
           {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
           {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
+          
         ],
       },
       opsTool: {
@@ -320,6 +379,21 @@ export default {
               'message.linkis.sideNavList.function.children.userConfig'
             ),
             path: '/console/userConfig',
+          },
+        ],
+      },
+      taskResourceManage: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.children.taskResourceManage'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {
+            key: '1-13-1',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.pythonModule'
+            ),
+            path: '/console/pythonModule',
           },
         ],
       },
@@ -344,7 +418,7 @@ export default {
       return this.$route.meta.noLayout
     },
   },
-  created() {
+  async created() {
     // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach((element) => {
       if (element.path === this.$route.path) {
@@ -358,14 +432,17 @@ export default {
       this.crrentItem = '1-11'
     }
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin
+      sessionStorage.setItem('canResultSet', res.canResultSet)
       storage.set('isLogAdmin', res.admin, 'session')
     })
+    this.isLogAdmin = storage.get('isLogAdmin', 'session');
     // Whether the result set can be downloaded
-    api.fetch('/user/baseinfo', 'get').then((res) => {
+    await api.fetch('/user/baseinfo', 'get').then((res) => {
       storage.set('resultSetExportEnable', res.resultSetExportEnable ? true : false,'session')
       storage.set('clusterInfo', res.linkisClusterName || '')
+      storage.set('engineLogOnlyAdminEnable', res.engineLogOnlyAdminEnable || false)
     })
   },
   methods: {
@@ -375,6 +452,7 @@ export default {
         '1-9': this.urmSideNavList,
         '1-10': this.basedataNavList,
         '1-12': this.opsTool,
+        '1-13': this.taskResourceManage
       }
       return map[key]
     },
@@ -389,14 +467,19 @@ export default {
           !this.sideNavList.children[7].showSubMenu
         return
       }
-      if (index === '1-10') {
+      if (index === '1-13') {
         this.sideNavList.children[8].showSubMenu =
           !this.sideNavList.children[8].showSubMenu
         return
       }
-      if (index === '1-12') {
+      if (index === '1-10') {
         this.sideNavList.children[9].showSubMenu =
           !this.sideNavList.children[9].showSubMenu
+        return
+      }
+      if (index === '1-12') {
+        this.sideNavList.children[11].showSubMenu =
+          !this.sideNavList.children[11].showSubMenu
         return
       }
       // index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
@@ -418,13 +501,37 @@ export default {
           activedCellParent = this.urmSideNavList
           this.sideNavList.children[7].showSubMenu = false
           break
+        case '1-13-1':
+          activedCellParent = this.taskResourceManage
+          this.sideNavList.children[8].showSubMenu = false
+          break
         case '1-10-5':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
           break
         case '1-10-6':
           activedCellParent = this.basedataNavList
-          this.sideNavList.children[8].showSubMenu = false
+          this.sideNavList.children[9].showSubMenu = false
+          break
+        case '1-10-7':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[9].showSubMenu = false
+          break
+        case '1-10-4':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[9].showSubMenu = false
+          break
+        case '1-10-3':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[9].showSubMenu = false
+          break
+        case '1-10-2':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[9].showSubMenu = false
+          break
+        case '1-10-1':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[9].showSubMenu = false
           break
         default:
           activedCellParent = this.sideNavList
@@ -465,7 +572,7 @@ export default {
       this.$router.push(`/console/${value}`)
     },
   },
-  beforeRouteEnter(to, from, next) {
+  async beforeRouteEnter(to, from, next) {
     if (to.name === 'FAQ' && from.name === 'Home') {
       next((vm) => {
         vm.breadcrumbFirstName = this.$t(
@@ -482,24 +589,37 @@ export default {
       !from.name
     ) {
       const lastActiveConsole = storage.get('lastActiveConsole')
-
       // If it is historical details, refresh directly(如果为历史详情则直接刷新)
       if (['viewHistory', 'viewHistoryDetail', 'codeDetail'].includes(to.name)) return next()
+      try {
+        let isLogAdmin = false;
+        await api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+          isLogAdmin = res.admin
+          storage.set('isLogAdmin', res.admin, 'session')
+          storage.set('isLogHistoryAdmin', res.historyAdmin, 'session')
+          storage.set('isLogDeptAdmin', res.deptAdmin, 'session')
+        })
 
-      next((vm) => {
-        if (lastActiveConsole) {
-          if (
-            lastActiveConsole.key === '1-9-1' ||
-            lastActiveConsole.key === '1-9-2'
-          ) {
-            vm.clickToRoute(lastActiveConsole.key)
+        next((vm) => {
+          const noAccess = !isLogAdmin && !['1-1', '1-2', '1-3', '1-4', '1-8-1', '1-9-1', '1-9-2', '1-10-7', '1-11'].includes(lastActiveConsole?.key)
+          if (lastActiveConsole && !noAccess ) {
+            if (
+              lastActiveConsole?.key === '1-9-1' ||
+              lastActiveConsole?.key === '1-9-2'
+            ) {
+              vm.clickToRoute(lastActiveConsole?.key)
+            } else {
+              vm.handleCellClick(lastActiveConsole?.key)
+            }
           } else {
-            vm.handleCellClick(lastActiveConsole.key)
+            vm.handleCellClick('1-1')
           }
-        } else {
-          vm.handleCellClick('1-1')
-        }
-      })
+        })
+      } catch(err) {
+        window.console.warn(err);
+      }
+
+
     }
     next()
   },

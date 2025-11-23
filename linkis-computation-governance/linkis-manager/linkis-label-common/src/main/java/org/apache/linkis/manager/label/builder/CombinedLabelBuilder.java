@@ -46,7 +46,7 @@ public class CombinedLabelBuilder implements LabelBuilder {
 
   @Override
   public Label<?> build(String labelKey, @Nullable Object valueObj) throws LabelErrorException {
-    if (null != valueObj || valueObj instanceof List) {
+    if (null != valueObj && valueObj instanceof List) {
       try {
         List<Label<?>> labels = (List<Label<?>>) valueObj;
         return new CombinedLabelImpl(labels);

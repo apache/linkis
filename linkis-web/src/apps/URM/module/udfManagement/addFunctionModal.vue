@@ -97,6 +97,38 @@
           @set-node="setNodePath"/>
       </FormItem>
       <FormItem
+        v-if="fnType === 1 && fnCategory.isSpark && registerFunctions.length > 0"
+        :label="$t('message.linkis.udf.registerFunc')"
+        prop="pyPara">
+        <Select
+          v-model="setting.pyPara"
+          @on-change="handleFuncChange"
+          :placeholder="$t('message.linkis.udf.registerFunction')"
+          filterable>
+          <Option
+            v-for="(item) in registerFunctions"
+            :label="item"
+            :value="item"
+            :key="item"/>
+        </Select>
+      </FormItem>
+      <FormItem
+        v-if="fnType === 2 && fnCategory.isSpark && registerFunctions.length > 0"
+        :label="$t('message.linkis.udf.registerFunc')"
+        prop="scalapara">
+        <Select
+          v-model="setting.scalapara"
+          @on-change="handleFuncChange"
+          :placeholder="$t('message.linkis.udf.registerFunction')"
+          filterable>
+          <Option
+            v-for="(item) in registerFunctions"
+            :label="item"
+            :value="item"
+            :key="item"/>
+        </Select>
+      </FormItem>
+      <FormItem
         v-if="fnType === 0 && fnCategory.isCommon"
         :label="$t('message.linkis.udf.registerFormat')"
         prop="jarPara">
@@ -110,6 +142,7 @@
         prop="pyPara">
         <Input
           v-model="setting.pyPara"
+          :disabled="!registerFunctionEditable"
           :placeholder="$t('message.linkis.udf.registerFunction')"/>
       </FormItem>
       <FormItem
@@ -134,6 +167,7 @@
           <FormItem prop="scalapara">
             <Input
               v-model="setting.scalapara"
+              :disabled="!registerFunctionEditable"
               :placeholder="$t('message.linkis.udf.registerFunction')"/>
           </FormItem>
         </div>
@@ -288,6 +322,8 @@ export default {
         },
       },
       title: '',
+      registerFunctions: [],
+      registerFunctionEditable: true,
       show: false,
       btnLabel: this.$t('message.common.ok'),
       modalHeight: '',
@@ -552,7 +588,11 @@ export default {
         };
       }
     },
-
+    handleFuncChange(val) {
+      if(this.model !== 1) {
+        this.setting.name = val;
+      }
+    },
     init() {
       let { name, shared, description, path, udfName, directory, udfType, registerFormat, load, useFormat } = this.node;
       let fnType = 'Spark'
@@ -575,9 +615,27 @@ export default {
         fnType,
         defaultLoad: !!load
       });
-      this.$nextTick(() => {
+      this.$nextTick(async () => {
         this.$set(this.setting, this.getTypes(), path);
+        if(this.getTypes() !== 'jarPath') {
+          if (/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(path)) {
+            try {
+              this.registerFunctions = await this.getRegisterFunction(path);
+              if(this.registerFunctions.length !== 0) {
+                this.registerFunctionEditable = false;
+              } else {
+                this.registerFunctionEditable = true;
+              }
+            } catch (err) {
+              window.console.error(err);
+              this.registerFunctions = [];
+              this.registerFunctionEditable = true;
+            }
+          } 
+        
+        }
       });
+      
     },
 
     close() {
@@ -594,27 +652,31 @@ export default {
       } else if (this.node.udfType === 1) {
         this.setting.pyPara = conver(',', ')', 'indexOf', 'lastIndexOf');
       } else {
-        const type = rf.slice(rf.indexOf('[') + 1, rf.indexOf(']'));
+        const typeStart = rf.indexOf('[') + 1;
+        const typeEnd = rf.lastIndexOf(']');
+        const type = rf.slice(typeStart, typeEnd);
         window.console.log(type, rf, '=====');
-        // 如果存在多个逗号，就只用使用格式来截取，否则会出现多个类型填入input异常的问题
-        if (type.indexOf(',') !== type.lastIndexOf(',')) {
-          // there are 2 case:
-          // 1. tuple,  return params in ();
-          // 2. multi params, the first params is return params
-          if (type.indexOf('(') !== -1) {
-            // tuple
-            this.setting.scalaTypeL = type.slice(type.indexOf('('), type.indexOf(')') + 1)
-            this.setting.scalaTypeR = type.slice(type.indexOf(')')+2)
-          } else {
-            // multi params
-            this.setting.scalaTypeL = type.split(',')[0];
-            this.setting.scalaTypeR = type.split(',').slice(1).toString();
+        const findFirstValidComma = (str) => {
+          let brackets = 0;
+          for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            // 计算所有类型的括号
+            if (char === '[' || char === '(') brackets++;
+            if (char === ']' || char === ')') brackets--;
+            // 只在最外层找逗号
+            if (char === ',' && brackets === 0) return i;
           }
+          return -1;
+        };
 
-          this.showScalaRF = this.node.registerFormat;
+        const commaPos = findFirstValidComma(type);
+        
+        if (commaPos !== -1) {
+          this.setting.scalaTypeL = type.slice(0, commaPos).trim();
+          this.setting.scalaTypeR = type.slice(commaPos + 1).trim();
         } else {
-          this.setting.scalaTypeL = conver('[', ',', 'indexOf', 'indexOf');
-          this.setting.scalaTypeR = conver(',', ']', 'indexOf', 'indexOf');
+          this.setting.scalaTypeL = type.trim();
+          this.setting.scalaTypeR = '';
         }
         this.setting.scalapara = conver(',', ')', 'lastIndexOf', 'lastIndexOf');
       }
@@ -635,7 +697,6 @@ export default {
         this.$set(this.setting, `${type}R`, right);
       }
     },
-
     handleShareChange() {
       if (!this.isShareLoading) {
         this.isShareLoading = true;
@@ -662,10 +723,10 @@ export default {
             udfType: this.fnType,
             isLeaf: true,
             directory,
-            clusterName
+            clusterName,
           };
           if (this.model) {
-            postData = Object.assign(postData, { shared: false });
+            postData = Object.assign(postData, { shared: false, defaultLoad });
             this.$emit('update', postData);
           } else {
             postData = Object.assign(postData, { defaultLoad });
@@ -692,12 +753,38 @@ export default {
     resize(h) {
       this.modalHeight = h - 380 + 'px';
     },
+    // 获取注册函数
+    async getRegisterFunction(path) {
+      const res = await api.fetch('/udf/get-register-functions', { path }, 'get');
+      return res.functions
+    },
 
-    setNodePath(node) {
+    async setNodePath(node) {
       ['jarPath', 'sparkPath', 'customPath'].forEach(item => {
         const temp = item === this.getTypes() ? node.path : '';
         this.$set(this.setting, item, temp);
       })
+      if(this.getTypes() !== 'jarPath') {
+
+        
+        if (/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(node.path)) {
+          try {
+            this.registerFunctions = await this.getRegisterFunction(node.path);
+            if(this.registerFunctions.length !== 0) {
+              this.registerFunctionEditable = false;
+            } else {
+              this.registerFunctionEditable = true;
+            }
+          } catch (err) {
+            window.console.error(err);
+            this.registerFunctions = [];
+            this.registerFunctionEditable = true;
+          }
+        }
+          
+        
+      }
+      
     },
 
     getTypes() {

@@ -290,24 +290,28 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       dealEngineByEngineNode(engineNodes.toList, userName)
     }
     // kill EMnode by user creator
-    if (StringUtils.isNotBlank(engineType) && !creator.equals(Configuration.GLOBAL_CONF_SYMBOL)) {
-      val filterEngineNode = engineNodes
-        .filter(_.getOwner.equals(userName))
-        .filter(node => {
-          var filterResult = false
-          if (!node.getLabels.isEmpty) {
-            val userCreator = LabelUtil.getUserCreatorLabel(node.getLabels)
-            val engineTypeLabel = LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue
-            if (
-                userCreator.getUser.equals(userName) && userCreator.getCreator
-                  .equals(creator) && engineTypeLabel.equals(engineType)
-            ) {
-              filterResult = true
-            }
-          }
-          filterResult
-        })
-        .toList
+    if (StringUtils.isNotBlank(engineType)) {
+      val filterEngineNode = creator match {
+        case Configuration.GLOBAL_CONF_SYMBOL =>
+          engineNodes
+            .filter(_.getOwner.equals(userName))
+            .filter(!_.getLabels.isEmpty)
+            .filter(node =>
+              LabelUtil.getUserCreatorLabel(node.getLabels).getUser.equals(userName)
+                && LabelUtil.getEngineTypeLabel(node.getLabels).getEngineType.equals(engineType)
+            )
+            .toList
+        case _ =>
+          engineNodes
+            .filter(_.getOwner.equals(userName))
+            .filter(!_.getLabels.isEmpty)
+            .filter(node =>
+              LabelUtil.getUserCreatorLabel(node.getLabels).getUser.equals(userName)
+                && LabelUtil.getUserCreatorLabel(node.getLabels).getCreator.equals(creator)
+                && LabelUtil.getEngineTypeLabel(node.getLabels).getStringValue.equals(engineType)
+            )
+            .toList
+      }
       dealEngineByEngineNode(filterEngineNode, userName)
     }
   }

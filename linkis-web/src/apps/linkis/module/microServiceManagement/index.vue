@@ -34,7 +34,7 @@
       </Col>
       <Col span="9" class="search-item">
         <span class="lable">{{
-          $t("message.linkis.tableColumns.engineType")
+          $t("message.linkis.tableColumns.serveType")
         }}</span>
         <Select v-model="applicationName" class="input">
           <Option v-for="item in typeList" :key="item" :value="item">{{

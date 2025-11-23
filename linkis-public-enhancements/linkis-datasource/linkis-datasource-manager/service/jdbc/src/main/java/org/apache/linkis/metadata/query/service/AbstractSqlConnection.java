@@ -17,12 +17,11 @@
 
 package org.apache.linkis.metadata.query.service;
 
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -35,13 +34,18 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSqlConnection implements Closeable {
-
+public class AbstractSqlConnection implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractSqlConnection.class);
 
-  public Connection conn;
+  private static final CommonVars<String> SQL_DRIVER_CLASS =
+      CommonVars.apply("wds.linkis.server.mdm.service.postgre.driver", "org.postgresql.Driver");
 
-  public ConnectMessage connectMessage;
+  private static final CommonVars<String> SQL_CONNECT_URL =
+      CommonVars.apply("wds.linkis.server.mdm.service.postgre.url", "jdbc:postgresql://%s:%s/%s");
+
+  private Connection conn;
+
+  private ConnectMessage connectMessage;
 
   public AbstractSqlConnection(
       String host,
@@ -52,14 +56,50 @@ public abstract class AbstractSqlConnection implements Closeable {
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
+    if (Strings.isBlank(database)) {
+      database = "";
+    }
     conn = getDBConnection(connectMessage, database);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
   }
 
-  public abstract Connection getDBConnection(ConnectMessage connectMessage, String database)
-      throws ClassNotFoundException, SQLException;
+  public List<String> getAllDatabases() throws SQLException {
+    List<String> dataBaseName = new ArrayList<>();
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      stmt = conn.createStatement();
+      rs = stmt.executeQuery("select datname from pg_database");
+      while (rs.next()) {
+        dataBaseName.add(rs.getString(1));
+      }
+    } finally {
+      closeResource(null, stmt, rs);
+    }
+    return dataBaseName;
+  }
+
+  public List<String> getAllTables(String schemaname) throws SQLException {
+    List<String> tableNames = new ArrayList<>();
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      stmt = conn.createStatement();
+      rs =
+          stmt.executeQuery(
+              "SELECT tablename FROM pg_tables where schemaname = '" + schemaname + "'");
+      //            rs = stmt.executeQuery("SELECT table_name FROM
+      // information_schema.tables");
+      while (rs.next()) {
+        tableNames.add(rs.getString(1));
+      }
+      return tableNames;
+    } finally {
+      closeResource(null, stmt, rs);
+    }
+  }
 
   public List<MetaColumnInfo> getColumns(String schemaname, String table)
       throws SQLException, ClassNotFoundException {
@@ -69,7 +109,8 @@ public abstract class AbstractSqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys =
+          getPrimaryKeys(/*getDBConnection(connectMessage, schemaname),  */ table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -77,8 +118,6 @@ public abstract class AbstractSqlConnection implements Closeable {
       for (int i = 1; i < columnCount + 1; i++) {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
-        info.setLength(meta.getColumnDisplaySize(i));
-        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
@@ -99,79 +138,22 @@ public abstract class AbstractSqlConnection implements Closeable {
    * @return
    * @throws SQLException
    */
-  public List<String> getPrimaryKeys(String table) throws SQLException {
+  private List<String> getPrimaryKeys(
+      /*Connection connection, */ String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
-    try {
-      DatabaseMetaData dbMeta = conn.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
-      while (rs.next()) {
-        primaryKeys.add(rs.getString("column_name"));
-      }
-      return primaryKeys;
-    } finally {
-      if (null != rs) {
-        rs.close();
-      }
+    //        try {
+    DatabaseMetaData dbMeta = conn.getMetaData();
+    rs = dbMeta.getPrimaryKeys(null, null, table);
+    while (rs.next()) {
+      primaryKeys.add(rs.getString("column_name"));
     }
-  }
-
-  public GenerateSqlInfo queryJdbcSql(String database, String table) {
-    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
-    String ddl = generateJdbcDdlSql(database, table);
-    generateSqlInfo.setDdl(ddl);
-
-    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
-
-    String columnStr = "*";
-    try {
-      List<MetaColumnInfo> columns = getColumns(database, table);
-      if (CollectionUtils.isNotEmpty(columns)) {
-        columnStr =
-            columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
-      }
-    } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
-    }
-    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
-
-    return generateSqlInfo;
-  }
-
-  public String generateJdbcDdlSql(String database, String table) {
-    StringBuilder ddl = new StringBuilder();
-    ddl.append("CREATE TABLE ").append(String.format("%s.%s", database, table)).append(" (");
-
-    try {
-      List<MetaColumnInfo> columns = getColumns(database, table);
-      if (CollectionUtils.isNotEmpty(columns)) {
-        for (MetaColumnInfo column : columns) {
-          ddl.append("\n\t").append(column.getName()).append(" ").append(column.getType());
-          if (column.getLength() > 0) {
-            ddl.append("(").append(column.getLength()).append(")");
-          }
-          if (!column.isNullable()) {
-            ddl.append(" NOT NULL");
-          }
-          ddl.append(",");
+    return primaryKeys;
+    /*}finally{
+        if(null != rs){
+            closeResource(connection, null, rs);
         }
-        String primaryKeys =
-            columns.stream()
-                .filter(MetaColumnInfo::isPrimaryKey)
-                .map(MetaColumnInfo::getName)
-                .collect(Collectors.joining(", "));
-        if (StringUtils.isNotBlank(primaryKeys)) {
-          ddl.append(String.format("\n\tPRIMARY KEY (%s),", primaryKeys));
-        }
-        ddl.deleteCharAt(ddl.length() - 1);
-      }
-    } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
-    }
-
-    ddl.append("\n)");
-
-    return ddl.toString();
+    }*/
   }
 
   /**
@@ -181,7 +163,7 @@ public abstract class AbstractSqlConnection implements Closeable {
    * @param statement statement
    * @param resultSet result set
    */
-  public void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
+  private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
     try {
       if (null != resultSet && !resultSet.isClosed()) {
         resultSet.close();
@@ -208,18 +190,34 @@ public abstract class AbstractSqlConnection implements Closeable {
    * @return
    * @throws ClassNotFoundException
    */
+  private Connection getDBConnection(ConnectMessage connectMessage, String database)
+      throws ClassNotFoundException, SQLException {
+    String extraParamString =
+        connectMessage.extraParams.entrySet().stream()
+            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+            .collect(Collectors.joining("&"));
+    Class.forName(SQL_DRIVER_CLASS.getValue());
+    String url =
+        String.format(
+            SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    if (!connectMessage.extraParams.isEmpty()) {
+      url += "?" + extraParamString;
+    }
+    return DriverManager.getConnection(
+        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
+  }
 
   /** Connect message */
-  public static class ConnectMessage {
-    public String host;
+  private static class ConnectMessage {
+    private String host;
 
-    public Integer port;
+    private Integer port;
 
-    public String username;
+    private String username;
 
-    public String password;
+    private String password;
 
-    public Map<String, Object> extraParams;
+    private Map<String, Object> extraParams;
 
     public ConnectMessage(
         String host,

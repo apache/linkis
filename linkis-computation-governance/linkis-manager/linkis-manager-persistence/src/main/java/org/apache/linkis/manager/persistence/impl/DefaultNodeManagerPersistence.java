@@ -105,6 +105,10 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     persistenceNode.setOwner(node.getOwner());
     persistenceNode.setMark(node.getMark());
     persistenceNode.setUpdateTime(new Date());
+    if (node instanceof EngineNode) {
+      EngineNode engineNode = (EngineNode) node;
+      persistenceNode.setParams(engineNode.getParams());
+    }
     persistenceNode.setCreator(
         node.getOwner()); // The creator is not given when inserting records in rm, so you need to
     // set this value(rm中插入记录的时候并未给出creator，所以需要set这个值)

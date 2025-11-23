@@ -31,9 +31,11 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.*;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg;
+import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
@@ -72,6 +74,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
   @Autowired private NodePointerBuilder nodePointerBuilder;
 
   @Autowired private ResourceManager resourceManager;
+
+  @Autowired private NodeManagerMapper nodeManagerMapper;
 
   @Autowired private LabelManagerPersistence labelManagerPersistence;
 
@@ -223,6 +227,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     if (scoreServiceInstances == null || scoreServiceInstances.length == 0) {
       return null;
     }
+    List<String> instances = new ArrayList<String>();
     List<ScoreServiceInstance> scoreServiceInstancesList = Arrays.asList(scoreServiceInstances);
     EngineNode[] engineNodes =
         scoreServiceInstancesList.stream()
@@ -231,6 +236,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
                   AMEngineNode engineNode = new AMEngineNode();
                   engineNode.setScore(scoreServiceInstance.getScore());
                   engineNode.setServiceInstance(scoreServiceInstance.getServiceInstance());
+                  instances.add(scoreServiceInstance.getServiceInstance().getInstance());
                   return engineNode;
                 })
             .toArray(EngineNode[]::new);
@@ -241,9 +247,10 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
             .collect(Collectors.toList());
 
     try {
+      logger.info("start getEngineNodes.");
       ResourceInfo resourceInfo =
           resourceManager.getResourceInfo(serviceInstancesList.toArray(new ServiceInstance[0]));
-
+      logger.info("end resourceInfo {}", resourceInfo);
       if (serviceInstancesList.isEmpty()) {
         throw new LinkisRetryException(
             AMConstant.ENGINE_ERROR_CODE, "Service instances cannot be empty.");
@@ -251,6 +258,15 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
       List<NodeMetrics> nodeMetrics =
           nodeMetricManagerPersistence.getNodeMetrics(Arrays.asList(engineNodes));
+      logger.info(
+          "get nodeMetrics, with engineNode size: {}, res size: {}",
+          engineNodes.length,
+          nodeMetrics.size());
+      List<PersistenceNode> persistenceNodes = nodeManagerMapper.getNodesByInstances(instances);
+      logger.info(
+          "get persistenceNodes, with instance size: {}, res size: {}",
+          instances.size(),
+          persistenceNodes.size());
 
       for (EngineNode engineNode : engineNodes) {
         Optional<NodeMetrics> optionMetrics =
@@ -269,6 +285,12 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
         optionMetrics.ifPresent(metrics -> metricsConverter.fillMetricsToNode(engineNode, metrics));
         optionRMNode.ifPresent(rmNode -> engineNode.setNodeResource(rmNode.getNodeResource()));
+
+        persistenceNodes.stream()
+            .filter(
+                node -> node.getInstance().equals(engineNode.getServiceInstance().getInstance()))
+            .findFirst()
+            .ifPresent(persistenceNode -> engineNode.setParams(persistenceNode.getParams()));
       }
     } catch (Exception e) {
       LinkisRetryException linkisRetryException =
@@ -276,6 +298,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       linkisRetryException.initCause(e);
       throw linkisRetryException;
     }
+    logger.info("end getEngineNodes");
     return engineNodes;
   }
 

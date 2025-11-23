@@ -13,41 +13,40 @@
 </p>
 
 <p align="center">
-  <a href="https://linkis.apache.org/docs/latest/introduction/" >
-    <img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN docs" />
-  </a>
-  <a href="https://linkis.apache.org/zh-CN/docs/latest/introduction/">
-    <img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" />
-  </a>
+  <a href="https://linkis.apache.org/docs/latest/introduction/" ><!--
+    --><img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN docs" /><!--
+  --></a>
+  <a href="https://linkis.apache.org/zh-CN/docs/latest/introduction/"><!--
+    --><img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" /><!--
+  --></a>
 </p>
 
 <p align="center">
-    <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis">
-        <img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" />
-    </a>
-    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE">
-        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" />
-    </a>
-    <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
-        <img src="https://img.shields.io/badge/JDK-8-green.svg" />
-    </a>
-    <a target="_blank" href="https://github.com/apache/linkis/actions">
-        <img src="https://github.com/apache/linkis/actions/workflows//build-backend.yml/badge.svg" />
-    </a>
+    <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis"><!--
+      --><img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" /><!--
+    --></a>
+    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE"><!--
+      --><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" /><!--
+    --></a>
+    <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><!--
+      --><img src="https://img.shields.io/badge/JDK-8-green.svg" /><!--
+    --></a>
+    <a target="_blank" href="https://github.com/apache/linkis/actions"><!--
+      --><img src="https://github.com/apache/linkis/actions/workflows//build-backend.yml/badge.svg" /><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/><!--
+    --></a>
+   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT"><!--
+      --><img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" /><!--
+    --></a>
 
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/>
-   </a>
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/>
-   </a>
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/>
-   </a>
-  <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
-       <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
-  </a>
-  
 </p>
 <br/>
 
@@ -57,9 +56,9 @@
 # 介绍
 
 Linkis 在上层应用程序和底层引擎之间构建了一层计算中间件。通过使用 Linkis 提供的 REST/WebSocket/JDBC 等标准接口，
-上层应用可以方便地连接访问 MySQL/Spark/Hive/Presto/Flink 等底层引擎，同时实现变量、脚本、函数和资源文件等用户资源的跨上层应用互通。  
+上层应用可以方便地连接访问 MySQL/Spark/Hive/Presto/Flink 等底层引擎，同时实现变量、脚本、函数和资源文件等用户资源的跨上层应用互通。
 作为计算中间件，Linkis 提供了强大的连通、复用、编排、扩展和治理管控能力。通过计算中间件将应用层和引擎层解耦，简化了复杂的网络调用关系，
-降低了整体复杂度，同时节约了整体开发和维护成本。  
+降低了整体复杂度，同时节约了整体开发和维护成本。
 Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企业和 1000+沙盒试验用户，涉及金融、电信、制造、互联网等多个行业。
 许多公司已经将 Linkis 作为大数据平台底层计算存储引擎的统一入口，和计算请求/任务的治理管控利器。
 
@@ -82,21 +81,21 @@ Apache Linkis | DeepWiki : https://deepwiki.com/apache/linkis
 
 # 引擎类型
 
-| **引擎名** | **支持底层组件版本<br/>(默认依赖版本)** | **Linkis 1.X 版本要求** | **是否默认包含在发布包中** | **说明** |
-|:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Spark 3.2.1）|\>=1.0.3|是|Spark EngineConn， 支持 SQL, Scala, Pyspark 和 R 代码|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 3.1.3）|\>=1.0.3|是|Hive EngineConn， 支持 HiveQL 代码|
-|Python|Python >= 2.6, <br/>（默认 Python2*）|\>=1.0.3|是|Python EngineConn， 支持 python 代码|
-|Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持 Bash shell 代码|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL 和 SQLServer，可快速扩展支持其他数据库组件, 如SQLite|
-|Flink |Flink >= 1.12.2, <br/>(默认 Apache Flink 1.12.2)|\>=1.0.3|否|Flink EngineConn， 支持 FlinkSQL 代码，也支持以 Flink Jar 形式启动一个新的 Yarn 应用程序|
-|Pipeline|-|\>=1.0.3|否|Pipeline EngineConn， 支持文件的导入和导出|
-|openLooKeng|openLooKeng >= 1.5.0, <br/>(默认 openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用 Sql 查询数据虚拟化引擎 openLooKeng|
-|Sqoop| Sqoop >= 1.4.6, <br/>(默认 Apache Sqoop 1.4.6)|\>=1.1.2|否|Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎|
-|Presto|Presto >= 0.180, <br/>(默认 Presto 0.234)|\>=1.2.0|否|Presto EngineConn， 支持 Presto SQL 代码|
-|ElasticSearch|ElasticSearch >=6.0, <br/>((默认 ElasticSearch 7.6.2)|\>=1.2.0|否|ElasticSearch EngineConn， 支持 SQL 和 DSL 代码|
-|Trino | Trino >=371 | >=1.3.1 | 否 |   Trino EngineConn， 支持Trino SQL 代码 |
-|Seatunnel | Seatunnel >=2.1.2 | >=1.3.1 | 否 | Seatunnel EngineConn， 支持Seatunnel SQL 代码 |
+| **引擎名**    | **支持底层组件版本<br/>(默认依赖版本)**                              | **Linkis 1.X 版本要求** | **是否默认包含在发布包中** | **说明**                                                                                                                                         |
+| :------------ | :------------------------------------------------------------------- | :---------------------- | :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Spark         | Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Spark 3.2.1） | \>=1.0.3                | 是                         | Spark EngineConn， 支持 SQL, Scala, Pyspark 和 R 代码                                                                                            |
+| Hive          | Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 3.1.3）  | \>=1.0.3                | 是                         | Hive EngineConn， 支持 HiveQL 代码                                                                                                               |
+| Python        | Python >= 2.6, <br/>（默认 Python2*）                                | \>=1.0.3                | 是                         | Python EngineConn， 支持 python 代码                                                                                                             |
+| Shell         | Bash >= 2.0                                                          | \>=1.0.3                | 是                         | Shell EngineConn， 支持 Bash shell 代码                                                                                                          |
+| JDBC          | MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)              | \>=1.0.3                | 否                         | JDBC EngineConn， 已支持ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL 和 SQLServer，可快速扩展支持其他数据库组件, 如SQLite |
+| Flink         | Flink >= 1.12.2, <br/>(默认 Apache Flink 1.12.2)                     | \>=1.0.3                | 否                         | Flink EngineConn， 支持 FlinkSQL 代码，也支持以 Flink Jar 形式启动一个新的 Yarn 应用程序                                                         |
+| Pipeline      | -                                                                    | \>=1.0.3                | 否                         | Pipeline EngineConn， 支持文件的导入和导出                                                                                                       |
+| openLooKeng   | openLooKeng >= 1.5.0, <br/>(默认 openLookEng 1.5.0)                  | \>=1.1.1                | 否                         | openLooKeng EngineConn， 支持用 Sql 查询数据虚拟化引擎 openLooKeng                                                                               |
+| Sqoop         | Sqoop >= 1.4.6, <br/>(默认 Apache Sqoop 1.4.6)                       | \>=1.1.2                | 否                         | Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎                                                                                                  |
+| Presto        | Presto >= 0.180, <br/>(默认 Presto 0.234)                            | \>=1.2.0                | 否                         | Presto EngineConn， 支持 Presto SQL 代码                                                                                                         |
+| ElasticSearch | ElasticSearch >=6.0, <br/>((默认 ElasticSearch 7.6.2)                | \>=1.2.0                | 否                         | ElasticSearch EngineConn， 支持 SQL 和 DSL 代码                                                                                                  |
+| Trino         | Trino >=371                                                          | >=1.3.1                 | 否                         | Trino EngineConn， 支持Trino SQL 代码                                                                                                            |
+| Seatunnel     | Seatunnel >=2.1.2                                                    | >=1.3.1                 | 否                         | Seatunnel EngineConn， 支持Seatunnel SQL 代码                                                                                                    |
 
 # 下载
 
@@ -147,7 +146,7 @@ npm run build
 我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.1 
+$> LINKIS_IMAGE=linkis:1.3.1
 $> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
@@ -156,17 +155,17 @@ $> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 # 示例和使用指引
 
 - [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/how-to-use),
-- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview) 
+- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview)
 - [API 文档 ](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
 
 # 文档&视频
 
-- 完整的 Linkis 文档代码存放在[linkis-website 仓库中 ](https://github.com/apache/linkis-website)  
+- 完整的 Linkis 文档代码存放在[linkis-website 仓库中 ](https://github.com/apache/linkis-website)
 
 - Meetup 视频 [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
 # 架构概要
-Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服务、公共增强服务和微服务治理服务。  
+Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服务、公共增强服务和微服务治理服务。
 
 - 计算治理服务，支持计算任务/请求处理流程的 3 个主要阶段:提交-> 准备-> 执行
 - 公共增强服务，包括上下文服务、物料管理服务及数据源服务等
@@ -178,7 +177,7 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 
 # 贡献
 
-我们非常欢迎和期待更多的贡献者参与共建 Linkis, 不论是代码、文档，或是其他能够帮助到社区的贡献形式。  
+我们非常欢迎和期待更多的贡献者参与共建 Linkis, 不论是代码、文档，或是其他能够帮助到社区的贡献形式。
 代码和文档相关的贡献请参照[贡献指引](https://linkis.apache.org/zh-CN/community/how-to-contribute).
 
 # 联系我们
@@ -192,5 +191,5 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 
 # 谁在使用 Linkis
 
-我们创建了一个 issue [[Who is Using Linkis]](https://github.com/apache/linkis/issues/23) 以便用户反馈和记录谁在使用 Linkis.  
+我们创建了一个 issue [[Who is Using Linkis]](https://github.com/apache/linkis/issues/23) 以便用户反馈和记录谁在使用 Linkis.
 Linkis 自 2019 年开源发布以来，累计已有 700 多家试验企业和 1000+沙盒试验用户，涉及金融、电信、制造、互联网等多个行业。

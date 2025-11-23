@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.core.receivers;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
@@ -75,10 +76,12 @@ public class DsmReceiver {
                 MessageFormat.format(
                     "Datasource name:{0} is not published.", dataSource.getDataSourceName()));
           }
-
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              dataSource.getConnectParams());
+          // Decrypt
+          if (!AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
+            RestfulApiHelper.decryptPasswordKey(
+                dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
+                dataSource.getConnectParams());
+          }
           return new DsInfoResponse(
               true,
               dataSource.getDataSourceType().getName(),

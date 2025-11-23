@@ -85,6 +85,11 @@ public class ClusterLabel extends GenericLabel
   }
 
   @Override
+  public int hashCode() {
+    return getClusterName().hashCode() + getClusterType().hashCode();
+  }
+
+  @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 2) {

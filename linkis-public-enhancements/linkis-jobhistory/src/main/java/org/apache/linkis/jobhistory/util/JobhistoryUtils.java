@@ -32,20 +32,26 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JobhistoryUtils {
-
+  private static final Logger logger = LoggerFactory.getLogger(JobhistoryUtils.class);
   public static String headersStr =
-      "任务ID,来源,查询语句,状态,已耗时,关键信息,是否复用,申请开始时间,申请结束时间,申请耗时,应用/引擎,用户,创建时间";
+      "任务ID,来源,查询语句,状态,已耗时,关键信息,是否复用,申请开始时间,申请结束时间,申请耗时,应用/任务类型/引擎,用户,创建时间";
   public static String headersEnStr =
-      "JobID,Source,Execution Code,Status,Time Elapsed,Key Information,IsRuse,Application Start Time,Application End Time,Application Takes Time,App / Engine,User,Created at";
+      "JobID,Source,Execution Code,Status,Time Elapsed,Key Information,IsRuse,Application Start Time,Application End Time,Application Takes Time,App /Run Type/Engine,User,Created at";
   private static Sender sender =
       Sender.getSender(
           Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());;
+
+  public static final String shellPath = Configuration.getLinkisHome() + "/admin/";
+  public static final String analyzeFilePath = "tools/linkis-analyze.sh";
 
   public static byte[] downLoadJobToExcel(
       List<QueryTaskVO> jobHistoryList,
@@ -106,7 +112,9 @@ public class JobhistoryUtils {
             row,
             10,
             formatExecuteApplicationName(
-                queryTaskVO.getExecuteApplicationName(), queryTaskVO.getRequestApplicationName()));
+                queryTaskVO.getExecuteApplicationName(),
+                queryTaskVO.getRequestApplicationName(),
+                queryTaskVO.getRunType()));
         if (viewResult) {
           createCell(row, 11, queryTaskVO.getUmUser());
           createCell(row, 12, formatDateTime(queryTaskVO.getCreatedTime()));
@@ -129,12 +137,16 @@ public class JobhistoryUtils {
 
   public static String getDepartmentByuser(String username) {
     String departmentId = "";
-    Object responseObject = sender.ask(new DepartmentRequest(username));
-    if (responseObject instanceof DepartmentResponse) {
-      DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
-      if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
-        departmentId = departmentResponse.departmentId();
+    try {
+      Object responseObject = sender.ask(new DepartmentRequest(username));
+      if (responseObject instanceof DepartmentResponse) {
+        DepartmentResponse departmentResponse = (DepartmentResponse) responseObject;
+        if (StringUtils.isNotBlank(departmentResponse.departmentId())) {
+          departmentId = departmentResponse.departmentId();
+        }
       }
+    } catch (Exception e) {
+      logger.warn("get user {} departmentId  error: {}", username, e);
     }
     return departmentId;
   }
@@ -163,7 +175,16 @@ public class JobhistoryUtils {
 
   // 格式化executeApplicationName的方法
   private static String formatExecuteApplicationName(
-      String executeApplicationName, String requestApplicationName) {
-    return requestApplicationName + "/" + executeApplicationName;
+      String executeApplicationName, String requestApplicationName, String runType) {
+    return requestApplicationName + "/" + runType + "/" + executeApplicationName;
+  }
+
+  public static String getDiagnosisMsg(String taskID) {
+    // 执行shell 脚本获取诊断信息
+    List<String> cmdlist = new ArrayList<>();
+    cmdlist.add("sh");
+    cmdlist.add(shellPath + analyzeFilePath);
+    cmdlist.add(taskID);
+    return Utils.exec(cmdlist.toArray(new String[3]), 600 * 1000L);
   }
 }

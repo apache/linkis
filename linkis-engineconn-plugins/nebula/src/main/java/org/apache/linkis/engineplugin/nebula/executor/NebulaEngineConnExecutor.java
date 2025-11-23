@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.nebula.executor;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.common.log.LogUtils;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.OverloadUtils;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
@@ -280,7 +281,8 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
     } else {
       Session session = null;
       String username = NebulaConfiguration.NEBULA_USER_NAME.getValue(configMap);
-      String password = NebulaConfiguration.NEBULA_PASSWORD.getValue(configMap);
+      String password =
+          AESUtils.isDecryptByConf(NebulaConfiguration.NEBULA_PASSWORD.getValue(configMap));
       Boolean reconnect = NebulaConfiguration.NEBULA_RECONNECT_ENABLED.getValue(configMap);
       String space = NebulaConfiguration.NEBULA_SPACE.getValue(configMap);
       try {

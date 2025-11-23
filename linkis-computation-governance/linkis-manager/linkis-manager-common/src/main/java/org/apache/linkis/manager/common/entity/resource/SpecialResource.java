@@ -19,6 +19,7 @@ package org.apache.linkis.manager.common.entity.resource;
 
 import org.apache.linkis.manager.common.exception.ResourceWarnException;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -292,11 +293,11 @@ public class SpecialResource extends Resource {
                 if (v instanceof Integer && rsV instanceof Integer) {
                   return (int) v != (int) rsV;
                 } else if (v instanceof Double && rsV instanceof Double) {
-                  return (double) v != (double) rsV;
+                  return !BigDecimal.valueOf((double) v).equals(BigDecimal.valueOf((double) rsV));
                 } else if (v instanceof Long && rsV instanceof Long) {
                   return (long) v != (long) rsV;
                 } else if (v instanceof Float && rsV instanceof Float) {
-                  return (float) v != (float) rsV;
+                  return !BigDecimal.valueOf((float) v).equals(BigDecimal.valueOf((float) rsV));
                 } else if (v instanceof Short && rsV instanceof Short) {
                   return (short) v != (short) rsV;
                 } else {

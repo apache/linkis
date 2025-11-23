@@ -30,20 +30,6 @@ object EntranceConfiguration {
   val JOB_MAX_PERSIST_WAIT_TIME =
     CommonVars("wds.linkis.entrance.job.persist.wait.max", new TimeType("5m"))
 
-  val MULTI_ENTRANCE_CONDITION = CommonVars("wds.linkis.entrance.multi.entrance.flag", true)
-
-  val JOBHISTORY_SPRING_APPLICATION_NAME =
-    CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
-
-  /**
-   * DEFAULT_LOGPATH_PREFIX is the prefix that represents the default log storage path
-   * DEFAULT_LOGPATH_PREFIX 是表示默认的日志存储路径的前缀
-   */
-  val DEFAULT_LOGPATH_PREFIX = CommonVars[String](
-    "wds.linkis.entrance.config.log.path",
-    CommonVars[String]("wds.linkis.filesystem.hdfs.root.path").getValue
-  )
-
   /**
    * Default_Cache_Max is used to specify the size of the LoopArray of the CacheLogWriter
    * Default_Cache_Max 是用来指定CacheLogWriter的LoopArray的大小
@@ -95,6 +81,9 @@ object EntranceConfiguration {
    * wds.linkis.instance 是用来进行控制每个用户启动engine数量的参数
    */
   val WDS_LINKIS_INSTANCE = CommonVars("wds.linkis.rm.instance", 10)
+
+  val WDS_LINKIS_ENTRANCE_RUNNING_JOB =
+    CommonVars("wds.linkis.engine.running.job.max", WDS_LINKIS_INSTANCE.getValue)
 
   val ENTRANCE_INSTANCE_MIN = CommonVars("wds.linkis.entrance.runningjob.min", 5)
 
@@ -221,10 +210,13 @@ object EntranceConfiguration {
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
   val TEMPLATE_CONF_SWITCH =
-    CommonVars("wds.linkis.entrance.template.conf.interceptor.switch", false)
+    CommonVars("wds.linkis.entrance.template.conf.interceptor.switch", true)
 
   val TEMPLATE_CONF_ADD_ONCE_LABEL_ENABLE =
     CommonVars("wds.linkis.entrance.template.add.once.label.enable", false)
+
+  val SUPPORT_TEMPLATE_CONF_RETRY_ENABLE =
+    CommonVars("linkis.entrance.template.retry.enable", false)
 
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR: CommonVars[Boolean] =
     CommonVars[Boolean]("linkis.entrance.auto.clean.dirty.data.enable", true)
@@ -270,7 +262,7 @@ object EntranceConfiguration {
 
   // if true, the job in ConsumeQueue can be failover
   val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
-    CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
+    CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", false).getValue
 
   val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", false)
 
@@ -293,5 +285,125 @@ object EntranceConfiguration {
 
   val ENABLE_HDFS_RES_DIR_PRIVATE =
     CommonVars[Boolean]("linkis.entrance.enable.hdfs.res.dir.private", false).getValue
+
+  val UNSUPPORTED_RETRY_CODES =
+    CommonVars("linkis.entrance.unsupported.retry.codes", "NOCODE").getValue
+
+  val SUPPORTED_RETRY_ERROR_CODES =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.codes",
+      "01002,01003,13005,13006,13012"
+    ).getValue
+
+  val SUPPORTED_RETRY_ERROR_DESC =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.desc",
+      "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
+    ).getValue
+
+  val SUPPORT_ADD_RETRY_CODE_KEYS =
+    CommonVars(
+      "linkis.entrance.supported.add.retry.code.keys",
+      "dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
+    ).getValue
+
+  val TASK_RETRY_ENABLED: Boolean =
+    CommonVars[Boolean]("linkis.task.retry.enabled", true).getValue
+
+  val AI_SQL_DEFAULT_SPARK_ENGINE_TYPE: String =
+    CommonVars[String]("linkis.ai.sql.default.spark.engine.type", "spark-3.4.4").getValue
+
+  val AI_SQL_DEFAULT_HIVE_ENGINE_TYPE: String =
+    CommonVars[String]("linkis.ai.sql.default.hive.engine.type", "hive-2.3.3").getValue
+
+  val AI_SQL_HIVE_TEMPLATE_KEYS: String =
+    CommonVars[String]("linkis.ai.sql.hive.template.keys", "hive,mapreduce").getValue
+
+  val AI_SQL_CREATORS: String =
+    CommonVars[String]("linkis.ai.sql.support.creators", "IDE,MCP").getValue
+
+  val AI_SQL_KEY: CommonVars[String] =
+    CommonVars[String]("linkis.ai.sql.enable", "true")
+
+  val RETRY_NUM_KEY: CommonVars[Int] =
+    CommonVars[Int]("linkis.ai.retry.num", 1)
+
+  val AI_SQL_RETRY_ONCE: CommonVars[Boolean] =
+    CommonVars[Boolean]("linkis.ai.sql.once.enable", true)
+
+  val SPARK3_VERSION_COERCION_USERS: String =
+    CommonVars[String]("spark.version.coercion.users", "").getHotValue()
+
+  val SPARK3_VERSION_COERCION_DEPARTMENT: String =
+    CommonVars[String]("spark.version.coercion.department.id", "").getHotValue()
+
+  val SPARK3_VERSION_COERCION_SWITCH: Boolean =
+    CommonVars[Boolean]("spark.version.coercion.switch", false).getValue
+
+  val PYTHON_SAFE_CHECK_SWITCH = CommonVars("linkis.python.safe.check.switch", false).getValue
+
+  val DOCTOR_URL = CommonVars("linkis.doctor.url", "").getValue
+
+  val DOCTOR_DYNAMIC_ENGINE_URL = CommonVars(
+    "linkis.aisql.doctor.api",
+    "/api/v1/external/engine/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+  ).getValue
+
+  val DOCTOR_ENCRYPT_SQL_URL = CommonVars(
+    "linkis.encrypt.doctor.api",
+    "/api/v1/external/plaintext/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+  ).getValue
+
+  val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
+
+  val DOCTOR_NONCE = CommonVars.apply("linkis.doctor.signature.nonce", "").getValue
+
+  val LINKIS_SYSTEM_NAME = CommonVars("linkis.system.name", "").getValue
+
+  val DOCTOR_CLUSTER = CommonVars("linkis.aisql.doctor.cluster", "").getValue
+
+  val AI_SQL_DYNAMIC_ENGINE_SWITCH =
+    CommonVars("linkis.aisql.dynamic.engine.type.switch", false).getValue
+
+  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 30000).getValue
+
+  val DOCTOR_HTTP_MAX_CONNECT = CommonVars("linkis.aisql.doctor.http.max.connect", 20).getValue
+
+  val SPARK_EXECUTOR_CORES = CommonVars.apply("spark.executor.cores", "2");
+
+  var SPARK_EXECUTOR_MEMORY = CommonVars.apply("spark.executor.memory", "6G");
+
+  var SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS =
+    CommonVars.apply("spark.dynamicAllocation.maxExecutors", "50");
+
+  var SPARK_EXECUTOR_INSTANCES = CommonVars.apply("spark.executor.instances", "1");
+
+  var SPARK_EXECUTOR_MEMORY_OVERHEAD = CommonVars.apply("spark.executor.memoryOverhead", "2G");
+
+  var SPARK3_PYTHON_VERSION = CommonVars.apply("spark.python.version", "python3");
+
+  var SPARK_DYNAMIC_ALLOCATION_ENABLED =
+    CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
+
+  var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
+    CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_SWITCH =
+    CommonVars[Boolean]("linkis.doctor.sensitive.sql.check.switch", false).getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_RUNTYPE =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.run.Type", "sql,python").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_CREATOR =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.creator", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_DEPARTMENT =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.department", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_WHITELIST =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.whitelist", "").getValue
+
+  var DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE =
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark").getValue
 
 }

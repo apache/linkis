@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.utils
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -45,7 +46,7 @@ import com.google.common.net.InetAddresses
 object JobHistoryHelper extends Logging {
 
   private val sender =
-    Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
+    Sender.getSender(Configuration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
 
   private val SUCCESS_FLAG = 0
 
@@ -191,12 +192,12 @@ object JobHistoryHelper extends Logging {
       response match {
         case resp: util.List[JobRespProtocol] =>
           // todo filter success data, rpc have bug
-//          resp.asScala
-//            .filter(r =>
-//              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
-//            )
-//            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
-//            .toList
+          //          resp.asScala
+          //            .filter(r =>
+          //              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
+          //            )
+          //            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
+          //            .toList
 
           taskIdList
         case _ =>
@@ -358,6 +359,9 @@ object JobHistoryHelper extends Logging {
     }
     if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
       metricsMap.put(TaskConstant.ENGINE_INSTANCE, infoMap.get(TaskConstant.ENGINE_INSTANCE))
+    }
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_IS_REUSE)) {
+      metricsMap.put(TaskConstant.JOB_IS_REUSE, infoMap.get(TaskConstant.JOB_IS_REUSE))
     }
   }
 

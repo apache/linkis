@@ -91,6 +91,11 @@ trait NodeLabelService {
       labels: util.List[Label[_]]
   ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
 
+  def getScoredNodeMapsByLabelsReuse(
+      labels: util.List[Label[_]],
+      shuffEnable: Boolean
+  ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
+
   def getNodeLabelsByInstanceList(
       instanceList: util.List[ServiceInstance]
   ): util.HashMap[String, util.List[Label[_]]]

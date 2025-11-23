@@ -24,6 +24,12 @@ import org.apache.linkis.orchestrator.execution.FailedTaskResponse
 class DefaultFailedTaskResponse(errorMsg: String, errorCode: Int, throwable: Throwable)
     extends FailedTaskResponse {
 
+  private var _errorIndex: Int = -1
+
+  def errorIndex: Int = _errorIndex
+
+  def errorIndex_=(value: Int): Unit = _errorIndex = value
+
   override def getCause: Throwable = throwable
 
   override def getErrorMsg: String = errorMsg

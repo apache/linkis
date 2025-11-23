@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.query.service;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
@@ -39,13 +40,14 @@ public class EsMetaService extends AbstractDbMetaService<ElasticConnection> {
     } else {
       endPoints = ((List<String>) urls).toArray(endPoints);
     }
+    String password =
+        String.valueOf(params.getOrDefault(ElasticParamsMapper.PARAM_ES_PASSWORD.getValue(), ""));
     ElasticConnection conn =
         new ElasticConnection(
             endPoints,
             String.valueOf(
                 params.getOrDefault(ElasticParamsMapper.PARAM_ES_USERNAME.getValue(), "")),
-            String.valueOf(
-                params.getOrDefault(ElasticParamsMapper.PARAM_ES_PASSWORD.getValue(), "")));
+            AESUtils.isDecryptByConf(password));
     return new MetadataConnection<>(conn, false);
   }
 

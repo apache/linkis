@@ -72,15 +72,18 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
       case userPwd: UserPwdAction =>
         action.addRequestPayload("userName", userPwd.getUser)
         action.addRequestPayload("password", userPwd.getPassword.getOrElse(pwd))
+        action.addRequestPayload("source", "client")
       case userAction: UserAction =>
         action.addRequestPayload("userName", userAction.getUser)
         action.addRequestPayload("password", pwd)
+        action.addRequestPayload("source", "client")
       case _ =>
         if (StringUtils.isBlank(getClientConfig.getAuthTokenKey)) {
           throw new AuthenticationFailedException(AUTHTOKENVALUE_BE_EXISTS.getErrorDesc)
         }
         action.addRequestPayload("userName", getClientConfig.getAuthTokenKey)
         action.addRequestPayload("password", pwd)
+        action.addRequestPayload("source", "client")
     }
     action
   }

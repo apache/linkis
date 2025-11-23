@@ -31,6 +31,7 @@ public class PythonModuleInfo {
   private Integer isExpire;
   private Date createTime;
   private Date updateTime;
+  private String pythonModule;
 
   public PythonModuleInfo() {}
 
@@ -122,6 +123,14 @@ public class PythonModuleInfo {
     this.updateTime = updateTime;
   }
 
+  public String getPythonModule() {
+    return pythonModule;
+  }
+
+  public void setPythonModule(String pythonModule) {
+    this.pythonModule = pythonModule;
+  }
+
   @Override
   public String toString() {
     return "PythonModuleInfo{"
@@ -153,6 +162,8 @@ public class PythonModuleInfo {
         + createTime
         + ", updateTime="
         + updateTime
+        + ",  pythonModule="
+        + pythonModule
         + '}';
   }
 }

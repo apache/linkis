@@ -25,6 +25,7 @@ import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.*;
+import org.apache.linkis.jobhistory.service.JobHistoryDiagnosisService;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.transitional.TaskStatus;
 import org.apache.linkis.jobhistory.util.JobhistoryUtils;
@@ -77,6 +78,7 @@ public class QueryRestfulApi {
   @Autowired private JobHistoryQueryService jobHistoryQueryService;
 
   @Autowired private DefaultQueryCacheManager queryCacheManager;
+  @Autowired private JobHistoryDiagnosisService jobHistoryDiagnosisService;
 
   @ApiOperation(
       value = "governanceStationAdmin",
@@ -85,19 +87,29 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
+    String departmentId = JobhistoryUtils.getDepartmentByuser(username);
     return Message.ok()
         .data("admin", Configuration.isAdmin(username))
         .data("historyAdmin", Configuration.isJobHistoryAdmin(username))
         .data("deptAdmin", Configuration.isDepartmentAdmin(username))
+        .data("canResultSet", Configuration.canResultSetByDepartment(departmentId))
         .data("errorMsgTip", Configuration.ERROR_MSG_TIP().getValue());
   }
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "jobId", required = true, dataType = "long", example = "12345")
+    @ApiImplicitParam(name = "jobId", required = true, dataType = "long", example = "12345"),
+    @ApiImplicitParam(
+        name = "brief",
+        required = false,
+        dataType = "boolean",
+        value = "only return brief info if true")
   })
   @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
-  public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
+  public Message getTaskByID(
+      HttpServletRequest req,
+      @PathVariable("id") Long jobId,
+      @RequestParam(value = "brief", required = false) String brief) {
     String username = SecurityFilter.getLoginUsername(req);
     if (Configuration.isJobHistoryAdmin(username)
         || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()
@@ -105,7 +117,10 @@ public class QueryRestfulApi {
       username = null;
     }
     JobHistory jobHistory = null;
-    if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
+    if (Boolean.parseBoolean(brief)) {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndNameBrief(jobId, username);
+    } else if (JobhistoryConfiguration.JOB_HISTORY_QUERY_EXECUTION_CODE_SWITCH()) {
+      // 简要模式或配置为不查询执行代码时，使用NoCode方法
       jobHistory = jobHistoryQueryService.getJobHistoryByIdAndNameNoCode(jobId, username);
     } else {
       jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
@@ -117,13 +132,21 @@ public class QueryRestfulApi {
         log.error("Exchange executionCode for job with id : {} failed, {}", jobHistory.getId(), e);
       }
     }
-    QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
-    // todo check
+
+    QueryTaskVO taskVO;
+    if (Boolean.parseBoolean(brief)) {
+      taskVO = TaskConversions.jobHistory2BriefTaskVO(jobHistory);
+    } else {
+      taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+    }
+
+    // todo check  20503 is retry error code
     if (taskVO == null) {
       return Message.error(
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
-    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())) {
+    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())
+        && !Integer.valueOf(20503).equals(taskVO.getErrCode())) {
       //  任务运行时不显示异常信息(Do not display exception information during task runtime)
       taskVO.setErrCode(null);
       taskVO.setErrDesc(null);
@@ -145,7 +168,13 @@ public class QueryRestfulApi {
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
     @ApiImplicitParam(name = "isAdminView", dataType = "Boolean"),
-    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance")
+    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+    @ApiImplicitParam(
+        name = "engineInstance",
+        required = false,
+        dataType = "String",
+        value = "engineInstance"),
+    @ApiImplicitParam(name = "runType", required = false, dataType = "String", value = "runType")
   })
   @RequestMapping(path = "/list", method = RequestMethod.GET)
   public Message list(
@@ -163,7 +192,8 @@ public class QueryRestfulApi {
       @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
       @RequestParam(value = "isDeptView", required = false) Boolean isDeptView,
       @RequestParam(value = "instance", required = false) String instance,
-      @RequestParam(value = "engineInstance", required = false) String engineInstance)
+      @RequestParam(value = "engineInstance", required = false) String engineInstance,
+      @RequestParam(value = "runType", required = false) String runType)
       throws IOException, QueryException {
     List<JobHistory> queryTasks = null;
     try {
@@ -182,7 +212,8 @@ public class QueryRestfulApi {
               isAdminView,
               isDeptView,
               instance,
-              engineInstance);
+              engineInstance,
+              runType);
     } catch (Exception e) {
       return Message.error(e.getMessage());
     }
@@ -292,6 +323,7 @@ public class QueryRestfulApi {
               eDate,
               engineType,
               queryCacheManager.getUndoneTaskMinId(),
+              null,
               null,
               null,
               null);
@@ -436,7 +468,7 @@ public class QueryRestfulApi {
         if (StringUtils.isNotBlank(departmentId)) {
           List<JobHistory> list =
               jobHistoryQueryService.search(
-                  jobId, null, null, null, null, null, null, null, null, departmentId, null);
+                  jobId, null, null, null, null, null, null, null, null, departmentId, null, null);
           if (!CollectionUtils.isEmpty(list)) {
             jobHistory = list.get(0);
           }
@@ -506,7 +538,8 @@ public class QueryRestfulApi {
               isAdminView,
               isDeptView,
               instance,
-              engineInstance);
+              engineInstance,
+              null);
       PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
       if (pageInfo.getTotal() > 5000) {
         queryTasks.addAll(
@@ -524,7 +557,8 @@ public class QueryRestfulApi {
                 isAdminView,
                 isDeptView,
                 instance,
-                engineInstance));
+                engineInstance,
+                null));
       }
       List<QueryTaskVO> vos =
           pageInfo.getList().stream()
@@ -657,7 +691,8 @@ public class QueryRestfulApi {
       Boolean isAdminView,
       Boolean isDeptView,
       String instance,
-      String engineInstance)
+      String engineInstance,
+      String runType)
       throws LinkisCommonErrorException {
     String username = SecurityFilter.getLoginUsername(req);
     if (StringUtils.isBlank(status)) {
@@ -740,10 +775,88 @@ public class QueryRestfulApi {
               null,
               instance,
               departmentId,
-              engineInstance);
+              engineInstance,
+              runType);
     } finally {
       PageHelper.clearPage();
     }
     return queryTasks;
+  }
+
+  @ApiOperation(
+      value = "diagnosis-query",
+      notes = "query failed task diagnosis msg",
+      response = Message.class)
+  @RequestMapping(path = "/diagnosis-query", method = RequestMethod.GET)
+  public Message queryFailedTaskDiagnosis(
+      HttpServletRequest req, @RequestParam(value = "taskID", required = false) String taskID) {
+    String username = ModuleUserUtils.getOperationUser(req, "diagnosis-query");
+    if (StringUtils.isBlank(taskID)) {
+      return Message.error("Invalid jobId cannot be empty");
+    }
+    if (!QueryUtils.checkNumberValid(taskID)) {
+      throw new LinkisCommonErrorException(21304, "Invalid taskID : " + taskID);
+    }
+    JobHistory jobHistory = null;
+    boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
+    boolean isDepartmentAdmin = Configuration.isDepartmentAdmin(username);
+    if (isAdmin) {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(Long.valueOf(taskID), null);
+    } else if (isDepartmentAdmin) {
+      String departmentId = JobhistoryUtils.getDepartmentByuser(username);
+      if (StringUtils.isNotBlank(departmentId)) {
+        List<JobHistory> list =
+            jobHistoryQueryService.search(
+                Long.valueOf(taskID),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                departmentId,
+                null,
+                null);
+        if (!CollectionUtils.isEmpty(list)) {
+          jobHistory = list.get(0);
+        }
+      }
+    } else {
+      jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(Long.valueOf(taskID), username);
+    }
+    String diagnosisMsg = "";
+    if (jobHistory != null) {
+      String jobStatus = jobHistory.getStatus();
+      JobDiagnosis jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID));
+      if (null == jobDiagnosis) {
+        diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
+        jobDiagnosis = new JobDiagnosis();
+        jobDiagnosis.setJobHistoryId(Long.valueOf(taskID));
+        jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+        jobDiagnosis.setCreatedTime(new Date());
+        jobDiagnosis.setUpdatedDate(new Date());
+        if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
+          jobDiagnosis.setOnlyRead("1");
+        }
+        jobHistoryDiagnosisService.insert(jobDiagnosis);
+      } else {
+        if (StringUtils.isNotBlank(jobDiagnosis.getOnlyRead())
+            && "1".equals(jobDiagnosis.getOnlyRead())) {
+          diagnosisMsg = jobDiagnosis.getDiagnosisContent();
+        } else {
+          diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
+          jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+          jobDiagnosis.setUpdatedDate(new Date());
+          jobDiagnosis.setDiagnosisContent(diagnosisMsg);
+          if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
+            jobDiagnosis.setOnlyRead("1");
+          }
+          jobHistoryDiagnosisService.update(jobDiagnosis);
+        }
+      }
+    }
+    return Message.ok().data("diagnosisMsg", diagnosisMsg);
   }
 }

@@ -131,6 +131,9 @@ public class ResourceUtils {
     if (nodeResource.getUsedResource() != null) {
       persistenceResource.setUsedResource(serializeResource(nodeResource.getUsedResource()));
     }
+    if (nodeResource.getId() != null) {
+      persistenceResource.setId(nodeResource.getId());
+    }
     persistenceResource.setResourceType(nodeResource.getResourceType().toString());
     return persistenceResource;
   }

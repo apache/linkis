@@ -39,4 +39,7 @@ object EngineConnPluginConfiguration {
   val EC_BML_VERSION_MAY_WITH_PREFIX_V: CommonVars[Boolean] =
     CommonVars("linkis.engineconn.bml.version.may.with.prefix", true)
 
+  val QUEUE_PREFIX: CommonVars[String] =
+    CommonVars("wds.linkis.queue.prefix", "root.")
+
 }

@@ -22,7 +22,7 @@
         height: 610px;
     }
     .datepicker {
-        /deep/.ivu-input-with-suffix {
+        ::v-deep .ivu-input-with-suffix {
             padding-right: 0px;
         }
     }

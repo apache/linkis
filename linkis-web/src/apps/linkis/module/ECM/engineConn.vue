@@ -18,7 +18,7 @@
 <template>
   <div :style="{height: '100%'}">
     <div v-show="!showviewlog" class="ecmEngine">
-      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" @stop="stopAll" :stopbtn="true" />
+      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" @stop="stopAll" @batchUnhealth="batchUnhealth" :stopbtn="true" :healthbtn="true" />
       <Spin
         v-if="loading"
         size="large"
@@ -86,6 +86,15 @@
                 :key="item"/>
             </Select>
           </FormItem>
+          <FormItem :label="`${$t('message.linkis.healthInfo')}：`">
+            <Select v-model="formItem.nodeHealthy">
+              <Option
+                v-for="(item) in healthinfoList"
+                :label="item"
+                :value="item"
+                :key="item"/>
+            </Select>
+          </FormItem>
         </Form>
       </Modal>
     </div>
@@ -105,6 +114,7 @@ export default {
       showviewlog: false,
       loading: false,
       healthyStatusList: [],
+      healthinfoList: ['Healthy', 'UnHealthy'],
       ownerList: [],
       engineTypes: [],
       applicationName: '',
@@ -116,6 +126,7 @@ export default {
         labels: [],
         emStatus: '',
         applicationName: '',
+        nodeHealthy: ''
       },
       tagTitle: [],
       applicationList: {},
@@ -156,6 +167,12 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.engineType'),
           key: 'engineType',
+          minWidth: 100,
+          className: 'table-project-column'
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.healthInfo'),
+          key: 'nodeHealthy',
           minWidth: 100,
           className: 'table-project-column'
         },
@@ -258,6 +275,7 @@ export default {
                     })
                     obj.emStatus = params.row.nodeStatus;
                     obj.applicationName = params.row.applicationName;
+                    obj.nodeHealthy ='';
                     this.formItem = Object.assign(this.formItem, obj)
                   }
                 }
@@ -341,6 +359,35 @@ export default {
             this.$Message.success({
               background: true,
               content: 'Stop Success！！'
+            });
+          }).catch((err) => {
+            window.console.err(err)
+          });
+        }
+      })
+    },
+    batchUnhealth() {
+      if (!this.selection || !this.selection.length) {
+        this.$Message.warning(this.$t('message.linkis.noselection'));
+        return;
+      }
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalunheathyInstance'),
+        onOk: () => {
+          let data = [];
+          this.selection.forEach(row => {
+            data.push({
+              applicationName: row.applicationName,
+              instance: row.instance,
+              engineType: row.engineType,
+            });
+          })
+          api.fetch(`/linkisManager/batchSetEngineToUnHealthy`, { instances: data }).then(() => {
+            this.initExpandList();
+            this.$Message.success({
+              background: true,
+              content: 'Modify Success！！'
             });
           }).catch((err) => {
             window.console.err(err)

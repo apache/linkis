@@ -506,7 +506,22 @@ public class LocalFileSystem extends FileSystem {
   }
 
   @Override
-  public String checkSum(FsPath dest) {
+  public String getChecksum(FsPath dest) {
     return null;
+  }
+
+  @Override
+  public String getChecksumWithMD5(FsPath dest) {
+    return null;
+  }
+
+  @Override
+  public long getBlockSize(FsPath dest) {
+    return 0L;
+  }
+
+  @Override
+  public List<FsPath> getAllFilePaths(FsPath dest) {
+    return new ArrayList<>();
   }
 }

@@ -18,8 +18,10 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -34,6 +36,8 @@ import org.apache.linkis.engineconn.executor.entity.{ResourceFetchExecutor, Yarn
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
+import org.apache.linkis.engineplugin.spark.exception.RuleCheckFailedException
 import org.apache.linkis.engineplugin.spark.extension.{
   SparkPostExecutionHook,
   SparkPreExecutionHook
@@ -41,6 +45,10 @@ import org.apache.linkis.engineplugin.spark.extension.{
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.common.exception.engineconn.{
+  EngineConnExecutorErrorCode,
+  EngineConnExecutorErrorException
+}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
@@ -48,8 +56,10 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.server.toJavaMap
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
@@ -83,6 +93,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   private var applicationId: String = sc.applicationId
 
+  private var sparkTmpConf = Map[String, String]()
   override def getApplicationId: String = applicationId
 
   override def getApplicationURL: String = ""
@@ -131,6 +142,31 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       )
     }
 
+    // 正则匹配校验
+    val ready = EngineConnObject.isReady
+    val jobId: String = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+    val udfNames: String = System.getProperty(ComputationExecutorConf.ONLY_SQL_USE_UDF_KEY, "")
+    if (ready && StringUtils.isNotBlank(udfNames) && StringUtils.isNotBlank(jobId)) {
+      val codeType: String = LabelUtil.getCodeType(engineExecutorContext.getLabels.toList.asJava)
+      val languageType: String = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+      // sql 或者 python
+      if (!ComputationExecutorConf.SUPPORT_SPECIAL_UDF_LANGUAGES.getValue.contains(languageType)) {
+        val udfNames: String = ComputationExecutorConf.SPECIAL_UDF_NAMES.getValue
+        if (StringUtils.isNotBlank(udfNames)) {
+          val funcNames: Array[String] = udfNames.split(",")
+          funcNames.foreach(funcName => {
+            if (code.contains(funcName)) {
+              logger.info("contains specific functionName: {}", udfNames)
+              throw new RuleCheckFailedException(
+                SparkErrorCodeSummary.NOT_SUPPORT_FUNCTION.getErrorCode,
+                SparkErrorCodeSummary.NOT_SUPPORT_FUNCTION.getErrorDesc
+              )
+            }
+          })
+        }
+      }
+    }
+
     // Pre-execution hook
     var executionHook: SparkPreExecutionHook = null
     Utils.tryCatch {
@@ -155,7 +191,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       case _ => Kind.getRealCode(preCode)
     }
     logger.info(s"Ready to run code with kind $kind.")
-    val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {
       jobId
     } else {
@@ -166,8 +201,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     logger.info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
 
-    // print job configuration, only the first paragraph
-    if (isFirstParagraph == true) {
+    // print job configuration, only the first paragraph or retry
+    val errorIndex: Integer = Integer.valueOf(
+      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+    )
+    if (isFirstParagraph || (errorIndex + 1 == engineExecutorContext.getCurrentParagraph)) {
       Utils.tryCatch({
         val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
         val executorMem: Long =
@@ -182,6 +220,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         val pythonVersion = SparkConfiguration.SPARK_PYTHON_VERSION.getValue(
           EngineConnObject.getEngineCreationContext.getOptions
         )
+        var engineType = ""
+        val labels = engineExecutorContext.getLabels
+        if (labels.length > 0) {
+          engineType = LabelUtil.getEngineTypeLabel(labels.toList.asJava).getStringValue
+        }
         val sb = new StringBuilder
         sb.append(s"spark.executor.instances=$executorNum\n")
         sb.append(s"spark.executor.memory=${executorMem}G\n")
@@ -191,6 +234,18 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         sb.append(s"spark.yarn.queue=$queue\n")
         sb.append(s"spark.executor.memoryOverhead=${memoryOverhead}\n")
         sb.append(s"spark.python.version=$pythonVersion\n")
+        sb.append(s"spark.engineType=$engineType\n")
+        val dynamicAllocation: String = sc.getConf.get("spark.dynamicAllocation.enabled", "false")
+        if ("true".equals(dynamicAllocation)) {
+          val shuffleEnabled: String = sc.getConf.get("spark.shuffle.service.enabled", "false")
+          val minExecutors: Int = sc.getConf.get("spark.dynamicAllocation.minExecutors", "1").toInt
+          val maxExecutors: Int =
+            sc.getConf.get("spark.dynamicAllocation.maxExecutors", "50").toInt
+          sb.append("spark.dynamicAllocation.enabled=true\n")
+          sb.append(s"spark.shuffle.service.enabled=$shuffleEnabled\n")
+          sb.append(s"spark.dynamicAllocation.minExecutors=$minExecutors\n")
+          sb.append(s"spark.dynamicAllocation.maxExecutors=$maxExecutors\n")
+        }
         sb.append("\n")
         engineExecutionContext.appendStdout(
           LogUtils.generateInfo(s" Your spark job exec with configs:\n${sb.toString()}")
@@ -371,6 +426,64 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   override def close(): Unit = {
     super.close()
+  }
+
+  override protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {
+    super.beforeExecute(engineConnTask)
+    if (
+        EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue && sparkTmpConf.isEmpty && this
+          .isInstanceOf[SparkSqlExecutor]
+    ) {
+      val sqlContext = this.asInstanceOf[SparkSqlExecutor].getSparkEngineSession.sqlContext
+      sparkTmpConf = sqlContext.getAllConfs
+      // 维护spark扩展配置,防止不同版本的sprk 默认配置与用户配置匹配不上，导致配置无法回滚
+      SparkConfiguration.SPARK_ENGINE_EXTENSION_CONF
+        .split(',')
+        .foreach(keyValue => {
+          val key = keyValue.split("=")(0).trim
+          val value = keyValue.split("=")(1).trim
+          if (!sparkTmpConf.containsKey(key)) {
+            sparkTmpConf += key -> value
+          }
+        })
+    }
+  }
+
+  override protected def afterExecute(
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {
+    try {
+      if (
+          EngineConnConf.ENGINE_CONF_REVENT_SWITCH.getValue
+          && sparkTmpConf.nonEmpty
+          && this.isInstanceOf[SparkSqlExecutor]
+      ) {
+
+        val sqlExecutor = this.asInstanceOf[SparkSqlExecutor]
+        Option(sqlExecutor.getSparkEngineSession)
+          .flatMap(session => Option(session.sqlContext))
+          .foreach { sqlContext =>
+            sparkTmpConf.foreach { case (key, value) =>
+              if (value != null && !value.equals(sqlContext.getConf(key))) {
+                sqlContext.setConf(key, value)
+              }
+            }
+            // 清理多出来的配置
+            sqlContext.getAllConfs.keys.foreach { key =>
+              if (!sparkTmpConf.contains(key)) {
+                logger.info(s"Clearing extra configuration key: $key")
+                sqlContext.setConf(key, "")
+              }
+            }
+          }
+      }
+    } catch {
+      case e: Exception =>
+        logger.error(s"Error in afterExecute for task ${engineConnTask.getTaskId}", e)
+    } finally {
+      super.afterExecute(engineConnTask, executeResponse)
+    }
   }
 
 }

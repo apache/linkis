@@ -28,7 +28,16 @@ spec:
           command:
             - /bin/bash
             - -ecx
-            - >-
+            - |-
+              sed -i 's#@YARN_RESTFUL_URL#{{ .Values.linkis.deps.yarn.restfulUrl }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@HADOOP_VERSION#{{ .Values.linkis.deps.hadoop.version }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_AUTH_ENABLE#{{ .Values.linkis.deps.yarn.authEnable }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_AUTH_USER#{{ .Values.linkis.deps.yarn.authUser }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_AUTH_PWD#{{ .Values.linkis.deps.yarn.authPassword }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_KERBEROS_ENABLE#{{ .Values.linkis.deps.yarn.kerberosEnable }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_PRINCIPAL_NAME#{{ .Values.linkis.deps.yarn.principal }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_KEYTAB_PATH#{{ .Values.linkis.deps.yarn.keytab }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
+              sed -i 's#@YARN_KRB5_PATH#{{ .Values.linkis.deps.yarn.krb5 }}#g' {{ .Values.linkis.locations.homeDir }}/db/linkis_dml.sql
               mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS {{ .Values.linkis.datasource.database }} DEFAULT CHARSET utf8 COLLATE utf8_general_ci";
               mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source {{ .Values.linkis.locations.homeDir }}/db//linkis_ddl.sql";
               mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source {{ .Values.linkis.locations.homeDir }}/db//linkis_dml.sql"

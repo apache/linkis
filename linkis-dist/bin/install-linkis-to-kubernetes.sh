@@ -86,6 +86,8 @@ tag(){
 make_linkis_image_with_mysql_jdbc(){
     ${ROOT_DIR}/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
     docker tag linkis:with-jdbc linkis:dev
+    ${ROOT_DIR}/docker/scripts/make-ldh-image-with-mysql-jdbc.sh
+    docker tag linkis-ldh:with-jdbc linkis-ldh:dev
 }
 #creating a kind cluster
 create_kind_cluster(){

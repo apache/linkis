@@ -46,13 +46,20 @@ public class ThreadUtils extends ApplicationContextEvent {
   public static ExecutionContextExecutorService executors_analyze =
       Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);
 
+  public static ExecutionContextExecutorService executors_archive =
+      Utils.newCachedExecutionContext(10, "archive-pool-thread-", false);
+
   public ThreadUtils(ApplicationContext source) {
     super(source);
   }
 
   public static String run(List<String> cmdList, String shellName) {
     FutureTask future = new FutureTask(() -> Utils.exec(cmdList.toArray(new String[2]), -1));
-    executors.submit(future);
+    if (shellName.equals(Constants.TASK_ARCHIVE_SH())) {
+      executors_archive.submit(future);
+    } else {
+      executors.submit(future);
+    }
     String msg = "";
     try {
       msg = future.get(MonitorConfig.SHELL_TIMEOUT.getValue(), TimeUnit.MINUTES).toString();

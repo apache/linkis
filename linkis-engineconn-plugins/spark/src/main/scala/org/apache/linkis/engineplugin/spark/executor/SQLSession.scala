@@ -123,6 +123,20 @@ object SQLSession extends Logging {
     columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
+
+    // 失败任务重试处理结果集
+    val errorIndex: Integer = Integer.valueOf(
+      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+    )
+    val hasSetResultSetNum: Boolean = engineExecutionContext.getProperties
+      .getOrDefault("hasSetResultSetNum", "true")
+      .toString
+      .toBoolean
+    if (hasSetResultSetNum && errorIndex > 0) {
+      engineExecutionContext.setResultSetNum(errorIndex)
+      engineExecutionContext.getProperties.put("hasSetResultSetNum", "false")
+    }
+
     val writer =
       if (StringUtils.isNotBlank(alias)) {
         engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE, alias)

@@ -126,7 +126,9 @@ data:
     spring:
       application:
         name: linkis-mg-eureka
-      profiles: eureka
+      config:
+        activate:
+          on-profile: eureka
       cloud:
         loadbalancer:
           cache:
@@ -212,7 +214,7 @@ data:
     wds.linkis.client.common.gatewayUrl={{- include "linkis.gateway.url" . }}
     wds.linkis.client.common.authStrategy=token
     wds.linkis.client.common.tokenKey=Validation-Code
-    wds.linkis.client.common.tokenValue=LINKIS-UNAVAILABLE-TOKE
+    wds.linkis.client.common.tokenValue=LINKIS-UNAVAILABLE-TOKEN
     spring.spring.mvc.pathmatch.matching-strategy=ant_path_matcher
     spring.spring.cloud.loadbalancer.cache.enabled=false
     springfox.documentation.enabled=false

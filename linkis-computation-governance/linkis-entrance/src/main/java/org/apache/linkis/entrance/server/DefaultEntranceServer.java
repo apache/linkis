@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.server;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration$;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
@@ -69,8 +70,7 @@ public class DefaultEntranceServer extends EntranceServer {
     if ((Boolean) EntranceConfiguration$.MODULE$.ENABLE_ENTRANCE_DIRTY_DATA_CLEAR().getValue()) {
       logger.info("start to clean up entrance dirty data.");
       Sender sender =
-          Sender.getSender(
-              EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
+          Sender.getSender(Configuration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
       ServiceInstance thisServiceInstance = Sender.getThisServiceInstance();
       sender.ask(new EntranceInstanceConfRequest(thisServiceInstance.getInstance()));
     }
@@ -100,7 +100,7 @@ public class DefaultEntranceServer extends EntranceServer {
     } else {
       if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED()) {
         logger.warn("Entrance exit to update and clean all ConsumeQueue task instances");
-        updateAllNotExecutionTaskInstances(false);
+        // updateAllNotExecutionTaskInstances(false);
       }
 
       logger.warn("Entrance exit to stop all job");

@@ -153,6 +153,16 @@ public interface LabelManagerMapper {
   List<PersistenceResource> listResourceByLaBelId(Integer labelId);
 
   /**
+   * 通过labelValues获取实例资源，labelValues实际上为 {"instance":"ip:port","serviceName":"linkis-cg-engineconn"}
+   * EC/ECM
+   *
+   * @param labelValues
+   * @return
+   */
+  List<PersistenceResource> getInstanceResourceByLabelValue(
+      @Param("labelValues") List<String> labelValues);
+
+  /**
    * 通过labelId删除资源，还有资源和label的关联，并不会删除label表记录
    *
    * @param labelId

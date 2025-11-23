@@ -35,6 +35,7 @@ public class PersistenceNode {
   private Date createTime;
   private String updator;
   private String creator;
+  private String params;
 
   private String mappingPorts;
   private String mappingHost;
@@ -141,5 +142,17 @@ public class PersistenceNode {
 
   public void setMappingHost(String mappingHost) {
     this.mappingHost = mappingHost;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getParams() {
+    return params;
+  }
+
+  public void setParams(String params) {
+    this.params = params;
   }
 }

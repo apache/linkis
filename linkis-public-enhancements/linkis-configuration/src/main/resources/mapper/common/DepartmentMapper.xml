@@ -33,6 +33,6 @@
         </where>
     </select>
     <select id="queryDepartmentList" resultType="org.apache.linkis.configuration.entity.DepartmentVo">
-        select <include refid="Department_Column_List"/> from linkis_org_user where org_id is NOT NULL
+        select DISTINCT org_id,org_name from linkis_org_user where org_id is NOT NULL and org_name is NOT NULL
     </select>
 </mapper>

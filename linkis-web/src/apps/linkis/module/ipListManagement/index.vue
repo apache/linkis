@@ -431,7 +431,7 @@ export default {
     }
   },
   created() {
-    this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';
+    this.userName = storage.get('userName') || storage.get('baseInfo', 'local')?.username || '';
     this.init();
   }
 

@@ -21,6 +21,6 @@ object ResourceOperationType extends Enumeration {
 
   type ResourceOperationType = Value
 
-  val LOCK, USED, USED_RELEASE, LOCKER_RELEASE = Value
+  val LOCK, USED, RELEASE = Value
 
 }

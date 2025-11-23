@@ -46,6 +46,10 @@ object DateTypeUtils {
     override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd HH")
   }
 
+  val dateFormatSecondLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyyMMddHHmmss")
+  }
+
   /**
    * Get Today"s date
    *

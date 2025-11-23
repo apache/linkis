@@ -25,6 +25,7 @@
                autoMapping="false">
         <id property="id" column="id"/>
         <result property="tokenName" column="token_name"/>
+        <result property="tokenSign" column="token_sign"/>
         <result property="legalUsersStr" column="legal_users"/>
         <result property="legalHostsStr" column="legal_hosts"/>
         <result property="businessOwner" column="business_owner"/>
@@ -43,6 +44,25 @@
             token_name = #{tokenName}
         </where>
     </select>
+
+    <select id="selectTokenByNameWithLike" parameterType="String" resultMap="tokenEntityMap">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            <if test="tokenName != null and tokenName != ''">
+                token_name like concat('%',#{tokenName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectTokenBySign" parameterType="String" resultMap="tokenEntityMap">
+        select * from
+        <include refid="tableName"/>
+        <where>
+            token_sign = #{tokenSign}
+        </where>
+    </select>
+
 
     <select id="getAllTokens" resultMap="tokenEntityMap">
         select * from

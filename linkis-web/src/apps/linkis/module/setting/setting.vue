@@ -398,8 +398,40 @@ export default {
         cb(true);
       }, 200);
     },
+    preCheckConfig() {
+      try {
+        this.fullTree.forEach((item) => {
+          if (item.settings) {
+            item.settings.forEach((s) => {
+              if (
+                s.key === "spark.conf" && s.configValue
+              ) {
+                const kvList = s.configValue.split(';').map(kv => kv.replace(/^\s+|\s+$/g,''));
+                kvList.forEach((kv) => {
+                  if(kv && !/^[\w.-]+=[\w.-]+$/.test(kv)) {
+                    this.unValidMsg = {key: s.key, msg: s.description}
+                    throw new Error('invalid')
+                  }
+                });
+                const formattedKvString = kvList.join(';\n');
+                s.configValue = formattedKvString.trim();
+              }
+            });
+          }
+        });
+        return true;
+      } catch(err) {
+        window.console.warn(err);
+        this.isAdvancedShow = true;
+        return false;
+      }
+    },
     save() {
       this.loading = true;
+      if(!this.preCheckConfig()) {
+        this.loading = false;
+        return;
+      }
       this.checkValid();
       api
         .fetch("/configuration/saveFullTree", {
@@ -411,6 +443,20 @@ export default {
           this.getAppVariable(this.activeMenu);
           this.unValidMsg = {};
           this.$Message.success(this.$t("message.linkis.save"));
+          this.$Modal.confirm({
+            title: this.$t('message.linkis.setting.killEngineTitle'),
+            content: this.$t('message.linkis.setting.killEngine'),
+            onOk: async () => {
+              try {
+                api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
+                  creator: this.currentTabName,
+                  engineType: this.subCategory[this.currentTabName] ? this.subCategory[this.currentTabName].categoryName : null
+                })
+              } catch (err) {
+                window.console.warn(err)
+              }
+            }
+          })
         })
         .catch((err) => {
           this.loading = false;
@@ -747,7 +793,7 @@ export default {
     font-size: 14px;
   }
   .tabs {
-    /deep/.ivu-tabs-bar {
+    ::v-deep .ivu-tabs-bar {
       &::before {
         content: '';
         display: block;
@@ -756,7 +802,7 @@ export default {
         float: left;
       }
     }
-    /deep/.ivu-tabs-tab:not(:last-of-type) {
+    ::v-deep .ivu-tabs-tab:not(:last-of-type) {
       position: relative;
       &::after {
         content: '';

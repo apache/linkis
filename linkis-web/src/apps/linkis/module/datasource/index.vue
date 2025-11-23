@@ -588,7 +588,9 @@ export default {
         realFormData.connectParams = formData
         realFormData.createSystem = 'Linkis'
         realFormData.dataSourceTypeId = this.currentSourceData.dataSourceTypeId
-
+        if(this.$refs.datasourceForm.isEncrypt) {
+          realFormData.connectParams.isEncrypt = this.$refs.datasourceForm.isEncrypt;
+        }
         let postDataSource = createDataSource
         let commentMsg = this.$t('message.linkis.datasource.initVersion')
         if (!this.currentSourceData.id) {
@@ -694,8 +696,12 @@ export default {
             realFormData[key] = formData[key]
             delete formData[key]
           })
-
           realFormData.connectParams = formData
+          // console.log(this.$refs.datasourceForm.isEncrypt);
+          if(this.$refs.datasourceForm.isEncrypt) {
+            realFormData.connectParams.isEncrypt = this.$refs.datasourceForm.isEncrypt;
+          }
+          
           realFormData.createSystem = 'Linkis'
           realFormData.dataSourceTypeId =
             this.currentSourceData.dataSourceTypeId

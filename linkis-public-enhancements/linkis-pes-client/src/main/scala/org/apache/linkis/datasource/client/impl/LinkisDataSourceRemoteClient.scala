@@ -95,6 +95,11 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
   ): GetInfoPublishedByDataSourceNameResult =
     execute(action).asInstanceOf[GetInfoPublishedByDataSourceNameResult]
 
+  override def getInfoPublishedByIpPort(
+      action: GetInfoPublishedByUserIpPortAction
+  ): GetInfoPublishedByUserIpPortResult =
+    execute(action).asInstanceOf[GetInfoPublishedByUserIpPortResult]
+
   override def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult = execute(
     action
   ).asInstanceOf[QueryDataSourceResult]

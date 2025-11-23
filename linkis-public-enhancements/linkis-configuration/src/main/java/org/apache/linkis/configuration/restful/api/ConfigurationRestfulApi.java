@@ -17,6 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -294,6 +295,16 @@ public class ConfigurationRestfulApi {
       creator = "*";
     }
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
+    String engine = null;
+    String version = null;
+    if (engineType != null) {
+      String[] tmpString = engineType.split("-");
+      if (tmpString.length != 2) {
+        throw new ConfigurationException(INCORRECT_FIXED_SUCH.getErrorDesc());
+      }
+      engine = tmpString[0];
+      version = tmpString[1];
+    }
     ArrayList<ConfigValue> createList = new ArrayList<>();
     ArrayList<ConfigValue> updateList = new ArrayList<>();
     ArrayList<List<ConfigKeyValue>> chekList = new ArrayList<>();
@@ -309,6 +320,37 @@ public class ConfigurationRestfulApi {
           sparkConf = configKeyValue.getConfigValue().trim();
           configKeyValue.setConfigValue(sparkConf);
         }
+        if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+            && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          List<ConfigUserValue> userConfigValue =
+              configKeyService.getUserConfigValue(
+                  engine, configKeyValue.getKey(), creator, username);
+          for (ConfigUserValue configUserValue : userConfigValue) {
+            if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+                && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
+              configKeyValue.setConfigValue(
+                  AESUtils.encrypt(
+                      configKeyValue.getConfigValue(),
+                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            }
+          }
+        }
+        if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+            && configKeyValue.getKey().equals("linkis.nebula.password")
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          List<ConfigKeyValue> configByLabelIds =
+              configurationService.getConfigByLabelId(configKeyValue.getConfigLabelId(), null);
+          for (ConfigKeyValue configByLabelId : configByLabelIds) {
+            if (configByLabelId.getKey().equals("linkis.nebula.password")
+                && !configByLabelId.getConfigValue().equals(configKeyValue.getConfigValue())) {
+              configKeyValue.setConfigValue(
+                  AESUtils.encrypt(
+                      configKeyValue.getConfigValue(),
+                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            }
+          }
+        }
       }
     }
     for (List<ConfigKeyValue> settings : chekList) {
@@ -318,16 +360,6 @@ public class ConfigurationRestfulApi {
       for (ConfigKeyValue setting : settings) {
         configurationService.updateUserValue(setting, userLabelId, createList, updateList);
       }
-    }
-    String engine = null;
-    String version = null;
-    if (engineType != null) {
-      String[] tmpString = engineType.split("-");
-      if (tmpString.length != 2) {
-        throw new ConfigurationException(INCORRECT_FIXED_SUCH.getErrorDesc());
-      }
-      engine = tmpString[0];
-      version = tmpString[1];
     }
     configurationService.updateUserValue(createList, updateList);
     // TODO: Add a refresh cache interface later
@@ -551,6 +583,22 @@ public class ConfigurationRestfulApi {
       } else {
         return Message.error(e.getMessage());
       }
+    }
+    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+        && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+        && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+      String passwd =
+          AESUtils.encrypt(
+              configKeyValue.getConfigValue(), AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
+      List<ConfigUserValue> userConfigValue =
+          configKeyService.getUserConfigValue(engineType, configKeyValue.getKey(), creator, user);
+      if (userConfigValue.stream()
+          .anyMatch(
+              configValue ->
+                  configValue.getConfigValue().equals(configKeyValue.getConfigValue()))) {
+        passwd = configKeyValue.getConfigValue();
+      }
+      configKeyValue.setConfigValue(passwd);
     }
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);

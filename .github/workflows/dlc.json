@@ -1,10 +1,13 @@
 {
-  "ignorePatterns": [ 
-    { 
-      "pattern": "^http://localhost" 
+  "ignorePatterns": [
+    {
+      "pattern": "^http://localhost"
     },
     {
-      "pattern": "^http://127.0.0.1" 
+      "pattern": "^http://127.0.0.1"
+    },
+    {
+      "pattern": "^(https?://)?([a-zA-Z0-9-]+\\.)*bilibili\\.com"
     }
   ],
   "timeout": "10s",

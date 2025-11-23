@@ -16,7 +16,9 @@
 spring:
   application:
     name: linkis-mg-eureka
-  profiles: eureka
+  config:
+    activate:
+      on-profile: eureka
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

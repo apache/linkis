@@ -17,7 +17,7 @@
 
 <template>
   <div class="global-history">
-    <div class="global-history-searchbar">
+    <div ref="searchBar" class="global-history-searchbar">
       <div class="searchbar-items">
         <div class="searchbar-item">
           <label class="label">{{$t('message.linkis.jobId')}}</label>
@@ -44,12 +44,13 @@
             class="datepicker"
             :options="shortcutOpt"
             v-model="searchBar.shortcut"
-            type="daterange"
+            type="datetimerange"
             placement="bottom-start"
-            format="yyyy-MM-dd"
+            format="yyyy-MM-dd HH:mm"
             :placeholder="$t('message.linkis.formItems.date.placeholder')"
-            style="width: 160px"
+            style="width: 250px"
             :editable="false"
+            @on-change="onDatePickerChange"
           />
         </div>
         <div class="searchbar-item">
@@ -58,6 +59,15 @@
             :maxlength="50"
             v-model.trim="searchBar.creator"
             :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+            style="width:80px;"
+          />
+        </div>
+        <div class="searchbar-item">
+          <label class="label">{{$t('message.linkis.formItems.runType.label')}}</label>
+          <Input
+            :maxlength="50"
+            v-model.trim="searchBar.runType"
+            :placeholder="$t('message.linkis.formItems.runType.placeholder')"
             style="width:80px;"
           />
         </div>
@@ -86,13 +96,20 @@
               style="width:150px;"
             />
           </FormItem>
+          <FormItem prop="engineInstance" :label="$t('message.linkis.engineInstance.label')">
+            <Input
+              v-model.trim="searchBar.engineInstance"
+              :placeholder="$t('message.linkis.engineInstance.placeholder')"
+              style="width:150px;"
+            />
+          </FormItem>
         </Form>
       </div>
       <div class="search-btns">
         <Button
           class="search-btn"
           type="primary"
-          @click="search"
+          @click="search(false)"
           style="margin-right: 10px;"
         >{{ $t('message.linkis.search') }}</Button>
         <Button
@@ -105,22 +122,44 @@
         <Button
           class="search-btn"
           type="primary"
-          @click="switchAdmin"
-          v-show="isLogAdmin || isHistoryAdmin"
+          @click="switchAdmin(false)"
+          v-show="isLogAdmin || isHistoryAdmin || isDeptAdmin"
           style="margin-right: 10px;"
-        >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
+        >{{ isAdminModel ? $t('message.linkis.generalView') : (isDeptAdmin && !isLogAdmin && !isHistoryAdmin ? $t('message.linkis.deptManageView') : $t('message.linkis.manageView')) }}</Button>
         <Button
           class="search-btn"
           type="primary"
           @click="clickAdvance"
         >{{ showAdvance ? $t('message.linkis.hideAdvancedSearch') :  $t('message.linkis.showAdvancedSearch') }}</Button>
+        <Dropdown placement="bottom-start" trigger="click">
+          <Button
+            class="search-btn"
+            type="primary"
+          >{{$t('message.linkis.tableSetting')}}</Button>
+          <template #list>
+            <DropdownMenu>
+              <CheckboxGroup v-model="visibleColumns" style="display: flex; flex-direction: column; padding: 10px 10px 0;">
+                <Checkbox :label="item.title" v-for="(item, index) in column" v-show="item.title" :key="index" style="margin-bottom: 10px">
+                  <span>{{item.title}}</span>
+                </Checkbox>
+              </CheckboxGroup>
+            </DropdownMenu>
+          </template>
+        </Dropdown>
+        <Button
+          class="search-btn"
+          type="primary"
+          @click="download"
+          :loading="downloading"
+        >{{ $t('message.linkis.downloadLog') }}</Button>
       </div>
+      
     </div>
     <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight +'px'}">
       <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
       <history-table
         v-if="!isLoading"
-        :columns="column"
+        :columns="filteredColumns"
         :data="list"
         :height="moduleHeight"
         :no-data-text="$t('message.linkis.noDataText')"
@@ -135,11 +174,14 @@
         :total="pageSetting.total"
         :page-size="pageSetting.pageSize"
         :current="pageSetting.current"
+        :page-size-opts="pageSetting.sizeOpts"
         size="small"
         show-total
         show-elevator
+        show-sizer
         :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         @on-change="changePage"
+        @on-page-size-change="changePageSize"
       />
     </div>
   </div>
@@ -149,6 +191,7 @@ import storage from '@/common/helper/storage'
 import table from '@/components/virtualTable'
 import mixin from '@/common/service/mixin'
 import api from '@/common/service/api'
+import axios from 'axios'
 export default {
   name: 'GlobalHistory',
   components: {
@@ -160,13 +203,15 @@ export default {
     return {
       list: [],
       column: [],
+      visibleColumns: [],
       getEngineTypes: [],
       isLoading: false,
       showAdvance: false,
       pageSetting: {
         total: 0,
         pageSize: 50,
-        current: 1
+        current: 1,
+        sizeOpts: [25, 50, 100]
       },
       searchBar: {
         id: null,
@@ -174,10 +219,22 @@ export default {
         creator: '',
         engine: 'all',
         status: '',
-        shortcut: [today, today]
+        shortcut: [new Date(today.setHours(0, 0, 0, 0)), new Date(today.setHours(23, 59, 59, 0))],
       },
       inputType: 'number',
       shortcutOpt: {
+        disabledDate(date) {
+          if (!date) {
+            return false;
+          }
+
+          const now = new Date();
+          const ninetyDaysAgo = new Date(now);
+          ninetyDaysAgo.setDate(now.getDate() - 90);
+          ninetyDaysAgo.setHours(0, 0, 0, 0);
+
+          return date.valueOf() < ninetyDaysAgo.valueOf() || date.valueOf() > now.valueOf();
+        },
         shortcuts: [
           {
             text: this.$t('message.linkis.shortcuts.week'),
@@ -278,23 +335,55 @@ export default {
       ],
       isLogAdmin: false,
       isHistoryAdmin: false,
+      isDeptAdmin: false,
       isAdminModel: false,
-      moduleHeight: 300
+      moduleHeight: 300,
+      lastChooseDate: ['', ''],
+      curDateTime: ['', ''],
+      downloading: false
     }
   },
   async created() {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
-      this.isLogAdmin = res.admin
-      this.isHistoryAdmin = res.historyAdmin
-    })
-    await api.fetch('/configuration/engineType', 'get').then(res => {
-      this.getEngineTypes = ['all', ...res.engineType]
-    })
+    try {
+      await api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
+        this.isLogAdmin = res.admin
+        this.isHistoryAdmin = res.historyAdmin
+        this.isDeptAdmin = res.deptAdmin
+      })
+      await api.fetch('/configuration/engineType', 'get').then(res => {
+        this.getEngineTypes = ['all', ...res.engineType]
+      })
+    } catch(err) {
+      window.console.warn(err);
+    }
+
   },
   mounted() {
+    if(sessionStorage.getItem('last-page-columns')) {
+      this.visibleColumns = JSON.parse(sessionStorage.getItem('last-page-columns'))
+    } else {
+      this.visibleColumns = this.getColumns().filter(
+        (item) => {
+          return [
+            'checked',
+            'control',
+            'taskID',
+            'source',
+            'executionCode',
+            'status',
+            'costTime',
+            'failedReason',
+            'requestApplicationName',
+            'createdTime',
+            'isReuse',
+          ].includes(item.key)
+        }
+      ).map(item => item.title);
+      this.visibleColumns.push(this.$t('message.linkis.tableColumns.user'));
+    }
+    
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 220
     // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
     window.addEventListener('resize', this.getHeight)
   },
@@ -310,17 +399,96 @@ export default {
       sessionStorage.removeItem('last-searchbar-status');
       sessionStorage.removeItem('last-pageSetting-status');
       sessionStorage.removeItem('last-searchbar-advance');
+      sessionStorage.removeItem('last-page-columns');
     }
     next();
   },
   activated() {
     this.init()
   },
+  computed: {
+    filteredColumns() {
+      return this.column.filter(item => this.visibleColumns.includes(item.title));
+    }
+  },
   methods: {
+    async download() {
+      try {
+        
+        if(this.downloading) return;
+        if(this.pageSetting.total >= 10000) {
+          this.$Modal.confirm({
+            title: this.$t('message.linkis.countinueDownload'),
+            content: this.$t('message.linkis.exceed10000'),
+            onOk: async () => {
+              try {
+                const params = this.getParams();
+                params.pageNow = 1;
+                params.pageSize = 10000;
+                this.downloading = true;
+                const res = await axios({
+                  url: process.env.VUE_APP_MN_CONFIG_PREFIX || `http://${window.location.host}/api/rest_j/v1/jobhistory/download-job-list`,
+                  method: 'get',
+                  responseType: 'blob',
+                  params,
+                  headers: {
+                    'Content-Language': localStorage.getItem('locale') || 'zh-CN'
+                  }
+                })
+                
+                let blob = res.data
+                let url = window.URL.createObjectURL(blob);
+                let l = document.createElement('a')
+                l.href = url;
+                l.download = 'ResultOfJobHistory';
+                document.body.appendChild(l);
+                l.click()
+                window.URL.revokeObjectURL(url)
+                this.downloading = false
+                this.$Message.success(this.$t('message.linkis.downloadSucceed'))
+              } catch (err) {
+                window.console.warn(err)
+                this.downloading = false;
+              }
+            
+            }
+          })
+        } else {
+          this.downloading = true
+          const params = this.getParams();
+          params.pageNow = 1;
+          params.pageSize = 10000;
+          const res = await axios({
+            url: process.env.VUE_APP_MN_CONFIG_PREFIX || `http://${window.location.host}/api/rest_j/v1/jobhistory/download-job-list`,
+            method: 'get',
+            responseType: 'blob',
+            params,
+            headers: {
+              'Content-Language': localStorage.getItem('locale') || 'zh-CN'
+            }
+          })
+          let blob = res.data
+          let url = window.URL.createObjectURL(blob);
+          let l = document.createElement('a')
+          l.href = url;
+          l.download = 'ResultOfJobHistory';
+          document.body.appendChild(l);
+          l.click()
+          window.URL.revokeObjectURL(url)
+          this.downloading = false
+          this.$Message.success(this.$t('message.linkis.downloadSucceed'))
+        }
+       
+      } catch(err) {
+        this.downloading = false
+      }
+      
+        
+    },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 228
+      this.moduleHeight = this.$parent.$el.clientHeight - this.$refs.searchBar.offsetHeight - 210;
       if(this.showAdvance) {
-        this.moduleHeight -= 42
+        this.moduleHeight -= 10
       }
     },
     clickAdvance() {
@@ -338,18 +506,20 @@ export default {
           lastSearch.shortcut = [new Date(lastSearch.shortcut[0]), new Date(lastSearch.shortcut[1])]
         } else {
           const today = new Date(new Date().toLocaleDateString())
-          lastSearch.shortcut = [today, today]
+          lastSearch.shortcut = [new Date(today.setHours(0, 0, 0, 0)), new Date(today.setHours(23, 59, 59, 0))]
         }
         this.searchBar = lastSearch
       }
-      if (lastPage) {
-        this.pageSetting = lastPage
-      }
-      if (isAdminModel) {
-        this.switchAdmin()
-      } else {
-        this.search()
-      }
+      this.$nextTick(()=> {
+        if (lastPage) {
+          this.pageSetting = lastPage
+        }
+        if (isAdminModel) {
+          this.switchAdmin(true)
+        } else {
+          this.search(true)
+        }
+      })
       storage.remove('last-pageSetting-status')
     },
     convertTimes(runningTime) {
@@ -401,6 +571,7 @@ export default {
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)
       storage.set('last-searchbar-advance', this.showAdvance)
+      storage.set('last-page-columns', this.visibleColumns)
       // Jump to view the history details page(跳转查看历史详情页面)
       this.$router.push({
         path: '/console/viewHistory',
@@ -409,20 +580,23 @@ export default {
     },
 
     getParams(page) {
-      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0)) : this.searchBar.shortcut[0]
-      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0)): this.searchBar.shortcut[1]
+      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setSeconds(0)) : this.searchBar.shortcut[0]
+      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setSeconds(59)): this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
+        runType: this.searchBar.runType,
         creator: this.searchBar.creator,
         executeApplicationName: this.searchBar.engine,
         status: this.searchBar.status,
         startDate: startDate && startDate.getTime(),
         endDate: endDate && endDate.getTime(),
+        engineInstance: this.searchBar.engineInstance,
         pageNow: page || this.pageSetting.current,
         pageSize: this.pageSetting.pageSize,
         proxyUser: this.searchBar.proxyUser,
-        isAdminView: this.isAdminModel,
-        instance: this.searchBar.instance?.replace(/ /g, '') || ''
+        isAdminView: this.isAdminModel && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin')),
+        instance: this.searchBar.instance?.replace(/ /g, '') || '',
+        isDeptView: this.isAdminModel && storage.get('isLogDeptAdmin') && !storage.get('isLogAdmin') && !storage.get('isLogHistoryAdmin')
       }
       if (!this.isAdminModel) {
         delete params.proxyUser
@@ -435,6 +609,8 @@ export default {
         delete params.endDate
         delete params.proxyUser
         delete params.instance
+        delete params.engineInstance
+        delete params.runType
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {
@@ -462,17 +638,33 @@ export default {
         .then(rst => {
           this.isLoading = false
           this.list = this.getList(rst.tasks)
-          this.pageSetting.current = page
-          this.pageSetting.total = rst.totalPage
+          // this.pageSetting.current = page
+          const maxPage = Math.ceil(rst.totalPage / this.pageSetting.pageSize);
+          if(maxPage < page) {
+            this.pageSetting.current = maxPage;
+          } else {
+            this.pageSetting.current = page;
+          }
+          this.pageSetting.total = rst.totalPage;
         })
         .catch(() => {
           this.isLoading = false
           this.list = []
         })
     },
-    search() {
+    // page size change(页容量变化)
+    changePageSize(pageSize) {
+      this.pageSetting.pageSize = pageSize
+      if(this.pageSetting.current === 1) this.search()
+      this.pageSetting.current = 1
+    },
+    search(isInit = false) {
       this.isLoading = true
+      if(!isInit) {
+        this.pageSetting.current = 1;
+      }
       const params = this.getParams()
+      
       this.column = this.getColumns()
       api
         .fetch('/jobhistory/list', params, 'get')
@@ -510,6 +702,15 @@ export default {
             runType: item.runType,
             instance: item.instance,
             engineInstance: item.engineInstance,
+            isReuse: item.isReuse === null 
+              ? '' 
+              : item.isReuse 
+                ? this.$t('message.linkis.yes') 
+                : this.$t('message.linkis.no'),
+            requestSpendTime: item.requestSpendTime,
+            requestStartTime: item.requestStartTime,
+            requestEndTime: item.requestEndTime,
+            metrics: item.metrics
           }
         })
       }
@@ -518,7 +719,12 @@ export default {
           disabled:
               ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
           failedReason: getFailedReason(item),
-          source: item.sourceTailor
+          source: item.sourceTailor,
+          isReuse: item.isReuse === null 
+            ? '' 
+            : item.isReuse 
+              ? this.$t('message.linkis.yes') 
+              : this.$t('message.linkis.no'),
         })
       })
     },
@@ -606,13 +812,56 @@ export default {
           }
         },
         {
-          title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
+          title: this.$t('message.linkis.tableColumns.isReuse'),
+          key: 'isReuse',
+          align: 'center',
+          width: 100,
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestStartTime'),
+          key: 'requestStartTime',
+          align: 'center',
+          width: 150,
+          // overflow to show(溢出以...显示)
+          renderType: 'formatTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestEndTime'),
+          key: 'requestEndTime',
+          align: 'center',
+          width: 150,
+          renderType: 'formatTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestSpendTime'),
+          key: 'requestSpendTime',
+          align: 'center',
+          width: 100,
+          // overflow to show(溢出以...显示)
+          renderType: 'convertTime'
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.metrix'),
+          key: 'metrics',
+          align: 'center',
+          width: 300,
+          // overflow to show(溢出以...显示)
+          ellipsis: true
+          // renderType: 'tooltip',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' +  this.$t('message.linkis.tableColumns.runType') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
           key: 'requestApplicationName',
           align: 'center',
           width: 130,
-          renderType: 'concat',
+          renderType: 'multiConcat',
           renderParams: {
-            concatKey: 'executeApplicationName'
+            concatKey1: 'runType',
+            concatKey2: 'executeApplicationName'
           }
 
         },
@@ -646,14 +895,15 @@ export default {
         shortcut: ''
       }
     },
-    switchAdmin() {
+    switchAdmin(isInit = false) {
       if (!this.isLoading) {
         if (this.isAdminModel) {
           this.searchBar.id = null
           this.searchBar.proxyUser = ''
+
         }
         this.isAdminModel = !this.isAdminModel
-        this.search()
+        this.search(isInit)
       }
     },
     linkTo(params) {
@@ -715,12 +965,43 @@ export default {
 
           Promise.all(p).then(()=> {
             this.$Message.success(this.$t('message.linkis.udf.success'));
-            this.search()
+            this.search(false)
           })
         }
       })
-    }
+    },
+    // 改造日期选择器选择日期时默认时间段为00:00-23:59
+    onDatePickerChange(date) {
+      // 兼容重复修改时间段00:00-00:00的情况
+      const isLastChooseDefault = (this.lastChooseDate[0].slice(-5) === '00:00'&& this.lastChooseDate[1].slice(-5) === '00:00')
+        && (date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00')
+        && (this.lastChooseDate[0].slice(0, 10) === date[0].slice(0, 10) && this.lastChooseDate[1].slice(0, 10) === date[1].slice(0, 10))
+
+      // 是否手动改动日期为00:00-00:00，条件：更改过日期 && （ 上次时间为00:00-(xx:xx) || (上次时间为（xx:xx)-00:00)）
+      const isChooseDefault = (date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00')
+          &&
+          (
+            (this.lastChooseDate[0].slice(-5) === '00:00'
+              && ((this.lastChooseDate[1].slice(-5, -3) === '00' && this.lastChooseDate[1].slice(-2) !== '00') || (this.lastChooseDate[1].slice(-5, -3) !== '00' && this.lastChooseDate[1].slice(-2) === '00')))
+            || (this.lastChooseDate[1].slice(-5) === '00:00'
+              && ((this.lastChooseDate[0].slice(-5, -3) === '00' && this.lastChooseDate[0].slice(-2) !== '00') || (this.lastChooseDate[0].slice(-5, -3) !== '00' && this.lastChooseDate[0].slice(-2) === '00'))))
+
+      if(isLastChooseDefault || isChooseDefault) {
+        this.lastChooseDate = JSON.parse(JSON.stringify(date))
+        return
+      }
+      // 修改日期默认为00:00-23:59
+      if(date[0].slice(-5) === '00:00'&& date[1].slice(-5) === '00:00') {
+        this.searchBar.shortcut = [new Date(new Date(date[0]).setHours(0, 0, 0, 0)), new Date(new Date(date[1]).setHours(23, 59, 59, 0))]
+        this.curDateTime =  JSON.parse(JSON.stringify([date[0].split(' ')[0]+' 00:00',  date[1].split(' ')[0] + ' 23:59']))
+      } else {
+        this.curDateTime =  JSON.parse(JSON.stringify(date))
+      }
+      this.lastChooseDate = JSON.parse(JSON.stringify(this.curDateTime))
+    },
   }
 }
 </script>
-<style src="./index.scss" lang="scss"></style>
+<style src="./index.scss" lang="scss">
+
+</style>

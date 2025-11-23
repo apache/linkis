@@ -1,0 +1,32 @@
+{
+    "dependencies": {
+        "core-js": "3.35.1",
+        "vue": "3.3.9",
+        "@vueuse/core": "10.9.0",
+        "lodash-es": "4.17.21",
+        "@qlin/request": "0.2.6",
+        "@webank/letgo-components": "1.1.4",
+        "@fesjs/fes-design": "0.8.60",
+        "@webank/fes-design-material": "0.2.31",
+        "@fesjs/traction-widget": "1.9.1",
+        "dayjs": "1.11.9",
+        "lodash": "4.17.21",
+        "@fesjs/fes": "3.1.10",
+        "@fesjs/plugin-model": "3.0.1",
+        "@fesjs/plugin-request": "4.0.0-rc.3",
+        "@fesjs/plugin-locale": "4.2.5",
+        "@fesjs/builder-vite": "4.0.2"
+    },
+    "name": "linkis",
+    "version": "1.0.0",
+    "scripts": {
+        "build:test": "cross-env FES_ENV=test fes build",
+        "build:prod": "cross-env FES_ENV=prod fes build",
+        "analyze": "cross-env ANALYZE=1 fes build",
+        "dev": "fes dev"
+    },
+    "devDependencies": {
+        "typescript": "5.3.3",
+        "cross-env": "7.0.3"
+    }
+}

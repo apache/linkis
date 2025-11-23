@@ -89,6 +89,11 @@ public class WorkspaceExceptionManager {
           put(
               "80037",
               "Parameter error, page size is incorrect, please pass in a number within [1-500] (参数错误，列筛选最多支持筛选50列)");
+          put(
+              "80038",
+              "The name directory {0} specified by PKG-INFO does not exist. Please confirm that the {0} specified by PKG-INFO in the package matches the actual folder name (PKG-INFO指定Name目录{0}不存在，请确认包中PKG-INFO指定{0}和实际文件夹名称一致)");
+          put("80039", "File upload failed, error message: {0} (文件上传失败，错误信息：{0})");
+          put("80040", "{0} file not found in the archive ({0}文件不存在，请确认包中包含{0}文件)");
         }
       };
 

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -42,6 +43,9 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -56,7 +60,9 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
   private final String HASTATE_ACTIVE = "active";
   private static final ObjectMapper objectMapper = new ObjectMapper();
+  private static final JsonFactory factory = new JsonFactory();
   private final Map<String, String> rmAddressMap = new ConcurrentHashMap<>();
+  private final String queuePrefix = EngineConnPluginConfiguration.QUEUE_PREFIX().getValue();
 
   private static final HttpClient httpClient = HttpClients.createDefault();
 
@@ -74,7 +80,12 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     logger.info("rmWebAddress: " + rmWebAddress);
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
-    String realQueueName = "root." + queueName;
+    if (queueName.startsWith(queuePrefix)) {
+      logger.info(
+          "Queue name {} starts with '{}', remove '{}'", queueName, queuePrefix, queuePrefix);
+      queueName = queueName.substring(queuePrefix.length());
+    }
+    String realQueueName = queuePrefix + queueName;
 
     try {
       YarnQueueInfo resources = getResources(rmWebAddress, realQueueName, queueName, provider);
@@ -212,7 +223,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       realQueueName = queueName;
       JsonNode childQueues = getChildQueuesOfCapacity(schedulerInfo);
       Optional<JsonNode> queue = getQueueOfCapacity(childQueues, realQueueName);
-      if (queue == null || !queue.isPresent()) {
+      if (!queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
@@ -234,7 +245,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
         queue = getQueue(childQueues, realQueueName);
       }
-      if (queue == null || !queue.isPresent()) {
+      if (!queue.isPresent()) {
         logger.debug(
             "cannot find any information about queue " + queueName + ", response: " + resp);
         throw new RMWarnException(
@@ -301,7 +312,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String rmWebAddress = getAndUpdateActiveRmWebAddress(provider);
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
-    String realQueueName = "root." + queueName;
+    String realQueueName = queuePrefix + queueName;
 
     JsonNode resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
     if (resp.isMissingNode()) {
@@ -335,6 +346,108 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   @Override
   public ResourceType getResourceType() {
     return ResourceType.Yarn;
+  }
+
+  public JsonNode parseJsonWithDuplicatesToJsonNode(String json) throws IOException {
+    try (JsonParser parser = factory.createParser(json)) {
+      if (parser.nextToken() != JsonToken.START_OBJECT) {
+        throw new IllegalStateException("Expected content to be an object");
+      }
+      return parseObject(parser);
+    }
+  }
+
+  private JsonNode parseObject(JsonParser parser) throws IOException {
+    ObjectNode rootNode = objectMapper.createObjectNode();
+    while (parser.nextToken() != JsonToken.END_OBJECT) {
+      if (parser.currentToken() == JsonToken.FIELD_NAME) {
+        String fieldName = parser.getCurrentName();
+        parser.nextToken(); // 移动到值
+        if (parser.currentToken() == JsonToken.START_ARRAY) {
+          // 处理数组
+          ArrayNode arrayNode = objectMapper.createArrayNode();
+          while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (parser.currentToken() == JsonToken.START_OBJECT) {
+              arrayNode.add(parseNestedObject(parser));
+            } else {
+              arrayNode.add(parser.getText());
+            }
+          }
+          rootNode.set(fieldName, arrayNode);
+        } else {
+          // 处理普通字段
+          rootNode.set(fieldName, objectMapper.valueToTree(parseValue(parser)));
+        }
+      }
+    }
+    return rootNode;
+  }
+
+  private JsonNode parseNestedObject(JsonParser parser) throws IOException {
+    ObjectNode nestedNode = objectMapper.createObjectNode();
+    Map<String, List<Object>> fieldMap = new LinkedHashMap<>();
+    while (parser.nextToken() != JsonToken.END_OBJECT) {
+      if (parser.currentToken() == JsonToken.FIELD_NAME) {
+        String fieldName = parser.getCurrentName();
+        parser.nextToken(); // 移动到值
+        Object value = parseValue(parser);
+        // 将值添加到对应的列表中
+        fieldMap.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(value);
+      }
+    }
+    // 将字段映射转换为 JsonNode
+    for (Map.Entry<String, List<Object>> entry : fieldMap.entrySet()) {
+      String key = entry.getKey();
+      List<Object> values = entry.getValue();
+      if (values.size() == 1) {
+        // 如果只有一个值，直接添加到节点
+        nestedNode.set(key, objectMapper.valueToTree(values.get(0)));
+      } else {
+        // 如果有多个值，创建数组节点
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+        for (Object value : values) {
+          arrayNode.add(objectMapper.valueToTree(value));
+        }
+        nestedNode.set(key, arrayNode);
+      }
+    }
+    return nestedNode;
+  }
+
+  private Object parseValue(JsonParser parser) throws IOException {
+    JsonToken token = parser.currentToken();
+    switch (token) {
+      case START_OBJECT:
+        return parseNestedObject(parser);
+      case START_ARRAY:
+        return parseArray(parser);
+      case VALUE_STRING:
+        return parser.getText();
+      case VALUE_NUMBER_INT:
+        return parser.getLongValue();
+      case VALUE_NUMBER_FLOAT:
+        return parser.getDoubleValue();
+      case VALUE_TRUE:
+        return true;
+      case VALUE_FALSE:
+        return false;
+      case VALUE_NULL:
+        return null;
+      default:
+        throw new IllegalStateException("Unexpected token: " + token);
+    }
+  }
+
+  private ArrayNode parseArray(JsonParser parser) throws IOException {
+    ArrayNode arrayNode = objectMapper.createArrayNode();
+    while (parser.nextToken() != JsonToken.END_ARRAY) {
+      if (parser.currentToken() == JsonToken.START_OBJECT) {
+        arrayNode.add(parseNestedObject(parser));
+      } else {
+        arrayNode.add(parser.getText());
+      }
+    }
+    return arrayNode;
   }
 
   private JsonNode getResponseByUrl(
@@ -394,11 +507,16 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     }
     JsonNode jsonNode = null;
     try {
-      jsonNode = objectMapper.readTree(entityString);
+      jsonNode = parseJsonWithDuplicatesToJsonNode(entityString);
     } catch (Exception e) {
-      logger.warn("getResponseByUrl failed", e);
-      throw new RMErrorException(
-          YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
+      logger.warn("parse json with duplicates failed.", e);
+      try {
+        jsonNode = objectMapper.readTree(entityString);
+      } catch (Exception ie) {
+        logger.warn("origin parse json failed", ie);
+        throw new RMErrorException(
+            YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), ie);
+      }
     }
     return jsonNode;
   }
@@ -407,7 +525,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     String haAddress = (String) provider.getConfigMap().get("rmWebAddress");
     String activeAddress = rmAddressMap.get(haAddress);
     if (StringUtils.isBlank(activeAddress)) {
-      synchronized (haAddress.intern()) {
+      synchronized (haAddress.intern()) { // NOSONAR
         if (StringUtils.isBlank(activeAddress)) {
           if (logger.isDebugEnabled()) {
             logger.debug(

@@ -372,6 +372,11 @@
                 flex-basis: 62px;
                 font-size: 16px;
                 margin-right: 20px;
+                display: inline-block;
+                width: 62px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                
             }
             .engine-ul {
                 flex: 1;

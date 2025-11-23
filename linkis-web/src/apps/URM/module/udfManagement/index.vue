@@ -360,7 +360,7 @@ export default {
       }
     },
     // 新增函数
-    addFunction(data) {
+    async addFunction(data) {
       if (this.loading) return
       this.loading = true;
       const params = {
@@ -377,19 +377,24 @@ export default {
         clusterName: data.clusterName,
         directory: data.directory
       }
-      api
+      await api
         .fetch('/udf/add', {udfAddVo: params}, 'post')
         .then(() => {
           this.showAddModal(false)
           this.search()
           this.isLoading = false
           this.loading = false
+          if (data.defaultLoad) {
+            this.confirmKillIdle(data)
+          }
         })
         .catch(() => {
           // this.list = [{}]
           this.loading = false
           this.isLoading = false
+          
         })
+      
     },
     // 更新
     updateFunction(data) {
@@ -417,11 +422,31 @@ export default {
           this.loading = false
           this.search()
           this.$Message.success(this.$t('message.linkis.udf.success'));
+          
+          if (data.defaultLoad) {
+            this.confirmKillIdle(data)
+          }
         })
         .catch(() => {
           this.isLoading = false
           this.loading = false
         })
+    },
+    confirmKillIdle(data) {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.setting.killEngineTitle'),
+        content: this.$t('message.linkis.setting.killEngine'),
+        onOk: async () => {
+          try {
+            api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
+              creator: '*',
+              engineType: [1, 2].includes(data.udfType) ? 'spark' : '*'
+            })
+          } catch (err) {
+            window.console.warn(err)
+          }
+        }
+      })
     },
     checkChange(v) {
       this.list = this.list.map(it => {

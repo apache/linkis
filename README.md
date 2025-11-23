@@ -3,7 +3,7 @@
 </h2>
 
 <p align="center">
-  <strong> Linkis builds a computation middleware layer to facilitate connection, 
+  <strong> Linkis builds a computation middleware layer to facilitate connection,
     governance and orchestration between the upper applications and the underlying data engines. </strong>
 </p>
 <p align="center">
@@ -14,41 +14,40 @@
 </p>
 
 <p align="center">
-  <a href="https://linkis.apache.org/docs/latest/introduction/" >
-    <img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN docs" />
-  </a>
-  <a href="https://linkis.apache.org/zh-CN/docs/latest/introduction/">
-    <img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" />
-  </a>
+  <a href="https://linkis.apache.org/docs/latest/introduction/" ><!--
+    --><img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN docs" /><!--
+    --></a>
+  <a href="https://linkis.apache.org/zh-CN/docs/latest/introduction/"><!--
+    --><img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" /><!--
+    --></a>
 </p>
 
 <p align="center">
-    <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis">
-        <img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" />
-    </a>
-    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE">
-        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" />
-    </a>
-    <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
-        <img src="https://img.shields.io/badge/JDK-8-green.svg" />
-    </a>
-    <a target="_blank" href="https://github.com/apache/linkis/actions">
-        <img src="https://github.com/apache/linkis/actions/workflows//build-backend.yml/badge.svg" />
-    </a>
+    <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis"><!--
+      --><img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" /><!--
+    --></a>
+    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE"><!--
+      --><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" /><!--
+    --></a>
+    <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><!--
+      --><img src="https://img.shields.io/badge/JDK-8-green.svg" /><!--
+    --></a>
+    <a target="_blank" href="https://github.com/apache/linkis/actions"><!--
+      --><img src="https://github.com/apache/linkis/actions/workflows//build-backend.yml/badge.svg" /><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/><!--
+    --></a>
+   <a target="_blank" href='https://github.com/apache/linkis'><!--
+      --><img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/><!--
+    --></a>
+   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT"><!--
+      --><img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" /><!--
+    --></a>
 
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/>
-   </a>
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/>
-   </a>
-   <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/>
-   </a>
-  <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
-       <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
-  </a>
-  
 </p>
 <br/>
 
@@ -89,21 +88,21 @@ Apache Linkis | DeepWiki : https://deepwiki.com/apache/linkis
 
 # Engine Type
 
-| **Engine name** | **Support underlying component version<br/>(default dependency version)** | **Linkis Version Requirements** | **Included in Release Package By Default** | **Description** |
-|:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 3.2.1)|\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 3.1.3)|\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
-|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes |Python EngineConn, supports python code|
-|Shell|Bash >= 2.0|\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No |JDBC EngineConn, already supports ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL and SQLServer, can be extended quickly Support other DB, such as SQLite|
-|Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.2|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application|
-|Pipeline|-|\>=1.0.2|No|Pipeline EngineConn, supports file import and export|
-|openLooKeng|openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)|\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|
-|Sqoop| Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)|\>=1.1.2|No|Sqoop EngineConn, support data migration tool Sqoop engine|
-|Presto|Presto >= 0.180|\>=1.2.0|No|Presto EngineConn, supports Presto SQL code|
-|ElasticSearch|ElasticSearch >=6.0|\>=1.2.0|No|ElasticSearch EngineConn, supports SQL and DSL code|
-|Trino | Trino >=371 | >=1.3.1 | No |   Trino EngineConn， supports Trino SQL code |
-|Seatunnel | Seatunnel >=2.1.2 | >=1.3.1 | No | Seatunnel EngineConn， supportt Seatunnel SQL code |
+| **Engine name** | **Support underlying component version<br/>(default dependency version)** | **Linkis Version Requirements** | **Included in Release Package By Default** | **Description**                                                                                                                                                               |
+| :-------------- | :------------------------------------------------------------------------ | :------------------------------ | :----------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Spark           | Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 3.2.1)     | \>=1.0.3                        | Yes                                        | Spark EngineConn, supports SQL , Scala, Pyspark and R code                                                                                                                    |
+| Hive            | Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 3.1.3)      | \>=1.0.3                        | Yes                                        | Hive EngineConn, supports HiveQL code                                                                                                                                         |
+| Python          | Python >= 2.6, <br/>(default Python2*)                                    | \>=1.0.3                        | Yes                                        | Python EngineConn, supports python code                                                                                                                                       |
+| Shell           | Bash >= 2.0                                                               | \>=1.0.3                        | Yes                                        | Shell EngineConn, supports Bash shell code                                                                                                                                    |
+| JDBC            | MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)                | \>=1.0.3                        | No                                         | JDBC EngineConn, already supports ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL and SQLServer, can be extended quickly Support other DB, such as SQLite |
+| Flink           | Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)                       | \>=1.0.2                        | No                                         | Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application                                                              |
+| Pipeline        | -                                                                         | \>=1.0.2                        | No                                         | Pipeline EngineConn, supports file import and export                                                                                                                          |
+| openLooKeng     | openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)                    | \>=1.1.1                        | No                                         | openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng                                                                                     |
+| Sqoop           | Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)                         | \>=1.1.2                        | No                                         | Sqoop EngineConn, support data migration tool Sqoop engine                                                                                                                    |
+| Presto          | Presto >= 0.180                                                           | \>=1.2.0                        | No                                         | Presto EngineConn, supports Presto SQL code                                                                                                                                   |
+| ElasticSearch   | ElasticSearch >=6.0                                                       | \>=1.2.0                        | No                                         | ElasticSearch EngineConn, supports SQL and DSL code                                                                                                                           |
+| Trino           | Trino >=371                                                               | >=1.3.1                         | No                                         | Trino EngineConn， supports Trino SQL code                                                                                                                                    |
+| Seatunnel       | Seatunnel >=2.1.2                                                         | >=1.3.1                         | No                                         | Seatunnel EngineConn， supportt Seatunnel SQL code                                                                                                                            |
 
 # Download
 
@@ -152,13 +151,13 @@ npm run build
 ```
 
 ### Bundled with MySQL JDBC Driver
-Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the 
+Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the
 official released linkis image by default. However, at current stage, linkis still relies on this library to work properly.
-To solve this problem, we provide a script which can help to creating a custom image with mysql jdbc from the official 
+To solve this problem, we provide a script which can help to creating a custom image with mysql jdbc from the official
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.1 
+$> LINKIS_IMAGE=linkis:1.3.1
 $> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
@@ -167,7 +166,7 @@ Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deploym
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/how-to-use)
-- [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine-usage/overview) 
+- [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine-usage/overview)
 - [API Documents](https://linkis.apache.org/docs/latest/api/overview)
 
 # Documentation & Vedio
@@ -186,13 +185,13 @@ Below is the Linkis architecture diagram. You can find more detailed architectur
 
 # Contributing
 
-Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.  
+Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.
 For code and documentation contributions, please follow the [contribution guide](https://linkis.apache.org/community/how-to-contribute).
 
 # Contact Us
 
 
-- Any questions or suggestions please kindly submit an [issue](https://github.com/apache/linkis/issues).  
+- Any questions or suggestions please kindly submit an [issue](https://github.com/apache/linkis/issues).
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
@@ -200,5 +199,5 @@ For code and documentation contributions, please follow the [contribution guide]
 
 # Who is Using Linkis
 
-We opened an issue [[Who is Using Linkis]](https://github.com/apache/linkis/issues/23) for users to feedback and record who is using Linkis.  
+We opened an issue [[Who is Using Linkis]](https://github.com/apache/linkis/issues/23) for users to feedback and record who is using Linkis.
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on.

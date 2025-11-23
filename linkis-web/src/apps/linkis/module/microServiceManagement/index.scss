@@ -59,13 +59,13 @@
 }
 .microService {
   height: 100%;
-  /deep/ .ivu-tag {
+  ::v-deep .ivu-tag {
     max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /deep/ .ivu-tooltip-inner {
+  ::v-deep .ivu-tooltip-inner {
     max-width: 100%;
   }
 }

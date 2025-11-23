@@ -59,8 +59,8 @@
             class="queue-manager-circle"></v-circle>
           <v-circle
             :percent="getPercentage(infos.queueInfo.numActiveApps, infos.queueInfo.maxApps)"
-            :used="infos.queueInfo.numActiveApps"
-            :max="infos.queueInfo.maxApps"
+            :used="infos.queueInfo.numActiveApps.toString()"
+            :max="infos.queueInfo.maxApps.toString()"
             suffixe=""
             width="120px"
             height="120px"

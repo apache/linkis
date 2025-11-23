@@ -28,7 +28,7 @@ class CodeAndRunTypeUtilsTest {
     val codeTypeAndRunTypeRelationMap = CodeAndRunTypeUtils.getCodeTypeAndLanguageTypeRelationMap
     assertTrue(codeTypeAndRunTypeRelationMap.nonEmpty)
     assertTrue(codeTypeAndRunTypeRelationMap.keySet.contains("sql"))
-    assertEquals(3, codeTypeAndRunTypeRelationMap("python").size)
+    assertEquals(4, codeTypeAndRunTypeRelationMap("python").size)
   }
 
   @Test

@@ -83,6 +83,8 @@ class JobInfoResult extends DWSResult with UserAction with Status {
           case resultSetList: ResultSetListResult => resultSetList.getResultSetList
         }
       val numberRegex: Regex = """(\d+)""".r
+      // There are compatibility issues under Windows, which can be resolved through this method.
+      // fileName.split(java.util.regex.Pattern.quote(File.separator)).last
       return resultSetList.sortBy { fileName =>
         numberRegex.findFirstIn(fileName.split(File.separator).last).getOrElse("0").toInt
       }

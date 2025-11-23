@@ -18,9 +18,13 @@
 package org.apache.linkis.entrance.persistence
 
 import org.apache.linkis.entrance.EntranceContext
-import org.apache.linkis.scheduler.listener.{JobListener, ProgressListener}
+import org.apache.linkis.scheduler.listener.{JobListener, JobRetryListener, ProgressListener}
 
-abstract class PersistenceManager extends JobListener with ResultSetListener with ProgressListener {
+abstract class PersistenceManager
+    extends JobListener
+    with ResultSetListener
+    with ProgressListener
+    with JobRetryListener {
 
   def getEntranceContext: EntranceContext
 

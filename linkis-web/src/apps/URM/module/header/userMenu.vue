@@ -121,11 +121,13 @@ export default {
       });
     },
     changeLang() {
-      // 中文切换英文
+      // Chinese to English(中文切换英文)
       if (localStorage.getItem('locale') === 'zh-CN') {
         localStorage.setItem('locale', 'en');
+        localStorage.setItem('fes_locale', 'en-US');
       } else {
         localStorage.setItem('locale', 'zh-CN');
+        localStorage.setItem('fes_locale', 'zh-CN');
       }
       window.location.reload();
     }

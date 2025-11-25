@@ -305,7 +305,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
       val users = whitelistUsers.split(",").map(_.trim)
       if (users.contains(submitUser)) {
         logger.info(s"User $submitUser is in StarRocks whitelist (user)")
-        return false
+        return true
       }
     }
 

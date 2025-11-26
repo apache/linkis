@@ -174,7 +174,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
               currentEngineType = starrocksEngineType
               logAppender.append(
                 LogUtils.generateInfo(
-                  s"use starrocks engine with datasource name : ${dataSource.getDataSourceName}"
+                  s"use starrocks engine with datasource name : ${dataSource.getDataSourceName} "
                 )
               )
             } else {

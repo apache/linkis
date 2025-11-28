@@ -293,7 +293,7 @@ class DefaultEngineCreateService
       if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
         val emInstance = engineNode.getServiceInstance.getInstance
         val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
-        if ((null != engineNode) && (null != ecmInstance)) {
+        if ((null != emInstance) && (null != ecmInstance)) {
           // 8. Update job history metrics after successful engine creation - 异步执行
           AMUtils.updateMetricsAsync(
             taskId,
@@ -311,7 +311,7 @@ class DefaultEngineCreateService
       }
     } { case e: Exception =>
       logger.error(
-        s"Failed to update metrics for taskId: $taskId, engineInstance: ${engineNode.getServiceInstance.getInstance}",
+        s"Failed to update metrics for taskId: $taskId",
         e
       )
     }

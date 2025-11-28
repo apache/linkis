@@ -174,7 +174,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
               currentEngineType = starrocksEngineType
               logAppender.append(
                 LogUtils.generateInfo(
-                  s"use starrocks engine with datasource name : ${dataSource.getDataSourceName} "
+                  s"use starrocks engine with datasource name : ${dataSource.getDataSourceName} \n"
                 )
               )
             } else {
@@ -186,7 +186,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
               )
               logAppender.append(
                 LogUtils.generateInfo(
-                  s"Failed to select starrocks engine, ${jobRequest.getExecuteUser} datasource does not exist. now use $currentEngineType"
+                  s"Failed to select starrocks engine, ${jobRequest.getExecuteUser} datasource does not exist. now use $currentEngineType \n"
                 )
               )
             }
@@ -197,7 +197,7 @@ class AISQLTransformInterceptor extends EntranceInterceptor with Logging {
             logger.warn("Failed to select starrocks engine: ", t)
             logAppender.append(
               LogUtils.generateInfo(
-                s"Failed to select starrocks engine, service exception. now use $currentEngineType"
+                s"Failed to select starrocks engine, service exception. now use $currentEngineType \n"
               )
             )
           }

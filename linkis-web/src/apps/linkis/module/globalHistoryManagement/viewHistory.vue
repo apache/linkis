@@ -194,20 +194,6 @@ export default {
     },
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
     async onClickTabs(name) {
-      const canResultSet = sessionStorage.getItem('canResultSet');
-      if(name === 'result' && canResultSet === 'false') {
-        try {
-          setTimeout(() => {
-            this.tabName = this.preName;
-          }, 0);
-          window.open(`http://${window.location.host}/#/results?parentPath=${this.jobhistoryTask.resultLocation}&taskId=${this.$route.query.taskID}&fileName=example.${this.jobhistoryTask.runType}`, '_blank')
-
-          return;
-        } catch (error) {
-          window.console.error(error)
-        }
-
-      }
       this.tabName = name
       this.preName = name
       if (name === 'result') {

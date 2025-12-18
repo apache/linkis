@@ -447,6 +447,22 @@
         ORDER BY c.INTEGER_IDX ASC;
     </select>
 
+    <!-- 通过SDID查询分区键 -->
+    <select id="getPartitionKeysByStorageDescriptionID" resultType="map"  parameterType="map">
+        select PKEY_COMMENT, PKEY_NAME, PKEY_TYPE from PARTITION_KEYS
+        inner join TBLS ON `PARTITION_KEYS`.TBL_ID = TBLS.TBL_ID
+        inner join SDS ON TBLS.SD_ID = SDS.SD_ID
+        where SDS.SD_ID = #{sdId,jdbcType=VARCHAR} order by integer_idx;
+    </select>
+    
+    <!-- 从库通过SDID查询分区键 -->
+    <select id="getPartitionKeysByStorageDescriptionIDSlave" resultType="map"  parameterType="map">
+        /*slave*/ select PKEY_COMMENT, PKEY_NAME, PKEY_TYPE from PARTITION_KEYS
+        inner join TBLS ON `PARTITION_KEYS`.TBL_ID = TBLS.TBL_ID
+        inner join SDS ON TBLS.SD_ID = SDS.SD_ID
+        where SDS.SD_ID = #{sdId,jdbcType=VARCHAR} order by integer_idx;
+    </select>
+
     <select id="getPartitionKeys" resultType="map"  parameterType="map">
         select  PKEY_COMMENT, PKEY_NAME, PKEY_TYPE from PARTITION_KEYS
         inner join TBLS ON `PARTITION_KEYS`.TBL_ID = TBLS.TBL_ID

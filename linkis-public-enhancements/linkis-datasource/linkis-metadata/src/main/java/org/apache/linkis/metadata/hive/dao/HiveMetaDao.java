@@ -131,11 +131,6 @@ public interface HiveMetaDao {
 
   List<Map<String, Object>> getPartitionKeysSlave(MetadataQueryParam queryParam);
 
-  List<Map<String, Object>> getPartitionKeysByStorageDescriptionID(MetadataQueryParam queryParam);
-
-  List<Map<String, Object>> getPartitionKeysByStorageDescriptionIDSlave(
-      MetadataQueryParam queryParam);
-
   String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 
   String getTableCommentSlave(@Param("DbName") String DbName, @Param("tableName") String tableName);

@@ -368,14 +368,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     logger.info("getTableMetabysdid : sdid = {}", queryParam.getSdId());
     List<Map<String, Object>> columns;
     List<Map<String, Object>> partitionKeys;
-    // 当调用queryTableMetaBySDID方法时，必须使用SDID查询列信息，确保正确的排序
-    // 无论HIVE_METADATA_SLOW_SQL_SWITCH开关状态如何，都应该使用SDID查询
     if (!MdqConfiguration.HIVE_METADATA_SALVE_SWITCH()) {
-      columns = hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
-      partitionKeys = hiveMetaDao.getPartitionKeysByStorageDescriptionID(queryParam);
+      columns = hiveMetaDao.getColumns(queryParam);
+      partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
     } else {
-      columns = hiveMetaDao.getColumnsByStorageDescriptionIDSlave(queryParam);
-      partitionKeys = hiveMetaDao.getPartitionKeysByStorageDescriptionIDSlave(queryParam);
+      columns = hiveMetaDao.getColumnsSlave(queryParam);
+      partitionKeys = hiveMetaDao.getPartitionKeysSlave(queryParam);
     }
     return getJsonNodesFromColumnMap(columns, partitionKeys);
   }

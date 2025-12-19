@@ -91,7 +91,10 @@ class PathValidator extends Logging {
     var userHdfsRootPath: String =
       WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue) +
         username + HDFS_USER_ROOT_PATH_SUFFIX.getValue
-    if (!(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))) {
+    if (
+        !(path.contains(StorageUtils.FILE_SCHEMA)) && !(path
+          .contains(StorageUtils.HDFS_SCHEMA)) && !(path.contains(StorageUtils.S3_SCHEMA))
+    ) {
       throw new WorkSpaceException(80025, "the path should contain schema")
     }
     userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath, File.separatorChar)

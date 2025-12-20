@@ -144,6 +144,19 @@ Note: If you want use `-Dlinkis.build.web=true` to build  linkis-web image, you 
 mvnw.cmd -N install
 mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
+### Hybrid Build (Recommended for faster compilation)
+
+The hybrid build method can significantly improve compilation speed (40-50% faster) while ensuring complete build artifacts.
+
+# Linux/macOS
+./hybrid-build.sh
+
+# Windows CMD
+hybrid-build.cmd
+
+# Windows PowerShell
+.\hybrid-build.ps1
+
 ## compile web
 cd linkis/linkis-web
 npm install

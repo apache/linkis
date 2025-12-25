@@ -342,6 +342,46 @@ object EntranceUtils extends Logging {
   }
 
   /**
+   * Spark任务实时诊断
+   */
+  def taskRealtimeDiagnose(
+      job: JobRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    val params = new util.HashMap[String, AnyRef]()
+    val metricsParams = job.getMetrics
+    if (MapUtils.isEmpty(metricsParams)) {
+      return DoctorResponse(success = false, "")
+    }
+    val yarnResource =
+      MapUtils.getMap(metricsParams, "yarnResource", new util.HashMap[String, AnyRef]())
+    if (MapUtils.isEmpty(yarnResource)) {
+      DoctorResponse(success = false, "")
+    } else {
+      var response: DoctorResponse = null
+      for (application <- yarnResource.keySet().asInstanceOf[Set[String]]) {
+        params.put("taskId", application)
+        params.put("engineType", LabelUtil.getEngineType(job.getLabels))
+        params.put("userId", job.getExecuteUser)
+        val msg = s"Task execution time exceeds 5m time, perform task diagnosis"
+        params.put("triggerReason", msg)
+        params.put("sparkConfig", "")
+        params.put("taskName", "")
+        params.put("linkisTaskUrl", "")
+        val request = DoctorRequest(
+          apiUrl = EntranceConfiguration.DOCTOR_REALTIME_DIAGNOSE_URL,
+          params = params,
+          defaultValue = "",
+          successMessage = "Task Realtime Diagnose result",
+          exceptionMessage = "Task Realtime Diagnose exception"
+        )
+        response = callDoctorService(request, logAppender)
+      }
+      response
+    }
+  }
+
+  /**
    * Doctor服务调用通用框架
    */
   case class DoctorRequest(
@@ -481,7 +521,7 @@ object EntranceUtils extends Logging {
             reason = reason,
             duration = duration
           )
-        } else {
+        } else if (request.apiUrl.contains("engine")) {
           // 动态引擎选择API
           val engineType = dataMap.get("engine").toString
           val reason = dataMap.get("reason").toString
@@ -490,6 +530,24 @@ object EntranceUtils extends Logging {
             logAppender
           )
           DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
+        } else if (request.apiUrl.contains("realtime")) {
+          // 实时诊断API
+          val success = dataMap.get("success").toString.toBoolean
+          val result = if (dataMap.containsKey("result")) dataMap.get("result").toString else ""
+          val reason = if (dataMap.containsKey("reason")) dataMap.get("reason").toString else ""
+          logInfo(
+            s"${request.successMessage}: $success, Result: $result, Reason: $reason, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(success = success, result = result, reason = reason, duration = duration)
+        } else {
+          // 默认处理
+          val result = dataMap.toString
+          logInfo(
+            s"${request.successMessage}: $result, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(success = true, result = result, duration = duration)
         }
       } else {
         throw new EntranceRPCException(

@@ -20,8 +20,8 @@
 
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobDiagnosisMapper">
     <insert id="insert" parameterType="org.apache.linkis.jobhistory.entity.JobDiagnosis">
-        INSERT INTO linkis_ps_job_history_diagnosis (job_history_id, diagnosis_content, created_time, updated_time, only_read)
-        VALUES (#{jobHistoryId}, #{diagnosisContent}, #{createdTime}, #{updatedTime}, #{onlyRead})
+        INSERT INTO linkis_ps_job_history_diagnosis (job_history_id, diagnosis_content, created_time, updated_time, only_read, diagnosis_source)
+        VALUES (#{jobHistoryId}, #{diagnosisContent}, #{createdTime}, #{updatedTime}, #{onlyRead}, #{diagnosisSource})
     </insert>
 
     <delete id="deleteById" parameterType="long">
@@ -34,12 +34,18 @@
             <if test="diagnosisContent != null">diagnosis_content = #{diagnosisContent},</if>
             <if test="createdTime != null">created_time = #{createdTime},</if>
             <if test="updatedTime != null">updated_time = #{updatedTime},</if>
-            <if test="onlyRead != null">only_read = #{onlyRead}</if>
+            <if test="onlyRead != null">only_read = #{onlyRead},</if>
+            <if test="diagnosisSource != null">diagnosis_source = #{diagnosisSource}</if>
         </trim>
         WHERE job_history_id = #{jobHistoryId}
     </update>
 
-    <select id="selectById" parameterType="long" resultType="org.apache.linkis.jobhistory.entity.JobDiagnosis">
-        SELECT * FROM linkis_ps_job_history_diagnosis WHERE job_history_id = #{jobHistoryId}
+    <select id="selectByJobIdAndSource" resultType="org.apache.linkis.jobhistory.entity.JobDiagnosis">
+        SELECT id, job_history_id, diagnosis_content, created_time, updated_time, only_read, diagnosis_source
+        FROM linkis_ps_job_history_diagnosis
+        WHERE job_history_id = #{0}
+        <if test="diagnosisSource != null">
+            AND diagnosis_source = #{diagnosisSource}
+        </if>
     </select>
 </mapper>

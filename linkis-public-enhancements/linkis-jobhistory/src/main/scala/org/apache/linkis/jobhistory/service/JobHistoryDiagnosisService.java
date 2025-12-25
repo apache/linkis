@@ -24,13 +24,11 @@ import java.util.List;
 
 public interface JobHistoryDiagnosisService {
 
-    void insert(JobDiagnosis jobDiagnosis);
+  void insert(JobDiagnosis jobDiagnosis);
 
-    void deleteById(Long id);
+  void deleteById(Long id);
 
-    void update(JobDiagnosis jobDiagnosis);
+  void update(JobDiagnosis jobDiagnosis);
 
-    JobDiagnosis selectByJobId(Long id);
-
-
+  JobDiagnosis selectByJobId(Long jobId, String diagnosisSource);
 }

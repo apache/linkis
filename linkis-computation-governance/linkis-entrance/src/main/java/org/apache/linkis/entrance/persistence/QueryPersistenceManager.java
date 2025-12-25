@@ -182,8 +182,12 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
 
     Map<String, Object> startupMap = TaskUtils.getStartupMap(props);
-    // 只对 aiSql 做重试
-    if ("true".equals(startupMap.get(aiSqlKey))) {
+    String isRetry =
+        startupMap
+            .getOrDefault(EntranceConfiguration.TASK_RETRY_SWITCH().key(), "false")
+            .toString();
+    // 对 aiSql 和 starrocks 做重试
+    if (Boolean.parseBoolean(isRetry)) {
       LinkisUtils.tryAndWarn(
           () -> {
             int retryNum = (int) startupMap.getOrDefault(retryNumKey, 1);

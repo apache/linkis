@@ -137,7 +137,8 @@ public class EntranceSpringConfiguration {
       new PythonCodeCheckInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
-      new UserCreatorIPCheckInterceptor()
+      new UserCreatorIPCheckInterceptor(),
+      new TaskRetryInterceptor()
     };
   }
 

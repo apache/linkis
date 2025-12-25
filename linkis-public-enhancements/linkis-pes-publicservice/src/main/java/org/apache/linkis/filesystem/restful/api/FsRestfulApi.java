@@ -645,6 +645,9 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
+    // 检查是否为管理台请求（enableLimit=true）
+    boolean enableLimitResult = Boolean.parseBoolean(enableLimit);
+
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
     LoggerUtils.setJobIdMDC("openFileThread_" + userName);
     LOGGER.info("userName {} start to open File {}", userName, path);
@@ -668,16 +671,15 @@ public class FsRestfulApi {
     String en_msg =
         MessageFormat.format(
             "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH(),
             LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE());
     String truncateColumn_msg =
         MessageFormat.format(
-            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容", LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
     String truncateColumn_en_msg =
         MessageFormat.format(
             "The result set contains field values exceeding {0} characters. To view the full data, please export the file or confirm the displayed content is truncated",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
@@ -692,7 +694,7 @@ public class FsRestfulApi {
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
 
-        if (StringUtils.isNotBlank(enableLimit) && "true".equals(enableLimit)) {
+        if (enableLimitResult) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
           // 组装列索引
@@ -766,7 +768,8 @@ public class FsRestfulApi {
                 ResultUtils.removeFieldsFromContent(resultmap, filteredContent, maskedFields);
           }
           // 优先截取大字段
-          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && enableLimitResult) {
+            // 管理台请求(enableLimit=true)不进行字段长度拦截，兼容旧逻辑
             FieldTruncationResult fieldTruncationResult =
                 ResultUtils.detectAndHandle(
                     filteredMetadata,
@@ -803,7 +806,7 @@ public class FsRestfulApi {
             }
           }
           if (StringUtils.isNotBlank(maskedFieldNames)
-              || LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+              || (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && enableLimitResult)) {
             message.data("metadata", filteredMetadata).data("fileContent", filteredContent);
           } else {
             // 不执行字段屏蔽也不执行字段截取

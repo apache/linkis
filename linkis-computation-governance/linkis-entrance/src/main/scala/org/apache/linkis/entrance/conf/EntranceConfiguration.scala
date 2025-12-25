@@ -400,8 +400,8 @@ object EntranceConfiguration {
 
   var SPARK3_PYTHON_VERSION = CommonVars.apply("spark.python.version", "python3");
 
-  var SPARK_DYNAMIC_ALLOCATION_ENABLED =
-    CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
+  var SPARK_DYNAMIC_CONF_USER_ENABLED =
+    CommonVars.apply("spark.dynamic.conf.user.enabled", false).getValue
 
   var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
     CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue

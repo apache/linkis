@@ -79,6 +79,9 @@ public abstract class SecurityUtils {
 
   private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
 
+  private static final String BLACKLIST_REGEX =
+      "autodeserialize|allowloadlocalinfile|allowurlinlocalinfile|allowloadlocalinfileinpath";
+
   /**
    * check mysql connection params
    *
@@ -118,6 +121,23 @@ public abstract class SecurityUtils {
 
     // 3. Check params. Mainly vulnerability parameters. Note the url encoding
     checkParams(extraParams);
+
+    // 4. Check url security, especially for the possibility of malicious characters appearing on
+    // the host
+    try {
+      while (url.contains("%")) {
+        String decodedUrl = URLDecoder.decode(url, "UTF-8");
+        if (decodedUrl.equals(url)) {
+          // If the decomposition is the same as the original, avoid infinite loop
+          break;
+        }
+        url = decodedUrl;
+      }
+    } catch (UnsupportedEncodingException e) {
+      logger.error("URL decode failed: {}", e.getMessage());
+      throw new LinkisSecurityException(35001, "URL decode failed.");
+    }
+    checkUrlIsSafe(url);
   }
 
   /** @param url */
@@ -280,6 +300,35 @@ public abstract class SecurityUtils {
             35000,
             "Invalid mysql connection parameters: " + parseParamsMapToMysqlParamUrl(paramsMap));
       }
+    }
+  }
+
+  /**
+   * check url is safe
+   *
+   * @param url
+   */
+  public static void checkUrlIsSafe(String url) {
+    try {
+      String lowercaseURL = url.toLowerCase();
+
+      Pattern pattern = Pattern.compile(BLACKLIST_REGEX);
+      Matcher matcher = pattern.matcher(lowercaseURL);
+
+      StringBuilder foundKeywords = new StringBuilder();
+      while (matcher.find()) {
+        if (foundKeywords.length() > 0) {
+          foundKeywords.append(", ");
+        }
+        foundKeywords.append(matcher.group());
+      }
+
+      if (foundKeywords.length() > 0) {
+        throw new LinkisSecurityException(
+            35000, "url contains blacklisted characters: " + foundKeywords);
+      }
+    } catch (Exception e) {
+      throw new LinkisSecurityException(35000, "error occurred during url security check: " + e);
     }
   }
 

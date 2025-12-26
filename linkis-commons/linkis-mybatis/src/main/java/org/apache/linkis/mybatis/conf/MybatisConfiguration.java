@@ -70,4 +70,6 @@ public class MybatisConfiguration {
 
   public static final CommonVars<Integer> MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.timeout", 300);
+  public static final CommonVars<String> BDP_SERVER_MYBATIS_PAGEHELPER_DIALECT =
+      CommonVars.apply("linkis.server.mybatis.pagehelper.dialect", "mysql");
 }

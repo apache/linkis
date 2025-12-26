@@ -121,8 +121,9 @@ object VariableUtils extends Logging {
             }
           case _ =>
             if (!nameAndType.contains(key) && StringUtils.isNotEmpty(value)) {
-              if ((allCatch opt value.toDouble).isDefined) {
-                nameAndType(key) = variable.DoubleValue(value.toDouble)
+//              if ((allCatch opt value.toDouble).isDefined) {
+              if ((allCatch opt BigDecimal(value)).isDefined && !value.startsWith("0")) {
+                nameAndType(key) = variable.BigDecimalValue(BigDecimal(value))
               } else {
                 nameAndType(key) = variable.StringType(value)
               }

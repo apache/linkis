@@ -38,10 +38,10 @@ public class VariableOperationTest {
 
   @Test
   public void testSqlFormat() throws VariableOperationFailedException {
-    String jsonOld = "select \n" + "\"&{yyyy-MM}\"";
+    String jsonOld = "select &{yyyy-MM}";
     String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
     System.out.println(jsonNew);
-    assertEquals(jsonNew, "select \n" + "\"2022-04\"");
+    assertEquals(jsonNew, "select 2022-04");
   }
 
   @Test
@@ -53,6 +53,14 @@ public class VariableOperationTest {
     assertEquals(
         jsonNew,
         "{\"name\":\"\\\"20220401\\\"\",\"address\":{\"street\":\"\\\"20210402\\\"\"},\"links\":[{\"name\":\"\\\"20220302\\\"\"}]}");
+  }
+
+  @Test
+  public void testJsonArrayFormat() throws VariableOperationFailedException {
+    String jsonOld = "[{\"name\":[\"&{yyyyMMdd%-1d}\"],\"address\":[\"&{yyyyMMdd%-1d}\"]}]";
+    String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
+    System.out.println(jsonOld + "\n" + jsonNew);
+    assertEquals(jsonNew, "[{\"name\":[\"\\\"20220401\\\"\"],\"address\":[\"\\\"20220401\\\"\"]}]");
   }
 
   @Test

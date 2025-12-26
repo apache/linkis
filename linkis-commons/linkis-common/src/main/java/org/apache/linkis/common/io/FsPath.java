@@ -173,11 +173,15 @@ public class FsPath {
     return FileSystems.getDefault().getPath(uri.toString());
   }
 
+  public String getUriString() {
+    return uri.toString();
+  }
+
   public boolean isOwner(String user) {
     return owner.equals(user);
   }
 
-  public FsPath getParent() throws IOException {
+  public FsPath getParent() {
     String path = uri.getPath();
     int lastSlash = path.lastIndexOf('/');
     int start = startPositionWithoutWindowsDrive(path);

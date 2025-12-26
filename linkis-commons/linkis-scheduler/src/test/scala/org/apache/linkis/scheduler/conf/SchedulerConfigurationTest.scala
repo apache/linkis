@@ -34,7 +34,8 @@ class SchedulerConfigurationTest {
       fifoConsumerAutoClearEnabled
     )
     val fifoConsumerMaxIdleTime =
-      CommonVars("wds.linkis.fifo.consumer.max.idle.time", new TimeType("1h")).getValue.toLong
+      CommonVars("wds.linkis.fifo.consumer.max.idle.time", new TimeType("10m")).getValue.toLong
+    assertEquals(SchedulerConfiguration.FIFO_CONSUMER_MAX_IDLE_TIME, fifoConsumerMaxIdleTime)
     val fifoConsumerIdleScanInitTime =
       CommonVars("wds.linkis.fifo.consumer.idle.scan.init.time", new TimeType("1s")).getValue.toLong
     assertEquals(

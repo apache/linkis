@@ -95,7 +95,7 @@ object Configuration extends Logging {
       "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
     )
 
-  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "")
+  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-UNAVAILABLE-TOKEN")
 
   val HDFS_HOUR_DIR_SWITCH = CommonVars("linkis.hdfs.hour.dir.switch", false).getValue
 

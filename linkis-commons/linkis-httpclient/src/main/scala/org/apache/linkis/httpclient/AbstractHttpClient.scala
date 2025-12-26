@@ -76,6 +76,7 @@ import org.apache.http.util.EntityUtils
 import javax.net.ssl.{HostnameVerifier, SSLContext, SSLSession}
 
 import java.net.URI
+import java.nio.charset.Charset
 import java.util
 import java.util.Locale
 
@@ -319,7 +320,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
               if (v != null) nameValuePairs.add(new BasicNameValuePair(k, v.toString))
             }
           }
-          httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs))
+          httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs, Charset.defaultCharset))
         }
 
         if (StringUtils.isNotBlank(put.getRequestPayload)) {
@@ -377,7 +378,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             post.getParameters.asScala.foreach { case (k, v) =>
               if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps))
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset))
           } else if (post.getFormParams.asScala.nonEmpty) {
             post.getFormParams.asScala.foreach { case (k, v) =>
               if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))

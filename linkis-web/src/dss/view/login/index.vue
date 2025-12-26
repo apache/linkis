@@ -158,7 +158,7 @@ export default {
           api
             .fetch(`/user/login`, params, {
               headers: {
-                ...(DISALLOW_LOGIN === 'true' ? { webLogin: 'true' } : {}),
+                ...(DISALLOW_LOGIN ? { webLogin: 'true' } : {}),
               }
             })
             .then((rst) => {

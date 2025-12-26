@@ -49,6 +49,9 @@ public class JobRequest {
   /** result location */
   private String resultLocation;
 
+  /** Task status updates is ordered, if false, not checked */
+  private Boolean updateOrderFlag = true;
+
   private String observeInfo;
 
   private Map<String, Object> metrics = new HashMap<>();
@@ -203,6 +206,14 @@ public class JobRequest {
 
   public void setObserveInfo(String observeInfo) {
     this.observeInfo = observeInfo;
+  }
+
+  public Boolean getUpdateOrderFlag() {
+    return updateOrderFlag;
+  }
+
+  public void setUpdateOrderFlag(Boolean updateOrderFlag) {
+    this.updateOrderFlag = updateOrderFlag;
   }
 
   @Override

@@ -78,7 +78,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  private lazy val py4jToken: String = SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
+
+  private lazy val py4jToken: String = if (SparkConfiguration.LINKIS_PYSPARK_USE_SECURE_RANDOM) {
+    SecureRandomStringUtils.randomAlphanumeric(256)
+  } else {
+    SecureRandom.getInstance("SHA1PRNG").nextInt(100000).toString
+  }
 
   private lazy val gwBuilder: GatewayServerBuilder = {
     val builder = new GatewayServerBuilder()
@@ -154,7 +159,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
     val userDefinePythonVersion = engineCreationContext.getOptions
       .getOrDefault(SPARK_PYTHON_VERSION_KEY, "python")
-      .toString
       .toLowerCase()
     val sparkPythonVersion =
       if (

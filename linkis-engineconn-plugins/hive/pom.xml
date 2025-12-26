@@ -26,11 +26,6 @@
 
   <artifactId>linkis-engineplugin-hive</artifactId>
 
-  <properties>
-    <hive.version>2.3.3</hive.version>
-    <jackson.version>1.9.2</jackson.version>
-  </properties>
-
   <dependencies>
 
     <dependency>
@@ -116,12 +111,6 @@
           <artifactId>aircompressor</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>io.airlift</groupId>
-      <artifactId>aircompressor</artifactId>
-      <version>${aircompressor.version}</version>
     </dependency>
 
     <dependency>
@@ -223,11 +212,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.jettison</groupId>
-      <artifactId>jettison</artifactId>
-      <version>${jettision.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.hadoop</groupId>
@@ -245,6 +229,10 @@
         <exclusion>
           <groupId>org.mortbay.jetty</groupId>
           <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>javax.ws.rs</groupId>
@@ -338,57 +326,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>com.sun.jersey.contribs</groupId>
-      <artifactId>jersey-apache-client4</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-jaxrs</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-core-asl</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-xc</artifactId>
-      <version>${jackson.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
   </dependencies>
 
   <build>
@@ -428,4 +365,87 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <!--hive 2.3.3 by default mvn validate -Dhive.version=2.3.3 -->
+    <profile>
+      <id>hive-jersey-dependencies</id>
+      <activation>
+        <property>
+          <name>hive.version</name>
+          <value>2.3.3</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun.jersey.contribs</groupId>
+          <artifactId>jersey-apache-client4</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-client</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-server</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-core</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-json</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-servlet</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- fix different discovery dependencies -->
+    <profile>
+      <id>eureka</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <property>
+          <name>discovery</name>
+          <value>eureka</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <scope>provided</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+    <profile>
+      <id>nacos</id>
+      <activation>
+        <property>
+          <name>discovery</name>
+          <value>nacos</value>
+        </property>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <scope>compile</scope>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+  </profiles>
 </project>

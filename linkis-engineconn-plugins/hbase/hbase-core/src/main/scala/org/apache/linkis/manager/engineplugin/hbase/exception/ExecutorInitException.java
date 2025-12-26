@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.hbase.exception;
 
-import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.exception.ExceptionLevel;
 import org.apache.linkis.common.exception.LinkisRuntimeException;
 

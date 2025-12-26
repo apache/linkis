@@ -309,6 +309,14 @@ public class SparkConfig {
     this.conf = conf;
   }
 
+  public void addAllConf(Map<String, String> conf) {
+    if (this.conf == null) {
+      setConf(conf);
+    } else {
+      this.conf.putAll(conf);
+    }
+  }
+
   public String getPropertiesFile() {
     return propertiesFile;
   }

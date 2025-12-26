@@ -173,11 +173,21 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>net.sf.py4j</groupId>
+      <artifactId>py4j</artifactId>
+      <version>0.10.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_${scala.binary.version}</artifactId>
       <version>${spark.version}</version>
       <scope>provided</scope>
       <exclusions>
+        <exclusion>
+          <groupId>net.sf.py4j</groupId>
+          <artifactId>py4j</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
@@ -345,6 +355,11 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.arrow</groupId>
+      <artifactId>arrow-vector</artifactId>
+      <version>${arrow.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
       <version>3.0.9</version>
@@ -380,16 +395,27 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-common</artifactId>
-      <version>${hadoop.version}</version>
-      <scope>provided</scope>
+      <groupId>${spark.hadoop.groupid}</groupId>
+      <artifactId>${spark.hadoop-common.artifactId}</artifactId>
+      <version>${spark.hadoop.version}</version>
+      <scope>${spark.hadoop.scope}</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs</artifactId>
-      <version>${hadoop.version}</version>
-      <scope>provided</scope>
+      <groupId>${spark.hadoop.groupid}</groupId>
+      <artifactId>${spark.hadoop-hdfs.artifactId}</artifactId>
+      <version>${spark.hadoop.version}</version>
+      <scope>${spark.hadoop.scope}</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.redislabs</groupId>
+      <artifactId>spark-redis_${scala.binary.version}</artifactId>
+      <version>2.6.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>redis.clients</groupId>
+          <artifactId>jedis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -436,6 +462,37 @@
       <version>${kubernetes-client.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>ch.cern.sparkmeasure</groupId>
+      <artifactId>spark-measure_2.12</artifactId>
+      <version>0.24</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.xerial.snappy</groupId>
+          <artifactId>snappy-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.retrofit2</groupId>
+          <artifactId>retrofit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.msgpack</groupId>
+          <artifactId>msgpack-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.moshi</groupId>
+          <artifactId>moshi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.influxdb</groupId>
+          <artifactId>influxdb-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.squareup.retrofit2</groupId>
+          <artifactId>converter-moshi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>
@@ -485,6 +542,17 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>spark-3</id>
+      <properties>
+        <revision>1.11.0-wds-spark3</revision>
+        <json4s.version>3.7.0-M11</json4s.version>
+        <spark.version>3.4.4</spark.version>
+        <scala.version>2.12.17</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+        <jackson-bom.version>2.14.2</jackson-bom.version>
+      </properties>
+    </profile>
     <!-- spark2-hadoop3 version:spark2.4 use hadoop2.7.2 by default mvn validate -Pspark-2.4-hadoop-3.3  -->
     <profile>
       <id>spark-2.4-hadoop-3.3</id>

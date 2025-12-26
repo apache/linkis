@@ -25,9 +25,6 @@
   </parent>
 
   <artifactId>linkis-engineplugin-python</artifactId>
-  <properties>
-    <python.version>python2</python.version>
-  </properties>
 
   <dependencies>
     <dependency>

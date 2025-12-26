@@ -36,11 +36,12 @@ class SeatunnelEngineConnFactory extends MultiExecutorEngineConnFactory with Log
 
   override protected def getEngineConnType: EngineType = EngineType.SEATUNNEL
 
-  private val executorFactoryArray = Array[ExecutorFactory](
-    new SeatunnelSparkExecutorFactory,
-    new SeatunnelFlinkSQLExecutorFactory,
-    new SeatunnelFlinkExecutorFactory
-  )
+  private val executorFactoryArray =
+    Array[ExecutorFactory](
+      new SeatunnelSparkExecutorFactory,
+      new SeatunnelFlinkExecutorFactory,
+      new SeatunnelZetaExecutorFactory
+    )
 
   override protected def createEngineConnSession(
       engineCreationContext: EngineCreationContext

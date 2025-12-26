@@ -24,7 +24,7 @@ import org.apache.linkis.engineconn.once.executor.{
   OnceExecutorExecutionContext,
   OperableOnceExecutor
 }
-import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelSparkClient
+import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelSparkV2Client
 import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_SPARK_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
@@ -116,7 +116,7 @@ class SeatunnelSparkOnceCodeExecutor(
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
     logger.info(s"Execute SeatunnelSpark Process end args:${args.mkString(" ")}")
-    LinkisSeatunnelSparkClient.main(args)
+    LinkisSeatunnelSparkV2Client.main(args)
   }
 
   override protected def waitToRunning(): Unit = {

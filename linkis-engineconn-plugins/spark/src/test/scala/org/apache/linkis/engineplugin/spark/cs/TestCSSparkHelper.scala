@@ -58,7 +58,7 @@ class TestCSSparkHelper {
     Assertions.assertTrue(sparkScalaExecutor.isEngineInitialized)
     val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
     CSSparkHelper.setContextIDInfoToSparkConf(engineExecutionContext, sparkSession.sparkContext)
-    //    Assertions.assertNotNull(sparkSession.sparkContext.getLocalProperty(CSCommonUtils.CONTEXT_ID_STR))
+//    Assertions.assertNotNull(sparkSession.sparkContext.getLocalProperty(CSCommonUtils.CONTEXT_ID_STR))
   }
 
 }

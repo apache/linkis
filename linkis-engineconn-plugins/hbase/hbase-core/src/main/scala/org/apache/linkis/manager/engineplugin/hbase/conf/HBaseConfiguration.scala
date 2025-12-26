@@ -24,7 +24,7 @@ object HBaseConfiguration {
 
   val HBASE_DEFAULT_KERBEOS_PRINCIPAL = CommonVars[String](
     "linkis.engineconn.hbase.default.kerberos.principal",
-    "hadoop/_HOST@WEBANK.COM"
+    ""
   ).getValue
 
 }

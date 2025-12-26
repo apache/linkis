@@ -28,6 +28,9 @@
   <packaging>pom</packaging>
   <modules>
     <module>hbase-core</module>
-    <module>hbase-shims-1.2.1</module>
+    <module>hbase-shims-1.2.0</module>
+    <module>hbase-shims-1.4.3</module>
+    <module>hbase-shims-2.2.6</module>
+    <module>hbase-shims-2.5.3</module>
   </modules>
 </project>

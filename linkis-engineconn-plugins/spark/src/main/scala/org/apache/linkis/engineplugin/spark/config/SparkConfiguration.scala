@@ -121,7 +121,7 @@ object SparkConfiguration extends Logging {
   val LINKIS_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
 
   val DEFAULT_SPARK_JAR_NAME =
-    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.2.jar")
+    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.8.0.jar")
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
@@ -156,7 +156,7 @@ object SparkConfiguration extends Logging {
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
   val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
+    CommonVars[String]("pyspark.python3.path", "python3")
 
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
@@ -182,12 +182,52 @@ object SparkConfiguration extends Logging {
 
   val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
 
+  val LINKIS_PYSPARK_USE_SECURE_RANDOM =
+    CommonVars[Boolean]("linkis.pyspark.use.secure.random", false).getValue
+
   val SCALA_PARSE_APPEND_CODE =
     CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
 
 // 多个配置用英文逗号分割
   val SPARK_ENGINE_EXTENSION_CONF =
     CommonVars("linkis.spark.engine.extension.conf", "spark.sql.shuffle.partitions=200").getValue
+
+  val SPARKMEASURE_AGGREGATE_TYPE = "linkis.sparkmeasure.aggregate.type"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_TYPE =
+    CommonVars[String]("linkis.sparkmeasure.flight.recorder.type", "")
+
+  val SPARKMEASURE_OUTPUT_PREFIX =
+    CommonVars[String]("linkis.sparkmeasure.output.prefix", "/appcom/sparkmeasure")
+
+  val SPARKMEASURE_FLIGHT_STAGE_CLASS =
+    "ch.cern.sparkmeasure.FlightRecorderStageMetrics"
+
+  val SPARKMEASURE_FLIGHT_TASK_CLASS = "ch.cern.sparkmeasure.FlightRecorderTaskMetrics"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_KEY = "spark.extraListeners"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_KEY = "spark.sparkmeasure.outputFormat"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON = "json"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FORMAT_JSON_HADOOP = "json_to_hadoop"
+
+  val SPARKMEASURE_FLIGHT_RECORDER_OUTPUT_FILENAME_KEY = "spark.sparkmeasure.outputFilename"
+
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST =
+    CommonVars("linkis.engine.containerization.mapping.host", "")
+
+  val ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS =
+    CommonVars("linkis.engine.containerization.mapping.ports", "")
+
+  val SPARK_DRIVER_HOST = CommonVars[String]("spark.driver.host", "")
+
+  val SPARK_DRIVER_PORT = CommonVars[String]("spark.driver.port", "")
+
+  val SPARK_DRIVER_BIND_ADDRESS = CommonVars[String]("spark.driver.bindAddress", "0.0.0.0")
+
+  val SPARK_DRIVER_BLOCK_MANAGER_PORT = CommonVars[String]("spark.driver.blockManager.port", "")
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

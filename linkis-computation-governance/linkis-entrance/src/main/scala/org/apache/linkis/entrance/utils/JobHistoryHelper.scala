@@ -365,12 +365,12 @@ object JobHistoryHelper extends Logging {
     }
   }
 
-  def addDiagnosis(jobid: String, diagnosis: String): Unit = {
+  def addDiagnosis(jobid: Long, diagnosis: String): Unit = {
     val jobDiagnosisRequest = new JobDiagnosisRequest()
-    jobDiagnosisRequest.setJobHistoryId(jobid.toLong)
+    jobDiagnosisRequest.setJobHistoryId(jobid)
     jobDiagnosisRequest.setDiagnosisContent(diagnosis)
-    jobDiagnosisRequest.setDiagnosisContent("doctoris")
-    JobDiagnosisReqInsert(jobDiagnosisRequest)
+    jobDiagnosisRequest.setDiagnosisSource("doctoris")
+    sender.ask(JobDiagnosisReqInsert(jobDiagnosisRequest))
   }
 
 }

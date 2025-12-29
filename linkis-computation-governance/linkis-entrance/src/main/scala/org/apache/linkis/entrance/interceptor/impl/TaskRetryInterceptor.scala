@@ -20,7 +20,12 @@ package org.apache.linkis.entrance.interceptor.impl
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils.LANGUAGE_TYPE_AI_SQL
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.entrance.conf.EntranceConfiguration.{AI_SQL_CREATORS, AI_SQL_KEY, TASK_RETRY_CODE_TYPE, TASK_RETRY_SWITCH}
+import org.apache.linkis.entrance.conf.EntranceConfiguration.{
+  AI_SQL_CREATORS,
+  AI_SQL_KEY,
+  TASK_RETRY_CODE_TYPE,
+  TASK_RETRY_SWITCH
+}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.entity.Label

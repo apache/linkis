@@ -779,7 +779,9 @@ public class FsRestfulApi {
             if (fieldTruncationResult.isHasOversizedFields()) {
               // 检测到超长字段
               if (null == truncateColumn) {
+                message.data("type", fileSource.getFileSplits()[0].type());
                 message.data("oversizedFields", fieldTruncationResult.getOversizedFields());
+                message.data("display_prohibited", true);
                 message.data("zh_msg", truncateColumn_msg);
                 message.data("en_msg", truncateColumn_en_msg);
                 return message;
@@ -1431,7 +1433,8 @@ public class FsRestfulApi {
     @ApiImplicitParam(
         name = "logLevel",
         dataType = "String",
-        value = "Log level, values: all,info,error,warn, default returns all logs")
+        value =
+            "Log level, values: all,info,error,warn or comma-separated combinations like error,info,warn")
   })
   @RequestMapping(path = "/openLog", method = RequestMethod.GET)
   public Message openLog(
@@ -1461,13 +1464,8 @@ public class FsRestfulApi {
         > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
       throw WorkspaceExceptionManager.createException(80033, path);
     }
-    // Parse log level
-    LogLevel.Type targetLevel = LogLevel.Type.ALL;
-    try {
-      targetLevel = LogLevel.Type.valueOf(logLevel.toUpperCase());
-    } catch (IllegalArgumentException e) {
-      LOGGER.warn("Invalid logLevel: {}, use default level: ALL", logLevel);
-    }
+    // 解析日志级别，支持多级别组合
+    Set<LogLevel.Type> targetLevels = parseLogLevels(logLevel);
     try (FileSource fileSource =
         FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
       Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
@@ -1477,20 +1475,21 @@ public class FsRestfulApi {
               .toArray(StringBuilder[]::new);
       ArrayList<String[]> snd = collect.getSecond();
       LogLevel start = new LogLevel(LogLevel.Type.ALL);
-      LogLevel.Type finalTargetLevel = targetLevel;
       snd.stream()
           .map(f -> f[0])
           .forEach(
               s -> {
                 List<Integer> matchedIndices = WorkspaceUtil.logMatch(s, start);
-                if (finalTargetLevel == LogLevel.Type.ALL) {
+                if (targetLevels.contains(LogLevel.Type.ALL)) {
                   // 返回所有日志
                   matchedIndices.forEach(i -> log[i].append(s).append("\n"));
                 } else {
-                  // 只返回目标级别的日志
-                  int targetIndex = finalTargetLevel.ordinal();
-                  if (matchedIndices.contains(targetIndex)) {
-                    log[targetIndex].append(s).append("\n");
+                  // 多级别组合：只返回目标级别的日志
+                  for (LogLevel.Type level : targetLevels) {
+                    int targetIndex = level.ordinal();
+                    if (matchedIndices.contains(targetIndex)) {
+                      log[targetIndex].append(s).append("\n");
+                    }
                   }
                 }
               });
@@ -1514,6 +1513,55 @@ public class FsRestfulApi {
       deleteAllFiles(fileSystem, path);
     }
     fileSystem.delete(fsPath);
+  }
+
+  /** 解析日志级别参数，支持多级别组合 */
+  private Set<LogLevel.Type> parseLogLevels(String logLevel) {
+    Set<LogLevel.Type> levels = new HashSet<>();
+
+    if (StringUtils.isEmpty(logLevel)) {
+      levels.add(LogLevel.Type.ALL);
+      return levels;
+    }
+
+    // 去除空格并转为大写
+    String cleanedLevel = logLevel.replaceAll("\\s+", "").toUpperCase();
+
+    // 检查是否为 ALL
+    if ("ALL".equals(cleanedLevel)) {
+      levels.add(LogLevel.Type.ALL);
+      return levels;
+    }
+
+    // 检查是否包含逗号（多级别组合）
+    if (cleanedLevel.contains(",")) {
+      String[] levelArray = cleanedLevel.split(",");
+      for (String levelStr : levelArray) {
+        try {
+          LogLevel.Type level = LogLevel.Type.valueOf(levelStr);
+          levels.add(level);
+        } catch (IllegalArgumentException e) {
+          LOGGER.warn("Invalid log level: {}, skipping", levelStr);
+        }
+      }
+
+      // 如果没有有效的级别，使用默认的 ALL
+      if (levels.isEmpty()) {
+        LOGGER.warn("No valid log levels found in: {}, using ALL", logLevel);
+        levels.add(LogLevel.Type.ALL);
+      }
+    } else {
+      // 单级别情况
+      try {
+        LogLevel.Type level = LogLevel.Type.valueOf(cleanedLevel);
+        levels.add(level);
+      } catch (IllegalArgumentException e) {
+        LOGGER.warn("Invalid logLevel: {}, use default level: ALL", logLevel);
+        levels.add(LogLevel.Type.ALL);
+      }
+    }
+
+    return levels;
   }
 
   @ApiOperation(value = "chmod", notes = "file permission chmod", response = Message.class)

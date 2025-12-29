@@ -237,23 +237,21 @@ object EntranceUtils extends Logging {
     // deal with spark3 dynamic allocation conf
     // 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
     val properties = new util.HashMap[String, AnyRef]()
+    val sparkDynamicAllocationEnabled: Boolean =
+      EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
     val isSpark3 = LabelUtil.isTargetEngine(
       jobRequest.getLabels,
       EngineType.SPARK.toString,
       LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
     )
     try {
-      if (isSpark3) {
+      if (isSpark3 && sparkDynamicAllocationEnabled) {
         logger.info(s"Task :${jobRequest.getId} using dynamic conf ")
-        if (EntranceConfiguration.SPARK_DYNAMIC_CONF_USER_ENABLED) {
-          // If dynamic allocation is disabled, only set python version
-          properties.put(
-            EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
-            EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
-          )
-        } else {
-          setSparkDynamicAllocationDefaultConfs(properties, logAppender)
-        }
+        // If dynamic allocation is disabled, only set python version
+        properties.put(
+          EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
+          EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
+        )
       }
     } catch {
       case e: Exception =>
@@ -271,9 +269,9 @@ object EntranceUtils extends Logging {
    * Set spark dynamic allocation default confs
    */
   private def setSparkDynamicAllocationDefaultConfs(
-                                                     properties: util.HashMap[String, AnyRef],
-                                                     logAppender: lang.StringBuilder
-                                                   ): Unit = {
+      properties: util.HashMap[String, AnyRef],
+      logAppender: lang.StringBuilder
+  ): Unit = {
     properties.put(
       EntranceConfiguration.SPARK_EXECUTOR_CORES.key,
       EntranceConfiguration.SPARK_EXECUTOR_CORES.getValue
@@ -351,21 +349,21 @@ object EntranceUtils extends Logging {
     val params = new util.HashMap[String, AnyRef]()
     val metricsParams = job.getMetrics
     if (MapUtils.isEmpty(metricsParams)) {
-      return DoctorResponse(success = false, "")
+      return DoctorResponse(success = false, "Diagnose error, metricsParams is empty!")
     }
     val yarnResource =
       MapUtils.getMap(metricsParams, "yarnResource", new util.HashMap[String, AnyRef]())
     if (MapUtils.isEmpty(yarnResource)) {
-      DoctorResponse(success = false, "")
+      DoctorResponse(success = false, "Diagnose error, yarnResource is empty!")
     } else {
       var response: DoctorResponse = null
-      for (application <- yarnResource.keySet().asInstanceOf[Set[String]]) {
+      yarnResource.keySet().toArray.foreach { application =>
         params.put("taskId", application)
         params.put("engineType", LabelUtil.getEngineType(job.getLabels))
         params.put("userId", job.getExecuteUser)
         val msg = s"Task execution time exceeds 5m time, perform task diagnosis"
         params.put("triggerReason", msg)
-        params.put("sparkConfig", "")
+        params.put("sparkConfig", new util.HashMap[String, AnyRef]())
         params.put("taskName", "")
         params.put("linkisTaskUrl", "")
         val request = DoctorRequest(
@@ -532,14 +530,8 @@ object EntranceUtils extends Logging {
           DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
         } else if (request.apiUrl.contains("realtime")) {
           // 实时诊断API
-          val success = dataMap.get("success").toString.toBoolean
-          val result = if (dataMap.containsKey("result")) dataMap.get("result").toString else ""
-          val reason = if (dataMap.containsKey("reason")) dataMap.get("reason").toString else ""
-          logInfo(
-            s"${request.successMessage}: $success, Result: $result, Reason: $reason, This decision took $duration seconds",
-            logAppender
-          )
-          DoctorResponse(success = success, result = result, reason = reason, duration = duration)
+          val resultJson = BDPJettyServerHelper.gson.toJson(responseMapJson)
+          DoctorResponse(success = true, result = resultJson, reason = null, duration = duration)
         } else {
           // 默认处理
           val result = dataMap.toString

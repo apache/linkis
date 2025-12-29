@@ -19,6 +19,8 @@ package org.apache.linkis.jobhistory.dao;
 
 import org.apache.linkis.jobhistory.entity.JobDiagnosis;
 
+import org.apache.ibatis.annotations.Param;
+
 public interface JobDiagnosisMapper {
   void insert(JobDiagnosis jobDiagnosis);
 
@@ -26,5 +28,6 @@ public interface JobDiagnosisMapper {
 
   void update(JobDiagnosis jobDiagnosis);
 
-  JobDiagnosis selectByJobIdAndSource(Long jobHistoryId, String diagnosisSource);
+  JobDiagnosis selectByJobIdAndSource(
+      @Param("id") Long jobHistoryId, @Param("diagnosisSource") String diagnosisSource);
 }

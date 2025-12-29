@@ -43,7 +43,7 @@
     <select id="selectByJobIdAndSource" resultType="org.apache.linkis.jobhistory.entity.JobDiagnosis">
         SELECT id, job_history_id, diagnosis_content, created_time, updated_time, only_read, diagnosis_source
         FROM linkis_ps_job_history_diagnosis
-        WHERE job_history_id = #{0}
+        WHERE job_history_id = #{id}
         <if test="diagnosisSource != null">
             AND diagnosis_source = #{diagnosisSource}
         </if>

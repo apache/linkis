@@ -295,8 +295,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     // 从header获取webLogin标识，默认为false
     val headers = gatewayContext.getRequest.getHeaders
     val webLoginHeaders = headers.getOrDefault("webLogin", Array("false"))
-    val webLogin = webLoginHeaders.head.toBoolean
-    
+    val webLogin = java.lang.Boolean.parseBoolean(webLoginHeaders.head)
     // 如果是web登录，检查是否为系统用户（包括hadoop用户）
     if (GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && webLogin) {
       // 检查是否为系统用户（包括hadoop用户）

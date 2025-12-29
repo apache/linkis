@@ -376,7 +376,7 @@ object EntranceConfiguration {
   val AI_SQL_DYNAMIC_ENGINE_SWITCH =
     CommonVars("linkis.aisql.dynamic.engine.type.switch", false).getValue
 
-  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 30000).getValue
+  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 300000).getValue
 
   val DOCTOR_HTTP_MAX_CONNECT = CommonVars("linkis.aisql.doctor.http.max.connect", 20).getValue
 
@@ -411,8 +411,8 @@ object EntranceConfiguration {
 
   var SPARK3_PYTHON_VERSION = CommonVars.apply("spark.python.version", "python3");
 
-  var SPARK_DYNAMIC_CONF_USER_ENABLED =
-    CommonVars.apply("spark.dynamic.conf.user.enabled", false).getValue
+  var SPARK_DYNAMIC_ALLOCATION_ENABLED =
+    CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
 
   var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
     CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
@@ -441,6 +441,9 @@ object EntranceConfiguration {
   val TASK_DIAGNOSIS_ENGINE_TYPE =
     CommonVars[String]("linkis.task.diagnosis.engine.type", "spark").getValue
 
-  val TASK_DIAGNOSIS_TIMEOUT = CommonVars[Long]("linkis.task.diagnosis.timeout", 300000L).getValue
+  val TASK_DIAGNOSIS_TIMEOUT = CommonVars[String]("linkis.task.diagnosis.timeout", "5m").getValue
+
+  val TASK_DIAGNOSIS_TIMEOUT_SCAN =
+    CommonVars("linkis.task.diagnosis.timeout.scan", "1m").getValue
 
 }

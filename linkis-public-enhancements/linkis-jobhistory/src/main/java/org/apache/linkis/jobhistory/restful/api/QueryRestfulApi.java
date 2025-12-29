@@ -837,14 +837,10 @@ public class QueryRestfulApi {
       String jobStatus = jobHistory.getStatus();
       JobDiagnosis jobDiagnosis =
           jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID), diagnosisSource);
-      if (StringUtils.isNotBlank(diagnosisSource)) {
-        if (StringUtils.isNotBlank(jobDiagnosis.getDiagnosisContent())) {
-          return Message.ok().data("diagnosisMsg", jobDiagnosis.getDiagnosisContent());
-        } else {
+      if (null == jobDiagnosis) {
+        if (StringUtils.isNotBlank(diagnosisSource)) {
           return Message.ok().data("diagnosisMsg", diagnosisMsg);
         }
-      }
-      if (null == jobDiagnosis) {
         diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
         jobDiagnosis = new JobDiagnosis();
         jobDiagnosis.setJobHistoryId(Long.valueOf(taskID));

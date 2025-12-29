@@ -84,26 +84,26 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     .build()
 
   @Receiver
-  def JobDiagnosisReqInsert(jobDiagnosisRequest: JobDiagnosisRequest): JobRespProtocol = {
+  def JobDiagnosisReqInsert(jobDiagnosisRequest: JobDiagnosisReqInsert): JobRespProtocol = {
     logger.info(s"insert job diagnosis: ${jobDiagnosisRequest.toString}")
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       // 先查询是否已存在该任务的诊断记录
-      var jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(
-        jobDiagnosisRequest.getJobHistoryId,
-        jobDiagnosisRequest.getDiagnosisSource
-      )
+      val jobid = jobDiagnosisRequest.jobReq.getJobHistoryId
+      val content = jobDiagnosisRequest.jobReq.getDiagnosisContent
+      val diagnosisSource = jobDiagnosisRequest.jobReq.getDiagnosisSource
+      var jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(jobid, diagnosisSource)
 
       if (jobDiagnosis == null) {
         // 创建新的诊断记录
         jobDiagnosis = new JobDiagnosis
-        jobDiagnosis.setJobHistoryId(jobDiagnosisRequest.getJobHistoryId)
+        jobDiagnosis.setJobHistoryId(jobid)
         jobDiagnosis.setCreatedTime(new Date)
       }
-
       // 更新诊断内容和来源
-      jobDiagnosis.setDiagnosisContent(jobDiagnosisRequest.getDiagnosisContent)
-      jobDiagnosis.setDiagnosisSource(jobDiagnosisRequest.getDiagnosisSource)
+      jobDiagnosis.setDiagnosisContent(content)
+      jobDiagnosis.setDiagnosisSource(diagnosisSource)
+      jobDiagnosis.setOnlyRead("1")
       jobDiagnosis.setUpdatedDate(new Date)
 
       // 保存诊断记录

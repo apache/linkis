@@ -42,6 +42,15 @@ object GatewayConfiguration {
   val TOKEN_AUTHENTICATION_SCAN_INTERVAL =
     CommonVars("wds.linkis.gateway.conf.token.auth.scan.interval", 1000 * 60 * 10)
 
+  val ENABLE_OAUTH_AUTHENTICATION = CommonVars("wds.linkis.gateway.conf.enable.oauth.auth", false)
+  val OAUTH_AUTHENTICATION_URL = CommonVars("wds.linkis.gateway.auth.oauth.authentication.url", "")
+  val OAUTH_EXCHANGE_URL = CommonVars("wds.linkis.gateway.auth.oauth.exchange.url", "")
+  val OAUTH_VALIDATE_URL = CommonVars("wds.linkis.gateway.auth.oauth.validate.url", "")
+  val OAUTH_VALIDATE_FIELD = CommonVars("wds.linkis.gateway.auth.oauth.validate.field", "")
+  val OAUTH_CLIENT_ID = CommonVars("wds.linkis.gateway.auth.oauth.client.id", "")
+  val OAUTH_CLIENT_SECRET = CommonVars("wds.linkis.gateway.auth.oauth.client.secret", "")
+  val OAUTH_SCOPE = CommonVars("wds.linkis.gateway.auth.oauth.scope", "")
+
   val PASS_AUTH_REQUEST_URI =
     CommonVars("wds.linkis.gateway.conf.url.pass.auth", "/dws/").getValue.split(",")
 

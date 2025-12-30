@@ -57,7 +57,7 @@ public class ConnectionManager {
   private final Map<String, DataSource> dataSourceFactories;
   private final JDBCDataSourceConfigurations jdbcDataSourceConfigurations;
 
-  private static volatile ConnectionManager connectionManager;
+  private static volatile ConnectionManager connectionManager; // NOSONAR
   private ScheduledExecutorService scheduledExecutorService;
   private Integer kinitFailCount = 0;
 
@@ -67,9 +67,9 @@ public class ConnectionManager {
   }
 
   public static ConnectionManager getInstance() {
-    if (connectionManager == null) {
-      synchronized (ConnectionManager.class) {
-        if (connectionManager == null) {
+    if (connectionManager == null) { // NOSONAR
+      synchronized (ConnectionManager.class) { // NOSONAR
+        if (connectionManager == null) { // NOSONAR
           connectionManager = new ConnectionManager();
         }
       }
@@ -245,6 +245,9 @@ public class ConnectionManager {
           dataSourceFactories.put(dataSourceIdentifier, dataSource);
         }
       }
+    }
+    if (url.contains("oracle")) {
+      ((DruidDataSource) dataSource).setValidationQuery("SELECT 1 FROM DUAL");
     }
     return dataSource.getConnection();
   }

@@ -15,18 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils
+package org.apache.linkis.engineplugin.presto.builder;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
-class testPrestoSQLHook {
+public class PrestoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
-  @Test
-  def testPreExecuteHook {
-    val prestoSQLHook = PrestoSQLHook
-    val code = "`1104`"
-    val codes = prestoSQLHook.preExecuteHook(code)
-    Assertions.assertEquals(codes, "\"1104\"")
+  @Override
+  public String getEngineStartUser(UserCreatorLabel label) {
+    return StorageConfiguration.HDFS_ROOT_USER().getValue();
   }
-
 }

@@ -15,22 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils
+package org.apache.linkis.engineplugin.presto.utils;
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.StringUtils;
 
-object PrestoSQLHook {
-
-  def preExecuteHook(code: String): String = {
-    replaceBackQuoted(code)
+public class PrestoSQLHook {
+  public static String preExecuteHook(String code) {
+    return replaceBackQuoted(code);
   }
 
-  private def replaceBackQuoted(code: String): String = {
+  private static String replaceBackQuoted(String code) {
     if (StringUtils.isNotBlank(code)) {
-      code.replaceAll("`", "\"")
+      return code.replaceAll("`", "\"");
     } else {
-      code
+      return code;
     }
   }
-
 }

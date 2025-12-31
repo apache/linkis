@@ -15,16 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto
+package org.apache.linkis.engineplugin.presto.exception;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.linkis.common.exception.ErrorException;
 
-class TestPrestoEngineConnPlugin {
+public class PrestoStateInvalidException extends ErrorException {
 
-  @Test
-  def testGetEngineResourceFactory: Unit = {
-    val prestoEngineConnPlugin = new PrestoEngineConnPlugin
-    Assertions.assertNotNull(prestoEngineConnPlugin.getEngineConnFactory)
+  public PrestoStateInvalidException(int errorCode, String message) {
+    super(errorCode, message);
   }
-
 }

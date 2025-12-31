@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.exception
+package org.apache.linkis.engineplugin.presto.exception;
 
-import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException;
 
-case class PrestoStateInvalidException(errorCode: Int, message: String)
-    extends ErrorException(errorCode, message: String)
+public class PrestoClientException extends ErrorException {
 
-case class PrestoClientException(errorCode: Int, message: String)
-    extends ErrorException(errorCode, message: String)
+  public PrestoClientException(int errorCode, String message) {
+    super(errorCode, message);
+  }
+}

@@ -44,9 +44,9 @@ class TriggerSavepointOperator extends Operator with Logging {
   override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
     val rsMap = new mutable.HashMap[String, String]
 
-    val savepointPath = getAsThrow[String](FlinkECConstant.SAVAPOINT_PATH_KEY, params)
-    val appIdStr = getAsThrow[String](ECConstants.YARN_APPID_NAME_KEY, params)
-    val mode = getAsThrow[String](FlinkECConstant.SAVEPOINT_MODE_KEY, params)
+    val savepointPath = getAsThrow[String](FlinkECConstant.SAVAPOINT_PATH_KEY)
+    val appIdStr = getAsThrow[String](ECConstants.YARN_APPID_NAME_KEY)
+    val mode = getAsThrow[String](FlinkECConstant.SAVEPOINT_MODE_KEY)
 
     val appId = YarnUtil.retrieveApplicationId(appIdStr)
     val yarnClient = YarnUtil.getYarnClient()

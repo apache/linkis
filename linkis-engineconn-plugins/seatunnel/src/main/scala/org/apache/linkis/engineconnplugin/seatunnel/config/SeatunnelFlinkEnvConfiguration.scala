@@ -38,6 +38,7 @@ object SeatunnelFlinkEnvConfiguration {
 
   val LINKIS_FLINK_CHECK: CommonVars[String] = CommonVars[String]("linkis.flink.check", "check")
 
+  val GET_LINKIS_FLINK_RUNMODE = "--" + LINKIS_FLINK_RUNMODE.getValue
   val GET_LINKIS_FLINK_DEPLOY_MODE = "--" + LINKIS_FLINK_DEPLOY_MODE.getValue
   val GET_LINKIS_FLINK_CONFIG = "--" + LINKIS_FLINK_CONFIG.getValue
   val GET_LINKIS_FLINK_VARIABLE = "--" + LINKIS_FLINK_VARIABLE.getValue

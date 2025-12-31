@@ -244,6 +244,7 @@
     <json4s.version>3.7.0-M11</json4s.version>
     <scala.version>2.11.12</scala.version>
     <scala.binary.version>2.11</scala.binary.version>
+    <sparkmeasure.version>0.17</sparkmeasure.version>
     <ant.version>1.10.12</ant.version>
 
     <azure.blob.bom.version>1.2.30</azure.blob.bom.version>

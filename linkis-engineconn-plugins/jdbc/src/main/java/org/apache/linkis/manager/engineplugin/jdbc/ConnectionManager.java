@@ -57,7 +57,7 @@ public class ConnectionManager {
   private final Map<String, DataSource> dataSourceFactories;
   private final JDBCDataSourceConfigurations jdbcDataSourceConfigurations;
 
-  private static volatile ConnectionManager connectionManager;
+  private static volatile ConnectionManager connectionManager; // NOSONAR
   private ScheduledExecutorService scheduledExecutorService;
   private Integer kinitFailCount = 0;
 
@@ -67,9 +67,9 @@ public class ConnectionManager {
   }
 
   public static ConnectionManager getInstance() {
-    if (connectionManager == null) {
-      synchronized (ConnectionManager.class) {
-        if (connectionManager == null) {
+    if (connectionManager == null) { // NOSONAR
+      synchronized (ConnectionManager.class) { // NOSONAR
+        if (connectionManager == null) { // NOSONAR
           connectionManager = new ConnectionManager();
         }
       }
@@ -185,6 +185,9 @@ public class ConnectionManager {
     boolean removeAbandoned =
         JDBCPropertiesParser.getBool(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_ENABLED, true);
+    boolean logAbandoned =
+        JDBCPropertiesParser.getBool(
+            properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_LOG_ENABLED, true);
     int removeAbandonedTimeout =
         JDBCPropertiesParser.getInt(
             properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
@@ -200,6 +203,9 @@ public class ConnectionManager {
     DruidDataSource datasource = new DruidDataSource();
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
+    if (dbUrl.toLowerCase().contains("oracle")) {
+      datasource.setValidationQuery("SELECT 1 FROM DUAL");
+    }
     datasource.setUsername(username);
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
       // decrypt
@@ -221,6 +227,7 @@ public class ConnectionManager {
     datasource.setPoolPreparedStatements(poolPreparedStatements);
     datasource.setRemoveAbandoned(removeAbandoned);
     datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+    datasource.setLogAbandoned(logAbandoned);
     if (queryTimeout > 0) {
       datasource.setQueryTimeout(queryTimeout);
     }
@@ -238,6 +245,9 @@ public class ConnectionManager {
           dataSourceFactories.put(dataSourceIdentifier, dataSource);
         }
       }
+    }
+    if (url.contains("oracle")) {
+      ((DruidDataSource) dataSource).setValidationQuery("SELECT 1 FROM DUAL");
     }
     return dataSource.getConnection();
   }

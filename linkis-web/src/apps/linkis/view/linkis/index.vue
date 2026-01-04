@@ -30,7 +30,7 @@
             <CellGroup v-for="(item, index2) in sideNavList.children" :key="index2"
               @on-click="handleCellClick">
               <Cell
-                v-if="(!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true) && (item.key !== '1-13' || isPythonModuleEnabled)"
+                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true"
                 :key="index2" :class="{ crrentItem: crrentItem === item.key }" :title="item.name"
                 :name="item.key">
                 <div>
@@ -116,7 +116,6 @@
 <script>
 import storage from '@/common/helper/storage'
 import api from '@/common/service/api'
-import { isPythonModuleEnabled } from '../../router'
 export default {
   name: 'Layout',
   mounted() {
@@ -129,12 +128,9 @@ export default {
       }
     })
     if(!localStorage.getItem('hasRead')) {
-      // Jump to pythonModule if enabled, otherwise jump to globalHistory
-      if (isPythonModuleEnabled) {
-        this.clickToRoute('1-13-1')
-      } else {
-        this.clickToRoute('1-1')
-      }
+      this.clickToRoute('1-13-1')
+      // this.crrentItem = '1-13-1'
+      // this.$router.push({path: '/console/pythonModule'})
     }
   },
   unmounted() {
@@ -151,7 +147,6 @@ export default {
     return {
       crrentItem: '1-1',
       isLogAdmin: false,
-      isPythonModuleEnabled: isPythonModuleEnabled,
       sideNavList: {
         key: '1',
         name: this.$t('message.linkis.sideNavList.function.name'),
@@ -364,7 +359,7 @@ export default {
           },
           {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
           {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
-          
+
         ],
       },
       opsTool: {

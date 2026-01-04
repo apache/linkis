@@ -260,8 +260,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
   private Map<String, Object> readFromProperties(String propertiesFile) {
     Map<String, Object> map = new HashMap<>();
     Properties properties = new Properties();
-    try {
-      BufferedReader reader = new BufferedReader(new FileReader(propertiesFile));
+    try (BufferedReader reader = new BufferedReader(new FileReader(propertiesFile))) {
       properties.load(reader);
       map = new HashMap<String, Object>((Map) properties);
     } catch (IOException e) {

@@ -119,15 +119,12 @@ abstract class JavaProcessEngineConnLaunchBuilder
     // first, add engineconn conf dirs.
     addPathToClassPath(environment, buildPath(Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME)))
     // then, add LINKIS_CONF_DIR conf dirs.
-    addPathToClassPath(environment, buildPath(Seq(variable(LINKIS_HOME), "conf")))
+    addPathToClassPath(environment, buildPath(Seq(EnvConfiguration.LINKIS_CONF_DIR.getValue)))
     // then, add engineconn libs.
     addPathToClassPath(environment, buildPath(Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*")))
     // then, add public modules.
     if (!enablePublicModule) {
-      addPathToClassPath(
-        environment,
-        buildPath(Seq(variable(LINKIS_HOME), LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
-      )
+      addPathToClassPath(environment, buildPath(Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*")))
     }
     // finally, add the suitable properties key to classpath
     val taskClassPathFiles = EnvConfiguration.ENGINE_CONN_CLASSPATH_FILES.getValue(

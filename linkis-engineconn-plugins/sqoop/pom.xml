@@ -72,8 +72,12 @@
           <artifactId>servlet-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>com.google.inject</groupId>
-          <artifactId>guice</artifactId>
+          <groupId>org.apache.avro</groupId>
+          <artifactId>avro</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-core-asl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

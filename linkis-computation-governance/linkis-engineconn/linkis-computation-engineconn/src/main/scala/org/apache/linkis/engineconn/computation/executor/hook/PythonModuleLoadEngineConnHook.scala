@@ -54,7 +54,9 @@ abstract class PythonModuleLoad extends Logging {
   /** Abstract properties to be defined by the subclass */
   protected val engineType: String
   protected val runType: RunType
+
   protected def getEngineType(): String = engineType
+
   protected def constructCode(pythonModuleInfo: PythonModuleInfoVO): String
 
   private def queryPythonModuleRpc(
@@ -66,6 +68,7 @@ abstract class PythonModuleLoad extends Logging {
       .ask(RequestPythonModuleProtocol(userName, engineType))
       .asInstanceOf[ResponsePythonModuleProtocol]
       .getModulesInfo()
+
     // 使用Collections.sort()和Comparator进行排序
     if (infoList != null && !infoList.isEmpty) {
       Collections.sort(
@@ -83,12 +86,14 @@ abstract class PythonModuleLoad extends Logging {
     val engineCreationContext =
       EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
     val user = engineCreationContext.getUser
+
     var infoList: util.List[PythonModuleInfoVO] =
       Utils.tryAndWarn(queryPythonModuleRpc(user, getEngineType()))
     if (infoList == null) {
       logger.info("rpc get info is empty.")
       infoList = new util.ArrayList[PythonModuleInfoVO]()
     }
+
     // 替换Viewfs
     if (IS_VIEW_FS_ENV.getValue) {
       infoList.asScala.foreach { info =>
@@ -101,6 +106,7 @@ abstract class PythonModuleLoad extends Logging {
         }
       }
     } else {
+
       infoList.asScala.foreach { info =>
         val path = info.getPath
         logger.info(s"hdfs python path: ${path}")
@@ -109,8 +115,10 @@ abstract class PythonModuleLoad extends Logging {
         }
       }
     }
+
     logger.info(s"${user} load python modules: ")
     infoList.asScala.foreach(l => logger.info(s"module name:${l.getName}, path:${l.getPath}\n"))
+
     // 创建加载code
     val codes: mutable.Buffer[String] = infoList.asScala
       .filter { info => StringUtils.isNotEmpty(info.getPath) }
@@ -142,6 +150,7 @@ abstract class PythonModuleLoad extends Logging {
    *   An object capable of executing code in the current engine context.
    */
   protected def loadPythonModules(labels: Array[Label[_]]): Unit = {
+
     val codes = getLoadPythonModuleCode
     logger.info(s"codes length: ${codes.length}")
     if (null != codes && codes.nonEmpty) {
@@ -152,6 +161,7 @@ abstract class PythonModuleLoad extends Logging {
       } else {
         logger.error(s"Failed to load python, executor is null")
       }
+
       executor match {
         case computationExecutor: ComputationExecutor =>
           executeFunctionCode(codes, computationExecutor)
@@ -179,6 +189,7 @@ abstract class PythonModuleLoadEngineConnHook
       val labels = Array[Label[_]](codeLanguageLabel)
       loadPythonModules(labels)
     }(s"Failed to load Python Modules: ${engineType}")
+
   }
 
   override def afterEngineServerStartFailed(
@@ -203,8 +214,10 @@ abstract class PythonModuleLoadEngineConnHook
 
 // 加载PySpark的Python模块
 class PythonSparkEngineHook extends PythonModuleLoadEngineConnHook {
+
   // 设置engineType属性为"spark"，表示此挂钩适用于Spark数据处理引擎
   override val engineType: String = "spark"
+
   // 设置runType属性为RunType.PYSPARK，表示此挂钩将执行PySpark类型的代码
   override protected val runType: RunType = RunType.PYSPARK
 
@@ -222,8 +235,10 @@ class PythonSparkEngineHook extends PythonModuleLoadEngineConnHook {
 
 // 加载Python的Python模块
 class PythonEngineHook extends PythonModuleLoadEngineConnHook {
+
   // 设置engineType属性为"python"，表示此挂钩适用于python引擎
   override val engineType: String = "python"
+
   // 设置runType属性为RunType.PYTHON，表示此挂钩将执行python类型的代码
   override protected val runType: RunType = RunType.PYTHON
 
@@ -234,6 +249,7 @@ class PythonEngineHook extends PythonModuleLoadEngineConnHook {
     val engineCreationContext: EngineCreationContext =
       EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
     val user: String = engineCreationContext.getUser
+
     var loadCode: String = null
     logger.info(s"gen code in constructCode")
     Utils.tryAndWarn({

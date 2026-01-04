@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.codecentric.boot.admin.server.utils.jackson.AdminServerModule;
 
 @Configuration
 class ApplicationConfiguration implements WebMvcConfigurer {
@@ -35,6 +36,7 @@ class ApplicationConfiguration implements WebMvcConfigurer {
   @Primary
   public ObjectMapper jsonMapper() {
     ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new AdminServerModule(new String[] {".*password$"}));
     mapper.registerModule(new JavaTimeModule());
     return mapper;
   }

@@ -34,6 +34,7 @@
     <module>linkis-ps-common-lock</module>
     <module>linkis-bml-server</module>
     <module>linkis-cs-server</module>
+    <module>linkis-datasource/linkis-metadata</module>
     <module>linkis-datasource</module>
     <module>linkis-udf-service</module>
     <module>linkis-jobhistory</module>
@@ -50,12 +51,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-datasource-manager-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasource-manager-server</artifactId>
+      <artifactId>linkis-metadata-query-server</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

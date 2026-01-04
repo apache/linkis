@@ -121,11 +121,41 @@ class SparkSqlMeasure(
   private def collectMetrics(
       metrics: Either[StageMetrics, TaskMetrics]
   ): java.util.Map[String, Long] = {
+    import scala.collection.JavaConverters._
+
+    def toJavaMap(obj: Any): java.util.Map[String, Long] = {
+      try {
+        // Try newer API (0.24+) with JavaMap method
+        val javaMapMethod = obj.getClass.getMethod("aggregateStageMetricsJavaMap")
+        javaMapMethod.invoke(obj).asInstanceOf[java.util.Map[String, Long]]
+      } catch {
+        case _: NoSuchMethodException =>
+          try {
+            // Try older API (0.17) that returns Scala Map
+            val aggregateMethod = obj.getClass.getMethod(
+              if (obj.isInstanceOf[StageMetrics]) "aggregateStageMetrics"
+              else "aggregateTaskMetrics"
+            )
+            val result = aggregateMethod.invoke(obj)
+            // Convert Scala Map to Java Map
+            result
+              .asInstanceOf[Map[String, Any]]
+              .map {
+                case (k, v: Number) => k -> v.longValue()
+                case (k, v) => k -> v.toString.toLong
+              }
+              .asJava
+          } catch {
+            case e: Exception =>
+              logger.warn(s"Failed to collect metrics: ${e.getMessage}")
+              new util.HashMap[String, Long]()
+          }
+      }
+    }
+
     metrics match {
-      case Left(stageMetrics) =>
-        stageMetrics.aggregateStageMetricsJavaMap()
-      case Right(taskMetrics) =>
-        taskMetrics.aggregateTaskMetricsJavaMap()
+      case Left(stageMetrics) => toJavaMap(stageMetrics)
+      case Right(taskMetrics) => toJavaMap(taskMetrics)
       case _ => new util.HashMap[String, Long]()
     }
   }

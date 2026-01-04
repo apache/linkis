@@ -138,6 +138,7 @@ public class KerberosUtils {
       } else {
         LOG.info("CurrentUser is not null");
       }
+      assert curUsr != null;
       if (loginUsr.getClass() != curUsr.getClass()) {
         LOG.info("getClass() is different");
       } else {

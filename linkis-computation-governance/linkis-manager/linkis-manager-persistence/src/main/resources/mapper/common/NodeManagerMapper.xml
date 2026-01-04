@@ -66,12 +66,6 @@
             <if test="persistenceNode.identifier != null">
                 identifier = #{persistenceNode.identifier},
             </if>
-            <if test="persistenceNode.mappingPorts != null">
-                mapping_ports = #{persistenceNode.mappingPorts},
-            </if>
-            <if test="persistenceNode.mappingHost != null">
-                mapping_host = #{persistenceNode.mappingHost},
-            </if>
             <if test="persistenceNode.params != null">
                 params = #{persistenceNode.params},
             </if>

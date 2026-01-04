@@ -123,6 +123,7 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
                       PFIFO_SCHEDULER_STRATEGY
                         .equals(fifoQueueStrategy) && isSupportPriority(groupName)
                   ) {
+                    logger.info(s"use priority queue: ${groupName}")
                     new PriorityLoopArrayQueue(group)
                   } else new LoopArrayQueue(group)
                 newConsumer.setConsumeQueue(consumerQueue)

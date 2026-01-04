@@ -46,10 +46,10 @@ public class ContextHistoryTest {
   public void testcreateContextHistory() throws CSErrorException, JsonProcessingException {
     AContextHistory aContextHistory = new AContextHistory();
     PersistenceContextID persistenceContextID = new PersistenceContextID();
-    persistenceContextID.setContextId(String.valueOf(new Random().nextInt(100000)));
+    persistenceContextID.setContextId(String.valueOf(new Random().nextInt(100000))); // NOSONAR
     aContextHistory.setHistoryJson("json");
     aContextHistory.setContextType(ContextType.DATA);
-    aContextHistory.setId(new Random().nextInt(100000));
+    aContextHistory.setId(new Random().nextInt(100000)); // NOSONAR
     aContextHistory.setKeyword("keywords");
     aContextHistory.setSource("source");
     contextHistoryPersistence.createHistory(persistenceContextID, aContextHistory);

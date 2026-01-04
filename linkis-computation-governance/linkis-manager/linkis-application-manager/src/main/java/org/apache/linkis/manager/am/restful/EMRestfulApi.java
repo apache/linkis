@@ -435,11 +435,7 @@ public class EMRestfulApi {
                   jsonNode.get("parameters").toString(),
                   new TypeReference<Map<String, Object>>() {});
       String logType = (String) parameters.get("logType");
-      if (!logType.equals("stdout")
-          && !logType.equals("stderr")
-          && !logType.equals("gc")
-          && !logType.equals("udfLog")
-          && !logType.equals("yarnApp")) {
+      if (!logType.equals("stdout") && !logType.equals("stderr")) {
         throw new AMErrorException(
             AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }
@@ -587,7 +583,7 @@ public class EMRestfulApi {
     @ApiImplicitParam(
         name = "serviceInstance",
         dataType = "String",
-        example = "gz.bdz.bdplxxxxx.apache:9102"),
+        example = "gz.bdz.bdplxxxxx.webank:9102"),
     @ApiImplicitParam(name = "username", dataType = "String", example = "hadoop")
   })
   @RequestMapping(path = "/reset-resource", method = RequestMethod.GET)

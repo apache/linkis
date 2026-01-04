@@ -464,8 +464,8 @@
 
     <dependency>
       <groupId>ch.cern.sparkmeasure</groupId>
-      <artifactId>spark-measure_2.12</artifactId>
-      <version>0.24</version>
+      <artifactId>spark-measure_${scala.binary.version}</artifactId>
+      <version>${sparkmeasure.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.xerial.snappy</groupId>
@@ -550,6 +550,7 @@
         <spark.version>3.4.4</spark.version>
         <scala.version>2.12.17</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
+        <sparkmeasure.version>0.24</sparkmeasure.version>
         <jackson-bom.version>2.14.2</jackson-bom.version>
       </properties>
     </profile>

@@ -28,15 +28,23 @@ public class LinkisClientApplicationTest {
 
   String[] cmdStr;
   String[] cmdStr2;
+  String[] cmdStr3;
 
   @BeforeEach
   public void before() {
     System.setProperty("conf.root", "src/test/resources/conf/");
     System.setProperty("user.name", "hadoop");
+    cmdStr3 = new String[] {"--version"};
     cmdStr2 =
         new String[] {
           "--gatewayUrl",
           "http://127.0.0.1:9001",
+          "--authStg",
+          "token",
+          "--authKey",
+          "Validation-Code",
+          "--authVal",
+          "BML-AUTH",
           "--status",
           //                    "--log",
           //          "--kill",

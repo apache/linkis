@@ -32,7 +32,10 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.PYTHON_VERSION_KEY
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf.{
+  PYTHON_VERSION_KEY,
+  SPARK_PYTHON_VERSION_KEY
+}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.label.entity.Label

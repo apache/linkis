@@ -29,7 +29,11 @@ import org.apache.linkis.datasource.client.request.{
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
-import org.apache.linkis.entrance.exception.EntranceRPCException
+import org.apache.linkis.entrance.exception.{
+  EntranceErrorCode,
+  EntranceErrorException,
+  EntranceRPCException
+}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
@@ -349,12 +353,18 @@ object EntranceUtils extends Logging {
     val params = new util.HashMap[String, AnyRef]()
     val metricsParams = job.getMetrics
     if (MapUtils.isEmpty(metricsParams)) {
-      return DoctorResponse(success = false, "Diagnose error, metricsParams is empty!")
+      throw new EntranceErrorException(
+        EntranceErrorCode.METRICS_PARAMS_EXCEPTION.getErrCode,
+        EntranceErrorCode.METRICS_PARAMS_EXCEPTION.getDesc
+      )
     }
     val yarnResource =
       MapUtils.getMap(metricsParams, "yarnResource", new util.HashMap[String, AnyRef]())
     if (MapUtils.isEmpty(yarnResource)) {
-      DoctorResponse(success = false, "Diagnose error, yarnResource is empty!")
+      throw new EntranceErrorException(
+        EntranceErrorCode.YARN_RESOURCE_YARN_PARAMS_EXCEPTION.getErrCode,
+        EntranceErrorCode.YARN_RESOURCE_YARN_PARAMS_EXCEPTION.getDesc
+      )
     } else {
       var response: DoctorResponse = null
       yarnResource.keySet().toArray.foreach { application =>

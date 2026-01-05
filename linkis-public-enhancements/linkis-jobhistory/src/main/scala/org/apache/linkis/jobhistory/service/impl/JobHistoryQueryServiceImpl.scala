@@ -172,8 +172,14 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
         val startUpMap: util.Map[String, AnyRef] =
           TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
-        val aiSqlEnable: AnyRef = startUpMap.getOrDefault("linkis.ai.sql.enable", "false")
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, aiSqlEnable.toString)) {
+        val taskRetrySwitch: AnyRef = startUpMap.getOrDefault("linkis.task.retry.switch", "false")
+        if (
+            oldStatus != null && !shouldUpdate(
+              oldStatus,
+              jobReq.getStatus,
+              taskRetrySwitch.toString
+            )
+        ) {
           throw new QueryException(
             120001,
             s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +

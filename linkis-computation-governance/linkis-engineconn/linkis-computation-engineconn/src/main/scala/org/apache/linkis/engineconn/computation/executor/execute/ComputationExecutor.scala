@@ -281,11 +281,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           response match {
             case e: ErrorExecuteResponse =>
               val props: util.Map[String, String] = engineCreationContext.getOptions
-              val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
+              val taskRetry: String =
+                props.getOrDefault("linkis.task.retry.switch", "false").toString
               val retryNum: Int =
                 Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
 
-              if (retryEnable && !props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+              if (retryEnable && !props.isEmpty && "true".equals(taskRetry) && retryNum > 0) {
                 logger.info(
                   s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
                   e.t

@@ -803,6 +803,9 @@ public class QueryRestfulApi {
     if (!QueryUtils.checkNumberValid(taskID)) {
       throw new LinkisCommonErrorException(21304, "Invalid taskID : " + taskID);
     }
+    if (StringUtils.isBlank(diagnosisSource)) {
+      diagnosisSource = "linkis";
+    }
     JobHistory jobHistory = null;
     boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
     boolean isDepartmentAdmin = Configuration.isDepartmentAdmin(username);
@@ -838,7 +841,7 @@ public class QueryRestfulApi {
       JobDiagnosis jobDiagnosis =
           jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID), diagnosisSource);
       if (null == jobDiagnosis) {
-        if (StringUtils.isNotBlank(diagnosisSource)) {
+        if (diagnosisSource.equals("doctoris")) {
           return Message.ok().data("diagnosisMsg", diagnosisMsg);
         }
         diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
@@ -847,6 +850,7 @@ public class QueryRestfulApi {
         jobDiagnosis.setDiagnosisContent(diagnosisMsg);
         jobDiagnosis.setCreatedTime(new Date());
         jobDiagnosis.setUpdatedDate(new Date());
+        jobDiagnosis.setDiagnosisSource("linkis");
         if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
           jobDiagnosis.setOnlyRead("1");
         }

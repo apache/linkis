@@ -32,7 +32,9 @@ public enum EntranceErrorCode {
   JOB_UPDATE_FAILED(20016, "job update failed"),
   VARIABLE_NULL_EXCEPTION(20017, "variable is null"),
   USER_NULL_EXCEPTION(20018, "User information not obtained"),
-  USER_IP_EXCEPTION(20019, "User IP address is not configured");
+  USER_IP_EXCEPTION(20019, "User IP address is not configured"),
+  METRICS_PARAMS_EXCEPTION(20020, "metricsParams is null"),
+  YARN_RESOURCE_YARN_PARAMS_EXCEPTION(20021, "yarnResource is null");
 
   private int errCode;
   private String desc;

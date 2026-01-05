@@ -301,6 +301,12 @@ object EntranceConfiguration {
       "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
     ).getValue
 
+  val SUPPORTED_RETRY_ERROR_DESC_REGEX =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.desc.regex",
+      "Query timeout.*,Query exceeded time limit.*,Memory of process exceed limit.*,Backend node not found,Connection reset by peer,StarRocks planner use long time,pending timeout"
+    ).getValue
+
   val SUPPORT_ADD_RETRY_CODE_KEYS =
     CommonVars(
       "linkis.entrance.supported.add.retry.code.keys",
@@ -433,7 +439,7 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.doctor.sensitive.sql.check.whitelist", "").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE =
-    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark").getValue
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark,jdbc").getValue
 
   // 任务诊断配置
   val TASK_DIAGNOSIS_ENABLE = CommonVars[Boolean]("linkis.task.diagnosis.enable", false).getValue

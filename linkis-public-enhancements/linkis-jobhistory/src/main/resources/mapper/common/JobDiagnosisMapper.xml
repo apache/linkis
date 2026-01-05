@@ -34,10 +34,9 @@
             <if test="diagnosisContent != null">diagnosis_content = #{diagnosisContent},</if>
             <if test="createdTime != null">created_time = #{createdTime},</if>
             <if test="updatedTime != null">updated_time = #{updatedTime},</if>
-            <if test="onlyRead != null">only_read = #{onlyRead},</if>
-            <if test="diagnosisSource != null">diagnosis_source = #{diagnosisSource}</if>
+            <if test="onlyRead != null">only_read = #{onlyRead}</if>
         </trim>
-        WHERE job_history_id = #{jobHistoryId}
+        WHERE job_history_id = #{jobHistoryId} and diagnosis_source = #{diagnosisSource}
     </update>
 
     <select id="selectByJobIdAndSource" resultType="org.apache.linkis.jobhistory.entity.JobDiagnosis">

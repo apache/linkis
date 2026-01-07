@@ -35,13 +35,19 @@ import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteEx
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
+import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineUtils
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
-import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
+import org.apache.linkis.governance.common.protocol.task.{
+  EngineConcurrentInfo,
+  RequestTask,
+  ResponseTaskError,
+  ResponseTaskStatusWithExecuteCodeIndex
+}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
@@ -263,7 +269,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         if (retryEnable && errorIndex > 0 && index < errorIndex) {
           engineExecutionContext.appendStdout(
             LogUtils.generateInfo(
-              s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+              s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
             )
           )
           executeFlag = false
@@ -284,16 +290,16 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
               val taskRetry: String =
                 props.getOrDefault("linkis.task.retry.switch", "false").toString
               val retryNum: Int =
-                Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
+                Integer.valueOf(props.getOrDefault("linkis.task.retry.num", "0").toString)
 
               if (retryEnable && !props.isEmpty && "true".equals(taskRetry) && retryNum > 0) {
                 logger.info(
-                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
+                  s"task execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
                   e.t
                 )
                 engineExecutionContext.appendStdout(
                   LogUtils.generateInfo(
-                    s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                    s"task execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
                   )
                 )
                 engineConnTask.getProperties.put("execute.error.code.index", index.toString)
@@ -362,6 +368,20 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       executeResponse match {
         case successExecuteResponse: SuccessExecuteResponse =>
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
+        case ErrorRetryExecuteResponse(message, index, throwable) =>
+          ComputationEngineUtils.sendToEntrance(
+            engineConnTask,
+            ResponseTaskError(engineConnTask.getTaskId, message)
+          )
+          logger.warn(s"The task begins executing retries,jobId:${engineConnTask.getTaskId},index:${index} ,message:${message}", throwable)
+          ComputationEngineUtils.sendToEntrance(
+            engineConnTask,
+            new ResponseTaskStatusWithExecuteCodeIndex(
+              engineConnTask.getTaskId,
+              ExecutionNodeStatus.Failed,
+              index
+            )
+          )
         case errorExecuteResponse: ErrorExecuteResponse =>
           listenerBusContext.getEngineConnSyncListenerBus.postToAll(
             TaskResponseErrorEvent(engineConnTask.getTaskId, errorExecuteResponse.message)

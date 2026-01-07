@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration.{
   AI_SQL_CREATORS,
   AI_SQL_KEY,
+  RETRY_NUM_KEY,
   TASK_RETRY_CODE_TYPE,
   TASK_RETRY_SWITCH
 }
@@ -62,14 +63,20 @@ class TaskRetryInterceptor extends EntranceInterceptor with Logging {
           )
           startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
         }
-      } else if (TASK_RETRY_CODE_TYPE.contains(codeType)) {
-        // 普通任务只需满足类型支持
-        logAppender.append(
-          LogUtils.generateWarn(s"The StarRocks task will initiate a failed retry \n")
-        )
-        startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
+      } else {
+        TASK_RETRY_CODE_TYPE
+          .split(",")
+          .foreach(codeTypeConf => {
+            if (codeTypeConf.equals(codeType)) {
+              // 普通任务只需满足类型支持
+              logAppender.append(
+                LogUtils.generateWarn(s"The StarRocks task will initiate a failed retry \n")
+              )
+              startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
+              startMap.put(RETRY_NUM_KEY.key, RETRY_NUM_KEY.getValue.asInstanceOf[AnyRef])
+            }
+          })
       }
-
       // 更新作业参数
       TaskUtils.addStartupMap(jobRequest.getParams, startMap)
     }

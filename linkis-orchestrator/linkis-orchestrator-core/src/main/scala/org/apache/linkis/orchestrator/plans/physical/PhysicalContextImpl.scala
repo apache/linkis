@@ -82,7 +82,8 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
           case job: AbstractJob =>
             val labels: util.List[Label[_]] = job.getLabels
             val codeType: String = LabelUtil.getCodeType(labels)
-            if ("aisql".equals(codeType)) {
+            // 支持 aisql 和 jdbc 类型的断点续跑
+            if ("aisql".equals(codeType) || "jdbc".equals(codeType)) {
               val params: Map[String, String] = this.rootTask.params
               var flag: Boolean = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               val startTime: Long = System.currentTimeMillis()

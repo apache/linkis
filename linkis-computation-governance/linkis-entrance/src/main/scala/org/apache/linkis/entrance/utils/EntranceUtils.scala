@@ -569,7 +569,9 @@ object EntranceUtils extends Logging {
    * 管理台任务日志info信息打印
    */
   private def logInfo(message: String, logAppender: java.lang.StringBuilder): Unit = {
-    logAppender.append(LogUtils.generateInfo(s"$message\n"))
+    if (null != logAppender) {
+      logAppender.append(LogUtils.generateInfo(s"$message\n"))
+    }
   }
 
 }

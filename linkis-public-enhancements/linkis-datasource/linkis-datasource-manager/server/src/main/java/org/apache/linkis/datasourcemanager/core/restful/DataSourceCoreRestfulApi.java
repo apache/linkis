@@ -1151,8 +1151,8 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
-          dataSource.setConnectParams(null);
-          dataSource.setParameter(null);
+          dataSource.setConnectParams(new HashMap<>());
+          dataSource.setParameter("");
           return Message.ok().data("info", dataSource);
         },
         "Fail to get published data source[获取已发布数据源信息失败]");

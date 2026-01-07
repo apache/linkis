@@ -34,6 +34,7 @@ import org.apache.linkis.engineplugin.spark.exception.{
   SparkSessionNullException
 }
 import org.apache.linkis.engineplugin.spark.extension.SparkUDFCheckRule
+import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
   ExecutorFactory,
@@ -41,6 +42,7 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -198,6 +200,22 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     }
 
     val sc = sparkSession.sparkContext
+
+    // 在所有配置加载完成后检查Spark版本
+    // 如果不是3.4.4版本则关闭动态分配功能（这是最晚的配置设置点）
+
+    val sparkVersion = Utils.tryQuietly(EngineUtils.sparkSubmitVersion())
+    if (!LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue.equals(sparkVersion)) {
+      logger.info(
+        s"Spark version is $sparkVersion, not 3.4.4, disabling spark.dynamicAllocation.enabled"
+      )
+      sc.getConf.set("spark.dynamicAllocation.enabled", "false")
+    } else {
+      logger.info(
+        s"Spark version is $sparkVersion, keeping spark.dynamicAllocation.enabled as configured"
+      )
+    }
+
     val sqlContext =
       createSQLContext(sc, options.asInstanceOf[util.HashMap[String, String]], sparkSession)
     if (SparkConfiguration.MAPRED_OUTPUT_COMPRESS.getValue(options)) {
@@ -255,6 +273,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (SparkConfiguration.LINKIS_SPARK_ETL_SUPPORT_HUDI.getValue) {
       conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
     }
+
     val builder = SparkSession.builder.config(conf)
     if (ComputationExecutorConf.SPECIAL_UDF_CHECK_ENABLED.getValue) {
       logger.info("inject sql check rule into spark extension.")

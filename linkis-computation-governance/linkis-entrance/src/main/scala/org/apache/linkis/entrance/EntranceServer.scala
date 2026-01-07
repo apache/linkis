@@ -366,6 +366,10 @@ abstract class EntranceServer extends Logging {
                         // 构造诊断更新请求
                         JobHistoryHelper.addDiagnosis(job.getJobRequest.getId, response.result)
                         logger.info(s"Successfully updated diagnosis for job ${job.getId()}")
+                      } else {
+                        // 更新诊断失败信息
+                        JobHistoryHelper
+                          .addDiagnosis(job.getJobRequest.getId, s"Doctoris 诊断服务异常，请联系管理人员排查！")
                       }
                       job.getLogListener.foreach(
                         _.onLogUpdate(

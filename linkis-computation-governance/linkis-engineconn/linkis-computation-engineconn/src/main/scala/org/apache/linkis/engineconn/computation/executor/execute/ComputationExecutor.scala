@@ -267,12 +267,23 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
         // 重试的时候如果执行过则跳过执行
         if (retryEnable && errorIndex > 0 && index < errorIndex) {
-          engineExecutionContext.appendStdout(
-            LogUtils.generateInfo(
-              s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+          val code = codes(index).trim.toUpperCase()
+          val shouldSkip = !isContextStatement(code)
+
+          if (shouldSkip) {
+            engineExecutionContext.appendStdout(
+              LogUtils.generateInfo(
+                s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+              )
             )
-          )
-          executeFlag = false
+            executeFlag = false
+          } else {
+            engineExecutionContext.appendStdout(
+              LogUtils.generateInfo(
+                s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} is a context statement, will execute."
+              )
+            )
+          }
         }
         if (executeFlag) {
           val code = codes(index)
@@ -319,7 +330,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
                   e.getOutput.substring(0, outputPrintLimit)
                 } else e.getOutput
               engineExecutionContext.appendStdout(output)
-              if (StringUtils.isNotBlank(e.getOutput)) engineExecutionContext.sendResultSet(e)
+              if (StringUtils.isNotBlank(e.getOutput)) {
+                engineConnTask.getProperties
+                  .put("execute.resultset.alias.num", engineExecutionContext.getAliasNum.toString)
+                engineExecutionContext.sendResultSet(e)
+              }
             case _: IncompleteExecuteResponse =>
               incomplete ++= incompleteSplitter
           }
@@ -373,13 +388,22 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
             engineConnTask,
             ResponseTaskError(engineConnTask.getTaskId, message)
           )
-          logger.warn(s"The task begins executing retries,jobId:${engineConnTask.getTaskId},index:${index} ,message:${message}", throwable)
+          logger.warn(
+            s"The task begins executing retries,jobId:${engineConnTask.getTaskId},index:${index} ,message:${message}",
+            throwable
+          )
+
+          val currentAliasNum = Integer.valueOf(
+            engineConnTask.getProperties.getOrDefault("execute.resultset.alias.num", "0").toString
+          )
+
           ComputationEngineUtils.sendToEntrance(
             engineConnTask,
             new ResponseTaskStatusWithExecuteCodeIndex(
               engineConnTask.getTaskId,
               ExecutionNodeStatus.Failed,
-              index
+              index,
+              currentAliasNum
             )
           )
         case errorExecuteResponse: ErrorExecuteResponse =>
@@ -440,6 +464,18 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     engineExecutionContext.setJobId(engineConnTask.getTaskId)
     engineExecutionContext.getProperties.putAll(engineConnTask.getProperties)
     engineExecutionContext.setLabels(engineConnTask.getLables)
+
+    val errorIndex: Int = Integer.valueOf(
+      engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+    )
+    if (errorIndex > 0) {
+      val savedAliasNum = Integer.valueOf(
+        engineConnTask.getProperties.getOrDefault("execute.resultset.alias.num", "0").toString
+      )
+      engineExecutionContext.setResultSetNum(savedAliasNum)
+      logger.info(s"Restore aliasNum to $savedAliasNum for retry task")
+    }
+
     engineExecutionContext
   }
 
@@ -450,6 +486,22 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         transformTaskStatus(task, ExecutionNodeStatus.Cancelled)
       }
     }
+  }
+
+  /**
+   * 判断是否为上下文语句，重试时需要保留执行
+   *
+   * @param code
+   *   SQL代码（已转换为大写并去除首尾空格）
+   * @return
+   *   true表示是上下文语句，false表示不是
+   */
+  private def isContextStatement(code: String): Boolean = {
+    code.startsWith("USE ") ||
+    code.startsWith("SET ") ||
+    code.startsWith("ALTER SESSION ") ||
+    code.startsWith("SET ROLE ") ||
+    code.startsWith("SET SCHEMA ")
   }
 
   /**

@@ -339,9 +339,9 @@ abstract class EntranceServer extends Logging {
                 )
               }
               .foreach { job =>
+                val jobId = job.getJobRequest.getId
                 try {
                   // 检查并设置诊断标记，确保每个任务只被诊断一次
-                  val jobId = job.getJobRequest.getId
                   diagnosedJobs.putIfAbsent(jobId.toString, true)
                   // 调用Doctoris诊断系统
                   logger.info(s"Start to diagnose spark job $jobId")
@@ -386,7 +386,7 @@ abstract class EntranceServer extends Logging {
                   case t: Throwable =>
                     logger.warn(s"Diagnose job ${job.getId()} failed. ${t.getMessage}", t)
                     // 如果诊断失败，移除标记，允许重试
-                    diagnosedJobs.remove(job.getId())
+                    diagnosedJobs.remove(jobId.toString)
                 }
                 logger.info("Finished to check Spark tasks for diagnosis")
               }

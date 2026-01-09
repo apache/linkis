@@ -98,6 +98,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
             case rte: ResponseTaskStatusWithExecuteCodeIndex =>
               logger.info(s"execute error with index: ${rte.errorIndex}")
               task.updateParams("execute.error.code.index", rte.errorIndex.toString)
+              task.updateParams("execute.resultset.alias.num", rte.aliasNum.toString)
             case _ =>
           }
           // 标识当前方法执行过，该方法是异步的，处理失败任务需要该方法执行完

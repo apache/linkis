@@ -97,6 +97,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
               }
               logger.info("task error receiver end.")
               failedResponse.errorIndex = params.getOrElse("execute.error.code.index", "-1").toInt
+              failedResponse.aliasNum = params.getOrElse("execute.resultset.alias.num", "0").toInt
             }
           case _ =>
         }

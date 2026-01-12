@@ -497,11 +497,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
    *   true表示是上下文语句，false表示不是
    */
   private def isContextStatement(code: String): Boolean = {
-    code.startsWith("USE ") ||
-    code.startsWith("SET ") ||
-    code.startsWith("ALTER SESSION ") ||
-    code.startsWith("SET ROLE ") ||
-    code.startsWith("SET SCHEMA ")
+    ComputationExecutorConf.CONTEXT_STATEMENT_PREFIXES.getValue.split(",").exists(code.startsWith)
   }
 
   /**

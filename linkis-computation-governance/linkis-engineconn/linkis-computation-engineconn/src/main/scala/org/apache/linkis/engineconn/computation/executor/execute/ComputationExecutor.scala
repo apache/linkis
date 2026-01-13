@@ -50,7 +50,7 @@ import org.apache.linkis.governance.common.protocol.task.{
 }
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
@@ -265,24 +265,33 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
         )
         engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
+        // 如果执行失败，则将错误的index-1，因为在重试的时候，会将错误的index+1，所以需要-1，
+        var newIndex = index
+        var newErrorIndex = errorIndex
+        if (adjustErrorIndexForSetScenarios(engineConnTask)) {
+          newIndex = index - 1
+          newErrorIndex = errorIndex + 1
+        }
         // 重试的时候如果执行过则跳过执行
-        if (retryEnable && errorIndex > 0 && index < errorIndex) {
+        if (retryEnable && errorIndex > 0 && index < newErrorIndex) {
           val code = codes(index).trim.toUpperCase()
           val shouldSkip = !isContextStatement(code)
 
           if (shouldSkip) {
             engineExecutionContext.appendStdout(
               LogUtils.generateInfo(
-                s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+                s"task retry with errorIndex: ${errorIndex}, current sql index: ${newIndex} will skip."
               )
             )
             executeFlag = false
           } else {
-            engineExecutionContext.appendStdout(
-              LogUtils.generateInfo(
-                s"task retry with errorIndex: ${errorIndex}, current sql index: ${index} is a context statement, will execute."
+            if (newIndex >= 0) {
+              engineExecutionContext.appendStdout(
+                LogUtils.generateInfo(
+                  s"task retry with errorIndex: ${errorIndex}, current sql index: ${newIndex} is a context statement, will execute."
+                )
               )
-            )
+            }
           }
         }
         if (executeFlag) {
@@ -440,6 +449,22 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   def progress(taskID: String): Float
 
   def getProgressInfo(taskID: String): Array[JobProgressInfo]
+
+  /**
+   * 调整错误索引：直接匹配三种SET语句场景 因为SET语句会被解析器视为第一条SQL
+   */
+  protected def adjustErrorIndexForSetScenarios(engineConnTask: EngineConnTask): Boolean = {
+    val executionCode = engineConnTask.getCode
+    val engineTypeLabel = engineConnTask.getLables.find(_.isInstanceOf[EngineTypeLabel]).get
+    val engineType = engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType
+    var result = false
+    if (executionCode != null && engineType.equals(EngineType.JDBC.toString)) {
+      val upperCode = executionCode.toUpperCase().trim
+      val jdbcSetPrefixes = ComputationExecutorConf.JDBC_SET_STATEMENT_PREFIXES.getValue.split(",")
+      result = jdbcSetPrefixes.exists(upperCode.startsWith)
+    }
+    result
+  }
 
   protected def createEngineExecutionContext(
       engineConnTask: EngineConnTask

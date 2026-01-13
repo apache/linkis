@@ -161,4 +161,10 @@ object ComputationExecutorConf {
     "SQL context statement prefixes for partial retry"
   )
 
+  val JDBC_SET_STATEMENT_PREFIXES = CommonVars(
+    "linkis.engineconn.jdbc.set.statement.prefixes",
+    "SET QUERY_TIMEOUT,SET QUERY_QUEUE_PENDING_TIMEOUT,SET NEW_PLANNER",
+    "JDBC SET statement prefixes for error index adjustment"
+  )
+
 }

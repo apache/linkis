@@ -7,10 +7,11 @@
 #
 # 预期效果: 性能提升 40-50%，产物与串行编译完全一致
 #
-# 用法: ./hybrid-build.sh [选项]
+# 用法: ./quick-build.sh [选项]
 #   -t, --threads <N>   并行线程数，默认为 1C (CPU核心数)
 #   -s, --skip-tests    跳过测试 (默认)
 #   -r, --run-tests     运行测试
+#   --v2                编译 2.x 版本 (Hadoop 2 + Spark 2 + Hive 2)
 #   -h, --help          显示帮助
 #
 
@@ -19,6 +20,7 @@ set -e
 # 默认参数
 THREADS="1C"
 SKIP_TESTS=true
+V2_MODE=false
 
 # 颜色定义
 RED='\033[0;31m'
@@ -39,11 +41,14 @@ show_help() {
     echo "  -t, --threads <N>   并行线程数，默认为 1C (CPU核心数)"
     echo "  -s, --skip-tests    跳过测试 (默认)"
     echo "  -r, --run-tests     运行测试"
+    echo "  --v2                编译 2.x 版本 (Hadoop 2 + Spark 2 + Hive 2)"
     echo "  -h, --help          显示帮助"
     echo ""
     echo "示例:"
-    echo "  $0                  使用默认设置编译"
+    echo "  $0                  使用默认设置编译 (3.x 版本)"
+    echo "  $0 --v2             编译 2.x 版本"
     echo "  $0 -t 4             使用 4 线程编译"
+    echo "  $0 --v2 -t 4        编译 2.x 版本，使用 4 线程"
     echo "  $0 -r               运行测试"
 }
 
@@ -62,6 +67,10 @@ while [[ $# -gt 0 ]]; do
             SKIP_TESTS=false
             shift
             ;;
+        --v2)
+            V2_MODE=true
+            shift
+            ;;
         -h|--help)
             show_help
             exit 0
@@ -78,6 +87,12 @@ done
 SKIP_TESTS_ARG=""
 if [ "$SKIP_TESTS" = true ]; then
     SKIP_TESTS_ARG="-DskipTests"
+fi
+
+# 2.x 版本 Profile 参数
+V2_PROFILE_ARG=""
+if [ "$V2_MODE" = true ]; then
+    V2_PROFILE_ARG="-Phadoop-2,spark-2,hive-2 -Dhadoop.profile=2"
 fi
 
 # 格式化时间
@@ -101,6 +116,12 @@ echo -e "${YELLOW}📋 编译策略:${NC}"
 echo "   [1/2] 并行编译所有模块 (跳过 linkis-dist) - 使用 -T $THREADS"
 echo "   [2/2] 串行打包 linkis-dist - 确保产物完整"
 echo ""
+if [ "$V2_MODE" = true ]; then
+    echo -e "${YELLOW}🔧 版本: 2.x (Hadoop 2.7.2 + Spark 2.4.3 + Hive 2.3.3)${NC}"
+else
+    echo -e "${YELLOW}🔧 版本: 3.x (Hadoop 3.3.4 + Spark 3.2.1 + Hive 3.1.3) [默认]${NC}"
+fi
+echo ""
 echo -e "${YELLOW}⏱️  开始时间: $(date '+%Y-%m-%d %H:%M:%S')${NC}"
 echo ""
 
@@ -111,13 +132,13 @@ START_TIME=$(date +%s)
 # Step 1: 并行编译所有模块（跳过 linkis-dist）
 # ============================================================
 echo -e "${GREEN}[1/2] 🚀 并行编译所有模块...${NC}"
-echo "执行: mvn clean install -T $THREADS $SKIP_TESTS_ARG -pl '!:linkis-dist'"
+echo "执行: mvn clean install -T $THREADS $SKIP_TESTS_ARG $V2_PROFILE_ARG -pl '!:linkis-dist'"
 echo ""
 
 cd "$PROJECT_DIR"
 STEP1_START=$(date +%s)
 
-mvn clean install -T $THREADS $SKIP_TESTS_ARG -pl '!:linkis-dist'
+mvn clean install -T $THREADS $SKIP_TESTS_ARG $V2_PROFILE_ARG -pl '!:linkis-dist'
 
 STEP1_END=$(date +%s)
 STEP1_TIME=$((STEP1_END - STEP1_START))
@@ -130,12 +151,12 @@ echo ""
 # Step 2: 串行编译 linkis-dist
 # ============================================================
 echo -e "${GREEN}[2/2] 📦 串行打包 linkis-dist...${NC}"
-echo "执行: mvn install -pl :linkis-dist $SKIP_TESTS_ARG"
+echo "执行: mvn install -pl :linkis-dist $SKIP_TESTS_ARG $V2_PROFILE_ARG"
 echo ""
 
 STEP2_START=$(date +%s)
 
-mvn install -pl :linkis-dist $SKIP_TESTS_ARG
+mvn install -pl :linkis-dist $SKIP_TESTS_ARG $V2_PROFILE_ARG
 
 STEP2_END=$(date +%s)
 STEP2_TIME=$((STEP2_END - STEP2_START))

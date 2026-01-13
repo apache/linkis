@@ -388,15 +388,25 @@ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = labe
 
 -- nebula default configuration
 insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
-(select relation.config_key_id AS config_key_id, '' AS config_value, relation.engine_type_label_id AS config_label_id FROM `linkis_ps_configuration_key_engine_relation` relation
-INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @NEBULA_ALL);
+(select relation.config_key_id AS config_key_id,
+  CASE
+    WHEN config.`key` = 'linkis.nebula.host' THEN '127.0.0.1'
+    WHEN config.`key` = 'linkis.nebula.port' THEN '9669'
+    WHEN config.`key` = 'linkis.nebula.username' THEN 'nebula'
+    WHEN config.`key` = 'linkis.nebula.password' THEN 'nebula'
+    ELSE ''
+  END AS config_value,
+  relation.engine_type_label_id AS config_label_id
+FROM `linkis_ps_configuration_key_engine_relation` relation
+INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @NEBULA_ALL
+INNER JOIN linkis_ps_configuration_config_key config ON relation.config_key_id = config.id);
 
 insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
-(1,'Yarn','default',NULL,'{"rmWebAddress":"@YARN_RESTFUL_URL","hadoopVersion":"@HADOOP_VERSION","authorEnable":@YARN_AUTH_ENABLE,"user":"@YARN_AUTH_USER","pwd":"@YARN_AUTH_PWD","kerberosEnable":@YARN_KERBEROS_ENABLE,"principalName":"@YARN_PRINCIPAL_NAME","keytabPath":"@YARN_KEYTAB_PATH","krb5Path":"@YARN_KRB5_PATH"}');
+(1,'Yarn','default',NULL,'{"rmWebAddress":"http://127.0.0.1:8088","hadoopVersion":"3.3.4","authorEnable":false,"user":"@YARN_AUTH_USER","pwd":"@YARN_AUTH_PWD","kerberosEnable":false,"principalName":"@YARN_PRINCIPAL_NAME","keytabPath":"@YARN_KEYTAB_PATH","krb5Path":"@YARN_KRB5_PATH"}');
 
 -- errorcode
 -- 01 linkis server
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01001','您的任务没有路由到后台ECM，请联系管理员','The em of labels',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01001','您的任务没有路由到后台ECM，请联系管理员','The ecm of labels',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整Driver内存或联系管理员扩容','Unexpected end of file from server',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01003','任务运行内存超过设置内存限制，导致Linkis服务负载过高，请在管理台调整Driver内存或联系管理员扩容','failed to ask linkis Manager Can be retried SocketTimeoutException',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','引擎在启动时被Kill，请联系管理员',' [0-9]+ Killed',0);
@@ -430,10 +440,10 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13001','Java进程内存溢出，建议优化脚本内容','OutOfMemoryError',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13002','任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory或spark.executor.memoryOverhead调整内存','Container killed by YARN for exceeding memory limits',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13003','任务运行内存超过设置内存限制，请在管理台增加executor内存或调优sql后执行','read record exception',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13004','任务运行内存超过设置内存限制，导致引擎意外退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory或spark.executor.memoryOverhead调整内存','failed because the engine quitted unexpectedly',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','任务运行内存超过设置内存限制，导致Spark app应用退出，请在管理台增加driver内存或在提交任务时通过spark.driver.memory调整内存','Spark application has already stopped',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','任务运行内存超过设置内存限制，导致Spark context应用退出，请在管理台增加driver内存或在提交任务时通过spark.driver.memory调整内存','Spark application sc has already stopped',0);
-INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','任务运行内存超过设置内存限制，导致Pyspark子进程退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory或spark.executor.memoryOverhead调整内存','Pyspark process  has stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13004','任务运行内存超过设置内存限制，导致引擎意外退出，请在管理台调整内存后使用','failed because the (hive|python|shell|jdbc|io_file|io_hdfs|fps|pipeline|presto|nebula|flink|appconn|sqoop|datax|openlookeng|trino|elasticsearch|seatunnel|hbase|jobserver) engine quitted unexpectedly',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','任务运行内存超过设置内存限制，导致Spark app应用退出，请在管理台增加Driver内存或在提交任务时通过spark.driver.memory调整内存。更多细节请参考Linkis常见问题Q60','Spark application has already stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','任务运行内存超过设置内存限制，导致Spark context应用退出，请在管理台增加Driver内存或在提交任务时通过spark.driver.memory调整内存。更多细节请参考Linkis常见问题Q60','Spark application sc has already stopped',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','任务运行内存超过设置内存限制，导致Pyspark子进程退出，请在管理台增加Driver内存或在提交任务时通过spark.driver.memory调整内存。更多细节请参考Linkis常见问题Q60','Pyspark process  has stopped',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13009','您的任务因为引擎退出（退出可能是引擎进程OOM或者主动kill引擎）导致失败','ERROR EC exits unexpectedly and actively kills the task',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13010','任务运行内存超过设置内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory或spark.executor.memoryOverhead调整内存','Container exited with a non-zero exit code',0);
@@ -583,7 +593,7 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 -- ----------------------------
 -- Default Tokens
 -- ----------------------------
-INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS-UNAVAILABLE-TOKEN','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS-7e3fb30c1c4b436cbfb9a245924d665f','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('WS-UNAVAILABLE-TOKEN','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DSS-UNAVAILABLE-TOKEN','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('QUALITIS-UNAVAILABLE-TOKEN','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
@@ -772,16 +782,6 @@ VALUES (@data_source_type_id, 'address', '地址', 'Address', NULL, 'TEXT', NULL
        (@data_source_type_id, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 1, '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
        (@data_source_type_id, 'instance', '实例名(instance)', 'Instance', NULL, 'TEXT', NULL, 1, '实例名(instance)', 'Instance', NULL, NULL, NULL, NULL,  now(), now());
 
-select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'starrocks';
-INSERT INTO `linkis_ps_dm_datasource_type_key`
-    (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`)
-VALUES (@data_source_type_id, 'host', '主机名(Host)', 'Host', NULL, 'TEXT', NULL, 0, '主机名(Host)', 'Host', NULL, NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'tcp_port', 'TCP端口号(Port)','Tcp_Port', 9030, 'TEXT', NULL, 0, 'TCP端口号','Tcp_Port', NULL, NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'http_port', 'HTTP端口号(Port)','Http_Port', 8030, 'TEXT', NULL, 0, 'HTTP端口号','Http_Port', NULL, NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'params', '连接参数(Connection params)', 'Connection params', NULL, 'TEXT', NULL, 0, '输入JSON格式(Input JSON format): {"param":"value"}', 'Input JSON format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'username', '用户名(Username)', 'Username', NULL, 'TEXT', NULL, 0, '用户名(Username)', 'Username', '^[0-9A-Za-z_-]+$', NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 0, '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
-       (@data_source_type_id, 'databaseName', '数据库名(Database name)', 'Database name', NULL, 'TEXT', NULL, 0, '数据库名(Database name)', 'Database name', NULL, NULL, NULL, NULL,  now(), now());
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'hive';
 INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境SIT', '测试环境SIT', @data_source_type_id, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);
@@ -840,3 +840,128 @@ VALUES (@data_source_type_id, 'address', '地址', 'Address', NULL, 'TEXT', NULL
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'doris';
 UPDATE linkis_ps_dm_datasource_type_key SET `require` = 0 WHERE `key` ="password" and `data_source_type_id` = @data_source_type_id;
+
+-- ============================================
+-- Additional Configuration (Integrated from upgrade scripts)
+-- ============================================
+
+-- Spark additional config key
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`, `en_description`, `en_name`, `en_treeName`) VALUES ('spark.external.default.jars', '取值范围：file:///xxx.jar 多个路径时 逗号分隔', 'spark 支持额外的jar包列表', NULL, 'Regex', '^file:\/\/\/[\u4e00-\u9fa5_a-zA-Z0-9-.\/]*\.jar(?:,\s*file:\/\/\/[\u4e00-\u9fa5_a-zA-Z0-9-.\/]*\.jar)*?$', '0', '1', '1', 'spark资源设置', 'spark','Value Range: file:///xxx.jar', 'Spark External Default Jars', 'Spark Resource Settings');
+
+-- JDBC additional config keys
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.jdbc.version', '取值范围：jdbc3,jdbc4', 'jdbc版本', 'jdbc4', 'OFT', '["jdbc3","jdbc4"]', 'jdbc', 0, 0, 1, '数据源配置', 0, 'DataSource Configuration', 'Value range: jdbc3, jdbc4', 'jdbc version', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.jdbc.connect.max', '范围：1-20，单位：个', 'jdbc引擎最大连接数', '10', 'NumInterval', '[1,20]', 'jdbc', 0, 0, 1, '数据源配置', 3, 'DataSource Configuration', 'Range: 1-20, unit: piece', 'Maximum connections of jdbc engine', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.jdbc.username', 'username', '数据库连接用户名', '', 'None', '', 'jdbc', 0, 0, 1, '用户配置', 0, 'User Configuration', 'username', 'Database connection user name', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.jdbc.password', 'password', '数据库连接密码', '', 'None', '', 'jdbc', 0, 0, 1, '用户配置', 0, 'User Configuration', 'password', 'Database connection password', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.jdbc.driver', '例如:com.mysql.jdbc.Driver', 'jdbc连接驱动', 'com.mysql.jdbc.Driver', 'None', NULL, 'jdbc', 0, 0, 1, '用户配置', 0, 'User Configuration', 'For Example: com.mysql.jdbc.Driver', 'JDBC Connection Driver', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'jdbc引擎初始化内存大小', '1g', 'Regex', '^([1-9]|10)(G|g)$', 'jdbc', 0, 0, 1, '用户配置', 0, 'Value range: 1-10, Unit: G', 'JDBC Engine Initialization Memory Size', 'User Configuration', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('linkis.jdbc.task.timeout.alert.time', '单位：分钟', 'jdbc任务超时告警时间', '', 'Regex', '^[1-9]\\d*$', 'jdbc', 0, 0, 1, '超时告警配置', 0, 'Timeout Alarm Configuration', 'Unit: Minutes', 'JDBC Task Timeout Alarm Time', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('linkis.jdbc.task.timeout.alert.user', '多人用英文逗号分隔', 'jdbc任务超时告警人', '', 'Regex', '^[a-zA-Z0-9,_-]+$', 'jdbc', 0, 0, 1, '超时告警配置', 0, 'Timeout Alarm Configuration', 'Multiple People Separated By Commas In English', 'JDBC Task Timeout Alert Person', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('linkis.jdbc.task.timeout.alert.level', '超时告警级别:1 critical,2 major,3 minor,4 warning,5 info', 'jdbc任务超时告警级别', '3', 'NumInterval', '[1,5]', 'jdbc', 0, 0, 1, '超时告警配置', 0, 'Timeout Alarm Configuration', 'Timeout Alarm Levels: 1 Critical, 2 Major, 3 Minor, 4 Warning, 5 Info', 'JDBC Task Timeout Alarm Level', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('linkis.jdbc.task.timeout.alert.datasource.type', '多个数据源用英文逗号分隔', '超时告警支持数据源类型', 'starrocks', 'Regex', '^[a-zA-Z0-9,]+$', 'jdbc', 0, 0, 1, '超时告警配置', 0, 'Timeout Alarm Configuration', 'Separate multiple data sources with commas in English', 'Timeout alarm supports data source types', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('linkisJDBCPoolAbandonedTimeout', '范围：1-21600，单位：秒', '数据源链接超时自动关闭时间', '300', 'NumInterval', '[1,21600]', 'jdbc', 0, 0, 1, '数据源配置', 0, 'Data Source Configuration', 'Range: 1-21600, Unit: seconds', 'Data Source Auto Close Link Time', 0);
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`, `template_required`) VALUES('wds.linkis.engineconn.max.free.time', '取值范围：3m,15m,30m,1h,2h', '引擎空闲退出时间', '15m', 'OFT', '["1h","2h","30m","15m","3m"]', 'jdbc', 0, 0, 1, '用户配置', 0, 'User Configuration', 'Value range: 3m, 15m, 30m, 1h, 2h', 'Engine unlock exit time', 0);
+
+-- Shell config key
+INSERT IGNORE INTO `linkis_ps_configuration_config_key` (`key`,description,name,default_value,validate_type,validate_range,engine_conn_type,is_hidden,is_advanced,`level`,treeName,boundary_type,en_treeName,en_description,en_name,template_required) VALUES ('wds.linkis.engine.running.job.max', '引擎运行最大任务数', '引擎运行最大任务数', '60', 'None', NULL, 'shell', 0, 0, 1, 'shell引擎设置', 0, 'shell Engine Settings', 'Maximum Number Of Tasks The Engine Can Run', 'Maximum Number For Engine', 0);
+
+-- Spark-3.4.4 labels
+INSERT IGNORE INTO `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-*,spark-3.4.4', 'OPTIONAL', 2, now(), now());
+INSERT IGNORE INTO `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-IDE,spark-3.4.4', 'OPTIONAL', 2, now(), now());
+INSERT IGNORE INTO `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-Visualis,spark-3.4.4', 'OPTIONAL', 2, now(), now());
+INSERT IGNORE INTO `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-nodeexecution,spark-3.4.4', 'OPTIONAL', 2, now(), now());
+
+-- Nebula IDE label
+INSERT IGNORE INTO `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-IDE,nebula-3.0.0', 'OPTIONAL', 2, now(), now());
+
+-- Spark additional key-engine relation
+INSERT IGNORE INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+ INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'spark' AND config.`key`='spark.external.default.jars' AND label.label_value = '*-*,spark-2.4.3');
+
+-- JDBC key-engine relations
+INSERT IGNORE INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+ INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'jdbc' AND label.label_value = '*-*,jdbc-4');
+
+-- Shell key-engine relation
+INSERT IGNORE INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+ INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'shell' AND config.`key` = 'wds.linkis.engine.running.job.max' AND label.label_value = '*-*,shell-1');
+
+-- Spark-3.4.4 key-engine relations
+INSERT IGNORE INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+ INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'spark' AND label.label_value = '*-*,spark-3.4.4');
+
+-- Nebula key-engine relations
+INSERT IGNORE INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+(SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+ INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'nebula' AND label.label_value = '*-*,nebula-3.0.0');
+
+-- Spark-3.4.4 configuration categories
+INSERT IGNORE INTO linkis_ps_configuration_category (`label_id`, `level`) VALUES ((SELECT id FROM linkis_cg_manager_label WHERE `label_value` = '*-IDE,spark-3.4.4'), 2);
+INSERT IGNORE INTO linkis_ps_configuration_category (`label_id`, `level`) VALUES ((SELECT id FROM linkis_cg_manager_label WHERE `label_value` = '*-Visualis,spark-3.4.4'), 2);
+INSERT IGNORE INTO linkis_ps_configuration_category (`label_id`, `level`) VALUES ((SELECT id FROM linkis_cg_manager_label WHERE `label_value` = '*-nodeexecution,spark-3.4.4'), 2);
+
+-- Nebula IDE configuration category
+INSERT IGNORE INTO linkis_ps_configuration_category (`label_id`, `level`) VALUES ((SELECT id FROM linkis_cg_manager_label WHERE `label_value` = '*-IDE,nebula-3.0.0'), 2);
+
+-- Spark additional config value
+INSERT IGNORE INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(SELECT `relation`.`config_key_id` AS `config_key_id`, NULL AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id`
+ FROM linkis_ps_configuration_key_engine_relation relation
+ INNER JOIN linkis_ps_configuration_config_key config ON relation.config_key_id=config.id AND config.`key`='spark.external.default.jars' AND config.engine_conn_type='spark'
+ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id=label.id AND label.label_value='*-*,spark-2.4.3');
+
+-- JDBC config values
+INSERT IGNORE INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(SELECT `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id`
+ FROM linkis_ps_configuration_key_engine_relation relation
+ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,jdbc-4');
+
+-- Shell config value
+INSERT IGNORE INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(SELECT `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id`
+ FROM linkis_ps_configuration_key_engine_relation relation
+ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id
+ INNER JOIN linkis_ps_configuration_config_key config ON relation.config_key_id = config.id AND config.`key` = 'wds.linkis.engine.running.job.max'
+ AND label.label_value = '*-*,shell-1');
+
+-- Spark-3.4.4 config values
+INSERT IGNORE INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(SELECT `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id`
+ FROM linkis_ps_configuration_key_engine_relation relation
+ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,spark-3.4.4');
+
+-- Nebula config values
+INSERT IGNORE INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+(SELECT `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id`
+ FROM linkis_ps_configuration_key_engine_relation relation
+ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,nebula-3.0.0');
+
+-- Additional error codes
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13010','任务实际运行内存超过了设置的内存限制，请在管理台增加executor内存或在提交任务时通过spark.executor.memory增加内存','Container exited with a non-zero exit code',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13011','广播表过大导致driver内存溢出，请在执行sql前增加参数后重试：set spark.sql.autoBroadcastJoinThreshold=-1;','dataFrame to local exception',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13012','driver内存不足，请增加driver内存后重试','Failed to allocate a page (\\S+.*\\)), try again.',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13013','使用spark默认变量sc导致后续代码执行失败','sc.setJobGroup(\\S+.*\\))',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13014','任务运行内存超过设置内存限制，导致引擎意外退出，请在管理台增加executor内存或在提交任务时通过spark.executor.memory或spark.executor.memoryOverhead调整内存','failed because the spark engine quitted unexpectedly',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21004','Hive Metastore存在问题，生产请联系生产服务助手进行处理，测试请联系Hive开发','Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42003','未知函数%s，请检查代码中引用的函数是否有误','Cannot resolve function `(\\S+)',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43016','模块 %s 没有属性 %s ，请确认代码引用是否正常','AttributeError: \'(\\S+)\' object has no attribute \'(\\S+)\'',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43019','执行表在元数据库中存在meta缓存，meta信息与缓存不一致导致，请增加参数(--conf spark.sql.hive.convertMetastoreOrc=false)后重试','Unable to alter table.*Table is not allowed to be altered',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43042','插入数据表动态分区数超过配置值 %s ，请优化sql或调整配置hive.exec.max.dynamic.partitions后重试','Maximum was set to (\\S+) partitions per node',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43043','执行任务消耗内存超过限制，hive任务请修改map或reduce的内存，spark任务请修改executor端内存','Error：java heap space',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43044','表 %s 分区数超过阈值 %s，需要分批删除分区，再删除表','the partitions of table (\\S+) exceeds threshold (\\S+)',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43045','查询/操作的表 %s 分区数为 %s ，超过阈值 %s ，需要限制查询/操作的分区数量','Number of partitions scanned \\(=(\\d+)\\) on table (\\S+) exceeds limit \\(=(\\d+)\\)',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43046','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Number of dynamic partitions created is (\\S+), which is more than (\\S+)',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43047','动态分区一次性写入分区数 %s ，超过阈值  %s,请减少一次性写入的分区数','Maximum was set to (\\S+) partitions per node, number of dynamic partitions on this node: (\\S+)',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43048','参数引用错误，请检查参数 %s 是否正常引用','UnboundLocalError.*local variable (\\S+) referenced before assignment',0);
+INSERT IGNORE INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43050','特殊UDF不支持在非sql脚本中使用','Not support spacial udf in non-SQL script',0);
+
+-- Additional Token
+INSERT IGNORE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DOCTOR-AUTH-LEstzFKwKkrALsDOuGg', '*', '*', 'BDP', DATE_FORMAT(NOW(), '%Y-%m-%d'), DATE_FORMAT(NOW(), '%Y-%m-%d'), -1, 'LINKIS');
+
+-- Additional datasource type keys
+INSERT IGNORE INTO linkis_ps_dm_datasource_type_key (data_source_type_id, `key`, name, default_value, value_type, `scope`, `require`, description, value_regex, ref_id, ref_value, data_source, update_time, create_time, name_en, description_en) VALUES(5, 'userClientIp', 'userClientIp', NULL, 'TEXT', 'ENV', 0, 'userClientIp', NULL, NULL, NULL, NULL, now(),now(), 'user client ip', 'user client ip');
+INSERT IGNORE INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `default_value`, `value_type`, `scope`, `require`, `description`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`, `name_en`, `description_en`) VALUES ((SELECT id FROM `linkis_ps_dm_datasource_type` WHERE `name` = 'starrocks'), 'kill_task_time', '超时kill任务时间', NULL, 'TEXT', NULL, 0, '配置任务超时时间，满足配置执行kill，单位：分钟', '^[1-9]\\d*$', NULL, NULL, NULL, now(), now(), 'Timeout Kill Task Time', 'Configure Task Timeout To Meet The Requirement Of Executing The Kill Action');

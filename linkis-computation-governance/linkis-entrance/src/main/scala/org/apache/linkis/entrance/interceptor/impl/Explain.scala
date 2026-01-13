@@ -22,11 +22,13 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.conf.EntranceConfiguration.PYTHON_SAFE_CHECK_SWITCH
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.interceptor.exception.{
   PythonCodeCheckException,
   ScalaCodeCheckException
 }
+import org.apache.linkis.entrance.utils.SafeUtils
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
 import org.apache.commons.lang3.StringUtils

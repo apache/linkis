@@ -144,13 +144,13 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>${woodstox.core.version}</version>
+      <version>${woodstox.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
-      <version>${jettision.version}</version>
+      <version>${jettison.version}</version>
     </dependency>
 
     <dependency>

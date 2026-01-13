@@ -15,14 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.execute.simple
-import org.apache.linkis.orchestrator.listener.OrchestratorListenerBusContext
+package org.apache.linkis.engineplugin.impala.password;
 
-object SimpleExecuteBusContext {
+import javax.security.auth.callback.PasswordCallback;
 
-  private lazy val orchestratorListenerBusContext = OrchestratorListenerBusContext.createBusContext
+public class StaticPasswordCallback extends PasswordCallback {
 
-  def getOrchestratorListenerBusContext(): OrchestratorListenerBusContext =
-    orchestratorListenerBusContext
+  private final char[] password;
 
+  public StaticPasswordCallback(String prompt, boolean echoOn) {
+    super(prompt, echoOn);
+    this.password = prompt.toCharArray();
+  }
+
+  public StaticPasswordCallback(String prompt) {
+    super(prompt, false);
+    this.password = prompt.toCharArray();
+  }
+
+  @Override
+  public char[] getPassword() {
+    return password;
+  }
 }

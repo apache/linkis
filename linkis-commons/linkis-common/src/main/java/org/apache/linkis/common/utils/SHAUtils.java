@@ -17,14 +17,9 @@
 
 package org.apache.linkis.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SHAUtils {
 
@@ -64,36 +59,5 @@ public class SHAUtils {
       des += tmp;
     }
     return des;
-  }
-
-  public static void main(String[] args) throws IOException {
-    String applicationId = args[0];
-    String app_id = args[1];
-    String token = args[2];
-    String nonce = args[3];
-    if (StringUtils.isBlank(applicationId)) {
-      throw new LinkageError("Invalid applicationId cannot be empty");
-    }
-    if (StringUtils.isBlank(app_id)) {
-      throw new LinkageError("Invalid app_id cannot be empty");
-    }
-    if (StringUtils.isBlank(token)) {
-      throw new LinkageError("Invalid token cannot be empty");
-    }
-    if (StringUtils.isBlank(nonce)) {
-      throw new LinkageError("Invalid nonce cannot be empty");
-    }
-    Map<String, String> parms = new HashMap<>();
-    String timestampStr = String.valueOf(System.currentTimeMillis());
-    parms.put("applicationId", applicationId);
-    parms.put("app_id", app_id);
-    parms.put("timestamp", timestampStr);
-    parms.put("nonce", nonce);
-    if (StringUtils.isNotBlank(token)) {
-      String signature =
-          Encrypt(Encrypt(parms.get("app_id") + nonce + timestampStr, null) + token, null);
-      parms.put("signature", signature);
-    }
-    System.out.println(parms);
   }
 }

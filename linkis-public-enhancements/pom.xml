@@ -61,11 +61,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-server</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-bmlserver</artifactId>
       <version>${project.version}</version>
     </dependency>

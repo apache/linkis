@@ -210,9 +210,14 @@
           <artifactId>hadoop-common</artifactId>
         </exclusion>
 
+        <!-- 排除 HDFS 依赖，由 linkis-hadoop-common 提供 -->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+          <artifactId>hadoop-hdfs-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
         </exclusion>
 
         <exclusion>

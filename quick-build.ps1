@@ -14,16 +14,30 @@
 .PARAMETER SkipTests
     是否跳过测试，默认为 $true
 
-.EXAMPLE
-    .\hybrid-build.ps1
+.PARAMETER V2
+    编译 2.x 版本 (Hadoop 2 + Spark 2 + Hive 2)，默认编译 3.x 版本
 
 .EXAMPLE
-    .\hybrid-build.ps1 -Threads 4
+    .\quick-build.ps1
+    使用默认设置编译 3.x 版本
+
+.EXAMPLE
+    .\quick-build.ps1 -V2
+    编译 2.x 版本
+
+.EXAMPLE
+    .\quick-build.ps1 -Threads 4
+    使用 4 线程编译
+
+.EXAMPLE
+    .\quick-build.ps1 -V2 -Threads 4
+    编译 2.x 版本，使用 4 线程
 #>
 
 param(
     [string]$Threads = "1C",
-    [switch]$SkipTests = $true
+    [switch]$SkipTests = $true,
+    [switch]$V2 = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -65,24 +79,39 @@ Write-ColorOutput "📋 编译策略:" "Yellow"
 Write-Host "   [1/2] 并行编译所有模块 (跳过 linkis-dist) - 使用 -T $Threads"
 Write-Host "   [2/2] 串行打包 linkis-dist - 确保产物完整"
 Write-Host ""
+if ($V2) {
+    Write-ColorOutput "🔧 版本: 2.x (Hadoop 2.7.2 + Spark 2.4.3 + Hive 2.3.3)" "Yellow"
+} else {
+    Write-ColorOutput "🔧 版本: 3.x (Hadoop 3.3.4 + Spark 3.2.1 + Hive 3.1.3) [默认]" "Yellow"
+}
+Write-Host ""
 Write-ColorOutput ("⏱️  开始时间: " + (Get-Date -Format "yyyy-MM-dd HH:mm:ss")) "Yellow"
 Write-Host ""
 
 $TotalStartTime = Get-Date
 $SkipTestsArg = if ($SkipTests) { "-DskipTests" } else { "" }
+$V2ProfileArg = if ($V2) { "-Phadoop-2,spark-2,hive-2 -Dhadoop.profile=2" } else { "" }
 
 # ============================================================
 # Step 1: 并行编译所有模块（跳过 linkis-dist）
 # ============================================================
 Write-ColorOutput "[1/2] 🚀 并行编译所有模块..." "Green"
-$cmd = "mvn clean install -T $Threads $SkipTestsArg -pl `"!:linkis-dist`""
+$cmd = "mvn clean install -T $Threads $SkipTestsArg $V2ProfileArg -pl `"!:linkis-dist`""
 Write-Host "执行: $cmd"
 Write-Host ""
 
 $Step1Start = Get-Date
 
 try {
-    & mvn clean install -T $Threads $SkipTestsArg -pl "!:linkis-dist"
+    $mvnArgs = @("clean", "install", "-T", $Threads)
+    if ($SkipTestsArg) { $mvnArgs += $SkipTestsArg }
+    if ($V2) {
+        $mvnArgs += "-Phadoop-2,spark-2,hive-2"
+        $mvnArgs += "-Dhadoop.profile=2"
+    }
+    $mvnArgs += @("-pl", "!:linkis-dist")
+
+    & mvn $mvnArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Maven 编译失败，退出码: $LASTEXITCODE"
     }
@@ -102,14 +131,21 @@ Write-Host ""
 # Step 2: 串行编译 linkis-dist
 # ============================================================
 Write-ColorOutput "[2/2] 📦 串行打包 linkis-dist..." "Green"
-$cmd = "mvn install -pl :linkis-dist $SkipTestsArg"
+$cmd = "mvn install -pl :linkis-dist $SkipTestsArg $V2ProfileArg"
 Write-Host "执行: $cmd"
 Write-Host ""
 
 $Step2Start = Get-Date
 
 try {
-    & mvn install -pl :linkis-dist $SkipTestsArg
+    $mvnArgs = @("install", "-pl", ":linkis-dist")
+    if ($SkipTestsArg) { $mvnArgs += $SkipTestsArg }
+    if ($V2) {
+        $mvnArgs += "-Phadoop-2,spark-2,hive-2"
+        $mvnArgs += "-Dhadoop.profile=2"
+    }
+
+    & mvn $mvnArgs
     if ($LASTEXITCODE -ne 0) {
         throw "Maven 打包失败，退出码: $LASTEXITCODE"
     }

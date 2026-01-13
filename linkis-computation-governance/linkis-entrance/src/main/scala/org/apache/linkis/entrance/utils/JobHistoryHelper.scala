@@ -266,7 +266,7 @@ object JobHistoryHelper extends Logging {
     tasks
   }
 
-  private def getTaskByTaskID(taskID: Long): JobRequest = {
+  def getTaskByTaskID(taskID: Long): JobRequest = {
     val jobRequest = new JobRequest
     jobRequest.setId(taskID)
     jobRequest.setSource(null)

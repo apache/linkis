@@ -23,6 +23,7 @@ import org.apache.linkis.storage.domain.FsPathListWithError;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -60,7 +61,9 @@ public abstract class FileSystem implements Fs {
 
   public abstract long getBlockSize(FsPath dest) throws IOException;
 
-  public abstract List<FsPath> getAllFilePaths(FsPath dest) throws IOException;
+  public List<FsPath> getAllFilePaths(FsPath dest) throws IOException {
+    return new ArrayList<>();
+  }
 
   public abstract boolean canExecute(FsPath dest) throws IOException;
 

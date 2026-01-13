@@ -9,9 +9,34 @@ REM 解决方案: 先并行编译所有模块，再串行打包 linkis-dist
 REM 这样既能获得并行编译的性能提升，又能保证产物完整性
 REM
 REM 预期效果: 性能提升 40-50%%，产物与串行编译完全一致
+REM
+REM 用法: quick-build.cmd [选项]
+REM   --v2              编译 2.x 版本 (Hadoop 2 + Spark 2 + Hive 2)
+REM   默认编译 3.x 版本
 REM ============================================================
 
 set "THREADS=1C"
+set "V2_MODE=false"
+set "V2_PROFILE="
+
+REM 解析命令行参数
+:parse_args
+if "%~1"=="" goto :done_args
+if "%~1"=="--v2" (
+    set "V2_MODE=true"
+    set "V2_PROFILE=-Phadoop-2,spark-2,hive-2 -Dhadoop.profile=2"
+    shift
+    goto :parse_args
+)
+if "%~1"=="-t" (
+    set "THREADS=%~2"
+    shift
+    shift
+    goto :parse_args
+)
+shift
+goto :parse_args
+:done_args
 
 echo.
 echo ╔════════════════════════════════════════════════════════╗
@@ -21,6 +46,12 @@ echo.
 echo 编译策略:
 echo    [1/2] 并行编译所有模块 (跳过 linkis-dist) - 使用 -T %THREADS%
 echo    [2/2] 串行打包 linkis-dist - 确保产物完整
+echo.
+if "%V2_MODE%"=="true" (
+    echo 版本: 2.x ^(Hadoop 2.7.2 + Spark 2.4.3 + Hive 2.3.3^)
+) else (
+    echo 版本: 3.x ^(Hadoop 3.3.4 + Spark 3.2.1 + Hive 3.1.3^) [默认]
+)
 echo.
 echo 开始时间: %date% %time%
 echo.
@@ -33,13 +64,13 @@ REM ============================================================
 REM Step 1: 并行编译所有模块（跳过 linkis-dist）
 REM ============================================================
 echo [1/2] 并行编译所有模块...
-echo 执行: mvn clean install -T %THREADS% -DskipTests -pl "!:linkis-dist"
+echo 执行: mvn clean install -T %THREADS% -DskipTests %V2_PROFILE% -pl "!:linkis-dist"
 echo.
 
 set "STEP1_START=%time%"
 call :GetSeconds "%STEP1_START%" STEP1_START_SEC
 
-call mvn clean install -T %THREADS% -DskipTests -pl "!:linkis-dist"
+call mvn clean install -T %THREADS% -DskipTests %V2_PROFILE% -pl "!:linkis-dist"
 if %ERRORLEVEL% neq 0 (
     echo.
     echo [错误] 步骤 1 编译失败!
@@ -61,13 +92,13 @@ REM ============================================================
 REM Step 2: 串行编译 linkis-dist
 REM ============================================================
 echo [2/2] 串行打包 linkis-dist...
-echo 执行: mvn install -pl :linkis-dist -DskipTests
+echo 执行: mvn install -pl :linkis-dist -DskipTests %V2_PROFILE%
 echo.
 
 set "STEP2_START=%time%"
 call :GetSeconds "%STEP2_START%" STEP2_START_SEC
 
-call mvn install -pl :linkis-dist -DskipTests
+call mvn install -pl :linkis-dist -DskipTests %V2_PROFILE%
 if %ERRORLEVEL% neq 0 (
     echo.
     echo [错误] 步骤 2 编译失败!

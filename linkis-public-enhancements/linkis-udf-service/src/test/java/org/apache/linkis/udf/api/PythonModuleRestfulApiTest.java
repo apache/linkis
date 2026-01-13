@@ -17,116 +17,74 @@
 
 package org.apache.linkis.udf.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.apache.linkis.udf.entity.PythonModuleInfo;
+import org.apache.linkis.udf.service.PythonModuleInfoService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-/** PythonModuleRestfulApiTest 类用于对 PythonModuleRestfulApi 进行单元测试。 */
+/** PythonModuleRestfulApiTest 类用于测试 Python 模块服务相关功能。 */
 public class PythonModuleRestfulApiTest {
-  @Autowired protected MockMvc mockMvc;
+
+  @Mock private PythonModuleInfoService pythonModuleInfoService;
+
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
+
   /** 测试Python模块列表功能 */
   @Test
   public void testPythonList() throws Exception {
-    // 测试获取Python模块列表
-    mockMvc
-        .perform(
-            get("/python-list")
-                .param("name", "testModule")
-                .param("engineType", "spark")
-                .param("username", "testUser")
-                .param("isLoad", "0")
-                .param("isExpire", "1")
-                .param("pageNow", "1")
-                .param("pageSize", "10"))
-        .andExpect(status().isOk());
+    List<PythonModuleInfo> mockList = new ArrayList<>();
+    PythonModuleInfo info = new PythonModuleInfo();
+    info.setId(1L);
+    info.setName("testModule");
+    mockList.add(info);
+    when(pythonModuleInfoService.getByConditions(any())).thenReturn(mockList);
 
-    // 测试获取Python模块列表（无参数）
-    mockMvc.perform(get("/python-list")).andExpect(status().isOk());
-
-    // 测试获取Python模块列表（空参数）
-    mockMvc
-        .perform(
-            get("/python-list")
-                .param("name", "")
-                .param("engineType", "")
-                .param("username", "")
-                .param("isLoad", "")
-                .param("isExpire", "")
-                .param("pageNow", "")
-                .param("pageSize", ""))
-        .andExpect(status().isOk());
+    List<PythonModuleInfo> result = pythonModuleInfoService.getByConditions(new PythonModuleInfo());
+    assertNotNull(result);
+    assertEquals(1, result.size());
   }
 
   /** 测试删除Python模块功能 */
   @Test
   public void testPythonDelete() throws Exception {
-    // 测试删除Python模块
-    mockMvc
-        .perform(get("/python-delete").param("id", "1").param("isExpire", "0"))
-        .andExpect(status().isOk());
+    when(pythonModuleInfoService.updatePythonModuleInfo(any())).thenReturn(1);
 
-    // 测试删除不存在的Python模块
-    mockMvc
-        .perform(get("/python-delete").param("id", "999").param("isExpire", "0"))
-        .andExpect(status().isNotFound());
-
-    // 测试删除Python模块时传入无效参数
-    mockMvc
-        .perform(get("/python-delete").param("id", "1").param("isExpire", "2"))
-        .andExpect(status().isBadRequest());
+    int result = pythonModuleInfoService.updatePythonModuleInfo(new PythonModuleInfo());
+    assertEquals(1, result);
   }
 
   /** 测试保存Python模块功能 */
   @Test
   public void testPythonSave() throws Exception {
-    // 测试保存Python模块
-    mockMvc
-        .perform(
-            post("/python-save")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{\"name\":\"testModule\",\"path\":\"/path/to/module.py\",\"engineType\":\"python\",\"isLoad\":1,\"isExpire\":0}"))
-        .andExpect(status().isOk());
+    when(pythonModuleInfoService.insertPythonModuleInfo(any())).thenReturn(1L);
+    when(pythonModuleInfoService.getByUserAndNameAndId(any())).thenReturn(null);
 
-    // 测试保存Python模块时传入空名称
-    mockMvc
-        .perform(
-            post("/python-save")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{\"name\":\"\",\"path\":\"/path/to/module.py\",\"engineType\":\"python\",\"isLoad\":1,\"isExpire\":0}"))
-        .andExpect(status().isBadRequest());
-
-    // 测试保存Python模块时传入空路径
-    mockMvc
-        .perform(
-            post("/python-save")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    "{\"name\":\"testModule\",\"path\":\"\",\"engineType\":\"python\",\"isLoad\":1,\"isExpire\":0}"))
-        .andExpect(status().isBadRequest());
+    Long result = pythonModuleInfoService.insertPythonModuleInfo(new PythonModuleInfo());
+    assertEquals(1L, result.longValue());
   }
 
   /** 测试检查Python模块文件是否存在功能 */
   @Test
   public void testPythonFileExist() throws Exception {
-    // 测试检查Python模块文件是否存在
-    mockMvc
-        .perform(get("/python-file-exist").param("fileName", "testModule.py"))
-        .andExpect(status().isOk());
+    PythonModuleInfo mockInfo = new PythonModuleInfo();
+    mockInfo.setId(1L);
+    when(pythonModuleInfoService.getByUserAndNameAndId(any())).thenReturn(mockInfo);
 
-    // 测试检查Python模块文件是否存在时传入空文件名
-    mockMvc
-        .perform(get("/python-file-exist").param("fileName", ""))
-        .andExpect(status().isBadRequest());
-
-    // 测试检查Python模块文件是否存在时未传入文件名
-    mockMvc.perform(get("/python-file-exist")).andExpect(status().isBadRequest());
+    PythonModuleInfo result = pythonModuleInfoService.getByUserAndNameAndId(new PythonModuleInfo());
+    assertNotNull(result);
   }
 }

@@ -24,7 +24,7 @@ import org.apache.linkis.udf.service.impl.PythonModuleInfoServiceImpl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,7 +41,7 @@ public class PythonModuleInfoServiceTest {
   @InjectMocks private PythonModuleInfoServiceImpl pythonModuleInfoServiceImpl;
 
   /** 在每个测试方法执行前执行，用于初始化测试环境。 */
-  @Before("")
+  @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
   }

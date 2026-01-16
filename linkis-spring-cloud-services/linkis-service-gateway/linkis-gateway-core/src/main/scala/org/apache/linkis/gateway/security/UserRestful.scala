@@ -299,11 +299,10 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     // 如果是web登录，检查是否为系统用户（包括hadoop用户）
     if (GatewayConfiguration.PROHIBIT_LOGIN_SWITCH.getValue && webLogin) {
       // 检查是否为系统用户（包括hadoop用户）
-      PROHIBIT_LOGIN_PREFIX.split(",").foreach {
-        prefix =>
-          if (userName.toLowerCase().startsWith(prefix)) {
-            return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
-          }
+      PROHIBIT_LOGIN_PREFIX.split(",").foreach { prefix =>
+        if (userName.toLowerCase().startsWith(prefix)) {
+          return Message.error("System users are prohibited from logging in（系统用户禁止登录）！")
+        }
       }
     }
     if (

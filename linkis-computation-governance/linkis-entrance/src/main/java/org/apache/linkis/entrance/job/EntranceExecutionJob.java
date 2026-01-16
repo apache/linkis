@@ -157,9 +157,13 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     String resultSetPathRoot = GovernanceCommonConf.RESULT_SET_STORE_PATH().getValue(runtimeMapTmp);
 
     if (!runtimeMapTmp.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH().key())) {
-      String resultParentPath = CommonLogPathUtils.getResultParentPath(jobRequest);
-      CommonLogPathUtils.buildCommonPath(resultParentPath, true);
-      resultSetPathRoot = CommonLogPathUtils.getResultPath(jobRequest);
+      if (org.apache.commons.lang3.StringUtils.isNotEmpty(jobRequest.getResultLocation())) {
+        resultSetPathRoot = jobRequest.getResultLocation();
+      } else {
+        String resultParentPath = CommonLogPathUtils.getResultParentPath(jobRequest);
+        CommonLogPathUtils.buildCommonPath(resultParentPath, true);
+        resultSetPathRoot = CommonLogPathUtils.getResultPath(jobRequest);
+      }
     }
 
     Map<String, Object> jobMap = new HashMap<String, Object>();

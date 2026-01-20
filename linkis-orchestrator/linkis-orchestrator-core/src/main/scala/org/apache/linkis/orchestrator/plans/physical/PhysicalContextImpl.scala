@@ -17,6 +17,7 @@
 
 package org.apache.linkis.orchestrator.plans.physical
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
@@ -96,8 +97,10 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
                 flag = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               }
               logger.info("task error receiver end.")
-              failedResponse.errorIndex = params.getOrElse("execute.error.code.index", "-1").toInt
-              failedResponse.aliasNum = params.getOrElse("execute.resultset.alias.num", "0").toInt
+              failedResponse.errorIndex =
+                params.getOrElse(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1").toInt
+              failedResponse.aliasNum =
+                params.getOrElse(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0").toInt
             }
           case _ =>
         }

@@ -322,19 +322,26 @@ abstract class EntranceServer extends Logging {
     Utils.defaultScheduler.scheduleAtFixedRate(
       new Runnable() {
         override def run(): Unit = {
-          val undoneTask = getAllUndoneTask(null, null)
           // 新增任务诊断检测逻辑
           if (EntranceConfiguration.TASK_DIAGNOSIS_ENABLE) {
             logger.info("Start to check tasks for diagnosis")
+            val undoneTask = getAllUndoneTask(null, null)
             val diagnosisTime = System.currentTimeMillis() - new TimeType(
               EntranceConfiguration.TASK_DIAGNOSIS_TIMEOUT
             ).toLong
             undoneTask
               .filter { job =>
                 val engineType = LabelUtil.getEngineType(job.getJobRequest.getLabels)
+                val jobMetrics = Option(job.jobRequest.getMetrics)
+                val startTime =
+                  if (jobMetrics.exists(_.containsKey(TaskConstant.JOB_RUNNING_TIME))) {
+                    jobMetrics.get.get(TaskConstant.JOB_RUNNING_TIME).toString.toLong
+                  } else {
+                    0L
+                  }
                 engineType.contains(
                   EntranceConfiguration.TASK_DIAGNOSIS_ENGINE_TYPE
-                ) && job.createTime < diagnosisTime && !diagnosedJobs.containsKey(
+                ) && startTime != 0 && startTime < diagnosisTime && !diagnosedJobs.containsKey(
                   job.getJobRequest.getId.toString
                 )
               }
@@ -390,17 +397,17 @@ abstract class EntranceServer extends Logging {
                 }
                 logger.info("Finished to check Spark tasks for diagnosis")
               }
-          }
-          // 定期清理diagnosedJobs，只保留未完成任务的记录
-          val undoneJobIds = undoneTask.map(_.getJobRequest.getId.toString()).toSet
-          val iterator = diagnosedJobs.keySet().iterator()
-          while (iterator.hasNext) {
-            val jobId = iterator.next()
-            if (!undoneJobIds.contains(jobId)) {
-              iterator.remove()
+            // 定期清理diagnosedJobs，只保留未完成任务的记录
+            val undoneJobIds = undoneTask.map(_.getJobRequest.getId.toString()).toSet
+            val iterator = diagnosedJobs.keySet().iterator()
+            while (iterator.hasNext) {
+              val jobId = iterator.next()
+              if (!undoneJobIds.contains(jobId)) {
+                iterator.remove()
+              }
             }
+            logger.info(s"Cleaned diagnosedJobs cache, current size: ${diagnosedJobs.size()}")
           }
-          logger.info(s"Cleaned diagnosedJobs cache, current size: ${diagnosedJobs.size()}")
         }
       },
       new TimeType(EntranceConfiguration.TASK_DIAGNOSIS_TIMEOUT_SCAN).toLong,

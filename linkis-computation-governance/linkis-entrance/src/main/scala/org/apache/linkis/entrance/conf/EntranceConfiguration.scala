@@ -420,6 +420,7 @@ object EntranceConfiguration {
   var SPARK_DYNAMIC_ALLOCATION_ENABLED =
     CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
 
+
   var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
     CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
 
@@ -450,6 +451,6 @@ object EntranceConfiguration {
   val TASK_DIAGNOSIS_TIMEOUT = CommonVars[String]("linkis.task.diagnosis.timeout", "5m").getValue
 
   val TASK_DIAGNOSIS_TIMEOUT_SCAN =
-    CommonVars("linkis.task.diagnosis.timeout.scan", "1m").getValue
+    CommonVars("linkis.task.diagnosis.timeout.scan", "2m").getValue
 
 }

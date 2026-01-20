@@ -189,6 +189,9 @@ object SparkConfiguration extends Logging {
   val SPARK_ENGINE_EXTENSION_CONF =
     CommonVars("linkis.spark.engine.extension.conf", "spark.sql.shuffle.partitions=200").getValue
 
+  val SPARK_PROHIBITS_DYNAMIC_RESOURCES_SWITCH =
+    CommonVars[Boolean]("linkis.spark.dynamic.resource.switch", false).getValue
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

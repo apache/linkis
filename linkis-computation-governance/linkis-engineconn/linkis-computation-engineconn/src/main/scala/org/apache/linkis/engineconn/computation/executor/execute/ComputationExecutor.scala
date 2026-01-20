@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.execute
 
 import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
@@ -262,10 +263,13 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
         var executeFlag = true
         val errorIndex: Int = Integer.valueOf(
-          engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+          engineConnTask.getProperties
+            .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+            .toString
         )
-        engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
-        // 如果执行失败，则将错误的index-1，因为在重试的时候，会将错误的index+1，所以需要-1，
+        engineExecutionContext.getProperties
+          .put(Configuration.EXECUTE_ERROR_CODE_INDEX.key, errorIndex.toString)
+        // jdbc执行任务重试，如果sql有被set进sql，会导致sql的index错位，这里会将日志打印的index进行减一，保证用户看的index是正常的，然后重试的errorIndex需要加一，保证重试的位置是正确的
         var newIndex = index
         var newErrorIndex = errorIndex
         if (adjustErrorIndexForSetScenarios(engineConnTask)) {
@@ -322,7 +326,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
                     s"task execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
                   )
                 )
-                engineConnTask.getProperties.put("execute.error.code.index", index.toString)
+                engineConnTask.getProperties
+                  .put(Configuration.EXECUTE_ERROR_CODE_INDEX.key, index.toString)
                 return ErrorRetryExecuteResponse(e.message, index, e.t)
               } else {
                 failedTasks.increase()
@@ -341,7 +346,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
               engineExecutionContext.appendStdout(output)
               if (StringUtils.isNotBlank(e.getOutput)) {
                 engineConnTask.getProperties
-                  .put("execute.resultset.alias.num", engineExecutionContext.getAliasNum.toString)
+                  .put(
+                    Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key,
+                    engineExecutionContext.getAliasNum.toString
+                  )
                 engineExecutionContext.sendResultSet(e)
               }
             case _: IncompleteExecuteResponse =>
@@ -403,7 +411,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           )
 
           val currentAliasNum = Integer.valueOf(
-            engineConnTask.getProperties.getOrDefault("execute.resultset.alias.num", "0").toString
+            engineConnTask.getProperties
+              .getOrDefault(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0")
+              .toString
           )
 
           ComputationEngineUtils.sendToEntrance(
@@ -491,11 +501,15 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     engineExecutionContext.setLabels(engineConnTask.getLables)
 
     val errorIndex: Int = Integer.valueOf(
-      engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+      engineConnTask.getProperties
+        .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+        .toString
     )
     if (errorIndex > 0) {
       val savedAliasNum = Integer.valueOf(
-        engineConnTask.getProperties.getOrDefault("execute.resultset.alias.num", "0").toString
+        engineConnTask.getProperties
+          .getOrDefault(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0")
+          .toString
       )
       engineExecutionContext.setResultSetNum(savedAliasNum)
       logger.info(s"Restore aliasNum to $savedAliasNum for retry task")

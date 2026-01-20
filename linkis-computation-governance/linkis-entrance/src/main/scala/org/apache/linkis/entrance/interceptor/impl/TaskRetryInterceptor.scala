@@ -53,30 +53,17 @@ class TaskRetryInterceptor extends EntranceInterceptor with Logging {
     // 全局重试开关开启时处理
     if (TASK_RETRY_SWITCH.getValue) {
       val startMap: util.Map[String, AnyRef] = TaskUtils.getStartupMap(jobRequest.getParams)
-
-      // 分类型处理：AI SQL任务或配置支持的任务类型
-      if (LANGUAGE_TYPE_AI_SQL.equals(codeType)) {
-        // AI SQL任务需同时满足功能启用和创建者权限
-        if (aiSqlEnable && supportAISQLCreator.contains(creator.toLowerCase())) {
-          logAppender.append(
-            LogUtils.generateWarn(s"The AI SQL task will initiate a failed retry \n")
-          )
-          startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
-        }
-      } else {
-        TASK_RETRY_CODE_TYPE
-          .split(",")
-          .foreach(codeTypeConf => {
-            if (codeTypeConf.equals(codeType)) {
-              // 普通任务只需满足类型支持
-              logAppender.append(
-                LogUtils.generateWarn(s"The StarRocks task will initiate a failed retry \n")
-              )
-              startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
-              startMap.put(RETRY_NUM_KEY.key, RETRY_NUM_KEY.getValue.asInstanceOf[AnyRef])
-            }
-          })
-      }
+      TASK_RETRY_CODE_TYPE
+        .split(",")
+        .foreach(codeTypeConf => {
+          if (codeTypeConf.equals(codeType)) {
+            // 普通任务只需满足类型支持
+            logAppender
+              .append(LogUtils.generateWarn(s"The StarRocks task will initiate a failed retry \n"))
+            startMap.put(TASK_RETRY_SWITCH.key, TASK_RETRY_SWITCH.getValue.asInstanceOf[AnyRef])
+            startMap.put(RETRY_NUM_KEY.key, RETRY_NUM_KEY.getValue.asInstanceOf[AnyRef])
+          }
+        })
       // 更新作业参数
       TaskUtils.addStartupMap(jobRequest.getParams, startMap)
     }

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
@@ -136,7 +137,9 @@ object SQLSession extends Logging {
 
     // 失败任务重试处理结果集
     val errorIndex: Integer = Integer.valueOf(
-      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+      engineExecutionContext.getProperties
+        .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+        .toString
     )
     val hasSetResultSetNum: Boolean = engineExecutionContext.getProperties
       .getOrDefault("hasSetResultSetNum", "true")

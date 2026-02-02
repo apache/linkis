@@ -88,4 +88,7 @@ public class RMConfiguration {
 
   public static final CommonVars<Boolean> GET_RESOURCE_BY_LABEL_VALUE_ENABLED =
       CommonVars.apply("wds.linkis.get.resource.by.label.value.enable", false);
+
+  public static final CommonVars<Boolean> YARN_APPS_FILTER_ENABLED =
+      CommonVars.apply("wds.linkis.rm.yarn.apps.filter.enabled", true);
 }

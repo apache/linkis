@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.external.yarn;
 
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -313,8 +314,23 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
     String realQueueName = queuePrefix + queueName;
+    JsonNode resp;
+    if (RMConfiguration.YARN_APPS_FILTER_ENABLED.getValue()) {
+      // Build query parameters to filter apps at Yarn API level using active states only
+      String queryParams =
+          "?queue="
+              + realQueueName
+              + "&states="
+              + YarnAppState.RUNNING.getState()
+              + ","
+              + YarnAppState.ACCEPTED.getState();
+      resp =
+          getResponseByUrl("apps" + queryParams, rmWebAddress, provider).path("apps").path("app");
+    } else {
+      // Fetch all apps without filtering (for backward compatibility)
+      resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
+    }
 
-    JsonNode resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
     if (resp.isMissingNode()) {
       return new ArrayList<>();
     }

@@ -1543,7 +1543,8 @@
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin.version}</version>
           <configuration>
-            <recompileMode>incremental</recompileMode>
+            <!-- Use `all` here to prevent an infinite loop during compilation -->
+            <recompileMode>all</recompileMode>
             <args>
               <arg>-unchecked</arg>
               <arg>-deprecation</arg>
@@ -1750,6 +1751,8 @@
           <version>${maven-surefire-plugin.version}</version>
           <configuration>
             <forkCount>3</forkCount>
+            <parallel>methods</parallel>
+            <threadCount>4</threadCount>
           </configuration>
         </plugin>
 
@@ -1902,6 +1905,8 @@
               <reuseForks>true</reuseForks>
               <argLine>-XX:MaxMetaspaceSize=2g ${extraJavaTestArgs}
                 -Dio.netty.tryReflectionSetAccessible=true</argLine>
+              <parallel>methods</parallel>
+              <threadCount>4</threadCount>
             </configuration>
           </plugin>
         </plugins>
@@ -1979,6 +1984,30 @@
       <properties>
         <storage.orc.scope>compile</storage.orc.scope>
       </properties>
+    </profile>
+
+    <!-- skip test -->
+    <profile>
+      <id>quick</id>
+      <properties>
+        <skipTests>true</skipTests>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.source.skip>true</maven.source.skip>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.site.skip>true</maven.site.skip>
+        <checkstyle.skip>true</checkstyle.skip>
+        <rat.skip>true</rat.skip>
+        <spotless.check.skip>true</spotless.check.skip>
+        <jacoco.skip>true</jacoco.skip>
+        <findbugs.skip>true</findbugs.skip>
+        <pmd.skip>true</pmd.skip>
+        <flatten.skip>true</flatten.skip>
+        <enforcer.skip>true</enforcer.skip>
+      </properties>
+      <build>
+        <defaultGoal>compile</defaultGoal>
+      </build>
     </profile>
   </profiles>
 </project>

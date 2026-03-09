@@ -30,4 +30,7 @@ object PipeLineConstant {
     "wds.linkis.engine.pipeline.field.quote.retoch.enable"
 
   val BLANK = "BLANK"
+
+  val PIPELINE_MASKED_CONF = "pipeline.masked.field.names"
+
 }

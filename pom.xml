@@ -305,7 +305,7 @@
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jacoco.skip>false</jacoco.skip>
-
+    <bes.version>9.5.5.0141</bes.version>
     <!-- ==================== 28. JDK-17 测试参数 ==================== -->
     <extraJavaTestArgs>-XX:+IgnoreUnrecognizedVMOptions
       --add-opens=java.base/java.lang=ALL-UNNAMED

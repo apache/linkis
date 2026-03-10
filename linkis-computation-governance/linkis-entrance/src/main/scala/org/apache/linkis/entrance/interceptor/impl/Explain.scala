@@ -219,7 +219,7 @@ object SQLExplain extends Explain {
         EntranceErrorCode.EXECUTION_CODE_ISNULL.getDesc
       )
     }
-    logger.debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+    logger.debug(s"SQL limit applied.")
   }
 
   private def findRealSemicolonIndex(tempCode: String): Array[Int] = {

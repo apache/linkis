@@ -29,19 +29,19 @@ Happy contributing!
 
 ### What is the purpose of the change
 
-<!-- 用英文简要描述变更目的，1-2 句话即可 -->
+<!-- Briefly describe the change purpose in 1-2 sentences -->
 
 
 ### Related issues/PRs
 
-<!-- 关联的 Issue 和 PR，如 N/A 或 close #123 -->
+<!-- Related issues and PRs, e.g., N/A or close #123 -->
 
 Related issues:
 Related pr:
 
 ### Brief change log
 
-<!-- 用英文列出主要改动，使用 bullet points -->
+<!-- List the main changes using bullet points -->
 
 -
 -
@@ -59,16 +59,9 @@ Related pr:
 
 ---
 
-## Change Description (Chinese)
+### Main Changes (Detailed)
 
-### Purpose
-
-<!-- Describe the purpose in Chinese, what problem does it solve -->
-
-
-### Main Changes
-
-<!-- List the main changes in detail in Chinese -->
+<!-- List the main changes in detail -->
 
 1. **Server-side changes**:
    -

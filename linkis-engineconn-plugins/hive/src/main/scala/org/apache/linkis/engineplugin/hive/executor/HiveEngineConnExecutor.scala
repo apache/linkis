@@ -700,7 +700,7 @@ class HiveEngineConnExecutor(
           currentProps.keys.foreach { key =>
             if (!hiveTmpConf.contains(key)) {
               logger.info(s"Clearing extra configuration key: $key")
-              sessionConf.set(key, "")
+              sessionConf.unset(key)
             }
           }
         } else {

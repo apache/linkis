@@ -47,16 +47,6 @@ Related pr:
 -
 -
 
-### Checklist
-
-- [ ] I have read the [Contributing Guidelines on pull requests](https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md#pull-requests).
-- [ ] I have explained the need for this PR and the problem it solves
-- [ ] I have explained the changes or the new features added to this PR
-- [ ] I have added tests corresponding to this change
-- [ ] I have updated the documentation to reflect this change
-- [ ] I have verified that this change is backward compatible (If not, please discuss on the [Linkis mailing list](https://linkis.apache.org/community/how-to-subscribe) first)
-- [ ] **If this is a code change**: I have written unit tests to fully verify the new behavior.
-
 ---
 
 ### Main Changes (Detailed)
@@ -80,3 +70,15 @@ Related pr:
 
 - []
 - []
+
+---
+
+### Checklist
+
+- [ ] I have read the [Contributing Guidelines on pull requests](https://github.com/facebook/docusaurus/blob/main/CONTRIBUTING.md#pull-requests).
+- [ ] I have explained the need for this PR and the problem it solves
+- [ ] I have explained the changes or the new features added to this PR
+- [ ] I have added tests corresponding to this change
+- [ ] I have updated the documentation to reflect this change
+- [ ] I have verified that this change is backward compatible (If not, please discuss on the [Linkis mailing list](https://linkis.apache.org/community/how-to-subscribe) first)
+- [ ] **If this is a code change**: I have written unit tests to fully verify the new behavior.

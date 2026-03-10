@@ -1,23 +1,23 @@
 <!--
-PR 提交模板 - 请按照以下格式填写
+PR Submission Template - Please follow the format below
 
-标题格式：【一级模块】【二级模块】【前/后端】需求简要描述
-- 一级模块：如 Datasource、Computation-Governance、EngineConn 等
-- 二级模块：如 datasource-manager、engineconn-core 等
-- 前后端：后端 / 前端
-- 需求描述：简洁描述功能，让人通过标题就能看出功能和改动点
+Title Format: [Level-1 Module][Level-2 Module][Frontend/Backend] Brief description of the change
+- Level-1 Module: e.g., Datasource, Computation-Governance, EngineConn, etc.
+- Level-2 Module: e.g., datasource-manager, engineconn-core, etc.
+- Frontend/Backend: Backend / Frontend
+- Description: Briefly describe the feature so that the title clearly shows the function and changes
 
-示例标题：
-- 【Datasource】【datasource-manager】【后端】新增按类型和代理用户获取已发布数据源功能
-- 【Computation-Governance】【engineconn-core】【后端】修复 EngineConn 连接池泄漏问题
-- 【UI】【console】【前端】新增任务执行进度可视化功能
+Example Titles:
+- [Datasource][datasource-manager][Backend] Add ability to get published data source by type and proxy user
+- [Computation-Governance][engineconn-core][Backend] Fix EngineConn connection pool leak
+- [UI][console][Frontend] Add task execution progress visualization
 -->
 
-## PR 标题
+## PR Title
 
-<!-- 在下方填写，格式：【一级模块】【二级模块】【前/后端】需求简要描述 -->
+<!-- Fill in below, format: [Level-1 Module][Level-2 Module][Frontend/Backend] Brief description -->
 
-【】【】【】
+[][][]
 
 ---
 
@@ -59,31 +59,31 @@ Related pr:
 
 ---
 
-## 变更说明（中文）
+## Change Description (Chinese)
 
-### 功能目的
+### Purpose
 
-<!-- 用中文描述功能目的，解决什么问题 -->
+<!-- Describe the purpose in Chinese, what problem does it solve -->
 
 
-### 主要改动
+### Main Changes
 
-<!-- 用中文详细列出主要改动，可分点描述 -->
+<!-- List the main changes in detail in Chinese -->
 
-1. **服务端改动**：
+1. **Server-side changes**:
    -
    -
 
-2. **客户端改动**：
+2. **Client-side changes**:
    -
    -
 
-3. **其他改动**：
+3. **Other changes**:
    -
 
-### 涉及模块
+### Related Modules
 
-<!-- 列出涉及的模块 -->
+<!-- List the related modules -->
 
-- 【】
-- 【】
+- []
+- []

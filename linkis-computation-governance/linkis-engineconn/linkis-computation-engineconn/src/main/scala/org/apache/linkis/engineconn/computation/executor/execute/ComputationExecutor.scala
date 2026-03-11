@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.execute
 
 import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
@@ -35,16 +36,22 @@ import org.apache.linkis.engineconn.computation.executor.exception.HookExecuteEx
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
+import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineUtils
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
-import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
+import org.apache.linkis.governance.common.protocol.task.{
+  EngineConcurrentInfo,
+  RequestTask,
+  ResponseTaskError,
+  ResponseTaskStatusWithExecuteCodeIndex
+}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
@@ -264,17 +271,40 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
         var executeFlag = true
         val errorIndex: Int = Integer.valueOf(
-          engineConnTask.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+          engineConnTask.getProperties
+            .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+            .toString
         )
-        engineExecutionContext.getProperties.put("execute.error.code.index", errorIndex.toString)
+        engineExecutionContext.getProperties
+          .put(Configuration.EXECUTE_ERROR_CODE_INDEX.key, errorIndex.toString)
+        // jdbc执行任务重试，如果sql有被set进sql，会导致sql的index错位，这里会将日志打印的index进行减一，保证用户看的index是正常的，然后重试的errorIndex需要加一，保证重试的位置是正确的
+        var newIndex = index
+        var newErrorIndex = errorIndex
+        if (adjustErrorIndexForSetScenarios(engineConnTask)) {
+          newIndex = index - 1
+          newErrorIndex = errorIndex + 1
+        }
         // 重试的时候如果执行过则跳过执行
-        if (retryEnable && errorIndex > 0 && index < errorIndex) {
-          engineExecutionContext.appendStdout(
-            LogUtils.generateInfo(
-              s"aisql retry with errorIndex: ${errorIndex}, current sql index: ${index} will skip."
+        if (retryEnable && errorIndex > 0 && index < newErrorIndex) {
+          val code = codes(index).trim.toUpperCase()
+          val shouldSkip = !isContextStatement(code)
+
+          if (shouldSkip) {
+            engineExecutionContext.appendStdout(
+              LogUtils.generateInfo(
+                s"task retry with errorIndex: ${errorIndex}, current sql index: ${newIndex} will skip."
+              )
             )
-          )
-          executeFlag = false
+            executeFlag = false
+          } else {
+            if (newIndex >= 0) {
+              engineExecutionContext.appendStdout(
+                LogUtils.generateInfo(
+                  s"task retry with errorIndex: ${errorIndex}, current sql index: ${newIndex} is a context statement, will execute."
+                )
+              )
+            }
+          }
         }
         if (executeFlag) {
           val code = codes(index)
@@ -289,21 +319,23 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           response match {
             case e: ErrorExecuteResponse =>
               val props: util.Map[String, String] = engineCreationContext.getOptions
-              val aiSqlEnable: String = props.getOrDefault("linkis.ai.sql.enable", "false").toString
+              val taskRetry: String =
+                props.getOrDefault("linkis.task.retry.switch", "false").toString
               val retryNum: Int =
-                Integer.valueOf(props.getOrDefault("linkis.ai.retry.num", "0").toString)
+                Integer.valueOf(props.getOrDefault("linkis.task.retry.num", "0").toString)
 
-              if (retryEnable && !props.isEmpty && "true".equals(aiSqlEnable) && retryNum > 0) {
+              if (retryEnable && !props.isEmpty && "true".equals(taskRetry) && retryNum > 0) {
                 logger.info(
-                  s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
+                  s"task execute failed, with index: ${index} retryNum: ${retryNum}, and will retry",
                   e.t
                 )
                 engineExecutionContext.appendStdout(
                   LogUtils.generateInfo(
-                    s"aisql execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
+                    s"task execute failed, with index: ${index} retryNum: ${retryNum}, and will retry"
                   )
                 )
-                engineConnTask.getProperties.put("execute.error.code.index", index.toString)
+                engineConnTask.getProperties
+                  .put(Configuration.EXECUTE_ERROR_CODE_INDEX.key, index.toString)
                 return ErrorRetryExecuteResponse(e.message, index, e.t)
               } else {
                 failedTasks.increase()
@@ -320,7 +352,14 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
                   e.getOutput.substring(0, outputPrintLimit)
                 } else e.getOutput
               engineExecutionContext.appendStdout(output)
-              if (StringUtils.isNotBlank(e.getOutput)) engineExecutionContext.sendResultSet(e)
+              if (StringUtils.isNotBlank(e.getOutput)) {
+                engineConnTask.getProperties
+                  .put(
+                    Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key,
+                    engineExecutionContext.getAliasNum.toString
+                  )
+                engineExecutionContext.sendResultSet(e)
+              }
             case _: IncompleteExecuteResponse =>
               incomplete ++= incompleteSplitter
           }
@@ -369,6 +408,31 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       executeResponse match {
         case successExecuteResponse: SuccessExecuteResponse =>
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
+        case ErrorRetryExecuteResponse(message, index, throwable) =>
+          ComputationEngineUtils.sendToEntrance(
+            engineConnTask,
+            ResponseTaskError(engineConnTask.getTaskId, message)
+          )
+          logger.warn(
+            s"The task begins executing retries,jobId:${engineConnTask.getTaskId},index:${index} ,message:${message}",
+            throwable
+          )
+
+          val currentAliasNum = Integer.valueOf(
+            engineConnTask.getProperties
+              .getOrDefault(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0")
+              .toString
+          )
+
+          ComputationEngineUtils.sendToEntrance(
+            engineConnTask,
+            new ResponseTaskStatusWithExecuteCodeIndex(
+              engineConnTask.getTaskId,
+              ExecutionNodeStatus.Failed,
+              index,
+              currentAliasNum
+            )
+          )
         case errorExecuteResponse: ErrorExecuteResponse =>
           listenerBusContext.getEngineConnSyncListenerBus.postToAll(
             TaskResponseErrorEvent(engineConnTask.getTaskId, errorExecuteResponse.message)
@@ -404,6 +468,22 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   def getProgressInfo(taskID: String): Array[JobProgressInfo]
 
+  /**
+   * 调整错误索引：直接匹配三种SET语句场景 因为SET语句会被解析器视为第一条SQL
+   */
+  protected def adjustErrorIndexForSetScenarios(engineConnTask: EngineConnTask): Boolean = {
+    val executionCode = engineConnTask.getCode
+    val engineTypeLabel = engineConnTask.getLables.find(_.isInstanceOf[EngineTypeLabel]).get
+    val engineType = engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType
+    var result = false
+    if (executionCode != null && engineType.equals(EngineType.JDBC.toString)) {
+      val upperCode = executionCode.toUpperCase().trim
+      val jdbcSetPrefixes = ComputationExecutorConf.JDBC_SET_STATEMENT_PREFIXES.getValue.split(",")
+      result = jdbcSetPrefixes.exists(upperCode.startsWith)
+    }
+    result
+  }
+
   protected def createEngineExecutionContext(
       engineConnTask: EngineConnTask
   ): EngineExecutionContext = {
@@ -427,6 +507,22 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     engineExecutionContext.setJobId(engineConnTask.getTaskId)
     engineExecutionContext.getProperties.putAll(engineConnTask.getProperties)
     engineExecutionContext.setLabels(engineConnTask.getLables)
+
+    val errorIndex: Int = Integer.valueOf(
+      engineConnTask.getProperties
+        .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+        .toString
+    )
+    if (errorIndex > 0) {
+      val savedAliasNum = Integer.valueOf(
+        engineConnTask.getProperties
+          .getOrDefault(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0")
+          .toString
+      )
+      engineExecutionContext.setResultSetNum(savedAliasNum)
+      logger.info(s"Restore aliasNum to $savedAliasNum for retry task")
+    }
+
     engineExecutionContext
   }
 
@@ -437,6 +533,18 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         transformTaskStatus(task, ExecutionNodeStatus.Cancelled)
       }
     }
+  }
+
+  /**
+   * 判断是否为上下文语句，重试时需要保留执行
+   *
+   * @param code
+   *   SQL代码（已转换为大写并去除首尾空格）
+   * @return
+   *   true表示是上下文语句，false表示不是
+   */
+  private def isContextStatement(code: String): Boolean = {
+    ComputationExecutorConf.CONTEXT_STATEMENT_PREFIXES.getValue.split(",").exists(code.startsWith)
   }
 
   /**

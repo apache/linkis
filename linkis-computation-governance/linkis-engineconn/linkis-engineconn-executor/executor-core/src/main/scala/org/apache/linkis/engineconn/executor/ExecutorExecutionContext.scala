@@ -127,4 +127,6 @@ trait ExecutorExecutionContext {
 
   def setResultSetNum(num: Int): Unit = aliasNum.set(num)
 
+  def getAliasNum: Int = aliasNum.get()
+
 }

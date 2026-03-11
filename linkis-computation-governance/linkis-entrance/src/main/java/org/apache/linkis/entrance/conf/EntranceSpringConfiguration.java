@@ -151,7 +151,8 @@ public class EntranceSpringConfiguration {
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
       new SetTenantLabelInterceptor(),
-      new UserCreatorIPCheckInterceptor()
+      new UserCreatorIPCheckInterceptor(),
+      new TaskRetryInterceptor()
     };
   }
 

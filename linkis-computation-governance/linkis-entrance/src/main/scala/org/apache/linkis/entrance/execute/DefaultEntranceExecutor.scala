@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.execute
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
@@ -252,7 +253,8 @@ class DefaultEntranceExecutor(id: Long)
           if (rte.errorIndex >= 0) {
             logger.info(s"tasks execute error with error index: ${rte.errorIndex}")
             val newParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]()
-            newParams.put("execute.error.code.index", rte.errorIndex.toString)
+            newParams.put(Configuration.EXECUTE_ERROR_CODE_INDEX.key, rte.errorIndex.toString)
+            newParams.put(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, rte.aliasNum.toString)
             LogUtils.generateInfo(
               s"tasks execute error with error index: ${rte.errorIndex} and will retry."
             )

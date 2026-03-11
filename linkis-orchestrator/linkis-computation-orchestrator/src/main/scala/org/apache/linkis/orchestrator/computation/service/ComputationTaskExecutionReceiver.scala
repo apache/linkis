@@ -17,6 +17,7 @@
 
 package org.apache.linkis.orchestrator.computation.service
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
@@ -97,7 +98,11 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
           taskStatus match {
             case rte: ResponseTaskStatusWithExecuteCodeIndex =>
               logger.info(s"execute error with index: ${rte.errorIndex}")
-              task.updateParams("execute.error.code.index", rte.errorIndex.toString)
+              task.updateParams(Configuration.EXECUTE_ERROR_CODE_INDEX.key, rte.errorIndex.toString)
+              task.updateParams(
+                Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key,
+                rte.aliasNum.toString
+              )
             case _ =>
           }
           // 标识当前方法执行过，该方法是异步的，处理失败任务需要该方法执行完

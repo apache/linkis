@@ -21,9 +21,19 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, SHAUtils, Utils}
+import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
+import org.apache.linkis.datasource.client.request.{
+  GetInfoPublishedByDataSourceNameAction,
+  GetPublishedDataSourceByTypeAction
+}
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
-import org.apache.linkis.entrance.exception.EntranceRPCException
+import org.apache.linkis.entrance.exception.{
+  EntranceErrorCode,
+  EntranceErrorException,
+  EntranceRPCException
+}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
@@ -157,9 +167,22 @@ object EntranceUtils extends Logging {
 
   /**
    * 动态引擎类型选择
+   * @param sql
+   *   SQL statement
+   * @param logAppender
+   *   log appender
+   * @param forceEngineType
+   *   force engine type (optional), such as "starrocks"
+   * @return
+   *   engine type
    */
-  def getDynamicEngineType(sql: String, logAppender: java.lang.StringBuilder): String = {
-    val defaultEngineType = "spark"
+  def getDynamicEngineType(
+      sql: String,
+      logAppender: java.lang.StringBuilder,
+      forceEngineType: String = null
+  ): String = {
+    // The default engine is hive for starrocks, and spark for other cases
+    val defaultEngineType = if ("starrocks".equals(forceEngineType)) "hive" else "spark"
 
     if (!EntranceConfiguration.AI_SQL_DYNAMIC_ENGINE_SWITCH) {
       return defaultEngineType
@@ -172,6 +195,11 @@ object EntranceUtils extends Logging {
     params.put("highStability", "")
     params.put("queueResourceUsage", "")
 
+    // Add force engine type parameter if specified
+    if (forceEngineType != null && forceEngineType.nonEmpty) {
+      params.put("engine", forceEngineType)
+    }
+
     val request = DoctorRequest(
       apiUrl = EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL,
       params = params,
@@ -182,6 +210,27 @@ object EntranceUtils extends Logging {
 
     val response = callDoctorService(request, logAppender)
     response.result
+  }
+
+  def getDatasourceByDatasourceTypeAndUser(
+      dataSourceType: String,
+      user: String,
+      proxyUser: String
+  ): DataSource = {
+    val dataSourceClient = new LinkisDataSourceRemoteClient()
+    var dataSource: DataSource = null
+    dataSource = dataSourceClient
+      .getPublishedDataSourceByType(
+        GetPublishedDataSourceByTypeAction
+          .builder()
+          .setDataSourceType(dataSourceType)
+          .setUser(user)
+          .setSystem("Linkis")
+          .setProxyUser(proxyUser)
+          .build()
+      )
+      .getDataSource
+    dataSource
   }
 
   def dealsparkDynamicConf(

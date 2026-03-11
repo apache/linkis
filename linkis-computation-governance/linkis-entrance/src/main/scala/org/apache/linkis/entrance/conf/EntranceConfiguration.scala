@@ -301,6 +301,12 @@ object EntranceConfiguration {
       "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
     ).getValue
 
+  val SUPPORTED_RETRY_ERROR_DESC_REGEX =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.desc.regex",
+      "Query timeout.*,Query exceeded time limit.*,Memory of process exceed limit.*,Backend node not found,Connection reset by peer,StarRocks planner use long time,pending timeout"
+    ).getValue
+
   val SUPPORT_ADD_RETRY_CODE_KEYS =
     CommonVars(
       "linkis.entrance.supported.add.retry.code.keys",
@@ -320,13 +326,19 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.ai.sql.hive.template.keys", "hive,mapreduce").getValue
 
   val AI_SQL_CREATORS: String =
-    CommonVars[String]("linkis.ai.sql.support.creators", "IDE,MCP").getValue
+    CommonVars[String]("linkis.ai.sql.support.creators", "IDE,MCP,nodeexecution").getValue
 
   val AI_SQL_KEY: CommonVars[String] =
     CommonVars[String]("linkis.ai.sql.enable", "true")
 
+  val TASK_RETRY_SWITCH: CommonVars[Boolean] =
+    CommonVars[Boolean]("linkis.task.retry.switch", false)
+
+  val TASK_RETRY_CODE_TYPE: String =
+    CommonVars[String]("linkis.task.retry.code.type", "aisql,jdbc").getValue
+
   val RETRY_NUM_KEY: CommonVars[Int] =
-    CommonVars[Int]("linkis.ai.retry.num", 1)
+    CommonVars[Int]("linkis.task.retry.num", 1)
 
   val AI_SQL_RETRY_ONCE: CommonVars[Boolean] =
     CommonVars[Boolean]("linkis.ai.sql.once.enable", true)
@@ -365,9 +377,27 @@ object EntranceConfiguration {
   val AI_SQL_DYNAMIC_ENGINE_SWITCH =
     CommonVars("linkis.aisql.dynamic.engine.type.switch", false).getValue
 
-  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 30000).getValue
+  val DOCTOR_REQUEST_TIMEOUT = CommonVars("linkis.aisql.doctor.http.timeout", 300000).getValue
 
   val DOCTOR_HTTP_MAX_CONNECT = CommonVars("linkis.aisql.doctor.http.max.connect", 20).getValue
+
+  // StarRocks engine switch configurations
+  val AISQL_STARROCKS_SWITCH = CommonVars("linkis.aisql.starrocks.switch", false)
+
+  val AISQL_DEFAULT_STARROCKS_ENGINE_TYPE =
+    CommonVars("linkis.aisql.default.starrocks.engine.type", "jdbc-4").getValue
+
+  val AISQL_STARROCKS_TEMPLATE_KEYS =
+    CommonVars("linkis.aisql.starrocks.template.keys", "starrocks")
+
+  val AISQL_STARROCKS_DATASOURCE_PREFIX =
+    CommonVars("linkis.aisql.starrocks.datasource.prefix", "starrocks_")
+
+  val AISQL_STARROCKS_WHITELIST_USERS =
+    CommonVars("linkis.aisql.starrocks.whitelist.users", "")
+
+  val AISQL_STARROCKS_WHITELIST_DEPARTMENTS =
+    CommonVars("linkis.aisql.starrocks.whitelist.departments", "")
 
   val SPARK_EXECUTOR_CORES = CommonVars.apply("spark.executor.cores", "2");
 
@@ -404,6 +434,6 @@ object EntranceConfiguration {
     CommonVars[String]("linkis.doctor.sensitive.sql.check.whitelist", "").getValue
 
   var DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE =
-    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark").getValue
+    CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark,jdbc").getValue
 
 }

@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.entity;
+package org.apache.linkis.governance.common.entity.job;
 
 import java.util.Date;
 
-public class JobDiagnosis {
+public class JobDiagnosisRequest {
 
   private Long id;
 

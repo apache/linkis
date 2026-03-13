@@ -192,6 +192,18 @@ object SparkConfiguration extends Logging {
   val SPARK_PROHIBITS_DYNAMIC_RESOURCES_SWITCH =
     CommonVars[Boolean]("linkis.spark.dynamic.resource.switch", false).getValue
 
+  val SPARK_EXECUTOR_PARAMS_ENABLED = CommonVars[Boolean](
+    "wds.linkis.spark.executor.params.enabled",
+    false,
+    "Enable spark executor params setting to executor side（启用Spark executor参数设置）"
+  )
+
+  val SPARK_EXECUTOR_PARAMS_EXCLUDE = CommonVars[String](
+    "wds.linkis.spark.executor.params.exclude",
+    "",
+    "Exclude params from setting to executor side, split by comma（排除的executor参数，逗号分隔）"
+  )
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

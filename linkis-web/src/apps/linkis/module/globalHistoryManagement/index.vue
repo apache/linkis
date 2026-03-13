@@ -153,7 +153,7 @@
           :loading="downloading"
         >{{ $t('message.linkis.downloadLog') }}</Button>
       </div>
-      
+
     </div>
     <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight +'px'}">
       <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
@@ -382,7 +382,7 @@ export default {
       ).map(item => item.title);
       this.visibleColumns.push(this.$t('message.linkis.tableColumns.user'));
     }
-    
+
     this.init()
     // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
     window.addEventListener('resize', this.getHeight)
@@ -414,7 +414,7 @@ export default {
   methods: {
     async download() {
       try {
-        
+
         if(this.downloading) return;
         if(this.pageSetting.total >= 10000) {
           this.$Modal.confirm({
@@ -435,7 +435,7 @@ export default {
                     'Content-Language': localStorage.getItem('locale') || 'zh-CN'
                   }
                 })
-                
+
                 let blob = res.data
                 let url = window.URL.createObjectURL(blob);
                 let l = document.createElement('a')
@@ -450,7 +450,7 @@ export default {
                 window.console.warn(err)
                 this.downloading = false;
               }
-            
+
             }
           })
         } else {
@@ -478,12 +478,12 @@ export default {
           this.downloading = false
           this.$Message.success(this.$t('message.linkis.downloadSucceed'))
         }
-       
+
       } catch(err) {
         this.downloading = false
       }
-      
-        
+
+
     },
     getHeight() {
       this.moduleHeight = this.$parent.$el.clientHeight - this.$refs.searchBar.offsetHeight - 210;
@@ -664,7 +664,7 @@ export default {
         this.pageSetting.current = 1;
       }
       const params = this.getParams()
-      
+
       this.column = this.getColumns()
       api
         .fetch('/jobhistory/list', params, 'get')

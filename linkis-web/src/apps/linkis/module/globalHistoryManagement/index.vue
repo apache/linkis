@@ -684,8 +684,26 @@ export default {
           ? item.errCode + item.errDesc
           : item.errCode || item.errDesc || ''
       }
+      // 从labels数组中提取引擎版本
+      const getEngineVersion = (item) => {
+        if (item.labels && Array.isArray(item.labels)) {
+          const engineTypeLabel = item.labels.find(label => label && label.startsWith('engineType:'))
+          if (engineTypeLabel) {
+            const version = engineTypeLabel.split(':')[1]
+            // 如果包含版本号（如 spark-3.4.4），则返回完整字符串
+            if (version && version.includes('-')) {
+              return version
+            }
+          }
+        }
+        return ''
+      }
       if (!this.isAdminModel) {
         return list.map(item => {
+          const engineVersion = getEngineVersion(item)
+          const executeApplicationNameWithVersion = engineVersion 
+            ? engineVersion 
+            : item.executeApplicationName
           return {
             disabled: ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
             taskID: item.taskID,
@@ -695,17 +713,17 @@ export default {
             status: item.status,
             costTime: item.costTime,
             requestApplicationName: item.requestApplicationName,
-            executeApplicationName: item.executeApplicationName,
+            executeApplicationName: executeApplicationNameWithVersion,
             createdTime: item.createdTime,
             progress: item.progress,
             failedReason: getFailedReason(item),
             runType: item.runType,
             instance: item.instance,
             engineInstance: item.engineInstance,
-            isReuse: item.isReuse === null 
-              ? '' 
-              : item.isReuse 
-                ? this.$t('message.linkis.yes') 
+            isReuse: item.isReuse === null
+              ? ''
+              : item.isReuse
+                ? this.$t('message.linkis.yes')
                 : this.$t('message.linkis.no'),
             requestSpendTime: item.requestSpendTime,
             requestStartTime: item.requestStartTime,
@@ -715,16 +733,21 @@ export default {
         })
       }
       return list.map(item => {
+        const engineVersion = getEngineVersion(item)
+        const executeApplicationNameWithVersion = engineVersion
+          ? engineVersion
+          : item.executeApplicationName
         return Object.assign(item, {
           disabled:
               ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
           failedReason: getFailedReason(item),
           source: item.sourceTailor,
-          isReuse: item.isReuse === null 
-            ? '' 
-            : item.isReuse 
-              ? this.$t('message.linkis.yes') 
+          isReuse: item.isReuse === null
+            ? ''
+            : item.isReuse
+              ? this.$t('message.linkis.yes')
               : this.$t('message.linkis.no'),
+          executeApplicationName: executeApplicationNameWithVersion,
         })
       })
     },
@@ -857,7 +880,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.requestApplicationName') + ' / ' +  this.$t('message.linkis.tableColumns.runType') + ' / ' + this.$t('message.linkis.tableColumns.executeApplicationName'),
           key: 'requestApplicationName',
           align: 'center',
-          width: 130,
+          width: 180,
           renderType: 'multiConcat',
           renderParams: {
             concatKey1: 'runType',

@@ -329,10 +329,15 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     var skippedParams = 0
     var successCount = 0
     var failCount = 0
-
+    logger.info(
+      s"Spark executor params setting begin"
+    )
     sc.getConf.getAll.foreach { case (key, value) =>
       totalParams += 1
       if (excludeParams.contains(key)) {
+        logger.info(
+          s"Spark executor params $key will be excluded and will not be set."
+        )
         skippedParams += 1
       } else {
         Utils.tryCatch {

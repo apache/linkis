@@ -315,7 +315,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     )
 
     if (!isSpark3) {
-      logger.warn(s"Spark executor params setting is only supported in Spark3 engine")
+      logger.info(s"Spark executor params setting is only supported in Spark3 engine")
       return
     }
 
@@ -329,26 +329,29 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     var skippedParams = 0
     var successCount = 0
     var failCount = 0
-    logger.info(
-      s"Spark executor params setting begin"
-    )
-    sc.getConf.getAll.foreach { case (key, value) =>
-      totalParams += 1
-      if (excludeParams.contains(key)) {
-        logger.info(
-          s"Spark executor params $key will be excluded and will not be set."
-        )
-        skippedParams += 1
-      } else {
-        Utils.tryCatch {
-          sc.setLocalProperty(key, value)
-          successCount += 1
-        } { case e: Exception =>
-          logger.warn(s"Failed to set spark param: $key, error: ${e.getMessage}", e)
-          failCount += 1
+    logger.info(s"Spark executor params setting begin")
+    this
+      .asInstanceOf[SparkSqlExecutor]
+      .getSparkEngineSession
+      .sparkSession
+      .sessionState
+      .conf
+      .getAllConfs
+      .foreach { case (key, value) =>
+        totalParams += 1
+        if (excludeParams.contains(key)) {
+          logger.info(s"Spark executor params $key will be excluded and will not be set.")
+          skippedParams += 1
+        } else {
+          Utils.tryCatch {
+            sc.setLocalProperty(key, value)
+            successCount += 1
+          } { case e: Exception =>
+            logger.warn(s"Failed to set spark param: $key, error: ${e.getMessage}", e)
+            failCount += 1
+          }
         }
       }
-    }
 
     logger.info(
       s"Spark executor params setting completed - total: $totalParams, " +

@@ -45,14 +45,7 @@
     <module>nebula</module>
     <module>doris</module>
     <module>repl</module>
+    <module>impala</module>
   </modules>
-  <profiles>
-    <profile>
-      <id>compile-impala</id>
-      <modules>
-        <module>impala</module>
-      </modules>
-    </profile>
-  </profiles>
 
 </project>

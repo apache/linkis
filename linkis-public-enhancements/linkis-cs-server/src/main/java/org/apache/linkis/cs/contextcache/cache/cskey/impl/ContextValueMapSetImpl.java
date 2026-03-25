@@ -45,7 +45,7 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
     }
     String csType = contextType.name();
     if (!contextValueMapSet.containsKey(csType)) {
-      synchronized (csType.intern()) {
+      synchronized (csType.intern()) { // NOSONAR
         if (!contextValueMapSet.containsKey(csType)) {
           logger.info("For ContextType({}) init ContextValueMap", csType);
           contextValueMapSet.put(csType, new HashMap<String, ContextKeyValue>(16));

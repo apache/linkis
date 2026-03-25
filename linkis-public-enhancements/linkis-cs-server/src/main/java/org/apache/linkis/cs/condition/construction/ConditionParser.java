@@ -22,30 +22,32 @@ import org.apache.linkis.cs.condition.Condition;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface ConditionParser {
 
-  public static Map<String, ConditionParser> parserMap =
-      new HashMap<String, ConditionParser>() {
-        {
-          List<ConditionParser> conditionParsers =
-              Lists.newArrayList(
-                  new RegexConditionParser(),
-                  new ContainsConditionParser(),
-                  new ContextTypeConditionParser(),
-                  new ContextScopeConditionParser(),
-                  new AndConditionParser(),
-                  new OrConditionParser(),
-                  new NotConditionParser(),
-                  new NearestConditionParser(),
-                  new ContextValueTypeConditionParser());
-          for (ConditionParser conditionParser : conditionParsers) {
-            put(conditionParser.getName(), conditionParser);
-          }
-        }
-      };
+  Map<String, ConditionParser> parserMap = initializeParserMap();
+
+  static Map<String, ConditionParser> initializeParserMap() {
+    List<ConditionParser> conditionParsers =
+        Stream.of(
+                new RegexConditionParser(),
+                new ContainsConditionParser(),
+                new ContextTypeConditionParser(),
+                new ContextScopeConditionParser(),
+                new AndConditionParser(),
+                new OrConditionParser(),
+                new NotConditionParser(),
+                new NearestConditionParser(),
+                new ContextValueTypeConditionParser())
+            .collect(Collectors.toList());
+    Map<String, ConditionParser> map = new HashMap<>();
+    for (ConditionParser conditionParser : conditionParsers) {
+      map.put(conditionParser.getName(), conditionParser);
+    }
+    return map;
+  }
 
   Condition parse(Map<Object, Object> conditionMap);
 

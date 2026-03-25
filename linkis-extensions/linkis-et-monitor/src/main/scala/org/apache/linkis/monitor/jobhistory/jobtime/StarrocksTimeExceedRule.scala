@@ -37,6 +37,8 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     extends AbstractScanRule(event = new StarrocksTimeExceedHitEvent, observer = hitObserver)
     with Logging {
 
+  private val scanRuleList = CacheUtils.cacheBuilder
+
   /**
    * if data match the pattern, return true and trigger observer should call isMatched()
    *
@@ -52,6 +54,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (scannedData <- data.asScala) {
       if (scannedData != null && scannedData.getData() != null) {
+        var taskMinID = 0L;
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
@@ -80,6 +83,10 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     alertData.add(job)
                   }
                 }
+              }
+              if (taskMinID == 0L || taskMinID > job.getId) {
+                taskMinID = job.getId
+                scanRuleList.put("jdbcUnfinishedAlertScan", taskMinID)
                 // 获取超时kill配置信息
                 if (StringUtils.isNotBlank(job.getParams)) {
                   val connectParamsMap = MapUtils.getMap(

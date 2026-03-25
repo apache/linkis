@@ -82,6 +82,9 @@
               :key="item"/>
           </Select>
         </FormItem>
+        <FormItem :label="`${$t('message.linkis.remark')}：`">
+          <Input v-model="formItem.description" :placeholder="$t('message.linkis.remarkPlaceholder')" />
+        </FormItem>
       </Form>
     </Modal>
     <Modal
@@ -123,6 +126,7 @@ export default {
         labels: [],
         emStatus: '',
         applicationName: '',
+        description: ''
       },
       tagTitle: [],
       addTagForm: { // form with new label(新增标签的form表单)
@@ -200,6 +204,13 @@ export default {
           minWidth: 150,
         },
         {
+          title: this.$t('message.linkis.remark'), // remark(备注信息)
+          key: 'description',
+          minWidth: 150,
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.tableColumns.startTime'), // enable time(启用时间)
           key: 'startTime',
           className: 'table-project-column',
@@ -238,6 +249,7 @@ export default {
                     })
                     obj.emStatus = params.row.nodeHealthy;
                     obj.applicationName = params.row.applicationName;
+                    obj.description = params.row?.description || '';
                     this.formItem = Object.assign(this.formItem, obj)
                   }
                 }

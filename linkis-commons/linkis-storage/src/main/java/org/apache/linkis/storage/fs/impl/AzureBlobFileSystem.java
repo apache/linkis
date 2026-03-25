@@ -398,6 +398,16 @@ public class AzureBlobFileSystem extends FileSystem {
   }
 
   @Override
+  public String getChecksumWithMD5(FsPath dest) throws IOException {
+    return null;
+  }
+
+  @Override
+  public long getBlockSize(FsPath dest) throws IOException {
+    return 0L;
+  }
+
+  @Override
   public boolean canExecute(FsPath dest) throws IOException {
     return false;
   }

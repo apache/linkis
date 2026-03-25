@@ -60,6 +60,7 @@
         "no": "否",
         "sprak": "sprak",
         "jarPackage": "jar包",
+        "registerFunc": "注册函数",
         "scriptPath": "脚本路径",
         "registerFunction": "注册的函数",
         "registerFormat": "注册格式",
@@ -88,7 +89,8 @@
         "XGHS": "修改函数",
         "XG": "修改",
         "QPZS": "全屏展示",
-        "QXQP": "取消全屏"
+        "QXQP": "取消全屏",
+        "XZHS": "选择函数"
       }
     }
   }

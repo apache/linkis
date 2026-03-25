@@ -128,6 +128,18 @@ public class PersistenceNode {
     this.creator = creator;
   }
 
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  public String getParams() {
+    return params;
+  }
+
+  public void setParams(String params) {
+    this.params = params;
+  }
+
   public String getMappingPorts() {
     return mappingPorts;
   }

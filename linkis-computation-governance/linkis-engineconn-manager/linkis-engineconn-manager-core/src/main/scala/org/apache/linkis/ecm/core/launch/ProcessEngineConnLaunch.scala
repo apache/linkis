@@ -121,6 +121,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
         environment.put(PREFER_IP_ADDRESS.toString, Configuration.PREFER_IP_ADDRESS.toString)
       case ENGINECONN_ENVKEYS =>
         environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS)
+      case LINKIS_HOME => putIfExists(LINKIS_HOME)
       case _ =>
     }
   }
@@ -225,6 +226,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_PORTS.key -> mappingPorts)
     engineConnConf += (ENGINE_CONN_CONTAINERIZATION_MAPPING_HOST.key -> mappingHost)
 
+    engineConnConf = engineConnConf.map(m => (m._1, s""""${m._2}""""))
     arguments.addEngineConnConf(engineConnConf)
     EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToArgs(arguments.build())
   }

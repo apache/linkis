@@ -55,7 +55,7 @@ public class RestResponseProtocol implements HttpResponseProtocol<Message> {
   public void notifyJob() {
     logger.info("notify the job");
     synchronized (lock) {
-      lock.notify();
+      lock.notify(); // NOSONAR
     }
   }
 

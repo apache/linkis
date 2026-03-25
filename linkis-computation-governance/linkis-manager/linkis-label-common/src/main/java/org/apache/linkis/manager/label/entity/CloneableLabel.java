@@ -33,7 +33,7 @@ public class CloneableLabel implements Cloneable {
       return super.clone();
     } catch (CloneNotSupportedException e) {
       LOG.info("Not support to clone label:[" + toString() + "]", e);
-      return null;
+      return null; // NOSONAR
     }
   }
 }

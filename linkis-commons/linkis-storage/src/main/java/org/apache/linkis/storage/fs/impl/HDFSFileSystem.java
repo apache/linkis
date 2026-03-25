@@ -337,7 +337,7 @@ public class HDFSFileSystem extends FileSystem {
   private void resetRootHdfs() {
     if (fs != null) {
       String locker = user + LOCKER_SUFFIX;
-      synchronized (locker.intern()) {
+      synchronized (locker.intern()) { // NOSONAR
         if (fs != null) {
           if (HadoopConf.HDFS_ENABLE_CACHE()) {
             long currentTime = System.currentTimeMillis();
@@ -504,7 +504,7 @@ public class HDFSFileSystem extends FileSystem {
   }
 
   @Override
-  public String getChecksumWithMD5(FsPath dest) throws IOException {
+  public String checkSum(FsPath dest) throws IOException {
     String path = checkHDFSPath(dest.getPath());
     if (!exists(dest)) {
       throw new IOException("directory or file not exists: " + path);

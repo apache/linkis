@@ -1,3 +1,4 @@
+
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +16,24 @@
   ~ limitations under the License.
   -->
 
+
 <template>
   <div class="global-history">
-    <Tabs @on-click="onClickTabs">
-      <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
-      <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
-      <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
-      <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
+    <Tabs v-model="tabName" @on-click="onClickTabs">
+      <TabPane
+        v-for="tab in tabs"
+        :key="tab.name"
+        :name="tab.name"
+        :label="$t(tab.label)">
+      </TabPane>
     </Tabs>
+    <!-- <Button v-if="tabName === 'log' && yarnAddress" class="jumpButton" type="primary" @click="jump">{{$t('message.linkis.jump')}}</Button> -->
+    <Button v-if="tabName === 'log'" class="foldButton" type="primary" @click="fold">{{foldFlag ? $t('message.linkis.unfold') : $t('message.linkis.fold')}}</Button>
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
-    <log v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" />
+    <log ref="logRef" key="log" v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" />
+    <log ref="codeRef" key="code" v-if="tabName === 'code'" :logs="codes" :from-line="fromLine" :script-view-state="scriptViewState" @tabClick="handleTabClick" status="code" />
     <result
       v-if="tabName === 'result'"
       class="result-class"
@@ -41,27 +49,37 @@
       :visualParams="visualParams"
     />
     <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
+    <logWithPage ref="udfLog" logType="udfLog" v-show="tabName === 'udfLog' && showUDF && hasEngine" />
+
+    <term ref="termRef" v-if="tabName === 'terminal'" :logs="termLogs" :script-view-state="scriptViewState" :loading="termLogLoading" />
   </div>
 </template>
 <script>
 import result from '@/components/consoleComponent/result.vue'
+import logWithPage from './log.vue';
 import log from '@/components/consoleComponent/log.vue'
+import term from '@/components/consoleComponent/term.vue'
 import api from '@/common/service/api'
 import mixin from '@/common/service/mixin'
 import util from '@/common/util'
 import ViewLog from '@/apps/linkis/module/resourceManagement/log.vue'
-import { isUndefined } from 'lodash'
+import { cloneDeep, isUndefined } from 'lodash'
+import storage from '@/common/helper/storage';
+
 export default {
   name: 'viewHistory',
   components: {
     log,
     result,
-    ViewLog
+    ViewLog,
+    term,
+    logWithPage
   },
   mixins: [mixin],
   props: {},
   data() {
     return {
+      foldFlag: true,
       hasResultData: false,
       isLoading: true,
       tabName: 'log',
@@ -93,36 +111,77 @@ export default {
         warning: '',
         info: ''
       },
+      codes: { code: '' },
+      termLogs: '',
+      termLogLoading: false,
       engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
       jobhistoryTask: null,
       hasEngine: false,
-      param: {}
+      yarnAddress: '',
+      logTimer: null,
+      preName: 'log',
+      showUDF: false,
+      tabs: [],
     }
   },
-  created() {
+  async created() {
     this.hasResultData = false
-  },
-  async mounted() {
-    let taskID = this.$route.query.taskID
     let engineInstance = this.$route.query.engineInstance
 
-    if(engineInstance) {
-      let url = '/linkisManager/ecinfo/ecrHistoryList?';
-      const endDate = new Date(); 
-      const startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 3);
-      url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
-      const res = await api.fetch(url,'get')
-      const param = res.engineList[0]
-      this.param = param;
-      this.hasEngine = !!param;
-         
+    const engineLogOnlyAdminEnable = storage.get('engineLogOnlyAdminEnable')
+    // 仅管理员可以查看引擎日志
+    const isAdminShowEngineLog = !engineLogOnlyAdminEnable || (engineLogOnlyAdminEnable && (storage.get('isLogAdmin') || storage.get('isLogHistoryAdmin') || storage.get('isLogDeptAdmin')))
+    let taskID = this.$route.query.taskID
+    await this.initHistory(taskID);
+    if(engineInstance && isAdminShowEngineLog) {
+      let hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance && !!this.jobhistoryTask.engineLogPath);
+      if(!hasEngine){
+        // 可能是因为老数据在get里面没有 再查一下ecrHistoryList试试
+        let url = '/linkisManager/ecinfo/ecrHistoryList?';
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 3);
+        url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+        const res = await api.fetch(url,'get')
+        const param = res.engineList[0]
+        if(param){
+          this.jobhistoryTask.ticketId = param.ticketId;
+          this.jobhistoryTask.engineType = param.engineType;
+          this.jobhistoryTask.ecmInstance = param.ecmInstance;
+          this.jobhistoryTask.engineInstance = param.serviceInstance;
+          this.jobhistoryTask.engineLogPath = param.logDirSuffix;
+          this.jobhistoryTask.udfLogPath = param.logDirSuffix;
+        }
+      }
+      this.hasEngine = (!!this.jobhistoryTask.ticketId && !!this.jobhistoryTask.ecmInstance && !!this.jobhistoryTask.engineInstance && !!this.jobhistoryTask.engineLogPath);
+      this.showUDF = this.hasEngine && ['spark', 'hive'].includes(this.jobhistoryTask?.engineType || '')
     }
-    this.initHistory(taskID);
+    this.tabs = [
+      { name: 'log', label: 'message.linkis.log' },
+      { name: 'code', label: 'message.linkis.executionCode' },
+      // { name: 'detail', label: 'message.linkis.detail', disabled: true },
+      { name: 'result', label: 'message.linkis.result' },
+      { name: 'engineLog', label: 'message.linkis.engineLog' },
+      { name: 'udfLog', label: 'message.linkis.udfLog' },
+      { name: 'terminal', label: 'message.linkis.diagnosticLog' }
+    ]
+    if(!this.hasEngine) {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'engineLog')
+    }
+    if(!this.showUDF) {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'udfLog')
+    }
+  },
+  destroyed() {
+    if(this.logTimer) {
+      clearTimeout(this.logTimer);
+    }
+  },
+  async mounted() {
     const node = document.getElementsByClassName('global-history')[0];
-    this.scriptViewState.bottomContentHeight = node.clientHeight - 85
+    this.scriptViewState.bottomContentHeight = node.clientHeight - 85;
   },
   computed: {
     isHistoryDetail() {
@@ -130,9 +189,27 @@ export default {
     }
   },
   methods: {
+    handleTabClick() {
+      this.foldFlag = true;
+    },
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
-    onClickTabs(name) {
+    async onClickTabs(name) {
+      const canResultSet = sessionStorage.getItem('canResultSet');
+      if(name === 'result' && canResultSet === 'false') {
+        try {
+          setTimeout(() => {
+            this.tabName = this.preName;
+          }, 0);
+          window.open(`http://${window.location.host}/#/results?parentPath=${this.jobhistoryTask.resultLocation}&taskId=${this.$route.query.taskID}&fileName=example.${this.jobhistoryTask.runType}`, '_blank')
+
+          return;
+        } catch (error) {
+          window.console.error(error)
+        }
+
+      }
       this.tabName = name
+      this.preName = name
       if (name === 'result') {
         // Determine whether it is a result set(判断是否为结果集)
         if (this.hasResultData) return // Determine whether the data has been obtained, and return directly if it is obtained(判断是否已经获取过数据，获取过则直接返回)
@@ -146,16 +223,55 @@ export default {
           })
         }
       } else if(name === 'engineLog') {
-        if(this.param) {
+        if(this.jobhistoryTask) {
           this.$refs.logPanel.getLogs(0, {
             applicationName: "linkis-cg-engineconn",
-            emInstance: this.param?.ecmInstance || '',
-            instance: this.param?.serviceInstance || '',
-            ticketId: this.param?.ticketId || '',
-            engineType: this.param?.engineType || '',
-            logDirSuffix: this.param?.logDirSuffix || '',
+            emInstance: this.jobhistoryTask.ecmInstance || '',
+            instance: this.jobhistoryTask.engineInstance || '',
+            ticketId: this.jobhistoryTask.ticketId || '',
+            engineType: this.jobhistoryTask.engineType || '',
+            logDirSuffix: this.jobhistoryTask.engineLogPath || '',
           })
         }
+
+      } else if(name === 'udfLog') {
+        if(this.jobhistoryTask) {
+          this.$refs.udfLog.getLogs(0, {
+            applicationName: "linkis-cg-engineconn",
+            emInstance: this.jobhistoryTask.ecmInstance || '',
+            instance: this.jobhistoryTask.engineInstance || '',
+            ticketId: this.jobhistoryTask.ticketId || '',
+            engineType: this.jobhistoryTask.engineType || '',
+            logDirSuffix: this.jobhistoryTask.engineLogPath || '',
+          })
+        }
+
+      } else if(name === 'code') {
+        // window.console.log('click code')
+        if(this.codes.code) return;
+        const res = await api.fetch(`/jobhistory/job-extra-info?jobId=${this.$route.query.taskID}`, 'get')
+        const { executionCode } = res.metricsMap;
+        this.codes = { code: executionCode };
+      } else if(name === 'terminal') {
+        if (['Scheduled', 'Running'].includes(this.$route.query.status) || !this.termLogs) {
+          try {
+            this.termLogLoading = true;
+            const res = await api.fetch(`/jobhistory/diagnosis-query?taskID=${this.$route.query.taskID}`, 'get')
+            this.termLogLoading = false;
+            const { diagnosisMsg } = res;
+            this.termLogs = diagnosisMsg;
+          } catch (err) {
+            window.console.error(err);
+            this.termLogs = '';
+          }
+
+        }
+
+      } else {
+        this.$nextTick(() => {
+          this.$refs.logRef.fold();
+          this.foldFlag = true;
+        })
 
       }
     },
@@ -177,25 +293,40 @@ export default {
             url,
             {
               path: resultPath,
+              enableLimit: true,
               pageSize
             },
             'get'
           )
           .then(ret => {
             let result = {}
-            if (ret.metadata && ret.metadata.length >= 500) {
+            if (ret.display_prohibited) {
               result = {
                 headRows: [],
                 bodyRows: [],
                 // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
                 total: ret.totalLine ? ret.totalLine : 0,
                 // (If the content is null, it will display no data)如果内容为null,就显示暂无数据
+                type: ret.type,
+                path: resultPath,
+                current: 1,
+                size: 20,
+                hugeData: true,
+                tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
+              }
+            } else if(ret.column_limit_display) {
+              result = {
+                headRows: ret.metadata,
+                bodyRows: ret.fileContent,
+                // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
+                total: ret.totalLine ? ret.totalLine : 0,
+                // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
                 type: ret.fileContent ? ret.type : 0,
                 path: resultPath,
                 current: 1,
                 size: 20,
-                hugeData: true
-              }
+                tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg,
+              };
             } else {
               result = {
                 headRows: ret.metadata,
@@ -227,6 +358,14 @@ export default {
         }
         cb()
       }
+    },
+    fold() {
+      if(this.foldFlag) {
+        this.$refs.logRef.unfold()
+      } else {
+        this.$refs.logRef.fold()
+      }
+      this.foldFlag = !this.foldFlag;
     },
     // Format the array into json form.(将数组格式化成json形式。)
     openAnalysisTab(type) {
@@ -324,13 +463,53 @@ export default {
 
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     },
+    async getLogs(jobhistory) {
+      const params = {
+        path: jobhistory.task.logPath
+      }
+      if (this.$route.query.proxyUser) {
+        params.proxyUser = this.$route.query.proxyUser
+      }
+      let openLog = {}
+      if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
+        const tempParams = {
+          fromLine: this.fromLine,
+          size: 10000,
+        }
+        openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
+      } else {
+        openLog = await api.fetch('/filesystem/openLog', params, 'get')
+      }
+      if (openLog) {
+        const log = cloneDeep(this.logs)
+        const convertLogs = util.convertLog(openLog.log)
+        Object.keys(convertLogs).forEach(key => {
+          if (convertLogs[key]) {
+            log[key] += convertLogs[key] + '\n'
+          }
+        })
+        this.logs = log
+        this.fromLine = openLog.fromLine
+        this.$nextTick(() => {
+          this.$refs.logRef.fold();
+          this.foldFlag = true;
+        })
+        if (convertLogs['all'].split('\n').length >= 10000 && ['Scheduled', 'Running'].includes(this.$route.query.status)) {
+          if(this.logTimer) clearTimeout(this.logTimer);
+          this.logTimer = setTimeout(async () => await this.getLogs(jobhistory), 2000);
+        }
+      }
+    },
     // Get historical details(获取历史详情)
     async initHistory(jobId) {
       try {
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
+        // const executionCode = option.executionCode;
         this.jobhistoryTask = option
         this.script.runType = option.runType
+        this.yarnAddress = option.yarnAddress
+        // this.codes = { code: executionCode }
         if (!jobhistory.task.logPath) {
           const errCode = jobhistory.task.errCode
             ? `\n${this.$t('message.linkis.errorCode')}：${
@@ -347,33 +526,8 @@ export default {
           this.fromLine = 1
           return
         }
-        const params = {
-          path: jobhistory.task.logPath
-        }
-        if (this.$route.query.proxyUser) {
-          params.proxyUser = this.$route.query.proxyUser
-        }
-        let openLog = {}
-        if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
-          const tempParams = {
-            fromLine: this.fromLine,
-            size: -1,
-          }
-          openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
-        } else {
-          openLog = await api.fetch('/filesystem/openLog', params, 'get')
-        }
-        if (openLog) {
-          const log = { all: '', error: '', warning: '', info: '' }
-          const convertLogs = util.convertLog(openLog.log)
-          Object.keys(convertLogs).forEach(key => {
-            if (convertLogs[key]) {
-              log[key] += convertLogs[key] + '\n'
-            }
-          })
-          this.logs = log
-          this.fromLine = log['all'].split('\n').length
-        }
+        await this.getLogs(jobhistory);
+
         this.isLoading = false
       } catch (errorMsg) {
         window.console.error(errorMsg)
@@ -406,21 +560,36 @@ export default {
                 {
                   path: currentResultPath,
                   page: 1,
+                  enableLimit: true,
                   pageSize: 5000
                 },
                 'get'
               )
               .then(ret => {
                 let tmpResult = {}
-                if (ret.metadata && ret.metadata.length >= 500) {
+                if (ret.display_prohibited) {
                   tmpResult = {
                     headRows: [],
                     bodyRows: [],
                     total: ret.totalLine,
                     type: ret.type,
                     path: currentResultPath,
-                    hugeData: true
-                  }
+                    hugeData: true,
+                    tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg
+                  };
+                } else if(ret.column_limit_display) {
+                  tmpResult = {
+                    headRows: ret.metadata,
+                    bodyRows: ret.fileContent,
+                    // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
+                    total: ret.totalLine,
+                    // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
+                    type: ret.type,
+                    path: currentResultPath,
+                    current: 1,
+                    size: 20,
+                    tipMsg: localStorage.getItem("locale") === "en" ? ret.en_msg : ret.zh_msg,
+                  };
                 } else {
                   tmpResult = {
                     headRows: ret.metadata,
@@ -466,22 +635,35 @@ export default {
         return this.$Message.warning(this.$t('message.linkis.logLoading'))
       }
       this.$router.go(-1)
-    }
+    },
+    // quick jump to yarn log page(快速跳转至yarn日志页面)
+    // jump() {
+    //   window.open(this.yarnAddress, '_blank')
+    // }
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.foldButton {
+  position: absolute;
+  top: 0;
+  right:83px;
+}
+// .jumpButton {
+//   position: absolute;
+//   top: 0;
+//   right:146px;
+// }
 
 .backButton {
   position: absolute;
   top: 0;
   right: 20px;
 }
-/deep/ .table-div {
+::v-deep .table-div {
   height: 100% !important;
 }
-/deep/ .log {
+::v-deep .log {
     height: calc(100% - 70px)
 }
 </style>

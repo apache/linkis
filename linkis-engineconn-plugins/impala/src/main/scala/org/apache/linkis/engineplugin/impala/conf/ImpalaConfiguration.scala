@@ -31,8 +31,7 @@ object ImpalaConfiguration {
   val IMPALA_USER_ISOLATION_MODE =
     CommonVars[Boolean]("linkis.impala.user.isolation.mode", false)
 
-  val IMPALA_ENGINE_USER =
-    CommonVars("linkis.impala.engine.user", StorageConfiguration.HDFS_ROOT_USER().getValue)
+  val IMPALA_ENGINE_USER = CommonVars[String]("linkis.impala.engine.user", "hadoop")
 
   val IMPALA_SERVERS = CommonVars[String]("linkis.impala.servers", "127.0.0.1:21050")
   val IMPALA_MAX_CONNECTIONS = CommonVars[Int]("linkis.impala.maxConnections", 10)
@@ -57,7 +56,9 @@ object ImpalaConfiguration {
   val IMPALA_SASL_AUTHORIZATION_ID = CommonVars[String]("linkis.impala.sasl.authorizationId", "")
   val IMPALA_SASL_PROTOCOL = CommonVars[String]("linkis.impala.sasl.protocol", "LDAP")
   val IMPALA_SASL_PROPERTIES = CommonVars[String]("linkis.impala.sasl.properties", "")
-  val IMPALA_SASL_USERNAME = CommonVars("linkis.impala.sasl.username", IMPALA_ENGINE_USER.getValue)
+
+  val IMPALA_SASL_USERNAME = CommonVars[String]("linkis.impala.sasl.username", "")
+
   val IMPALA_SASL_PASSWORD = CommonVars[String]("linkis.impala.sasl.password", "")
   val IMPALA_SASL_PASSWORD_CMD = CommonVars[String]("linkis.impala.sasl.password.cmd", "")
 

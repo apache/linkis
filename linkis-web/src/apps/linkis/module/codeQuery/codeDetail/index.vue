@@ -31,7 +31,7 @@
   </div>
 </template>
 <script>
-import api from '@/common/service/api'
+// import api from '@/common/service/api'
 import { filter, forEach } from 'lodash'
 export default {
   name: 'codeDetail',
@@ -42,9 +42,10 @@ export default {
     }
   },
   async mounted() {
-    const id = this.$route.query.id
-    const res = await api.fetch(`/jobhistory/es/task/${id}`, 'get');
-    this.code = res.task.executionCode
+    this.code = localStorage.getItem('queryCodeResult')
+    localStorage.removeItem('queryCodeResult')
+    // const res = await api.fetch(`/jobhistory/es/task/${id}`, 'get');
+    // this.code = res.task.executionCode
   },
   computed: {
     curCode: {

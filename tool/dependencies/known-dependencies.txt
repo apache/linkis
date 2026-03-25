@@ -1,8 +1,3 @@
-HdrHistogram-2.1.12.jar
-HdrHistogram-2.1.9.jar
-LatencyUtils-2.0.3.jar
-ST4-4.0.4.jar
-SparseBitSet-1.3.jar
 accessors-smart-2.4.9.jar
 agrona-1.12.0.jar
 aircompressor-0.10.jar
@@ -36,9 +31,9 @@ asm-commons-9.3.jar
 asm-tree-9.3.jar
 aspectjweaver-1.9.7.jar
 attoparser-2.0.5.RELEASE.jar
+audience-annotations-0.12.0.jar
 audience-annotations-0.13.0.jar
 audience-annotations-0.5.0.jar
-audience-annotations-0.12.0.jar
 automaton-1.11-8.jar
 avatica-1.11.0.jar
 avro-1.7.7.jar
@@ -321,6 +316,8 @@ hbase-shaded-protobuf-4.1.4.jar
 hbase-unsafe-4.1.4.jar
 hbase-zookeeper-2.2.6.jar
 hbase-zookeeper-2.5.3.jar
+HdrHistogram-2.1.12.jar
+HdrHistogram-2.1.9.jar
 hibernate-validator-5.1.2.Final.jar
 hibernate-validator-6.2.5.Final.jar
 hive-classification-3.1.3.jar
@@ -532,9 +529,9 @@ kubernetes-model-policy-5.10.2.jar
 kubernetes-model-rbac-5.10.2.jar
 kubernetes-model-scheduling-5.10.2.jar
 kubernetes-model-storageclass-5.10.2.jar
+LatencyUtils-2.0.3.jar
 leveldbjni-all-1.8.jar
 libfb303-0.9.3.jar
-libthrift-0.15.0.pom
 libthrift-0.9.3.jar
 listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
 log-0.191.jar
@@ -703,7 +700,9 @@ snappy-java-1.1.4.jar
 snappy-java-1.1.7.7.jar
 snappy-java-1.1.8.2.jar
 snappy-java-1.1.8.3.jar
+spark-measure_2.12-0.24.jar
 spark-redis_2.12-2.6.0.jar
+SparseBitSet-1.3.jar
 spring-aop-5.3.27.jar
 spring-beans-5.3.27.jar
 spring-boot-2.7.11.jar
@@ -750,13 +749,13 @@ spring-jcl-5.3.27.jar
 spring-jdbc-5.3.27.jar
 spring-plugin-core-2.0.0.RELEASE.jar
 spring-plugin-metadata-2.0.0.RELEASE.jar
+spring-retry-1.3.4.jar
 spring-security-crypto-5.7.8.jar
 spring-security-rsa-1.0.11.RELEASE.jar
 spring-tx-5.3.27.jar
 spring-web-5.3.27.jar
 spring-webflux-5.3.27.jar
 spring-webmvc-5.3.27.jar
-spring-retry-1.3.4.jar
 springfox-bean-validators-3.0.0.jar
 springfox-boot-starter-3.0.0.jar
 springfox-core-3.0.0.jar
@@ -772,6 +771,7 @@ springfox-swagger2-3.0.0.jar
 sqlline-1.3.0.jar
 sqoop-1.4.6-hadoop200.jar
 ssl-config-core_2.12-0.3.7.jar
+ST4-4.0.4.jar
 stats-0.191.jar
 stax2-api-4.2.1.jar
 stringtemplate-3.2.1.jar
@@ -825,4 +825,3 @@ zookeeper-3.9.2.jar
 zookeeper-jute-3.9.2.jar
 zstd-jni-1.4.5-6.jar
 zstd-jni-1.5.0-4.jar
-spark-measure_2.12-0.24.jar

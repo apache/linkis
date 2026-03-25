@@ -13,8 +13,8 @@
 #   -t, --threads <N>      并行线程数，默认为 1C (CPU 核心数)
 #   -s, --skip-tests       跳过测试 (默认)
 #   -r, --run-tests        运行测试
-#   --v2                   编译 2.x 版本 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11)
-#   --v3                   编译 3.x 版本 (Hadoop 3.3.1 + Spark 3.4.4 + Scala 2.12) [默认]
+#   --v2                   编译默认版本 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11 + Hive 2.3.3), 同默认
+#   --v3                   编译 Apache 发布版本 (Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12 + Hive 3.1.3), 同 -Papache
 #   --hadoop <VER>         指定 Hadoop 完整版本号 (如 3.3.4, 2.7.2)
 #   --spark <VER>          指定 Spark 完整版本号 (如 3.4.4, 3.2.1, 2.4.3)
 #   --hive <VER>           指定 Hive 完整版本号 (如 3.1.3, 2.3.3)
@@ -23,21 +23,21 @@
 #   -h, --help             显示帮助
 #
 # 版本说明:
-#   3.x 版本：Hadoop 3.3.1 + Spark 3.4.4 + Scala 2.12 (使用 hadoop-3.3,spark-3 profile)
-#   2.x 版本：Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11 (使用 hadoop-2.7 profile)
+#   默认版本：Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11.12 + Hive 2.3.3
+#   -Pspark-3: Spark 3.4.4 + Scala 2.12.17 (Hadoop/Hive 保持默认)
+#   -Papache / --v3: Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12.17 + Hive 3.1.3
 #
 # 示例:
-#   ./quick-build.sh                           使用默认设置编译 (3.x 版本，hadoop-3.3 + spark-3 profile)
-#   ./quick-build.sh --v2                      编译 2.x 版本 (hadoop-2.7 profile)
-#   ./quick-build.sh --v3                      编译 3.x 版本 (hadoop-3.3 + spark-3 profile)
+#   ./quick-build.sh                           使用默认版本编译 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11 + Hive 2.3.3)
+#   ./quick-build.sh --v2                      同默认版本 (仅用于明确指定 v2)
+#   ./quick-build.sh --v3                      编译 Apache 发布版本 (同 -Papache)
+#   ./quick-build.sh -Pspark-3                 只升级 Spark 到 3.4.4 + Scala 2.12.17
 #   ./quick-build.sh --revision 1.8.0-spark2   指定 revision 编译 (用于区分不同版本)
 #   ./quick-build.sh --spark 3.4.4             指定 Spark 3.4.4 编译
 #   ./quick-build.sh --hadoop 3.3.4 --spark 3.4.4 --hive 3.1.3  指定完整版本组合
 #   ./quick-build.sh --spark 3.4.4 --scala 2.12.17 --hadoop 3.3.1  自定义版本组合
 #   ./quick-build.sh -t 4                      使用 4 线程编译
-#   ./quick-build.sh --v2 -t 4                 编译 2.x 版本，使用 4 线程
 #   ./quick-build.sh -r                        运行测试
-#   ./quick-build.sh --v2 --revision 1.8.0-spark2  编译 2.x 版本并指定 revision
 #
 # 注意：--hadoop/--spark/--hive/--scala 参数优先级高于 --v2/--v3，可覆盖 Profile 中的版本
 #
@@ -48,6 +48,7 @@ set -e
 THREADS="1C"
 SKIP_TESTS=true
 V2_MODE=false
+V3_MODE=false
 CUSTOM_VERSION_MODE=false
 HADOOP_VERSION=""
 SPARK_VERSION=""
@@ -71,12 +72,12 @@ show_help() {
     echo "用法：$0 [选项]"
     echo ""
     echo "选项:"
-    echo "  -t, --threads <N>      平行线程数，默认为 1C (CPU 核心数)"
+    echo "  -t, --threads <N>      并行线程数，默认为 1C (CPU 核心数)"
     echo "  -s, --skip-tests       跳过测试 (默认)"
     echo "  -r, --run-tests        运行测试"
-    echo "  --v2                   编译 2.x 版本 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11)"
-    echo "  --v3                   编译 3.x 版本 (Hadoop 3.3.1 + Spark 3.4.4 + Scala 2.12) [默认]"
-    echo "  --hadoop <VER>         指定 Hadoop 完整版本号 (如 3.3.1, 3.3.4, 2.7.2)"
+    echo "  --v2                   编译默认版本 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11 + Hive 2.3.3), 同默认"
+    echo "  --v3                   编译 Apache 发布版本 (Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12 + Hive 3.1.3), 同 -Papache"
+    echo "  --hadoop <VER>         指定 Hadoop 完整版本号 (如 3.3.4, 2.7.2)"
     echo "  --spark <VER>          指定 Spark 完整版本号 (如 3.4.4, 3.2.1, 2.4.3)"
     echo "  --hive <VER>           指定 Hive 完整版本号 (如 3.1.3, 2.3.3)"
     echo "  --scala <VER>          指定 Scala 完整版本号 (如 2.12.17, 2.11.12)"
@@ -86,22 +87,26 @@ show_help() {
     echo "版本参数说明:"
     echo "  --hadoop/--spark/--hive/--scala 可单独使用，也可与 --v2/--v3 组合使用"
     echo "  当与 --v2/--v3 同时使用时，指定的版本会覆盖对应预设版本的默认值"
-    echo "  例：--v3 --spark 3.4.4  表示使用 3.x 预设，但将 Spark 从 3.2.1 改为 3.4.4"
+    echo ""
+    echo "编译方式说明:"
+    echo "  默认/-Pspark-2: Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11.12 + Hive 2.3.3"
+    echo "  -Pspark-3: Spark 3.4.4 + Scala 2.12.17 (Hadoop/Hive 保持默认)"
+    echo "  -Papache / --v3: Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12.17 + Hive 3.1.3"
     echo ""
     echo "示例:"
-    echo "  ./quick-build.sh                                                   编译 3.x 版本 (默认)"
-    echo "  ./quick-build.sh --v2                                              编译 2.x 版本"
-    echo "  ./quick-build.sh --v3 --spark 3.4.4 --hadoop 3.3.1                 3.x 基础上修改 Spark 和 Hadoop"
-    echo "  ./quick-build.sh --spark 3.4.4 --hadoop 3.3.1 --scala 2.12.17      与 dev-1.18.0-webank spark-3 一致"
-    echo "  ./quick-build.sh --hadoop 3.3.4 --spark 3.2.1 --hive 3.1.3         指定完整版本组合"
-    echo "  ./quick-build.sh --revision 1.8.0-spark2                           指定 revision 编译"
-    echo "  ./quick-build.sh --v2 --revision 1.8.0-spark2                      编译 2.x 并指定 revision"
-    echo "  ./quick-build.sh -t 4                                              使用 4 线程编译"
-    echo "  ./quick-build.sh -r                                                运行测试编译"
+    echo "  ./quick-build.sh                                    默认版本 (Hadoop 2.7.2 + Spark 2.4.3)"
+    echo "  ./quick-build.sh --v2                               同默认版本"
+    echo "  ./quick-build.sh --v3                               Apache 发布版本 (同 -Papache)"
+    echo "  ./quick-build.sh --spark 3.4.4                      只升级 Spark 到 3.4.4"
+    echo "  ./quick-build.sh --v3 --spark 3.4.4 --hadoop 3.3.1  Apache 基础上修改 Spark 和 Hadoop"
+    echo "  ./quick-build.sh --hadoop 3.3.4 --spark 3.2.1 --hive 3.1.3  指定完整版本组合"
+    echo "  ./quick-build.sh --revision 1.8.0-spark2            指定 revision 编译"
+    echo "  ./quick-build.sh -t 4                               使用 4 线程编译"
+    echo "  ./quick-build.sh -r                                 运行测试编译"
     echo ""
     echo "双版本编译 (分别执行两次，避免 Maven 仓库覆盖):"
-    echo "  ./quick-build.sh                                           # 编译 3.x"
-    echo "  ./quick-build.sh --v2 --revision 1.8.0-spark2              # 编译 2.x"
+    echo "  ./quick-build.sh                                    # 编译默认版本 (Spark 2.4.3)"
+    echo "  ./quick-build.sh --v3 --revision 1.8.0-apache       # 编译 Apache 版本 (Spark 3.2.1)"
 }
 
 # 解析参数
@@ -124,7 +129,7 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --v3)
-            V2_MODE=false
+            V3_MODE=true
             shift
             ;;
         --hadoop)
@@ -171,13 +176,13 @@ fi
 
 # Profile 参数
 PROFILE_ARG=""
-if [ "$V2_MODE" = true ]; then
-    # v2 模式：使用 hadoop-2.7 profile (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11)
-    PROFILE_ARG="-Phadoop-2.7 -Dhadoop.profile=2"
+if [ "$V3_MODE" = true ]; then
+    # --v3 模式：使用 -Papache profile (Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12 + Hive 3.1.3)
+    PROFILE_ARG="-Papache"
 else
-    # v3 模式：使用 hadoop-3.3 + spark-3 profile 组合
-    # 注意：不使用 apache profile 因为存在 jline 版本冲突问题
-    PROFILE_ARG="-Phadoop-3.3,spark-3 -Dhive.version=3.1.3"
+    # 默认模式 (包括 --v2): 使用默认配置 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11 + Hive 2.3.3)
+    # 不需要额外指定 profile
+    PROFILE_ARG=""
 fi
 
 # 自定义版本参数（优先级高于 --v2/--v3）
@@ -223,11 +228,13 @@ if [ "$CUSTOM_VERSION_MODE" = true ]; then
     [ -n "$SCALA_VERSION" ] && VERSION_DISPLAY="$VERSION_DISPLAY Scala $SCALA_VERSION"
     VERSION_DISPLAY="$VERSION_DISPLAY )"
     DEFAULT_REVISION="1.8.0"
-elif [ "$V2_MODE" = true ]; then
-    VERSION_DISPLAY="2.x (Hadoop 2.7.2 + Spark 2.4.3)"
-    DEFAULT_REVISION="1.8.0-spark2"
+elif [ "$V3_MODE" = true ]; then
+    # --v3 模式：Apache 发布版本
+    VERSION_DISPLAY="Apache 发布版本 (Hadoop 3.3.4 + Spark 3.2.1 + Scala 2.12.17 + Hive 3.1.3)"
+    DEFAULT_REVISION="1.8.0-apache"
 else
-    VERSION_DISPLAY="3.x (Hadoop 3.3.1 + Spark 3.4.4 + Scala 2.12) [默认]"
+    # 默认模式 (包括 --v2)
+    VERSION_DISPLAY="默认版本 (Hadoop 2.7.2 + Spark 2.4.3 + Scala 2.11.12 + Hive 2.3.3)"
     DEFAULT_REVISION="1.8.0"
 fi
 

@@ -277,6 +277,7 @@
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jacoco.skip>false</jacoco.skip>
+    <bes.version>9.5.5.0141</bes.version>
 
     <!-- for JDK-17 test-->
     <extraJavaTestArgs>-XX:+IgnoreUnrecognizedVMOptions

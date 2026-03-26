@@ -648,6 +648,9 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80036, path);
     }
 
+    // 检查是否为管理台请求（enableLimit=true）
+    boolean enableLimitResult = Boolean.parseBoolean(enableLimit);
+
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
     LoggerUtils.setJobIdMDC("openFileThread_" + userName);
     LOGGER.info("userName {} start to open File {}", userName, path);
@@ -695,7 +698,7 @@ public class FsRestfulApi {
               80034, FILESYSTEM_RESULTSET_ROW_LIMIT.getValue());
         }
 
-        if (StringUtils.isNotBlank(enableLimit) && "true".equals(enableLimit)) {
+        if (enableLimitResult) {
           LOGGER.info("set enable limit for thread: {}", Thread.currentThread().getName());
           LinkisStorageConf.enableLimitThreadLocal().set(enableLimit);
           // 组装列索引
@@ -769,7 +772,8 @@ public class FsRestfulApi {
                 ResultUtils.removeFieldsFromContent(resultmap, filteredContent, maskedFields);
           }
           // 优先截取大字段
-          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && enableLimitResult) {
+            // 管理台请求(enableLimit=true)不进行字段长度拦截，兼容旧逻辑
             FieldTruncationResult fieldTruncationResult =
                 ResultUtils.detectAndHandle(
                     filteredMetadata,
@@ -779,7 +783,9 @@ public class FsRestfulApi {
             if (fieldTruncationResult.isHasOversizedFields()) {
               // 检测到超长字段
               if (null == truncateColumn) {
+                message.data("type", fileSource.getFileSplits()[0].type());
                 message.data("oversizedFields", fieldTruncationResult.getOversizedFields());
+                message.data("display_prohibited", true);
                 message.data("zh_msg", truncateColumn_msg);
                 message.data("en_msg", truncateColumn_en_msg);
                 return message;
@@ -806,7 +812,7 @@ public class FsRestfulApi {
             }
           }
           if (StringUtils.isNotBlank(maskedFieldNames)
-              || LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+              || (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && enableLimitResult)) {
             message.data("metadata", filteredMetadata).data("fileContent", filteredContent);
           } else {
             // 不执行字段屏蔽也不执行字段截取

@@ -289,17 +289,30 @@ class DefaultEngineCreateService
         s"Failed to update engineNode: ${t.getMessage}"
       )
     }
-    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
-      val emInstance = engineNode.getServiceInstance.getInstance
-      val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
-      // 8. Update job history metrics after successful engine creation - 异步执行
-      AMUtils.updateMetricsAsync(
-        taskId,
-        resourceTicketId,
-        emInstance,
-        ecmInstance,
-        null,
-        isReuse = false
+    Utils.tryCatch {
+      if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+        val emInstance = engineNode.getServiceInstance.getInstance
+        val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
+        if ((null != emInstance) && (null != ecmInstance)) {
+          // 8. Update job history metrics after successful engine creation - 异步执行
+          AMUtils.updateMetricsAsync(
+            taskId,
+            resourceTicketId,
+            emInstance,
+            ecmInstance,
+            null,
+            isReuse = false
+          )
+        } else {
+          logger.info(
+            s"CreateEngine:Failed to update metrics for emInstance: $emInstance, ecmInstance: $ecmInstance"
+          )
+        }
+      }
+    } { case e: Exception =>
+      logger.error(
+        s"Failed to update metrics for taskId: $taskId",
+        e
       )
     }
     // 9. Add the Label of EngineConn, and add the Alias of engineConn

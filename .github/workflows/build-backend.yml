@@ -27,8 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        spark: [2.4, 3.2]
-        hadoop: [2.7, 3.3]
+        profile:
+          - default
+          - spark-3
+          - hadoop-3.3
+          - spark-3-hadoop-3.3
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -38,23 +41,26 @@ jobs:
         distribution: 'temurin'
         java-version: 8
         cache: maven
-    - if: ${{matrix.spark == '2.4' && matrix.hadoop == '2.7'}}
-      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+    # Default: Spark 2.4 + Hadoop 2.7
+    - if: ${{matrix.profile == 'default'}}
+      name: build default (Spark 2.4 + Hadoop 2.7)
       run:
-        ./mvnw -T 4C clean package -Pspark-${{matrix.spark}} -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
-    - if: ${{matrix.spark == '3.2' && matrix.hadoop == '3.3'}}
-      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+        ./mvnw -T 4C clean package -Dmaven.test.skip=true
+    # Spark 3.4 only
+    - if: ${{matrix.profile == 'spark-3'}}
+      name: build Spark 3.4 (Hadoop 2.7)
       run:
-        ./mvnw -T 4C clean package
-    - if:  ${{matrix.spark == '3.2' && matrix.hadoop == '2.7'}}
-      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+        ./mvnw -T 4C clean package -Pspark-3 -Dmaven.test.skip=true
+    # Hadoop 3.3 only (with Spark 2.4)
+    - if: ${{matrix.profile == 'hadoop-3.3'}}
+      name: build Hadoop 3.3 (Spark 2.4)
       run:
-        ./mvnw -T 4C clean package -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
-
-    - if: ${{matrix.spark == '2.4' && matrix.hadoop == '3.3'}}
-      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+        ./mvnw -T 4C clean package -Phadoop-3.3 -Dmaven.test.skip=true
+    # Spark 3.4 + Hadoop 3.3
+    - if: ${{matrix.profile == 'spark-3-hadoop-3.3'}}
+      name: build Spark 3.4 + Hadoop 3.3
       run:
-        ./mvnw -T 4C clean package -Pspark-${{matrix.spark}} -Dmaven.test.skip=true
+        ./mvnw -T 4C clean package -Pspark-3 -Phadoop-3.3 -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

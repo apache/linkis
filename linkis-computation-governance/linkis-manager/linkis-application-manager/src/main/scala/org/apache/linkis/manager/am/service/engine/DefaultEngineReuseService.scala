@@ -236,7 +236,6 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
     ) {
       engineScoreList = engineScoreList
-        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
         .filter(engine => {
           val oldTemplateName: String =
             getValueByKeyFromProps(confTemplateNameKey, parseParamsToMap(engine.getParams))
@@ -276,7 +275,6 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
         // 过滤掉资源不满足的引擎
         engineScoreList = engineScoreList
-          .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
           .filter(engine => {
             val enginePythonVersion: String = getPythonVersion(parseParamsToMap(engine.getParams))
             var pythonVersionMatch: Boolean = true

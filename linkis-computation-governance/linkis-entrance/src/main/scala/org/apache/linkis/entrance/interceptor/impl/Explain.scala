@@ -94,6 +94,10 @@ object SQLExplain extends Explain {
   val DROP_TABLE_SQL = "\\s*drop\\s+table\\s+\\w+\\s*"
   val CREATE_DATABASE_SQL = "\\s*create\\s+database\\s+\\w+\\s*"
 
+  // Hive LOCATION control configuration
+  val HIVE_LOCATION_CONTROL_ENABLE: CommonVars[Boolean] =
+    CommonVars("wds.linkis.hive.location.control.enable", false)
+
   private val IDE_ALLOW_NO_LIMIT_REGEX =
     "--set\\s*ide.engine.no.limit.allow\\s*=\\s*true".r.unanchored
 
@@ -106,7 +110,44 @@ object SQLExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    true
+    Utils.tryCatch {
+      // Fast path: if location control is disabled, pass through immediately
+      if (!HIVE_LOCATION_CONTROL_ENABLE.getHotValue) {
+        return true
+      }
+
+      // Handle null or empty code
+      if (code == null || code.trim.isEmpty) {
+        return true
+      }
+
+      // Check if the SQL contains CREATE TABLE with LOCATION clause
+      val cleanedCode = SQLCommentHelper.dealComment(code)
+
+      // Simple regex to match: CREATE TABLE ... LOCATION '...'
+      // Case-insensitive, supports EXTERNAL TABLE, handles quotes (single, double, backtick)
+      // Uses DOTALL to match across newlines
+      val locationPattern =
+        "(?is)create\\s+(?:external\\s+)?table\\s+\\S+.*?location\\s+['\"`].*?['\"`]".r
+
+      if (locationPattern.findFirstIn(cleanedCode).isDefined) {
+        error
+          .append("CREATE TABLE with LOCATION clause is not allowed. ")
+          .append("Please remove the LOCATION clause and retry. ")
+          .append(s"SQL: ${if (code.length > 100) code.take(100) + "..." else code}")
+        return false
+      }
+
+      true
+    } { case e: Exception =>
+      logger.warn(
+        s"Failed to check LOCATION in SQL: ${if (code != null && code.length > 50) code.take(50) + "..."
+        else code}",
+        e
+      )
+      // Fail-open strategy: return true on exception to ensure availability
+      true
+    }
   }
 
   /**

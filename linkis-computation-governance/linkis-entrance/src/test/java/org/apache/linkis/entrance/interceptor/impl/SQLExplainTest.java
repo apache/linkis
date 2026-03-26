@@ -17,10 +17,14 @@
 
 package org.apache.linkis.entrance.interceptor.impl;
 
+import org.apache.linkis.common.conf.BDPConfiguration;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class SQLExplainTest {
+
+  private static final String CONFIG_KEY = "wds.linkis.hive.location.control.enable";
 
   @Test
   void isSelectCmdNoLimit() {
@@ -51,5 +55,243 @@ class SQLExplainTest {
     code = "SELECT * from dual LIMIT 4000;";
     res = SQLExplain.isSelectOverLimit(code);
     Assertions.assertEquals(false, res);
+  }
+
+  // ===== Hive Location Control Tests =====
+
+  @Test
+  void testBlockCreateTableWithLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) LOCATION '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testAllowCreateTableWithoutLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT)";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testAllowAlterTableSetLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "ALTER TABLE test SET LOCATION '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testAllowWhenConfigDisabled() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) LOCATION '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "false");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testBlockExternalTableWithLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE EXTERNAL TABLE test (id INT) LOCATION '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testIgnoreLocationInComments() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "-- CREATE TABLE test LOCATION '/path'\nCREATE TABLE test (id INT)";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testAllowLocationInStringConstants() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "SELECT * FROM test WHERE comment = 'this location is ok'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testHandleEmptySQL() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+  }
+
+  @Test
+  void testHandleNullSQL() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = null;
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    // Should not throw exception and should return true (fail-open)
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+  }
+
+  @Test
+  void testCaseInsensitiveForCreateTable() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "create table test (id int) location '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testCaseInsensitiveForLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) location '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testMultiLineCreateTableWithLocation() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql =
+        "CREATE TABLE test (\n"
+            + "  id INT,\n"
+            + "  name STRING\n"
+            + ")\n"
+            + "LOCATION '/user/data'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testAllowCreateTableWithOtherClauses() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) PARTITIONED BY (dt STRING) STORED AS PARQUET";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testHandleLocationWithDoubleQuotes() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) LOCATION \"/user/data\"";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testHandleLocationWithBackticks() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "CREATE TABLE test (id INT) LOCATION `/user/data`";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertTrue(error.toString().contains("LOCATION clause is not allowed"));
+  }
+
+  @Test
+  void testTruncateLongSQLErrorMessage() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String longSql =
+        "CREATE TABLE test (id INT) LOCATION '/user/very/long/path/"
+            + "that/keeps/going/on/and/on/forever/and/ever/because/it/is/just/so/long/"
+            + "and/needs/to/be/truncated/in/the/error/message'";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(longSql, error);
+
+    Assertions.assertFalse(result);
+    Assertions.assertFalse(error.toString().contains(longSql));
+    Assertions.assertTrue(error.toString().contains("..."));
+  }
+
+  @Test
+  void testNotBlockInsertStatements() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "INSERT INTO TABLE test VALUES (1, 'test')";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testNotBlockSelectStatements() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "SELECT * FROM test WHERE id > 100";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
+  }
+
+  @Test
+  void testNotBlockDropTableStatements() {
+    scala.collection.mutable.StringBuilder error = new scala.collection.mutable.StringBuilder();
+    String sql = "DROP TABLE test";
+
+    BDPConfiguration.set(CONFIG_KEY, "true");
+    boolean result = SQLExplain.authPass(sql, error);
+
+    Assertions.assertTrue(result);
+    Assertions.assertEquals("", error.toString());
   }
 }

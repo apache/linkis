@@ -52,6 +52,7 @@ import org.apache.linkis.manager.persistence.{
   ResourceManagerPersistence
 }
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
+import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.{YarnAppInfo, YarnResourceIdentifier}
 import org.apache.linkis.manager.rm.restful.vo.{UserCreatorEngineType, UserResourceVo}
@@ -572,6 +573,174 @@ class RMMonitorRest extends Logging {
       }
     }
     appendMessageData(message, "queues", clusters)
+  }
+
+  @ApiOperation(value = "getBatchQueueResource", notes = "get batch queue resource")
+  @RequestMapping(path = Array("batchqueueresources"), method = Array(RequestMethod.POST))
+  def getBatchQueueResource(
+      request: HttpServletRequest,
+      @RequestBody param: util.Map[String, AnyRef]
+  ): Message = {
+    ModuleUserUtils.getOperationUser(request, "getBatchQueueResource")
+    val message = Message.ok("")
+    val queueNamesParam = param.get("queueNames")
+    if (queueNamesParam == null) {
+      return Message.error("queueNames parameter is required")
+    }
+    val queueNames = queueNamesParam match {
+      case list: java.util.List[_] =>
+        list.asScala.map(_.toString.trim).filter(StringUtils.isNotBlank).toArray
+      case array: Array[_] =>
+        array.map(_.toString.trim).filter(StringUtils.isNotBlank)
+      case _ =>
+        return Message.error("queueNames parameter must be an array or comma-separated string")
+    }
+    if (queueNames.isEmpty) {
+      return Message.error("queueNames parameter is empty")
+    }
+    var clustername = param.get("clustername").asInstanceOf[String]
+    val crossCluster = java.lang.Boolean.parseBoolean(
+      param.getOrDefault("crossCluster", "false").asInstanceOf[String]
+    )
+    if (crossCluster) {
+      clustername = AMConfiguration.PRIORITY_CLUSTER_TARGET
+    }
+    val clusterLabel = labelFactory.createLabel(classOf[ClusterLabel])
+    clusterLabel.setClusterName(clustername)
+    clusterLabel.setClusterType(param.get("clustertype").asInstanceOf[String])
+    val labelContainer = new RMLabelContainer(Lists.newArrayList(clusterLabel))
+    val queueInfoMap = new mutable.HashMap[String, AnyRef]()
+
+    try {
+      // Process queue names and create identifiers
+      import java.util.ArrayList
+      val identifiers = new ArrayList[ExternalResourceIdentifier]()
+      queueNames.foreach { queueName =>
+        var processedQueueName = queueName
+        if (
+            StringUtils.isNotBlank(processedQueueName) && processedQueueName.startsWith(queuePrefix)
+        ) {
+          logger.info(
+            "Queue name {} starts with '{}', remove '{}'",
+            processedQueueName,
+            queuePrefix,
+            queuePrefix
+          )
+          processedQueueName = processedQueueName.substring(queuePrefix.length)
+        }
+        identifiers.add(new YarnResourceIdentifier(processedQueueName))
+      }
+
+      // Use batch API to get all queue resources at once
+      val batchResources =
+        externalResourceService.getBatchResource(ResourceType.Yarn, labelContainer, identifiers)
+
+      // Process the results
+      import scala.collection.JavaConverters._
+      batchResources.asScala.foreach { case (queueName, nodeResource) =>
+        (
+          nodeResource.getMaxResource.asInstanceOf[YarnResource],
+          nodeResource.getUsedResource.asInstanceOf[YarnResource]
+        ) match {
+          case (maxResource, usedResource) =>
+            val queueInfo = new mutable.HashMap[String, AnyRef]()
+            queueInfo.put("queuename", maxResource)
+            queueInfo.put(
+              "maxResources",
+              Map(
+                "memory" -> maxResource.getQueueMemory,
+                "cores" -> maxResource.getQueueCores
+              ).asJava
+            )
+            queueInfo.put(
+              "usedResources",
+              Map(
+                "memory" -> usedResource.getQueueMemory,
+                "cores" -> usedResource.getQueueCores
+              ).asJava
+            )
+            val usedMemoryPercentage = usedResource.getQueueMemory
+              .asInstanceOf[Double] / maxResource.getQueueMemory.asInstanceOf[Double]
+            val usedCPUPercentage = usedResource.getQueueCores
+              .asInstanceOf[Double] / maxResource.getQueueCores.asInstanceOf[Double]
+            queueInfo.put(
+              "usedPercentage",
+              Map("memory" -> usedMemoryPercentage, "cores" -> usedCPUPercentage).asJava
+            )
+            queueInfo.put("maxApps", nodeResource.getMaxApps.asInstanceOf[AnyRef])
+            queueInfo.put("numActiveApps", nodeResource.getNumActiveApps.asInstanceOf[AnyRef])
+            queueInfo.put("numPendingApps", nodeResource.getNumPendingApps.asInstanceOf[AnyRef])
+            queueInfoMap.put(queueName, queueInfo.asJava)
+          case _ =>
+            logger.warn(s"Failed to get queue resource for $queueName")
+        }
+      }
+    } catch {
+      case e: Exception =>
+        logger.error("Failed to get batch queue resources", e)
+        // Fall back to individual requests if batch API fails
+        queueNames.foreach { queueName =>
+          try {
+            var processedQueueName = queueName
+            if (
+                StringUtils
+                  .isNotBlank(processedQueueName) && processedQueueName.startsWith(queuePrefix)
+            ) {
+              processedQueueName = processedQueueName.substring(queuePrefix.length)
+            }
+            val yarnIdentifier = new YarnResourceIdentifier(processedQueueName)
+            val providedYarnResource =
+              externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier)
+            (
+              providedYarnResource.getMaxResource.asInstanceOf[YarnResource],
+              providedYarnResource.getUsedResource.asInstanceOf[YarnResource]
+            ) match {
+              case (maxResource, usedResource) =>
+                val queueInfo = new mutable.HashMap[String, AnyRef]()
+                queueInfo.put(
+                  "maxResources",
+                  Map(
+                    "memory" -> maxResource.getQueueMemory,
+                    "cores" -> maxResource.getQueueCores
+                  ).asJava
+                )
+                queueInfo.put(
+                  "usedResources",
+                  Map(
+                    "memory" -> usedResource.getQueueMemory,
+                    "cores" -> usedResource.getQueueCores
+                  ).asJava
+                )
+                val usedMemoryPercentage = usedResource.getQueueMemory
+                  .asInstanceOf[Double] / maxResource.getQueueMemory.asInstanceOf[Double]
+                val usedCPUPercentage = usedResource.getQueueCores
+                  .asInstanceOf[Double] / maxResource.getQueueCores.asInstanceOf[Double]
+                queueInfo.put(
+                  "usedPercentage",
+                  Map("memory" -> usedMemoryPercentage, "cores" -> usedCPUPercentage).asJava
+                )
+                queueInfo.put("maxApps", providedYarnResource.getMaxApps.asInstanceOf[AnyRef])
+                queueInfo.put(
+                  "numActiveApps",
+                  providedYarnResource.getNumActiveApps.asInstanceOf[AnyRef]
+                )
+                queueInfo.put(
+                  "numPendingApps",
+                  providedYarnResource.getNumPendingApps.asInstanceOf[AnyRef]
+                )
+                queueInfoMap.put(queueName, queueInfo.asJava)
+              case _ =>
+                logger.warn(s"Failed to get queue resource for $queueName")
+            }
+          } catch {
+            case ex: Exception =>
+              logger.error(s"Failed to get queue resource for $queueName", ex)
+          }
+        }
+    }
+
+    appendMessageData(message, "queueInfos", queueInfoMap.asJava)
+    message
   }
 
   private def getEngineNodesByUserList(

@@ -405,10 +405,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
       }
     } { case e: Exception =>
-      logger.error(
-        s"Failed to update metrics for taskId: $taskId",
-        e
-      )
+      logger.error(s"Failed to update metrics for taskId: $taskId", e)
     }
     engine
   }

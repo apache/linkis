@@ -10,7 +10,7 @@
         "@webank/fes-design-material": "0.2.31",
         "@fesjs/traction-widget": "1.9.1",
         "dayjs": "1.11.9",
-        "lodash": "4.17.21",
+        "lodash": "4.17.23",
         "@fesjs/fes": "3.1.10",
         "@fesjs/plugin-model": "3.0.1",
         "@fesjs/plugin-request": "4.0.0-rc.3",

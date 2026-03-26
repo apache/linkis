@@ -236,7 +236,10 @@ class DefaultEngineCreateService
 
     val engineNode = Utils.tryCatch(getEMService().createEngine(engineBuildRequest, emNode)) {
       case t: Throwable =>
-        logger.warn(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}", t)
+        logger.warn(
+          s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}",
+          t
+        )
         val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
         if (null == failedEcNode) {
           logger.warn(s" engineConn does not exist in db: $oldServiceInstance ")
@@ -310,10 +313,7 @@ class DefaultEngineCreateService
         }
       }
     } { case e: Exception =>
-      logger.error(
-        s"Failed to update metrics for taskId: $taskId",
-        e
-      )
+      logger.error(s"Failed to update metrics for taskId: $taskId", e)
     }
     // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])

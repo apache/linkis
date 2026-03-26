@@ -310,7 +310,10 @@ class DefaultEngineCreateService
         }
       }
     } { case e: Exception =>
-      logger.error(s"Failed to update metrics for taskId: $taskId", e)
+      logger.error(
+        s"Failed to update metrics for taskId: $taskId",
+        e
+      )
     }
     // 9. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])

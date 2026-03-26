@@ -361,6 +361,36 @@
       <version>1.3.4</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-lite-spring-boot-2.x-starter</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-gmssl</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-jasper</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-jdbcra</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-websocket</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.bes.appserver</groupId>
+      <artifactId>bes-websocket-support</artifactId>
+      <version>${bes.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

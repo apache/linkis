@@ -313,6 +313,48 @@ public class ConfigurationRestfulApi {
       String s = BDPJettyServerHelper.gson().toJson(o);
       ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
       List<ConfigKeyValue> settings = fullTree.getSettings();
+      chekList.add(settings);
+      for (ConfigKeyValue configKeyValue : settings) {
+        if (configKeyValue.getKey().equals("spark.conf")
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          sparkConf = configKeyValue.getConfigValue().trim();
+          configKeyValue.setConfigValue(sparkConf);
+        }
+        if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+            && Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          List<ConfigUserValue> userConfigValue =
+              configKeyService.getUserConfigValue(
+                  engine, configKeyValue.getKey(), creator, username);
+          for (ConfigUserValue configUserValue : userConfigValue) {
+            if (Configuration.CONFIGURATION_AES_CONF().contains(configKeyValue.getKey())
+                && !configUserValue.getConfigValue().equals(configKeyValue.getConfigValue())) {
+              configKeyValue.setConfigValue(
+                  AESUtils.encrypt(
+                      configKeyValue.getConfigValue(),
+                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            }
+          }
+        }
+        if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
+            && configKeyValue.getKey().equals("linkis.nebula.password")
+            && StringUtils.isNotBlank(configKeyValue.getConfigValue())) {
+          List<ConfigKeyValue> configByLabelIds =
+              configurationService.getConfigByLabelId(configKeyValue.getConfigLabelId(), null);
+          for (ConfigKeyValue configByLabelId : configByLabelIds) {
+            if (configByLabelId.getKey().equals("linkis.nebula.password")
+                && !configByLabelId.getConfigValue().equals(configKeyValue.getConfigValue())) {
+              configKeyValue.setConfigValue(
+                  AESUtils.encrypt(
+                      configKeyValue.getConfigValue(),
+                      AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue()));
+            }
+          }
+        }
+      }
+    }
+    for (List<ConfigKeyValue> settings : chekList) {
+      sparkConfCheck(settings, sparkConf);
       Integer userLabelId =
           configurationService.checkAndCreateUserLabel(settings, username, creator);
       for (ConfigKeyValue setting : settings) {

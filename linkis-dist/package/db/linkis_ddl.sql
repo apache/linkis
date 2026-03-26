@@ -250,7 +250,7 @@ DROP TABLE IF EXISTS `linkis_ps_udf_tree`;
 CREATE TABLE `linkis_ps_udf_tree` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parent` bigint(20) NOT NULL,
-  `name` varchar(50) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
+  `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
   `user_name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -514,15 +514,15 @@ CREATE TABLE `linkis_ps_cs_context_id` (
   `source` varchar(255) DEFAULT NULL,
   `expire_type` varchar(32) DEFAULT NULL,
   `expire_time` datetime DEFAULT NULL,
-  `instance` varchar(64) DEFAULT NULL,
-  `backup_instance` varchar(64) DEFAULT NULL,
+  `instance` varchar(128) DEFAULT NULL,
+  `backup_instance` varchar(255) DEFAULT NULL,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
   PRIMARY KEY (`id`),
-  KEY `idx_instance` (`instance`),
-  KEY `idx_backup_instance` (`backup_instance`),
-  KEY `idx_instance_bin` (`instance`,`backup_instance`)
+  KEY `idx_instance` (`instance`(128)),
+  KEY `idx_backup_instance` (`backup_instance`(191)),
+  KEY `idx_instance_bin` (`instance`(128),`backup_instance`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- ----------------------------
@@ -810,7 +810,7 @@ DROP TABLE IF EXISTS `linkis_cg_manager_label`;
 CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_key` varchar(32) COLLATE utf8_bin NOT NULL,
-  `label_value` varchar(128) COLLATE utf8_bin NOT NULL,
+  `label_value` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_feature` varchar(16) COLLATE utf8_bin NOT NULL,
   `label_value_size` int(20) NOT NULL,
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -822,7 +822,7 @@ CREATE TABLE `linkis_cg_manager_label` (
 DROP TABLE IF EXISTS `linkis_cg_manager_label_value_relation`;
 CREATE TABLE `linkis_cg_manager_label_value_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `label_value_key` varchar(128) COLLATE utf8_bin NOT NULL,
+  `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `label_id` int(20) DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -846,18 +846,18 @@ CREATE TABLE `linkis_cg_manager_label_resource` (
 DROP TABLE IF EXISTS `linkis_cg_ec_resource_info_record`;
 CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `id` INT(20) NOT NULL AUTO_INCREMENT,
-    `label_value` VARCHAR(128) NOT NULL COMMENT 'ec labels stringValue',
+    `label_value` VARCHAR(255) NOT NULL COMMENT 'ec labels stringValue',
     `create_user` VARCHAR(128) NOT NULL COMMENT 'ec create user',
     `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ec instance info',
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ecm instance info ',
-    `ticket_id` VARCHAR(36) NOT NULL COMMENT 'ec ticket id',
+    `ticket_id` VARCHAR(100) NOT NULL COMMENT 'ec ticket id',
     `status` varchar(50) DEFAULT NULL COMMENT 'EC status: Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success',
     `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'log path',
     `request_times` INT(8) COMMENT 'resource request times',
     `request_resource` VARCHAR(1020) COMMENT 'request resource',
     `used_times` INT(8) COMMENT 'resource used times',
     `used_resource` VARCHAR(1020) COMMENT 'used resource',
-    `metrics` TEXT CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT 'ec metrics',
+    `metrics` TEXT DEFAULT NULL COMMENT 'ec metrics',
     `release_times` INT(8) COMMENT 'resource released times',
     `released_resource` VARCHAR(1020)  COMMENT 'released resource',
     `release_time` datetime DEFAULT NULL COMMENT 'released time',

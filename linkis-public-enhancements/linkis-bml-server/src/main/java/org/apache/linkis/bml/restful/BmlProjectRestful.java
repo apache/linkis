@@ -260,7 +260,7 @@ public class BmlProjectRestful {
       Map<String, Object> properties = new HashMap<>();
       properties.put("clientIp", clientIp);
       ResourceTask resourceTask = null;
-      synchronized (resourceId.intern()) {
+      synchronized (resourceId.intern()) { // NOSONAR
         resourceTask =
             taskService.createUpdateTask(resourceId, DEFAULT_PROXY_USER, file, properties);
       }

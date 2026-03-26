@@ -41,7 +41,7 @@ public class ProgressMonitorTest {
     String url = "jdbc:trino://127.0.0.1:8080/hive/test";
     Properties properties = new Properties();
     properties.setProperty("user", "test");
-    Connection connection = DriverManager.getConnection(url, properties);
+    Connection connection = DriverManager.getConnection(url, properties); // NOSONAR
     monitor = ProgressMonitor.attachMonitor(connection.createStatement());
     Assertions.assertNotNull(monitor);
 

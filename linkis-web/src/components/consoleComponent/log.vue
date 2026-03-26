@@ -21,7 +21,8 @@
       <div class="log-tools-control">
         <Tabs
           v-model="curPage"
-          class="log-tabs">
+          class="log-tabs"
+          @on-click="handleTabClick">
           <TabPane
             v-if="logs.all !== undefined"
             name="all"
@@ -41,6 +42,11 @@
             v-if="logs.info !== undefined"
             name="info"
             label="Info"/>
+          <TabPane
+            v-if="logs.code !== undefined"
+            name="code"
+            label="Code"
+          />
         </Tabs>
         <Input
           v-model="searchText"
@@ -128,7 +134,7 @@ export default {
       if (this.$refs.logEditor.editor) {
         this.$refs.logEditor.editor.revealLine(val);
       }
-    }
+    },
   },
   computed: {
     height() {
@@ -137,6 +143,9 @@ export default {
   },
   mounted() {
     elementResizeEvent.bind(this.$el, this.resize);
+    if(this.status === 'code') {
+      this.curPage = 'code'
+    }
   },
   beforeDestroy() {
     elementResizeEvent.unbind(this.$el);
@@ -147,11 +156,21 @@ export default {
         this.$refs.logEditor.editor.layout();
       }
     }, 1000),
+    handleTabClick() {
+      this.$nextTick(() => this.$refs.logEditor.fold())
+      this.$emit('tabClick')
+    },
     change() {
       this.scriptViewState.cacheLogScroll = this.$refs.logEditor.editor.getScrollTop();
     },
     editorOnload() {
       this.$refs.logEditor.editor.setScrollPosition({ scrollTop: this.scriptViewState.cacheLogScroll || 0 });
+    },
+    unfold() {
+      this.$refs.logEditor.unfold();
+    },
+    fold() {
+      this.$refs.logEditor.fold();
     },
     formattedLogs() {
       let logs = {};
@@ -164,8 +183,22 @@ export default {
     getPointNum(logs) {
       const errorLogs = trim(logs.error).split('\n').filter((e) => !!e);
       const warnLogs = trim(logs.warning).split('\n').filter((e) => !!e);
-      this.errorNum = errorLogs.length;
-      this.warnNum = warnLogs.length;
+      const errorRegex = /\sERROR\s.*/;
+      const warnRegex = /\sWARN\s.*/;
+      let errorCount = 0;
+      let warnCount = 0;
+      for (const str of errorLogs) {
+        if (str.match(errorRegex)) {
+          errorCount++;
+        }
+      }
+      for (const str of warnLogs) {
+        if (str.match(warnRegex)) {
+          warnCount++;
+        }
+      }
+      this.errorNum = errorCount;
+      this.warnNum = warnCount;
     },
     getSearchList(log) {
       let MatchText = '';

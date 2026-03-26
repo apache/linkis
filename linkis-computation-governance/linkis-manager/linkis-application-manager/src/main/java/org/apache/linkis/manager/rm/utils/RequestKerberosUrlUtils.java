@@ -103,6 +103,16 @@ public class RequestKerberosUrlUtils {
     logger.warn(
         String.format(
             "Calling KerberosHttpClient %s %s %s", this.principal, this.keyTabLocation, url));
+    HashMap<String, Object> map = new HashMap<>();
+    map.put("useTicketCache", "false");
+    map.put("useKeyTab", "true");
+    map.put("keyTab", keyTabLocation);
+    map.put("refreshKrb5Config", "true");
+    map.put("principal", principal);
+    map.put("storeKey", "true");
+    map.put("doNotPrompt", "true");
+    map.put("isInitiator", "true");
+    map.put("debug", "false");
     Configuration config =
         new Configuration() {
           @SuppressWarnings("serial")
@@ -112,19 +122,7 @@ public class RequestKerberosUrlUtils {
               new AppConfigurationEntry(
                   "com.sun.security.auth.module.Krb5LoginModule",
                   AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
-                  new HashMap<String, Object>() {
-                    {
-                      put("useTicketCache", "false");
-                      put("useKeyTab", "true");
-                      put("keyTab", keyTabLocation);
-                      put("refreshKrb5Config", "true");
-                      put("principal", principal);
-                      put("storeKey", "true");
-                      put("doNotPrompt", "true");
-                      put("isInitiator", "true");
-                      put("debug", "false");
-                    }
-                  })
+                  map)
             };
           }
         };

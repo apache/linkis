@@ -13,7 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+-->
 
 <template>
   <div class="function-management">
@@ -389,6 +389,9 @@ export default {
           this.search()
           this.isLoading = false
           this.loading = false
+          if (data.defaultLoad) {
+            this.confirmKillIdle()
+          }
         })
         .catch(() => {
           // this.list = [{}]
@@ -422,6 +425,9 @@ export default {
           this.loading = false
           this.search()
           this.$Message.success(this.$t('message.linkis.udf.success'));
+          if (data.defaultLoad) {
+            this.confirmKillIdle()
+          }
         })
         .catch(() => {
           this.isLoading = false
@@ -662,6 +668,22 @@ export default {
 
           })
       }
+    },
+    confirmKillIdle() {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.setting.killEngineTitle'),
+        content: this.$t('message.linkis.setting.killEngine'),
+        onOk: async () => {
+          try {
+            api.fetch("/linkisManager/rm/killEngineByCreatorEngineType", {
+              creator: '*',
+              engineType: 'spark'
+            })
+          } catch (err) {
+            window.console.warn(err)
+          }
+        }
+      })
     },
     getShareUsers() {
       return api.fetch('/udf/getSharedUsers', {udfId: this.handleRow.id}, 'post')

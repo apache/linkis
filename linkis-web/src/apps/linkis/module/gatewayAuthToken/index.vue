@@ -41,6 +41,14 @@
             :disabled="row.expire"
             size="small"
             type="primary"
+            @click="onTokenCheck(row, index)"
+          >{{ $t('message.linkis.basedataManagement.tokenInfo') }}
+          </Button
+          >
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
             @click="onTableEdit(row, index)"
           >{{ $t('message.linkis.basedataManagement.edit') }}
           </Button
@@ -81,14 +89,43 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <EditForm ref="editForm" :data="modalEditData"></EditForm>
+      <EditForm ref="editForm" :data="modalEditData" :mode="modalAddMode"></EditForm>
+    </Modal>
+
+    <!-- Token信息查看弹窗 -->
+    <Modal
+      width="600"
+      v-model="tokenModalShow"
+      :title="$t('message.linkis.basedataManagement.tokenInfo')"
+      :loading="tokenModalLoading"
+    >
+      <div slot="footer">
+        <Button type="primary" size="large" @click="onTokenModalClose()">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
+      </div>
+      <div style="padding: 20px;">
+        <div style="margin-bottom: 20px; display: flex;">
+          <div style="display:flex; align-items: center">{{ $t('message.linkis.tokenPlain') }}：</div>
+          <div style="flex:1; padding: 10px; background-color: #f8f8f9; border: 1px solid #dcdee2; border-radius: 4px; word-break: break-all;">
+            {{ tokenInfo.decryptToken || '' }}
+          </div>
+        </div>
+        <div style="display: flex; position: relative">
+          <div>{{ $t('message.linkis.tokenCipher') }}：</div>
+          <div style="flex:1; padding: 10px; background-color: #f8f8f9; border: 1px solid #dcdee2; border-radius: 4px; word-break: break-all;">
+            {{ tokenInfo.encryptToken || '' }}
+          </div>
+          <div style="text-align: right; top: 5px; right: -18px; position: absolute">
+            <Icon type="md-copy" :size="18" style="cursor: pointer; color: #2d8cf0;" @click="copyToClipboard(tokenInfo.encryptToken)" title="点击后可复制密文"></Icon>
+          </div>
+        </div>
+      </div>
     </Modal>
   </div>
 </template>
 <script>
 import mixin from '@/common/service/mixin';
 import EditForm from './EditForm/index'
-import {add, del, edit, getList} from "./service";
+import {add, del, edit, getDecryptToken, getList} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
@@ -172,7 +209,7 @@ export default {
         },
         {
           title: this.$t('message.linkis.basedataManagement.action'),
-          width: 150,
+          width: 190,
           slot: 'action',
           align: 'center',
         },
@@ -182,7 +219,14 @@ export default {
       modalShow: false,
       modalAddMode: 'add',
       modalEditData: {},
-      modalLoading: false
+      modalLoading: false,
+      // Token信息弹窗相关数据
+      tokenModalShow: false,
+      tokenModalLoading: false,
+      tokenInfo: {
+        decryptToken: '',
+        encryptToken: ''
+      }
     };
   },
   created() {
@@ -216,6 +260,7 @@ export default {
         elapseDay: -1,
         permanentlyValid: true
       }
+      this.$refs.editForm.formModel.rule[1].props.disabled = false
       this.$refs.editForm.formModel.rule[5].hidden = true
       this.$refs.editForm.formModel.setValue(row)
 
@@ -227,9 +272,53 @@ export default {
         row.permanentlyValid = true;
         this.$refs.editForm.formModel.rule[5].hidden = true
       }
+      this.$refs.editForm.formModel.rule[1].props.disabled = true
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
+    },
+    onTokenCheck(row) {
+      this.tokenModalLoading = true;
+      this.tokenModalShow = true;
+
+      // 调用getDecryptToken API
+      getDecryptToken(row).then((data) => {
+        this.tokenModalLoading = false;
+        this.tokenInfo = {
+          decryptToken: data.decryptToken,
+          encryptToken: data.encryptToken
+        };
+      }).catch(() => {
+        this.tokenModalLoading = false;
+      });
+    },
+    onTokenModalClose() {
+      this.tokenModalShow = false;
+      this.tokenInfo = {
+        decryptToken: '',
+        encryptToken: ''
+      };
+    },
+    copyToClipboard(text) {
+      if (!text) {
+        this.$Message.warning('没有可复制的内容');
+        return;
+      }
+
+      // 创建临时textarea元素
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand('copy');
+        this.$Message.success('复制成功');
+      } catch (err) {
+        this.$Message.error('复制失败，请手动复制');
+      }
+
+      document.body.removeChild(textarea);
     },
     onTableDelete(row){
       this.$Modal.confirm({
@@ -305,28 +394,29 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./index.scss" scoped>
-</style>
+  <style lang="scss" src="./index.scss" scoped>
+  </style>
 
-<style lang="scss">
-.mytable {
-  border: 0;
-  height: calc(100% - 110px);
-  width: 100%;
-  overflow-y: auto;
-
-  .ivu-table:before {
-    height: 0
-  }
-
-  .ivu-table:after {
-    width: 0
-  }
-
-  .ivu-table {
-    height: auto;
-    border: 1px solid #dcdee2;
+  <style lang="scss">
+  .mytable {
+    border: 0;
+    height: calc(100% - 110px);
     width: 100%;
+    overflow-y: auto;
+
+    .ivu-table:before {
+      height: 0
+    }
+
+    .ivu-table:after {
+      width: 0
+    }
+
+    .ivu-table {
+      height: auto;
+      border: 1px solid #dcdee2;
+      width: 100%;
+    }
   }
-}
-</style>
+  </style>
+  

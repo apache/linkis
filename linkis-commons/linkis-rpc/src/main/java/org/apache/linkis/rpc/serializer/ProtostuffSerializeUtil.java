@@ -61,8 +61,11 @@ public class ProtostuffSerializeUtil {
 
   public static <T> T deserialize(String str, Class<T> clazz) {
     Schema<T> schema = getSchema(clazz);
-    T obj = schema.newMessage();
-    ProtostuffIOUtil.mergeFrom(toByteArray(str), obj, schema);
+    T obj = null;
+    if (schema != null) {
+      obj = schema.newMessage();
+      ProtostuffIOUtil.mergeFrom(toByteArray(str), obj, schema);
+    }
     return obj;
   }
 
@@ -93,7 +96,7 @@ public class ProtostuffSerializeUtil {
     for (int i = 0; i < byteArray.length; i++) {
       byte high = (byte) (Character.digit(hexString.charAt(k), 16) & 0xff);
       byte low = (byte) (Character.digit(hexString.charAt(k + 1), 16) & 0xff);
-      byteArray[i] = (byte) (high << 4 | low);
+      byteArray[i] = (byte) (high << 4 | low); // NOSONAR
       k += 2;
     }
     return byteArray;

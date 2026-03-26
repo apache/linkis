@@ -17,12 +17,15 @@
 
 package org.apache.linkis.manager.engineplugin.hbase;
 
+import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.manager.engineplugin.hbase.errorcode.HBaseErrorCodeSummary;
 import org.apache.linkis.manager.engineplugin.hbase.exception.HBaseParamsIllegalException;
 import org.apache.linkis.manager.engineplugin.hbase.exception.JobExecutorException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.Connection;
@@ -73,16 +76,16 @@ public class HBaseConnectionManager {
   private static final AtomicBoolean kerberosEnvInit = new AtomicBoolean(false);
   private static final int KERBEROS_RE_LOGIN_MAX_RETRY = 5;
   private static final long KERBEROS_RE_LOGIN_INTERVAL = 30 * 60 * 1000L;
-  private static volatile HBaseConnectionManager instance = null;
+  private static volatile HBaseConnectionManager instance = null; // NOSONAR
 
   private HBaseConnectionManager() {
     connectionMap = new ConcurrentHashMap<>();
   }
 
   public static HBaseConnectionManager getInstance() {
-    if (instance == null) {
-      synchronized (HBaseConnectionManager.class) {
-        if (instance == null) {
+    if (instance == null) { // NOSONAR
+      synchronized (HBaseConnectionManager.class) { // NOSONAR
+        if (instance == null) { // NOSONAR
           instance = new HBaseConnectionManager();
         }
       }
@@ -178,6 +181,7 @@ public class HBaseConnectionManager {
       doKerberosReLogin();
     } catch (IOException e) {
       kerberosEnvInit.set(false);
+      LOG.info("Failed to doKerberosReLogin, principal {}, keytab {}", principal, keytab, e);
       throw new JobExecutorException(
           HBaseErrorCodeSummary.KERBEROS_AUTH_FAILED.getErrorCode(),
           HBaseErrorCodeSummary.KERBEROS_AUTH_FAILED.getErrorDesc());
@@ -256,11 +260,14 @@ public class HBaseConnectionManager {
     String dfsRootDir =
         HBasePropertiesParser.getString(prop, HBASE_DFS_ROOT_DIR, DEFAULT_HBASE_DFS_ROOT_DIR);
     configuration.set(HConstants.HBASE_DIR, dfsRootDir);
-    String securityAuth = HBasePropertiesParser.getString(prop, HBASE_SECURITY_AUTH, SIMPLE);
+    String securityAuth = HBasePropertiesParser.getString(prop, HBASE_SECURITY_AUTH, KERBEROS);
     configuration.set(HBASE_AUTH, securityAuth);
     if (isKerberosAuthType(configuration)) {
       configuration.set(HADOOP_SECURITY_AUTH, KERBEROS);
-      String kerberosPrincipal = HBasePropertiesParser.getString(prop, KERBEROS_PRINCIPAL, "");
+      configuration.setBoolean(CommonConfigurationKeysPublic.HADOOP_SECURITY_AUTHORIZATION, true);
+      String userName = Utils.getJvmUser();
+      String kerberosPrincipal =
+          HBasePropertiesParser.getString(prop, KERBEROS_PRINCIPAL, userName);
       if (StringUtils.isBlank(kerberosPrincipal)) {
         throw new HBaseParamsIllegalException(
             HBaseErrorCodeSummary.KERBEROS_PRINCIPAL_NOT_NULL.getErrorCode(),
@@ -269,15 +276,19 @@ public class HBaseConnectionManager {
       configuration.set(KERBEROS_PRINCIPAL, kerberosPrincipal);
       String keytabFile = HBasePropertiesParser.getString(prop, KERBEROS_KEYTAB_FILE, "");
       if (StringUtils.isBlank(keytabFile)) {
-        throw new HBaseParamsIllegalException(
-            HBaseErrorCodeSummary.KERBEROS_KEYTAB_NOT_NULL.getErrorCode(),
-            HBaseErrorCodeSummary.KERBEROS_KEYTAB_NOT_NULL.getErrorDesc());
+        keytabFile = HadoopConf.KEYTAB_FILE() + userName + ".keytab";
       }
       configuration.set(KERBEROS_KEYTAB_FILE, keytabFile);
       String proxyUser = HBasePropertiesParser.getString(prop, KERBEROS_PROXY_USER, "");
-      configuration.set(KERBEROS_PROXY_USER, proxyUser);
+      if (StringUtils.isNotBlank(proxyUser)) {
+        configuration.set(KERBEROS_PROXY_USER, proxyUser);
+      }
       String regionServerPrincipal =
-          HBasePropertiesParser.getString(prop, HBASE_REGION_SERVER_KERBEROS_PRINCIPAL, "");
+          HBasePropertiesParser.getString(
+              prop,
+              HBASE_REGION_SERVER_KERBEROS_PRINCIPAL,
+              org.apache.linkis.manager.engineplugin.hbase.conf.HBaseConfiguration
+                  .HBASE_DEFAULT_KERBEOS_PRINCIPAL());
       if (StringUtils.isBlank(regionServerPrincipal)) {
         throw new HBaseParamsIllegalException(
             HBaseErrorCodeSummary.REGION_SERVER_KERBEROS_PRINCIPAL_NOT_NULL.getErrorCode(),
@@ -285,7 +296,11 @@ public class HBaseConnectionManager {
       }
       configuration.set(REGION_SERVER_KERBEROS_PRINCIPAL, regionServerPrincipal);
       String masterPrincipal =
-          HBasePropertiesParser.getString(prop, HBASE_MASTER_KERBEROS_PRINCIPAL, "");
+          HBasePropertiesParser.getString(
+              prop,
+              HBASE_MASTER_KERBEROS_PRINCIPAL,
+              org.apache.linkis.manager.engineplugin.hbase.conf.HBaseConfiguration
+                  .HBASE_DEFAULT_KERBEOS_PRINCIPAL());
       if (StringUtils.isBlank(masterPrincipal)) {
         throw new HBaseParamsIllegalException(
             HBaseErrorCodeSummary.MASTER_KERBEROS_PRINCIPAL_NOT_NULL.getErrorCode(),
@@ -295,6 +310,14 @@ public class HBaseConnectionManager {
       String krb5Conf =
           HBasePropertiesParser.getString(prop, KRB5_CONF_PATH, DEFAULT_KRB5_CONF_PATH);
       System.setProperty(KRB5_CONF_PATH, krb5Conf);
+      LOG.info(
+          "Kerberos info zk: {}, zNodeParent: {}, KERBEROS_PRINCIPAL {}, KERBEROS_KEYTAB_FILE {}, HBASE_REGION_SERVER_KERBEROS_PRINCIPAL {}, HBASE_MASTER_KERBEROS_PRINCIPAL {}",
+          zkQuorum,
+          zNodeParent,
+          kerberosPrincipal,
+          keytabFile,
+          regionServerPrincipal,
+          masterPrincipal);
     }
     return configuration;
   }

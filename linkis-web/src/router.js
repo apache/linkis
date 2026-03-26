@@ -15,10 +15,32 @@
  * limitations under the License.
  */
 
-
+import {Modal} from 'iview';
 import VueRouter from "vue-router";
 import { routes } from './dynamic-apps'
-
+// import eventbus from '@/common/helper/eventbus';
+import axios from 'axios'
+// eslint-disable-next-line require-jsdoc
+async function checkNeedShowUpdate() {
+  try {
+    const { data } = await axios.get(`/dss/linkis/index.html?t=${Date.now()}`)
+    let serverAppHash = data.split('src="js/app.')[1].split('>')[0]
+    serverAppHash = serverAppHash && serverAppHash.substring(0, 8)
+    const appjs = [
+      ...document.getElementsByTagName('script')
+    ]
+      .map(it => it.src)
+      .find(it => /app\.[\da-z]{8}\.js/.test(it))
+    const pageAppHash = appjs && appjs.match(/app\.([\da-z]{8})\.js/)[1];
+    window.console.log(serverAppHash, pageAppHash);
+    return Promise.resolve(pageAppHash !== serverAppHash)
+  } catch(err) {
+    
+    window.console.error(err)
+    return Promise.reject(false)
+  }
+  
+}
 // Solve the error of repeated click routing jump(解决重复点击路由跳转报错)
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
@@ -45,10 +67,35 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-router.afterEach((to) => {
+router.afterEach(async (to) => {
   if (to.meta) {
     document.title = to.meta.title || 'Linkis';
   }
+  await checkNeedShowUpdate().then(
+    (show) => {
+      window.console.log(show)
+      const deniedUpdate = sessionStorage.getItem('deniedUpdate');
+      if(deniedUpdate === 'true') return;
+      if (show) {
+        window.console.log('exist difference')
+        Modal.confirm({
+          title: '发现新版本',
+          content: '为获得更好的体验，是否立即更新',
+          onOk: async () => {
+            try {
+              location.reload()
+            } catch (err) {
+              window.console.warn(err)
+            }
+          },
+          onCancel: () => {
+            // do nothing
+            sessionStorage.setItem('deniedUpdate', 'true');
+          }
+        })
+      }
+    }
+  )
 });
 
 export default router;

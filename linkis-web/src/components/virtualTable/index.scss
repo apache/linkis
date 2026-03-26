@@ -146,6 +146,7 @@ $border-color: #e0e0e0;
     .we-table {
         border: 1px solid #dcdee2;
         table-layout: fixed;
+        overflow: hidden;
         .we-table-thead {
             background-color: #2d8cf0;
             color: #fff;

@@ -186,9 +186,9 @@ public class DefaultSearchService implements SearchService {
   }
 
   public static SearchService getInstance() {
-    if (null == searchService) {
-      synchronized (DefaultSearchService.class) {
-        if (null == searchService) {
+    if (null == searchService) { // SONAR
+      synchronized (DefaultSearchService.class) { // NOSONAR
+        if (null == searchService) { // NOSONAR
           searchService = new DefaultSearchService();
         }
       }

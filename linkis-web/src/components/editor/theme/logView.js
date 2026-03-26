@@ -27,6 +27,7 @@ export default {
         { token: 'log-warn', foreground: 'FFA500' },
         { token: 'log-date', foreground: '008800' },
         { token: 'log-normal', foreground: '808080' },
+        { token: 'log-caused', foreground: 'ff0000', fontStyle: 'bold' },
       ],
       colors: {
         'editor.lineHighlightBackground': '#ffffff',

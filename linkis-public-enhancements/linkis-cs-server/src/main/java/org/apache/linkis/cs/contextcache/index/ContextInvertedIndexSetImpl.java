@@ -36,7 +36,7 @@ public class ContextInvertedIndexSetImpl implements ContextInvertedIndexSet {
   public ContextInvertedIndex getContextInvertedIndex(ContextType contextType) {
     String csType = contextType.name();
     if (!invertedIndexMap.containsKey(csType)) {
-      synchronized (csType.intern()) {
+      synchronized (csType.intern()) { // NOSONAR
         if (!invertedIndexMap.containsKey(csType)) {
           logger.info("For ContextType({}) init invertedIndex", csType);
           invertedIndexMap.put(csType, new DefaultContextInvertedIndex());

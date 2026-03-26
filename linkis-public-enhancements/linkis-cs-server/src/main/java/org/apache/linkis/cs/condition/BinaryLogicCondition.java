@@ -46,6 +46,6 @@ public abstract class BinaryLogicCondition extends AbstractCommonCondition {
   }
 
   public void setRight(Condition right) {
-    right = right;
+    this.right = right;
   }
 }

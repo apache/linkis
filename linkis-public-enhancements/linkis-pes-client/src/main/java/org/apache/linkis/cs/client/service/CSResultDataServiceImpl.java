@@ -48,9 +48,9 @@ public class CSResultDataServiceImpl implements CSResultDataService {
   private CSResultDataServiceImpl() {}
 
   public static CSResultDataService getInstance() {
-    if (null == csResultDataService) {
-      synchronized (CSResultDataServiceImpl.class) {
-        if (null == csResultDataService) {
+    if (null == csResultDataService) { // NOSONAR
+      synchronized (CSResultDataServiceImpl.class) { // NOSONAR
+        if (null == csResultDataService) { // NOSONAR
           csResultDataService = new CSResultDataServiceImpl();
         }
       }

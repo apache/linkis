@@ -26,29 +26,30 @@
 -- 组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
 -- 索引名尽量不超过50个字符，命名应该使用小写
 
+
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_config_key`;
 CREATE TABLE `linkis_ps_configuration_config_key`(
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `key` varchar(50) DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
-  `description` varchar(200) DEFAULT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `default_value` varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
-  `validate_type` varchar(50) DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
-  `validate_range` varchar(150) DEFAULT NULL COMMENT 'Validate range',
-  `engine_conn_type` varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc',
-  `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
-  `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
-  `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
-  `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
-  `boundary_type` TINYINT(2) NULL DEFAULT '0' COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
-  `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
-  `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
-  `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
-  `template_required` tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must',
-  UNIQUE INDEX `uniq_key_ectype` (`key`,`engine_conn_type`),
-  PRIMARY KEY  (`id`)
+    `id`               bigint(20) NOT NULL AUTO_INCREMENT,
+    `key`              varchar(50)  DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
+    `description`      varchar(200) DEFAULT NULL,
+    `name`             varchar(50)  DEFAULT NULL,
+    `default_value`    varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
+    `validate_type`    varchar(50)  DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
+    `validate_range`   varchar(150) COLLATE utf8_bin DEFAULT NULL COMMENT 'Validate range',
+    `engine_conn_type` varchar(50)  DEFAULT '' COMMENT 'engine type,such as spark,hive etc',
+    `is_hidden`        tinyint(1)   DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
+    `is_advanced`      tinyint(1)   DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
+    `level`            tinyint(1)   DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
+    `treeName`         varchar(20)  DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    `boundary_type`    tinyint(2) NOT NULL DEFAULT '0'  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
+    `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
+    `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
+    `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
+    `template_required` tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must',
+    UNIQUE INDEX `uniq_key_ectype` (`key`,`engine_conn_type`),
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
@@ -85,7 +86,62 @@ CREATE TABLE `linkis_ps_configuration_category` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `uniq_label_id` (`label_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+DROP  TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
+CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_template_config_key` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `template_name` VARCHAR(200) NOT NULL COMMENT 'Configuration template name redundant storage',
+    `template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid template id recorded by the third party',
+    `key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT 'configuration value',
+    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'upper limit value',
+    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Lower limit value (reserved)',
+    `validate_range` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Verification regularity (reserved)',
+    `is_valid` VARCHAR(2) DEFAULT 'Y' COMMENT 'Is it valid? Reserved Y/N',
+    `create_by` VARCHAR(50) NOT NULL COMMENT 'Creator',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Update by',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_tid_kid` (`template_uuid`, `key_id`),
+    UNIQUE INDEX `uniq_tname_kid` (`template_uuid`, `key_id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+DROP  TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
+CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_limit_for_user` (
+    `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+    `user_name` VARCHAR(50) NOT NULL COMMENT 'username',
+    `combined_label_value` VARCHAR(128) NOT NULL COMMENT 'Combined label combined_userCreator_engineType such as hadoop-IDE,spark-2.4.3',
+    `key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT 'configuration value',
+    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'upper limit value',
+    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Lower limit value (reserved)',
+    `latest_update_template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid template id recorded by the third party',
+    `is_valid` VARCHAR(2) DEFAULT 'Y' COMMENT 'Is it valid? Reserved Y/N',
+    `create_by` VARCHAR(50) NOT NULL COMMENT 'Creator',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Update by',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+DROP  TABLE IF EXISTS `linkis_ps_configutation_lm_across_cluster_rule`;
+CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
+    id INT AUTO_INCREMENT COMMENT 'Rule ID, auto-increment primary key',
+    cluster_name char(32) NOT NULL COMMENT 'Cluster name, cannot be empty',
+    creator char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    username char(32) NOT NULL COMMENT 'User, cannot be empty',
+    create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time, cannot be empty',
+    create_by char(32) NOT NULL COMMENT 'Creator, cannot be empty',
+    update_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Modification time, cannot be empty',
+    update_by char(32) NOT NULL COMMENT 'Updater, cannot be empty',
+    rules varchar(256) NOT NULL COMMENT 'Rule content, cannot be empty',
+    is_valid VARCHAR(2) DEFAULT 'N' COMMENT 'Is it valid Y/N',
+    PRIMARY KEY (id),
+    UNIQUE KEY idx_creator_username (creator, username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- New linkis job
@@ -616,7 +672,8 @@ create table if not exists linkis_ps_bml_project_resource(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
   `resource_id` varchar(128) DEFAULT NULL,
-PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_resource_id` (`resource_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=COMPACT;
 
 
@@ -697,7 +754,8 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
   `creator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `params` text COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_instance` (`instance`)
+  UNIQUE KEY `uniq_instance` (`instance`),
+  KEY `idx_instance_name` (`instance`, `name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_linkis_resources`;
@@ -991,6 +1049,7 @@ DROP TABLE IF EXISTS `linkis_mg_gateway_auth_token`;
 CREATE TABLE `linkis_mg_gateway_auth_token` (
      `id` int(11) NOT NULL AUTO_INCREMENT,
      `token_name` varchar(128) NOT NULL,
+     `token_sign` TEXT DEFAULT NULL COMMENT '存储token密文',
      `legal_users` text,
      `legal_hosts` text,
      `business_owner` varchar(32),
@@ -1144,51 +1203,6 @@ CREATE TABLE `linkis_ps_configuration_across_cluster_rule` (
     UNIQUE KEY idx_creator_username (creator, username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
--- ----------------------------
--- Table structure for linkis_ps_configuration_template_config_key
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
-CREATE TABLE `linkis_ps_configuration_template_config_key` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`template_name` VARCHAR(200) NOT NULL COMMENT '配置模板名称 冗余存储',
-	`template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
-	`key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
-	`config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT '配置值',
-	`max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT '上限值',
-	`min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT '下限值（预留）',
-	`validate_range` VARCHAR(50) NULL DEFAULT NULL COMMENT '校验正则(预留) ',
-	`is_valid` VARCHAR(2)   DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
-	`create_by` VARCHAR(50) NOT NULL COMMENT '创建人',
-  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
-	`update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT '更新人',
-  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
-	PRIMARY KEY (`id`),
-	UNIQUE INDEX `uniq_tid_kid` (`template_uuid`, `key_id`),
-	UNIQUE INDEX `uniq_tname_kid` (`template_uuid`, `key_id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
--- ----------------------------
--- Table structure for linkis_ps_configuration_key_limit_for_user
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
-CREATE TABLE `linkis_ps_configuration_key_limit_for_user` (
-	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-	`user_name` VARCHAR(50) NOT NULL COMMENT '用户名',
-	`combined_label_value` VARCHAR(128) NOT NULL COMMENT '组合标签 combined_userCreator_engineType  如 hadoop-IDE,spark-2.4.3',
-	`key_id` BIGINT(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
-    `config_value` VARCHAR(200) NULL DEFAULT NULL COMMENT '配置值',
-    `max_value` VARCHAR(50) NULL DEFAULT NULL COMMENT '上限值',
-    `min_value` VARCHAR(50) NULL DEFAULT NULL COMMENT '下限值（预留）',
-	`latest_update_template_uuid` VARCHAR(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
-	`is_valid` VARCHAR(2)  DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
-	`create_by` VARCHAR(50) NOT NULL COMMENT '创建人',
-    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
-	`update_by` VARCHAR(50) NULL DEFAULT NULL COMMENT '更新人',
-    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
-	PRIMARY KEY (`id`),
-	UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
 
 
 -- ----------------------------
@@ -1270,26 +1284,60 @@ CREATE TABLE `linkis_ps_python_module_info` (
   `update_user` varchar(50) NOT NULL COMMENT '修改用户',
   `is_load` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否加载，0-未加载，1-已加载',
   `is_expire` tinyint(1) DEFAULT NULL COMMENT '是否过期，0-未过期，1-已过期）',
+  `python_module` varchar(200) COLLATE utf8_bin DEFAULT NULL COMMENT '依赖python模块',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='Python模块包信息表';
 
--- ----------------------------
--- Table structure for linkis_org_user_sync
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_org_user_sync`;
-CREATE TABLE `linkis_org_user_sync` (
-  `cluster_code` varchar(16) COMMENT '集群',
-  `user_type` varchar(64) COMMENT '用户类型',
-  `user_name` varchar(128) COMMENT '授权用户',
-  `org_id` varchar(16) COMMENT '部门ID',
-  `org_name` varchar(64) COMMENT '部门名字',
-  `queue_name` varchar(64) COMMENT '默认资源队列',
-  `db_name` varchar(64) COMMENT '默认操作数据库',
-  `interface_user` varchar(64) COMMENT '接口人',
-  `is_union_analyse` varchar(64) COMMENT '是否联合分析人',
-  `create_time` varchar(64) COMMENT '用户创建时间',
-  `user_itsm_no` varchar(64) COMMENT '用户创建单号',
-  PRIMARY KEY (`user_name`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_bin COMMENT ='用户部门统计INC表';
+
+DROP TABLE IF EXISTS `linkis_ps_job_history_diagnosis`;
+CREATE TABLE `linkis_ps_job_history_diagnosis` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary Key, auto increment',
+  `job_history_id` bigint(20) NOT NULL COMMENT 'ID of JobHistory',
+  `diagnosis_content` text COLLATE utf8mb4_bin COMMENT 'Diagnosis failed task information',
+  `created_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Creation time',
+  `updated_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Update time',
+  `only_read` varchar(5) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '1 just read,can not update',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `job_history_id` (`job_history_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT ='任务诊断分析表';
+
+
+CREATE TABLE `linkis_mg_gateway_ecc_userinfo` (
+	`id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID，自增',
+	`om_tool` VARCHAR(255) NOT NULL COMMENT '工具系统',
+	`user_id` VARCHAR(255) NOT NULL COMMENT '申请授权用户',
+	`op_user_id` VARCHAR(255) NOT NULL COMMENT '协助运维账号',
+	`roles` VARCHAR(255) NOT NULL COMMENT '角色列表，多个逗号,分隔',
+	`auth_system_id` VARCHAR(500) NOT NULL COMMENT '授权子系统名称ID，多个逗号,分隔',
+	`apply_itsm_id` VARCHAR(255) NOT NULL COMMENT 'ITSM申请单号，唯一，重复推送时根据这个字段做更新',
+	`effective_datetime` DATETIME NOT NULL COMMENT '生效时间，允许登录的最早时间',
+	`expire_datetime` DATETIME NOT NULL COMMENT '失效时间，根据这个时间计算cookie的有效期',
+	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间，默认当前时间',
+	`updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间，默认当前时间，更新时修改',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `apply_itsm_id` (`apply_itsm_id`,`user_id`)
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='转协查用户授权表';
+
+
+-- AI 作业历史记录表
+CREATE TABLE IF NOT EXISTS `linkis_ps_ai_job_history` (
+    `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT COMMENT '主键ID',
+    `job_history_id` VARCHAR(64) NOT NULL COMMENT '作业历史ID',
+    `submit_user` VARCHAR(50) NOT NULL COMMENT '提交用户',
+    `execute_user` VARCHAR(50) NOT NULL COMMENT '执行用户',
+    `submit_code` TEXT COMMENT '用户提交代码',
+    `execution_code` TEXT COMMENT '执行代码',
+    `metrics` text COMMENT 'metrics 信息',
+    `params` text COMMENT '任务参数',
+    `labels` text COMMENT '任务标签',
+    `error_code` int DEFAULT NULL COMMENT '错误码',
+    `error_desc` TEXT COMMENT '错误信息',
+    `engine_instances` VARCHAR(250) COMMENT '引擎实例',
+    `engine_type` VARCHAR(50) COMMENT '引擎类型',
+    `change_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '切换时间',
+    `created_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='AI作业历史记录表';

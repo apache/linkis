@@ -75,6 +75,11 @@ import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
 import JSEncrypt from 'jsencrypt';
 import tab from '@/apps/scriptis/service/db/tab.js';
+
+const DISALLOW_LOGIN = process.env.VUE_APP_DISALLOW_LOGIN === 'true'
+const DISALLOW_LOGIN_PREFIX = (process.env.VUE_APP_DISALLOW_LOGIN_PREFIX || '').split(',').filter(Boolean).map(v=>{
+  return new RegExp(`^${v}`)
+});
 export default {
   data() {
     return {
@@ -87,6 +92,13 @@ export default {
       ruleInline: {
         user: [
           { required: true, message: this.$t('message.common.login.userName'), trigger: 'blur' },
+          ...(DISALLOW_LOGIN? [{
+            type: 'string',
+            validator: (_,value)=>{
+              return !DISALLOW_LOGIN_PREFIX.some(reg=>reg.test(value))
+            },
+            message: '系统用户禁止登录',
+          }] : [])
           // {type: 'string', pattern: /^[0-9a-zA-Z\.\-_]{4,16}$/, message: '无效的用户名！', trigger: 'change'},
         ],
         password: [
@@ -154,7 +166,11 @@ export default {
             db.db[key].clear();
           })
           api
-            .fetch(`/user/login`, params)
+            .fetch(`/user/login`, params, {
+              headers: {
+                ...(DISALLOW_LOGIN ? { webLogin: 'true' } : {}),
+              }
+            })
             .then((rst) => {
               this.loading = false;
               storage.set('userName',rst.userName,'session')

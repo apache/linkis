@@ -40,12 +40,14 @@ import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.csv.CSVFsWriter;
 import org.apache.linkis.storage.domain.FsPathListWithError;
+import org.apache.linkis.storage.entity.FieldTruncationResult;
 import org.apache.linkis.storage.excel.*;
 import org.apache.linkis.storage.exception.ColLengthExceedException;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
+import org.apache.linkis.storage.utils.ResultUtils;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -71,9 +73,7 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -635,7 +635,8 @@ public class FsRestfulApi {
       @RequestParam(value = "columnPage", required = false, defaultValue = "1") Integer columnPage,
       @RequestParam(value = "columnPageSize", required = false, defaultValue = "500")
           Integer columnPageSize,
-      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames)
+      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames,
+      @RequestParam(value = "truncateColumn", required = false) String truncateColumn)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -663,6 +664,23 @@ public class FsRestfulApi {
 
     int[] columnIndices = null;
     FileSource fileSource = null;
+    String zh_msg =
+        MessageFormat.format(
+            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或使用字符串截取函数（substring、substr）截取相关字符即可前端展示数据内容",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+    String en_msg =
+        MessageFormat.format(
+            "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+            LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE());
+    String truncateColumn_msg =
+        MessageFormat.format(
+            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+    String truncateColumn_en_msg =
+        MessageFormat.format(
+            "The result set contains field values exceeding {0} characters. To view the full data, please export the file or confirm the displayed content is truncated",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
@@ -737,16 +755,65 @@ public class FsRestfulApi {
         }
         // 增加字段屏蔽
         Object resultmap = newMap == null ? metaMap : newMap;
-        if (FileSource$.MODULE$.isResultSet(fsPath.getPath())
-            && StringUtils.isNotBlank(maskedFieldNames)) {
-          // 如果结果集并且屏蔽字段不为空，则执行屏蔽逻辑，反之则保持原逻辑
-          Set<String> maskedFields =
-              new HashSet<>(Arrays.asList(maskedFieldNames.toLowerCase().split(",")));
-          Map[] metadata = filterMaskedFieldsFromMetadata(resultmap, maskedFields);
-          List<String[]> fileContent =
-              removeFieldsFromContent(resultmap, result.getSecond(), maskedFields);
-          message.data("metadata", metadata).data("fileContent", fileContent);
+        if (FileSource$.MODULE$.isResultSet(fsPath.getPath()) && (resultmap instanceof Map[])) {
+          // 2. 类型转换（已通过校验，可安全强转）
+          Map<String, Object>[] filteredMetadata = (Map<String, Object>[]) resultmap;
+          List<String[]> filteredContent = result.getSecond();
+          // 优先过滤屏蔽字段
+          if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+              && StringUtils.isNotBlank(maskedFieldNames)) {
+            Set<String> maskedFields =
+                new HashSet<>(Arrays.asList(maskedFieldNames.toLowerCase().split(",")));
+            filteredMetadata = ResultUtils.filterMaskedFieldsFromMetadata(resultmap, maskedFields);
+            filteredContent =
+                ResultUtils.removeFieldsFromContent(resultmap, filteredContent, maskedFields);
+          }
+          // 优先截取大字段
+          if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+            FieldTruncationResult fieldTruncationResult =
+                ResultUtils.detectAndHandle(
+                    filteredMetadata,
+                    filteredContent,
+                    LinkisStorageConf.FIELD_VIEW_MAX_LENGTH(),
+                    false);
+            if (fieldTruncationResult.isHasOversizedFields()) {
+              // 检测到超长字段
+              if (null == truncateColumn) {
+                message.data("oversizedFields", fieldTruncationResult.getOversizedFields());
+                message.data("zh_msg", truncateColumn_msg);
+                message.data("en_msg", truncateColumn_en_msg);
+                return message;
+              }
+              boolean truncateColumnSwitch = Boolean.parseBoolean(truncateColumn);
+              if (truncateColumnSwitch) {
+                // 用户选择截取
+                FieldTruncationResult truncationResult =
+                    ResultUtils.detectAndHandle(
+                        filteredMetadata,
+                        filteredContent,
+                        LinkisStorageConf.FIELD_VIEW_MAX_LENGTH(),
+                        truncateColumnSwitch);
+                filteredContent = truncationResult.getData();
+
+              } else {
+                // 用户未选择截取，提示用户
+                message.data("type", fileSource.getFileSplits()[0].type());
+                message.data("display_prohibited", true);
+                message.data("zh_msg", zh_msg);
+                message.data("en_msg", en_msg);
+                return message;
+              }
+            }
+          }
+          if (StringUtils.isNotBlank(maskedFieldNames)
+              || LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+            message.data("metadata", filteredMetadata).data("fileContent", filteredContent);
+          } else {
+            // 不执行字段屏蔽也不执行字段截取
+            message.data("metadata", resultmap).data("fileContent", result.getSecond());
+          }
         } else {
+          // 不执行字段屏蔽也不执行字段截取
           message.data("metadata", resultmap).data("fileContent", result.getSecond());
         }
         message.data("type", fileSource.getFileSplits()[0].type());
@@ -756,17 +823,8 @@ public class FsRestfulApi {
         LOGGER.info("Failed to open file {}", path, e);
         message.data("type", fileSource.getFileSplits()[0].type());
         message.data("display_prohibited", true);
-        message.data(
-            "zh_msg",
-            MessageFormat.format(
-                "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或使用字符串截取函数（substring、substr）截取相关字符即可前端展示数据内容",
-                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH()));
-        message.data(
-            "en_msg",
-            MessageFormat.format(
-                "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
-                LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
-                LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE()));
+        message.data("zh_msg", zh_msg);
+        message.data("en_msg", en_msg);
         return message;
       }
     } finally {
@@ -777,87 +835,6 @@ public class FsRestfulApi {
       LoggerUtils.removeJobIdMDC();
       IOUtils.closeQuietly(fileSource);
     }
-  }
-  /**
-   * 删除指定字段的内容
-   *
-   * @param metadata 元数据数组，包含字段信息
-   * @param contentList 需要处理的二维字符串数组
-   * @param fieldsToRemove 需要删除的字段集合
-   * @return 处理后的字符串数组，若输入无效返回空集合而非null
-   */
-  @SuppressWarnings("unchecked")
-  private List<String[]> removeFieldsFromContent(
-      Object metadata, List<String[]> contentList, Set<String> fieldsToRemove) {
-    // 1. 参数校验
-    if (metadata == null
-        || fieldsToRemove == null
-        || fieldsToRemove.isEmpty()
-        || contentList == null
-        || !(metadata instanceof Map[])) {
-      return contentList;
-    }
-
-    // 2. 安全类型转换
-    Map<String, Object>[] fieldMetadata = (Map<String, Object>[]) metadata;
-
-    // 3. 收集需要删除的列索引（去重并排序）
-    List<Integer> columnsToRemove =
-        IntStream.range(0, fieldMetadata.length)
-            .filter(
-                i -> {
-                  Map<String, Object> meta = fieldMetadata[i];
-                  Object columnName = meta.get("columnName");
-                  return columnName != null
-                      && fieldsToRemove.contains(columnName.toString().toLowerCase());
-                })
-            .distinct()
-            .boxed()
-            .sorted((a, b) -> Integer.compare(b, a))
-            .collect(Collectors.toList());
-
-    // 如果没有需要删除的列，直接返回副本
-    if (columnsToRemove.isEmpty()) {
-      return new ArrayList<>(contentList);
-    }
-    // 4. 对每行数据进行处理（删除指定列）
-    return contentList.stream()
-        .map(
-            row -> {
-              if (row == null || row.length == 0) {
-                return row;
-              }
-              // 创建可变列表以便删除元素
-              List<String> rowList = new ArrayList<>(Arrays.asList(row));
-              // 从后向前删除列，避免索引变化问题
-              for (int columnIndex : columnsToRemove) {
-                if (columnIndex < rowList.size()) {
-                  rowList.remove(columnIndex);
-                }
-              }
-              return rowList.toArray(new String[0]);
-            })
-        .collect(Collectors.toList());
-  }
-
-  @SuppressWarnings("unchecked")
-  private Map[] filterMaskedFieldsFromMetadata(Object metadata, Set<String> maskedFields) {
-    // 1. 参数校验
-    if (metadata == null || maskedFields == null || !(metadata instanceof Map[])) {
-      return new Map[0];
-    }
-
-    // 2. 类型转换（已通过校验，可安全强转）
-    Map<String, Object>[] originalMaps = (Map<String, Object>[]) metadata;
-
-    // 3. 过滤逻辑（提取谓词增强可读性）
-    Predicate<Map<String, Object>> isNotMaskedField =
-        map -> !maskedFields.contains(map.get("columnName").toString().toLowerCase());
-
-    // 4. 流处理 + 结果转换
-    return Arrays.stream(originalMaps)
-        .filter(isNotMaskedField)
-        .toArray(Map[]::new); // 等价于 toArray(new Map[0])
   }
 
   /**
@@ -970,7 +947,12 @@ public class FsRestfulApi {
         dataType = "String",
         defaultValue = "NULL"),
     @ApiImplicitParam(name = "limit", required = true, dataType = "Integer", defaultValue = "0"),
-    @ApiImplicitParam(name = "autoFormat", dataType = "Boolean")
+    @ApiImplicitParam(name = "autoFormat", dataType = "Boolean"),
+    @ApiImplicitParam(
+        name = "maskedFieldNames",
+        required = false,
+        dataType = "String",
+        value = "Comma-separated list of field names to mask (e.g. password,apikey)")
   })
   @RequestMapping(path = "resultsetToExcel", method = RequestMethod.GET)
   public void resultsetToExcel(
@@ -988,7 +970,8 @@ public class FsRestfulApi {
       @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
       @RequestParam(value = "limit", defaultValue = "0") Integer limit,
       @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat,
-      @RequestParam(value = "keepNewline", defaultValue = "false") Boolean keepNewline)
+      @RequestParam(value = "keepNewline", defaultValue = "false") Boolean keepNewline,
+      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames)
       throws WorkSpaceException, IOException {
     ServletOutputStream outputStream = null;
     FsWriter fsWriter = null;
@@ -1064,7 +1047,32 @@ public class FsRestfulApi {
         default:
           throw WorkspaceExceptionManager.createException(80015);
       }
-      fileSource.write(fsWriter);
+
+      // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
+      if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)
+          && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()
+          && outputFileType.equals("xlsx")) {
+        // 同时执行字段屏蔽和字段截取
+        StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
+        ResultUtils.applyFieldMaskingAndTruncation(
+            maskedFieldNames,
+            excelFsWriter,
+            fileSource,
+            LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
+      } else if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)) {
+        // 只执行字段屏蔽
+        ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
+      } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED() && outputFileType.equals("xlsx")) {
+        // 只执行字段截取
+        StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
+        ResultUtils.detectAndHandle(
+            excelFsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
+      } else {
+        // Original stream write logic
+        fileSource.write(fsWriter);
+      }
       fsWriter.flush();
       LOGGER.info("userName {} Finished to resultsetToExcel File {}", userName, path);
     } catch (Exception e) {
@@ -1103,7 +1111,12 @@ public class FsRestfulApi {
         dataType = "String",
         defaultValue = "NULL"),
     @ApiImplicitParam(name = "limit", required = true, dataType = "Integer", defaultValue = "0"),
-    @ApiImplicitParam(name = "autoFormat", dataType = "Boolean")
+    @ApiImplicitParam(name = "autoFormat", dataType = "Boolean"),
+    @ApiImplicitParam(
+        name = "maskedFieldNames",
+        required = false,
+        dataType = "String",
+        value = "Comma-separated list of field names to mask (e.g. password,apikey)")
   })
   @RequestMapping(path = "resultsetsToExcel", method = RequestMethod.GET)
   public void resultsetsToExcel(
@@ -1114,7 +1127,8 @@ public class FsRestfulApi {
           String outputFileName,
       @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
       @RequestParam(value = "limit", defaultValue = "0") Integer limit,
-      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
+      @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat,
+      @RequestParam(value = "maskedFieldNames", required = false) String maskedFieldNames)
       throws WorkSpaceException, IOException {
     ServletOutputStream outputStream = null;
     FsWriter fsWriter = null;
@@ -1169,7 +1183,30 @@ public class FsRestfulApi {
       if (isLimitDownloadSize) {
         fileSource = fileSource.page(1, excelDownloadSize);
       }
-      fileSource.write(fsWriter);
+      // 如果同时提供了字段屏蔽和字段截取参数，则先执行字段屏蔽，再执行字段截取
+      if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)
+          && LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+        // 同时执行字段屏蔽和字段截取
+        StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
+        ResultUtils.applyFieldMaskingAndTruncation(
+            maskedFieldNames,
+            excelFsWriter,
+            fileSource,
+            LinkisStorageConf.FIELD_EXPORT_MAX_LENGTH());
+      } else if (LinkisStorageConf.FIELD_MASKED_ENABLED()
+          && StringUtils.isNotBlank(maskedFieldNames)) {
+        // 只执行字段屏蔽
+        ResultUtils.dealMaskedField(maskedFieldNames, fsWriter, fileSource);
+      } else if (LinkisStorageConf.FIELD_TRUNCATION_ENABLED()) {
+        // 只执行字段截取
+        StorageExcelWriter excelFsWriter = (StorageExcelWriter) fsWriter;
+        ResultUtils.detectAndHandle(
+            excelFsWriter, fileSource, LinkisStorageConf.FIELD_EXPORT_DOWNLOAD_LENGTH());
+      } else {
+        // Original stream write logic
+        fileSource.write(fsWriter);
+      }
       fsWriter.flush();
       LOGGER.info("userName {} Finished to resultsetsToExcel File {}", userName, path);
     } catch (Exception e) {

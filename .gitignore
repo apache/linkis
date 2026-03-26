@@ -34,3 +34,11 @@ target/
 *.log
 logs/
 nohup.out
+
+#claude
+.claude
+
+nul
+
+#claude
+.claude

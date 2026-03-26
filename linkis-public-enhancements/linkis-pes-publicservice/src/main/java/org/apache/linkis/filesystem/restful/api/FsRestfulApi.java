@@ -674,15 +674,16 @@ public class FsRestfulApi {
     String en_msg =
         MessageFormat.format(
             "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
-            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH(),
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
             LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE());
     String truncateColumn_msg =
         MessageFormat.format(
-            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容", LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
+            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容",
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
     String truncateColumn_en_msg =
         MessageFormat.format(
             "The result set contains field values exceeding {0} characters. To view the full data, please export the file or confirm the displayed content is truncated",
-            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
+            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
@@ -1432,20 +1433,26 @@ public class FsRestfulApi {
   @ApiOperation(value = "openLog", notes = "open log", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
-    @ApiImplicitParam(name = "proxyUser", dataType = "String")
+    @ApiImplicitParam(name = "proxyUser", dataType = "String"),
+    @ApiImplicitParam(
+        name = "logLevel",
+        dataType = "String",
+        value =
+            "Log level, values: all,info,error,warn or comma-separated combinations like error,info,warn")
   })
   @RequestMapping(path = "/openLog", method = RequestMethod.GET)
   public Message openLog(
       HttpServletRequest req,
       @RequestParam(value = "path", required = false) String path,
-      @RequestParam(value = "proxyUser", required = false) String proxyUser)
+      @RequestParam(value = "proxyUser", required = false) String proxyUser,
+      @RequestParam(value = "logLevel", required = false, defaultValue = "all") String logLevel)
       throws IOException, WorkSpaceException {
     if (StringUtils.isEmpty(path)) {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
     LoggerUtils.setJobIdMDC("openLogThread_" + userName);
-    LOGGER.info("userName {} start to openLog File {}", userName, path);
+    LOGGER.info("userName {} start to openLog File {}, logLevel: {}", userName, path, logLevel);
     if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
@@ -1461,6 +1468,8 @@ public class FsRestfulApi {
         > ByteTimeUtils.byteStringAsBytes(FILESYSTEM_FILE_CHECK_SIZE.getValue())) {
       throw WorkspaceExceptionManager.createException(80033, path);
     }
+    // 解析日志级别，支持多级别组合
+    Set<LogLevel.Type> targetLevels = parseLogLevels(logLevel);
     try (FileSource fileSource =
         FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
       Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
@@ -1473,7 +1482,21 @@ public class FsRestfulApi {
       snd.stream()
           .map(f -> f[0])
           .forEach(
-              s -> WorkspaceUtil.logMatch(s, start).forEach(i -> log[i].append(s).append("\n")));
+              s -> {
+                List<Integer> matchedIndices = WorkspaceUtil.logMatch(s, start);
+                if (targetLevels.contains(LogLevel.Type.ALL)) {
+                  // 返回所有日志
+                  matchedIndices.forEach(i -> log[i].append(s).append("\n"));
+                } else {
+                  // 多级别组合：只返回目标级别的日志
+                  for (LogLevel.Type level : targetLevels) {
+                    int targetIndex = level.ordinal();
+                    if (matchedIndices.contains(targetIndex)) {
+                      log[targetIndex].append(s).append("\n");
+                    }
+                  }
+                }
+              });
       LOGGER.info("userName {} Finished to openLog File {}", userName, path);
       LoggerUtils.removeJobIdMDC();
       return Message.ok()
@@ -1494,6 +1517,55 @@ public class FsRestfulApi {
       deleteAllFiles(fileSystem, path);
     }
     fileSystem.delete(fsPath);
+  }
+
+  /** 解析日志级别参数，支持多级别组合 */
+  private Set<LogLevel.Type> parseLogLevels(String logLevel) {
+    Set<LogLevel.Type> levels = new HashSet<>();
+
+    if (StringUtils.isEmpty(logLevel)) {
+      levels.add(LogLevel.Type.ALL);
+      return levels;
+    }
+
+    // 去除空格并转为大写
+    String cleanedLevel = logLevel.replaceAll("\\s+", "").toUpperCase();
+
+    // 检查是否为 ALL
+    if ("ALL".equals(cleanedLevel)) {
+      levels.add(LogLevel.Type.ALL);
+      return levels;
+    }
+
+    // 检查是否包含逗号（多级别组合）
+    if (cleanedLevel.contains(",")) {
+      String[] levelArray = cleanedLevel.split(",");
+      for (String levelStr : levelArray) {
+        try {
+          LogLevel.Type level = LogLevel.Type.valueOf(levelStr);
+          levels.add(level);
+        } catch (IllegalArgumentException e) {
+          LOGGER.warn("Invalid log level: {}, skipping", levelStr);
+        }
+      }
+
+      // 如果没有有效的级别，使用默认的 ALL
+      if (levels.isEmpty()) {
+        LOGGER.warn("No valid log levels found in: {}, using ALL", logLevel);
+        levels.add(LogLevel.Type.ALL);
+      }
+    } else {
+      // 单级别情况
+      try {
+        LogLevel.Type level = LogLevel.Type.valueOf(cleanedLevel);
+        levels.add(level);
+      } catch (IllegalArgumentException e) {
+        LOGGER.warn("Invalid logLevel: {}, use default level: ALL", logLevel);
+        levels.add(LogLevel.Type.ALL);
+      }
+    }
+
+    return levels;
   }
 
   @ApiOperation(value = "chmod", notes = "file permission chmod", response = Message.class)

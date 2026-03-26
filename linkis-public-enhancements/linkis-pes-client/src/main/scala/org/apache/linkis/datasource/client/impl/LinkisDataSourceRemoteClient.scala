@@ -151,4 +151,9 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
       action: GetKeyTypeDatasourceAction
   ): GetKeyTypeDatasourceResult = execute(action).asInstanceOf[GetKeyTypeDatasourceResult]
 
+  override def getPublishedDataSourceByType(
+      action: GetPublishedDataSourceByTypeAction
+  ): GetPublishedDataSourceByTypeResult =
+    execute(action).asInstanceOf[GetPublishedDataSourceByTypeResult]
+
 }

@@ -3,7 +3,7 @@
         "core-js": "3.35.1",
         "vue": "3.3.9",
         "@vueuse/core": "10.9.0",
-        "lodash-es": "4.17.21",
+        "lodash-es": "4.17.23",
         "@qlin/request": "0.2.6",
         "@webank/letgo-components": "1.1.4",
         "@fesjs/fes-design": "0.8.60",

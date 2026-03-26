@@ -52,10 +52,14 @@ case class ResponseTaskStatus(execId: String, status: ExecutionNodeStatus)
 class ResponseTaskStatusWithExecuteCodeIndex(
     execId: String,
     status: ExecutionNodeStatus,
-    private var _errorIndex: Int = -1
+    private var _errorIndex: Int = -1,
+    private var _aliasNum: Int = 0 // 新增：aliasNum字段
 ) extends ResponseTaskStatus(execId, status) {
   def errorIndex: Int = _errorIndex
   def errorIndex_=(value: Int): Unit = _errorIndex = value
+  // 新增：aliasNum的getter和setter
+  def aliasNum: Int = _aliasNum
+  def aliasNum_=(value: Int): Unit = _aliasNum = value
 }
 
 case class ResponseTaskResultSet(execId: String, output: String, alias: String)

@@ -301,6 +301,12 @@ object EntranceConfiguration {
       "Spark application has already stopped,Spark application sc has already stopped,Failed to allocate a page,dataFrame to local exception,org.apache.spark.sql.catalyst.expressions.codegen.CodeGenerator"
     ).getValue
 
+  val SUPPORTED_RETRY_ERROR_DESC_REGEX =
+    CommonVars(
+      "linkis.entrance.supported.retry.error.desc.regex",
+      "Query timeout.*,Query exceeded time limit.*,Memory of process exceed limit.*,Backend node not found,Connection reset by peer,StarRocks planner use long time,pending timeout"
+    ).getValue
+
   val SUPPORT_ADD_RETRY_CODE_KEYS =
     CommonVars(
       "linkis.entrance.supported.add.retry.code.keys",
@@ -325,8 +331,14 @@ object EntranceConfiguration {
   val AI_SQL_KEY: CommonVars[String] =
     CommonVars[String]("linkis.ai.sql.enable", "true")
 
+  val TASK_RETRY_SWITCH: CommonVars[Boolean] =
+    CommonVars[Boolean]("linkis.task.retry.switch", false)
+
+  val TASK_RETRY_CODE_TYPE: String =
+    CommonVars[String]("linkis.task.retry.code.type", "aisql,jdbc").getValue
+
   val RETRY_NUM_KEY: CommonVars[Int] =
-    CommonVars[Int]("linkis.ai.retry.num", 1)
+    CommonVars[Int]("linkis.task.retry.num", 1)
 
   val AI_SQL_RETRY_ONCE: CommonVars[Boolean] =
     CommonVars[Boolean]("linkis.ai.sql.once.enable", true)

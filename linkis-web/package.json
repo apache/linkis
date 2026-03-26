@@ -39,7 +39,7 @@
         "monaco-editor": "0.30.1",
         "object-to-formdata": "4.2.2",
         "path-browserify": "1.0.1",
-        "qs": "6.11.0",
+        "qs": "6.14.2",
         "reconnecting-websocket": "4.4.0",
         "sass": "1.77.8",
         "sql-formatter": "2.3.3",

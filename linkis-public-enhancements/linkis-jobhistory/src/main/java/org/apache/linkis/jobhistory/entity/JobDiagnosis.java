@@ -32,6 +32,8 @@ public class JobDiagnosis {
   private Date updatedTime;
   private String onlyRead;
 
+  private String diagnosisSource;
+
   // Getters and Setters
 
   public Long getId() {
@@ -82,6 +84,14 @@ public class JobDiagnosis {
     this.onlyRead = onlyRead;
   }
 
+  public String getDiagnosisSource() {
+    return diagnosisSource;
+  }
+
+  public void setDiagnosisSource(String diagnosisSource) {
+    this.diagnosisSource = diagnosisSource;
+  }
+
   @Override
   public String toString() {
     return "JobDiagnosis{"
@@ -91,11 +101,17 @@ public class JobDiagnosis {
         + jobHistoryId
         + ", diagnosisContent='"
         + diagnosisContent
-        + '\''
+        + "'"
         + ", createdTime="
         + createdTime
         + ", updatedTime="
         + updatedTime
+        + ", onlyRead='"
+        + onlyRead
+        + "'"
+        + ", diagnosisSource='"
+        + diagnosisSource
+        + "'"
         + '}';
   }
 }

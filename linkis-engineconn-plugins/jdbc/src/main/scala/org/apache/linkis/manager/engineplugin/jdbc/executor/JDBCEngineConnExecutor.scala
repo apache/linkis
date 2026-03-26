@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -68,6 +69,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.util.CollectionUtils
 
@@ -235,6 +237,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     } catch {
       case e: Throwable =>
         logger.error(s"Cannot run $code", e)
+        // 推送堆栈信息到前端
+        val errorStr = ExceptionUtils.getStackTrace(e)
+        engineExecutorContext.appendStdout(
+          LogUtils.generateERROR(s"execute code failed!: $errorStr")
+        )
         return ErrorExecuteResponse(e.getMessage, e)
     } finally {
       connectionManager.removeStatement(taskId)
@@ -374,6 +381,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             val data = resultSet.getObject(i + 1) match {
               case value: Array[Byte] =>
                 new String(resultSet.getObject(i + 1).asInstanceOf[Array[Byte]])
+              case value: java.sql.Timestamp => value.toString
+              case value: java.sql.Time => value.toString
+              case value: java.sql.Date => value.toString
               case value: Any => resultSet.getString(i + 1)
               case _ => null
             }

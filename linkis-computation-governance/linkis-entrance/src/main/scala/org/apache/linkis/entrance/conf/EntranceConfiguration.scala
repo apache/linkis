@@ -366,6 +366,11 @@ object EntranceConfiguration {
     "/api/v1/external/plaintext/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
   ).getValue
 
+  val DOCTOR_REALTIME_DIAGNOSE_URL = CommonVars(
+    "linkis.entrance.doctor.realtime.diagnose.api",
+    "/api/v1/external/realtime/diagnose?app_id=$app_id&timestamp=$timestamp&nonce=$nonce&signature=$signature"
+  ).getValue
+
   val DOCTOR_SIGNATURE_TOKEN = CommonVars("linkis.doctor.signature.token", "").getValue
 
   val DOCTOR_NONCE = CommonVars.apply("linkis.doctor.signature.nonce", "").getValue
@@ -435,5 +440,16 @@ object EntranceConfiguration {
 
   var DOCTOR_SENSITIVE_SQL_CHECK_ENGINETYPE =
     CommonVars[String]("linkis.doctor.sensitive.sql.check.engine.type", "hive,spark,jdbc").getValue
+
+  // 任务诊断配置
+  val TASK_DIAGNOSIS_ENABLE = CommonVars[Boolean]("linkis.task.diagnosis.enable", false).getValue
+
+  val TASK_DIAGNOSIS_ENGINE_TYPE =
+    CommonVars[String]("linkis.task.diagnosis.engine.type", "spark").getValue
+
+  val TASK_DIAGNOSIS_TIMEOUT = CommonVars[String]("linkis.task.diagnosis.timeout", "5m").getValue
+
+  val TASK_DIAGNOSIS_TIMEOUT_SCAN =
+    CommonVars("linkis.task.diagnosis.timeout.scan", "2m").getValue
 
 }

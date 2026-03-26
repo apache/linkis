@@ -231,11 +231,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           case _ => logger.info("failed to do with hook", e)
         }
       }
-      if (hookedCode.length > 100) {
-        logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
-      } else {
-        logger.info(s"hooked after code: $hookedCode ")
-      }
+      logger.info(s"ComputationExecutor code hook completed.")
 
       // task params log
       // spark engine: at org.apache.linkis.engineplugin.spark.executor.SparkEngineConnExecutor.executeLine log special conf

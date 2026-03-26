@@ -18,52 +18,16 @@
 
 
 -- 变量：
--- SET @SPARK_LABEL="spark-3.2.1"; -- MySQL user variable, not supported in PostgreSQL
--- SET @HIVE_LABEL="hive-3.1.3"; -- MySQL user variable, not supported in PostgreSQL
--- SET @PYTHON_LABEL="python-python2"; -- MySQL user variable, not supported in PostgreSQL
--- SET @PIPELINE_LABEL="pipeline-1"; -- MySQL user variable, not supported in PostgreSQL
--- SET @JDBC_LABEL="jdbc-4"; -- MySQL user variable, not supported in PostgreSQL
--- SET @PRESTO_LABEL="presto-0.234"; -- MySQL user variable, not supported in PostgreSQL
--- SET @TRINO_LABEL="trino-371"; -- MySQL user variable, not supported in PostgreSQL
--- SET @IO_FILE_LABEL="io_file-1.0"; -- MySQL user variable, not supported in PostgreSQL
--- SET @OPENLOOKENG_LABEL="openlookeng-1.5.0"; -- MySQL user variable, not supported in PostgreSQL
--- SET @ELASTICSEARCH_LABEL="elasticsearch-7.6.2"; -- MySQL user variable, not supported in PostgreSQL
--- SET @NEBULA_LABEL="nebula-3.0.0"; -- MySQL user variable, not supported in PostgreSQL
-
--- 衍生变量：
--- SET @SPARK_ALL=CONCAT('*-*,',@SPARK_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @SPARK_IDE=CONCAT('*-IDE,',@SPARK_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @SPARK_NODE=CONCAT('*-nodeexecution,',@SPARK_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @SPARK_VISUALIS=CONCAT('*-Visualis,',@SPARK_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @HIVE_ALL=CONCAT('*-*,',@HIVE_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @HIVE_IDE=CONCAT('*-IDE,',@HIVE_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @HIVE_NODE=CONCAT('*-nodeexecution,',@HIVE_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @PYTHON_ALL=CONCAT('*-*,',@PYTHON_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @PYTHON_IDE=CONCAT('*-IDE,',@PYTHON_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @PYTHON_NODE=CONCAT('*-nodeexecution,',@PYTHON_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @PIPELINE_ALL=CONCAT('*-*,',@PIPELINE_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @PIPELINE_IDE=CONCAT('*-IDE,',@PIPELINE_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @JDBC_ALL=CONCAT('*-*,',@JDBC_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @JDBC_IDE=CONCAT('*-IDE,',@JDBC_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @PRESTO_ALL=CONCAT('*-*,',@PRESTO_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @PRESTO_IDE=CONCAT('*-IDE,',@PRESTO_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @IO_FILE_ALL=CONCAT('*-*,',@IO_FILE_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @IO_FILE_IDE=CONCAT('*-IDE,',@IO_FILE_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @OPENLOOKENG_ALL=CONCAT('*-*,',@OPENLOOKENG_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @OPENLOOKENG_IDE=CONCAT('*-IDE,',@OPENLOOKENG_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @TRINO_ALL=CONCAT('*-*,',@TRINO_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @TRINO_IDE=CONCAT('*-IDE,',@TRINO_LABEL); -- MySQL user variable, not supported in PostgreSQL
-
--- SET @IO_FILE_ALL=CONCAT('*-*,',@IO_FILE_LABEL); -- MySQL user variable, not supported in PostgreSQL
--- SET @IO_FILE_IDE=CONCAT('*-IDE,',@IO_FILE_LABEL); -- MySQL user variable, not supported in PostgreSQL
+SET VAR.SPARK_LABEL="spark-3.2.1";
+SET VAR.HIVE_LABEL="hive-3.1.3";
+SET VAR.PYTHON_LABEL="python-python2";
+SET VAR.PIPELINE_LABEL="pipeline-1";
+SET VAR.JDBC_LABEL="jdbc-4";
+SET VAR.PRESTO_LABEL="presto-0.234";
+SET VAR.TRINO_LABEL="trino-371";
+SET VAR.IO_FILE_LABEL="io_file-1.0";
+SET VAR.OPENLOOKENG_LABEL="openlookeng-1.5.0";
+SET VAR.ELASTICSEARCH_LABEL="elasticsearch-7.6.2";
 
 -- SET @ELASTICSEARCH_ALL=CONCAT('*-*,',@ELASTICSEARCH_LABEL); -- MySQL user variable, not supported in PostgreSQL
 -- SET @ELASTICSEARCH_IDE=CONCAT('*-IDE,',@ELASTICSEARCH_LABEL); -- MySQL user variable, not supported in PostgreSQL

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import org.apache.linkis.common.io.FsPath
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.{
   PIPELINE_FIELD_QUOTE_RETOUCH_ENABLE,
@@ -25,6 +26,7 @@ import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfig
   PIPELINE_OUTPUT_CHARSET_STR,
   PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
 }
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
 import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant._
 import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
@@ -32,13 +34,15 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.csv.CSVFsWriter
 import org.apache.linkis.storage.source.FileSource
+import org.apache.linkis.storage.utils.ResultUtils
 import org.apache.linkis.storage.utils.StorageConfiguration.STORAGE_RS_FILE_SUFFIX
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.io.OutputStream
 
-class CSVExecutor extends PipeLineExecutor {
+class CSVExecutor extends PipeLineExecutor with Logging {
 
   override def execute(
       sourcePath: String,
@@ -57,35 +61,58 @@ class CSVExecutor extends PipeLineExecutor {
         NOT_A_RESULT_SET_FILE.getErrorDesc
       )
     }
+
+    // Extract masked field names from options
+    val maskedFieldNames = options.getOrDefault(PipeLineConstant.PIPELINE_MASKED_CONF, "")
+
     val sourceFsPath = new FsPath(sourcePath)
     val destFsPath = new FsPath(destPath)
     val sourceFs = FSFactory.getFs(sourceFsPath)
     sourceFs.init(null)
     val destFs = FSFactory.getFs(destFsPath)
     destFs.init(null)
-    val fileSource = FileSource.create(sourceFsPath, sourceFs)
-    if (!FileSource.isTableResultSet(fileSource)) {
-      throw new PipeLineErrorException(
-        ONLY_RESULT_CONVERTED_TO_CSV.getErrorCode,
-        ONLY_RESULT_CONVERTED_TO_CSV.getErrorDesc
+
+    try {
+      val fileSource = FileSource.create(sourceFsPath, sourceFs)
+      if (!FileSource.isTableResultSet(fileSource)) {
+        throw new PipeLineErrorException(
+          ONLY_RESULT_CONVERTED_TO_CSV.getErrorCode,
+          ONLY_RESULT_CONVERTED_TO_CSV.getErrorDesc
+        )
+      }
+
+      var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")
+      if (BLANK.equalsIgnoreCase(nullValue)) nullValue = ""
+
+      val outputStream: OutputStream =
+        destFs.write(destFsPath, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH.getValue(options))
+      OutputStreamCache.osCache.put(engineExecutionContext.getJobId.get, outputStream)
+
+      val cSVFsWriter = CSVFsWriter.getCSVFSWriter(
+        PIPELINE_OUTPUT_CHARSET_STR.getValue(options),
+        PIPELINE_FIELD_SPLIT_STR.getValue(options),
+        PIPELINE_FIELD_QUOTE_RETOUCH_ENABLE.getValue(options),
+        outputStream
       )
+
+      try {
+        if (StringUtils.isNotBlank(maskedFieldNames)) {
+          // Apply field masking if maskedFieldNames is provided
+          ResultUtils.dealMaskedField(maskedFieldNames, cSVFsWriter, fileSource)
+        } else {
+          // Original stream write logic
+          logger.info("No field masking, using stream write for CSV export")
+          fileSource.addParams("nullValue", nullValue).write(cSVFsWriter)
+        }
+      } finally {
+        IOUtils.closeQuietly(cSVFsWriter)
+        IOUtils.closeQuietly(fileSource)
+      }
+    } finally {
+      IOUtils.closeQuietly(sourceFs)
+      IOUtils.closeQuietly(destFs)
     }
-    var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")
-    if (BLANK.equalsIgnoreCase(nullValue)) nullValue = ""
-    val outputStream: OutputStream =
-      destFs.write(destFsPath, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH.getValue(options))
-    OutputStreamCache.osCache.put(engineExecutionContext.getJobId.get, outputStream)
-    val cSVFsWriter = CSVFsWriter.getCSVFSWriter(
-      PIPELINE_OUTPUT_CHARSET_STR.getValue(options),
-      PIPELINE_FIELD_SPLIT_STR.getValue(options),
-      PIPELINE_FIELD_QUOTE_RETOUCH_ENABLE.getValue(options),
-      outputStream
-    )
-    fileSource.addParams("nullValue", nullValue).write(cSVFsWriter)
-    IOUtils.closeQuietly(cSVFsWriter)
-    IOUtils.closeQuietly(fileSource)
-    IOUtils.closeQuietly(sourceFs)
-    IOUtils.closeQuietly(destFs)
+
     super.execute(sourcePath, destPath, engineExecutionContext)
   }
 

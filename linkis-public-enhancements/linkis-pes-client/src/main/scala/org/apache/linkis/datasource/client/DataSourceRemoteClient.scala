@@ -67,4 +67,9 @@ trait DataSourceRemoteClient extends RemoteClient {
   ): UpdateDataSourceParameterResult
 
   def getKeyDefinitionsByType(action: GetKeyTypeDatasourceAction): GetKeyTypeDatasourceResult
+
+  def getPublishedDataSourceByType(
+      action: GetPublishedDataSourceByTypeAction
+  ): GetPublishedDataSourceByTypeResult
+
 }

@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{
+  JobDiagnosisRequest,
   JobRequest,
   JobRequestWithDetail,
   QueryException,
@@ -33,7 +34,9 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
+import org.apache.linkis.jobhistory.entity.JobDiagnosis
 import org.apache.linkis.jobhistory.errorcode.JobhistoryErrorCodeSummary
+import org.apache.linkis.jobhistory.service.JobHistoryDiagnosisService
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
@@ -68,6 +71,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   @Autowired
   private var jobHistoryMapper: JobHistoryMapper = _
 
+  @Autowired
+  private var jobHistoryDiagnosisService: JobHistoryDiagnosisService = _
+
   private val unDoneTaskCache: Cache[String, Integer] = CacheBuilder
     .newBuilder()
     .concurrencyLevel(5)
@@ -76,6 +82,49 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     .maximumSize(1000)
     .recordStats()
     .build()
+
+  @Receiver
+  def JobDiagnosisReqInsert(jobDiagnosisRequest: JobDiagnosisReqInsert): JobRespProtocol = {
+    logger.info(s"insert job diagnosis: ${jobDiagnosisRequest.toString}")
+    val jobResp = new JobRespProtocol
+    Utils.tryCatch {
+      // 先查询是否已存在该任务的诊断记录
+      val jobid = jobDiagnosisRequest.jobReq.getJobHistoryId
+      val content = jobDiagnosisRequest.jobReq.getDiagnosisContent
+      val diagnosisSource = jobDiagnosisRequest.jobReq.getDiagnosisSource
+      var jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(jobid, diagnosisSource)
+
+      if (jobDiagnosis == null) {
+        // 创建新的诊断记录
+        jobDiagnosis = new JobDiagnosis
+        jobDiagnosis.setJobHistoryId(jobid)
+        jobDiagnosis.setCreatedTime(new Date)
+      }
+      // 更新诊断内容和来源
+      jobDiagnosis.setDiagnosisContent(content)
+      jobDiagnosis.setDiagnosisSource(diagnosisSource)
+      jobDiagnosis.setOnlyRead("1")
+      jobDiagnosis.setUpdatedDate(new Date)
+
+      // 保存诊断记录
+      if (jobDiagnosis.getId == null) {
+        jobHistoryDiagnosisService.insert(jobDiagnosis)
+      } else {
+        jobHistoryDiagnosisService.update(jobDiagnosis)
+      }
+
+      jobResp.setStatus(0)
+      jobResp.setMsg("insert diagnosis success")
+    } { case exception: Exception =>
+      logger.error(
+        s"Failed to insert job diagnosis ${jobDiagnosisRequest.toString}, should be retry",
+        exception
+      )
+      jobResp.setStatus(2)
+      jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
+    }
+    jobResp
+  }
 
   @Receiver
   override def add(jobReqInsert: JobReqInsert): JobRespProtocol = {
@@ -123,8 +172,14 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
         val startUpMap: util.Map[String, AnyRef] =
           TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
-        val aiSqlEnable: AnyRef = startUpMap.getOrDefault("linkis.ai.sql.enable", "false")
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus, aiSqlEnable.toString)) {
+        val taskRetrySwitch: AnyRef = startUpMap.getOrDefault("linkis.task.retry.switch", "false")
+        if (
+            oldStatus != null && !shouldUpdate(
+              oldStatus,
+              jobReq.getStatus,
+              taskRetrySwitch.toString
+            )
+        ) {
           throw new QueryException(
             120001,
             s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +

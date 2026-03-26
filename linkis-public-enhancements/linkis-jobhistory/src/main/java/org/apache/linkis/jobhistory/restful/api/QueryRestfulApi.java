@@ -787,15 +787,24 @@ public class QueryRestfulApi {
       value = "diagnosis-query",
       notes = "query failed task diagnosis msg",
       response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "taskID", dataType = "String"),
+    @ApiImplicitParam(name = "diagnosisSource", dataType = "String", example = "doctoris"),
+  })
   @RequestMapping(path = "/diagnosis-query", method = RequestMethod.GET)
   public Message queryFailedTaskDiagnosis(
-      HttpServletRequest req, @RequestParam(value = "taskID", required = false) String taskID) {
+      HttpServletRequest req,
+      @RequestParam(value = "taskID", required = false) String taskID,
+      @RequestParam(value = "diagnosisSource", required = false) String diagnosisSource) {
     String username = ModuleUserUtils.getOperationUser(req, "diagnosis-query");
     if (StringUtils.isBlank(taskID)) {
       return Message.error("Invalid jobId cannot be empty");
     }
     if (!QueryUtils.checkNumberValid(taskID)) {
       throw new LinkisCommonErrorException(21304, "Invalid taskID : " + taskID);
+    }
+    if (StringUtils.isBlank(diagnosisSource)) {
+      diagnosisSource = "linkis";
     }
     JobHistory jobHistory = null;
     boolean isAdmin = Configuration.isJobHistoryAdmin(username) || Configuration.isAdmin(username);
@@ -829,14 +838,19 @@ public class QueryRestfulApi {
     String diagnosisMsg = "";
     if (jobHistory != null) {
       String jobStatus = jobHistory.getStatus();
-      JobDiagnosis jobDiagnosis = jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID));
+      JobDiagnosis jobDiagnosis =
+          jobHistoryDiagnosisService.selectByJobId(Long.valueOf(taskID), diagnosisSource);
       if (null == jobDiagnosis) {
+        if (diagnosisSource.equals("doctoris")) {
+          return Message.ok().data("diagnosisMsg", diagnosisMsg);
+        }
         diagnosisMsg = JobhistoryUtils.getDiagnosisMsg(taskID);
         jobDiagnosis = new JobDiagnosis();
         jobDiagnosis.setJobHistoryId(Long.valueOf(taskID));
         jobDiagnosis.setDiagnosisContent(diagnosisMsg);
         jobDiagnosis.setCreatedTime(new Date());
         jobDiagnosis.setUpdatedDate(new Date());
+        jobDiagnosis.setDiagnosisSource("linkis");
         if (TaskStatus.isComplete(TaskStatus.valueOf(jobStatus))) {
           jobDiagnosis.setOnlyRead("1");
         }

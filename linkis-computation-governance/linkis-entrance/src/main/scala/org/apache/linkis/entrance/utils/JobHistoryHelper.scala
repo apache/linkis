@@ -24,7 +24,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.JobHistoryFailedException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.entity.job.{JobDiagnosisRequest, JobRequest}
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.protocol.constants.TaskConstant
@@ -363,6 +363,14 @@ object JobHistoryHelper extends Logging {
     if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_IS_REUSE)) {
       metricsMap.put(TaskConstant.JOB_IS_REUSE, infoMap.get(TaskConstant.JOB_IS_REUSE))
     }
+  }
+
+  def addDiagnosis(jobid: Long, diagnosis: String): Unit = {
+    val jobDiagnosisRequest = new JobDiagnosisRequest()
+    jobDiagnosisRequest.setJobHistoryId(jobid)
+    jobDiagnosisRequest.setDiagnosisContent(diagnosis)
+    jobDiagnosisRequest.setDiagnosisSource("doctoris")
+    sender.ask(JobDiagnosisReqInsert(jobDiagnosisRequest))
   }
 
 }

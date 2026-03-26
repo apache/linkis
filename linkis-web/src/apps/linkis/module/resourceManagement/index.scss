@@ -45,7 +45,7 @@ td.table-name-column {
     cursor: pointer;
   }
 }
-/deep/.table-project-column {
+::v-deep .table-project-column {
   text-align: center;
   .ivu-table-cell {
     display: inline-block;
@@ -78,7 +78,7 @@ td.table-project-column {
     padding-right: 10px;
   }
 }
-/deep/.addTagClass {
+::v-deep .addTagClass {
   position: relative;
   z-index: 99;
 }
@@ -110,7 +110,7 @@ td.table-name-column {
     cursor: pointer;
   }
 }
-/deep/.table-project-column {
+::v-deep .table-project-column {
   text-align: center;
   .ivu-table-cell {
     display: inline-block;
@@ -124,20 +124,20 @@ td.table-project-column {
   text-align: center;
   padding: 10px 0;
 }
-/deep/.addTagClass {
+::v-deep .addTagClass {
   position: relative;
   z-index: 99;
 }
 .ecm, .ecmEngine {
   height: 100%;
   overflow: hidden;
-  /deep/ .ivu-tag {
+  ::v-deep .ivu-tag {
     max-width: 140px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  /deep/ .ivu-tooltip-inner {
+  ::v-deep .ivu-tooltip-inner {
     max-width: 100%;
   }
 }

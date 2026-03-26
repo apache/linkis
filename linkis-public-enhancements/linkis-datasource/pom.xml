@@ -34,6 +34,5 @@
     <module>linkis-datasource-manager/service/jdbc</module>
     <module>linkis-datasource-manager/service/hdfs</module>
     <module>linkis-datasource-manager/service/mongodb</module>
-    <module>linkis-metadata</module>
   </modules>
 </project>

@@ -5,15 +5,15 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
+-->
 
 <template>
   <Modal
@@ -39,7 +39,7 @@
       <FormItem
         :label="$t('message.linkis.udf.functionName')"
         prop="name">
-        <Input v-model="setting.name" :disabled="model === 1" />
+        <Input v-model="setting.name" :disabled="model === 1 || !registerFunctionEditable" />
       </FormItem>
       <FormItem
         :label="$t('message.linkis.udf.functionType')"
@@ -94,6 +94,21 @@
           :path="fnPath"
           fs-type="share"
           @set-node="setNodePath"/>
+      </FormItem>
+      <FormItem
+        v-if="registerFunctions.length > 0 && model !== 1"
+        :label="$t('message.linkis.udf.XZHS')"
+        prop="name">
+        <Select
+          v-model="setting.name"
+          @on-change="handleFuncChange"
+          filterable>
+          <Option
+            v-for="(item) in registerFunctions"
+            :label="item"
+            :value="item"
+            :key="item"/>
+        </Select>
       </FormItem>
       <!-- <FormItem
         v-if="fnType === 0 && fnCategory.isCommon"
@@ -200,10 +215,10 @@
           type="textarea"/>
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.class')" prop="directory">
-        <Select 
-          ref="directory" 
+        <Select
+          ref="directory"
           v-model="setting.directory" filterable
-          @on-query-change="queryChange" 
+          @on-query-change="queryChange"
           :remoteMethod="filterAdd" :disabled="model === 1">
           <Option
             v-for="(item) in directories"
@@ -214,7 +229,7 @@
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.clusterName')">
         <Select v-model="setting.clusterName" :disabled="model === 1">
-          <Option   
+          <Option
             label="all"
             value="all" />
         </Select>
@@ -268,6 +283,7 @@ export default {
         isCommon: false,
         isCustom: true,
       },
+      registerFunctions: [],
       TYPELIB: {
         jar: 0,
         Spark: {
@@ -308,6 +324,8 @@ export default {
         directory: ''
       },
       isShareLoading: false,
+
+      registerFunctionEditable: true,
       rules: {
         name: [
           { required: true, message: this.$t('message.linkis.udf.QSRMC'), trigger: 'blur' },
@@ -514,6 +532,11 @@ export default {
     getHeight() {
       this.resize(window.innerHeight);
     },
+    handleFuncChange(val) {
+      if(this.model !== 1) {
+        this.setting.name = val;
+      }
+    },
     open(node) {
       this.resetData();
       const titleMap = [this.$t('message.linkis.udf.addFunction'), this.$t('message.linkis.udf.updateFunction')];
@@ -531,7 +554,10 @@ export default {
       this.title = titleMap[this.model];
       this.btnLabel = btnLabelMap[this.model];
     },
-
+    async getRegisterFunction(path) {
+      const res = await api.fetch('/udf/get-register-functions', { path }, 'get');
+      return res.functions
+    },
     init() {
       let { name, shared, description, path, udfName, directory, udfType, registerFormat, load, useFormat } = this.node;
       let fnType = 'Spark'
@@ -556,6 +582,18 @@ export default {
       });
       this.$nextTick(() => {
         this.$set(this.setting, this.getTypes(), path);
+        // try {
+        //   this.registerFunctions = await this.getRegisterFunction(path);
+        //   if(this.registerFunctions.length !== 0) {
+        //     this.registerFunctionEditable = false;
+        //   } else {
+        //     this.registerFunctionEditable = true;
+        //   }
+        // } catch (err) {
+        //   window.console.error(err);
+        //   this.registerFunctions = [];
+        //   this.registerFunctionEditable = true;
+        // }
       });
     },
 
@@ -631,7 +669,7 @@ export default {
             clusterName
           };
           if (this.model) {
-            postData = Object.assign(postData, { shared: false });
+            postData = Object.assign(postData, { shared: false, defaultLoad });
             this.$emit('update', postData);
           } else {
             postData = Object.assign(postData, { defaultLoad });
@@ -659,8 +697,24 @@ export default {
       this.modalHeight = h - 380 + 'px';
     },
 
-    setNodePath(node) {
+    async setNodePath(node) {
       this.$set(this.setting, this.getTypes(), node.path);
+      if(this.model !== 1 && /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(node.path)) {
+        try {
+          this.registerFunctions = await this.getRegisterFunction(node.path);
+          if(this.registerFunctions.length !== 0) {
+            this.registerFunctionEditable = false;
+            this.setting.name = '';
+          } else {
+            this.registerFunctionEditable = true;
+          }
+        } catch (err) {
+          window.console.error(err);
+          this.registerFunctions = [];
+          this.registerFunctionEditable = true;
+        }
+      }
+
     },
 
     getTypes() {
@@ -697,6 +751,8 @@ export default {
       };
       this.showScalaRF = '';
       this.showScalaUF = '';
+      this.registerFunctions = [];
+      this.registerFunctionEditable = true;
     },
 
     getDir() {
@@ -780,7 +836,7 @@ export default {
         height: 100% !important;
       }
     }
-  
+
     .ivu-modal-content {
       height: 100% !important;
     }

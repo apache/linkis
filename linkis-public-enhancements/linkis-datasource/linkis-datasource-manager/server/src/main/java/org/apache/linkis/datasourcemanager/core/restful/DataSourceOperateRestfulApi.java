@@ -126,14 +126,6 @@ public class DataSourceOperateRestfulApi {
       connectParams.replace("password", encrypt);
       dataSource.setConnectParams(connectParams);
     }
-    if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()
-        && !dataSource.getConnectParams().containsKey("isEncrypt")) {
-      String password = dataSource.getConnectParams().get("password").toString();
-      String encrypt = AESUtils.encrypt(password, AESUtils.LINKIS_DATASOURCE_AES_KEY.getValue());
-      Map<String, Object> connectParams = dataSource.getConnectParams();
-      connectParams.replace("password", encrypt);
-      dataSource.setConnectParams(connectParams);
-    }
     List<DataSourceParamKeyDefinition> keyDefinitionList =
         dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
     dataSource.setKeyDefinitions(keyDefinitionList);

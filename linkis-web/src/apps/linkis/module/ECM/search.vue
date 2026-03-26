@@ -57,6 +57,9 @@
       <Button v-if="stopbtn" type="error" @click="stop"  style="margin-left:20px">
         {{ $t('message.linkis.stop') }}
       </Button>
+      <Button v-if="healthbtn" type="error" @click="batchUnhealth"  style="margin-left:20px">
+        {{ $t('message.linkis.batchUnhealth') }}
+      </Button>
     </FormItem>
   </Form>
 
@@ -80,6 +83,9 @@ export default {
       default: () => []
     },
     stopbtn: {
+      type: Boolean
+    },
+    healthbtn: {
       type: Boolean
     }
   },
@@ -110,6 +116,9 @@ export default {
     },
     stop() {
       this.$emit("stop")
+    },
+    batchUnhealth() {
+      this.$emit('batchUnhealth')
     }
   },
 };

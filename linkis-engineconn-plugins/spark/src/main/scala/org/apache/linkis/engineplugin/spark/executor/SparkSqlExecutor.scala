@@ -121,18 +121,15 @@ class SparkSqlExecutor(
         )
       )
 
-      if (engineExecutionContext.isEnableDirectPush) {
-        submitResultSetIterator(lastTask.getTaskId, df)
-      } else {
-        SQLSession.showDF(
-          sparkEngineSession.sparkContext,
-          jobGroup,
-          df,
-          null,
-          SparkConfiguration.SHOW_DF_MAX_RES.getValue,
-          engineExecutionContext
-        )
-      }
+      // Direct push feature removed, use standard showDF
+      SQLSession.showDF(
+        sparkEngineSession.sparkContext,
+        jobGroup,
+        df,
+        null,
+        SparkConfiguration.SHOW_DF_MAX_RES.getValue,
+        engineExecutionContext
+      )
 
       // Stop capturing Spark metrics and output the records to the specified file.
       sparkMeasure.foreach { measure =>
@@ -160,23 +157,25 @@ class SparkSqlExecutor(
       sparkEngineSession: SparkEngineSession,
       code: String
   ): Option[SparkSqlMeasure] = {
-    val sparkMeasureType = engineExecutionContext.getProperties
-      .getOrDefault(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE, "")
-      .toString
+    Option(engineExecutionContext.getProperties.get(SparkConfiguration.SPARKMEASURE_AGGREGATE_TYPE))
+      .map(_.toString)
+      .flatMap { sparkMeasureType =>
+        val userName = LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1
+        val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
+        val timestamp = System.currentTimeMillis().toString
 
-    if (sparkMeasureType.nonEmpty) {
-      val outputPrefix = SparkConfiguration.SPARKMEASURE_OUTPUT_PREFIX.getValue(options)
-      val outputPath = FsPath.getFsPath(
-        outputPrefix,
-        LabelUtil.getUserCreator(engineExecutionContext.getLabels.toList.asJava)._1,
-        sparkMeasureType,
-        JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
-        new Date().getTime.toString
-      )
-      Some(new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath))
-    } else {
-      None
-    }
+        val outputPath = FsPath.getFsPath(
+          outputPrefix,
+          userName,
+          sparkMeasureType,
+          JobUtils.getJobIdFromMap(engineExecutionContext.getProperties),
+          timestamp
+        )
+
+        Some(
+          new SparkSqlMeasure(sparkEngineSession.sparkSession, code, sparkMeasureType, outputPath)
+        )
+      }
   }
 
   override protected def getExecutorIdPreFix: String = "SparkSqlExecutor_"

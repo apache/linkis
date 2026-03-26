@@ -100,11 +100,11 @@ public class ContextHACheckerImpl implements ContextHAChecker {
       throw new CSErrorException(
           CSErrorCode.INVALID_HAID,
           "Incomplete HAID Object cannot be encoded. mainInstance : "
-              + haContextID.getInstance()
+              + (haContextID == null ? "NULL" : haContextID.getInstance())
               + ", backupInstance : "
-              + haContextID.getBackupInstance()
+              + (haContextID == null ? "NULL" : haContextID.getBackupInstance())
               + ", contextID : "
-              + haContextID.getContextId());
+              + (haContextID == null ? "NULL" : haContextID.getContextId()));
     }
     if (StringUtils.isNumeric(haContextID.getContextId())) {
       return encode(haContextID);

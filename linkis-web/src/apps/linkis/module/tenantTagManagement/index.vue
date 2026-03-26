@@ -103,6 +103,12 @@
           <FormItem :label="$t('message.linkis.tenantTagManagement.desc')" prop="desc">
             <Input class="input" v-model="modalData.desc" style="width: 319px"></Input>
           </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.isValid')" prop="isValid">
+            <RadioGroup v-model="modalData.isValid">
+              <Radio label="Y">{{$t('message.linkis.ipListManagement.yes')}}</Radio>
+              <Radio label="N">{{$t('message.linkis.ipListManagement.no')}}</Radio>
+            </RadioGroup>
+          </FormItem>
         </Form>
         <div style="margin-top: 60px">
           <span style="width: 60px">{{ $t('message.linkis.tenantTagManagement.yourTagMapping') }}</span>
@@ -118,6 +124,7 @@
   </div>
 </template>
 <script>
+import {cloneDeep} from 'lodash'
 import storage from "@/common/helper/storage";
 import api from '@/common/service/api'
 export default {
@@ -146,7 +153,7 @@ export default {
         {
           title: this.$t('message.linkis.tenantTagManagement.userCreator'),
           key: 'userCreator',
-          width: 350,
+          width: 250,
           tooltip: true,
           align: 'center',
         },
@@ -156,6 +163,18 @@ export default {
           width: 350,
           tooltip: true,
           align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.ipListManagement.isValid'),
+          key: 'isValid',
+          width: 100,
+          tooltip: true,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('span', params.row.isValid === 'Y' ? this.$t('message.linkis.ipListManagement.yes') : this.$t('message.linkis.ipListManagement.no'))
+            ]);
+          }
         },
         {
           title: this.$t('message.linkis.tenantTagManagement.createUser'),
@@ -197,12 +216,26 @@ export default {
                   type: 'error',
                   size: 'small'
                 },
+                style: {
+                  marginRight: '5px'
+                },
                 on: {
                   click: () => {
                     this.delete(params.row)
                   }
                 }
-              }, this.$t('message.linkis.tenantTagManagement.delete'))
+              }, this.$t('message.linkis.tenantTagManagement.delete')),
+              h('Button', {
+                props: {
+                  type: params.row.isValid === 'N' ? 'success' : 'warning',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+                    this.enable(params.row)
+                  }
+                }
+              }, params.row.isValid === 'N' ? this.$t('message.linkis.ipListManagement.enable') : this.$t('message.linkis.ipListManagement.disable')),
             ]);
           }
         }
@@ -215,7 +248,8 @@ export default {
         creator: '',
         tenantValue: '',
         bussinessUser: '',
-        desc: ''
+        desc: '',
+        isValid: 'Y',
       },
       modalDataRule: {
         user: [
@@ -228,7 +262,8 @@ export default {
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_\*\-]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_\*\-]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'},
+          {type: 'string', max: 100, message: this.$t('message.linkis.tenantTagManagement.maxLen')},
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
@@ -286,10 +321,44 @@ export default {
       }
 
     },
+    enable(data) {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.ipListManagement.confirmDel'),
+        content: data.isValid === 'N' ? this.$t('message.linkis.ipListManagement.confirmEnable', {name: `${data.id}`}) : this.$t('message.linkis.ipListManagement.confirmDisable', {name: `${data.id}`}),
+        onOk: async () => {
+          await this.confirmEnable(data);
+          await this.getTableData();
+        },
+      })
+    },
     async init() {
       this.loading = true;
       await this.getTableData();
       this.loading = false;
+    },
+    async confirmEnable(data) {
+      const status = data.isValid;
+      const tempData = cloneDeep(data);
+      delete tempData._index;
+      delete tempData._rowKey;
+      delete tempData.updateTime;
+      delete tempData.createTime;
+      delete tempData.userCreator;
+
+      tempData.isValid = tempData.isValid === 'Y' ? 'N' : 'Y';
+      try {
+        await api.fetch('/configuration/tenant-mapping/update-tenant', tempData, 'post');
+        if(status === 'N') {
+          this.$Message.success(this.$t('message.linkis.ipListManagement.enableSuccessfully'));
+        } else {
+          this.$Message.success(this.$t('message.linkis.ipListManagement.disableSuccessfully'));
+        }
+          
+      } catch (err) {
+        return;
+      }
+        
+      
     },
     async clearSearch() {
       this.queryData = {
@@ -348,14 +417,16 @@ export default {
         creator: '',
         tenantValue: '',
         bussinessUser: '',
-        desc: ''
+        desc: '',
+        isValid: 'Y',
       };
       this.editData = {
         user: '',
         creator: '',
         tenantValue: '',
         bussinessUser: '',
-        desc: ''
+        desc: '',
+        isValid: 'Y',
       };
       this.$refs.createTenantForm.resetFields();
     },
@@ -388,13 +459,13 @@ export default {
     },
     edit(data) {
       const {
-        id, user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc, isValid
       } = data
       this.modalData = {
-        id, user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc, isValid
       };
       this.editData = {
-        id, user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc, isValid
       };
       this.showCreateModal = true;
       this.tagIsExist = false;
@@ -434,7 +505,7 @@ export default {
     }
   },
   created() {
-    this.userName = storage.get('userName') || storage.get('baseInfo', 'local').username || '';
+    this.userName = storage.get('userName') || storage.get('baseInfo', 'local')?.username || '';
     this.init();
   }
 

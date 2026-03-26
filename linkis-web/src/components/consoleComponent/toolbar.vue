@@ -67,7 +67,7 @@
           </div>
         </Poptip>
       </li>
-      <li v-if="analysistext.flag !== 2 && rsDownload" :style="{cursor: rsDownload ? 'pointer': 'not-allowed'}">
+      <li v-if="analysistext.flag !== 2 && rsDownload && canDownload" :style="{cursor: rsDownload ? 'pointer': 'not-allowed'}">
         <Poptip
           :transfer="true"
           :width="500"
@@ -75,7 +75,7 @@
           placement="right"
           popper-class="we-poptip">
           <div @click.stop="openPopup('download')">
-            <i class="material-icons">cloud_download</i>
+            <i class="material-icons">cloud_download</i> 
             <span v-if="isIconLabelShow" :title="$t('message.common.download')" class="v-toolbar-icon">{{ $t('message.common.download') }}</span>
           </div>
           <div slot="content">
@@ -143,19 +143,20 @@
                 </RadioGroup>
               </Row>
             </div>
+            
+            <Row>
+              {{$t('message.common.toolbar.downloadMode')}}
+            </Row>
             <div v-if="isAll">
-              <Row>
-                {{$t('message.common.toolbar.downloadMode')}}
-              </Row>
               <Row>
                 <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all', {count: String(allPath.length)})}}</Checkbox>
               </Row>
-              <div v-if="isExcel">
-                <Row>
-                  <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
-                </Row>
-              </div>
-              
+            </div>
+            
+            <div v-if="isExcel">
+              <Row>
+                <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
+              </Row>
             </div>
             <Row class="confirm">
               <Col span="10">
@@ -300,8 +301,14 @@ export default {
       };
       return describe
     },
+    canDownload() {
+      if (this?.script?.resultList && this.script.resultList[this.script.resultSet]?.result?.tipMsg) {
+        return !this.script.resultList[this.script.resultSet].result.tipMsg;
+      }
+      return true
+    },
     isAll() {
-      return ['hql', 'sql'].includes(this.script.runType) || this.download.format === '1';
+      return ['hql', 'sql', 'tsql', 'nebula'].includes(this.script.runType) || this.download.format === '1';
     },
     isExcel() {
       return this.download.format === '2';
@@ -396,7 +403,7 @@ export default {
         let separator = encodeURIComponent(separatorItem.key || '');
         url += `&csvSeparator=${separator}`
       }
-      if(this.isAll && this.isExcel) {
+      if(this.isExcel) {
         url += `&autoFormat=${this.autoFormat}`
       }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)

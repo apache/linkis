@@ -197,6 +197,7 @@ object EngineConnMonitor extends Logging {
             killTask(unActivityExecutors.get(status._1))
           }
         }
+      case _ =>
     }
   }
 

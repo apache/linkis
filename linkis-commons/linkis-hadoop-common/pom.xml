@@ -59,18 +59,10 @@
       <artifactId>hadoop-auth</artifactId>
     </dependency>
 
-    <!-- HDFS 依赖: 通过 scope 变量控制，3.x 使用 hadoop-hdfs-client，2.x 使用 hadoop-hdfs -->
-    <!-- hadoop-hdfs-client 在 2.x 中不存在，父 pom 中通过单独版本变量保持使用 3.3.4 -->
+    <!-- HDFS 依赖：通过 artifactId 变量控制，2.x 使用 hadoop-hdfs，3.x 使用 hadoop-hdfs-client -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs-client</artifactId>
-      <scope>${hadoop-hdfs-client.scope}</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs</artifactId>
-      <scope>${hadoop-hdfs.scope}</scope>
+      <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
     </dependency>
 
     <!-- Common Logging 桥接 -->

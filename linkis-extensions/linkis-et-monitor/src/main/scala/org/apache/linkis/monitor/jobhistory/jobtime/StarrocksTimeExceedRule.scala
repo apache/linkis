@@ -29,7 +29,7 @@ import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.util
-import java.util.{ArrayList, HashMap, List, Locale, Map}
+import java.util.{ArrayList, HashMap, Locale, Map}
 
 import scala.collection.JavaConverters._
 
@@ -54,7 +54,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     val alertData: util.List[JobHistory] = new util.ArrayList[JobHistory]()
     for (scannedData <- data.asScala) {
       if (scannedData != null && scannedData.getData() != null) {
-        var taskMinID = 0L;
+        var taskMinID = 0L
         for (jobHistory <- scannedData.getData().asScala) {
           jobHistory match {
             case job: JobHistory =>
@@ -66,7 +66,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                     Constants.JDBC_ENGINE.toUpperCase(Locale.getDefault)
                   )
               ) {
-                // 获取job所使用的数据源类型
+                // 获取 job 所使用的数据源类型
                 val datasourceConfMap = getDatasourceConf(job)
                 logger.info("starock  datasourceConfMap: {}", datasourceConfMap)
                 // 计算任务执行时间
@@ -81,6 +81,26 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
                   if (elapse > timeoutInMillis) {
                     // 发送告警
                     alertData.add(job)
+                  }
+                }
+                // 获取超时 kill 配置信息
+                if (StringUtils.isNotBlank(job.getParams)) {
+                  val connectParamsMap = MapUtils.getMap(
+                    datasourceConfMap,
+                    "connectParams",
+                    new util.HashMap[AnyRef, AnyRef]
+                  )
+                  val killTime = MapUtils.getString(connectParamsMap, "kill_task_time", "")
+                  logger.info("starock  killTime: {}", killTime)
+                  if (StringUtils.isNotBlank(killTime) && elapse > killTime.toLong * 60 * 1000) {
+                    if (StringUtils.isNotBlank(timeValue)) {
+                      val timeoutInSeconds = timeValue.toDouble
+                      val timeoutInMillis = (timeoutInSeconds * 60 * 1000).toLong
+                      if (elapse > timeoutInMillis) {
+                        // 触发 kill 任务
+                        HttpsUntils.killJob(job)
+                      }
+                    }
                   }
                 }
               }
@@ -109,7 +129,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
   }
 
   private def getDatasourceConf(job: JobHistory): util.Map[_, _] = {
-    // 获取任务参数中datasourcename
+    // 获取任务参数中 datasourceName
     val parmMap =
       BDPJettyServerHelper.gson.fromJson(job.getParams, classOf[java.util.Map[String, String]])
     val configurationMap =
@@ -117,7 +137,7 @@ class StarrocksTimeExceedRule(hitObserver: Observer)
     val runtimeMap =
       MapUtils.getMap(configurationMap, "runtime", new util.HashMap[String, String]())
     val datasourceName = MapUtils.getString(runtimeMap, Constants.JOB_DATASOURCE_CONF, "")
-    // 获取datasource信息
+    // 获取 datasource 信息
     if (StringUtils.isNotBlank(datasourceName)) {
       HttpsUntils.getDatasourceConf(job.getSubmitUser, datasourceName)
     } else {

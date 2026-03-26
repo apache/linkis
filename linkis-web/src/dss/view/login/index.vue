@@ -20,7 +20,7 @@
     class="login"
     @keyup.enter.stop.prevent="handleSubmit('loginForm')">
     <i class="login-bg"/>
-    <div class="login-main">
+    <div class="login-main" :style="{height: OAuthRedirectUrl ? '500px' : ''}">
       <Form
         ref="loginForm"
         :model="loginForm"
@@ -56,6 +56,14 @@
             size="large"
             @click="handleSubmit('loginForm')">{{$t('message.common.login.login')}}</Button>
         </FormItem>
+        <FormItem>
+          <Button
+            v-if="OAuthRedirectUrl"
+            type="primary"
+            long
+            size="large"
+            @click="handleOAuthLogin()">{{$t('message.common.login.oauthLogin')}}</Button>
+        </FormItem>
       </Form>
     </div>
   </div>
@@ -71,6 +79,7 @@ export default {
   data() {
     return {
       loading: false,
+      OAuthRedirectUrl: null,
       loginForm: {
         user: '',
         password: '',
@@ -97,6 +106,7 @@ export default {
       this.loginForm.password = userNameAndPass.split('&')[1];
     }
     this.getPublicKey();
+    this.checkOAuthStatus();
   },
   mounted() {
   },
@@ -178,6 +188,15 @@ export default {
     // clear local cache(清楚本地缓存)
     clearSession() {
       storage.clear();
+    },
+    // check OAuth status(检查OAuth状态)
+    checkOAuthStatus() {
+      api.fetch('/user/oauth-redirect', {}, 'get').then((res) => {
+        this.OAuthRedirectUrl = res.redirectUrl;
+      })
+    },
+    handleOAuthLogin() {
+      window.location.href = this.OAuthRedirectUrl;
     },
   },
 };

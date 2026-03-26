@@ -64,11 +64,11 @@ public class PersistenceNode {
     this.ticketId = ticketId;
   }
 
-  public Integer getId() {
+  public int getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(int id) {
     this.id = id;
   }
 
@@ -126,10 +126,6 @@ public class PersistenceNode {
 
   public void setCreator(String creator) {
     this.creator = creator;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public String getParams() {

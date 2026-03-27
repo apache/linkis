@@ -104,6 +104,12 @@ object Configuration extends Logging {
   val METRICS_INCREMENTAL_UPDATE_ENABLE =
     CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
 
+  val EXECUTE_ERROR_CODE_INDEX =
+    CommonVars("execute.error.code.index", "-1")
+
+  val EXECUTE_RESULTSET_ALIAS_NUM =
+    CommonVars("execute.resultset.alias.num", "0")
+
   val GLOBAL_CONF_CHN_NAME = "全局设置"
 
   val GLOBAL_CONF_CHN_OLDNAME = "通用设置"

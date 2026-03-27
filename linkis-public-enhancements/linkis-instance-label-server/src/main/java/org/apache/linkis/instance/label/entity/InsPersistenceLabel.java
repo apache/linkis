@@ -20,6 +20,7 @@ package org.apache.linkis.instance.label.entity;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 
 import java.util.Date;
+import java.util.Objects;
 
 /** like: PersistenceLabel in label-manager-common */
 public class InsPersistenceLabel extends GenericLabel {
@@ -92,5 +93,10 @@ public class InsPersistenceLabel extends GenericLabel {
       }
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.getLabelKey(), this.getStringValue());
   }
 }

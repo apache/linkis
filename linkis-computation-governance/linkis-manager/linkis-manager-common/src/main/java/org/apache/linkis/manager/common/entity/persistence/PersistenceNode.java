@@ -64,11 +64,11 @@ public class PersistenceNode {
     this.ticketId = ticketId;
   }
 
-  public Integer getId() {
+  public int getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(int id) {
     this.id = id;
   }
 
@@ -128,6 +128,14 @@ public class PersistenceNode {
     this.creator = creator;
   }
 
+  public String getParams() {
+    return params;
+  }
+
+  public void setParams(String params) {
+    this.params = params;
+  }
+
   public String getMappingPorts() {
     return mappingPorts;
   }
@@ -142,17 +150,5 @@ public class PersistenceNode {
 
   public void setMappingHost(String mappingHost) {
     this.mappingHost = mappingHost;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getParams() {
-    return params;
-  }
-
-  public void setParams(String params) {
-    this.params = params;
   }
 }

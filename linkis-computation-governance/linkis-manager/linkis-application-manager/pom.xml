@@ -27,10 +27,6 @@
   <artifactId>linkis-application-manager</artifactId>
 
   <dependencies>
-    <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -98,6 +94,13 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-ps-common-lock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -128,12 +131,6 @@
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-model-core</artifactId>
       <version>${kubernetes-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-ps-common-lock</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

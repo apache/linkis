@@ -739,4 +739,29 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
       }
     }
   }
+
+  @Override
+  public DataSource getPublishedDataSourceByType(String dataSourceType, String proxyUser) {
+    try {
+      // 1. 查询数据源列表
+      List<DataSource> dataSourceList =
+          dataSourceDao.selectDatasourcesByType(dataSourceType, proxyUser);
+      if (CollectionUtils.isEmpty(dataSourceList)) {
+        LOG.debug("No datasource found for type:{} and owner:{}", dataSourceType, proxyUser);
+        return null;
+      }
+      // 2. 筛选符合条件的已发布数据源
+      return dataSourceList.stream()
+          .filter(
+              dataSource ->
+                  (dataSource.getPublishedVersionId() != null) && (!dataSource.isExpire()))
+          .sorted(Comparator.comparing(DataSource::getCreateTime, Comparator.reverseOrder()))
+          .findFirst()
+          .orElse(null);
+    } catch (Exception e) {
+      LOG.error(
+          "Get published datasource failed, type:{}, proxyUser:{}", dataSourceType, proxyUser, e);
+      return null;
+    }
+  }
 }

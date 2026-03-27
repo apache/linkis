@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.external.yarn;
 
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
+import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -217,6 +218,31 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       String queueName,
       ExternalResourceProvider provider) {
     JsonNode resp = getResponseByUrl("scheduler", rmWebAddress, provider);
+    return getResourcesFromResponse(resp, realQueueName, queueName, provider);
+  }
+
+  public Map<String, YarnQueueInfo> getBatchResources(
+      String rmWebAddress, List<String> queueNames, ExternalResourceProvider provider) {
+    JsonNode resp = getResponseByUrl("scheduler", rmWebAddress, provider);
+    Map<String, YarnQueueInfo> queueInfoMap = new HashMap<>();
+    for (String queueName : queueNames) {
+      try {
+        String realQueueName = queuePrefix + queueName;
+        if (queueName.startsWith(queuePrefix)) {
+          realQueueName = queueName;
+        }
+        YarnQueueInfo queueInfo =
+            getResourcesFromResponse(resp, realQueueName, queueName, provider);
+        queueInfoMap.put(queueName, queueInfo);
+      } catch (Exception e) {
+        logger.error("Failed to get resource for queue " + queueName, e);
+      }
+    }
+    return queueInfoMap;
+  }
+
+  private YarnQueueInfo getResourcesFromResponse(
+      JsonNode resp, String realQueueName, String queueName, ExternalResourceProvider provider) {
     JsonNode schedulerInfo = resp.path("scheduler").path("schedulerInfo");
     String schedulerType = schedulerInfo.path("type").asText();
     if ("capacityScheduler".equals(schedulerType)) {
@@ -232,7 +258,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       }
       JsonNode queueInfo = queue.get();
       return new YarnQueueInfo(
-          maxEffectiveHandle(queue, rmWebAddress, queueName, provider).get(),
+          maxEffectiveHandle(queue, getAndUpdateActiveRmWebAddress(provider), queueName, provider)
+              .get(),
           getYarnResource(queue.map(node -> node.path("resourcesUsed")), queueName).get(),
           queueInfo.path("maxApps").asInt(),
           queueInfo.path("numPendingApps").asInt(),
@@ -313,8 +340,24 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
     String queueName = ((YarnResourceIdentifier) identifier).getQueueName();
     String realQueueName = queuePrefix + queueName;
+    JsonNode resp;
+    if (RMConfiguration.YARN_APPS_FILTER_ENABLED.getValue()) {
+      // Build query parameters to filter apps at Yarn API level using active states only
+      String queryParams =
+          "?queue="
+              + realQueueName
+              + "&states="
+              + YarnAppState.RUNNING.getState()
+              + ","
+              + YarnAppState.ACCEPTED.getState()
+              + RMConfiguration.YARN_APPS_FILTER_PARMS.getValue();
+      resp =
+          getResponseByUrl("apps" + queryParams, rmWebAddress, provider).path("apps").path("app");
+    } else {
+      // Fetch all apps without filtering (for backward compatibility)
+      resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
+    }
 
-    JsonNode resp = getResponseByUrl("apps", rmWebAddress, provider).path("apps").path("app");
     if (resp.isMissingNode()) {
       return new ArrayList<>();
     }

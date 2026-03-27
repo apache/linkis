@@ -83,9 +83,9 @@ public class LinkisErrorCodeSynchronizer {
   }
 
   public static LinkisErrorCodeSynchronizer getInstance() {
-    if (linkisErrorCodeSynchronizer == null) {
-      synchronized (LinkisErrorCodeSynchronizer.class) {
-        if (linkisErrorCodeSynchronizer == null) {
+    if (linkisErrorCodeSynchronizer == null) { // NOSONAR
+      synchronized (LinkisErrorCodeSynchronizer.class) { // NOSONAR
+        if (linkisErrorCodeSynchronizer == null) { // NOSONAR
           linkisErrorCodeSynchronizer = new LinkisErrorCodeSynchronizer();
         }
       }

@@ -36,6 +36,7 @@ object JobRequestConstants {
   val ENABLE_DIRECT_PUSH = "enableDirectPush"
 
   val DIRECT_PUSH_FETCH_SIZE = "direct_push_fetch_size"
+
   val LINKIS_HIVE_EC_READ_RESULT_BY_OBJECT = "readResByObject"
 
 }

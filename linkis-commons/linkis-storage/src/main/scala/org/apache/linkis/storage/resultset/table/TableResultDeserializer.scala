@@ -127,14 +127,16 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
       val len = colArray(i).toInt
       val res = Dolphin.getString(bytes, index, len)
       if (res.length > LinkisStorageConf.LINKIS_RESULT_COL_LENGTH && enableLimit) {
-        throw new ColLengthExceedException(
-          LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorCode,
-          MessageFormat.format(
-            LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorDesc,
-            res.length.asInstanceOf[Object],
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH.asInstanceOf[Object]
+        if (!LinkisStorageConf.FIELD_TRUNCATION_ENABLED) {
+          throw new ColLengthExceedException(
+            LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorCode,
+            MessageFormat.format(
+              LinkisStorageErrorCodeSummary.RESULT_COL_LENGTH.getErrorDesc,
+              res.length.asInstanceOf[Object],
+              LinkisStorageConf.LINKIS_RESULT_COL_LENGTH.asInstanceOf[Object]
+            )
           )
-        )
+        }
       }
       index += len
       // 如果enableLimit为true，则采取的是列分页

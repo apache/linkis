@@ -37,7 +37,7 @@ public class LinkisHAWorkFlowContextIDSerializer
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(LinkisHAWorkFlowContextID.class.getName())) {
+    if (null != obj && obj.getClass().isAssignableFrom(LinkisHAWorkFlowContextID.class)) {
       return true;
     }
     return false;

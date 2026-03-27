@@ -130,6 +130,7 @@ public class RestfulApiHelper {
     } catch (WarnException e) {
       return Message.warn(e.getMessage());
     } catch (Exception e) {
+      e.printStackTrace();
       return Message.error(failMessage, e);
     }
   }

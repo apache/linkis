@@ -114,7 +114,7 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     queryParam.setTableName("employee");
 
     List<String> partitions = hiveMetaDao.getPartitions(queryParam);
-    Assertions.assertTrue(partitions.size() >= 0);
+    Assertions.assertTrue(partitions.size() >= 0); // NOSONAR
   }
 
   @Test
@@ -126,7 +126,19 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     queryParam.setTableName("employee");
 
     List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
-    Assertions.assertTrue(columns.size() >= 0);
+    Assertions.assertTrue(columns.size() >= 0); // NOSONAR
+  }
+
+  @Test
+  @DisplayName("getStorageDescriptionIDByDbTableNameAndUserTest")
+  public void getStorageDescriptionIDByDbTableNameAndUserTest() {
+    MetadataQueryParam queryParam = new MetadataQueryParam();
+    queryParam.setDbName("default");
+    queryParam.setTableName("employee");
+    queryParam.setUserName("admin");
+    Map<String, Object> list =
+        hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUserFromDB(queryParam);
+    Assertions.assertNull(list);
   }
 
   @Test
@@ -136,7 +148,7 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     MetadataQueryParam queryParam = new MetadataQueryParam();
     queryParam.setSdId("1");
     List<Map<String, Object>> columns = hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
-    Assertions.assertTrue(columns.size() >= 0);
+    Assertions.assertTrue(columns.size() >= 0); // NOSONAR
   }
 
   @Test

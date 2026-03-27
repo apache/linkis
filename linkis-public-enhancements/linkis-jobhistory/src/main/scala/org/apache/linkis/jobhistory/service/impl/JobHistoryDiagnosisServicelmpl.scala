@@ -45,8 +45,8 @@ class JobHistoryDiagnosisServicelmpl extends JobHistoryDiagnosisService with Log
     jobDiagnosisMapper.update(jobDiagnosis)
   }
 
-  override def selectByJobId(id: lang.Long): JobDiagnosis = {
-    jobDiagnosisMapper.selectById(id)
+  override def selectByJobId(jobId: lang.Long, diagnosisSource: String): JobDiagnosis = {
+    jobDiagnosisMapper.selectByJobIdAndSource(jobId, diagnosisSource)
   }
 
 }

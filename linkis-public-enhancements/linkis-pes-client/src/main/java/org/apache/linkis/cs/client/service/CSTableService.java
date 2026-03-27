@@ -54,9 +54,9 @@ public class CSTableService implements TableService {
   private CSTableService() {}
 
   public static CSTableService getInstance() {
-    if (null == csTableService) {
-      synchronized (CSTableService.class) {
-        if (null == csTableService) {
+    if (null == csTableService) { // NOSONAR
+      synchronized (CSTableService.class) { // NOSONAR
+        if (null == csTableService) { // NOSONAR
           csTableService = new CSTableService();
         }
       }
@@ -104,7 +104,7 @@ public class CSTableService implements TableService {
       if (null != rsList)
         logger.info(
             "contextID: {} and nodeName: {} succeed to get tables size {}",
-            contextID.getContextId(),
+            contextID == null ? "NULL" : contextID.getContextId(),
             nodeName,
             rsList.size());
       return rsList;

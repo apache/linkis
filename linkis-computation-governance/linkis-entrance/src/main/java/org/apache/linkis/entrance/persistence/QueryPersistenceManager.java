@@ -29,7 +29,9 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel;
+import org.apache.linkis.manager.label.utils.LabelUtil;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
@@ -154,36 +156,79 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
 
     boolean containsAny = false;
+    // 文本匹配
     String errorDescArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_DESC();
+    // 错误码匹配
     String errorCodeArray = EntranceConfiguration.SUPPORTED_RETRY_ERROR_CODES();
-    for (String keyword : errorDescArray.split(",")) {
-      if (errorDesc.contains(keyword.trim()) || errorCodeArray.contains(errorCode + "")) {
-        containsAny = true;
-        break;
+    // 正则匹配
+    String errorDescRegex = EntranceConfiguration.SUPPORTED_RETRY_ERROR_DESC_REGEX();
+    final EntranceJob entranceJob = (EntranceJob) job;
+    String engineType = LabelUtil.getEngineType(entranceJob.getJobRequest().getLabels());
+    AtomicBoolean canRetry = new AtomicBoolean(false);
+    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY().key();
+
+    if (engineType.equals(EngineType.JDBC().toString()) && StringUtils.isNotBlank(errorDescRegex)) {
+      // JDBC执行正则匹配
+      for (String regex : errorDescRegex.split(",")) {
+        String trimmedRegex = regex.trim();
+        if (StringUtils.isNotBlank(trimmedRegex)) {
+          try {
+            Pattern pattern = Pattern.compile(trimmedRegex, Pattern.CASE_INSENSITIVE);
+            if (pattern.matcher(errorDesc).find()) {
+              containsAny = true;
+              break;
+            }
+          } catch (Exception e) {
+            logger.warn("Invalid regex pattern: {}", trimmedRegex, e);
+          }
+        }
+      }
+      if (!containsAny) {
+        return false;
+      }
+      JobRequest jobRequest = entranceJob.getJobRequest();
+      Pattern queryPattern =
+          Pattern.compile(
+              "Query timeout. Increase the query_timeout session variable and retry|Query exceeded time limit of (\\S+) seconds",
+              Pattern.CASE_INSENSITIVE);
+      Pattern newPlannerPattern =
+          Pattern.compile("StarRocks planner use long time", Pattern.CASE_INSENSITIVE);
+      Pattern queryQueuePendingPattern =
+          Pattern.compile("pending timeout", Pattern.CASE_INSENSITIVE);
+      if (queryPattern.matcher(errorDesc).find()) {
+        jobRequest.setExecutionCode("SET query_timeout = 1200;\n" + code);
+      } else if (newPlannerPattern.matcher(errorDesc).find()) {
+        jobRequest.setExecutionCode("SET new_planner_optimize_timeout = 300000;\n" + code);
+      } else if (queryQueuePendingPattern.matcher(errorDesc).find()) {
+        jobRequest.setExecutionCode("SET query_queue_pending_timeout_second = 3600;\n" + code);
+      }
+    } else {
+      for (String keyword : errorDescArray.split(",")) {
+        if (errorDesc.contains(keyword.trim()) || errorCodeArray.contains(errorCode + "")) {
+          containsAny = true;
+          break;
+        }
+      }
+      if (!containsAny) {
+        return false;
+      }
+      // 处理广播表
+      String dataFrameKey = EntranceConfiguration.SUPPORT_ADD_RETRY_CODE_KEYS();
+      if (containsAny(errorDesc, dataFrameKey)
+          && engineType.equals(EngineType.SPARK().toString())) {
+        entranceJob
+            .getJobRequest()
+            .setExecutionCode("set spark.sql.autoBroadcastJoinThreshold=-1; " + code);
       }
     }
 
-    if (!containsAny) {
-      return false;
-    }
-
-    AtomicBoolean canRetry = new AtomicBoolean(false);
-    String aiSqlKey = EntranceConfiguration.AI_SQL_KEY().key();
-    String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY().key();
-
-    final EntranceJob entranceJob = (EntranceJob) job;
-
-    // 处理广播表
-    String dataFrameKey = EntranceConfiguration.SUPPORT_ADD_RETRY_CODE_KEYS();
-    if (containsAny(errorDesc, dataFrameKey)) {
-      entranceJob
-          .getJobRequest()
-          .setExecutionCode("set spark.sql.autoBroadcastJoinThreshold=-1; " + code);
-    }
-
     Map<String, Object> startupMap = TaskUtils.getStartupMap(props);
-    // 只对 aiSql 做重试
-    if ("true".equals(startupMap.get(aiSqlKey))) {
+    String isRetry =
+        startupMap
+            .getOrDefault(EntranceConfiguration.TASK_RETRY_SWITCH().key(), "false")
+            .toString();
+    // 对 aiSql 和 starrocks 做重试
+    if (Boolean.parseBoolean(isRetry)) {
       LinkisUtils.tryAndWarn(
           () -> {
             int retryNum = (int) startupMap.getOrDefault(retryNumKey, 1);

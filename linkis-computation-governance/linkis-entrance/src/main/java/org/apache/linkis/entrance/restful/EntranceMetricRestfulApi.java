@@ -95,6 +95,7 @@ public class EntranceMetricRestfulApi {
         }
       }
     }
+    assert undoneTasks != null;
     Message resp =
         Message.ok("success")
             .data("taskNumber", undoneTasks.length)

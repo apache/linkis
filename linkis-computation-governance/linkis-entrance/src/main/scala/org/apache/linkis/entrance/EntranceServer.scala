@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.TimeType
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -31,13 +32,14 @@ import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.log.LogReader
 import org.apache.linkis.entrance.parser.ParserUtils
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
-import org.apache.linkis.entrance.utils.JobHistoryHelper
+import org.apache.linkis.entrance.utils.{EntranceUtils, JobHistoryHelper}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.task.RequestTaskKill
 import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
@@ -54,13 +56,18 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.text.{MessageFormat, SimpleDateFormat}
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import java.util
 import java.util.Date
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.collection.JavaConverters._
 
 abstract class EntranceServer extends Logging {
+
+  // Map to track which jobs have been diagnosed
+  private val diagnosedJobs = new ConcurrentHashMap[String, Boolean]()
 
   private var entranceWebSocketService: Option[EntranceWebSocketService] = None
 
@@ -760,6 +767,113 @@ abstract class EntranceServer extends Logging {
       },
       EntranceConfiguration.ENTRANCE_TASK_TIMEOUT_SCAN.getValue.toLong,
       EntranceConfiguration.ENTRANCE_TASK_TIMEOUT_SCAN.getValue.toLong,
+      TimeUnit.MILLISECONDS
+    )
+
+    Utils.defaultScheduler.scheduleAtFixedRate(
+      new Runnable() {
+        override def run(): Unit = {
+          // 新增任务诊断检测逻辑
+          if (EntranceConfiguration.TASK_DIAGNOSIS_ENABLE) {
+            logger.info("Start to check tasks for diagnosis")
+            val undoneTask = getAllUndoneTask(null, null)
+            val diagnosisTime = System.currentTimeMillis() - new TimeType(
+              EntranceConfiguration.TASK_DIAGNOSIS_TIMEOUT
+            ).toLong
+            undoneTask
+              .filter { job =>
+                try {
+                  val engineType = LabelUtil.getEngineType(job.getJobRequest.getLabels)
+                  val jobMetrics =
+                    Option(JobHistoryHelper.getTaskByTaskID(job.getJobRequest.getId).getMetrics)
+                  val startTime =
+                    if (jobMetrics.exists(_.containsKey(TaskConstant.JOB_RUNNING_TIME))) {
+                      val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")
+                      val instant = Instant.from(
+                        formatter.parse(jobMetrics.get.get(TaskConstant.JOB_RUNNING_TIME).toString)
+                      )
+                      instant.toEpochMilli
+                    } else {
+                      0L
+                    }
+                  engineType.contains(
+                    EntranceConfiguration.TASK_DIAGNOSIS_ENGINE_TYPE
+                  ) && startTime != 0 && startTime < diagnosisTime && !diagnosedJobs.containsKey(
+                    job.getJobRequest.getId.toString
+                  )
+                } catch {
+                  case t: Throwable =>
+                    logger.error(s"Failed to check task for diagnosis, reason: ${t.getMessage}", t)
+                    false
+                }
+              }
+              .foreach { job =>
+                val jobId = job.getJobRequest.getId
+                try {
+                  // 检查并设置诊断标记，确保每个任务只被诊断一次
+                  diagnosedJobs.putIfAbsent(jobId.toString, true)
+                  // 调用Doctoris诊断系统
+                  logger.info(s"Start to diagnose spark job $jobId")
+                  job match {
+                    case entranceJob: EntranceJob =>
+                      // 调用doctoris实时诊断API
+                      job.getLogListener.foreach(
+                        _.onLogUpdate(
+                          job,
+                          LogUtils.generateInfo(
+                            s"Start diagnosing Spark task as task execution time exceeds 5 minutes,jobId:$jobId"
+                          )
+                        )
+                      )
+                      val response =
+                        EntranceUtils.taskRealtimeDiagnose(entranceJob.getJobRequest, null)
+                      logger.info(
+                        s"Finished to diagnose job $jobId, result: ${response.result}, reason: ${response.reason}"
+                      )
+                      // 更新诊断信息
+                      if (response.success) {
+                        // 构造诊断更新请求
+                        JobHistoryHelper.addDiagnosis(job.getJobRequest.getId, response.result)
+                        logger.info(s"Successfully updated diagnosis for job ${job.getId()}")
+                      } else {
+                        // 更新诊断失败信息
+                        JobHistoryHelper
+                          .addDiagnosis(job.getJobRequest.getId, s"Doctoris 诊断服务异常，请联系管理人员排查！")
+                      }
+                      job.getLogListener.foreach(
+                        _.onLogUpdate(
+                          job,
+                          LogUtils.generateInfo(
+                            s"Finished diagnosing task,This decision took ${response.duration} seconds"
+                          )
+                        )
+                      )
+                    case _ =>
+                      logger.warn(s"Job $jobId is not an EntranceJob, skip diagnosis")
+                  }
+                } catch {
+                  case t: Throwable =>
+                    logger.warn(s"Diagnose job ${job.getId()} failed. ${t.getMessage}", t)
+                    // 如果诊断失败，移除标记，允许重试
+                    diagnosedJobs.remove(jobId.toString)
+                }
+                logger.info("Finished to check Spark tasks for diagnosis")
+              }
+            // 定期清理diagnosedJobs，只保留未完成任务的记录
+            val undoneJobIds = undoneTask.map(_.getJobRequest.getId.toString()).toSet
+            val iterator = diagnosedJobs.keySet().iterator()
+            while (iterator.hasNext) {
+              val jobId = iterator.next()
+              if (!undoneJobIds.contains(jobId)) {
+                iterator.remove()
+              }
+            }
+            logger.info(s"Cleaned diagnosedJobs cache, current size: ${diagnosedJobs.size()}")
+          }
+        }
+      },
+      new TimeType(EntranceConfiguration.TASK_DIAGNOSIS_TIMEOUT_SCAN).toLong,
+      new TimeType(EntranceConfiguration.TASK_DIAGNOSIS_TIMEOUT_SCAN).toLong,
       TimeUnit.MILLISECONDS
     )
   }

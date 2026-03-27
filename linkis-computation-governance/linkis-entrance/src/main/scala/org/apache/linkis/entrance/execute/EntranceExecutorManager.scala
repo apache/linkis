@@ -39,8 +39,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
 
   private val idGenerator = new AtomicLong(0)
 
-  def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor]
-
   override def delete(executor: Executor): Unit = {
     if (null != executor) {
       executor.close()
@@ -92,15 +90,14 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
         job.getJobRequest match {
           case jobReq: JobRequest =>
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(jobReq.getId)
-            if (EntranceConfiguration.LINKIS_ENTRANCE_SKIP_ORCHESTRATOR) {
-              new SimpleEntranceExecutor(
-                jobReq.getId,
-                SimpleExecuteBusContext.getOrchestratorListenerBusContext()
-              )
-            } else {
-              new DefaultEntranceExecutor(jobReq.getId)
-            }
+              if (EntranceConfiguration.LINKIS_ENTRANCE_SKIP_ORCHESTRATOR) {
+                new SimpleEntranceExecutor(
+                  jobReq.getId,
+                  SimpleExecuteBusContext.getOrchestratorListenerBusContext()
+                )
+              } else {
+                new DefaultEntranceExecutor(jobReq.getId)
+              }
             // getEngineConn Executor
             job.getLogListener.foreach(
               _.onLogUpdate(
@@ -109,13 +106,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
               )
             )
             jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
-
-            /**
-             * // val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
-             * idToEngines.put(entranceEntranceExecutor.getId, entranceEntranceExecutor)
-             */
-//          instanceToEngines.put(engineConnExecutor.getServiceInstance.getInstance, entranceEntranceExecutor) // todo
-//          entranceEntranceExecutor.setInterceptors(getOrCreateInterceptors()) // todo
             entranceEntranceExecutor
           case _ =>
             throw new EntranceErrorException(

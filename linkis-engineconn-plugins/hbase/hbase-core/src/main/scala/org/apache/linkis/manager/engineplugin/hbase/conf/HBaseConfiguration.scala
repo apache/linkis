@@ -21,4 +21,8 @@ import org.apache.linkis.common.conf.CommonVars
 
 object HBaseConfiguration {
   val HBASE_CONCURRENT_LIMIT = CommonVars[Int]("linkis.engineconn.hbase.concurrent.limit", 100)
+
+  val HBASE_DEFAULT_KERBEOS_PRINCIPAL =
+    CommonVars[String]("linkis.engineconn.hbase.default.kerberos.principal", "").getValue
+
 }

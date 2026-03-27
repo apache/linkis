@@ -180,4 +180,21 @@ object LabelUtil {
     }
   }
 
+  def isTargetEngine(
+      labels: util.List[Label[_]],
+      engine: String,
+      version: String = null
+  ): Boolean = {
+    if (null == labels || StringUtils.isBlank(engine)) return false
+    val engineTypeLabel = getEngineTypeLabel(labels)
+    if (null != engineTypeLabel) {
+      val isEngineMatch = engineTypeLabel.getEngineType.equals(engine)
+      val isVersionMatch =
+        StringUtils.isBlank(version) || engineTypeLabel.getVersion.contains(version)
+      isEngineMatch && isVersionMatch
+    } else {
+      false
+    }
+  }
+
 }

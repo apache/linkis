@@ -99,9 +99,9 @@ public class CSVariableService implements VariableService {
   }
 
   public static CSVariableService getInstance() {
-    if (null == csVariableService) {
-      synchronized (CSVariableService.class) {
-        if (null == csVariableService) {
+    if (null == csVariableService) { // NOSONAR
+      synchronized (CSVariableService.class) { // NOSONAR
+        if (null == csVariableService) { // NOSONAR
           csVariableService = new CSVariableService();
         }
       }

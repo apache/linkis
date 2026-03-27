@@ -24,6 +24,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.io.IOUtils
 import org.apache.poi.ss.usermodel._
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
 import java.io._
@@ -66,6 +67,15 @@ class StorageExcelWriter(
     val headerCellStyle = workBook.createCellStyle
     headerCellStyle.setFont(headerFont)
     headerCellStyle
+  }
+
+  def getWarningStyle: CellStyle = {
+    val warningFont = workBook.createFont
+    warningFont.setBold(true)
+    warningFont.setColor(IndexedColors.RED.getIndex)
+    val warningCellStyle = workBook.createCellStyle
+    warningCellStyle.setFont(warningFont)
+    warningCellStyle
   }
 
   def getWorkBook: Workbook = {
@@ -131,6 +141,38 @@ class StorageExcelWriter(
     }
     types = columnType.toArray
     rowPoint += 1
+  }
+
+  @scala.throws[IOException]
+  def addMetaDataWithNote(metaData: MetaData, note: String): Unit = {
+    init
+    // 创建公告行（第0行）
+    val noticeRow = sheet.createRow(0)
+    val noticeCell = noticeRow.createCell(0)
+    noticeCell.setCellValue(note)
+    noticeCell.setCellStyle(getWarningStyle)
+
+    // 合并单元格（从第0列到最后一列）
+    val columns = metaData.asInstanceOf[TableMetaData].columns
+    val columnCount = columns.length
+    if (columnCount > 1) {
+      val mergeRange = new CellRangeAddress(0, 0, 0, columnCount - 1)
+      sheet.addMergedRegion(mergeRange)
+    }
+
+    // 创建表头行（第1行）
+    val tableHead = sheet.createRow(1)
+    val columnType = new ArrayBuffer[DataType]()
+    columnCounter = 0
+    for (elem <- columns) {
+      val headCell = tableHead.createCell(columnCounter)
+      headCell.setCellValue(elem.columnName)
+      headCell.setCellStyle(getDefaultHeadStyle)
+      columnType += elem.dataType
+      columnCounter += 1
+    }
+    types = columnType.toArray
+    rowPoint += 2 // 由于增加了公告行，所以行指针需要增加2（公告行和表头行）
   }
 
   @scala.throws[IOException]

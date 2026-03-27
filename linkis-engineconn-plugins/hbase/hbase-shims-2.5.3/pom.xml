@@ -98,6 +98,11 @@
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
         </exclusion>
+        <!-- 排除 hadoop-hdfs-client，避免 Hadoop 2.x 编译时找不到 -->
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs-client</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>

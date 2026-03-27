@@ -93,11 +93,13 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
 
   protected val connectionManager = new PoolingHttpClientConnectionManager
 
+  // 设置连接池参数
+  connectionManager.setMaxTotal(clientConfig.getMaxConnection)
+  connectionManager.setDefaultMaxPerRoute(clientConfig.getMaxConnection / 2)
+
   private val httpClientBuilder: HttpClientBuilder = HttpClients
     .custom()
     .setDefaultCookieStore(cookieStore)
-    .setMaxConnTotal(clientConfig.getMaxConnection)
-    .setMaxConnPerRoute(clientConfig.getMaxConnection / 2)
     .setConnectionManager(connectionManager)
 
   protected val httpClient: CloseableHttpClient = if (clientConfig.isSSL) {
@@ -611,9 +613,11 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     clientConnectInfo.put("leased", totalStats.getLeased)
     clientConnectInfo.put("avaiLabel", totalStats.getAvailable)
     clientConnectInfo.put("maxTotal", connectionManager.getMaxTotal)
+    clientConnectInfo.put("pendingCount", totalStats.getPending)
     logger.info(s"BMLClient:总最大连接数：${connectionManager.getMaxTotal}")
     logger.info(s"BMLClient:空闲连接数：${totalStats.getAvailable}")
     logger.info(s"BMLClient:活跃连接数：${totalStats.getLeased}")
+    logger.info(s"BMLClient:等待连接数：${totalStats.getPending}")
     clientConnectInfo
   }
 

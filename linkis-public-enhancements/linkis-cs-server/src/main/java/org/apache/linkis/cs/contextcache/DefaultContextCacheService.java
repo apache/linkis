@@ -166,7 +166,7 @@ public class DefaultContextCacheService implements ContextCacheService {
     } catch (Exception e) {
       logger.error(
           "Failed to getAllByScope contextID({}) of ContextScope({}) of csType({})",
-          contextID.getContextId(),
+          contextID == null ? "NULL" : contextID.getContextId(),
           scope,
           csType,
           e);

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.external.service.impl;
 
 import org.apache.linkis.manager.common.conf.RMConfiguration;
+import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 import org.apache.linkis.manager.common.exception.RMErrorException;
@@ -33,6 +34,8 @@ import org.apache.linkis.manager.rm.external.parser.ExternalResourceIdentifierPa
 import org.apache.linkis.manager.rm.external.parser.YarnResourceIdentifierParser;
 import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
+import org.apache.linkis.manager.rm.external.yarn.YarnQueueInfo;
+import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier;
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceRequester;
 import org.apache.linkis.manager.rm.utils.RMUtils;
 
@@ -44,11 +47,13 @@ import org.springframework.stereotype.Component;
 
 import java.net.ConnectException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.cache.CacheBuilder;
@@ -73,8 +78,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
   private LoadingCache<String, List<ExternalResourceProvider>> providerCache =
       CacheBuilder.newBuilder()
           .maximumSize(20)
-          .expireAfterAccess(1, TimeUnit.HOURS)
-          .refreshAfterWrite(
+          .expireAfterWrite(
               RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(), TimeUnit.MINUTES)
           .build(
               new CacheLoader<String, List<ExternalResourceProvider>>() {
@@ -140,6 +144,60 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
                 (i) -> externalResourceRequester.requestAppInfo(identifier, provider),
                 (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
     return appInfos;
+  }
+
+  @Override
+  public Map<String, NodeResource> getBatchResource(
+      ResourceType resourceType,
+      RMLabelContainer labelContainer,
+      List<ExternalResourceIdentifier> identifiers)
+      throws RMErrorException {
+    ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
+    ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
+
+    if (externalResourceRequester instanceof YarnResourceRequester) {
+      YarnResourceRequester yarnRequester = (YarnResourceRequester) externalResourceRequester;
+      List<String> queueNames =
+          identifiers.stream()
+              .map(id -> ((YarnResourceIdentifier) id).getQueueName())
+              .collect(Collectors.toList());
+
+      Map<String, YarnQueueInfo> batchResources =
+          (Map<String, YarnQueueInfo>)
+              retry(
+                  RMConfiguration.EXTERNAL_RETRY_NUM.getValue(),
+                  (i) ->
+                      yarnRequester.getBatchResources(
+                          yarnRequester.getAndUpdateActiveRmWebAddress(provider),
+                          queueNames,
+                          provider),
+                  (i) -> yarnRequester.reloadExternalResourceAddress(provider));
+
+      Map<String, NodeResource> result = new HashMap<>();
+      batchResources.forEach(
+          (queueName, queueInfo) -> {
+            CommonNodeResource nodeResource = new CommonNodeResource();
+            nodeResource.setMaxResource(queueInfo.getMaxResource());
+            nodeResource.setUsedResource(queueInfo.getUsedResource());
+            nodeResource.setMaxApps(queueInfo.getMaxApps());
+            nodeResource.setNumPendingApps(queueInfo.getNumPendingApps());
+            nodeResource.setNumActiveApps(queueInfo.getNumActiveApps());
+            result.put(queueName, nodeResource);
+          });
+      return result;
+    } else {
+      // For other resource types, fall back to individual requests
+      Map<String, NodeResource> result = new HashMap<>();
+      for (ExternalResourceIdentifier identifier : identifiers) {
+        try {
+          NodeResource resource = getResource(resourceType, labelContainer, identifier);
+          result.put(((YarnResourceIdentifier) identifier).getQueueName(), resource);
+        } catch (Exception e) {
+          logger.error("Failed to get resource for identifier " + identifier, e);
+        }
+      }
+      return result;
+    }
   }
 
   private Object retry(int retryNum, Function function, Function reloadExternalAddress)

@@ -80,14 +80,14 @@ public class TimingMonitorService implements InitializingBean, Runnable {
         LOG.warn("Executor can not is null");
         return;
       }
-      isAvailable = true;
+      isAvailable = true; // NOSONAR
       monitorServiceList.forEach(
           monitorService -> {
             if (!monitorService.isAvailable()) {
               isAvailable = false;
             }
           });
-      if (isAvailable) {
+      if (isAvailable) { // NOSONAR
         if (concurrentExecutor.isBusy())
           synchronized (EXECUTOR_STATUS_LOCKER) {
             LOG.info("monitor turn to executor status from busy to unlock");

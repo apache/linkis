@@ -155,4 +155,16 @@ object ComputationExecutorConf {
   val SUPPORT_PARTIAL_RETRY_FOR_FAILED_TASKS_ENABLED: Boolean =
     CommonVars[Boolean]("linkis.partial.retry.for.failed.task.enabled", false).getValue
 
+  val CONTEXT_STATEMENT_PREFIXES = CommonVars(
+    "linkis.engineconn.context.statement.prefixes",
+    "USE ,SET ,ALTER SESSION ,SET ROLE ,SET SCHEMA ",
+    "SQL context statement prefixes for partial retry"
+  )
+
+  val JDBC_SET_STATEMENT_PREFIXES = CommonVars(
+    "linkis.engineconn.jdbc.set.statement.prefixes",
+    "SET QUERY_TIMEOUT,SET QUERY_QUEUE_PENDING_TIMEOUT,SET NEW_PLANNER",
+    "JDBC SET statement prefixes for error index adjustment"
+  )
+
 }

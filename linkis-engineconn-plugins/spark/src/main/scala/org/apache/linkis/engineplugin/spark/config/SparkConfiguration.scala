@@ -229,6 +229,9 @@ object SparkConfiguration extends Logging {
 
   val SPARK_DRIVER_BLOCK_MANAGER_PORT = CommonVars[String]("spark.driver.blockManager.port", "")
 
+  val SPARK_PROHIBITS_DYNAMIC_RESOURCES_SWITCH =
+    CommonVars[Boolean]("linkis.spark.dynamic.resource.switch", false).getValue
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

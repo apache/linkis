@@ -147,10 +147,12 @@ public class EntranceSpringConfiguration {
       new LogPathCreateInterceptor(),
       new StorePathEntranceInterceptor(),
       new ScalaCodeInterceptor(),
+      new PythonCodeCheckInterceptor(),
       new SQLLimitEntranceInterceptor(),
       new CommentInterceptor(),
-      //      new SetTenantLabelInterceptor(),
-      new UserCreatorIPCheckInterceptor()
+      new SetTenantLabelInterceptor(),
+      new UserCreatorIPCheckInterceptor(),
+      new TaskRetryInterceptor()
     };
   }
 

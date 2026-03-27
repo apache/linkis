@@ -249,17 +249,6 @@ class TaskExecutionServiceImpl
               sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
               logger.error(message, throwable)
               sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
-            case ErrorRetryExecuteResponse(message, index, throwable) =>
-              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-              logger.error(message, throwable)
-              sendToEntrance(
-                task,
-                new ResponseTaskStatusWithExecuteCodeIndex(
-                  task.getTaskId,
-                  ExecutionNodeStatus.Failed,
-                  index
-                )
-              )
             case _ =>
           }
           LoggerUtils.removeJobIdMDC()

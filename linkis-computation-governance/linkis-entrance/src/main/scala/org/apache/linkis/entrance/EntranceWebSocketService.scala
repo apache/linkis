@@ -364,13 +364,8 @@ class EntranceWebSocketService
   }
 
   private def concatLog(length: Int, log: String, flag: StringBuilder, all: StringBuilder): Unit = {
-    if (length == 1) {
-      flag ++= log ++= "\n"
-      all ++= log ++= "\n"
-    } else {
-      flag ++= log ++= "\n"
-      all ++= log ++= "\n"
-    }
+    flag ++= log ++= "\n"
+    all ++= log ++= "\n"
   }
 
   /**

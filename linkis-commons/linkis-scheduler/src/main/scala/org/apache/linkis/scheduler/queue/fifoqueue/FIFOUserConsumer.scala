@@ -151,6 +151,7 @@ class FIFOUserConsumer(
           } else getWaitForRetryEvent
       }
     }
+
     event.foreach { case job: Job =>
       logger.info(s"event not empty ${job.getState}  id: ${job.getId()}")
       Utils.tryCatch {

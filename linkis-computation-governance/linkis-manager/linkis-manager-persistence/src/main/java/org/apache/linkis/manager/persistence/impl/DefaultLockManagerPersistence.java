@@ -68,14 +68,14 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
     }
     persistenceLock.setTimeOut(timeOut);
     String syncLocker = persistenceLock.getLockObject().intern();
-    synchronized (syncLocker) {
+    synchronized (syncLocker) { // NOSONAR
       // insert lock The order is determined by the id auto-incrementing number
       lockManagerMapper.lock(persistenceLock);
     }
     boolean isLocked = false;
     while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
       try {
-        synchronized (syncLocker) {
+        synchronized (syncLocker) { // NOSONAR
           isLocked = isAcquireLock(persistenceLock);
           if (isLocked) {
             syncLocker.notifyAll();

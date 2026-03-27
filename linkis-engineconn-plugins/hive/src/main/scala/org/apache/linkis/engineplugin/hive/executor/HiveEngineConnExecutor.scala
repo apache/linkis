@@ -277,6 +277,10 @@ class HiveEngineConnExecutor(
             }
             if (numberOfMRJobs > 0) {
               engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
+              val queueName = hiveConf.get(HiveEngineConfiguration.HIVE_QUEUE_NAME)
+              engineExecutorContext.appendStdout(
+                s"Your task will be submitted to the $queueName queue"
+              )
             }
             if (thread.isInterrupted) {
               logger.error(
@@ -696,7 +700,7 @@ class HiveEngineConnExecutor(
           currentProps.keys.foreach { key =>
             if (!hiveTmpConf.contains(key)) {
               logger.info(s"Clearing extra configuration key: $key")
-              sessionConf.set(key, "")
+              sessionConf.unset(key)
             }
           }
         } else {

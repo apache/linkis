@@ -30,7 +30,6 @@ import java.{lang, util}
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.concurrent.duration.Duration
-import scala.tools.nsc.interactive.Logger
 
 class UdfReceiver extends Receiver with Logging {
 

@@ -42,6 +42,7 @@
       <artifactId>httpmime</artifactId>
       <version>${httpmime.version}</version>
     </dependency>
+
   </dependencies>
 
   <build>

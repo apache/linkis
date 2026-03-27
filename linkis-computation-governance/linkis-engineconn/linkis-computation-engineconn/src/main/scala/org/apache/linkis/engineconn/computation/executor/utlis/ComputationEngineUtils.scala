@@ -17,11 +17,19 @@
 
 package org.apache.linkis.engineconn.computation.executor.utlis
 
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.governance.common.exception.engineconn.{
+  EngineConnExecutorErrorCode,
+  EngineConnExecutorErrorException
+}
+import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import com.google.gson.{Gson, GsonBuilder}
 
-object ComputationEngineUtils {
+object ComputationEngineUtils extends Logging {
 
   def GSON: Gson = BDPJettyServerHelper.gson
 
@@ -29,5 +37,25 @@ object ComputationEngineUtils {
 
   private val WORK_DIR_STR = "user.dir"
   def getCurrentWorkDir: String = System.getProperty(WORK_DIR_STR)
+
+  def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = {
+    Utils.tryCatch {
+      var sender: Sender = null
+      if (null != task && null != task.getCallbackServiceInstance() && null != msg) {
+        sender = Sender.getSender(task.getCallbackServiceInstance())
+        sender.send(msg)
+      } else {
+        // todo
+        logger.debug("SendtoEntrance error, cannot find entrance instance.")
+      }
+    } { t =>
+      val errorMsg = s"SendToEntrance error. $msg" + t.getCause
+      logger.error(errorMsg, t)
+      throw new EngineConnExecutorErrorException(
+        EngineConnExecutorErrorCode.SEND_TO_ENTRANCE_ERROR,
+        errorMsg
+      )
+    }
+  }
 
 }

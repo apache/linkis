@@ -17,6 +17,7 @@
 
 package org.apache.linkis.orchestrator.plans.physical
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
@@ -82,7 +83,8 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
           case job: AbstractJob =>
             val labels: util.List[Label[_]] = job.getLabels
             val codeType: String = LabelUtil.getCodeType(labels)
-            if ("aisql".equals(codeType)) {
+            // 支持 aisql 和 jdbc 类型的断点续跑
+            if ("aisql".equals(codeType) || "jdbc".equals(codeType)) {
               val params: Map[String, String] = this.rootTask.params
               var flag: Boolean = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               val startTime: Long = System.currentTimeMillis()
@@ -95,7 +97,10 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
                 flag = params.getOrElse("task.error.receiver.flag", "false").toBoolean
               }
               logger.info("task error receiver end.")
-              failedResponse.errorIndex = params.getOrElse("execute.error.code.index", "-1").toInt
+              failedResponse.errorIndex =
+                params.getOrElse(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1").toInt
+              failedResponse.aliasNum =
+                params.getOrElse(Configuration.EXECUTE_RESULTSET_ALIAS_NUM.key, "0").toInt
             }
           case _ =>
         }

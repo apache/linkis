@@ -235,7 +235,7 @@
     <!-- spring -->
     <spring-framework.version>5.3.34</spring-framework.version>
     <spring-security.version>5.7.11</spring-security.version>
-    <spring.boot.version>2.7.12</spring.boot.version>
+    <spring.boot.version>2.7.18</spring.boot.version>
     <spring-netflix.version>3.1.7</spring-netflix.version>
     <spring-cloud.version>2021.0.8</spring-cloud.version>
     <spring-cloud-alibaba.version>2021.0.6.0</spring-cloud-alibaba.version>

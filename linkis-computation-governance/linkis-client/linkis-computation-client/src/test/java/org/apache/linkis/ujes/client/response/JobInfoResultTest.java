@@ -52,26 +52,23 @@ class JobInfoResultTest {
    */
   @Test
   void shouldReturnMultiResultSetWithOrder() {
-    boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-    if (!isWindows) {
-      String[] toBeReturned =
-          new String[] {
-            "/path/to/xxxx_1.txt",
-            "/some/path/xxxx_10.txt",
+    String[] toBeReturned =
+        new String[] {
+          "/path/to/xxxx_1.txt",
+          "/some/path/xxxx_10.txt",
+          "/another/path/xxxx_0.txt",
+          "/another/path/xxxx_2.txt",
+          "/yet/another/path/xxxx_3.txt",
+        };
+    String[] setList = getResultSetList(toBeReturned);
+    assertIterableEquals(
+        Lists.newArrayList(
             "/another/path/xxxx_0.txt",
+            "/path/to/xxxx_1.txt",
             "/another/path/xxxx_2.txt",
             "/yet/another/path/xxxx_3.txt",
-          };
-      String[] setList = getResultSetList(toBeReturned);
-      assertIterableEquals(
-          Lists.newArrayList(
-              "/another/path/xxxx_0.txt",
-              "/path/to/xxxx_1.txt",
-              "/another/path/xxxx_2.txt",
-              "/yet/another/path/xxxx_3.txt",
-              "/some/path/xxxx_10.txt"),
-          Lists.newArrayList(setList));
-    }
+            "/some/path/xxxx_10.txt"),
+        Lists.newArrayList(setList));
   }
 
   private static String[] getResultSetList(String[] toBeReturned) {

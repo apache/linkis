@@ -247,37 +247,50 @@ class DefaultEngineAskEngineService
               null
           }
         }
-
-        val engineCreateRequest = new EngineCreateRequest
-        engineCreateRequest.setLabels(engineAskRequest.getLabels)
-        engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
-        engineCreateRequest.setUser(engineAskRequest.getUser)
-        engineCreateRequest.setProperties(engineAskRequest.getProperties)
-        engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
-
-        val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
-        val timeout =
-          if (engineCreateRequest.getTimeout <= 0) {
-            AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-          } else engineCreateRequest.getTimeout
-        // UseEngine requires a timeout (useEngine 需要加上超时)
-        val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
-        if (null == createEngineNode) {
-          throw new LinkisRetryException(
-            AMConstant.EM_ERROR_CODE,
-            s"create engine${createNode.getServiceInstance} success, but to use engine failed"
-          )
-        }
-        logger.info(
-          s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
-        )
-        if (null != sender) {
-          sender.send(EngineCreateSuccess(engineAskAsyncId, createEngineNode))
+        if (reuseNode != null) {
           logger.info(
-            s"Task: $taskId has sent EngineCreateSuccess($engineAskAsyncId, reuse=false) to Entrance."
+            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode"
           )
+          if (null != sender) {
+            sender.send(EngineCreateSuccess(engineAskAsyncId, reuseNode, true))
+            logger.info(
+              s"Task: $taskId has sent EngineCreateSuccess($engineAskAsyncId, reuse=true) to Entrance."
+            )
+          } else {
+            logger.warn(f"Task: $taskId will not send async using null sender.")
+          }
         } else {
-          logger.warn(s"Task: $taskId will not send async using null sender.")
+          val engineCreateRequest = new EngineCreateRequest
+          engineCreateRequest.setLabels(engineAskRequest.getLabels)
+          engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
+          engineCreateRequest.setUser(engineAskRequest.getUser)
+          engineCreateRequest.setProperties(engineAskRequest.getProperties)
+          engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
+
+          val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
+          val timeout =
+            if (engineCreateRequest.getTimeout <= 0) {
+              AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+            } else engineCreateRequest.getTimeout
+          // UseEngine requires a timeout (useEngine 需要加上超时)
+          val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
+          if (null == createEngineNode) {
+            throw new LinkisRetryException(
+              AMConstant.EM_ERROR_CODE,
+              s"create engine${createNode.getServiceInstance} success, but to use engine failed"
+            )
+          }
+          logger.info(
+            s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
+          )
+          if (null != sender) {
+            sender.send(EngineCreateSuccess(engineAskAsyncId, createEngineNode))
+            logger.info(
+              s"Task: $taskId has sent EngineCreateSuccess($engineAskAsyncId, reuse=false) to Entrance."
+            )
+          } else {
+            logger.warn(s"Task: $taskId will not send async using null sender.")
+          }
         }
       } {
         Utils.tryAndWarn {

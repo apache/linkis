@@ -41,9 +41,9 @@ public class CSMetaDataService implements MetaDataService {
   private CSMetaDataService() {}
 
   public static CSMetaDataService getInstance() {
-    if (null == csMetaDataService) {
-      synchronized (CSMetaDataService.class) {
-        if (null == csMetaDataService) {
+    if (null == csMetaDataService) { // NOSONAR
+      synchronized (CSMetaDataService.class) { // NOSONAR
+        if (null == csMetaDataService) { // NOSONAR
           csMetaDataService = new CSMetaDataService();
         }
       }

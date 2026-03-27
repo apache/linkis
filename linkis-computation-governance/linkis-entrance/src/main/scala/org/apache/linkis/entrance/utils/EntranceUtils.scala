@@ -21,9 +21,19 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, SHAUtils, Utils}
+import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
+import org.apache.linkis.datasource.client.request.{
+  GetInfoPublishedByDataSourceNameAction,
+  GetPublishedDataSourceByTypeAction
+}
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
-import org.apache.linkis.entrance.exception.EntranceRPCException
+import org.apache.linkis.entrance.exception.{
+  EntranceErrorCode,
+  EntranceErrorException,
+  EntranceRPCException
+}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{DepartmentRequest, DepartmentResponse}
 import org.apache.linkis.instance.label.client.InstanceLabelClient
@@ -157,9 +167,22 @@ object EntranceUtils extends Logging {
 
   /**
    * 动态引擎类型选择
+   * @param sql
+   *   SQL statement
+   * @param logAppender
+   *   log appender
+   * @param forceEngineType
+   *   force engine type (optional), such as "starrocks"
+   * @return
+   *   engine type
    */
-  def getDynamicEngineType(sql: String, logAppender: java.lang.StringBuilder): String = {
-    val defaultEngineType = "spark"
+  def getDynamicEngineType(
+      sql: String,
+      logAppender: java.lang.StringBuilder,
+      forceEngineType: String = null
+  ): String = {
+    // The default engine is hive for starrocks, and spark for other cases
+    val defaultEngineType = if ("starrocks".equals(forceEngineType)) "hive" else "spark"
 
     if (!EntranceConfiguration.AI_SQL_DYNAMIC_ENGINE_SWITCH) {
       return defaultEngineType
@@ -171,6 +194,11 @@ object EntranceUtils extends Logging {
     params.put("sql", sql)
     params.put("highStability", "")
     params.put("queueResourceUsage", "")
+
+    // Add force engine type parameter if specified
+    if (forceEngineType != null && forceEngineType.nonEmpty) {
+      params.put("engine", forceEngineType)
+    }
 
     val request = DoctorRequest(
       apiUrl = EntranceConfiguration.DOCTOR_DYNAMIC_ENGINE_URL,
@@ -184,6 +212,27 @@ object EntranceUtils extends Logging {
     response.result
   }
 
+  def getDatasourceByDatasourceTypeAndUser(
+      dataSourceType: String,
+      user: String,
+      proxyUser: String
+  ): DataSource = {
+    val dataSourceClient = new LinkisDataSourceRemoteClient()
+    var dataSource: DataSource = null
+    dataSource = dataSourceClient
+      .getPublishedDataSourceByType(
+        GetPublishedDataSourceByTypeAction
+          .builder()
+          .setDataSourceType(dataSourceType)
+          .setUser(user)
+          .setSystem("Linkis")
+          .setProxyUser(proxyUser)
+          .build()
+      )
+      .getDataSource
+    dataSource
+  }
+
   def dealsparkDynamicConf(
       jobRequest: JobRequest,
       logAppender: lang.StringBuilder,
@@ -192,56 +241,83 @@ object EntranceUtils extends Logging {
     // deal with spark3 dynamic allocation conf
     // 1.只有spark3需要处理动态规划参数 2.用户未指定模板名称，则设置默认值与spark底层配置保持一致，否则使用用户模板中指定的参数
     val properties = new util.HashMap[String, AnyRef]()
-    val label: EngineTypeLabel = LabelUtil.getEngineTypeLabel(jobRequest.getLabels)
     val sparkDynamicAllocationEnabled: Boolean =
       EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ENABLED
-    if (
-        sparkDynamicAllocationEnabled && label.getEngineType.equals(
-          EngineType.SPARK.toString
-        ) && label.getVersion.contains(LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue)
-    ) {
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_CORES.key,
-        EntranceConfiguration.SPARK_EXECUTOR_CORES.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY.key,
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
-        EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.key,
-        EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
-        EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
-      )
-      properties.put(
-        EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
-        EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
-      )
-      Utils.tryAndWarn {
-        val extraConfs: String =
-          EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
-        if (StringUtils.isNotBlank(extraConfs)) {
-          val confs: Array[String] = extraConfs.split(",")
-          for (conf <- confs) {
-            val confKey: String = conf.split("=")(0)
-            val confValue: String = conf.split("=")(1)
-            properties.put(confKey, confValue)
-          }
+    val isSpark3 = LabelUtil.isTargetEngine(
+      jobRequest.getLabels,
+      EngineType.SPARK.toString,
+      LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+    )
+    try {
+      if (isSpark3) {
+        if (!sparkDynamicAllocationEnabled) {
+          logger.info(s"Task :${jobRequest.getId} using user dynamic conf ")
+          // If dynamic allocation is disabled, only set python version
+          properties.put(
+            EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
+            EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
+          )
+        } else {
+          logger.info(s"Task :${jobRequest.getId} using default dynamic conf ")
+          setSparkDynamicAllocationDefaultConfs(properties, logAppender)
         }
       }
-      logAppender.append(
-        LogUtils
-          .generateInfo(s"use spark3 default conf. \n")
-      )
+    } catch {
+      case e: Exception =>
+        logger.error(
+          s"Task error :${jobRequest.getId} using default dynamic conf, message {} ",
+          e.getMessage
+        )
+        setSparkDynamicAllocationDefaultConfs(properties, logAppender)
+    } finally {
       TaskUtils.addStartupMap(params, properties)
     }
+  }
+
+  /**
+   * Set spark dynamic allocation default confs
+   */
+  private def setSparkDynamicAllocationDefaultConfs(
+      properties: util.HashMap[String, AnyRef],
+      logAppender: lang.StringBuilder
+  ): Unit = {
+    properties.put(
+      EntranceConfiguration.SPARK_EXECUTOR_CORES.key,
+      EntranceConfiguration.SPARK_EXECUTOR_CORES.getValue
+    )
+    properties.put(
+      EntranceConfiguration.SPARK_EXECUTOR_MEMORY.key,
+      EntranceConfiguration.SPARK_EXECUTOR_MEMORY.getValue
+    )
+    properties.put(
+      EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.key,
+      EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_MAX_EXECUTORS.getValue
+    )
+    properties.put(
+      EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.key,
+      EntranceConfiguration.SPARK_EXECUTOR_INSTANCES.getValue
+    )
+    properties.put(
+      EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.key,
+      EntranceConfiguration.SPARK_EXECUTOR_MEMORY_OVERHEAD.getValue
+    )
+    properties.put(
+      EntranceConfiguration.SPARK3_PYTHON_VERSION.key,
+      EntranceConfiguration.SPARK3_PYTHON_VERSION.getValue
+    )
+    Utils.tryAndWarn {
+      val extraConfs: String =
+        EntranceConfiguration.SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS
+      if (StringUtils.isNotBlank(extraConfs)) {
+        val confs: Array[String] = extraConfs.split(",")
+        for (conf <- confs) {
+          val confKey: String = conf.split("=")(0)
+          val confValue: String = conf.split("=")(1)
+          properties.put(confKey, confValue)
+        }
+      }
+    }
+    logInfo(s"use spark3 default conf. \n", logAppender)
   }
 
   /**
@@ -270,6 +346,52 @@ object EntranceUtils extends Logging {
 
     val response = callDoctorService(request, logAppender)
     (response.result.toBoolean, response.reason)
+  }
+
+  /**
+   * Spark任务实时诊断
+   */
+  def taskRealtimeDiagnose(
+      job: JobRequest,
+      logAppender: java.lang.StringBuilder
+  ): DoctorResponse = {
+    val params = new util.HashMap[String, AnyRef]()
+    val metricsParams = job.getMetrics
+    if (MapUtils.isEmpty(metricsParams)) {
+      throw new EntranceErrorException(
+        EntranceErrorCode.METRICS_PARAMS_EXCEPTION.getErrCode,
+        EntranceErrorCode.METRICS_PARAMS_EXCEPTION.getDesc
+      )
+    }
+    val yarnResource =
+      MapUtils.getMap(metricsParams, "yarnResource", new util.HashMap[String, AnyRef]())
+    if (MapUtils.isEmpty(yarnResource)) {
+      throw new EntranceErrorException(
+        EntranceErrorCode.YARN_RESOURCE_YARN_PARAMS_EXCEPTION.getErrCode,
+        EntranceErrorCode.YARN_RESOURCE_YARN_PARAMS_EXCEPTION.getDesc
+      )
+    } else {
+      var response: DoctorResponse = null
+      yarnResource.keySet().toArray.foreach { application =>
+        params.put("taskId", application)
+        params.put("engineType", LabelUtil.getEngineType(job.getLabels))
+        params.put("userId", job.getExecuteUser)
+        val msg = s"Task execution time exceeds 5m time, perform task diagnosis"
+        params.put("triggerReason", msg)
+        params.put("sparkConfig", new util.HashMap[String, AnyRef]())
+        params.put("taskName", "")
+        params.put("linkisTaskUrl", "")
+        val request = DoctorRequest(
+          apiUrl = EntranceConfiguration.DOCTOR_REALTIME_DIAGNOSE_URL,
+          params = params,
+          defaultValue = "",
+          successMessage = "Task Realtime Diagnose result",
+          exceptionMessage = "Task Realtime Diagnose exception"
+        )
+        response = callDoctorService(request, logAppender)
+      }
+      response
+    }
   }
 
   /**
@@ -412,7 +534,7 @@ object EntranceUtils extends Logging {
             reason = reason,
             duration = duration
           )
-        } else {
+        } else if (request.apiUrl.contains("engine")) {
           // 动态引擎选择API
           val engineType = dataMap.get("engine").toString
           val reason = dataMap.get("reason").toString
@@ -421,6 +543,18 @@ object EntranceUtils extends Logging {
             logAppender
           )
           DoctorResponse(success = true, result = engineType, reason = reason, duration = duration)
+        } else if (request.apiUrl.contains("realtime")) {
+          // 实时诊断API
+          val resultJson = BDPJettyServerHelper.gson.toJson(responseMapJson)
+          DoctorResponse(success = true, result = resultJson, reason = null, duration = duration)
+        } else {
+          // 默认处理
+          val result = dataMap.toString
+          logInfo(
+            s"${request.successMessage}: $result, This decision took $duration seconds",
+            logAppender
+          )
+          DoctorResponse(success = true, result = result, duration = duration)
         }
       } else {
         throw new EntranceRPCException(
@@ -437,10 +571,12 @@ object EntranceUtils extends Logging {
   }
 
   /**
-   * 记录日志信息
+   * 管理台任务日志info信息打印
    */
   private def logInfo(message: String, logAppender: java.lang.StringBuilder): Unit = {
-    logAppender.append(LogUtils.generateInfo(s"$message\n"))
+    if (null != logAppender) {
+      logAppender.append(LogUtils.generateInfo(s"$message\n"))
+    }
   }
 
 }

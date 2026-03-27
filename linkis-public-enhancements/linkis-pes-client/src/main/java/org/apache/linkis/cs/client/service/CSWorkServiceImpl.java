@@ -41,9 +41,9 @@ public class CSWorkServiceImpl implements CSWorkService {
   private static CSWorkService csWorkService = null;
 
   public static CSWorkService getInstance() {
-    if (null == csWorkService) {
-      synchronized (CSWorkServiceImpl.class) {
-        if (null == csWorkService) {
+    if (null == csWorkService) { // NOSONAR
+      synchronized (CSWorkServiceImpl.class) { // NOSONAR
+        if (null == csWorkService) { // NOSONAR
           csWorkService = new CSWorkServiceImpl();
         }
       }

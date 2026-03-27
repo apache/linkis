@@ -27,7 +27,6 @@
   <artifactId>linkis-metadata-query-service-jdbc</artifactId>
 
   <properties>
-    <postgresql.version>42.3.8</postgresql.version>
     <clickhouse.version>0.4.6</clickhouse.version>
   </properties>
 

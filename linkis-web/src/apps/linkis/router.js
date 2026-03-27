@@ -282,6 +282,16 @@ export default [
       },
     }] : []),
     {
+      name: 'pythonModule',
+      path: 'pythonModule',
+      component: () =>
+        import('./module/pythonModule/index.vue'),
+      meta: {
+        title: 'pythonModule',
+        publicPage: true,
+      },
+    },
+    {
       name: 'datasourceAccess',
       path: 'datasourceAccess',
       component: () =>

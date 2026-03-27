@@ -34,7 +34,7 @@ public class LabelCommonConfig {
       CommonVars.apply("wds.linkis.label.entity.packages", "");
 
   public static final CommonVars<String> SPARK_ENGINE_VERSION =
-      CommonVars.apply("wds.linkis.spark.engine.version", "3.2.1");
+      CommonVars.apply("wds.linkis.spark.engine.version", "2.4.3");
   public static final String SPARK3_ENGINE_VERSION_CONF = "sparkVersion";
   public static final String SPARK_ENGINE_HOME_CONF = "SPARK_HOME";
   public static final String SPARK_ENGINE_CMD_CONF = "SPARK_CMD";
@@ -64,7 +64,7 @@ public class LabelCommonConfig {
   public static final CommonVars<String> SPARK_ENGINE_CONFIG =
       CommonVars.apply("linkis.spark.engine.config", "/appcom/config/spark-config/spark-submit");
   public static final CommonVars<String> HIVE_ENGINE_VERSION =
-      CommonVars.apply("wds.linkis.hive.engine.version", "3.1.3");
+      CommonVars.apply("wds.linkis.hive.engine.version", "2.3.3");
 
   public static final CommonVars<String> PYTHON_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.python.engine.version", "python2");

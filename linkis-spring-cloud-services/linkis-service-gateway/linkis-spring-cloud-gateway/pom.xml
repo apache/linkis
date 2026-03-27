@@ -48,6 +48,10 @@
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-starter-gateway</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-core-asl</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -97,7 +101,16 @@
           <groupId>io.projectreactor.netty</groupId>
           <artifactId>reactor-netty</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>io.projectreactor.netty</groupId>
+          <artifactId>reactor-netty-http</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.projectreactor.netty</groupId>
+      <artifactId>reactor-netty-http</artifactId>
+      <version>${reactor-netty-http.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

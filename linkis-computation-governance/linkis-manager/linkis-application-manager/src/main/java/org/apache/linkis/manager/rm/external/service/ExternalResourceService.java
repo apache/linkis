@@ -50,6 +50,12 @@ public interface ExternalResourceService {
       ExternalResourceIdentifier identifier)
       throws RMErrorException;
 
+  Map<String, NodeResource> getBatchResource(
+      ResourceType resourceType,
+      RMLabelContainer labelContainer,
+      List<ExternalResourceIdentifier> identifiers)
+      throws RMErrorException;
+
   ExternalResourceProvider chooseProvider(
       ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException;
 }

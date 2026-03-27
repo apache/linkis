@@ -121,18 +121,15 @@ class SparkSqlExecutor(
         )
       )
 
-      if (engineExecutionContext.isEnableDirectPush) {
-        submitResultSetIterator(lastTask.getTaskId, df)
-      } else {
-        SQLSession.showDF(
-          sparkEngineSession.sparkContext,
-          jobGroup,
-          df,
-          null,
-          SparkConfiguration.SHOW_DF_MAX_RES.getValue,
-          engineExecutionContext
-        )
-      }
+      // Direct push feature removed, use standard showDF
+      SQLSession.showDF(
+        sparkEngineSession.sparkContext,
+        jobGroup,
+        df,
+        null,
+        SparkConfiguration.SHOW_DF_MAX_RES.getValue,
+        engineExecutionContext
+      )
 
       // Stop capturing Spark metrics and output the records to the specified file.
       sparkMeasure.foreach { measure =>

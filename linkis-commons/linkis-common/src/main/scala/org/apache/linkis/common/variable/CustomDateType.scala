@@ -79,20 +79,12 @@ class CustomMonthType(date: String, std: Boolean = true, isEnd: Boolean = false)
 
   def -(months: Int): String = {
     val dateFormat = DateTypeUtils.dateFormatLocal.get()
-    if (std) {
-      DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
-    } else {
-      DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
-    }
+    DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
   }
 
   def +(months: Int): String = {
     val dateFormat = DateTypeUtils.dateFormatLocal.get()
-    if (std) {
-      DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
-    } else {
-      DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
-    }
+    DateTypeUtils.getMonth(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
   }
 
   override def toString: String = {
@@ -111,20 +103,12 @@ class CustomMonType(date: String, std: Boolean = true, isEnd: Boolean = false) {
 
   def -(months: Int): String = {
     val dateFormat = DateTypeUtils.dateFormatMonLocal.get()
-    if (std) {
-      DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
-    } else {
-      DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
-    }
+    DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), -months))
   }
 
   def +(months: Int): String = {
     val dateFormat = DateTypeUtils.dateFormatMonLocal.get()
-    if (std) {
-      DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
-    } else {
-      DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
-    }
+    DateTypeUtils.getMon(std, isEnd, DateUtils.addMonths(dateFormat.parse(date), months))
   }
 
   override def toString: String = {

@@ -24,6 +24,7 @@ import org.apache.linkis.manager.label.entity.SerializableLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class BindEngineLabel extends GenericLabel implements JobStrategyLabel {
 
@@ -68,6 +69,11 @@ public class BindEngineLabel extends GenericLabel implements JobStrategyLabel {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
   }
 
   @ValueSerialNum(0)

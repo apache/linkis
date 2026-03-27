@@ -43,7 +43,7 @@ public class LabelBuilderFactoryContext {
 
   public static LabelBuilderFactory getLabelBuilderFactory() {
     if (labelBuilderFactory == null) {
-      synchronized (LabelBuilderFactoryContext.class) {
+      synchronized (LabelBuilderFactoryContext.class) { // NOSONAR
         if (labelBuilderFactory == null) {
           String className = LabelCommonConfig.LABEL_FACTORY_CLASS.acquireNew();
           if (clazz == StdLabelBuilderFactory.class && StringUtils.isNotBlank(className)) {

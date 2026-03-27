@@ -28,7 +28,7 @@ import org.apache.linkis.common.variable.DateTypeUtils.{
   getYesterday
 }
 
-import org.apache.commons.lang3.{Strings, StringUtils}
+import org.apache.commons.lang3.StringUtils
 
 import java.time.ZonedDateTime
 import java.util
@@ -122,9 +122,7 @@ object VariableUtils extends Logging {
           case _ =>
             if (!nameAndType.contains(key) && StringUtils.isNotEmpty(value)) {
 //              if ((allCatch opt value.toDouble).isDefined) {
-              if (
-                  (allCatch opt BigDecimal(value)).isDefined && !Strings.CS.startsWith(value, "0")
-              ) {
+              if ((allCatch opt BigDecimal(value)).isDefined && !value.startsWith("0")) {
                 nameAndType(key) = variable.BigDecimalValue(BigDecimal(value))
               } else {
                 nameAndType(key) = variable.StringType(value)

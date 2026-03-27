@@ -173,7 +173,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   protected def getCommandArgs: Array[String] = {
     if (
         request.creationDesc.properties.asScala.exists { case (k, v) =>
-          k.contains(" ")
+          k.contains(" ") || (v != null && v.contains(" "))
         }
     ) {
       throw new ErrorException(

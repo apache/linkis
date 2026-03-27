@@ -18,6 +18,7 @@
 package org.apache.linkis.protocol.util;
 
 import java.util.AbstractMap;
+import java.util.Objects;
 
 public class ImmutablePair<K, V> {
 
@@ -51,6 +52,11 @@ public class ImmutablePair<K, V> {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(entry);
   }
 
   private boolean eq(Object o1, Object o2) {

@@ -290,4 +290,13 @@ public interface DataSourceInfoService {
    * @return
    */
   boolean existDataSourceEnv(String dataSourceEnvName);
+
+  /**
+   * Get published data source by type and proxy user
+   *
+   * @param dataSourceType data source type
+   * @param proxyUser proxy user
+   * @return data source entity
+   */
+  DataSource getPublishedDataSourceByType(String dataSourceType, String proxyUser);
 }

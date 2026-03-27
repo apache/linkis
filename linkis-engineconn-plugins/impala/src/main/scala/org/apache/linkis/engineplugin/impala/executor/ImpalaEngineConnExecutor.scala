@@ -19,10 +19,6 @@ package org.apache.linkis.engineplugin.impala.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.common.password.{
-  CommandPasswordCallback,
-  StaticPasswordCallback
-}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -45,6 +41,10 @@ import org.apache.linkis.engineplugin.impala.client.thrift.{
 }
 import org.apache.linkis.engineplugin.impala.conf.ImpalaConfiguration._
 import org.apache.linkis.engineplugin.impala.conf.ImpalaEngineConfig
+import org.apache.linkis.engineplugin.impala.password.{
+  CommandPasswordCallback,
+  StaticPasswordCallback
+}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -204,7 +204,7 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
       var row: Row = resultSet.next()
       while (row != null) {
-        val record = new TableRecord(row.getValues)
+        val record = new TableRecord(row.getValues.asInstanceOf[Array[Any]])
         resultSetWriter.addRecord(record)
         rows += 1
         row = resultSet.next()

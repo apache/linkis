@@ -19,6 +19,8 @@ package org.apache.linkis.rpc.transform
 
 import org.apache.linkis.common.exception.ExceptionManager
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_CLASS_ILLEGAL
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_NOT_FOUND
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_TO_INITIALIZE
 import org.apache.linkis.rpc.exception.DWCURIException
@@ -50,7 +52,19 @@ private[linkis] object RPCConsumer {
           if (data.isEmpty) return BoxedUnit.UNIT
           val objectStr = data.get(OBJECT_VALUE).toString
           val objectClass = data.get(CLASS_VALUE).toString
+          val isRequestProtocol = data.get(IS_REQUEST_PROTOCOL_CLASS).toString
           logger.debug("The corresponding anti-sequence is class {}", objectClass)
+          if (
+              RPCConfiguration.ENABLE_RPC_OBJECT_PREFIX_WHITE_LIST_CHECK && "true".equals(
+                isRequestProtocol
+              ) && !RPCConfiguration.RPC_OBJECT_PREFIX_WHITE_LIST
+                .exists(prefix => objectClass.startsWith(prefix))
+          ) {
+            throw new DWCURIException(
+              CORRESPONDING_CLASS_ILLEGAL.getErrorCode,
+              MessageFormat.format(CORRESPONDING_CLASS_ILLEGAL.getErrorDesc, objectClass)
+            )
+          }
           val clazz = Utils.tryThrow(Class.forName(objectClass)) {
             case _: ClassNotFoundException =>
               new DWCURIException(

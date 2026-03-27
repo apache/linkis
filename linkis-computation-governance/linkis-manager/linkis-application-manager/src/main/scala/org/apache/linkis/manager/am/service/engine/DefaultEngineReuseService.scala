@@ -236,7 +236,6 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         StringUtils.isNotBlank(templateName) && AMConfiguration.EC_REUSE_WITH_TEMPLATE_RULE_ENABLE
     ) {
       engineScoreList = engineScoreList
-        .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
         .filter(engine => {
           val oldTemplateName: String =
             getValueByKeyFromProps(confTemplateNameKey, parseParamsToMap(engine.getParams))
@@ -276,7 +275,6 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
 
         // 过滤掉资源不满足的引擎
         engineScoreList = engineScoreList
-          .filter(engine => engine.getNodeStatus == NodeStatus.Unlock)
           .filter(engine => {
             val enginePythonVersion: String = getPythonVersion(parseParamsToMap(engine.getParams))
             var pythonVersionMatch: Boolean = true
@@ -383,20 +381,29 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           .toJson(engine) + " from engineLabelMap : " + AMUtils.GSON.toJson(instances)
       )
     }
-    if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
-      val engineNode =
-        ecResourceInfoService.getECResourceInfoRecordByInstance(
-          engine.getServiceInstance.getInstance
-        )
-      // 异步更新 metrics
-      AMUtils.updateMetricsAsync(
-        taskId,
-        engineNode.getTicketId,
-        engineNode.getServiceInstance,
-        engineNode.getEcmInstance,
-        engineNode.getLogDirSuffix,
-        isReuse = true
-      )
+    Utils.tryCatch {
+      if (Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue) {
+        val engineNode =
+          ecResourceInfoService.getECResourceInfoRecordByInstance(
+            engine.getServiceInstance.getInstance
+          )
+        if (null != engineNode) {
+          // 异步更新 metrics
+          AMUtils.updateMetricsAsync(
+            taskId,
+            engineNode.getTicketId,
+            engineNode.getServiceInstance,
+            engineNode.getEcmInstance,
+            engineNode.getLogDirSuffix,
+            isReuse = true
+          )
+        } else {
+          logger.info(s"ReuseEngine:Failed to update metrics for engineNode: $engineNode")
+        }
+
+      }
+    } { case e: Exception =>
+      logger.error(s"Failed to update metrics for taskId: $taskId", e)
     }
     engine
   }

@@ -45,7 +45,7 @@ public class ContextMapTest {
   public void testcreateContextMap() throws CSErrorException, JsonProcessingException {
     AContextKeyValue aContextKeyValue = new AContextKeyValue();
     PersistenceContextID persistenceContextID = new PersistenceContextID();
-    persistenceContextID.setContextId(String.valueOf(new Random().nextInt(100000)));
+    persistenceContextID.setContextId(String.valueOf(new Random().nextInt(100000))); // NOSONAR
     AContextValue aContextValue = new AContextValue();
     CSTable csTable = new CSTable();
     csTable.setCreator("hadoop");

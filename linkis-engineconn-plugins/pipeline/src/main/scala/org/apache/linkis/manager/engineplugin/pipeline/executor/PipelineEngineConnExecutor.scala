@@ -30,12 +30,14 @@ import org.apache.linkis.manager.common.entity.resource.{
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
 import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.storage.conf.LinkisStorageConf
 
 import java.util
 
@@ -66,11 +68,25 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
       newOptions.put(keyAndValue._1, keyAndValue._2.toString)
     }
     newOptions.asScala.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
-    val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
+
+    // Regex patterns for Pipeline syntax
+    val regexWithMask = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s+without\\s+\"([^\"]+)\"\\s*".r
+    val regexNormal = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s*".r
+
     try {
       thread = Thread.currentThread()
       code match {
-        case regex(sourcePath, destPath) =>
+        case regexWithMask(sourcePath, destPath, maskedFields) =>
+          logger.info(s"Pipeline execution with field masking: $maskedFields")
+          val enhancedOptions = new util.HashMap[String, String](newOptions)
+          if (LinkisStorageConf.FIELD_MASKED_ENABLED) {
+            enhancedOptions.put(PipeLineConstant.PIPELINE_MASKED_CONF, maskedFields)
+          }
+          PipelineExecutorSelector
+            .select(sourcePath, destPath, enhancedOptions.asInstanceOf[util.Map[String, String]])
+            .execute(sourcePath, destPath, engineExecutorContext)
+        case regexNormal(sourcePath, destPath) =>
+          logger.info("Pipeline execution without field masking")
           PipelineExecutorSelector
             .select(sourcePath, destPath, newOptions.asInstanceOf[util.Map[String, String]])
             .execute(sourcePath, destPath, engineExecutorContext)

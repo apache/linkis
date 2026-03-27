@@ -17,7 +17,11 @@
 
 package org.apache.linkis.governance.common.protocol.job
 
-import org.apache.linkis.governance.common.entity.job.{JobAiRequest, JobRequest}
+import org.apache.linkis.governance.common.entity.job.{
+  JobAiRequest,
+  JobDiagnosisRequest,
+  JobRequest
+}
 import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.protocol.message.RequestProtocol
 
@@ -39,6 +43,8 @@ case class JobReqQuery(jobReq: JobRequest) extends JobReq
 case class JobReqReadAll(jobReq: JobRequest) extends JobReq
 
 case class JobAiReqInsert(jobReq: JobAiRequest) extends JobReq
+
+case class JobDiagnosisReqInsert(jobReq: JobDiagnosisRequest) extends JobReq
 
 class RequestOneJob extends JobReq {
 

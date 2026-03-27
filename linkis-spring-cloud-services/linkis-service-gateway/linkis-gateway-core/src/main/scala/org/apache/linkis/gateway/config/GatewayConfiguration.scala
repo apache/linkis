@@ -138,6 +138,7 @@ object GatewayConfiguration {
   val PROHIBIT_LOGIN_SWITCH = CommonVars("linkis.system.user.prohibit.login.switch", false)
 
   val PROHIBIT_LOGIN_PREFIX =
-    CommonVars("linkis.system.user.prohibit.login.prefix", "hduser,shduser").getValue.toLowerCase()
+    CommonVars("linkis.system.user.prohibit.login.prefix", "hduser,shduser,hadoop").getValue
+      .toLowerCase()
 
 }

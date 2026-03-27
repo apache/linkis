@@ -31,3 +31,5 @@ class ResponsePythonModuleProtocol(val pythonModules: java.util.List[PythonModul
   }
 
 }
+
+case class ResponsePythonInfo(pythonModuleInfoVO: PythonModuleInfoVO) extends PythonModuleProtocol

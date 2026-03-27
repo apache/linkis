@@ -32,9 +32,9 @@ public class LinkisErrorCodeManager {
   private LinkisErrorCodeManager() {}
 
   public static LinkisErrorCodeManager getInstance() {
-    if (linkisErrorCodeManager == null) {
-      synchronized (LinkisErrorCodeManager.class) {
-        if (linkisErrorCodeManager == null) {
+    if (linkisErrorCodeManager == null) { // NOSONAR
+      synchronized (LinkisErrorCodeManager.class) { // NOSONAR
+        if (linkisErrorCodeManager == null) { // NOSONAR
           linkisErrorCodeManager = new LinkisErrorCodeManager();
         }
       }

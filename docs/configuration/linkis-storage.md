@@ -29,4 +29,4 @@
 |linkis-storage|wds.linkis.fs.hdfs.impl.disable.cache|  false |disable.cache |true|
 |linkis-storage|wds.linkis.hdfs.rest.errs|  |rest.errs|true|
 |linkis-storage|wds.linkis.resultset.row.max.str | 2m  | max.str |true|
-|linkis-storage|wds.linkis.storage.file.type | dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql | file.type |true|
+|linkis-storage|wds.linkis.storage.file.type | dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql,txt | file.type |true|

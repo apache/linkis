@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +22,7 @@ if [ "$LINKIS_HOME" = "" ]; then
   export LINKIS_HOME=$INSTALL_HOME
 fi
 if [ "$LINKIS_LOG_DIR" = "" ]; then
-  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+  export LINKIS_LOG_DIR="/data/logs/bdpe-ujes"
 fi
 ecmPid=`cat $LINKIS_HOME/pid/linkis_cg-engineconnmanager.pid`
 month=`date '+%Y-%m'`
@@ -46,7 +46,8 @@ function kill_proc_by_pid() {
     cnt=0
     MAX_RETRY=6
     if [ "${killProcessPID}" != "${ecmPid}" ]; then
-        pkill -TERM -P ${killProcessPID}
+        #pkill -TERM -P ${killProcessPID}
+        kill -- -$(ps -o pgid "$killProcessPID" | grep [0-9] | tr -d ' ')
         while ps -p ${killProcessPID} > /dev/null && [ $cnt -lt $MAX_RETRY ]
         do
             kill -15 ${killProcessPID}

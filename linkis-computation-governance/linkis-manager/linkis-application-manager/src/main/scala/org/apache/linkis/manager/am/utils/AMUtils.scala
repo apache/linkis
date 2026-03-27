@@ -44,10 +44,15 @@ import java.io.File
 import java.util
 
 import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContextExecutorService
 
 import com.google.gson.JsonObject
 
 object AMUtils extends Logging {
+
+  // 优化：线程池复用，线程数设置为5
+  private implicit val updateMetricsExecutor: ExecutionContextExecutorService =
+    Utils.newCachedExecutionContext(5, "UpdateMetrics-Thread-")
 
   lazy val GSON = BDPJettyServerHelper.gson
 
@@ -409,14 +414,15 @@ object AMUtils extends Logging {
     import scala.concurrent.Future
     import scala.util.{Failure, Success}
 
+    // 优化：使用复用的线程池，线程数设置为5
     Future {
       updateMetrics(taskId, resourceTicketId, emInstance, ecmInstance, engineLogPath, isReuse)
-    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-")).onComplete {
+    }(updateMetricsExecutor).onComplete {
       case Success(_) =>
         logger.debug(s"Task: $taskId metrics update completed successfully for engine: $emInstance")
       case Failure(t) =>
         logger.warn(s"Task: $taskId metrics update failed for engine: $emInstance", t)
-    }(Utils.newCachedExecutionContext(1, "UpdateMetrics-Thread-"))
+    }(updateMetricsExecutor)
   }
 
 }

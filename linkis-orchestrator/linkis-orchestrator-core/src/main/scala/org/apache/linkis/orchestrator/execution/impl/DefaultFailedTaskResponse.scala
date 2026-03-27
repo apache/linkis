@@ -25,10 +25,15 @@ class DefaultFailedTaskResponse(errorMsg: String, errorCode: Int, throwable: Thr
     extends FailedTaskResponse {
 
   private var _errorIndex: Int = -1
+  private var _aliasNum: Int = 0
 
   def errorIndex: Int = _errorIndex
 
   def errorIndex_=(value: Int): Unit = _errorIndex = value
+
+  def aliasNum: Int = _aliasNum
+
+  def aliasNum_=(value: Int): Unit = _aliasNum = value
 
   override def getCause: Throwable = throwable
 

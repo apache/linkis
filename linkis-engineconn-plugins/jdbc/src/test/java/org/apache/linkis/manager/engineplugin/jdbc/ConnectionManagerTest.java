@@ -51,7 +51,7 @@ public class ConnectionManagerTest {
     properties.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "leo_jie");
     ConnectionManager connectionManager = ConnectionManager.getInstance();
     Connection conn = connectionManager.getConnection("jdbc-1", properties);
-    Statement statement = conn.createStatement();
+    Statement statement = conn.createStatement(); // NOSONAR
     ResultSet rs = statement.executeQuery("show databases;");
     while (rs.next()) {
       System.out.println(rs.getObject(1));

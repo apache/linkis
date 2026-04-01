@@ -1702,7 +1702,7 @@
 
         <!-- Other -->
         <poi.version>5.3.0</poi.version>
-        <jline.version>3.9.0</jline.version>
+        <jline.version>2.14.6</jline.version>
         <woodstox.version>6.4.0</woodstox.version>
         <sparkmeasure.version>0.24</sparkmeasure.version>
         <flink.version>1.16.2</flink.version>

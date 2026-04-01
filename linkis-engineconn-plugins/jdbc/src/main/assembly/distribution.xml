@@ -38,8 +38,7 @@
             <useTransitiveFiltering>true</useTransitiveFiltering>
 
             <excludes>
-                <exclude>org.apache.hbase:hbase-shaded-jetty:jar</exclude>
-                <exclude>org.apache.hbase:hbase-protocol-shaded:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-*:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

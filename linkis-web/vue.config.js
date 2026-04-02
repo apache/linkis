@@ -31,6 +31,10 @@ const getVersion = () => {
 // 指定module打包, 不指定则打包全部子应用
 // npm run serve --module=scriptis
 let modules = process.env.npm_config_module || ''
+// python_module feature toggle: default enabled, use PYTHON_MODULE=false to disable
+// Usage: PYTHON_MODULE=false npm run build
+// Note: npm 7+ converts npm_config_python_module to npm_config_python-module
+const enablePythonModule = process.env.PYTHON_MODULE !== 'false' && process.env.npm_config_python_module !== 'false' && process.env.npm_config_python_module !== 'false'
 if (modules) {
   modules = modules.split(',')
   Object.keys(apps).forEach(m => {
@@ -81,7 +85,11 @@ const virtualModules = new VirtualModulesPlugin({
     requireComponent: [${requireComponent.join(',')}],
     requireComponentVue: [${requireComponentVue.join(',')}],
     microModule: ${JSON.stringify(process.env.npm_config_micro_module) || false},
-    headers:{${headers.join(',')}}
+    headers:{${headers.join(',')}},
+    enablePythonModule: ${enablePythonModule}
+  };`,
+  'node_modules/python-module-config.js': `module.exports = {
+    enablePythonModule: ${enablePythonModule}
   };`
 });
 

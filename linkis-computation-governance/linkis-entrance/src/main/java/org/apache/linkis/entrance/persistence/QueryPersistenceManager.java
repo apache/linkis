@@ -167,7 +167,9 @@ public class QueryPersistenceManager extends PersistenceManager {
     AtomicBoolean canRetry = new AtomicBoolean(false);
     String retryNumKey = EntranceConfiguration.RETRY_NUM_KEY().key();
 
-    if (engineType.equals(EngineType.JDBC().toString()) && StringUtils.isNotBlank(errorDescRegex)) {
+    if (((Boolean) EntranceConfiguration.TASK_RETRY_SWITCH().getValue())
+        && engineType.equals(EngineType.JDBC().toString())
+        && StringUtils.isNotBlank(errorDescRegex)) {
       // JDBC执行正则匹配
       for (String regex : errorDescRegex.split(",")) {
         String trimmedRegex = regex.trim();

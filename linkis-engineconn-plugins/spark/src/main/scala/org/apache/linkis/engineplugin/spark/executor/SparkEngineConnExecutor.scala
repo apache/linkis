@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.executor
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -53,10 +54,11 @@ import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
-import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineType}
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.linkis.server.toJavaMap
@@ -69,6 +71,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+import scala.util.matching.Regex
 
 abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     extends ComputationExecutor
@@ -120,11 +123,10 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     }
     val kind: Kind = getKind
     var preCode = code
-
+    val engineContext = EngineConnObject.getEngineCreationContext
     val isFirstParagraph = (engineExecutorContext.getCurrentParagraph == 1)
     if (isFirstParagraph == true) {
       var yarnUrl = ""
-      val engineContext = EngineConnObject.getEngineCreationContext
       if (null != engineContext) {
         engineContext
           .getLabels()
@@ -200,6 +202,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     //    val executeCount = queryNum.get().toInt - 1
     logger.info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
+
+    // Set spark executor params to executor side
+    Utils.tryAndWarn(setSparkExecutorParams(sc, engineContext))
 
     // print job configuration, only the first paragraph or retry
     val errorIndex: Integer = Integer.valueOf(
@@ -277,6 +282,78 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     } else {
       executeHook.getClass.getName
     }
+  }
+
+  /**
+   * Set spark params to executor side via setLocalProperty Note: Only supported in Spark 3.4+
+   * engine
+   *
+   * @param sc
+   *   SparkContext
+   */
+  private def setSparkExecutorParams(
+      sc: SparkContext,
+      engineContext: EngineCreationContext
+  ): Unit = {
+    if (!SparkConfiguration.SPARK_EXECUTOR_PARAMS_ENABLED.getValue) {
+      logger.info("Spark executor params setting is disabled")
+      return
+    }
+
+    if (null == engineContext) {
+      logger.info("Skip Spark executor params setting: engineContext is null")
+      return
+    }
+    // Check if this is Spark3 engine using LabelUtil
+    val isSpark3 = LabelUtil.isTargetEngine(
+      engineContext.getLabels(),
+      EngineType.SPARK.toString,
+      LabelCommonConfig.SPARK3_ENGINE_VERSION.getValue
+    )
+
+    if (!isSpark3) {
+      logger.info(s"Spark executor params setting is only supported in Spark3 engine")
+      return
+    }
+
+    val excludeParams = SparkConfiguration.SPARK_EXECUTOR_PARAMS_EXCLUDE.getValue
+      .split(",")
+      .map(_.trim)
+      .filter(_.nonEmpty)
+      .toSet
+
+    var totalParams = 0
+    var skippedParams = 0
+    var successCount = 0
+    var failCount = 0
+    logger.info(s"Spark executor params setting begin")
+    this
+      .asInstanceOf[SparkSqlExecutor]
+      .getSparkEngineSession
+      .sparkSession
+      .sessionState
+      .conf
+      .getAllConfs
+      .foreach { case (key, value) =>
+        totalParams += 1
+        if (excludeParams.contains(key)) {
+          logger.info(s"Spark executor params $key will be excluded and will not be set.")
+          skippedParams += 1
+        } else {
+          Utils.tryCatch {
+            sc.setLocalProperty(key, value)
+            successCount += 1
+          } { case e: Exception =>
+            logger.warn(s"Failed to set spark param: $key, error: ${e.getMessage}", e)
+            failCount += 1
+          }
+        }
+      }
+
+    logger.info(
+      s"Spark executor params setting completed - total: $totalParams, " +
+        s"skipped: $skippedParams, success: $successCount, failed: $failCount"
+    )
   }
 
   override def executeCompletely(

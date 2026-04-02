@@ -123,6 +123,13 @@
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
                 <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-jetty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-jersey:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-gson:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-netty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-protobuf:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-miscellaneous:jar</exclude>
+                <exclude>org.apache.hbase:hbase-protocol-shaded:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>

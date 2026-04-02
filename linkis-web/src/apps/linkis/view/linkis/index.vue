@@ -30,17 +30,17 @@
             <CellGroup v-for="(item, index2) in sideNavList.children" :key="index2"
               @on-click="handleCellClick">
               <Cell
-                v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true"
+                v-if="(item.key !== '1-13' || isPythonModuleEnabled) && (!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-12'):true)"
                 :key="index2" :class="{ crrentItem: crrentItem === item.key }" :title="item.name"
                 :name="item.key">
                 <div>
                   <span>{{item.name}}</span>
                   <div class="sub-menu-row">
                     <Icon
-                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
+                      v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || (item.key === '1-13' && isPythonModuleEnabled))"
                       type="ios-arrow-down" class="user-icon" />
                     <Icon
-                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || item.key === '1-13')"
+                      v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10' || item.key === '1-12' || (item.key === '1-13' && isPythonModuleEnabled))"
                       type="ios-arrow-up" class="user-icon" />
                   </div>
                 </div>
@@ -51,7 +51,7 @@
                       v-for="(item3, index3) in getChildMap(item.key).children"
                       :key="index3" @on-click="clickToRoute">
                       <div
-                        v-if="isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7', '1-13-1'].includes(item3.key)">
+                        v-if="(item.key !== '1-13' || isPythonModuleEnabled) && (isLogAdmin ? true : ['1-8-1', '1-9-2', '1-9-1', '1-10-7'].includes(item3.key))">
                         <Cell :key="index3" :class="{ crrentItem: crrentItem === item3.key }"
                           :title="item3.name" :name="item3.key" />
                       </div>
@@ -116,6 +116,7 @@
 <script>
 import storage from '@/common/helper/storage'
 import api from '@/common/service/api'
+import { isPythonModuleEnabled } from '../../router'
 export default {
   name: 'Layout',
   mounted() {
@@ -128,9 +129,12 @@ export default {
       }
     })
     if(!localStorage.getItem('hasRead')) {
-      this.clickToRoute('1-13-1')
-      // this.crrentItem = '1-13-1'
-      // this.$router.push({path: '/console/pythonModule'})
+      // Redirect based on pythonModule feature toggle
+      if (isPythonModuleEnabled) {
+        this.clickToRoute('1-13-1')
+      } else {
+        this.clickToRoute('1-1')
+      }
     }
   },
   unmounted() {
@@ -147,6 +151,7 @@ export default {
     return {
       crrentItem: '1-1',
       isLogAdmin: false,
+      isPythonModuleEnabled: isPythonModuleEnabled,
       sideNavList: {
         key: '1',
         name: this.$t('message.linkis.sideNavList.function.name'),
@@ -596,7 +601,9 @@ export default {
         })
 
         next((vm) => {
-          const noAccess = !isLogAdmin && !['1-1', '1-2', '1-3', '1-4', '1-8-1', '1-9-1', '1-9-2', '1-10-7', '1-11'].includes(lastActiveConsole?.key)
+          // Check if pythonModule is disabled and lastActiveConsole was pythonModule
+          const pythonModuleDisabled = !isPythonModuleEnabled && lastActiveConsole?.key === '1-13-1'
+          const noAccess = pythonModuleDisabled || (!isLogAdmin && !['1-1', '1-2', '1-3', '1-4', '1-8-1', '1-9-1', '1-9-2', '1-10-7', '1-11'].includes(lastActiveConsole?.key))
           if (lastActiveConsole && !noAccess ) {
             if (
               lastActiveConsole?.key === '1-9-1' ||

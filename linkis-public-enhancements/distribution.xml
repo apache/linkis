@@ -154,6 +154,28 @@
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
                 <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <exclude>org.apache.hbase:hbase-asyncfs:jar</exclude>
+                <exclude>org.apache.hbase:hbase-client:jar</exclude>
+                <exclude>org.apache.hbase:hbase-common:jar</exclude>
+                <exclude>org.apache.hbase:hbase-hadoop2-compat:jar</exclude>
+                <exclude>org.apache.hbase:hbase-hadoop-compat:jar</exclude>
+                <exclude>org.apache.hbase:hbase-http:jar</exclude>
+                <exclude>org.apache.hbase:hbase-logging:jar</exclude>
+                <exclude>org.apache.hbase:hbase-metrics:jar</exclude>
+                <exclude>org.apache.hbase:hbase-metrics-api:jar</exclude>
+                <exclude>org.apache.hbase:hbase-procedure:jar</exclude>
+                <exclude>org.apache.hbase:hbase-protocol:jar</exclude>
+                <exclude>org.apache.hbase:hbase-replication:jar</exclude>
+                <exclude>org.apache.hbase:hbase-server:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-gson:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-jersey:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-jetty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-miscellaneous:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-netty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-protobuf:jar</exclude>
+                <exclude>org.apache.hbase:hbase-unsafe:jar</exclude>
+                <exclude>org.apache.hbase:hbase-zookeeper:jar</exclude>
+                <exclude>org.apache.hbase:hbase-protocol-shaded:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
                 <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>

@@ -41,10 +41,14 @@ import java.util.stream.Collectors
 class GatewaySpringConfiguration {
 
   @Autowired
+  private var userRestful: UserRestful = _
+
+  @Autowired
   private var tokenService: TokenService = _
 
   @PostConstruct
   def init(): Unit = {
+    SecurityFilter.setUserRestful(userRestful)
     TokenAuthentication.setTokenService(tokenService)
   }
 
@@ -54,7 +58,6 @@ class GatewaySpringConfiguration {
   def createUserRestful(securityHooks: Array[SecurityHook]): UserRestful = {
     val userRestful = new LDAPUserRestful
     if (securityHooks != null) userRestful.setSecurityHooks(securityHooks)
-    SecurityFilter.setUserRestful(userRestful)
     userRestful
   }
 

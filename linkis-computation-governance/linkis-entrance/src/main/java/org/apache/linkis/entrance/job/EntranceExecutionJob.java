@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.job;
 
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceErrorException;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogHandler;
@@ -159,7 +160,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     if (!runtimeMapTmp.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH().key())) {
       // 修复：任务重试背景下，10：59分提交任务执行，重试时时间变成11：00，重试任务会重新生成结果目录，导致查询结果集时，重试之前执行的结果集丢失
       // 新增判断：生成结果目录之前，判断任务之前是否生成结果集，生成过就复用
-      if (org.apache.commons.lang3.StringUtils.isNotEmpty(jobRequest.getResultLocation())) {
+      if (((Boolean) EntranceConfiguration.TASK_RETRY_SWITCH().getValue())
+          && org.apache.commons.lang3.StringUtils.isNotEmpty(jobRequest.getResultLocation())) {
         resultSetPathRoot = jobRequest.getResultLocation();
       } else {
         String resultParentPath = CommonLogPathUtils.getResultParentPath(jobRequest);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+// Import from a separate module to avoid circular dependency with dynamic-modules
+import pythonModuleConfig from 'python-module-config'
+
 export const subAppRoutes = {
   path: '',
   name: 'layout',
@@ -27,8 +30,9 @@ export const subAppRoutes = {
   children: []
 }
 
-// Check if Python Module is enabled via environment variable
-export const isPythonModuleEnabled = process.env.VUE_APP_ENABLE_PYTHON_MODULE === 'true'
+// Check if Python Module is enabled via build-time parameter
+// Default: enabled, use PYTHON_MODULE=false to disable
+export const isPythonModuleEnabled = pythonModuleConfig.enablePythonModule
 
 export default [
   {
@@ -281,16 +285,6 @@ export default [
         publicPage: true,
       },
     }] : []),
-    {
-      name: 'pythonModule',
-      path: 'pythonModule',
-      component: () =>
-        import('./module/pythonModule/index.vue'),
-      meta: {
-        title: 'pythonModule',
-        publicPage: true,
-      },
-    },
     {
       name: 'datasourceAccess',
       path: 'datasourceAccess',

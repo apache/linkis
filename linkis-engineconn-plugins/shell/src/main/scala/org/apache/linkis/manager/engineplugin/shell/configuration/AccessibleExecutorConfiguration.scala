@@ -36,6 +36,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
 class AccessibleExecutorConfiguration extends Logging {
 
   @Bean(Array("lockService"))
+  @ConditionalOnMissingBean
   def createLockManager(): LockService = {
     val lockService = new EngineConnConcurrentLockService
     logger.info("use shell engine conn configuration to create concurrent lockService")

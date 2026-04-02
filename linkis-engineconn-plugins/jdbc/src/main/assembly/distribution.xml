@@ -37,6 +37,15 @@
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
 
+            <excludes>
+                <exclude>org.apache.hbase:hbase-shaded-jetty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-jersey:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-gson:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-netty:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-protobuf:jar</exclude>
+                <exclude>org.apache.hbase:hbase-shaded-miscellaneous:jar</exclude>
+                <exclude>org.apache.hbase:hbase-protocol-shaded:jar</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
 

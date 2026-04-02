@@ -106,6 +106,14 @@
           <groupId>org.apache.logging.log4j</groupId>
           <artifactId>log4j-slf4j-impl</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-shaded-jetty</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-protocol-shaded</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -205,6 +213,14 @@
         <exclusion>
           <groupId>org.apache.velocity</groupId>
           <artifactId>velocity</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-shaded-jetty</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hbase</groupId>
+          <artifactId>hbase-protocol-shaded</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

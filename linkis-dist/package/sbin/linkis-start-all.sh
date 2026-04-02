@@ -107,8 +107,16 @@ echo "start-all shell script executed completely"
 echo "Start to check all linkis microservice"
 
 function checkServer() {
+local service_name=$1
+local alias_num=$2
 echo "<-------------------------------->"
-echo "Begin to check $SERVER_NAME"
+sh $LINKIS_HOME/sbin/linkis-daemon.sh status $SERVER_NAME
+local status=$?
+if [ $status -ne 0 ]; then
+    printf "alias->[%d]  [%-22s]  [FAILED]\n" "$alias_num" "$service_name"
+else
+    printf "alias->[%d]  [%-22s]  [OK]\n" "$alias_num" "$service_name"
+fi
 SERVER_CHECK_CMD="sh $LINKIS_HOME/sbin/linkis-daemon.sh status $SERVER_NAME"
 if test -z "$SERVER_IP"
 then
@@ -136,34 +144,34 @@ sleep 3
 if [ "$DISCOVERY" == "EUREKA" ]; then
   export SERVER_NAME="mg-eureka"
   SERVER_IP=$EUREKA_INSTALL_IP
-  checkServer
+  checkServer mg-eureka 1
 fi
 
 
 #linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
-checkServer
+checkServer mg-gateway 2
 
 #linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
-checkServer
+checkServer ps-publicservice 3
 
 #linkis-cg-linkismanager
 SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
-checkServer
+checkServer cg-linkismanager 4
 
 
 #linkis-cg-entrance
 SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
-checkServer
+checkServer cg-entrance 5
 
 #linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
-checkServer
+checkServer cg-engineconnmanager 6
 
 echo "Apache Linkis started successfully"

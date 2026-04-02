@@ -75,9 +75,10 @@ import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
 import JSEncrypt from 'jsencrypt';
 import tab from '@/apps/scriptis/service/db/tab.js';
+import disallowLoginConfig from 'disallow-login-config';
 
-const DISALLOW_LOGIN = process.env.VUE_APP_DISALLOW_LOGIN === 'true'
-const DISALLOW_LOGIN_PREFIX = (process.env.VUE_APP_DISALLOW_LOGIN_PREFIX || '').split(',').filter(Boolean).map(v=>{
+const DISALLOW_LOGIN = disallowLoginConfig.enableDisallowLogin
+const DISALLOW_LOGIN_PREFIX = (disallowLoginConfig.disallowLoginPrefix || '').split(',').filter(Boolean).map(v=>{
   return new RegExp(`^${v}`)
 });
 export default {

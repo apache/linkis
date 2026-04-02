@@ -35,6 +35,9 @@ let modules = process.env.npm_config_module || ''
 // Usage: PYTHON_MODULE=false npm run build
 // Note: npm 7+ converts npm_config_python_module to npm_config_python-module
 const enablePythonModule = process.env.PYTHON_MODULE !== 'false' && process.env.npm_config_python_module !== 'false' && process.env.npm_config_python_module !== 'false'
+// disallow_login feature toggle: default enabled, use DISALLOW_LOGIN=false to disable
+// Usage: DISALLOW_LOGIN=false npm run build
+const enableDisallowLogin = process.env.DISALLOW_LOGIN !== 'false' && process.env.npm_config_disallow_login !== 'false' && process.env.npm_config_disallow_login !== 'false'
 if (modules) {
   modules = modules.split(',')
   Object.keys(apps).forEach(m => {
@@ -90,6 +93,10 @@ const virtualModules = new VirtualModulesPlugin({
   };`,
   'node_modules/python-module-config.js': `module.exports = {
     enablePythonModule: ${enablePythonModule}
+  };`,
+  'node_modules/disallow-login-config.js': `module.exports = {
+    enableDisallowLogin: ${enableDisallowLogin},
+    disallowLoginPrefix: ${JSON.stringify(process.env.VUE_APP_DISALLOW_LOGIN_PREFIX || 'hduser,shduser,hadoop')}
   };`
 });
 

@@ -27,7 +27,7 @@
         }}
         </Button>
         <Button type="success" class="Button" style="margin-left: 10px" @click="onAdd()">{{
-          $t('message.linkis.basedata.add')
+          $t('message.linkis.basedataManagement.add')
         }}
         </Button>
       </Col>
@@ -77,7 +77,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add' ? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
+      :title="modalAddMode=='add' ? $t('message.linkis.basedataManagement.add') : $t('message.linkis.basedata.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">

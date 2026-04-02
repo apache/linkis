@@ -33,7 +33,7 @@
         "hint.css": "^2.7.0",
         "iview": "3.5.4",
         "jsencrypt": "3.2.1",
-        "lodash": "4.17.23",
+        "lodash": "4.18.1",
         "md5": "2.3.0",
         "moment": "2.29.4",
         "monaco-editor": "0.30.1",

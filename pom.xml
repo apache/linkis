@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.9.0</revision>
+    <revision>2.0.0</revision>
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
@@ -1595,7 +1595,7 @@
     <profile>
       <id>spark-3</id>
       <properties>
-        <revision>1.9.0-spark3</revision>
+        <revision>2.0.0-spark3</revision>
         <json4s.version>3.7.0-M11</json4s.version>
         <spark.version>3.4.4</spark.version>
         <scala.version>2.12.17</scala.version>
@@ -1605,14 +1605,14 @@
     </profile>
 
     <!-- ==================================================== -->
-    <!-- Apache Open Source Profile (dev-1.9.0)              -->
+    <!-- Apache Open Source Profile (dev-2.0.0)              -->
     <!-- Usage: mvn clean install -Papache                    -->
     <!-- ==================================================== -->
     <profile>
       <id>apache</id>
       <properties>
         <!-- Core Version -->
-        <revision>1.9.0</revision>
+        <revision>2.0.0</revision>
 
         <!-- Hadoop Ecosystem -->
         <hadoop.version>3.3.4</hadoop.version>

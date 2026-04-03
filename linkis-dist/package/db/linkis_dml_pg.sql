@@ -953,7 +953,7 @@ INSERT INTO linkis_mg_gateway_auth_token(token_name,legal_users,legal_hosts,busi
 
 
 -- ============================================
--- Version: 1.9.0 (dev-1.9.0)
+-- Version: 2.0.0 (dev-2.0.0)
 -- ============================================
 
 INSERT INTO linkis_ps_configuration_config_key (key, description, name, default_value, validate_type, validate_range, engine_conn_type, is_hidden, is_advanced, level, treeName, boundary_type, en_treeName, en_description, en_name, template_required) VALUES( 'wds.linkis.jdbc.driver', '例如:com.mysql.jdbc.Driver', 'jdbc连接驱动', '', 'None', '', 'jdbc', 0, 0, 1, '用户配置', 0, 'User Configuration', 'For Example: com.mysql.jdbc.Driver', 'JDBC Connection Driver', 0);

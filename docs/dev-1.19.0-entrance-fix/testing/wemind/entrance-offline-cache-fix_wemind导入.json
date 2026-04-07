@@ -1,0 +1,451 @@
+{
+  "root": {
+    "data": {
+      "text": "BDP_DOPS"
+    },
+    "children": [
+      {
+        "data": {
+          "text": "路径"
+        },
+        "children": [
+          {
+            "data": {
+              "text": "需求：000001"
+            },
+            "children": [
+              {
+                "data": {
+                  "text": "Entrance Offline Cache Fix 测试集"
+                },
+                "children": [
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】复现Bug - Entrance offline后并发数未更新"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D\nEntrance C上有正在运行的任务\n已提交任务建立了Group缓存（并发数为25）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、检查当前Group缓存，确认并发数为25（100/4）\n2、管理员通过管理台或API将Entrance C标记为offline（GET /entrance/operation/label/markoffline?instance=entrance-2）\n3、在Entrance A上提交新任务\n4、观察任务提交结果和并发数"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统仍按4个实例计算并发数（25个槽位）\n任务应该提交失败，提示\"并发数已满\"\nGroup缓存未清除，缓存大小仍为1"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】修复后 - Entrance offline时缓存立即清除"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D\nEntrance C上有正在运行的任务\n已提交任务建立了Group缓存（并发数为25）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、检查Entrance A/B/D的Group缓存大小，确认缓存存在\n2、通过API将Entrance C标记为offline\n3、在5秒内检查所有实例的日志，确认广播消息被接收\n4、检查各实例的Group缓存，确认缓存已被清除"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：所有Entrance实例（A/B/D）应该收到广播消息\n各实例的Group缓存应该在5秒内清除\n缓存清除应该被记录到日志\n日志应包含: \"Received cache clear broadcast from entrance-2\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】修复后 - offline后新任务并发数正确"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D\nEntrance C已offline\nGroup缓存已清除"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、确认Entrance C已offline（通过管理台或API查询）\n2、确认所有实例的Group缓存已清除（大小为0）\n3、用户提交新任务到Entrance A\n4、观察任务提交结果和并发数"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统按3个实例计算并发数（33个槽位）\n任务应该成功提交\n不应该出现并发数已满错误\n新的Group缓存被创建，maxRunningJobs=33"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不同数量的Entrance offline后并发数计算正确（1个offline）"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n有1个Entrance实例已offline\nGroup缓存已清除"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、标记Entrance C为offline\n2、等待广播消息并确认缓存清除\n3、提交新任务\n4、检查并发数计算结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统按3个实例计算并发数\n每个实例并发数应该是33"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不同数量的Entrance offline后并发数计算正确（2个offline）"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n有2个Entrance实例已offline\nGroup缓存已清除"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、标记Entrance C和D为offline\n2、等待广播消息并确认缓存清除\n3、提交新任务\n4、检查并发数计算结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统按2个实例计算并发数\n每个实例并发数应该是50"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不同数量的Entrance offline后并发数计算正确（3个offline）"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n有3个Entrance实例已offline\nGroup缓存已清除"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、标记Entrance B、C、D为offline\n2、等待广播消息并确认缓存清除\n3、提交新任务\n4、检查并发数计算结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统按1个实例计算并发数\n每个实例并发数应该是100"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】正常情况下任务提交仍正常"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D\n所有实例都在线"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、确认所有4个Entrance实例都在线\n2、提交新任务\n3、观察任务提交结果和并发数"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统按4个实例计算并发数（25个槽位）\n任务应该成功提交\n行为应该与修复前完全一致"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】实例频繁上下线场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、将Entrance C标记为offline\n2、立即将Entrance C标记为online\n3、再次将Entrance C标记为offline\n4、提交新任务\n5、检查缓存状态和并发数"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：缓存应该正确更新\n并发数应该反映当前在线实例数量\n不应该出现异常或错误日志\n每次offline都应该发送广播"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】多个实例同时offline"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、同时将Entrance C和D标记为offline（在10秒内完成）\n2、检查各实例收到的广播消息数量\n3、检查Group缓存状态\n4、提交新任务并检查并发数"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：所有实例应该收到2条广播消息\nGroup缓存应该被清除2次（幂等操作，无副作用）\n并发数应该按2个实例计算（50个槽位）\n不应该出现异常或错误"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】广播失败不影响offline流程"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例: A, B, C, D\nEntrance D的RPC服务不可用（模拟网络故障）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、模拟Entrance D的RPC通信失败（如停止网络或防火墙阻断）\n2、管理员将Entrance C标记为offline\n3、检查Entrance A和B是否收到广播消息\n4、检查Entrance D的通信失败日志\n5、验证Entrance C的offline流程是否成功完成"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：Entrance A和B应该收到广播消息并清除缓存\nEntrance D通信失败应该被记录到ERROR日志\nEntrance C的offline流程应该成功完成\n不应该抛出异常或中断offline流程\n日志应包含: \"Failed to send cache clear broadcast\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：性能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】广播延迟测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\nRPC网络正常"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、记录当前时间戳T1\n2、触发Entrance offline广播\n3、在所有实例上记录接收广播的时间戳T2\n4、计算广播端到端延迟 = T2 - T1"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：所有实例应该在5秒内收到广播\n广播总耗时应该小于5秒\n平均延迟应该小于2秒"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】缓存清除性能测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：缓存中有5000个Group（接近最大容量）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、预先创建5000个Group对象并放入缓存\n2、记录当前时间戳T1\n3、执行缓存清除操作 clearAllGroupCache()\n4、记录完成时间戳T2\n5、计算清除耗时 = T2 - T1\n6、监控CPU使用率"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：清除操作应该在100ms内完成\nCPU使用率不应该显著增加（< 5%）\n不应该出现内存泄漏"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】广播期间任务提交不受影响"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n系统正在处理正常的任务提交"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、开始发送广播消息\n2、同时在广播发送期间提交10个任务\n3、记录每个任务的响应时间\n4、对比无广播时的基准响应时间"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：任务提交应该正常处理\n响应时间不应该明显增加（< 10%差异）\n所有任务都应该成功\n不应该出现超时或失败"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】广播发送日志记录"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n日志级别为INFO"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、触发Entrance offline广播\n2、检查offline实例的日志文件\n3、搜索广播发送相关的日志"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志应该记录\"Successfully sent cache clear broadcast\"\n日志应该包含offline实例信息\n日志应该包含时间戳\n日志级别应该为INFO"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】广播接收日志记录"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n日志级别为INFO"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、触发Entrance offline广播\n2、检查所有在线实例的日志文件\n3、搜索广播接收相关的日志"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：每个实例应该记录\"Received cache clear broadcast\"\n日志应该记录缓存清除操作\n日志应该包含广播来源实例信息\n日志应该包含时间戳"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】广播失败日志记录"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：集群有4个Entrance实例\n某个实例不可达（RPC通信失败）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、模拟某个实例的RPC通信失败\n2、触发Entrance offline广播\n3、检查offline实例的日志文件\n4、搜索广播失败相关的日志"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：应该记录\"Broadcast to <instance> failed\"的ERROR日志\n日志应该包含失败原因（如Connection refused）\n日志级别应该为ERROR\noffline流程应该继续执行"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

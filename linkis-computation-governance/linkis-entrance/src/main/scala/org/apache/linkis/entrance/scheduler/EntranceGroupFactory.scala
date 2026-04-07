@@ -138,6 +138,34 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
+  /**
+   * 清除所有Group缓存
+   *
+   * 调用时机：
+   *   1. 接收到EntranceGroupCacheClearBroadcast广播时（需功能开关启用）
+   *   2. 手动清除缓存（如管理API）
+   *
+   * 线程安全：Guava Cache的invalidateAll()是原子操作，支持并发调用
+   *
+   * 注意：只有在 linkis.entrance.group.cache.clear.enabled=true 时才会执行清理
+   */
+  def clearAllGroupCache(): Unit = {
+    try {
+      // 检查功能开关是否启用
+      if (EntranceConfiguration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED) {
+        val cacheSize = groupNameToGroups.size()
+        groupNameToGroups.invalidateAll()
+        logger.info(s"Cleared all Group cache. Cache size before clear: $cacheSize")
+      } else {
+        logger.info("Group cache clear feature is disabled, skip clearing cache")
+      }
+    } catch {
+      case e: Exception =>
+        logger.error("Failed to clear Group cache", e)
+        // 不抛出异常，避免影响调用方
+    }
+  }
+
 }
 
 object EntranceGroupFactory {

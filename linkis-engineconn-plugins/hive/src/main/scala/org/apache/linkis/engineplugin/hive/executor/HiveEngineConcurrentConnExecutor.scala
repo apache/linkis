@@ -27,6 +27,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.{ConcurrentExecutor, ResourceFetchExecutor}
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
+import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration.HIVE_TAG_USER_ENABLE
 import org.apache.linkis.engineplugin.hive.creation.HiveEngineConnFactory
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
@@ -143,8 +144,25 @@ class HiveEngineConcurrentConnExecutor(
     LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     if (StringUtils.isNotBlank(jobId)) {
-      LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
-      hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
+      // Get username from engineExecutorContext
+      val submitUser = if (engineExecutorContext.getProperties != null) {
+        Utils.tryAndWarn {
+          engineExecutorContext.getProperties.get("submitUser") match {
+            case user: String => user
+            case _ => null
+          }
+        }
+      } else null
+
+      // Build tags with username information
+      val tags = if (HIVE_TAG_USER_ENABLE && StringUtils.isNotBlank(submitUser)) {
+        s"LINKIS_$jobId" + s"_$submitUser"
+      } else {
+        s"LINKIS_$jobId"
+      }
+
+      LOG.info(s"set mapreduce.job.tags=$tags")
+      hiveConf.set("mapreduce.job.tags", tags)
     }
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")

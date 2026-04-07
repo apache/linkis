@@ -91,6 +91,13 @@ public interface ResourceManagerPersistence {
       throws PersistenceErrorException;
 
   /**
+   * 查询资源为负数（异常）的资源记录
+   *
+   * @return 异常资源列表
+   */
+  List<PersistenceResource> getAbnormalResources();
+
+  /**
    * 删除实例占用的资源
    *
    * @param serviceInstance

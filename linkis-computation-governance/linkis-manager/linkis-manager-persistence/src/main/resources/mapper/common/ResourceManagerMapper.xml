@@ -98,4 +98,10 @@
         select * from linkis_cg_manager_label where id in
         (select label_id from linkis_cg_manager_label_resource A join linkis_cg_manager_linkis_resources B on A.resource_id=B.id and B.ticketId=#{ticketId})
     </select>
+
+    <select id="getAbnormalResources" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        SELECT * FROM linkis_cg_manager_linkis_resources
+        WHERE (locked_resource LIKE '%-%' OR used_resource LIKE '%-%' OR left_resource LIKE '%-%')
+        AND ticketId IS NULL
+    </select>
 </mapper>

@@ -110,6 +110,61 @@ object SQLExplain extends Explain {
   }
 
   /**
+   * Check if SQL contains CREATE TABLE with LOCATION clause or SET LOCATION clause This method does
+   * NOT check the enable switch, it only checks the SQL code content. The caller is responsible for
+   * checking the switch and other conditions (engine type, whitelist, etc.)
+   *
+   * @param code
+   *   SQL code to check
+   * @param error
+   *   error message builder (will be populated if LOCATION is found)
+   * @return
+   *   true if pass (no LOCATION), false if LOCATION is found
+   */
+  def checkLocation(code: String, error: StringBuilder): Boolean = {
+    if (!EntranceConfiguration.HIVE_LOCATION_CONTROL_ENABLE.getHotValue) {
+      return true
+    }
+    // Handle null or empty code
+    if (code == null || code.trim.isEmpty) {
+      return true
+    }
+
+    // Remove comments before checking
+    val cleanedCode = SQLCommentHelper.dealComment(code)
+
+    // Regex patterns (aligned with existing validation rules)
+    val CREATE_TABLE_PATTERN =
+      Pattern.compile("create[\\s]*(temporary)?(external)?[\\s]*table", Pattern.CASE_INSENSITIVE)
+    val LOCATION_PATTERN =
+      Pattern.compile("[\\s]*location[\\s]*['\"][^'\"]*['\"]", Pattern.CASE_INSENSITIVE)
+    val SET_LOCATION_PATTERN = Pattern.compile("set[\\t\\s]+location", Pattern.CASE_INSENSITIVE)
+
+    // Check SET LOCATION first
+    if (SET_LOCATION_PATTERN.matcher(cleanedCode).find()) {
+      error
+        .append("SET LOCATION is not allowed. ")
+        .append("Please remove the SET LOCATION clause and retry. ")
+      return false
+    }
+
+    // Check CREATE TABLE ... LOCATION (cross-line match)
+    // Remove line breaks to support multi-line CREATE TABLE statements
+    val singleLineCode = cleanedCode.replaceAll("\\s+", " ")
+    if (
+        CREATE_TABLE_PATTERN.matcher(singleLineCode).find() &&
+        LOCATION_PATTERN.matcher(singleLineCode).find()
+    ) {
+      error
+        .append("CREATE TABLE with LOCATION clause is not allowed. ")
+        .append("Please remove the LOCATION clause and retry. ")
+      return false
+    }
+
+    true
+  }
+
+  /**
    * to deal with sql limit
    *
    * @param executionCode

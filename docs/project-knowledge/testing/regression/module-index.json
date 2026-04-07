@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-03-26T17:46:00Z",
+  "project": {
+    "name": "Apache Linkis",
+    "description": "计算中间件层"
+  },
+  "modules": [
+    {
+      "id": "hive-engine",
+      "name": "Hive引擎",
+      "description": "Hive引擎插件，包含SQL解析、执行控制、安全拦截等功能",
+      "criticalLevel": "critical",
+      "regressionDoc": "docs/project-knowledge/testing/regression/hive-engine_回归.md",
+      "regressionFeature": "docs/project-knowledge/testing/features/hive-engine.feature",
+      "sourceBranches": ["dev-1.19.0-yarn-tag-update"],
+      "requirements": [
+        "Hive表Location路径控制"
+      ],
+      "testCases": {
+        "unit": 0,
+        "functional": 40,
+        "performance": 3,
+        "security": 5,
+        "compatibility": 5,
+        "regression": 4,
+        "total": 57
+      },
+      "lastSync": "2026-03-26T17:46:00Z"
+    }
+  ],
+  "statistics": {
+    "totalModules": 1,
+    "totalTestCases": 57,
+    "criticalModules": 1
+  }
+}

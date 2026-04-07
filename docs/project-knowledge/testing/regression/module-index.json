@@ -1,5 +1,30 @@
 {
   "version": "1.0",
+  "lastUpdated": "2026-03-24T10:00:00Z",
+  "project": {
+    "name": "Apache Linkis",
+    "description": "Linkis 构建上层应用与底层数据引擎之间的计算中间件层"
+  },
+  "modules": [
+    {
+      "id": "monitor",
+      "name": "Monitor（监控模块）",
+      "description": "Linkis监控模块，负责诊断日志管理、诊断功能、Alert连接池等功能",
+      "criticalLevel": "critical",
+      "regressionDoc": "docs/project-knowledge/testing/regression/monitor_回归.md",
+      "regressionFeature": "docs/project-knowledge/testing/features/monitor.feature",
+      "sourceBranches": ["dev-1.19.0-monitor-update"],
+      "requirements": [
+        "Monitor模块优化"
+      ],
+      "testCases": {
+        "functional": 17,
+        "performance": 3,
+        "integration": 2,
+        "regression": 5,
+        "total": 27
+      },
+      "lastSync": "2026-03-24T10:00:00Z"
   "lastUpdated": "2026-03-26T17:46:00Z",
   "project": {
     "name": "Apache Linkis",

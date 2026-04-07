@@ -72,4 +72,14 @@ public class MonitorConfig {
 
   public static final CommonVars<String> JOBHISTORY_CLEAR_DAY =
       CommonVars.apply("linkis.monitor.jobhistory.clear.day", "60");
+
+  // Diagnosis log cleanup configuration
+  public static final CommonVars<Boolean> DIAGNOSIS_LOG_ENABLED =
+      CommonVars.apply("linkis.monitor.diagnosis.log.enabled", true);
+  public static final CommonVars<Integer> DIAGNOSIS_LOG_RETENTION_DAYS =
+      CommonVars.apply("linkis.monitor.diagnosis.log.retention.days", 90);
+  public static final CommonVars<String> DIAGNOSIS_LOG_PATH =
+      CommonVars.apply("linkis.monitor.diagnosis.log.path", "");
+  public static final CommonVars<Integer> DIAGNOSIS_LOG_MAX_DELETE_PER_RUN =
+      CommonVars.apply("linkis.monitor.diagnosis.log.max.delete.per.run", 10000);
 }

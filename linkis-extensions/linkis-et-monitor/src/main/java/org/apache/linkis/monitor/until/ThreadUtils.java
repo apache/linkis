@@ -41,7 +41,7 @@ public class ThreadUtils extends ApplicationContextEvent {
   private static final Logger logger = LogUtils.stdOutLogger();
 
   public static ExecutionContextExecutorService executors =
-      Utils.newCachedExecutionContext(5, "alert-pool-thread-", false);
+      Utils.newCachedExecutionContext(20, "alert-pool-thread-", false);
 
   public static ExecutionContextExecutorService executors_analyze =
       Utils.newCachedExecutionContext(50, "analyze-pool-thread-", false);

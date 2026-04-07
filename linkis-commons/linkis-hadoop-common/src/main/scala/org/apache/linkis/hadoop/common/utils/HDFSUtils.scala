@@ -23,6 +23,7 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 
+import com.google.common.cache.{CacheBuilder, LoadingCache, RemovalCause, RemovalListener, RemovalNotification}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
@@ -43,6 +44,42 @@ object HDFSUtils extends Logging {
 
   private val fileSystemCache: java.util.Map[String, HDFSFileSystemContainer] =
     new ConcurrentHashMap[String, HDFSFileSystemContainer]()
+
+  // 缓存keytab文件路径，避免重复创建临时文件导致KeyTab对象内存泄漏
+  private val keytabTempFileCache: LoadingCache[String, String] = {
+    val removalListener = new RemovalListener[String, String] {
+      override def onRemoval(notification: RemovalNotification[String, String]): Unit = {
+        val key = notification.getKey
+        val path = notification.getValue
+        val cause = notification.getCause
+        
+        logger.info(s"Keytab cache entry removed: $key, cause: $cause")
+        
+        // 当缓存项被移除时，清理对应的临时文件
+        if (path != null) {
+          val file = new File(path)
+          if (file.exists()) {
+            if (file.delete()) {
+              logger.info(s"Removed keytab temp file: $path")
+            } else {
+              logger.warn(s"Failed to remove keytab temp file: $path")
+            }
+          }
+        }
+      }
+    }
+
+    CacheBuilder.newBuilder()
+      .maximumSize(1000) // 最大缓存项数量
+      .expireAfterAccess(24, TimeUnit.HOURS) // 24小时未访问过期
+      .removalListener(removalListener)
+      .build(new com.google.common.cache.CacheLoader[String, String] {
+        override def load(key: String): String = {
+          // 这里不应该被调用，因为我们总是在put之前检查缓存
+          throw new UnsupportedOperationException("Cache loader not supported")
+        }
+      })
+  }
 
   private val LOCKER_SUFFIX = "_HDFS"
   private val DEFAULT_CACHE_LABEL = "default"
@@ -92,6 +129,20 @@ object HDFSUtils extends Logging {
       60 * 1000,
       TimeUnit.MILLISECONDS
     )
+  }
+
+  /**
+   * 创建 keytab 缓存的 key，考虑 label 参数
+   */
+  private def createKeytabCacheKey(userName: String, label: String): String = {
+    if (label == null) userName else s"$userName#$label"
+  }
+
+  /**
+   * 获取 keytab 临时文件目录
+   */
+  private def getKeytabTempDir(): java.nio.file.Path = {
+    Paths.get(HadoopConf.KEYTAB_TEMP_DIR.getValue)
   }
 
   def getConfiguration(user: String): Configuration = getConfiguration(user, hadoopConfDir)
@@ -382,18 +433,69 @@ object HDFSUtils extends Logging {
 
   private def getLinkisUserKeytabFile(userName: String, label: String): String = {
     val path = if (LINKIS_KEYTAB_SWITCH) {
-      // 读取文件
-      val byte = Files.readAllBytes(Paths.get(getLinkisKeytabPath(label), userName + KEYTAB_SUFFIX))
-      // 加密内容// 加密内容
-      val encryptedContent = AESUtils.decrypt(byte, AESUtils.PASSWORD)
-      val tempFile = Files.createTempFile(userName, KEYTAB_SUFFIX)
-      Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rw-------"))
-      Files.write(tempFile, encryptedContent)
-      tempFile.toString
+      try {
+        val cacheKey = createKeytabCacheKey(userName, label)
+        val keytabTempDir = getKeytabTempDir()
+        synchronized {
+          // 确保keytab临时目录存在
+          if (!Files.exists(keytabTempDir)) {
+            Files.createDirectories(keytabTempDir)
+            Files.setPosixFilePermissions(keytabTempDir, PosixFilePermissions.fromString("rwxr-xr-x"))
+          }
+
+          val cachedPath = keytabTempFileCache.getIfPresent(cacheKey)
+          if (cachedPath != null) {
+            val tempFile = new File(cachedPath)
+            if (tempFile.exists()) {
+              logger.info(s"Found cached keytab file: $cachedPath")
+              cachedPath
+            } else {
+              logger.info(s"Cached keytab file not exists, removing from cache: $cachedPath")
+              // 文件不存在，从缓存中移除
+              keytabTempFileCache.invalidate(cacheKey)
+              // 创建新的临时文件
+              createNewKeytabFile(userName, label, keytabTempDir, cacheKey)
+            }
+          } else {
+            logger.info(s"Creating new keytab file for cacheKey: $cacheKey")
+            // 创建新的临时文件
+            createNewKeytabFile(userName, label, keytabTempDir, cacheKey)
+          }
+        }
+      } catch {
+        case _: Throwable => new File(getKeytabPath(label), userName + KEYTAB_SUFFIX).getPath
+      }
     } else {
       new File(getKeytabPath(label), userName + KEYTAB_SUFFIX).getPath
     }
     path
+  }
+
+  private def createNewKeytabFile(
+      userName: String,
+      label: String,
+      keytabTempDir: java.nio.file.Path,
+      cacheKey: String
+  ): String = {
+    try {
+      // 读取文件
+      val sourcePath = Paths.get(getLinkisKeytabPath(label), userName + KEYTAB_SUFFIX)
+      val byte = Files.readAllBytes(sourcePath)
+      // 解密内容
+      val encryptedContent = AESUtils.decrypt(byte, AESUtils.PASSWORD)
+      val tempFile = Files.createTempFile(keytabTempDir, null, KEYTAB_SUFFIX)
+      Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rw-------"))
+      Files.write(tempFile, encryptedContent)
+      val keyTablePath = tempFile.toString
+      // 将固定文件路径加入缓存
+      keytabTempFileCache.put(cacheKey, keyTablePath)
+      logger.info(s"Created and cached fixed keytab file: $keyTablePath, cacheKey: $cacheKey")
+      keyTablePath
+    } catch {
+      case e: Exception =>
+        logger.error(s"Failed to create keytab file for user: $userName", e)
+        throw e
+    }
   }
 
 }

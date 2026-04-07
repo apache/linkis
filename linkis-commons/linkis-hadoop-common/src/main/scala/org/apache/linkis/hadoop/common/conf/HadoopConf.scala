@@ -75,4 +75,10 @@ object HadoopConf {
   val HDFS_ENABLE_CACHE_MAX_TIME =
     CommonVars("wds.linkis.hadoop.hdfs.cache.max.time", new TimeType("12h")).getValue.toLong
 
+  /**
+   * Temporary directory for keytab files when LINKIS_KEYTAB_SWITCH is enabled
+   * 默认使用系统临时目录下的 keytab 子目录
+   */
+  val KEYTAB_TEMP_DIR = CommonVars("linkis.keytab.temp.dir", "/tmp/keytab")
+
 }

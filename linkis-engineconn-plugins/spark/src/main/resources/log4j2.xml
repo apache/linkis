@@ -87,6 +87,12 @@
         <logger name="org.apache.spark.deploy.yarn.Client" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
+        <!-- Filter Spark FutureWarning messages (e.g., HiveContext is deprecated) -->
+        <logger name="org.apache.linkis.engineplugin.spark.executor.SparkPythonExecutor" level="INFO" additivity="false">
+            <appender-ref ref="RollingFile">
+                <RegexFilter regex=".*FutureWarning.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </appender-ref>
+        </logger>
         <logger name="org.apache.linkis.engineconn.computation.executor.hook" level="INFO" additivity="true">
             <appender-ref ref="UDFOutputFile"/>
         </logger>

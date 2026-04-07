@@ -101,6 +101,8 @@ object Configuration extends Logging {
 
   val LINKIS_KEYTAB_SWITCH: Boolean = CommonVars("linkis.keytab.switch", false).getValue
 
+  val TOKEN_MASK_ENABLED: Boolean = CommonVars("linkis.log.token.mask.enable", true).getValue
+
   val METRICS_INCREMENTAL_UPDATE_ENABLE =
     CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
 

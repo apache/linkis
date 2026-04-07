@@ -180,42 +180,68 @@ public class HDFSFileSystem extends FileSystem {
   /** FS interface method start */
   @Override
   public void init(Map<String, String> properties) throws IOException {
-    if (MapUtils.isNotEmpty(properties)
-        && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
-      user = StorageConfiguration.PROXY_USER().getValue(properties);
-      properties.remove(StorageConfiguration.PROXY_USER().key());
-    }
+    long startTime = System.currentTimeMillis();
+    logger.info("Initializing HDFSFileSystem - user: {}, label: {}", user, label);
 
-    if (user == null) {
-      throw new IOException("User cannot be empty(用户不能为空)");
-    }
-    if (label == null && Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
-      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
-    }
-    /** if properties is null do not to create conf */
-    if (MapUtils.isNotEmpty(properties)) {
-      conf = HDFSUtils.getConfigurationByLabel(user, label);
+    try {
+      if (MapUtils.isNotEmpty(properties)
+          && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
+        user = StorageConfiguration.PROXY_USER().getValue(properties);
+        properties.remove(StorageConfiguration.PROXY_USER().key());
+      }
+
+      if (user == null) {
+        throw new IOException("User cannot be empty(用户不能为空)");
+      }
+      if (label == null && Configuration.IS_MULTIPLE_YARN_CLUSTER()) {
+        label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
+      }
+      /** if properties is null do not to create conf */
       if (MapUtils.isNotEmpty(properties)) {
-        for (String key : properties.keySet()) {
-          String v = properties.get(key);
-          if (StringUtils.isNotEmpty(v)) {
-            conf.set(key, v);
+        logger.info(
+            "Loading Hadoop configuration with custom properties - user: {}, label: {}, propertiesCount: {}",
+            user,
+            label,
+            properties.size());
+        conf = HDFSUtils.getConfigurationByLabel(user, label);
+        if (MapUtils.isNotEmpty(properties)) {
+          for (String key : properties.keySet()) {
+            String v = properties.get(key);
+            if (StringUtils.isNotEmpty(v)) {
+              conf.set(key, v);
+            }
           }
         }
       }
-    }
-    if (null != conf) {
-      fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
-    } else {
-      fs = HDFSUtils.getHDFSUserFileSystem(user, label);
-    }
+      if (null != conf) {
+        fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
+      } else {
+        fs = HDFSUtils.getHDFSUserFileSystem(user, label);
+      }
 
-    if (fs == null) {
-      throw new IOException("init HDFS FileSystem failed!");
-    }
-    if (StorageConfiguration.FS_CHECKSUM_DISBALE()) {
-      fs.setVerifyChecksum(false);
-      fs.setWriteChecksum(false);
+      if (fs == null) {
+        throw new IOException("init HDFS FileSystem failed!");
+      }
+      if (StorageConfiguration.FS_CHECKSUM_DISBALE()) {
+        fs.setVerifyChecksum(false);
+        fs.setWriteChecksum(false);
+      }
+
+      long duration = System.currentTimeMillis() - startTime;
+      logger.info(
+          "HDFSFileSystem initialized successfully - user: {}, label: {}, duration: {}",
+          user,
+          label,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      logger.error(
+          "Failed to initialize HDFSFileSystem - user: {}, label: {}, duration: {}",
+          user,
+          label,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
     }
   }
 
@@ -336,32 +362,53 @@ public class HDFSFileSystem extends FileSystem {
 
   private void resetRootHdfs() {
     if (fs != null) {
-      String locker = user + LOCKER_SUFFIX;
-      synchronized (locker.intern()) { // NOSONAR
-        if (fs != null) {
-          if (HadoopConf.HDFS_ENABLE_CACHE()) {
-            long currentTime = System.currentTimeMillis();
-            Long lastCallTime = lastCallTimes.get(user);
+      long startTime = System.currentTimeMillis();
+      logger.warn("Resetting HDFS FileSystem connection - user: {}, label: {}", user, label);
 
-            if (lastCallTime != null && (currentTime - lastCallTime) < REFRESH_INTERVAL) {
-              logger.warn(
-                  "Method call denied for username: {} Please wait for {} minutes.",
-                  user,
-                  REFRESH_INTERVAL / 60000);
-              return;
+      try {
+        String locker = user + LOCKER_SUFFIX;
+        synchronized (locker.intern()) { // NOSONAR
+          if (fs != null) {
+            if (HadoopConf.HDFS_ENABLE_CACHE()) {
+              long currentTime = System.currentTimeMillis();
+              Long lastCallTime = lastCallTimes.get(user);
+
+              if (lastCallTime != null && (currentTime - lastCallTime) < REFRESH_INTERVAL) {
+                logger.warn(
+                    "Method call denied for username: {} Please wait for {} minutes.",
+                    user,
+                    REFRESH_INTERVAL / 60000);
+                return;
+              }
+              lastCallTimes.put(user, currentTime);
+              HDFSUtils.closeHDFSFIleSystem(fs, user, label, true);
+            } else {
+              HDFSUtils.closeHDFSFIleSystem(fs, user, label);
             }
-            lastCallTimes.put(user, currentTime);
-            HDFSUtils.closeHDFSFIleSystem(fs, user, label, true);
-          } else {
-            HDFSUtils.closeHDFSFIleSystem(fs, user, label);
-          }
-          logger.warn("{} FS reset close.", user);
-          if (null != conf) {
-            fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
-          } else {
-            fs = HDFSUtils.getHDFSUserFileSystem(user, label);
+            logger.warn("{} FS reset close.", user);
+            if (null != conf) {
+              fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
+            } else {
+              fs = HDFSUtils.getHDFSUserFileSystem(user, label);
+            }
           }
         }
+
+        long duration = System.currentTimeMillis() - startTime;
+        logger.warn(
+            "HDFS FileSystem connection reset completed - user: {}, label: {}, duration: {}",
+            user,
+            label,
+            org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+      } catch (Exception e) {
+        long duration = System.currentTimeMillis() - startTime;
+        logger.error(
+            "Failed to reset HDFS FileSystem connection - user: {}, label: {}, duration: {}",
+            user,
+            label,
+            org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+            e);
+        throw e;
       }
     }
   }
@@ -386,10 +433,31 @@ public class HDFSFileSystem extends FileSystem {
 
   @Override
   public void close() throws IOException {
-    if (null != fs) {
-      HDFSUtils.closeHDFSFIleSystem(fs, user);
-    } else {
-      logger.warn("FS was null, cannot close.");
+    long startTime = System.currentTimeMillis();
+    logger.info("Closing HDFSFileSystem - user: {}, label: {}", user, label);
+
+    try {
+      if (null != fs) {
+        HDFSUtils.closeHDFSFIleSystem(fs, user);
+      } else {
+        logger.warn("FS was null, cannot close.");
+      }
+
+      long duration = System.currentTimeMillis() - startTime;
+      logger.info(
+          "HDFSFileSystem closed successfully - user: {}, label: {}, duration: {}",
+          user,
+          label,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      logger.error(
+          "Failed to close HDFSFileSystem - user: {}, label: {}, duration: {}",
+          user,
+          label,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
     }
   }
 

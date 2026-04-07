@@ -43,26 +43,97 @@ public class HdfsConnection implements Closeable {
 
   public HdfsConnection(String scheme, String operator, String clusterLabel, boolean cache)
       throws IOException {
-    // TODO fix the problem of connecting multiple cluster in FSFactory.getFSByLabelAndUser
-    //        Fs fileSystem = FSFactory.getFSByLabelAndUser(scheme, operator, clusterLabel);
-    hadoopConf = HDFSUtils.getConfigurationByLabel(operator, clusterLabel);
-    fs = createFileSystem(operator, this.hadoopConf, cache);
+    long startTime = System.currentTimeMillis();
+    LOG.info(
+        "Creating HdfsConnection - scheme: {}, operator: {}, clusterLabel: {}, cache: {}",
+        scheme,
+        operator,
+        clusterLabel,
+        cache);
+
+    try {
+      // TODO fix the problem of connecting multiple cluster in FSFactory.getFSByLabelAndUser
+      //        Fs fileSystem = FSFactory.getFSByLabelAndUser(scheme, operator, clusterLabel);
+      hadoopConf = HDFSUtils.getConfigurationByLabel(operator, clusterLabel);
+      LOG.info(
+          "Hadoop configuration loaded for HdfsConnection - operator: {}, clusterLabel: {}",
+          operator,
+          clusterLabel);
+      fs = createFileSystem(operator, this.hadoopConf, cache);
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HdfsConnection created successfully - operator: {}, clusterLabel: {}, duration: {}",
+          operator,
+          clusterLabel,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to create HdfsConnection - operator: {}, clusterLabel: {}, duration: {}",
+          operator,
+          clusterLabel,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
+    }
   }
 
   public HdfsConnection(
       String scheme, String operator, Map<String, String> configuration, boolean cache) {
-    if (Objects.nonNull(configuration)) {
-      hadoopConf = new Configuration();
-      configuration.forEach(hadoopConf::set);
-    } else {
-      hadoopConf = HDFSUtils.getConfiguration(operator);
+    long startTime = System.currentTimeMillis();
+    LOG.info(
+        "Creating HdfsConnection with custom config - scheme: {}, operator: {}, cache: {}, configSize: {}",
+        scheme,
+        operator,
+        cache,
+        configuration != null ? configuration.size() : 0);
+
+    try {
+      if (Objects.nonNull(configuration)) {
+        hadoopConf = new Configuration();
+        configuration.forEach(hadoopConf::set);
+      } else {
+        hadoopConf = HDFSUtils.getConfiguration(operator);
+      }
+      fs = createFileSystem(operator, this.hadoopConf, cache);
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HdfsConnection with custom config created successfully - operator: {}, duration: {}",
+          operator,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to create HdfsConnection with custom config - operator: {}, duration: {}",
+          operator,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
     }
-    fs = createFileSystem(operator, this.hadoopConf, cache);
   }
 
   @Override
   public void close() throws IOException {
-    this.fs.close();
+    long startTime = System.currentTimeMillis();
+    LOG.info("Closing HdfsConnection");
+
+    try {
+      this.fs.close();
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HdfsConnection closed successfully - duration: {}",
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to close HdfsConnection - duration: {}",
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
+    }
   }
 
   /**
@@ -100,9 +171,29 @@ public class HdfsConnection implements Closeable {
    * @return file system
    */
   private FileSystem createFileSystem(String operator, Configuration hadoopConf, boolean cache) {
-    if (!cache) {
-      hadoopConf.set("fs.hdfs.impl.disable.cache", "true");
+    long startTime = System.currentTimeMillis();
+    LOG.info("Creating FileSystem for HdfsConnection - operator: {}, cache: {}", operator, cache);
+
+    try {
+      if (!cache) {
+        hadoopConf.set("fs.hdfs.impl.disable.cache", "true");
+      }
+      FileSystem fs = HDFSUtils.createFileSystem(operator, hadoopConf);
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "FileSystem created for HdfsConnection - operator: {}, duration: {}",
+          operator,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+      return fs;
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to create FileSystem for HdfsConnection - operator: {}, duration: {}",
+          operator,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
     }
-    return HDFSUtils.createFileSystem(operator, hadoopConf);
   }
 }

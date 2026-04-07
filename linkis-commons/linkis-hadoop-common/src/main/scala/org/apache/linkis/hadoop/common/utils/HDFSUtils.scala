@@ -18,7 +18,7 @@
 package org.apache.linkis.hadoop.common.utils
 
 import org.apache.linkis.common.conf.Configuration.LINKIS_KEYTAB_SWITCH
-import org.apache.linkis.common.utils.{AESUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{AESUtils, ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
@@ -165,20 +165,38 @@ object HDFSUtils extends Logging {
   }
 
   def getConfiguration(user: String, hadoopConfDir: String): Configuration = {
-    val confPath = new File(hadoopConfDir)
-    if (!confPath.exists() || confPath.isFile) {
-      throw new RuntimeException(
-        s"Create hadoop configuration failed, path $hadoopConfDir not exists."
+    val startTime = System.currentTimeMillis()
+    logger.info(s"Loading Hadoop configuration - user: $user, configDir: $hadoopConfDir")
+    try {
+      val confPath = new File(hadoopConfDir)
+      if (!confPath.exists() || confPath.isFile) {
+        throw new RuntimeException(
+          s"Create hadoop configuration failed, path $hadoopConfDir not exists."
+        )
+      }
+      val conf = new Configuration()
+      conf.addResource(
+        new Path(Paths.get(hadoopConfDir, "core-site.xml").toAbsolutePath.toFile.getAbsolutePath)
       )
+      conf.addResource(
+        new Path(Paths.get(hadoopConfDir, "hdfs-site.xml").toAbsolutePath.toFile.getAbsolutePath)
+      )
+      val duration = System.currentTimeMillis() - startTime
+      logger.info(
+        s"Hadoop configuration loaded successfully - user: $user, configDir: $hadoopConfDir, duration: ${ByteTimeUtils
+          .msDurationToString(duration)}"
+      )
+      conf
+    } catch {
+      case e: Exception =>
+        val duration = System.currentTimeMillis() - startTime
+        logger.error(
+          s"Failed to load Hadoop configuration - user: $user, configDir: $hadoopConfDir, duration: ${ByteTimeUtils
+            .msDurationToString(duration)}",
+          e
+        )
+        throw e
     }
-    val conf = new Configuration()
-    conf.addResource(
-      new Path(Paths.get(hadoopConfDir, "core-site.xml").toAbsolutePath.toFile.getAbsolutePath)
-    )
-    conf.addResource(
-      new Path(Paths.get(hadoopConfDir, "hdfs-site.xml").toAbsolutePath.toFile.getAbsolutePath)
-    )
-    conf
   }
 
   def getHDFSRootUserFileSystem: FileSystem = getHDFSRootUserFileSystem(
@@ -266,11 +284,32 @@ object HDFSUtils extends Logging {
       conf: org.apache.hadoop.conf.Configuration
   ): FileSystem = {
     val createCount = count.getAndIncrement()
-    logger.info(s"user ${userName} to create Fs, create time ${createCount}")
-    getUserGroupInformation(userName, label)
-      .doAs(new PrivilegedExceptionAction[FileSystem] {
-        def run: FileSystem = FileSystem.newInstance(conf)
-      })
+    val startTime = System.currentTimeMillis()
+    val labelInfo = if (label == null) "default" else label
+    logger.info(
+      s"Creating Hadoop FileSystem - user: $userName, label: $labelInfo, createCount: $createCount"
+    )
+    try {
+      val fs = getUserGroupInformation(userName, label)
+        .doAs(new PrivilegedExceptionAction[FileSystem] {
+          def run: FileSystem = FileSystem.newInstance(conf)
+        })
+      val duration = System.currentTimeMillis() - startTime
+      logger.info(
+        s"Hadoop FileSystem created successfully - user: $userName, label: $labelInfo, duration: ${ByteTimeUtils
+          .msDurationToString(duration)}, createCount: $createCount"
+      )
+      fs
+    } catch {
+      case e: Exception =>
+        val duration = System.currentTimeMillis() - startTime
+        logger.error(
+          s"Failed to create Hadoop FileSystem - user: $userName, label: $labelInfo, duration: ${ByteTimeUtils
+            .msDurationToString(duration)}, createCount: $createCount",
+          e
+        )
+        throw e
+    }
   }
 
   def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit =
@@ -291,29 +330,48 @@ object HDFSUtils extends Logging {
       isForce: Boolean
   ): Unit =
     if (null != fileSystem && StringUtils.isNotBlank(userName)) {
-      val locker = userName + LOCKER_SUFFIX
-      if (HadoopConf.HDFS_ENABLE_CACHE) locker.intern().synchronized {
-        val cacheLabel = if (label == null) DEFAULT_CACHE_LABEL else label
-        val cacheKey = userName + JOINT + cacheLabel
-        val hdfsFileSystemContainer = fileSystemCache.get(cacheKey)
-        if (
-            null != hdfsFileSystemContainer && fileSystem == hdfsFileSystemContainer.getFileSystem
-        ) {
-          if (isForce) {
-            fileSystemCache.remove(hdfsFileSystemContainer.getUser)
-            IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
-            logger.info(
-              s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer"
-            )
+      val startTime = System.currentTimeMillis()
+      val labelInfo = if (label == null) "default" else label
+      logger.info(
+        s"Closing Hadoop FileSystem - user: $userName, label: $labelInfo, force: $isForce"
+      )
+      try {
+        val locker = userName + LOCKER_SUFFIX
+        if (HadoopConf.HDFS_ENABLE_CACHE) locker.intern().synchronized {
+          val cacheLabel = if (label == null) DEFAULT_CACHE_LABEL else label
+          val cacheKey = userName + JOINT + cacheLabel
+          val hdfsFileSystemContainer = fileSystemCache.get(cacheKey)
+          if (
+              null != hdfsFileSystemContainer && fileSystem == hdfsFileSystemContainer.getFileSystem
+          ) {
+            if (isForce) {
+              fileSystemCache.remove(hdfsFileSystemContainer.getUser)
+              IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
+              logger.info(s"Force closed Hadoop FileSystem - user: $userName, label: $labelInfo")
+            } else {
+              hdfsFileSystemContainer.minusAccessCount()
+            }
           } else {
-            hdfsFileSystemContainer.minusAccessCount()
+            IOUtils.closeQuietly(fileSystem)
           }
-        } else {
+        }
+        else {
           IOUtils.closeQuietly(fileSystem)
         }
-      }
-      else {
-        IOUtils.closeQuietly(fileSystem)
+        val duration = System.currentTimeMillis() - startTime
+        logger.info(
+          s"Hadoop FileSystem closed successfully - user: $userName, label: $labelInfo, duration: ${ByteTimeUtils
+            .msDurationToString(duration)}"
+        )
+      } catch {
+        case e: Exception =>
+          val duration = System.currentTimeMillis() - startTime
+          logger.error(
+            s"Failed to close Hadoop FileSystem - user: $userName, label: $labelInfo, duration: ${ByteTimeUtils
+              .msDurationToString(duration)}",
+            e
+          )
+          throw e
       }
     }
 
@@ -322,24 +380,51 @@ object HDFSUtils extends Logging {
   }
 
   def getUserGroupInformation(userName: String, label: String): UserGroupInformation = {
-    if (isKerberosEnabled(label)) {
-      if (!isKeytabProxyUserEnabled(label)) {
-        val path = getLinkisUserKeytabFile(userName, label)
-        val user = getKerberosUser(userName, label)
-        UserGroupInformation.setConfiguration(getConfigurationByLabel(userName, label))
-        UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
-      } else {
-        val superUser = getKeytabSuperUser(label)
-        val path = getLinkisUserKeytabFile(superUser, label)
-        val user = getKerberosUser(superUser, label)
-        UserGroupInformation.setConfiguration(getConfigurationByLabel(superUser, label))
-        UserGroupInformation.createProxyUser(
-          userName,
+    val startTime = System.currentTimeMillis()
+    val labelInfo = if (label == null) "default" else label
+    val authMethod = if (isKerberosEnabled(label)) "kerberos" else "simple"
+    logger.info(
+      s"Getting UserGroupInformation - user: $userName, label: $labelInfo, authMethod: $authMethod"
+    )
+    try {
+      val ugi = if (isKerberosEnabled(label)) {
+        if (!isKeytabProxyUserEnabled(label)) {
+          val path = getLinkisUserKeytabFile(userName, label)
+          val user = getKerberosUser(userName, label)
+          logger.info(s"Performing Kerberos login with keytab - user: $userName, label: $labelInfo")
+          UserGroupInformation.setConfiguration(getConfigurationByLabel(userName, label))
           UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
-        )
+        } else {
+          val superUser = getKeytabSuperUser(label)
+          val path = getLinkisUserKeytabFile(superUser, label)
+          val user = getKerberosUser(superUser, label)
+          logger.info(
+            s"Performing Kerberos login with proxy user - user: $userName, superUser: $superUser, label: $labelInfo"
+          )
+          UserGroupInformation.setConfiguration(getConfigurationByLabel(superUser, label))
+          UserGroupInformation.createProxyUser(
+            userName,
+            UserGroupInformation.loginUserFromKeytabAndReturnUGI(user, path)
+          )
+        }
+      } else {
+        UserGroupInformation.createRemoteUser(userName)
       }
-    } else {
-      UserGroupInformation.createRemoteUser(userName)
+      val duration = System.currentTimeMillis() - startTime
+      logger.info(
+        s"UserGroupInformation obtained successfully - user: $userName, label: $labelInfo, authMethod: $authMethod, duration: ${ByteTimeUtils
+          .msDurationToString(duration)}"
+      )
+      ugi
+    } catch {
+      case e: Exception =>
+        val duration = System.currentTimeMillis() - startTime
+        logger.error(
+          s"Failed to get UserGroupInformation - user: $userName, label: $labelInfo, authMethod: $authMethod, duration: ${ByteTimeUtils
+            .msDurationToString(duration)}",
+          e
+        )
+        throw e
     }
   }
 

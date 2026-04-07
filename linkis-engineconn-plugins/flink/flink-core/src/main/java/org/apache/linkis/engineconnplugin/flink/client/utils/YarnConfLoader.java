@@ -24,8 +24,16 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class YarnConfLoader {
+  private static final Logger LOG = LoggerFactory.getLogger(YarnConfLoader.class);
+
   public static YarnConfiguration getYarnConf(String yarnConfDir) {
+    long startTime = System.currentTimeMillis();
+    LOG.info("Loading Yarn configuration - yarnConfDir: {}", yarnConfDir);
+
     YarnConfiguration yarnConf = new YarnConfiguration();
     try {
       File dir = new File(yarnConfDir);
@@ -40,15 +48,35 @@ public class YarnConfLoader {
                       return false;
                     });
         if (xmlFileList != null) {
+          LOG.info("Found {} XML configuration files in {}", xmlFileList.length, yarnConfDir);
           for (File xmlFile : xmlFileList) {
+            LOG.debug("Adding Yarn configuration file: {}", xmlFile.getName());
             yarnConf.addResource(xmlFile.toURI().toURL());
           }
+        } else {
+          LOG.warn("No XML configuration files found in {}", yarnConfDir);
         }
+      } else {
+        LOG.warn(
+            "Yarn configuration directory does not exist or is not a directory: {}", yarnConfDir);
       }
     } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to load Yarn configuration - yarnConfDir: {}, duration: {}",
+          yarnConfDir,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
       throw new RuntimeException(e);
     }
+
     haYarnConf(yarnConf);
+
+    long duration = System.currentTimeMillis() - startTime;
+    LOG.info(
+        "Yarn configuration loaded successfully - yarnConfDir: {}, duration: {}",
+        yarnConfDir,
+        org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
     return yarnConf;
   }
 

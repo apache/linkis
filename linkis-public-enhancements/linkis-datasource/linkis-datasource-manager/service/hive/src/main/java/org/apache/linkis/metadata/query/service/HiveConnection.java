@@ -32,9 +32,14 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.apache.hadoop.fs.FileSystem.FS_DEFAULT_NAME_KEY;
 
 public class HiveConnection implements Closeable {
+
+  private static final Logger LOG = LoggerFactory.getLogger(HiveConnection.class);
 
   private Hive hiveClient;
 
@@ -50,37 +55,79 @@ public class HiveConnection implements Closeable {
   public HiveConnection(
       String uris, String principle, String keytabFilePath, Map<String, String> hadoopConf)
       throws Exception {
-    final HiveConf conf = new HiveConf();
-    conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
-    conf.setVar(HiveConf.ConfVars.METASTORE_USE_THRIFT_SASL, "true");
-    conf.setVar(
-        HiveConf.ConfVars.METASTORE_KERBEROS_PRINCIPAL, KERBEROS_DEFAULT_PRINCIPLE.getValue());
-    // Disable the cache in FileSystem
-    conf.setBoolean(
-        String.format(
-            "fs.%s.impl.disable.cache", URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()),
-        true);
-    conf.set("hadoop.security.authentication", "kerberos");
-    hadoopConf.forEach(conf::set);
-    principle = principle.substring(0, principle.indexOf("@"));
-    UserGroupInformation ugi =
-        UserGroupInformationWrapper.loginUserFromKeytab(conf, principle, keytabFilePath);
-    hiveClient = getHive(ugi, conf);
+    long startTime = System.currentTimeMillis();
+    LOG.info("Creating HiveConnection with Kerberos - uris: {}, principle: {}", uris, principle);
+
+    try {
+      final HiveConf conf = new HiveConf();
+      conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
+      conf.setVar(HiveConf.ConfVars.METASTORE_USE_THRIFT_SASL, "true");
+      conf.setVar(
+          HiveConf.ConfVars.METASTORE_KERBEROS_PRINCIPAL, KERBEROS_DEFAULT_PRINCIPLE.getValue());
+      // Disable the cache in FileSystem
+      conf.setBoolean(
+          String.format(
+              "fs.%s.impl.disable.cache",
+              URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()),
+          true);
+      conf.set("hadoop.security.authentication", "kerberos");
+      hadoopConf.forEach(conf::set);
+      principle = principle.substring(0, principle.indexOf("@"));
+
+      LOG.info("Performing Kerberos login - principle: {}, keytab: {}", principle, keytabFilePath);
+      UserGroupInformation ugi =
+          UserGroupInformationWrapper.loginUserFromKeytab(conf, principle, keytabFilePath);
+      hiveClient = getHive(ugi, conf);
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HiveConnection with Kerberos created successfully - uris: {}, duration: {}",
+          uris,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to create HiveConnection with Kerberos - uris: {}, duration: {}",
+          uris,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
+    }
   }
 
   public HiveConnection(String uris, Map<String, String> hadoopConf) throws Exception {
-    final HiveConf conf = new HiveConf();
-    conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
-    hadoopConf.forEach(conf::set);
-    // Disable the cache in FileSystem
-    conf.setBoolean(
-        String.format(
-            "fs.%s.impl.disable.cache", URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()),
-        true);
-    // TODO choose an authentication strategy for hive, and then use createProxyUser
-    UserGroupInformation ugi =
-        UserGroupInformation.createRemoteUser(DEFAULT_SERVICE_USER.getValue());
-    hiveClient = getHive(ugi, conf);
+    long startTime = System.currentTimeMillis();
+    LOG.info("Creating HiveConnection with simple auth - uris: {}", uris);
+
+    try {
+      final HiveConf conf = new HiveConf();
+      conf.setVar(HiveConf.ConfVars.METASTOREURIS, uris);
+      hadoopConf.forEach(conf::set);
+      // Disable the cache in FileSystem
+      conf.setBoolean(
+          String.format(
+              "fs.%s.impl.disable.cache",
+              URI.create(conf.get(FS_DEFAULT_NAME_KEY, "")).getScheme()),
+          true);
+      // TODO choose an authentication strategy for hive, and then use createProxyUser
+      UserGroupInformation ugi =
+          UserGroupInformation.createRemoteUser(DEFAULT_SERVICE_USER.getValue());
+      hiveClient = getHive(ugi, conf);
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HiveConnection with simple auth created successfully - uris: {}, duration: {}",
+          uris,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to create HiveConnection with simple auth - uris: {}, duration: {}",
+          uris,
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
+    }
   }
   /**
    * Get Hive client(Hive object)
@@ -106,8 +153,25 @@ public class HiveConnection implements Closeable {
 
   @Override
   public void close() throws IOException {
-    // Close meta store client
-    metaStoreClient.close();
+    long startTime = System.currentTimeMillis();
+    LOG.info("Closing HiveConnection");
+
+    try {
+      // Close meta store client
+      metaStoreClient.close();
+
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.info(
+          "HiveConnection closed successfully - duration: {}",
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration));
+    } catch (Exception e) {
+      long duration = System.currentTimeMillis() - startTime;
+      LOG.error(
+          "Failed to close HiveConnection - duration: {}",
+          org.apache.linkis.common.utils.ByteTimeUtils.msDurationToString(duration),
+          e);
+      throw e;
+    }
   }
 
   /** Wrapper class of UserGroupInformation */

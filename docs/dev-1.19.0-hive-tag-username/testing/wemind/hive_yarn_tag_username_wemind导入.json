@@ -1,0 +1,479 @@
+{
+  "root": {
+    "data": {
+      "text": "Linkis"
+    },
+    "children": [
+      {
+        "data": {
+          "text": "路径"
+        },
+        "children": [
+          {
+            "data": {
+              "text": "需求：000001"
+            },
+            "children": [
+              {
+                "data": {
+                  "text": "Hive YARN Tag 用户名增强功能测试"
+                },
+                "children": [
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC001：正常用户名 - 无jobTags场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；YARN ResourceManager正常运行；execUser=\"zhangsan\"，jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"zhangsan\"\n2、设置jobId为\"123456789\"\n3、不设置jobTags\n4、执行任务\n5、查看Linkis日志输出\n6、登录YARN Web UI查看任务标签"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789,USER_zhangsan；YARN Web UI显示标签：LINKIS_123456789,USER_zhangsan；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC002：正常用户名 - 有jobTags场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；YARN ResourceManager正常运行；execUser=\"zhangsan\"，jobId=\"123456789\"，jobTags=\"EMR\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"zhangsan\"\n2、设置jobId为\"123456789\"\n3、设置jobTags为\"EMR\"\n4、执行任务\n5、查看Linkis日志输出\n6、登录YARN Web UI查看任务标签"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789,EMR,USER_zhangsan；YARN Web UI显示标签：LINKIS_123456789,EMR,USER_zhangsan；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC014：日志输出完整性验证"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；日志级别设置为INFO"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"testuser\"\n2、查看Linkis日志文件\n3、搜索\"set mapreduce.job.tags\"关键词"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志中包含：set mapreduce.job.tags=LINKIS_xxx,USER_testuser；日志级别为INFO；日志内容清晰可读"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC003：用户名为空字符串"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；execUser=\"\"（空字符串），jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为空字符串\n2、设置jobId为\"123456789\"\n3、执行任务\n4、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789（保持原格式）；不包含USER标签；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC004：用户名为null"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；execUser=null，jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为null\n2、设置jobId为\"123456789\"\n3、执行任务\n4、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789（保持原格式）；不包含USER标签；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC005：jobId为空"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；jobId=\"\"（空字符串）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，jobId为空字符串\n2、执行任务\n3、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：不设置mapreduce.job.tags参数；日志中无\"set mapreduce.job.tags\"输出；Hive任务正常执行"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC008：execUser不存在于properties"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；properties中不包含\"execUser\"键；jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，properties中不设置execUser\n2、设置jobId为\"123456789\"\n3、执行任务\n4、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789（保持原格式）；不包含USER标签；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC006：特殊字符用户名"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；execUser=\"user@example.com\"，jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"user@example.com\"\n2、设置jobId为\"123456789\"\n3、执行任务\n4、查看Linkis日志输出\n5、登录YARN Web UI查看任务标签"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789,USER_user@example.com；特殊字符@和.保持原样，不转义；YARN Web UI正确显示标签；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC007：用户名包含下划线"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；execUser=\"user_name\"，jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"user_name\"\n2、设置jobId为\"123456789\"\n3、执行任务\n4、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789,USER_user_name；用户名中的下划线保持原样；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC009：向后兼容性 - 无execUser场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：使用未增强的Hive引擎（或execUser为null）；YARN ResourceManager正常运行"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser为null\n2、验证任务标签格式与增强前一致\n3、验证Hive任务执行结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：标签格式与增强前完全一致；任务执行结果与增强前一致；无任何错误或异常"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC010：向后兼容性 - 有jobTags无execUser场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；execUser=null，jobTags=\"EMR\"，jobId=\"123456789\""
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，设置jobTags为\"EMR\"\n2、execUser为null\n3、执行任务\n4、查看Linkis日志输出"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：日志输出：set mapreduce.job.tags=LINKIS_123456789,EMR；标签格式与增强前完全一致；Hive任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC011：现有任务标签格式不受影响"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；存在历史Hive任务记录"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、查询历史Hive任务的标签格式\n2、提交新的Hive任务\n3、对比新旧任务的标签格式"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：历史任务标签格式不受影响；新任务标签格式符合预期；无任务执行异常"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：性能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC013：标签构建性能测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交1000个Hive任务\n2、记录每个任务的标签构建时间\n3、统计平均构建时间"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：标签构建时间 < 1ms；对任务执行时间无显著影响；无性能下降"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：流程案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC012：多用户并发场景"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Hive引擎服务已启动；准备3个不同的用户：zhangsan、lisi、wangwu"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、同时提交3个Hive任务，分别使用不同的execUser\n2、任务1：execUser=\"zhangsan\"，jobId=\"001\"\n3、任务2：execUser=\"lisi\"，jobId=\"002\"\n4、任务3：execUser=\"wangwu\"，jobId=\"003\"\n5、查看各任务的日志输出\n6、登录YARN Web UI查看各任务标签"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：任务1标签：LINKIS_001,USER_zhangsan；任务2标签：LINKIS_002,USER_lisi；任务3标签：LINKIS_003,USER_wangwu；各任务标签互不干扰；所有任务执行成功"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：接口案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】TC015：YARN Web UI标签显示验证"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：YARN ResourceManager Web UI可访问；Hive引擎服务已启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive任务，execUser设置为\"testuser\"\n2、登录YARN ResourceManager Web UI\n3、查找对应的Hive任务\n4、查看任务的标签信息"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：YARN Web UI显示标签：LINKIS_xxx,USER_testuser；标签格式正确，显示清晰；可以通过标签快速识别任务来源用户"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】TC016：YARN标签搜索功能验证"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：YARN ResourceManager Web UI可访问；已提交多个Hive任务"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、在YARN Web UI中搜索\"USER_testuser\"\n2、验证搜索结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：可以通过用户名标签快速定位任务；搜索结果准确；运维效率提升"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

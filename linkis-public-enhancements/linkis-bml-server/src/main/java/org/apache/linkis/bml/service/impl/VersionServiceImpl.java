@@ -115,6 +115,12 @@ public class VersionServiceImpl implements VersionService {
         ResourceVersion.createNewResourceVersion(
             resourceId, path, md5String, clientIp, size, newVersion, 1);
     versionDao.insertNewVersion(resourceVersion);
+    logger.info(
+        "Update resource version - resourceId: {}, version: {}, hdfsPath: {}, user: {}",
+        resourceId,
+        newVersion,
+        path,
+        user);
     // }
     return newVersion;
   }
@@ -150,6 +156,12 @@ public class VersionServiceImpl implements VersionService {
     inputStream.skip(startByte - 1); // NOSONAR
     logger.info(
         "{} downLoad source {} inputStream skipped {} bytes", user, resourceId, (startByte - 1));
+    logger.info(
+        "Download resource - resourceId: {}, version: {}, hdfsPath: {}, user: {}",
+        resourceId,
+        version,
+        path,
+        user);
     byte[] buffer = new byte[1024];
     long size = endByte - startByte + 1;
     int left = (int) size;

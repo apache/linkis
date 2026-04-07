@@ -95,7 +95,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue
     )
     logger.info(
-      s" user ${engineStopRequest.getUser} prepare to stop engine ${engineStopRequest.getServiceInstance}"
+      s"try to kill engine with engineInstance: ${engineStopRequest.getServiceInstance},user:${engineStopRequest.getUser},engineType:${engineStopRequest.getEngineType}"
     )
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {

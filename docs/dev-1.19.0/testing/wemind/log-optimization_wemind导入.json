@@ -1,0 +1,173 @@
+{
+  "root": {
+    "data": {"text": "Linkis"},
+    "children": [{
+      "data": {"text": "路径"},
+      "children": [{
+        "data": {"text": "需求：000001"},
+        "children": [{
+          "data": {"text": "日志优化功能测试"},
+          "children": [
+            {
+              "data": {"text": "分类：功能案例"},
+              "children": [
+                {
+                  "data": {"text": "【AIGC】Token脱敏 - 短Token（长度≤6）"},
+                  "children": [
+                    {"data": {"text": "条件：Token脱敏工具类已实现，单元测试框架可用"}, "children": []},
+                    {"data": {"text": "步骤：\n1、准备测试数据：\"ab\" (长度=2)\n2、调用脱敏方法 maskToken(\"ab\")\n3、验证返回结果为 \"***\"（长度-3 < 0时返回\"***\"）\n4、准备测试数据：\"abc123\" (长度=6)\n5、调用脱敏方法 maskToken(\"abc123\")\n6、验证返回结果为 \"abc***\""}, "children": []},
+                    {"data": {"text": "预期结果：\"ab\" → \"***\"（长度-3 < 0），\"abc123\" → \"abc***\"（前{长度-3}位 + ***）"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】Token脱敏 - 长Token（长度>6）"},
+                  "children": [
+                    {"data": {"text": "条件：Token脱敏工具类已实现，单元测试框架可用"}, "children": []},
+                    {"data": {"text": "步骤：\n1、准备测试数据：\"abc123def456\" (长度=12)\n2、调用脱敏方法 maskToken(\"abc123def456\")\n3、验证返回结果为 \"abc***456\"（前3位 + *** + 后3位）\n4、准备测试数据：\"VERY_LONG_TOKEN_HERE\" (长度=19)\n5、调用脱敏方法 maskToken(\"VERY_LONG_TOKEN_HERE\")\n6、验证返回结果为 \"VER***ERE\""}, "children": []},
+                    {"data": {"text": "预期结果：\"abc123def456\" → \"abc***456\"，\"VERY_LONG_TOKEN_HERE\" → \"VER***ERE\""}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】Token脱敏 - 特殊值处理"},
+                  "children": [
+                    {"data": {"text": "条件：Token脱敏工具类已实现，单元测试框架可用"}, "children": []},
+                    {"data": {"text": "步骤：\n1、准备测试数据：null\n2、调用脱敏方法 maskToken(null)\n3、验证返回结果为 \"***\"\n4、准备测试数据：\"\" (空字符串)\n5、调用脱敏方法 maskToken(\"\")\n6、验证返回结果为 \"***\""}, "children": []},
+                    {"data": {"text": "预期结果：null → \"***\"，\"\" → \"***\""}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】资源上传 - HDFS路径日志"},
+                  "children": [
+                    {"data": {"text": "条件：BML服务已启动，HDFS已启动，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、准备测试资源文件（test_resource.txt）\n2、通过BML API上传资源\n3、获取resourceId和version\n4、收集BML服务日志\n5、验证日志包含HDFS路径信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [BmlService] Upload resource - resourceId: {id}, version: {version}, hdfsPath: {hdfsPath}, user: {user}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】资源下载 - HDFS路径日志"},
+                  "children": [
+                    {"data": {"text": "条件：BML服务已启动，测试资源已上传，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过BML API下载已上传的资源\n2、收集BML服务日志\n3、验证日志包含HDFS路径信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [BmlService] Download resource - resourceId: {id}, version: {version}, hdfsPath: {hdfsPath}, user: {user}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】版本更新 - HDFS路径日志"},
+                  "children": [
+                    {"data": {"text": "条件：BML服务已启动，测试资源已上传，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过BML API上传资源的新版本\n2、获取新的version号\n3、收集BML服务日志\n4、验证日志包含新版本的HDFS路径"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [BmlService] Update resource - resourceId: {id}, version: {newVersion}, hdfsPath: {newHdfsPath}, user: {user}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】删除全部记录 - HDFS路径日志"},
+                  "children": [
+                    {"data": {"text": "条件：BML服务已启动，测试资源已上传，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过BML API删除资源的全部版本\n2、收集BML服务日志\n3、验证日志包含HDFS路径信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [BmlService] Delete resource - resourceId: {id}, version: *, hdfsPath: {hdfsPath}, user: {user}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】killEngine日志 - 信息完整性"},
+                  "children": [
+                    {"data": {"text": "条件：Linkis Manager服务已启动，Spark引擎已创建，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Linkis Manager API创建Spark引擎\n2、获取engineInstance信息\n3、通过Linkis Manager API kill引擎\n4、收集Linkis Manager日志\n5、验证日志包含引擎类型和用户名"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [LinkisManagerAMService] Kill engine - engineType: {engineType}, user: {user}, engineInstance: {engineInstance}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】killEngine日志 - 不包含敏感信息"},
+                  "children": [
+                    {"data": {"text": "条件：Linkis Manager服务已启动，引擎已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Linkis Manager API kill引擎\n2、收集Linkis Manager日志\n3、搜索killEngine日志\n4、验证日志不包含engineConnExecId和ticketId"}, "children": []},
+                    {"data": {"text": "预期结果：日志不包含 engineConnExecId，日志不包含 ticketId"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】Kerberos认证 - 认证成功日志"},
+                  "children": [
+                    {"data": {"text": "条件：Hive引擎插件已部署，Kerberos环境已配置，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、配置Kerberos认证（KEYTAB_PROXYUSER_ENABLED = true）\n2、创建Hive引擎\n3、收集Hive引擎日志\n4、验证日志包含认证信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [HiveEngineConnFactory] Hive engine authentication - user: {user}, authType: kerberos, result: success"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】Kerberos认证 - Simple认证日志"},
+                  "children": [
+                    {"data": {"text": "条件：Hive引擎插件已部署，Kerberos未配置，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、确认Kerberos未配置（KEYTAB_PROXYUSER_ENABLED = false）\n2、创建Hive引擎\n3、收集Hive引擎日志\n4、验证日志包含认证信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [HiveEngineConnFactory] Hive engine authentication - user: {user}, authType: simple, result: success"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】HDFS操作 - 创建路径成功"},
+                  "children": [
+                    {"data": {"text": "条件：Spark引擎插件已部署，HDFS已启动，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Spark引擎执行CSV导出操作\n2、指定HDFS输出路径（如 hdfs://linkis/tmp/output.csv）\n3、收集Spark引擎日志\n4、验证日志包含HDFS操作信息"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：INFO [CsvRelation] HDFS operation - type: create, path: {path}, user: {user}, result: success"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】HDFS操作 - 列出路径失败"},
+                  "children": [
+                    {"data": {"text": "条件：Spark引擎插件已部署，HDFS已启动，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Spark引擎执行CSV导出操作\n2、指定一个不存在的父目录\n3、触发HDFS list操作失败\n4、收集Spark引擎日志\n5、验证日志包含失败信息和错误详情"}, "children": []},
+                    {"data": {"text": "预期结果：日志格式：WARN [CsvRelation] HDFS operation - type: list, path: {path}, user: {user}, result: failed, error: {error}"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】FutureWarning过滤验证"},
+                  "children": [
+                    {"data": {"text": "条件：Spark引擎插件已部署，log4j2.xml已配置RegexFilter，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Spark引擎执行Python代码\n2、代码中使用广播表（触发FutureWarning）\n3、收集Spark引擎日志\n4、搜索ERROR级别的FutureWarning日志\n5、验证搜索结果为空（FutureWarning被过滤）"}, "children": []},
+                    {"data": {"text": "预期结果：ERROR级别日志中不包含 FutureWarning: HiveContext is deprecated"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】其他ERROR日志正常输出"},
+                  "children": [
+                    {"data": {"text": "条件：Spark引擎插件已部署，log4j2.xml已配置RegexFilter，Linkis服务已启动"}, "children": []},
+                    {"data": {"text": "步骤：\n1、通过Spark引擎执行会触发真实ERROR的代码\n2、收集Spark引擎日志\n3、搜索ERROR级别日志\n4、验证真实ERROR日志正常输出"}, "children": []},
+                    {"data": {"text": "预期结果：真实的ERROR日志正常输出，只有FutureWarning被过滤"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】日志中无明文Token"},
+                  "children": [
+                    {"data": {"text": "条件：Token脱敏功能已实现，Linkis服务已启动，日志目录可访问"}, "children": []},
+                    {"data": {"text": "步骤：\n1、准备测试Token：\"TEST_TOKEN_12345678901234567890\"\n2、触发包含Token的操作（如用户登录、引擎创建）\n3、等待日志文件写入完成\n4、使用grep搜索日志文件中的明文Token\n5、验证搜索结果为空（无明文Token）"}, "children": []},
+                    {"data": {"text": "预期结果：日志文件中不存在明文Token，日志中仅包含脱敏后的Token"}, "children": []
+                  }
+                ]
+              },
+                {
+                  "data": {"text": "【AIGC】Token业务逻辑不受影响"},
+                  "children": [
+                    {"data": {"text": "条件：Token脱敏功能已实现，Linkis服务已启动，测试用户已创建"}, "children": []},
+                    {"data": {"text": "步骤：\n1、用户提交任务，生成用户Token\n2、服务间使用Token进行验证（未脱敏的原始Token）\n3、验证Token验证通过，任务正常执行\n4、检查日志文件，确认日志中的Token已脱敏"}, "children": []},
+                    {"data": {"text": "预期结果：Token验证成功（使用原始Token），任务正常执行，日志中Token已脱敏"}, "children": []
+                  }
+                ]
+              }
+            ]
+          }]
+        }]
+      }]
+    }]
+  }
+}

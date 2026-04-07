@@ -17,13 +17,16 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.CodeAndRunTypeUtils
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 
-class SQLCodeCheckInterceptor extends EntranceInterceptor {
+import org.apache.commons.lang3.StringUtils
+
+class SQLCodeCheckInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = {
@@ -42,10 +45,44 @@ class SQLCodeCheckInterceptor extends EntranceInterceptor {
         if (!isAuth) {
           throw CodeCheckException(20051, "sql code check failed, reason is " + sb.toString())
         }
+
+        // Hive LOCATION control check
+        // Only check if: 1. Hive engine 2. Feature enabled 3. Creator NOT in whitelist
+        val engineType = LabelUtil.getEngineTypeLabel(jobRequest.getLabels).getEngineType
+        if (
+            "hive".equalsIgnoreCase(engineType) &&
+            EntranceConfiguration.HIVE_LOCATION_CONTROL_ENABLE.getValue &&
+            !isCreatorWhitelisted(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator)
+        ) {
+          val locationSb: StringBuilder = new StringBuilder
+          SQLExplain.checkLocation(jobRequest.getExecutionCode, locationSb)
+          if (locationSb.nonEmpty) {
+            throw CodeCheckException(20052, locationSb.toString())
+          }
+        }
       case _ =>
     }
     jobRequest
 
+  }
+
+  /**
+   * Check if the creator is in the LOCATION control whitelist
+   *
+   * @param creator
+   *   the application creator name
+   * @return
+   *   true if the creator is whitelisted (LOCATION allowed), false otherwise
+   */
+  private def isCreatorWhitelisted(creator: String): Boolean = {
+    if (StringUtils.isBlank(creator)) {
+      return false
+    }
+    val whitelist = EntranceConfiguration.HIVE_LOCATION_CONTROL_WHITELIST_CREATORS.getValue
+    if (StringUtils.isBlank(whitelist)) {
+      return false
+    }
+    whitelist.split(",").map(_.trim).exists(_.equalsIgnoreCase(creator))
   }
 
 }

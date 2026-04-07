@@ -190,6 +190,12 @@ public class EntranceSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
+  public EntranceGroupFactory entranceGroupFactory() {
+    return new EntranceGroupFactory();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
   public ConsumerManager consumerManager() {
     return new EntranceParallelConsumerManager(
         ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue(), "EntranceJobScheduler");

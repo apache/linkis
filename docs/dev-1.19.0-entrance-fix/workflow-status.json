@@ -1,0 +1,146 @@
+{
+  "taskName": "entrance-offline-cache-fix",
+  "taskNameCN": "Entrance实例隔离后Group缓存清理修复",
+  "branch": "dev-1.19.0-entrance-fix",
+  "status": "completed",
+  "currentStage": "stage-9",
+  "stageName": "循环决策完成",
+  "startedAt": "2026-04-02T07:00:00Z",
+  "completedAt": "2026-04-02T08:05:00Z",
+  "totalDuration": "1小时5分钟",
+  "executionMode": "fast",
+  "stages": [
+    {
+      "stage": "stage-0",
+      "name": "需求澄清",
+      "status": "completed",
+      "skipped": true,
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-1",
+      "name": "需求分析",
+      "status": "completed",
+      "output": "docs/dev-1.19.0-entrance-fix/requirements/entrance-offline-cache-fix_需求.md"
+    },
+    {
+      "stage": "stage-1.1",
+      "name": "需求文档质量检视",
+      "status": "completed",
+      "skipped": true,
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-1.2",
+      "name": "需求知识同步",
+      "status": "completed",
+      "output": "docs/project-knowledge/requirements/entrance_模块需求.md"
+    },
+    {
+      "stage": "stage-2",
+      "name": "设计方案生成",
+      "status": "completed",
+      "output": "docs/dev-1.19.0-entrance-fix/designs/entrance-offline-cache-fix_设计.md"
+    },
+    {
+      "stage": "stage-2.1",
+      "name": "设计文档质量检视",
+      "status": "completed",
+      "skipped": true,
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-2.2",
+      "name": "设计知识同步",
+      "status": "completed",
+      "output": "docs/project-knowledge/design/entrance_模块设计.md"
+    },
+    {
+      "stage": "stage-3",
+      "name": "代码开发",
+      "status": "completed",
+      "output": [
+        "linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/protocol/EntranceGroupCacheClearBroadcast.scala",
+        "linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/listener/EntranceGroupCacheClearBroadcastListener.scala",
+        "linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/scheduler/EntranceGroupFactory.scala (修改)",
+        "linkis-computation-governance/linkis-entrance/src/main/java/org/apache/linkis/entrance/restful/EntranceLabelRestfulApi.java (修改)"
+      ]
+    },
+    {
+      "stage": "stage-3.1",
+      "name": "代码知识同步",
+      "status": "completed",
+      "output": "docs/project-knowledge/code/entrance_模块代码.md"
+    },
+    {
+      "stage": "stage-4",
+      "name": "自动部署",
+      "status": "skipped",
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-5",
+      "name": "部署确认",
+      "status": "skipped",
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-6",
+      "name": "测试验证",
+      "status": "completed",
+      "output": "docs/dev-1.19.0-entrance-fix/testing/entrance-offline-cache-fix_测试用例.md"
+    },
+    {
+      "stage": "stage-6.1",
+      "name": "回归测试知识同步",
+      "status": "skipped",
+      "note": "快速模式跳过"
+    },
+    {
+      "stage": "stage-7",
+      "name": "测试执行",
+      "status": "completed",
+      "output": "docs/dev-1.19.0-entrance-fix/testing/test-status.json"
+    },
+    {
+      "stage": "stage-8",
+      "name": "测试报告生成",
+      "status": "completed",
+      "output": "docs/dev-1.19.0-entrance-fix/testing/reports/entrance-offline-cache-fix_测试执行报告.md"
+    },
+    {
+      "stage": "stage-9",
+      "name": "循环决策",
+      "status": "completed",
+      "decision": "exit",
+      "reason": "所有测试通过(18/18)，无缺陷发现"
+    }
+  ],
+  "testResults": {
+    "totalTests": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "passRate": "100%",
+    "executionTime": "1m 33s"
+  },
+  "deliverables": {
+    "requirements": "docs/dev-1.19.0-entrance-fix/requirements/entrance-offline-cache-fix_需求.md",
+    "design": "docs/dev-1.19.0-entrance-fix/designs/entrance-offline-cache-fix_设计.md",
+    "code": [
+      "linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/protocol/EntranceGroupCacheClearBroadcast.scala",
+      "linkis-computation-governance/linkis-entrance/src/main/scala/org/apache/linkis/entrance/listener/EntranceGroupCacheClearBroadcastListener.scala"
+    ],
+    "testCode": [
+      "linkis-computation-governance/linkis-entrance/src/test/scala/org/apache/linkis/entrance/protocol/EntranceGroupCacheClearBroadcastTest.scala",
+      "linkis-computation-governance/linkis-entrance/src/test/scala/org/apache/linkis/entrance/listener/EntranceGroupCacheClearBroadcastListenerTest.scala",
+      "linkis-computation-governance/linkis-entrance/src/test/scala/org/apache/linkis/entrance/scheduler/EntranceGroupFactoryTest.scala"
+    ],
+    "testReport": "docs/dev-1.19.0-entrance-fix/testing/reports/entrance-offline-cache-fix_测试执行报告.md"
+  },
+  "nextSteps": [
+    "代码已准备好合并到主分支",
+    "部署前确保配置 linkis.entrance.group.cache.clear.enabled=true",
+    "建议在测试环境进行多实例Entrance集成测试"
+  ]
+}

@@ -452,4 +452,15 @@ object EntranceConfiguration {
   val TASK_DIAGNOSIS_TIMEOUT_SCAN =
     CommonVars("linkis.task.diagnosis.timeout.scan", "2m").getValue
 
+  /**
+   * Entrance Group缓存清理功能总开关
+   *
+   * 控制以下功能是否启用：
+   *   1. Entrance offline时发送Group缓存清理广播 2. 接收并处理Group缓存清理广播 3. 手动清理Group缓存API
+   *
+   * 默认关闭，需要手动启用以验证功能稳定性
+   */
+  val ENTRANCE_GROUP_CACHE_CLEAR_ENABLED =
+    CommonVars[Boolean]("linkis.entrance.group.cache.clear.enabled", true).getValue
+
 }

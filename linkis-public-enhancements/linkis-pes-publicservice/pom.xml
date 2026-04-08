@@ -70,43 +70,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.hbase</groupId>
-      <artifactId>hbase-server</artifactId>
-      <version>${hbase.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-auth</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-mapreduce-client-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jruby.jcodings</groupId>
-          <artifactId>jcodings</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jruby.joni</groupId>
-          <artifactId>joni</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.mortbay.jetty</groupId>
-          <artifactId>jetty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.hbase</groupId>
-          <artifactId>hbase-shaded-jetty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.hbase</groupId>
-          <artifactId>hbase-protocol-shaded</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-io_file-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

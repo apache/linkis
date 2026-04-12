@@ -57,6 +57,12 @@ public class JDBCEngineConnConstant {
   public static final String JDBC_POOL_TEST_WHILE_IDLE = "wds.linkis.jdbc.pool.testWhileIdle";
   public static final String JDBC_POOL_VALIDATION_QUERY = "wds.linkis.jdbc.pool.validationQuery";
   public static final String JDBC_POOL_DEFAULT_VALIDATION_QUERY = "SELECT 1";
+
+  // Configuration for database-specific validation queries
+  // Format: dbType1:query1,dbType2:query2,...
+  // Example: oracle:SELECT 1 FROM DUAL,db2:SELECT 1 FROM SYSIBM.SYSDUMMY1,mysql:SELECT 1
+  public static final String JDBC_VALIDATION_QUERY_MAPPING =
+      "wds.linkis.jdbc.validation.query.mapping";
   public static final String JDBC_POOL_TIME_BETWEEN_MIN_EVIC_IDLE_MS =
       "wds.linkis.jdbc.pool.minEvictableIdleTimeMillis";
   public static final String JDBC_POOL_TIME_BETWEEN_EVIC_RUNS_MS =

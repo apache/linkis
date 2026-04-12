@@ -43,4 +43,13 @@ object JDBCConfiguration {
   val SUPPORT_CONN_PARAM_EXECUTE_ENABLE: Boolean =
     CommonVars[Boolean]("linkis.support.conn.param.execute.enable", true).getValue
 
+  // Validation query mapping for different database types
+  // Format: dbType1:query1,dbType2:query2,...
+  // Default includes common databases that need non-standard validation queries
+  val JDBC_VALIDATION_QUERY_MAPPING: String =
+    CommonVars[String](
+      "wds.linkis.jdbc.validation.query.mapping",
+      "oracle:SELECT 1 FROM DUAL,db2:SELECT 1 FROM SYSIBM.SYSDUMMY1"
+    ).getValue
+
 }

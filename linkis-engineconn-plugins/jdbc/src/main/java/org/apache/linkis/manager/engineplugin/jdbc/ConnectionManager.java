@@ -205,6 +205,8 @@ public class ConnectionManager {
     datasource.setUrl(dbUrl);
     if (dbUrl.toLowerCase().contains("oracle")) {
       datasource.setValidationQuery("SELECT 1 FROM DUAL");
+    } else if (dbUrl.toLowerCase().contains("db2")) {
+      datasource.setValidationQuery("SELECT 1 FROM SYSIBM.SYSDUMMY1");
     }
     datasource.setUsername(username);
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
@@ -248,6 +250,8 @@ public class ConnectionManager {
     }
     if (url.contains("oracle")) {
       ((DruidDataSource) dataSource).setValidationQuery("SELECT 1 FROM DUAL");
+    } else if (url.contains("db2")) {
+      ((DruidDataSource) dataSource).setValidationQuery("SELECT 1 FROM SYSIBM.SYSDUMMY1");
     }
     return dataSource.getConnection();
   }

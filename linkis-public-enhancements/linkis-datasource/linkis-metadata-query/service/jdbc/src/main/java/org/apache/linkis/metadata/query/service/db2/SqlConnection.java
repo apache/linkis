@@ -66,22 +66,21 @@ public class SqlConnection implements Closeable {
   }
 
   public List<String> getAllDatabases() throws SQLException {
-    // db2 "select schemaname from syscat.schemata"
-    List<String> dataBaseName = new ArrayList<>();
+    // Query schema list from system catalog view
+    List<String> schemaNames = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs = stmt.executeQuery("list database directory");
-      // rs = stmt.executeQuery("SELECT * FROM SYSIBMADM.APPLICATIONS WITH UR");
-      // rs = stmt.executeQuery("select * from syscat.tables");
+      // Query all schemas from SYSCAT.SCHEMATA (DB2 system catalog)
+      rs = stmt.executeQuery("SELECT SCHEMANAME FROM SYSCAT.SCHEMATA WITH UR");
       while (rs.next()) {
-        dataBaseName.add(rs.getString(1));
+        schemaNames.add(rs.getString(1));
       }
     } finally {
       closeResource(null, stmt, rs);
     }
-    return dataBaseName;
+    return schemaNames;
   }
 
   public List<String> getAllTables(String tabschema) throws SQLException {

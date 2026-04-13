@@ -57,6 +57,9 @@ public class ConnectionManager {
   private final Map<String, DataSource> dataSourceFactories;
   private final JDBCDataSourceConfigurations jdbcDataSourceConfigurations;
 
+  // Cache for validation query mapping parsed from configuration
+  private volatile Map<String, String> validationQueryMapping = null;
+
   private static volatile ConnectionManager connectionManager; // NOSONAR
   private ScheduledExecutorService scheduledExecutorService;
   private Integer kinitFailCount = 0;
@@ -64,6 +67,54 @@ public class ConnectionManager {
   private ConnectionManager() {
     jdbcDataSourceConfigurations = new JDBCDataSourceConfigurations();
     dataSourceFactories = new HashMap<>();
+    initValidationQueryMapping();
+  }
+
+  /**
+   * Parse validation query mapping from configuration. Format: dbType1:query1,dbType2:query2,...
+   * Example: oracle:SELECT 1 FROM DUAL,db2:SELECT 1 FROM SYSIBM.SYSDUMMY1
+   */
+  private void initValidationQueryMapping() {
+    String mappingConfig = JDBCConfiguration$.MODULE$.JDBC_VALIDATION_QUERY_MAPPING();
+    Map<String, String> mapping = new HashMap<>();
+    if (StringUtils.isNotBlank(mappingConfig)) {
+      String[] entries = mappingConfig.split(",");
+      for (String entry : entries) {
+        String[] parts = entry.split(":");
+        if (parts.length == 2) {
+          String dbType = parts[0].trim().toLowerCase();
+          String query = parts[1].trim();
+          mapping.put(dbType, query);
+          LOG.info("Loaded validation query mapping: {} -> {}", dbType, query);
+        }
+      }
+    }
+    this.validationQueryMapping = mapping;
+  }
+
+  /**
+   * Get validation query for a specific JDBC URL based on database type. Returns null if no
+   * specific mapping found (will use default "SELECT 1").
+   *
+   * @param jdbcUrl the JDBC connection URL
+   * @return the validation query for this database type, or null if using default
+   */
+  private String getValidationQueryFromUrl(String jdbcUrl) {
+    if (jdbcUrl == null || validationQueryMapping == null || validationQueryMapping.isEmpty()) {
+      return null;
+    }
+    String lowerUrl = jdbcUrl.toLowerCase();
+    for (Map.Entry<String, String> entry : validationQueryMapping.entrySet()) {
+      if (lowerUrl.contains(entry.getKey())) {
+        LOG.debug(
+            "Using validation query '{}' for database type '{}' from URL: {}",
+            entry.getValue(),
+            entry.getKey(),
+            jdbcUrl);
+        return entry.getValue();
+      }
+    }
+    return null;
   }
 
   public static ConnectionManager getInstance() {
@@ -203,9 +254,13 @@ public class ConnectionManager {
     DruidDataSource datasource = new DruidDataSource();
     LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
     datasource.setUrl(dbUrl);
-    if (dbUrl.toLowerCase().contains("oracle")) {
-      datasource.setValidationQuery("SELECT 1 FROM DUAL");
+
+    // Set validation query based on database type from configuration
+    String dbSpecificValidationQuery = getValidationQueryFromUrl(dbUrl);
+    if (dbSpecificValidationQuery != null) {
+      datasource.setValidationQuery(dbSpecificValidationQuery);
     }
+
     datasource.setUsername(username);
     if (AESUtils.LINKIS_DATASOURCE_AES_SWITCH.getValue()) {
       // decrypt
@@ -246,9 +301,13 @@ public class ConnectionManager {
         }
       }
     }
-    if (url.contains("oracle")) {
-      ((DruidDataSource) dataSource).setValidationQuery("SELECT 1 FROM DUAL");
+
+    // Set validation query based on database type from configuration
+    String dbSpecificValidationQuery = getValidationQueryFromUrl(url);
+    if (dbSpecificValidationQuery != null) {
+      ((DruidDataSource) dataSource).setValidationQuery(dbSpecificValidationQuery);
     }
+
     return dataSource.getConnection();
   }
 

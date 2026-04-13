@@ -45,6 +45,15 @@
                 <exclude>org.apache.hbase:hbase-shaded-protobuf:jar</exclude>
                 <exclude>org.apache.hbase:hbase-shaded-miscellaneous:jar</exclude>
                 <exclude>org.apache.hbase:hbase-protocol-shaded:jar</exclude>
+                <!-- Exclude conflicting Jetty jars - use from public-module -->
+                <exclude>org.eclipse.jetty:jetty-*:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-runner:jar</exclude>
+                <!-- Exclude SLF4J binding to avoid conflict -->
+                <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
+                <exclude>org.slf4j:slf4j-reload4j:jar</exclude>
+                <exclude>org.slf4j:slf4j-log4j12:jar</exclude>
+                <!-- Exclude Hadoop jars - use from public-module -->
+                <exclude>org.apache.hadoop:hadoop-*:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

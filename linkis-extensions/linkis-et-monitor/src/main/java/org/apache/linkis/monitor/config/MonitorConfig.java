@@ -75,7 +75,7 @@ public class MonitorConfig {
 
   // Diagnosis log cleanup configuration
   public static final CommonVars<Boolean> DIAGNOSIS_LOG_ENABLED =
-      CommonVars.apply("linkis.monitor.diagnosis.log.enabled", true);
+      CommonVars.apply("linkis.monitor.diagnosis.log.enabled", false);
   public static final CommonVars<Integer> DIAGNOSIS_LOG_RETENTION_DAYS =
       CommonVars.apply("linkis.monitor.diagnosis.log.retention.days", 90);
   public static final CommonVars<String> DIAGNOSIS_LOG_PATH =

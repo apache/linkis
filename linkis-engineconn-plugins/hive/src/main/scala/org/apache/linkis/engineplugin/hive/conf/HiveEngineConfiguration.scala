@@ -46,7 +46,7 @@ object HiveEngineConfiguration {
 
   val HIVE_RANGER_ENABLE = CommonVars[Boolean]("linkis.hive.ranger.enabled", false).getValue
 
-  val HIVE_TAG_USER_ENABLE = CommonVars[Boolean]("linkis.hive.tag.user.enabled", true).getValue
+  val HIVE_TAG_USER_ENABLE = CommonVars[Boolean]("linkis.hive.tag.user.enabled", false).getValue
 
   val HIVE_ENGINE_CONN_JAVA_EXTRA_OPTS = CommonVars(
     "wds.linkis.hive.engineConn.java.extraOpts",

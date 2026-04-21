@@ -21,9 +21,9 @@ import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
-import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.protocol.EntranceGroupCacheClearBroadcast;
+import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
@@ -149,8 +149,8 @@ public class EntranceLabelRestfulApi {
       try {
         // 构造广播消息
         EntranceGroupCacheClearBroadcast broadcast =
-                new EntranceGroupCacheClearBroadcast(
-                        Sender.getThisInstance(), System.currentTimeMillis());
+            new EntranceGroupCacheClearBroadcast(
+                Sender.getThisInstance(), System.currentTimeMillis());
         // 获取entrance服务的Sender并发送广播
         Sender.getSender(Sender.getThisServiceInstance()).send(broadcast);
         logger.info("Successfully sent cache clear broadcast for entrance offline");

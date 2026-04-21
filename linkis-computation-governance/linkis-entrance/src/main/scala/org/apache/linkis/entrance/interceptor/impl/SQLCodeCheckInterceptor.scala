@@ -22,6 +22,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.lang3.StringUtils
@@ -50,7 +51,7 @@ class SQLCodeCheckInterceptor extends EntranceInterceptor with Logging {
         // Only check if: 1. Hive engine 2. Feature enabled 3. Creator NOT in whitelist
         val engineType = LabelUtil.getEngineTypeLabel(jobRequest.getLabels).getEngineType
         if (
-            "hive".equalsIgnoreCase(engineType) &&
+            EngineType.HIVE.toString.equalsIgnoreCase(engineType) &&
             EntranceConfiguration.HIVE_LOCATION_CONTROL_ENABLE.getValue &&
             !isCreatorWhitelisted(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator)
         ) {

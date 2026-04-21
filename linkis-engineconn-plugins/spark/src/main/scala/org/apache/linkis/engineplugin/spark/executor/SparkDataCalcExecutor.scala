@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.exception.FatalException
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{CodeUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
@@ -27,6 +27,7 @@ import org.apache.linkis.engineplugin.spark.datacalc.model.{DataCalcArrayData, D
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.EmptyCodeParser
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.scheduler.executer.{
   CompletedExecuteResponse,
   ErrorExecuteResponse,
@@ -53,7 +54,10 @@ class SparkDataCalcExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       context: EngineExecutionContext,
       jobGroup: String
   ): ExecuteResponse = {
-    logger.info("DataCalcExecutor run query: " + code)
+    logger.info(
+      "DataCalcExecutor run query: " + CodeUtils
+        .maskCode(code, EngineType.SPARK.toString() + "-DataCalc")
+    )
     context.appendStdout(s"${EngineUtils.getName} >> $code")
     Utils.tryCatch {
       val execType = context.getProperties.getOrDefault("exec-type", "array").toString

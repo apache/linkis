@@ -142,8 +142,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
    * 清除所有Group缓存
    *
    * 调用时机：
-   *   1. 接收到EntranceGroupCacheClearBroadcast广播时（需功能开关启用）
-   *   2. 手动清除缓存（如管理API）
+   *   1. 接收到EntranceGroupCacheClearBroadcast广播时（需功能开关启用） 2. 手动清除缓存（如管理API）
    *
    * 线程安全：Guava Cache的invalidateAll()是原子操作，支持并发调用
    *
@@ -162,7 +161,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     } catch {
       case e: Exception =>
         logger.error("Failed to clear Group cache", e)
-        // 不抛出异常，避免影响调用方
+      // 不抛出异常，避免影响调用方
     }
   }
 

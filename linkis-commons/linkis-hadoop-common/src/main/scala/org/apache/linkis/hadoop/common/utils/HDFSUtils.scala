@@ -23,7 +23,6 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf._
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 
-import com.google.common.cache.{CacheBuilder, LoadingCache, RemovalCause, RemovalListener, RemovalNotification}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
@@ -40,6 +39,14 @@ import java.util.concurrent.atomic.AtomicLong
 
 import scala.collection.JavaConverters._
 
+import com.google.common.cache.{
+  CacheBuilder,
+  LoadingCache,
+  RemovalCause,
+  RemovalListener,
+  RemovalNotification
+}
+
 object HDFSUtils extends Logging {
 
   private val fileSystemCache: java.util.Map[String, HDFSFileSystemContainer] =
@@ -52,9 +59,9 @@ object HDFSUtils extends Logging {
         val key = notification.getKey
         val path = notification.getValue
         val cause = notification.getCause
-        
+
         logger.info(s"Keytab cache entry removed: $key, cause: $cause")
-        
+
         // 当缓存项被移除时，清理对应的临时文件
         if (path != null) {
           val file = new File(path)
@@ -69,7 +76,8 @@ object HDFSUtils extends Logging {
       }
     }
 
-    CacheBuilder.newBuilder()
+    CacheBuilder
+      .newBuilder()
       .maximumSize(1000) // 最大缓存项数量
       .expireAfterAccess(24, TimeUnit.HOURS) // 24小时未访问过期
       .removalListener(removalListener)
@@ -525,7 +533,10 @@ object HDFSUtils extends Logging {
           // 确保keytab临时目录存在
           if (!Files.exists(keytabTempDir)) {
             Files.createDirectories(keytabTempDir)
-            Files.setPosixFilePermissions(keytabTempDir, PosixFilePermissions.fromString("rwxr-xr-x"))
+            Files.setPosixFilePermissions(
+              keytabTempDir,
+              PosixFilePermissions.fromString("rwxr-xr-x")
+            )
           }
 
           val cachedPath = keytabTempFileCache.getIfPresent(cacheKey)

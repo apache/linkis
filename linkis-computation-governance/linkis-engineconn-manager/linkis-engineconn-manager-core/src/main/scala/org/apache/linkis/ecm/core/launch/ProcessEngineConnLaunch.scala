@@ -99,6 +99,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       val conf = CommonVars.apply(key, "")
       if (StringUtils.isNotBlank(conf.getValue)) environment.put(key, conf.getValue)
     }
+    // 获取引擎类型标签
+    val engineTypeLabel = LabelUtil.getEngineTypeLabel(request.labels)
     Environment.values foreach {
       case USER => environment.put(USER.toString, request.user)
       case ECM_HOME =>
@@ -122,6 +124,13 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case ENGINECONN_ENVKEYS =>
         environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS)
       case LINKIS_HOME => putIfExists(LINKIS_HOME)
+      case ENGINE_TYPE =>
+        // 设置引擎类型环境变量，格式: engineType-version (如: hive-2.3.3)
+        if (engineTypeLabel != null) {
+          val engineType = engineTypeLabel.getEngineType
+          val version = engineTypeLabel.getVersion
+          environment.put(ENGINE_TYPE.toString, s"$engineType-$version")
+        }
       case _ =>
     }
   }

@@ -23,4 +23,10 @@ object ECPCoreConf {
 
   val CORE_DUMP_DISABLE = CommonVars("linkis.ec.core.dump.disable", true).getValue
 
+  /**
+   * 物料替换脚本路径 脚本会在每次软链接创建前被调用，参数为：源路径 目标路径 例如：/appcom/Install/linkis/bin/material_replace.sh
+   */
+  val MATERIAL_REPLACE_SCRIPT_PATH: String =
+    CommonVars("linkis.ecm.material.replace.script.path", "").getValue
+
 }

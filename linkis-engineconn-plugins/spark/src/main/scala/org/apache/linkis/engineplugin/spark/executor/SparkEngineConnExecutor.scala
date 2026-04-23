@@ -18,7 +18,13 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{ByteTimeUtils, CodeAndRunTypeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{
+  ByteTimeUtils,
+  CodeAndRunTypeUtils,
+  CodeUtils,
+  Logging,
+  Utils
+}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
@@ -58,6 +64,7 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineType}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
@@ -222,13 +229,19 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         // with unit if set configuration with unit
         // if not set sc get will get the value of spark.yarn.executor.memoryOverhead such as 512(without unit)
         val memoryOverhead = sc.getConf.get("spark.executor.memoryOverhead", "1G")
-        val pythonVersion = SparkConfiguration.SPARK_PYTHON_VERSION.getValue(
-          EngineConnObject.getEngineCreationContext.getOptions
-        )
+        val engineCreationOptions = EngineConnObject.getEngineCreationContext.getOptions
+        val pythonVersion = if (engineCreationOptions != null) {
+          SparkConfiguration.SPARK_PYTHON_VERSION.getValue(engineCreationOptions)
+        } else {
+          SparkConfiguration.SPARK_PYTHON_VERSION.getValue
+        }
         var engineType = ""
         val labels = engineExecutorContext.getLabels
         if (labels.length > 0) {
-          engineType = LabelUtil.getEngineTypeLabel(labels.toList.asJava).getStringValue
+          val engineTypeLabel = LabelUtil.getEngineTypeLabel(labels.toList.asJava)
+          if (engineTypeLabel != null) {
+            engineType = engineTypeLabel.getStringValue
+          }
         }
         val sb = new StringBuilder
         sb.append(s"spark.executor.instances=$executorNum\n")
@@ -362,7 +375,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       completedLine: String
   ): ExecuteResponse = {
     val newcode = completedLine + code
-    logger.info("newcode is " + newcode)
+    logger.info("newcode is " + CodeUtils.maskCode(newcode, EngineType.SPARK.toString()))
     executeLine(engineExecutorContext, newcode)
   }
 

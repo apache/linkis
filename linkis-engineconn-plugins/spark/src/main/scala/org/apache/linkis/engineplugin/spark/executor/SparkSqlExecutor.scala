@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{CodeUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
@@ -28,6 +28,7 @@ import org.apache.linkis.engineplugin.spark.utils.{DirectPushCache, EngineUtils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.scheduler.executer._
 
@@ -86,7 +87,9 @@ class SparkSqlExecutor(
       sparkEngineSession.sqlContext.sql(s"use $defaultDB")
     }
 
-    logger.info("SQLExecutor run query: " + code)
+    logger.info(
+      "SQLExecutor run query: " + CodeUtils.maskCode(code, EngineType.SPARK.toString() + "-SQL")
+    )
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     val standInClassLoader = Thread.currentThread().getContextClassLoader
     try {

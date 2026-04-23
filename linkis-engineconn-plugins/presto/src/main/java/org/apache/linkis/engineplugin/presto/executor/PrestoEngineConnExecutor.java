@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.presto.executor;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.common.log.LogUtils;
+import org.apache.linkis.common.utils.CodeUtils;
 import org.apache.linkis.common.utils.OverloadUtils;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.engineconn.common.conf.EngineConnConstant;
@@ -39,6 +40,7 @@ import org.apache.linkis.manager.common.entity.resource.LoadResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -145,7 +147,9 @@ public class PrestoEngineConnExecutor extends ConcurrentComputationExecutor {
     } else {
       realCode = code.trim();
     }
-    logger.info("presto client begins to run psql code:\n {}", realCode);
+    logger.info(
+        "presto client begins to run psql code: {}",
+        CodeUtils.maskCode(realCode, EngineType.PRESTO().toString()));
 
     String taskId = engineExecutorContext.getJobId().get();
     ClientSession clientSession = clientSessionCache.getIfPresent(taskId);

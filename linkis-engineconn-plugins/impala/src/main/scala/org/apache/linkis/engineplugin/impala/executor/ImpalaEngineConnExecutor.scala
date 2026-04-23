@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.impala.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -54,6 +54,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{
@@ -111,7 +112,9 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       code.trim
     }
 
-    logger.info(s"impala client begins to run code:\n $realCode")
+    logger.info(
+      s"impala client begins to run code: ${CodeUtils.maskCode(realCode, EngineType.IMPALA.toString())}"
+    )
     val taskId = engineExecutionContext.getJobId.get
 
     val impalaClient = getOrCreateImpalaClient(engineExecutionContext)

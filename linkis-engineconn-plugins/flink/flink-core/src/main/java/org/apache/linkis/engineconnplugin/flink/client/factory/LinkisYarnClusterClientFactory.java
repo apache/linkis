@@ -18,7 +18,6 @@
 package org.apache.linkis.engineconnplugin.flink.client.factory;
 
 import org.apache.linkis.engineconnplugin.flink.client.utils.YarnConfLoader;
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 
 import org.apache.flink.configuration.ConfigOption;
 import org.apache.flink.configuration.Configuration;
@@ -26,7 +25,6 @@ import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.yarn.YarnClientYarnClusterInformationRetriever;
 import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.YarnClusterDescriptor;
-import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnLogConfigUtil;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.client.api.YarnClient;

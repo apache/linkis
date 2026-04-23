@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.common.log.LogUtils;
+import org.apache.linkis.common.utils.CodeUtils;
 import org.apache.linkis.common.utils.OverloadUtils;
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask;
 import org.apache.linkis.engineconn.computation.executor.execute.ConcurrentComputationExecutor;
@@ -35,6 +36,7 @@ import org.apache.linkis.manager.common.entity.resource.LoadResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -131,7 +133,9 @@ public class ReplEngineConnExecutor extends ConcurrentComputationExecutor {
     } else {
       realCode = code.trim();
     }
-    logger.info("Repl engine begins to run code:\n {}", realCode);
+    logger.info(
+        "Repl engine begins to run code: {}",
+        CodeUtils.maskCode(realCode, EngineType.REPL().toString()));
 
     String taskId = engineExecutorContext.getJobId().get();
 

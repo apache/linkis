@@ -17,18 +17,18 @@
 
 package org.apache.linkis.hadoop.common.utils
 
-import org.junit.jupiter.api.{AfterAll, AfterEach, BeforeAll, DisplayName, Test}
-import org.junit.jupiter.api.Assertions.{assertEquals, assertFalse, assertNotNull, assertTrue}
-
 import java.io.File
 import java.nio.file.{Files, Paths, StandardOpenOption}
 import java.util.concurrent.{ConcurrentHashMap, Executors, TimeUnit}
+
 import scala.collection.JavaConverters._
 
+import org.junit.jupiter.api.{AfterAll, AfterEach, BeforeAll, DisplayName, Test}
+import org.junit.jupiter.api.Assertions.{assertEquals, assertFalse, assertNotNull, assertTrue}
+
 /**
- * Unit tests for keytab file cache optimization in HDFSUtils.
- * This test validates that the caching mechanism reduces Full GC by avoiding
- * repeated creation of temporary keytab files.
+ * Unit tests for keytab file cache optimization in HDFSUtils. This test validates that the caching
+ * mechanism reduces Full GC by avoiding repeated creation of temporary keytab files.
  */
 @DisplayName("HDFSUtils Keytab Cache Test")
 class HDFSUtilsKeytabCacheTest {
@@ -40,7 +40,10 @@ class HDFSUtilsKeytabCacheTest {
   @BeforeAll
   def setupClass(): Unit = {
     // Create test directory for keytab files
-    testKeytabDir = new File(System.getProperty("java.io.tmpdir"), "test_keytab_cache_" + System.currentTimeMillis())
+    testKeytabDir = new File(
+      System.getProperty("java.io.tmpdir"),
+      "test_keytab_cache_" + System.currentTimeMillis()
+    )
     testKeytabDir.mkdirs()
 
     // Create a dummy encrypted keytab file for testing
@@ -77,7 +80,8 @@ class HDFSUtilsKeytabCacheTest {
     try {
       val cacheMethod = HDFSUtils.getClass.getDeclaredMethod("keytabFileCache")
       cacheMethod.setAccessible(true)
-      val cache = cacheMethod.invoke(HDFSUtils).asInstanceOf[ConcurrentHashMap[String, java.nio.file.Path]]
+      val cache =
+        cacheMethod.invoke(HDFSUtils).asInstanceOf[ConcurrentHashMap[String, java.nio.file.Path]]
       cache.asScala.foreach { case (_, path) =>
         try {
           Files.deleteIfExists(path)
@@ -111,7 +115,8 @@ class HDFSUtilsKeytabCacheTest {
     val label = null
 
     // Verify cache key generation is consistent
-    val keyMethod = HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
+    val keyMethod =
+      HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
     keyMethod.setAccessible(true)
     val key1 = keyMethod.invoke(HDFSUtils, userName, label).asInstanceOf[String]
     val key2 = keyMethod.invoke(HDFSUtils, userName, label).asInstanceOf[String]
@@ -126,7 +131,8 @@ class HDFSUtilsKeytabCacheTest {
     val user2 = "testuser2"
     val label = null
 
-    val keyMethod = HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
+    val keyMethod =
+      HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
     keyMethod.setAccessible(true)
     val key1 = keyMethod.invoke(HDFSUtils, user1, label).asInstanceOf[String]
     val key2 = keyMethod.invoke(HDFSUtils, user2, label).asInstanceOf[String]
@@ -143,7 +149,8 @@ class HDFSUtilsKeytabCacheTest {
     val label1 = "cluster1"
     val label2 = "cluster2"
 
-    val keyMethod = HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
+    val keyMethod =
+      HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
     keyMethod.setAccessible(true)
     val key1 = keyMethod.invoke(HDFSUtils, userName, label1).asInstanceOf[String]
     val key2 = keyMethod.invoke(HDFSUtils, userName, label2).asInstanceOf[String]
@@ -160,7 +167,8 @@ class HDFSUtilsKeytabCacheTest {
     val label = null
     val threadCount = 10
 
-    val keyMethod = HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
+    val keyMethod =
+      HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
     keyMethod.setAccessible(true)
 
     val executor = Executors.newFixedThreadPool(threadCount)
@@ -195,7 +203,8 @@ class HDFSUtilsKeytabCacheTest {
     val label1 = null
     val label2 = "default"
 
-    val keyMethod = HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
+    val keyMethod =
+      HDFSUtils.getClass.getDeclaredMethod("createKeytabCacheKey", classOf[String], classOf[String])
     keyMethod.setAccessible(true)
     val key1 = keyMethod.invoke(HDFSUtils, userName, label1).asInstanceOf[String]
     val key2 = keyMethod.invoke(HDFSUtils, userName, label2).asInstanceOf[String]
@@ -224,4 +233,5 @@ class HDFSUtilsKeytabCacheTest {
       case _: Exception => // Field may not be accessible
     }
   }
+
 }

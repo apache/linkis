@@ -152,7 +152,8 @@ public class EntranceSpringConfiguration {
       new CommentInterceptor(),
       new SetTenantLabelInterceptor(),
       new UserCreatorIPCheckInterceptor(),
-      new TaskRetryInterceptor()
+      new TaskRetryInterceptor(),
+      new QueueSelectionInterceptor()
     };
   }
 

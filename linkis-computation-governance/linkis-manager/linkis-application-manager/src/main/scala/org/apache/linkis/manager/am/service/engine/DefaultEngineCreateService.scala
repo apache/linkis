@@ -24,8 +24,10 @@ import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
-import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.job.{JobReqQuery, JobReqUpdate}
+import org.apache.linkis.governance.common.protocol.conf.{
+  SecondaryYarnRequest,
+  SecondaryYarnResponse
+}
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
@@ -36,7 +38,8 @@ import org.apache.linkis.manager.am.vo.CanCreateECRes
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import org.apache.linkis.manager.common.entity.resource.NodeResource
+import org.apache.linkis.manager.common.entity.resource.{NodeResource, ResourceType}
+import org.apache.linkis.manager.common.entity.resource.YarnResource
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateRequest, EngineStopRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.engineplugin.common.launch.entity.{
@@ -45,7 +48,6 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
@@ -53,7 +55,9 @@ import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelServi
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
-import org.apache.linkis.manager.rm.service.ResourceManager
+import org.apache.linkis.manager.rm.external.service.ExternalResourceService
+import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
+import org.apache.linkis.manager.rm.service.{LabelResourceService, ResourceManager}
 import org.apache.linkis.manager.service.common.label.LabelFilter
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
@@ -94,6 +98,12 @@ class DefaultEngineCreateService
 
   @Autowired
   private var userLabelService: UserLabelService = _
+
+  @Autowired
+  private var externalResourceService: ExternalResourceService = _
+
+  @Autowired
+  private var labelResourceService: LabelResourceService = _
 
   @Autowired
   private var engineConnConfigurationService: EngineConnConfigurationService = _
@@ -297,7 +307,7 @@ class DefaultEngineCreateService
         val emInstance = engineNode.getServiceInstance.getInstance
         val ecmInstance = engineNode.getEMNode.getServiceInstance.getInstance
         if ((null != emInstance) && (null != ecmInstance)) {
-          // 8. Update job history metrics after successful engine creation - 异步执行
+          // 8. Update job history metrics after successful engine creation - executed asynchronously
           AMUtils.updateMetricsAsync(
             taskId,
             resourceTicketId,
@@ -407,6 +417,151 @@ class DefaultEngineCreateService
 
     val timeoutEngineResourceRequest = TimeoutEngineResourceRequest(timeout, user, labelList, props)
     engineConnResourceFactoryService.createEngineResource(timeoutEngineResourceRequest)
+  }
+
+  /**
+   * Smart queue selection: executed before creating YarnResource to ensure correct queue
+   * configuration Decides whether to use primary queue or secondary queue by checking secondary
+   * queue resource usage
+   *
+   * @param secondaryYarnRequest
+   *   Request containing labels and params
+   * @param sender
+   *   RPC sender
+   * @return
+   *   Response with selected queue
+   */
+  @Receiver
+  override def performSmartQueueSelection(
+      secondaryYarnRequest: SecondaryYarnRequest,
+      sender: Sender
+  ): SecondaryYarnResponse = {
+    val taskId = secondaryYarnRequest.taskId
+    logger.info(s"[$taskId]Received queue judgment request")
+    var secondaryYarnResponse = SecondaryYarnResponse("", "", "")
+    Utils.tryAndWarn {
+      if (Configuration.SECONDARY_QUEUE_ENABLED.getValue) {
+        val labelList = secondaryYarnRequest.labels
+        val props = secondaryYarnRequest.params
+        val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
+        if (null != configProp && configProp.asScala.nonEmpty) {
+          configProp.asScala.foreach(keyValue => {
+            if (!props.containsKey(keyValue._1)) {
+              props.put(keyValue._1, keyValue._2)
+            }
+          })
+        }
+        // 1. Get queue configuration with priority: user params > console config > default
+        val primaryQueue =
+          props.getOrDefault(AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY, "").toString.trim
+        val secondaryQueue =
+          props
+            .getOrDefault(AMConfiguration.SECONDARY_YARN_QUEUE_NAME_CONFIG_KEY, "")
+            .toString
+            .trim
+        // 2. Get system configuration
+        val threshold = Configuration.SECONDARY_QUEUE_THRESHOLD.getValue
+
+        logger.info(
+          s"[$taskId]Smart queue config - primary: $primaryQueue, secondary: $secondaryQueue, threshold: ${threshold * 100}%"
+        )
+
+        // 3. Check if secondary queue feature is enabled
+        if (StringUtils.isBlank(secondaryQueue) || StringUtils.isBlank(primaryQueue)) {
+          logger.info(
+            s"[$taskId]Smart queue selection is disabled - primary or secondary queue is empty, using primary queue"
+          )
+          secondaryYarnResponse
+        } else {
+
+          // 4. Query secondary queue resource usage
+          val labelContainer = labelResourceService.enrichLabels(labelList)
+          val yarnResourceIdentifier = new YarnResourceIdentifier(secondaryQueue)
+          val queueInfo = externalResourceService.getResource(
+            ResourceType.Yarn,
+            labelContainer,
+            yarnResourceIdentifier
+          )
+
+          if (queueInfo != null) {
+            val usedResource = queueInfo.getUsedResource.asInstanceOf[YarnResource]
+            val maxResource = queueInfo.getMaxResource.asInstanceOf[YarnResource]
+
+            // 5. Three-dimensional independent judgment with null safety
+            val useSecondaryQueue =
+              if (maxResource != null && maxResource.getQueueMemory > 0 && usedResource != null) {
+                val memoryUsage =
+                  usedResource.getQueueMemory.toDouble / maxResource.getQueueMemory.toDouble
+                val cpuUsage = if (maxResource.getQueueCores > 0) {
+                  usedResource.getQueueCores.toDouble / maxResource.getQueueCores.toDouble
+                } else {
+                  0.0
+                }
+                val instanceUsage = if (maxResource.getQueueInstances > 0) {
+                  usedResource.getQueueInstances.toDouble / maxResource.getQueueInstances.toDouble
+                } else {
+                  0.0
+                }
+
+                // Log detailed resource usage
+                logger.info(
+                  s"[$taskId]Secondary queue :${secondaryQueue} resource usage - memory: ${formatPercent(memoryUsage)} (threshold: ${formatPercent(threshold)}), " +
+                    s"cpu: ${formatPercent(cpuUsage)} (threshold: ${formatPercent(threshold)}), " +
+                    s"instance: ${formatPercent(instanceUsage)} (threshold: ${formatPercent(threshold)})"
+                )
+
+                // Do not use secondary queue if any dimension exceeds threshold
+                val memoryOverThreshold = memoryUsage > threshold
+                val cpuOverThreshold = cpuUsage > threshold
+                val instanceOverThreshold = instanceUsage > threshold
+
+                if (memoryOverThreshold || cpuOverThreshold || instanceOverThreshold) {
+                  logger.info(
+                    s"[$taskId]Secondary queue exceeds threshold - memory over: $memoryOverThreshold, cpu over: $cpuOverThreshold, instance over: $instanceOverThreshold, using primary queue"
+                  )
+                  false
+                } else {
+                  logger.info(
+                    s"[$taskId]Secondary queue has sufficient resources, using secondary queue"
+                  )
+                  true
+                }
+              } else {
+                logger.warn(
+                  s"[$taskId]Secondary queue resource info is incomplete (maxResource or usedResource is null), using primary queue"
+                )
+                false
+              }
+            // 6. Determine which queue to use and update response
+            val selectedQueue = if (useSecondaryQueue) secondaryQueue else primaryQueue
+            logger.info(
+              s"[$taskId]Smart queue selection completed - primary: $primaryQueue, secondary: $secondaryQueue, selected: $selectedQueue"
+            )
+            secondaryYarnResponse =
+              SecondaryYarnResponse(selectedQueue, primaryQueue, secondaryQueue)
+          } else {
+            logger.warn(
+              s"[$taskId]Unable to get secondary queue $secondaryQueue information from Yarn, using primary queue: $primaryQueue"
+            )
+            secondaryYarnResponse =
+              SecondaryYarnResponse(primaryQueue, primaryQueue, secondaryQueue)
+          }
+        }
+      }
+    }
+    secondaryYarnResponse
+  }
+
+  /**
+   * Format decimal as percentage string.
+   *
+   * @param value
+   *   decimal value (e.g., 0.85)
+   * @return
+   *   formatted percentage string (e.g., "85.00%")
+   */
+  private def formatPercent(value: Double): String = {
+    f"${value * 100}%.2f%%"
   }
 
   private def fromEMGetEngineLabels(emLabels: util.List[Label[_]]): util.List[Label[_]] = {

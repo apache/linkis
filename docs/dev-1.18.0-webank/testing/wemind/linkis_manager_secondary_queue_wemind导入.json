@@ -1,0 +1,940 @@
+{
+  "root": {
+    "data": {
+      "text": "BDP_DOPS"
+    },
+    "children": [
+      {
+        "data": {
+          "text": "路径"
+        },
+        "children": [
+          {
+            "data": {
+              "text": "需求：000001"
+            },
+            "children": [
+              {
+                "data": {
+                  "text": "Linkis Manager 智能队列选择功能测试"
+                },
+                "children": [
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】备用队列可用时选择备用队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置主队列root.primary和备用队列root.backup；功能开关已启用；阈值配置为0.9"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，配置主队列root.primary和备用队列root.backup，引擎类型为spark，Creator为IDE\n2、模拟备用队列资源使用情况：已使用内存72GB，最大内存100GB，使用率72%\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：备用队列使用率72% <= 阈值90%；系统选择备用队列root.backup；properties中wds.linkis.rm.yarnqueue被更新为root.backup；日志显示队列选择过程和资源使用详情"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】备用队列不可用时选择主队列-内存超阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置主队列和备用队列；功能开关已启用；阈值配置为0.9"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列资源使用情况：已使用内存95GB，最大内存100GB，内存使用率95%\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：备用队列内存使用率95% > 阈值90%；系统选择主队列root.primary；properties中wds.linkis.rm.yarnqueue保持为root.primary；日志显示Memory超过阈值"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】备用队列不可用时选择主队列-CPU超阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置主队列和备用队列；功能开关已启用"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列资源使用情况：内存使用率85%（正常），CPU使用率95%（超阈值），实例数使用率70%（正常）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：CPU使用率95% > 阈值90%；系统选择主队列root.primary；日志明确显示CPU超过阈值"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】备用队列不可用时选择主队列-实例数超阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置主队列和备用队列；功能开关已启用"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列资源使用情况：内存使用率85%（正常），CPU使用率80%（正常），实例数使用率95%（超阈值）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：实例数使用率95% > 阈值90%；系统选择主队列root.primary；日志明确显示实例数超过阈值"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】多个维度同时超阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置主队列和备用队列；功能开关已启用"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列资源使用情况：内存使用率95%（超阈值），CPU使用率92%（超阈值），实例数使用率88%（正常）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：内存和CPU都超过阈值；系统选择主队列root.primary；日志显示所有超阈值的维度：Memory, CPU over threshold"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】未配置备用队列时使用主队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；仅配置主队列root.primary；未配置备用队列"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，配置仅包含主队列wds.linkis.rm.yarnqueue=root.primary\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统检测到未配置备用队列；直接使用主队列root.primary；不调用Yarn API查询队列资源；日志输出：Secondary queue not configured or disabled"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】功能禁用时使用主队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；功能开关关闭：wds.linkis.rm.secondary.yarnqueue.enable=false"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，配置了主队列和备用队列\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统检测到功能已禁用；直接使用主队列root.primary；不调用Yarn API查询队列资源；不检查引擎类型和Creator"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】Spark引擎通过过滤"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：配置的支持引擎列表：spark；配置的支持Creator列表：IDE"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，Creator为IDE\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：引擎类型spark在支持列表中；Creator IDE在支持列表中；继续执行队列选择逻辑（查询备用队列资源）"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】Hive引擎被过滤使用主队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：配置的支持引擎列表：spark（仅支持Spark）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Hive引擎创建请求，配置主队列和备用队列\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：引擎类型hive不在支持列表中；使用主队列root.primary；不调用Yarn API查询队列资源；日志输出：Engine type 'hive' not in supported list"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】SHELL Creator被过滤使用主队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：配置的支持Creator列表：IDE（仅支持IDE）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，Creator为SHELL\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：Creator SHELL不在支持列表中；使用主队列root.primary；不调用Yarn API查询队列资源；日志输出：Creator 'SHELL' not in supported list"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：边界案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】阈值边界测试-等于阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；阈值配置为0.9"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，阈值配置为0.9\n2、模拟备用队列资源使用率恰好为90%\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：使用率90% <= 阈值90%（使用<=判断）；系统选择备用队列root.backup；验证边界条件正确"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】阈值边界测试-略高于阈值"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；阈值配置为0.9"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，阈值配置为0.9\n2、模拟备用队列资源使用率为90.1%\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：使用率90.1% > 阈值90%；系统选择主队列root.primary"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】资源使用率为0%空队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列完全空闲（使用率0%）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：使用率0% <= 阈值90%；系统选择备用队列root.backup；验证空队列场景正确处理"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】资源使用率为100%满队列"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列完全满载（使用率100%）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：使用率100% > 阈值90%；系统选择主队列root.primary；验证满队列场景正确处理"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】最大资源为0的异常情况"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列最大资源为0（异常配置）\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统检测到maxResource为0或null；使用率计算结果为0.0（避免除以0）；根据0.0 <= threshold判断；系统选择备用队列；日志中有相应的提示信息"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】CPU核心数为0的情况"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列CPU最大核心数为0\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：CPU使用率计算为0.0（避免除以0）；CPU维度判定为未超过阈值；根据其他维度（内存、实例数）进行判断"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】实例数为0的情况"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、模拟备用队列最大实例数为0\n3、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：实例数使用率计算为0.0（避免除以0）；实例数维度判定为未超过阈值；根据其他维度进行判断"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：安全用例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】Yarn连接失败自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Yarn ResourceManager服务不可用或网络不通"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、尝试查询备用队列资源\n3、Yarn API调用失败（ConnectException）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获ConnectException；记录ERROR日志，包含完整异常堆栈；使用主队列root.primary；引擎继续创建，不受影响；任务正常执行"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】队列不存在自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；配置的队列在Yarn中不存在"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求，配置不存在的队列nonexistent_queue\n2、尝试查询队列资源\n3、Yarn返回404错误"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获队列不存在异常；记录ERROR日志；使用主队列root.primary；引擎继续创建"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】Label解析失败自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交引擎创建请求，Labels格式错误或缺失\n2、尝试解析引擎类型和Creator\n3、Label解析抛出异常"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获Label解析异常；记录ERROR日志；使用主队列root.primary；引擎继续创建"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】Yarn API超时自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Yarn ResourceManager响应缓慢（>3秒）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark引擎创建请求\n2、Yarn API调用超时\n3、触发超时异常"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获超时异常；记录ERROR日志，包含超时信息；使用主队列root.primary；引擎继续创建；总耗时不超过4秒（3秒超时+处理时间）"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】配置格式错误自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、配置阈值为非法值（如abc）\n2、提交引擎创建请求\n3、尝试解析配置"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获配置解析异常；使用默认配置或降级到主队列；记录ERROR日志；引擎继续创建"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】空指针异常自动降级"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、模拟properties为null的情况\n2、提交引擎创建请求"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：代码中有null检查，避免空指针；如果发生空指针异常，最外层try-catch捕获；使用主队列root.primary；记录ERROR日志；引擎继续创建"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】并发请求异常隔离"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、同时提交10个引擎创建请求\n2、其中部分请求的Yarn API调用失败\n3、验证异常隔离"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：失败的请求降级到主队列；成功的请求正常选择队列；各请求互不影响；没有异常扩散到其他请求"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】properties为null"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交引擎创建请求，engineCreateRequest.getProperties()返回null\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：代码中有null检查，创建新的HashMap；使用主队列（因为没有配置备用队列）；不抛出空指针异常"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】primaryQueue为空字符串"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交引擎创建请求，配置wds.linkis.rm.yarnqueue为空字符串\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：StringUtils.isBlank()检测到空字符串；跳过智能队列选择；使用原始配置（空字符串）；日志记录：Secondary queue not configured or disabled"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】secondaryQueue为空字符串"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交引擎创建请求，配置wds.linkis.rm.secondary.yarnqueue为空字符串\n2、执行队列选择逻辑"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：StringUtils.isBlank()检测到空字符串；跳过智能队列选择；使用主队列"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：性能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】队列查询耗时测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Yarn ResourceManager正常运行；网络延迟正常（<50ms）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交100次引擎创建请求\n2、记录每次Yarn API调用耗时\n3、统计P50、P95、P99耗时"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：P50耗时 < 200ms；P95耗时 < 500ms；P99耗时 < 1000ms；满足性能要求"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】引擎创建总耗时测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：准备两组测试：对照组（功能禁用）和实验组（功能启用）"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、禁用智能队列选择，记录50次引擎创建的平均耗时\n2、启用智能队列选择，记录50次引擎创建的平均耗时\n3、对比两者差异"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：增加的耗时 < 1s；增加比例 < 20%"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】并发队列选择测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Yarn ResourceManager正常运行"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、同时提交10个引擎创建请求\n2、观察各请求的队列选择结果\n3、验证并发正确性"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：各请求独立进行队列选择；没有请求阻塞或超时；没有并发安全问题；各请求选择正确的队列"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】高并发压力测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Yarn ResourceManager正常运行"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、以50 QPS的速率提交引擎创建请求\n2、持续1分钟\n3、观察系统状态"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：系统稳定运行，无崩溃；错误率 < 1%；平均响应时间 < 2s；Yarn ResourceManager无异常"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：流程案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】端到端队列选择流程"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可访问；配置正确的主队列和备用队列"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、用户通过IDE提交Spark任务\n2、配置主队列root.primary和备用队列root.backup\n3、Linkis Manager接收引擎创建请求\n4、执行队列选择逻辑\n5、查询备用队列资源\n6、根据阈值选择队列\n7、更新properties\n8、Spark引擎使用选定的队列创建"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：备用队列可用时，Spark引擎使用备用队列创建；备用队列不可用时，Spark引擎使用主队列创建；引擎正常创建并执行任务；Yarn中可以看到任务提交到正确的队列"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】多引擎集成测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；配置支持引擎列表：spark"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、提交Spark任务，验证执行队列选择\n2、提交Hive任务，验证不执行队列选择\n3、提交Flink任务，验证不执行队列选择"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：Spark任务执行队列选择，使用选定队列；Hive任务跳过队列选择，使用主队列；Flink任务跳过队列选择，使用主队列"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】多Creator集成测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；配置支持Creator列表：IDE"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、通过IDE提交Spark任务\n2、通过NOTEBOOK提交Spark任务\n3、通过SHELL提交Spark任务"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：IDE Creator执行队列选择；NOTEBOOK Creator跳过队列选择（不在支持列表）；SHELL Creator跳过队列选择（不在支持列表）"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】Yarn故障恢复测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：Linkis Manager服务正常启动；Yarn ResourceManager可以启停"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、正常状态下提交任务，验证队列选择正常\n2、停止Yarn ResourceManager\n3、提交任务，验证降级到主队列\n4、重启Yarn ResourceManager\n5、提交任务，验证队列选择恢复正常"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：步骤1正常选择队列；步骤3降级到主队列，引擎创建成功；步骤5恢复正常队列选择"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

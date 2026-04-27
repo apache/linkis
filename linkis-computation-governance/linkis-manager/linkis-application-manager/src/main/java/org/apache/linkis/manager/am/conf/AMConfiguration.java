@@ -32,6 +32,9 @@ public class AMConfiguration {
   // The configuration key for the YARN queue name.
   public static final String YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue";
 
+  public static final String SECONDARY_YARN_QUEUE_NAME_CONFIG_KEY =
+      "wds.linkis.rm.secondary.yarnqueue";
+
   // Identifier for cross-queue tasks.
   public static final String CROSS_QUEUE = "crossQueue";
 

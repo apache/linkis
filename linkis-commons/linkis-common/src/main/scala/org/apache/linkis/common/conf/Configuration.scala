@@ -57,6 +57,9 @@ object Configuration extends Logging {
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
+  val MANAGER_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
+
   val JOBHISTORY_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
 
@@ -107,6 +110,34 @@ object Configuration extends Logging {
 
   val METRICS_INCREMENTAL_UPDATE_ENABLE =
     CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
+
+  /**
+   * Whether to enable secondary queue feature Default: true Description: true enables smart queue
+   * selection, false disables the feature
+   */
+  val SECONDARY_QUEUE_ENABLED: CommonVars[Boolean] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.enable", false)
+
+  /**
+   * Secondary queue resource usage threshold Default: 0.9 (90%) Description: Use secondary queue
+   * when usage <= this value, use primary queue when usage > this value
+   */
+  val SECONDARY_QUEUE_THRESHOLD: CommonVars[Double] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.threshold", 0.9)
+
+  /**
+   * Supported engine type list (comma-separated) Default: spark Description: Only engines in this
+   * list will execute smart queue selection Case-insensitive
+   */
+  val SECONDARY_QUEUE_ENGINES: CommonVars[String] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.engines", "spark")
+
+  /**
+   * Supported Creator list (comma-separated) Default: IDE Description: Only Creators in this list
+   * will execute smart queue selection Case-insensitive
+   */
+  val SECONDARY_QUEUE_CREATORS: CommonVars[String] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.creators", "IDE")
 
   val EXECUTE_ERROR_CODE_INDEX =
     CommonVars("execute.error.code.index", "-1")

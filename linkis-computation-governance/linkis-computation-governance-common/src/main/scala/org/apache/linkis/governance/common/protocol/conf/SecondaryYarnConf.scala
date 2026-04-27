@@ -15,25 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.governance.common.protocol.conf
 
-import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.governance.common.protocol.conf.{
-  SecondaryYarnRequest,
-  SecondaryYarnResponse
-}
-import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.message.RequestProtocol
 
-trait EngineCreateService {
+import java.util
 
-  @throws[LinkisRetryException]
-  def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
+trait SecondaryYarnConf extends RequestProtocol
 
-  def performSmartQueueSelection(
-      secondaryYarnRequest: SecondaryYarnRequest,
-      sender: Sender
-  ): SecondaryYarnResponse
+case class SecondaryYarnRequest(
+    taskId: String,
+    params: util.Map[String, AnyRef],
+    labels: java.util.List[Label[_]]
+) extends SecondaryYarnConf
 
-}
+case class SecondaryYarnResponse(selectQueue: String, primaryQueue: String, secondaryQueue: String)

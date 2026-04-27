@@ -18,7 +18,7 @@
 package org.apache.linkis.gateway.security.oauth
 
 import org.apache.linkis.common.exception.LinkisCommonErrorException
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, TokenSensitiveUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
@@ -130,7 +130,8 @@ object OAuth2Authentication extends Logging {
     if (StringUtils.isNotBlank(accessToken)) {
       val username = validateAccessToken(accessToken, host)
       logger.info(
-        s"OAuth authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, accessToken: $accessToken, username: $username."
+        s"OAuth authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, accessToken: ${TokenSensitiveUtils
+          .maskToken(accessToken)}, username: $username."
       )
 
       if (login) {
@@ -149,7 +150,8 @@ object OAuth2Authentication extends Logging {
       true
     } else {
       logger.info(
-        s"OAuth exchange fail, uri: ${gatewayContext.getRequest.getRequestURI}, code: $code, host: $host."
+        s"OAuth exchange fail, uri: ${gatewayContext.getRequest.getRequestURI}, code: ${TokenSensitiveUtils
+          .maskToken(code)}, host: $host."
       )
       SecurityFilter.filterResponse(gatewayContext, authMsg)
       false

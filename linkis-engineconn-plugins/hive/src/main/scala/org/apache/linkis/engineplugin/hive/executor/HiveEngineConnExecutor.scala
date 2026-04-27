@@ -18,23 +18,17 @@
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
-  EngineExecutionContext
-}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration.HIVE_TAG_USER_ENABLE
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
-import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.{
-  COMPILE_HIVE_QUERY_ERROR,
-  GET_FIELD_SCHEMAS_ERROR
-}
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.{COMPILE_HIVE_QUERY_ERROR, GET_FIELD_SCHEMAS_ERROR}
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -46,15 +40,10 @@ import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
@@ -65,24 +54,19 @@ import org.apache.hadoop.hive.ql.exec.Task.TaskState
 import org.apache.hadoop.hive.ql.exec.Utilities
 import org.apache.hadoop.hive.ql.exec.mr.HadoopJobExecHelper
 import org.apache.hadoop.hive.ql.exec.tez.TezJobExecHelper
-import org.apache.hadoop.hive.ql.processors.{
-  CommandProcessor,
-  CommandProcessorFactory,
-  CommandProcessorResponse
-}
+import org.apache.hadoop.hive.ql.processors.{CommandProcessor, CommandProcessorFactory, CommandProcessorResponse}
 import org.apache.hadoop.hive.ql.session.SessionState
 import org.apache.hadoop.mapred.{JobStatus, RunningJob}
 import org.apache.hadoop.security.UserGroupInformation
+import org.apache.linkis.manager.label.entity.engine.EngineType
 
 import java.io.ByteArrayOutputStream
 import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-
 import org.slf4j.LoggerFactory
 
 class HiveEngineConnExecutor(
@@ -280,10 +264,10 @@ class HiveEngineConnExecutor(
             Utils.tryCatch {
               compileRet = driver.compile(realCode)
               logger.info(
-                s"driver compile realCode : \n ${realCode} \n finished, status : ${compileRet}"
+                s"driver compile realCode : \n ${CodeUtils.maskCode(realCode, EngineType.HIVE.toString())} \n finished, status : ${compileRet}"
               )
               if (0 != compileRet) {
-                logger.warn(s"compile realCode : \n ${realCode} \n error status : ${compileRet}")
+                logger.warn(s"compile realCode : \n ${CodeUtils.maskCode(realCode, EngineType.HIVE.toString())} \n error status : ${compileRet}")
                 throw HiveQueryFailedException(
                   COMPILE_HIVE_QUERY_ERROR.getErrorCode,
                   COMPILE_HIVE_QUERY_ERROR.getErrorDesc

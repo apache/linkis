@@ -114,7 +114,7 @@ class FlinkCodeOnceExecutor(
   protected def runCode(code: String): Unit = {
     if (isClosed) return
     val trimmedCode = StringUtils.trim(code)
-    logger.info(s"$getId >> " + trimmedCode)
+    logger.info(s"$getId >> " + CodeUtils.maskCode(trimmedCode, EngineType.FLINK.toString()))
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     if (!callOpt.isPresent) {

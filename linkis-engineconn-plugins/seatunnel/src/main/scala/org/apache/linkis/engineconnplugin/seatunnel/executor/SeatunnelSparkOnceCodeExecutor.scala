@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.executor
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{CodeUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.once.executor.{
@@ -70,7 +70,7 @@ class SeatunnelSparkOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        logger.info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + CodeUtils.maskCode(code, "seatunnel"))
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(

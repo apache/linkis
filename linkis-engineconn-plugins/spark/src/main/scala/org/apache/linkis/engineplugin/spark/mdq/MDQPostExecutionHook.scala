@@ -17,21 +17,19 @@
 
 package org.apache.linkis.engineplugin.spark.mdq
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{CodeUtils, Logging}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.common.SparkKind
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.extension.SparkPostExecutionHook
 import org.apache.linkis.governance.common.constant.CodeConstants
 import org.apache.linkis.governance.common.constant.job.TaskInfoConstants
-import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineType}
 import org.apache.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.utils.StorageUtils
-
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
@@ -73,10 +71,10 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
         sender.ask(DDLExecuteResponse(true, code, StorageUtils.getJvmUser)) match {
           case DDLCompleteResponse(status) =>
             if (!status) {
-              logger.warn(s"failed to execute create table :$code (执行建表失败):$code")
+              logger.warn(s"failed to execute create table :${CodeUtils.maskCode(code, EngineType.SPARK.toString())} (执行建表失败):${CodeUtils.maskCode(code, EngineType.SPARK.toString())}")
             }
         }
-      case _ => logger.warn(s"failed to execute create table:$code (执行建表失败:$code)")
+      case _ => logger.warn(s"failed to execute create table:${CodeUtils.maskCode(code, EngineType.SPARK.toString())} (执行建表失败:${CodeUtils.maskCode(code, EngineType.SPARK.toString())})")
     }
   }
 

@@ -17,9 +17,9 @@
 
 package org.apache.linkis.entrance.listener
 
-import org.apache.linkis.entrance.protocol.EntranceGroupCacheClearBroadcast
 import org.apache.linkis.entrance.scheduler.EntranceGroupFactory
 import org.apache.linkis.protocol.BroadcastProtocol
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast
 import org.apache.linkis.rpc.Sender
 
 import org.junit.jupiter.api.{AfterEach, Assertions, BeforeEach, Test}

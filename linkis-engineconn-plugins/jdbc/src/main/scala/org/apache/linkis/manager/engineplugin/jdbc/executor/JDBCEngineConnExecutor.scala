@@ -19,64 +19,40 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ConcurrentComputationExecutor,
-  EngineExecutionContext
-}
+import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.governance.common.protocol.conf.{
-  RequestQueryEngineConfig,
-  ResponseQueryConfig
-}
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadResource,
-  NodeResource
-}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{
-  NOT_SUPPORT_LIMIT_DBS,
-  SUPPORT_CONN_PARAM_EXECUTE_ENABLE
-}
+import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration.{NOT_SUPPORT_LIMIT_DBS, SUPPORT_CONN_PARAM_EXECUTE_ENABLE}
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
-import org.apache.linkis.manager.engineplugin.jdbc.exception.{
-  JDBCGetDatasourceInfoException,
-  JDBCParamsIllegalException
-}
+import org.apache.linkis.manager.engineplugin.jdbc.exception.{JDBCGetDatasourceInfoException, JDBCParamsIllegalException}
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.{RPCMapCache, Sender}
-import org.apache.linkis.scheduler.executer.{
-  AliasOutputExecuteResponse,
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
+import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-
 import org.apache.commons.collections.MapUtils
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.util.CollectionUtils
 
 import java.sql.{Connection, ResultSet, Statement}
 import java.util
 import java.util.concurrent.ConcurrentHashMap
-
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
@@ -236,7 +212,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       }
     } catch {
       case e: Throwable =>
-        logger.error(s"Cannot run $code", e)
+        logger.error(s"Cannot run ${CodeUtils.maskCode(code, EngineType.JDBC.toString())}", e)
         // 推送堆栈信息到前端
         val errorStr = ExceptionUtils.getStackTrace(e)
         engineExecutorContext.appendStdout(

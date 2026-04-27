@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.engineplugin.python.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{CodeUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -110,7 +110,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       completedLine: String
   ): ExecuteResponse = {
     val newcode = completedLine + code
-    logger.debug("newcode is " + newcode)
+    logger.debug("newcode is " + CodeUtils.maskCode(newcode, "python"))
     executeLine(engineExecutionContext, newcode)
   }
 

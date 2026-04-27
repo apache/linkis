@@ -103,6 +103,8 @@ object Configuration extends Logging {
 
   val TOKEN_MASK_ENABLED: Boolean = CommonVars("linkis.log.token.mask.enable", true).getValue
 
+  val CODE_MASK_ENABLED: Boolean = CommonVars("linkis.log.code.mask.enable", true).getValue
+
   val METRICS_INCREMENTAL_UPDATE_ENABLE =
     CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
 

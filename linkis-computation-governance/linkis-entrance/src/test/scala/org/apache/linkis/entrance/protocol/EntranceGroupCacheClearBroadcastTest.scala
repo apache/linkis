@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.protocol
 
 import org.apache.linkis.protocol.BroadcastProtocol
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast
 
 import org.junit.jupiter.api.{Assertions, Test}
 import org.junit.jupiter.api.DisplayName

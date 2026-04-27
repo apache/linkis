@@ -17,10 +17,10 @@
 
 package org.apache.linkis.common.utils
 
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.variable
-import org.apache.linkis.common.variable._
+import org.apache.linkis.common.variable.{WeekType, _}
 import org.apache.linkis.common.variable.DateTypeUtils.{
   getCurHour,
   getMonthDay,
@@ -44,6 +44,15 @@ object VariableUtils extends Logging {
   val RUN_TODAY_H = "run_today_h"
 
   val RUN_TODAY_HOUR = "run_today_hour"
+
+  // Week variable constants
+  val RUN_WEEK_BEGIN = "run_week_begin"
+  val RUN_WEEK_BEGIN_STD = "run_week_begin_std"
+  val RUN_WEEK_END = "run_week_end"
+  val RUN_WEEK_END_STD = "run_week_end_std"
+
+  // Week variable feature switch (default: true)
+  val WEEK_VARIABLE_ENABLED = CommonVars[Boolean]("linkis.variable.week.enabled", false)
 
   private val codeReg =
     "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
@@ -236,6 +245,20 @@ object VariableUtils extends Logging {
     nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_date_str))
     nameAndType("run_year_end") = YearType(new CustomYearType(run_date_str, false, true))
     nameAndType("run_year_end_std") = YearType(new CustomYearType(run_date_str, true, true))
+
+    // Initialize week variables (with feature switch and exception handling)
+    if (WEEK_VARIABLE_ENABLED.getValue) {
+      Utils.tryAndWarn {
+        // Use CustomWeekType following the same pattern as CustomMonthType
+        nameAndType("run_week_begin") = WeekType(new CustomWeekType(run_date_str, false, false))
+        nameAndType("run_week_begin_std") = WeekType(new CustomWeekType(run_date_str, true, false))
+        nameAndType("run_week_end") = WeekType(new CustomWeekType(run_date_str, false, true))
+        nameAndType("run_week_end_std") = WeekType(new CustomWeekType(run_date_str, true, true))
+        logger.info("Week variables initialized successfully")
+      }
+    } else {
+      logger.info("Week variables are disabled by configuration")
+    }
 
     /*
     calculate run_today based on run_date

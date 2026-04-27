@@ -255,3 +255,32 @@ class CustomHourType(dateH: String, std: Boolean = true) {
   }
 
 }
+
+/**
+ * CustomWeekType: Week-based date type following the same pattern as CustomMonType
+ *
+ * @param date
+ *   Base date string
+ * @param std
+ *   Whether to use standard format (true: yyyy-MM-dd, false: yyyyMMdd)
+ * @param isEnd
+ *   Whether to calculate week end (Sunday) instead of week begin (Monday)
+ */
+class CustomWeekType(date: String, std: Boolean = true, isEnd: Boolean = false) {
+
+  def -(weeks: Int): String = {
+    val dateFormat = DateTypeUtils.dateFormatLocal.get()
+    DateTypeUtils.getWeek(std, isEnd, DateUtils.addWeeks(dateFormat.parse(date), -weeks))
+  }
+
+  def +(weeks: Int): String = {
+    val dateFormat = DateTypeUtils.dateFormatLocal.get()
+    DateTypeUtils.getWeek(std, isEnd, DateUtils.addWeeks(dateFormat.parse(date), weeks))
+  }
+
+  override def toString: String = {
+    val dateFormat = DateTypeUtils.dateFormatLocal.get()
+    DateTypeUtils.getWeek(std, isEnd, dateFormat.parse(date))
+  }
+
+}

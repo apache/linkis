@@ -252,4 +252,46 @@ object DateTypeUtils {
     }
   }
 
+  /**
+   * Get week date (Monday or Sunday)
+   *
+   * @param std
+   *   Whether to use standard format (true: yyyy-MM-dd, false: yyyyMMdd)
+   * @param isEnd
+   *   Whether to get week end (Sunday) instead of week begin (Monday)
+   * @param date
+   *   Base date
+   * @return
+   *   Monday or Sunday date string depending on isEnd
+   */
+  def getWeek(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
+    try {
+      val dateFormat = dateFormatLocal.get()
+      val dateFormat_std = dateFormatStdLocal.get()
+      val cal: Calendar = Calendar.getInstance()
+      cal.setTime(date)
+
+      // Get current day of week (Calendar.SUNDAY=1, Calendar.MONDAY=2, ..., Calendar.SATURDAY=7)
+      val dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
+
+      // Calculate days to target day (Monday or Sunday)
+      val daysToTarget = if (isEnd) {
+        // Calculate days to Sunday
+        if (dayOfWeek == Calendar.SUNDAY) 0 else Calendar.SUNDAY - dayOfWeek + 7
+      } else {
+        // Calculate days to Monday
+        if (dayOfWeek == Calendar.SUNDAY) -6 else Calendar.MONDAY - dayOfWeek
+      }
+
+      cal.add(Calendar.DAY_OF_MONTH, daysToTarget)
+
+      if (std) dateFormat_std.format(cal.getTime)
+      else dateFormat.format(cal.getTime)
+    } catch {
+      case e: Exception =>
+        val fallbackFormat = if (std) dateFormatStdLocal.get() else dateFormatLocal.get()
+        fallbackFormat.format(date)
+    }
+  }
+
 }

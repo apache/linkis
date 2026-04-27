@@ -1,0 +1,933 @@
+{
+  "root": {
+    "data": {
+      "text": "Linkis"
+    },
+    "children": [
+      {
+        "data": {
+          "text": "路径"
+        },
+        "children": [
+          {
+            "data": {
+              "text": "需求：000001"
+            },
+            "children": [
+              {
+                "data": {
+                  "text": "周变量功能测试"
+                },
+                "children": [
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekBegin - 周四返回本周一"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-09(周四)\n2、调用 DateTypeUtils.getWeekBegin(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260406\" (2026-04-06 是周一)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekBegin - 周一返回自身"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-06(周一)\n2、调用 DateTypeUtils.getWeekBegin(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260406\" (自身)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekBegin - 周日返回本周一"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-12(周日)\n2、调用 DateTypeUtils.getWeekBegin(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260406\" (本周一)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekBegin - 标准格式"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-09(周四)\n2、调用 DateTypeUtils.getWeekBegin(std = true, date)\n3、验证返回值格式"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"2026-04-06\" (yyyy-MM-dd 格式)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekEnd - 周四返回本周日"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-09(周四)\n2、调用 DateTypeUtils.getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260412\" (2026-04-12 是周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekEnd - 周日返回自身"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-12(周日)\n2、调用 DateTypeUtils.getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260412\" (自身)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekEnd - 周一返回本周日"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-06(周一)\n2、调用 DateTypeUtils.getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：返回 \"20260412\" (本周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量替换 - 基本功能"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_week_begin}' AND dt <= '${run_week_end}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：SQL 被正确替换，run_week_begin 被替换为 \"20260406\"，run_week_end 被替换为 \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量替换 - 标准格式"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_week_begin_std}' AND dt <= '${run_week_end_std}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin_std 被替换为 \"2026-04-06\"，run_week_end_std 被替换为 \"2026-04-12\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量算术运算 - 上周"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_week_begin - 7}' AND dt <= '${run_week_end - 7}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin - 7 被替换为 \"20260330\" (2026-03-30 周一)，run_week_end - 7 被替换为 \"20260405\" (2026-04-05 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量算术运算 - 下周"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_week_begin + 7}' AND dt <= '${run_week_end + 7}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin + 7 被替换为 \"20260413\" (2026-04-13 周一)，run_week_end + 7 被替换为 \"20260419\" (2026-04-19 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量混合使用"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_week_begin}' AND dt <= '${run_week_end}' AND month >= '${run_month_begin}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：所有变量都被正确替换，run_week_begin → \"20260406\"，run_week_end → \"20260412\"，run_month_begin → \"20260401\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量对比分析"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备对比分析 SQL (本周 vs 上周)\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：第一组 run_week_begin → \"20260406\"，run_week_end → \"20260412\"；第二组 run_week_begin - 7 → \"20260330\"，run_week_end - 7 → \"20260405\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不影响现有变量 - run_date"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt = '${run_date}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_date 被正确替换为 \"20260409\"，现有变量功能不受影响"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不影响现有变量 - run_month_begin"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_month_begin}' AND dt <= '${run_month_end}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_month_begin 被正确替换为 \"20260401\"，run_month_end 被正确替换为 \"20260430\"，现有月份变量功能不受影响"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不影响现有变量 - run_quarter_begin"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_quarter_begin}' AND dt <= '${run_quarter_end}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_quarter_begin 被正确替换为 \"20260401\" (Q2开始)，run_quarter_end 被正确替换为 \"20260630\" (Q2结束)，现有季度变量功能不受影响"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】不影响现有变量 - run_year_begin"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：VariableUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备 SQL: SELECT * FROM orders WHERE dt >= '${run_year_begin}' AND dt <= '${run_year_end}'\n2、设置变量: run_date = \"20260409\"\n3、调用 VariableUtils.replace(sql, variables)\n4、验证替换结果"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_year_begin 被正确替换为 \"20260101\"，run_year_end 被正确替换为 \"20261231\"，现有年度变量功能不受影响"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】跨年周 - 年末(2025-12-31 周四)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2025-12-31(周四)\n2、调用 getWeekBegin(std = false, date) 和 getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20251228\" (2025-12-28 周一)，run_week_end = \"20260103\" (2026-01-03 周日, 跨年)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】跨年周 - 年初(2026-01-01 周五)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-01-01(周五)\n2、调用 getWeekBegin(std = false, date) 和 getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20251228\" (2025-12-28 周一, 跨年)，run_week_end = \"20260103\" (2026-01-03 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】闰年 - 2024-02-29(闰日, 周四)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2024-02-29(闰日, 周四)\n2、调用 getWeekBegin(std = false, date) 和 getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20240226\" (2024-02-26 周一)，run_week_end = \"20240303\" (2024-03-03 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】闰年 - 2020-02-29(闰日, 周六)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2020-02-29(闰日, 周六)\n2、调用 getWeekBegin(std = false, date) 和 getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20200224\" (2020-02-24 周一)，run_week_end = \"20200301\" (2020-03-01 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】非闰年 - 2023-02-28(周二)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2023-02-28(周二)\n2、调用 getWeekBegin(std = false, date) 和 getWeekEnd(std = false, date)\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20230227\" (2023-02-27 周一)，run_week_end = \"20230305\" (2023-03-05 周日)"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周一测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-06(周一)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周二测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-07(周二)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周三测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-08(周三)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周四测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-09(周四)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周五测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-10(周五)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周六测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-11(周六)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】周日测试"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备测试日期：2026-04-12(周日)\n2、调用 getWeekBegin 和 getWeekEnd\n3、验证返回值"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：run_week_begin = \"20260406\"，run_week_end = \"20260412\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：功能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekBegin - 异常处理(降级逻辑)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、模拟异常场景(传入 null 日期)\n2、调用 getWeekBegin(std = false, date)\n3、验证降级处理"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获异常不抛出，返回当前日期作为降级值，记录错误日志"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】getWeekEnd - 异常处理(降级逻辑)"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：DateTypeUtils 已正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、模拟异常场景(传入 null 日期)\n2、调用 getWeekEnd(std = false, date)\n3、验证降级处理"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：捕获异常不抛出，返回当前日期作为降级值，记录错误日志"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】功能开关 - 启用状态"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：配置 linkis.variable.week.enabled = true (默认)"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、设置配置 linkis.variable.week.enabled = true\n2、调用 VariableUtils.replace(),传入 run_date\n3、验证周变量被正确初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：周变量被正确初始化，run_week_begin、run_week_begin_std、run_week_end、run_week_end_std 都可用，日志输出 \"Week variables initialized successfully\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】功能开关 - 禁用状态"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：配置 linkis.variable.week.enabled = false"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、设置配置 linkis.variable.week.enabled = false\n2、调用 VariableUtils.replace(),传入 run_date\n3、验证周变量未被初始化"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：周变量未被初始化，nameAndType 中不包含 run_week_begin 等变量，日志输出 \"Week variables are disabled by configuration\""
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "data": {
+                      "text": "分类：性能案例"
+                    },
+                    "children": [
+                      {
+                        "data": {
+                          "text": "【AIGC】周变量计算性能"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：使用 JMH (Java Microbenchmark Harness) 框架，预热完成"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、使用 JMH 运行 getWeekBegin() 性能测试\n2、使用 JMH 运行 getWeekEnd() 性能测试\n3、记录平均执行时间"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：getWeekBegin() 平均执行时间 < 50ms，getWeekEnd() 平均执行时间 < 50ms"
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "data": {
+                          "text": "【AIGC】变量替换性能"
+                        },
+                        "children": [
+                          {
+                            "data": {
+                              "text": "条件：使用 JMH 框架，预热完成"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "步骤：\n1、准备包含周变量的 SQL\n2、使用 JMH 运行 VariableUtils.replace() 性能测试\n3、记录平均执行时间"
+                            },
+                            "children": []
+                          },
+                          {
+                            "data": {
+                              "text": "预期结果：变量替换总时间 < 100ms，内存占用增量 < 1KB"
+                            },
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

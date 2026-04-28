@@ -94,9 +94,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     engineStopRequest.getServiceInstance.setApplicationName(
       GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue
     )
-    logger.info(
-      s"try to kill engine with engineInstance: ${engineStopRequest.getServiceInstance},user:${engineStopRequest.getUser},engineType:${engineStopRequest.getEngineType}"
-    )
+
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {
       logger.info(s" engineConn does not exist in db: $engineStopRequest ")
@@ -106,6 +104,10 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     val labels = nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance)
     node.setLabels(labels)
 
+    logger.info(
+      s"try to kill engine with engineInstance: ${engineStopRequest.getServiceInstance},user:${engineStopRequest.getUser},engineType:${LabelUtil
+        .getEngineType(labels)}"
+    )
     // 1. request em to kill ec
     logger.info(s"Start to kill engine invoke enginePointer ${node.getServiceInstance}")
     Utils.tryAndErrorMsg {

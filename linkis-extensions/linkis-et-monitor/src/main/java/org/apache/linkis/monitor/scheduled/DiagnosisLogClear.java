@@ -145,33 +145,31 @@ public class DiagnosisLogClear {
 
     // 遍历task目录下的所有子目录和文件
     try (java.util.stream.Stream<Path> children = Files.list(path)) {
-      children.forEach(
-          child -> {
-            try {
-              // 检查是否达到最大删除数量限制
-              if (maxDeletePerRun > 0 && deletedCount[0] >= maxDeletePerRun) {
-                logger.warn("Reached max delete limit: {}, stopping cleanup", maxDeletePerRun);
-                return;
-              }
+      for (Path child : children.toArray(Path[]::new)) {
+        // 检查是否达到最大删除数量限制
+        if (maxDeletePerRun > 0 && deletedCount[0] >= maxDeletePerRun) {
+          logger.warn("Reached max delete limit: {}, stopping cleanup", maxDeletePerRun);
+          break;
+        }
 
-              if (Files.isDirectory(child)) {
-                // 处理子目录
-                String dirName = child.getFileName().toString();
-                if (isJobIdDirectory(dirName)) {
-                  // 处理job_id目录：整体删除
-                  deleteExpiredJobIdDirectory(
-                      child, cutoffTime, deletedCount, freedSpace, maxDeletePerRun);
-                } else if (JSON_SUBDIR.equals(dirName)) {
-                  // 处理json目录：清理 Detail JSON 文件
-                  deleteExpiredJsonFiles(
-                      child, cutoffTime, deletedCount, freedSpace, maxDeletePerRun);
-                }
-                // 其他目录跳过
-              }
-            } catch (Exception e) {
-              logger.error("Failed to process {}: {}", child, e.getMessage());
+        try {
+          if (Files.isDirectory(child)) {
+            // 处理子目录
+            String dirName = child.getFileName().toString();
+            if (isJobIdDirectory(dirName)) {
+              // 处理job_id目录：整体删除
+              deleteExpiredJobIdDirectory(
+                  child, cutoffTime, deletedCount, freedSpace, maxDeletePerRun);
+            } else if (JSON_SUBDIR.equals(dirName)) {
+              // 处理json目录：清理 Detail JSON 文件
+              deleteExpiredJsonFiles(child, cutoffTime, deletedCount, freedSpace, maxDeletePerRun);
             }
-          });
+            // 其他目录跳过
+          }
+        } catch (Exception e) {
+          logger.error("Failed to process {}: {}", child, e.getMessage());
+        }
+      }
     }
 
     logClearResult(deletedCount[0], freedSpace[0]);
@@ -271,32 +269,31 @@ public class DiagnosisLogClear {
 
     // 遍历json目录下的所有文件
     try (java.util.stream.Stream<Path> files = Files.list(jsonDirPath)) {
-      files.forEach(
-          file -> {
-            try {
-              // 检查是否达到最大删除数量限制
-              if (maxDeletePerRun > 0 && deletedCount[0] >= maxDeletePerRun) {
-                return;
-              }
+      for (Path file : files.toArray(Path[]::new)) {
+        // 检查是否达到最大删除数量限制
+        if (maxDeletePerRun > 0 && deletedCount[0] >= maxDeletePerRun) {
+          break;
+        }
 
-              if (!Files.isDirectory(file)) {
-                String fileName = file.getFileName().toString();
-                // 检查是否是detail JSON文件：{job_id}_detail.json
-                if (isDetailJsonFile(fileName)) {
-                  BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-                  if (attrs.lastModifiedTime().toInstant().isBefore(cutoffTime)) {
-                    long fileSize = Files.size(file);
-                    Files.delete(file);
-                    deletedCount[0]++;
-                    freedSpace[0] += fileSize;
-                    logger.debug("Deleted expired detail JSON: {}", file);
-                  }
-                }
+        try {
+          if (!Files.isDirectory(file)) {
+            String fileName = file.getFileName().toString();
+            // 检查是否是detail JSON文件：{job_id}_detail.json
+            if (isDetailJsonFile(fileName)) {
+              BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+              if (attrs.lastModifiedTime().toInstant().isBefore(cutoffTime)) {
+                long fileSize = Files.size(file);
+                Files.delete(file);
+                deletedCount[0]++;
+                freedSpace[0] += fileSize;
+                logger.debug("Deleted expired detail JSON: {}", file);
               }
-            } catch (Exception e) {
-              logger.error("Failed to process JSON file {}: {}", file, e.getMessage());
             }
-          });
+          }
+        } catch (Exception e) {
+          logger.error("Failed to process JSON file {}: {}", file, e.getMessage());
+        }
+      }
     }
   }
 

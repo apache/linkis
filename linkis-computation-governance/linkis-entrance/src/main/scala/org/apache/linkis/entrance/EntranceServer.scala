@@ -106,9 +106,8 @@ abstract class EntranceServer extends Logging {
         PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
-    logger.info(s"received a request,convert $jobRequest")
-
     LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
+    logger.info(s"received a request,convert $jobRequest")
 
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(

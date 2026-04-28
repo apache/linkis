@@ -541,7 +541,12 @@ class TaskExecutionServiceImpl
   override def dealRequestTaskStatus(requestTaskStatus: RequestTaskStatus): ResponseTaskStatus = {
     val task = getTaskByTaskId(requestTaskStatus.execId)
     if (null != task) {
-      ResponseTaskStatus(task.getTaskId, task.getStatus)
+      LoggerUtils.setJobIdMDC(task.getTaskId)
+      try {
+        ResponseTaskStatus(task.getTaskId, task.getStatus)
+      } finally {
+        LoggerUtils.removeJobIdMDC()
+      }
     } else {
       val msg =
         "Task null! requestTaskStatus: " + ComputationEngineUtils.GSON.toJson(requestTaskStatus)
@@ -552,18 +557,33 @@ class TaskExecutionServiceImpl
 
   @Receiver
   override def dealRequestTaskPause(requestTaskPause: RequestTaskPause): Unit = {
-    logger.info(s"Pause is Not supported for task : " + requestTaskPause.execId)
+    LoggerUtils.setJobIdMDC(requestTaskPause.execId)
+    try {
+      logger.info(s"Pause is Not supported for task : " + requestTaskPause.execId)
+    } finally {
+      LoggerUtils.removeJobIdMDC()
+    }
   }
 
   @Receiver
   override def dealRequestTaskKill(requestTaskKill: RequestTaskKill): Unit = {
-    logger.warn(s"Requested to kill task : ${requestTaskKill.execId}")
-    killTask(requestTaskKill.execId)
+    LoggerUtils.setJobIdMDC(requestTaskKill.execId)
+    try {
+      logger.warn(s"Requested to kill task : ${requestTaskKill.execId}")
+      killTask(requestTaskKill.execId)
+    } finally {
+      LoggerUtils.removeJobIdMDC()
+    }
   }
 
   @Receiver
   override def dealRequestTaskResume(requestTaskResume: RequestTaskResume): Unit = {
-    logger.info(s"Resume is Not support for task : " + requestTaskResume.execId)
+    LoggerUtils.setJobIdMDC(requestTaskResume.execId)
+    try {
+      logger.info(s"Resume is Not support for task : " + requestTaskResume.execId)
+    } finally {
+      LoggerUtils.removeJobIdMDC()
+    }
   }
 
   override def onEvent(event: EngineConnSyncEvent): Unit = event match {

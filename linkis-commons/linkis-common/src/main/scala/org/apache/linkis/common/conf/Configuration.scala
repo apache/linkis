@@ -63,6 +63,9 @@ object Configuration extends Logging {
   val JOBHISTORY_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
 
+  val CLOUD_CONSOLE_ENTRANCE_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.console.entrance.application.name", "linkis-cg-entrance")
+
   // read from env
   val PREFER_IP_ADDRESS: Boolean = CommonVars(
     "linkis.discovery.prefer-ip-address",
@@ -138,6 +141,13 @@ object Configuration extends Logging {
    */
   val SECONDARY_QUEUE_CREATORS: CommonVars[String] =
     CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.creators", "IDE")
+
+  /**
+   * Entrance Group缓存清理功能总开关 控制以下功能是否启用：
+   *   1. Entrance offline时发送Group缓存清理广播 2. 接收并处理Group缓存清理广播 3. 手动清理Group缓存API
+   */
+  val ENTRANCE_GROUP_CACHE_CLEAR_ENABLED =
+    CommonVars[Boolean]("linkis.entrance.group.cache.clear.enabled", true).getValue
 
   val EXECUTE_ERROR_CODE_INDEX =
     CommonVars("execute.error.code.index", "-1")

@@ -22,12 +22,12 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
-import org.apache.linkis.entrance.protocol.EntranceGroupCacheClearBroadcast;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
 import org.apache.linkis.protocol.label.InsLabelRemoveRequest;
 import org.apache.linkis.rpc.Sender;
@@ -103,7 +103,7 @@ public class EntranceLabelRestfulApi {
       offlineFlag = true;
     }
     // 只有当功能开关启用时才发送缓存清理广播
-    if (EntranceConfiguration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
+    if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
       try {
         // 构造广播消息
         EntranceGroupCacheClearBroadcast broadcast =
@@ -145,7 +145,7 @@ public class EntranceLabelRestfulApi {
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().removeLabelsFromInstance(insLabelRemoveRequest);
     // 只有当功能开关启用时才发送缓存清理广播
-    if (EntranceConfiguration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
+    if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
       try {
         // 构造广播消息
         EntranceGroupCacheClearBroadcast broadcast =

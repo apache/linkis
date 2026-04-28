@@ -27,6 +27,7 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper;
 import org.apache.linkis.entrance.utils.RGBUtils;
 import org.apache.linkis.entrance.vo.YarnResourceWithStatusVo;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.protocol.engine.JobInstance;
@@ -118,27 +119,32 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     Job job = entranceServer.execute(json);
     JobRequest jobReq = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobReq.getId();
-    ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
-    String execID =
-        ZuulEntranceUtils.generateExecID(
-            job.getId(),
-            Sender.getThisServiceInstance().getApplicationName(),
-            new String[] {Sender.getThisInstance()});
-    pushLog(
-        LogUtils.generateInfo(
-            "Your job is accepted,  jobID is "
-                + execID
-                + " and taskID is "
-                + jobReqId
-                + " in "
-                + Sender.getThisServiceInstance().toString()
-                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
-        job);
-    message = Message.ok();
-    message.setMethod("/api/entrance/execute");
-    message.data("execID", execID);
-    message.data("taskID", jobReqId);
-    logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
+    LoggerUtils.setJobIdMDC(String.valueOf(jobReqId));
+    try {
+      ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
+      String execID =
+          ZuulEntranceUtils.generateExecID(
+              job.getId(),
+              Sender.getThisServiceInstance().getApplicationName(),
+              new String[] {Sender.getThisInstance()});
+      pushLog(
+          LogUtils.generateInfo(
+              "Your job is accepted,  jobID is "
+                  + execID
+                  + " and taskID is "
+                  + jobReqId
+                  + " in "
+                  + Sender.getThisServiceInstance().toString()
+                  + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
+          job);
+      message = Message.ok();
+      message.setMethod("/api/entrance/execute");
+      message.data("execID", execID);
+      message.data("taskID", jobReqId);
+      logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
+    } finally {
+      LoggerUtils.removeJobIdMDC();
+    }
     return message;
   }
 
@@ -177,27 +183,32 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     Job job = entranceServer.execute(json);
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobRequest.getId();
-    ModuleUserUtils.getOperationUser(req, "submit jobReqId: " + jobReqId);
-    pushLog(
-        LogUtils.generateInfo(
-            "Your job is accepted,  jobID is "
-                + job.getId()
-                + " and jobReqId is "
-                + jobReqId
-                + " in "
-                + Sender.getThisServiceInstance().toString()
-                + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
-        job);
-    String execID =
-        ZuulEntranceUtils.generateExecID(
-            job.getId(),
-            Sender.getThisServiceInstance().getApplicationName(),
-            new String[] {Sender.getThisInstance()});
-    message = Message.ok();
-    message.setMethod("/api/entrance/submit");
-    message.data("execID", execID);
-    message.data("taskID", jobReqId);
-    logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
+    LoggerUtils.setJobIdMDC(String.valueOf(jobReqId));
+    try {
+      ModuleUserUtils.getOperationUser(req, "submit jobReqId: " + jobReqId);
+      pushLog(
+          LogUtils.generateInfo(
+              "Your job is accepted,  jobID is "
+                  + job.getId()
+                  + " and jobReqId is "
+                  + jobReqId
+                  + " in "
+                  + Sender.getThisServiceInstance().toString()
+                  + ". \n Please wait it to be scheduled(您的任务已经提交，进入排队中，如果一直没有更新日志，是任务并发达到了限制，可以在ITSM提Linkis参数修改单)"),
+          job);
+      String execID =
+          ZuulEntranceUtils.generateExecID(
+              job.getId(),
+              Sender.getThisServiceInstance().getApplicationName(),
+              new String[] {Sender.getThisInstance()});
+      message = Message.ok();
+      message.setMethod("/api/entrance/submit");
+      message.data("execID", execID);
+      message.data("taskID", jobReqId);
+      logger.info("End to get an an execID: {}, taskID: {}", execID, jobReqId);
+    } finally {
+      LoggerUtils.removeJobIdMDC();
+    }
     return message;
   }
 

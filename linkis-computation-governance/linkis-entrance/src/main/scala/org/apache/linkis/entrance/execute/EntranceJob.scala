@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.paser.CodeParser
+import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.utils.RPCUtils
@@ -123,6 +124,18 @@ abstract class EntranceJob extends Job {
 
   protected def isWaitForPersistedTimeout(startWaitForPersistedTime: Long): Boolean =
     System.currentTimeMillis - startWaitForPersistedTime >= EntranceConfiguration.JOB_MAX_PERSIST_WAIT_TIME.getValue.toLong
+
+  override protected def transition(state: SchedulerEventState): Unit = {
+    val jobRequest = getJobRequest
+    if (jobRequest != null && jobRequest.getId != null && jobRequest.getId > 0) {
+      LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
+    }
+    try {
+      super.transition(state)
+    } finally {
+      LoggerUtils.removeJobIdMDC()
+    }
+  }
 
   override def beforeStateChanged(
       fromState: SchedulerEventState,

@@ -182,7 +182,7 @@
 
     <!-- Query Engines -->
     <hive.version>2.3.3</hive.version>
-    <flink.version>1.16.2</flink.version>
+    <flink.version>1.12.2</flink.version>
     <trino.version>371</trino.version>
     <impala.version>3.4.0.7.2.15.0-147</impala.version>
     <presto.version>0.234</presto.version>
@@ -1705,7 +1705,7 @@
         <jline.version>2.14.6</jline.version>
         <woodstox.version>6.4.0</woodstox.version>
         <sparkmeasure.version>0.24</sparkmeasure.version>
-        <flink.version>1.16.2</flink.version>
+        <flink.version>1.12.2</flink.version>
 
         <!-- Cloud Storage -->
         <hadoop-aliyun.version>3.3.4</hadoop-aliyun.version>

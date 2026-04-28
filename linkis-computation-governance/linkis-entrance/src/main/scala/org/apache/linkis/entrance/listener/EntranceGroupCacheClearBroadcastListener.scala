@@ -17,14 +17,13 @@
 
 package org.apache.linkis.entrance.listener
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.entrance.conf.EntranceConfiguration
-import org.apache.linkis.entrance.protocol.EntranceGroupCacheClearBroadcast
 import org.apache.linkis.entrance.scheduler.EntranceGroupFactory
 import org.apache.linkis.protocol.BroadcastProtocol
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast
 import org.apache.linkis.rpc.BroadcastListener
 import org.apache.linkis.rpc.Sender
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -46,7 +45,7 @@ class EntranceGroupCacheClearBroadcastListener extends BroadcastListener with Lo
     protocol match {
       case clear: EntranceGroupCacheClearBroadcast =>
         logger.info(s"Received cache clear broadcast from ${clear.instance} at ${clear.timestamp}")
-        if (EntranceConfiguration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED) {
+        if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED) {
           try {
             // 清除所有Group缓存
             entranceGroupFactory.clearAllGroupCache()

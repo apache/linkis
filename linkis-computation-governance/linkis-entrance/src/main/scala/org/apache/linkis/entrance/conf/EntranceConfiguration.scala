@@ -420,6 +420,7 @@ object EntranceConfiguration {
   var SPARK_DYNAMIC_ALLOCATION_ENABLED =
     CommonVars.apply("spark.dynamic.allocation.enabled", false).getValue
 
+
   var SPARK_DYNAMIC_ALLOCATION_ADDITIONAL_CONFS =
     CommonVars.apply("spark.dynamic.allocation.additional.confs", "").getValue
 
@@ -467,15 +468,6 @@ object EntranceConfiguration {
   val HIVE_LOCATION_CONTROL_WHITELIST_CREATORS: CommonVars[String] =
     CommonVars("wds.linkis.hive.location.control.whitelist.creators", "")
 
-  /**
-   * Entrance Group缓存清理功能总开关
-   *
-   * 控制以下功能是否启用：
-   *   1. Entrance offline时发送Group缓存清理广播 2. 接收并处理Group缓存清理广播 3. 手动清理Group缓存API
-   *
-   * 默认关闭，需要手动启用以验证功能稳定性
-   */
-  val ENTRANCE_GROUP_CACHE_CLEAR_ENABLED =
-    CommonVars[Boolean]("linkis.entrance.group.cache.clear.enabled", true).getValue
+
 
 }

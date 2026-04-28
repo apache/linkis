@@ -151,7 +151,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   def clearAllGroupCache(): Unit = {
     try {
       // 检查功能开关是否启用
-      if (EntranceConfiguration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED) {
+      if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED) {
         val cacheSize = groupNameToGroups.size()
         groupNameToGroups.invalidateAll()
         logger.info(s"Cleared all Group cache. Cache size before clear: $cacheSize")

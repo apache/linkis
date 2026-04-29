@@ -17,11 +17,12 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.util
 
+import org.apache.linkis.common.utils.CodeUtils
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.{Log, LogFactory}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 
 import java.io.{BufferedReader, File, InputStreamReader, PrintWriter}
 import java.lang.ProcessBuilder.Redirect
@@ -56,7 +57,7 @@ object SeatunnelUtils {
       processBuilder.redirectOutput(Redirect.appendTo(file))
       LOGGER.info("process ready start.")
       process = processBuilder.start()
-      LOGGER.info(s"process start: $code")
+      LOGGER.info(s"process start: ${CodeUtils.maskCode(code, EngineType.SEATUNNEL.toString)}")
       val exitcode = process.waitFor()
       exitcode
     } finally {

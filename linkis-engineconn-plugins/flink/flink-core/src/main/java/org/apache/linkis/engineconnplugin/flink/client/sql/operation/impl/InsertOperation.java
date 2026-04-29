@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
+import org.apache.linkis.common.utils.CodeUtils;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +90,7 @@ public class InsertOperation extends AbstractJobOperation {
     try {
       tableResult = executionContext.wrapClassLoader(() -> tableEnv.executeSql(statement));
     } catch (Exception t) {
-      LOG.error(String.format("Invalid SQL query, sql is: %s.", statement), t);
+      LOG.error(String.format("Invalid SQL query, sql is: %s.", CodeUtils.maskCode(statement, EngineType.FLINK().toString())), t);
       // catch everything such that the statement does not crash the executor
       throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }

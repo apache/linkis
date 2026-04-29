@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.hive.hook
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.hook.EngineConnHook
@@ -77,7 +77,7 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
       jars.split(",") foreach { jar =>
         try {
           val sql = addSql + jar
-          logger.info("begin to run hive sql {}", sql)
+          logger.info("begin to run hive sql {}", CodeUtils.maskCode(sql))
           ExecutorManager.getInstance.getExecutorByLabels(labels) match {
             case executor: HiveEngineConnExecutor =>
               executor.executeLine(new EngineExecutionContext(executor), sql)

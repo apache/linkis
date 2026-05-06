@@ -717,7 +717,11 @@ class HiveEngineConnExecutor(
             .getOrElse(Map.empty)
           hiveTmpConf.foreach { case (key, value) =>
             currentProps.get(key).filter(_ != value).foreach { userValue =>
-              logger.info(s"Resetting configuration key: $key,value: $value cover $userValue")
+              if (key.equals("hive.query.string") || key.equals("mapreduce.workflow.name")) {
+                // 会打印用户sql，涉及敏感信息不打印
+              } else {
+                logger.info(s"Resetting configuration key: $key,value: $value cover $userValue")
+              }
               sessionConf.set(key, value)
             }
           }

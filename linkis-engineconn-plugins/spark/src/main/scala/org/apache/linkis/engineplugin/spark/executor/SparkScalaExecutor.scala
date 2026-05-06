@@ -442,7 +442,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override protected def getExecutorIdPreFix: String = "SparkScalaExecutor_"
-
+  def getSparkEngineSession: SparkEngineSession = sparkEngineSession
 }
 
 class EngineExecutionContextFactory {

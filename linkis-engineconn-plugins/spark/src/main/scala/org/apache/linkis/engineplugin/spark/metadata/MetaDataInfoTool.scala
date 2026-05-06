@@ -19,7 +19,8 @@ package org.apache.linkis.engineplugin.spark.metadata
 
 import org.apache.linkis.common.utils.{CodeUtils, Logging}
 import org.apache.linkis.manager.label.entity.engine.EngineType
-import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SparkLogicalPlanHelper}
+
+import org.apache.spark.sql.{DataFrame, Dataset, SparkLogicalPlanHelper, SQLContext}
 
 /**
  * Description:
@@ -27,11 +28,15 @@ import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SparkLogicalPlanHel
 class MetaDataInfoTool extends Logging {
 
   def getMetaDataInfo(sqlContext: SQLContext, sql: String, dataFrame: DataFrame): String = {
-    logger.info(s"begin to get sql metadata info: ${CodeUtils.maskCode(sql, EngineType.SPARK.toString())}")
+    logger.info(
+      s"begin to get sql metadata info: ${CodeUtils.maskCode(sql, EngineType.SPARK.toString())}"
+    )
     val startTime = System.currentTimeMillis
     val inputTables =
       SparkLogicalPlanHelper.extract(sqlContext, sql, dataFrame.queryExecution, startTime)
-    logger.info(s"end to get sql metadata info: ${CodeUtils.maskCode(sql, EngineType.SPARK.toString())}, metadata is ${inputTables}")
+    logger.info(
+      s"end to get sql metadata info: ${CodeUtils.maskCode(sql, EngineType.SPARK.toString())}, metadata is ${inputTables}"
+    )
     if (inputTables != null) inputTables.toString else ""
   }
 

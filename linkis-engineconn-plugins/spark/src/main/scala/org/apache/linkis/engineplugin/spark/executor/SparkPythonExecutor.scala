@@ -448,6 +448,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
+  def getSparkEngineSession: SparkEngineSession = sparkEngineSession
 }
 
 case class PythonInterpretRequest(statements: String, jobGroup: String)

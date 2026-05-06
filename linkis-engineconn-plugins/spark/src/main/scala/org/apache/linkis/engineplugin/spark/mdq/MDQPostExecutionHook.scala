@@ -29,7 +29,9 @@ import org.apache.linkis.protocol.mdq.{DDLCompleteResponse, DDLExecuteResponse}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.utils.StorageUtils
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
@@ -71,10 +73,16 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
         sender.ask(DDLExecuteResponse(true, code, StorageUtils.getJvmUser)) match {
           case DDLCompleteResponse(status) =>
             if (!status) {
-              logger.warn(s"failed to execute create table :${CodeUtils.maskCode(code, EngineType.SPARK.toString())} (执行建表失败):${CodeUtils.maskCode(code, EngineType.SPARK.toString())}")
+              logger.warn(s"failed to execute create table :${CodeUtils
+                .maskCode(code, EngineType.SPARK.toString())} (执行建表失败):${CodeUtils
+                .maskCode(code, EngineType.SPARK.toString())}")
             }
         }
-      case _ => logger.warn(s"failed to execute create table:${CodeUtils.maskCode(code, EngineType.SPARK.toString())} (执行建表失败:${CodeUtils.maskCode(code, EngineType.SPARK.toString())})")
+      case _ =>
+        logger.warn(
+          s"failed to execute create table:${CodeUtils.maskCode(code, EngineType.SPARK.toString())} (执行建表失败:${CodeUtils
+            .maskCode(code, EngineType.SPARK.toString())})"
+        )
     }
   }
 

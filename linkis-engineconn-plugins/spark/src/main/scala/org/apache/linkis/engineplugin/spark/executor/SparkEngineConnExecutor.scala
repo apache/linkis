@@ -340,13 +340,22 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     var successCount = 0
     var failCount = 0
     logger.info(s"Spark executor params setting begin")
-    this
-      .asInstanceOf[SparkSqlExecutor]
-      .getSparkEngineSession
-      .sparkSession
-      .sessionState
-      .conf
-      .getAllConfs
+    val sparkSession = this match {
+      case executor: SparkSqlExecutor =>
+        executor.getSparkEngineSession
+      case executor: SparkScalaExecutor =>
+        executor.getSparkEngineSession
+      case executor: SparkPythonExecutor =>
+        executor.getSparkEngineSession
+      case executor: SparkDataCalcExecutor =>
+        executor.getSparkEngineSession
+      case _ =>
+        logger.warn(
+          s"Unsupported executor type: ${this.getClass.getName}, skip spark executor params setting"
+        )
+        return
+    }
+    sparkSession.sparkSession.sessionState.conf.getAllConfs
       .foreach { case (key, value) =>
         totalParams += 1
         if (excludeParams.contains(key)) {

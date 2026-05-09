@@ -152,11 +152,7 @@ class DefaultEMInfoService extends EMInfoService with Logging {
       val filteredECMs = if (serviceInstance.equals("*")) {
         getAllEM()
       } else {
-        val ecInstance = new ServiceInstance
-        ecInstance.setInstance(serviceInstance)
-        ecInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
-        val node = emNodeManager.getEM(ecInstance)
-        if (node != null) Array(node) else Array.empty[EMNode]
+        getAllEM().filter(_.getServiceInstance.getInstance.equals(serviceInstance))
       }
       // 遍历处理ECM
       filteredECMs.foreach { ecmInstance =>

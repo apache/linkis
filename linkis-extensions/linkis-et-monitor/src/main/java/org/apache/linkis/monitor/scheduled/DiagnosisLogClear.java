@@ -77,7 +77,7 @@ public class DiagnosisLogClear {
    *
    * <p>Cron表达式：默认每日凌晨2点执行
    */
-  @Scheduled(cron = "${linkis.monitor.diagnosis.log.clear.cron:0 0 2 * * ?}")
+  @Scheduled(cron = "${linkis.monitor.diagnosis.log.clear.cron:0 0 22 * * ?}")
   public void clearDiagnosisLogs() {
     boolean diagnosisLogEnabled = MonitorConfig.DIAGNOSIS_LOG_ENABLED.getValue();
     String diagnosisLogPath = MonitorConfig.DIAGNOSIS_LOG_PATH.getValue();

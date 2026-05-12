@@ -106,11 +106,12 @@ object SecurityFilter extends Logging {
     val isPassAuthRequest = GatewayConfiguration.PASS_AUTH_REQUEST_URI.exists(r =>
       !r.equals("") && gatewayContext.getRequest.getRequestURI.startsWith(r)
     )
-    if (
-        gatewayContext.getRequest.getRequestURI.startsWith(
-          ServerConfiguration.BDP_SERVER_USER_URI.getValue
-        )
-    ) {
+
+    val isUserRestful = gatewayContext.getRequest.getRequestURI.startsWith(
+      ServerConfiguration.BDP_SERVER_USER_URI.getValue
+    )
+
+    if (isUserRestful) {
       Utils.tryCatch(userRestful.doUserRequest(gatewayContext)) { t =>
         val message = t match {
           case dwc: LinkisException => dwc.getMessage
@@ -122,10 +123,9 @@ object SecurityFilter extends Logging {
           Message.error(message).<<(gatewayContext.getRequest.getRequestURI)
         )
       }
-      false
+      return false
     } else if (isPassAuthRequest && !GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
       logger.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
-      true
     } else if (TokenAuthentication.isTokenRequest(gatewayContext)) {
       TokenAuthentication.tokenAuth(gatewayContext)
     } else if (OAuth2Authentication.isOAuth2Request(gatewayContext)) {
@@ -149,22 +149,19 @@ object SecurityFilter extends Logging {
       }
       if (userName.isDefined) {
         logger.info(s"User $userName has logged in.")
-        true
       } else if (Configuration.IS_TEST_MODE.getValue) {
         logger.info("test mode! login for uri: " + gatewayContext.getRequest.getRequestURI)
         GatewaySSOUtils.setLoginUser(gatewayContext, testUser)
-        true
       } else if (GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
         val user = SSOInterceptor.getSSOInterceptor.getUser(gatewayContext)
         if (StringUtils.isNotBlank(user)) {
           GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, user)
-          true
         } else if (isPassAuthRequest) {
           gatewayContext.getResponse.redirectTo(
             SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)
           )
           gatewayContext.getResponse.sendResponse()
-          false
+          return false
         } else {
           filterResponse(
             gatewayContext,
@@ -176,7 +173,7 @@ object SecurityFilter extends Logging {
                 SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)
               ) << gatewayContext.getRequest.getRequestURI
           )
-          false
+          return false
         }
       } else if (
           gatewayContext.getRequest.getRequestURI.matches(
@@ -186,7 +183,6 @@ object SecurityFilter extends Logging {
         logger.info(
           "Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI
         )
-        true
       } else {
         filterResponse(
           gatewayContext,

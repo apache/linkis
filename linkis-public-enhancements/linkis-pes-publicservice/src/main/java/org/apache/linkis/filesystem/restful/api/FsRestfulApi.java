@@ -674,16 +674,15 @@ public class FsRestfulApi {
     String en_msg =
         MessageFormat.format(
             "There is a field value exceed {0} characters or col size exceed {1} in the result set. If you want to view it, please use the result set export function.",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH(),
+            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH(),
             LinkisStorageConf.LINKIS_RESULT_COLUMN_SIZE());
     String truncateColumn_msg =
         MessageFormat.format(
-            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+            "结果集存在字段值字符数超过{0}，如需查看全部数据请导出文件或确认截取展示数据内容", LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
     String truncateColumn_en_msg =
         MessageFormat.format(
             "The result set contains field values exceeding {0} characters. To view the full data, please export the file or confirm the displayed content is truncated",
-            LinkisStorageConf.LINKIS_RESULT_COL_LENGTH());
+            LinkisStorageConf.FIELD_VIEW_MAX_LENGTH());
     try {
       fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {

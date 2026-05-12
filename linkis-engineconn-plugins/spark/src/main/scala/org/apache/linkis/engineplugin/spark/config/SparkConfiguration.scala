@@ -121,7 +121,7 @@ object SparkConfiguration extends Logging {
   val LINKIS_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
 
   val DEFAULT_SPARK_JAR_NAME =
-    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.8.0.jar")
+    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.2.jar")
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 
@@ -156,7 +156,7 @@ object SparkConfiguration extends Logging {
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
   val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "python3")
+    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
 
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)

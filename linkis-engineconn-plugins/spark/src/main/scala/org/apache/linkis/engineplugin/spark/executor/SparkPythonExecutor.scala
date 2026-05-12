@@ -159,6 +159,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
     val userDefinePythonVersion = engineCreationContext.getOptions
       .getOrDefault(SPARK_PYTHON_VERSION_KEY, "python")
+      .toString
       .toLowerCase()
     val sparkPythonVersion =
       if (

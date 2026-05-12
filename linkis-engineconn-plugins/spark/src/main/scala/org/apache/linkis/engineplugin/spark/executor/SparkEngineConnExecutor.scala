@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{
   ByteTimeUtils,
@@ -215,7 +216,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
     // print job configuration, only the first paragraph or retry
     val errorIndex: Integer = Integer.valueOf(
-      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+      engineExecutionContext.getProperties
+        .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+        .toString
     )
     if (isFirstParagraph || (errorIndex + 1 == engineExecutorContext.getCurrentParagraph)) {
       Utils.tryCatch({

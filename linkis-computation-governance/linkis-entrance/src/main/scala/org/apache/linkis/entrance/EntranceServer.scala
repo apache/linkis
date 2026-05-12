@@ -169,13 +169,6 @@ abstract class EntranceServer extends Logging {
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
         case _ =>
       }
-      Utils.tryCatch {
-        if (logAppender.length() > 0) {
-          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
-        }
-      } { t =>
-        logger.error("Failed to write init log, reason: ", t)
-      }
 
       /**
        * job.afterStateChanged() method is only called in job.run(), and job.run() is called only

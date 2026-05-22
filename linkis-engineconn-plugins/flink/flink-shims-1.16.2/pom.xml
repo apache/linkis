@@ -27,7 +27,7 @@
   <artifactId>flink-shims-1.16.2</artifactId>
 
   <properties>
-    <flink.version>1.16.2</flink.version>
+    <flink.version>1.20.4</flink.version>
   </properties>
 
   <dependencies>

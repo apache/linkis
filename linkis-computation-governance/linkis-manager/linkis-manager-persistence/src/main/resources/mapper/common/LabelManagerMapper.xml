@@ -340,6 +340,24 @@
         </foreach>
     </select>
 
+    <select id="getNodeRelationsByLabelIds" resultType="java.util.HashMap">
+        SELECT
+        l.id,
+        l.label_value_size AS 'labelValueSize',
+        l.label_key AS 'labelKey',
+        l.label_value AS 'stringValue',
+        si.instance,
+        si.name AS 'applicationName'
+        FROM
+        linkis_cg_manager_label l
+        INNER JOIN linkis_cg_manager_label_service_instance lsi ON l.id = lsi.label_id
+        INNER JOIN linkis_cg_manager_service_instance si ON si.instance = lsi.service_instance
+        WHERE l.id IN
+        <foreach collection="labelIds" item="labelId" open="(" close=")" separator=",">
+            #{labelId}
+        </foreach>
+    </select>
+
     <select id="listResourceByLaBelId"
             resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
         SELECT r.* FROM linkis_cg_manager_label_resource lr, linkis_cg_manager_linkis_resources r,

@@ -116,6 +116,8 @@ public interface LabelManagerMapper {
   List<Map<String, Object>> getNodeRelationsByLabels(
       @Param("labels") List<PersistenceLabel> labels);
 
+  List<Map<String, Object>> getNodeRelationsByLabelIds(@Param("labelIds") List<Integer> labelIds);
+
   /**
    * 通过instance信息，同时返回instance信息和label信息
    *

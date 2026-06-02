@@ -298,11 +298,21 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     if (PersistenceUtils.persistenceLabelListIsEmpty(persistenceLabels))
       return Collections.emptyMap();
     try {
-      /*Map<String, Map<String, String>> keyValueMap = PersistenceUtils.filterEmptyPersistenceLabelList(persistenceLabels).stream().collect(Collectors.toMap(PersistenceLabel::getLabelKey, PersistenceLabel::getValue));
-      String dimType = Label.ValueRelation.ALL.name();
-      List<Map<String, Object>> nodeRelationsByLabels = labelManagerMapper.dimListNodeRelationsByKeyValueMap(keyValueMap, dimType);*/
+      // Step 1: 逐个通过 label_key + label_value 查询 label ID（走唯一索引，每次1行）
+      List<Integer> labelIds = new ArrayList<>();
+      for (PersistenceLabel label : persistenceLabels) {
+        PersistenceLabel dbLabel =
+            labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
+        if (dbLabel != null) {
+          labelIds.add(dbLabel.getId());
+        }
+      }
+      if (labelIds.isEmpty()) {
+        return Collections.emptyMap();
+      }
+      // Step 2: 用 label ID 列表查询关联关系（走主键 + idx_lid_instance 索引）
       List<Map<String, Object>> nodeRelationsByLabels =
-          labelManagerMapper.getNodeRelationsByLabels(persistenceLabels);
+          labelManagerMapper.getNodeRelationsByLabelIds(labelIds);
       List<Tunple<PersistenceLabel, ServiceInstance>> arrays =
           new ArrayList<Tunple<PersistenceLabel, ServiceInstance>>();
       for (Map<String, Object> nodeRelationsByLabel : nodeRelationsByLabels) {

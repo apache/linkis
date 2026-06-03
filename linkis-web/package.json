@@ -76,7 +76,7 @@
         "mitt": "1.2.0",
         "monaco-editor-webpack-plugin": "6.0.0",
         "npm-force-resolutions": "0.0.10",
-        "postcss": "8.4.21",
+        "postcss": "8.5.10",
         "sass-loader": "10.4.1",
         "svg-sprite-loader": "6.0.0",
         "vue-cli-plugin-mockjs": "0.1.3",
@@ -84,6 +84,6 @@
         "webpack-virtual-modules": "0.3.2"
     },
     "resolutions": {
-        "postcss": "8.4.21"
+        "postcss": "8.5.10"
     }
 }

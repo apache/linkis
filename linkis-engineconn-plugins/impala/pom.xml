@@ -27,7 +27,7 @@
   <artifactId>linkis-engineplugin-impala</artifactId>
 
   <properties>
-    <libthrift.version>0.15.0</libthrift.version>
+    <libthrift.version>0.23.0</libthrift.version>
     <package.impala.version>3.4.0</package.impala.version>
   </properties>
   <dependencies>

@@ -92,6 +92,22 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
   )
 
   override def link(fromPath: String, toPath: String): Unit = {
+    // 只对 lib 目录执行物料替换脚本
+    if (ECPCoreConf.MATERIAL_REPLACE_SCRIPT_PATH.nonEmpty && fromPath.endsWith("/lib")) {
+      newLine(Array("if [ -x \"", ECPCoreConf.MATERIAL_REPLACE_SCRIPT_PATH, "\" ]; then"))
+      newLine(
+        Array(
+          "  \"",
+          ECPCoreConf.MATERIAL_REPLACE_SCRIPT_PATH,
+          "\" \"",
+          fromPath,
+          "\" \"",
+          toPath,
+          "\""
+        )
+      )
+      newLine(Array("fi"))
+    }
     newLine(Array("ln -sf \"", fromPath, "\" \"", toPath, "\""))
     addErrorCheck()
   }

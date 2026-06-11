@@ -15,26 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.utils
+package org.apache.linkis.protocol.label
 
-object ParameterUtils {
+import org.apache.linkis.protocol.BroadcastProtocol
 
-  private val startupConfRegex =
-    """--([a-z]+)-conf\s+(\S+)=([^=]+?)(?=\s*(?:--engineconn-conf|--spring-conf|$))""".r
+/**
+ * Entrance Group缓存清除广播消息
+ *
+ * 广播时机：
+ *   1. Entrance实例offline时（通过/markoffline接口触发） 2. 通过InstanceLabel管理接口更新Entrance实例标签时
+ *
+ * 广播目的：通知所有其他Entrance实例清除本地Group缓存 广播效果：下次任务提交时重新计算并发数
+ *
+ * @param instance
+ *   触发广播的Entrance实例标识
+ * @param timestamp
+ *   广播发送时间戳（毫秒）
+ */
+case class EntranceGroupCacheClearBroadcast(instance: String, timestamp: Long)
+    extends BroadcastProtocol {
 
-  def parseStartupParams(args: Array[String], handler: (String, String, String) => Unit): Unit = {
-    val argString = args.mkString(" ")
-    startupConfRegex.findAllMatchIn(argString).foreach { m =>
-      val prefix = m.group(1).trim
-      val key = m.group(2).trim
-      val value = m.group(3).trim
-      prefix match {
-        case "engineconn" | "spring" =>
-          handler(prefix, key, value)
-        case _ =>
-          throw new IllegalArgumentException(s"illegal command line, $prefix cannot recognize.")
-      }
-    }
-  }
+  // 不抛出任何异常，即使部分实例接收失败也不影响流程
+  override val throwsIfAnyFailed: Boolean = false
 
 }

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.executor
 
-import org.apache.linkis.common.utils.{ByteTimeUtils, Utils, VariableUtils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeUtils, Utils, VariableUtils}
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnPerJobClusterDescriptorAdapter
 import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
@@ -30,6 +30,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.governance.common.paser.{CodeParserFactory, CodeType}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
 
@@ -64,14 +65,17 @@ class FlinkCodeOnceExecutor(
         if (StringUtils.isBlank(codes)) {
           throw new FlinkInitFailedException(SQL_CODE_EMPTY.getErrorDesc)
         }
-        logger.info(s"Ready to submit flink application, sql is: $codes.")
+        logger.info(s"Ready to submit flink application, sql is: ${CodeUtils
+          .maskCode(codes, EngineType.FLINK.toString() + "-SQL")}.")
         val variableMap =
           if (onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null) {
             onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap
               .asInstanceOf[util.Map[String, Any]]
           } else new util.HashMap[String, Any]
         codes = VariableUtils.replace(codes, variableMap)
-        logger.info(s"After variable replace, sql is: $codes.")
+        logger.info(
+          s"After variable replace, sql is: ${CodeUtils.maskCode(codes, EngineType.FLINK.toString() + "-SQL")}."
+        )
       case runType =>
         // Now, only support sql code.
         throw new FlinkInitFailedException(
@@ -110,7 +114,7 @@ class FlinkCodeOnceExecutor(
   protected def runCode(code: String): Unit = {
     if (isClosed) return
     val trimmedCode = StringUtils.trim(code)
-    logger.info(s"$getId >> " + trimmedCode)
+    logger.info(s"$getId >> " + CodeUtils.maskCode(trimmedCode, EngineType.FLINK.toString()))
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     if (!callOpt.isPresent) {

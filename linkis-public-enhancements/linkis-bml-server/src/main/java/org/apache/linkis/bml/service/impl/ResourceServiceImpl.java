@@ -95,6 +95,12 @@ public class ResourceServiceImpl implements ResourceService {
       // 插入一条记录到resource表
       long id = resourceDao.uploadResource(resource);
       logger.info("{} uploaded a resource and resourceId is {}", user, resource.getResourceId());
+      logger.info(
+          "Upload resource - resourceId: {}, version: {}, hdfsPath: {}, user: {}",
+          resource.getResourceId(),
+          Constant.FIRST_VERSION,
+          path,
+          user);
       // 插入一条记录到resource version表
       String clientIp = (String) properties.get("clientIp");
       ResourceVersion resourceVersion =

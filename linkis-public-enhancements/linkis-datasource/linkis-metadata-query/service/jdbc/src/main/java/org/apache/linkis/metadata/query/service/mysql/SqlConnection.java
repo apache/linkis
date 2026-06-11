@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.service.mysql;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
@@ -112,7 +113,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -136,15 +137,16 @@ public class SqlConnection implements Closeable {
   /**
    * Get primary keys
    *
+   * @param connection connection
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(String table) throws SQLException {
+  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
-      DatabaseMetaData dbMeta = conn.getMetaData();
+      DatabaseMetaData dbMeta = connection.getMetaData();
       rs = dbMeta.getPrimaryKeys(null, null, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
@@ -152,7 +154,7 @@ public class SqlConnection implements Closeable {
       return primaryKeys;
     } finally {
       if (null != rs) {
-        rs.close();
+        closeResource(connection, null, rs);
       }
     }
   }

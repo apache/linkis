@@ -152,7 +152,8 @@ public class EntranceSpringConfiguration {
       new CommentInterceptor(),
       new SetTenantLabelInterceptor(),
       new UserCreatorIPCheckInterceptor(),
-      new TaskRetryInterceptor()
+      new TaskRetryInterceptor(),
+      new QueueSelectionInterceptor()
     };
   }
 
@@ -185,6 +186,12 @@ public class EntranceSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public GroupFactory groupFactory() {
+    return new EntranceGroupFactory();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public EntranceGroupFactory entranceGroupFactory() {
     return new EntranceGroupFactory();
   }
 

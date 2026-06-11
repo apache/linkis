@@ -88,6 +88,10 @@ abstract class JavaProcessEngineConnLaunchBuilder
         .foreach(commandLine += _)
     }
     if (StringUtils.isNotEmpty(javaOPTS)) javaOPTS.split("\\s+").foreach(commandLine += _)
+    if (EnvConfiguration.ENGINE_CONN_KERBEROS_ENABLE.getValue) {
+      commandLine += "-Dsun.net.inetaddr.ttl=0"
+      commandLine += "-Dsun.security.jgss.native=false"
+    }
     getLogDir(engineConnBuildRequest).trim.split(" ").foreach(commandLine += _)
     commandLine += ("-Djava.io.tmpdir=" + variable(TEMP_DIRS))
     if (EnvConfiguration.ENGINE_CONN_DEBUG_ENABLE.getValue) {

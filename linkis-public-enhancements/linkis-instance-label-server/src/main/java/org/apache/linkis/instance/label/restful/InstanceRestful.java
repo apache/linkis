@@ -29,6 +29,8 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.utils.LabelUtils;
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast;
+import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -149,6 +151,15 @@ public class InstanceRestful {
     InstanceInfo instanceInfo = insLabelService.getInstanceInfoByServiceInstance(instance);
     instanceInfo.setUpdateTime(new Date());
     insLabelService.updateInstance(instanceInfo);
+
+    // If the instance is an Entrance service, trigger cache clear broadcast
+    if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()
+        && Configuration.CLOUD_CONSOLE_ENTRANCE_SPRING_APPLICATION_NAME()
+            .getValue()
+            .equalsIgnoreCase(instanceType)) {
+      triggerEntranceCacheClearBroadcast(instanceName);
+    }
+
     return Message.ok("success").data("labels", labels);
   }
 
@@ -206,5 +217,28 @@ public class InstanceRestful {
           instanceList.filter(s -> s.getMetadata().get("linkis.app.version").contains(version));
     }
     return Message.ok().data("list", instanceList.collect(Collectors.toList()));
+  }
+
+  /**
+   * Trigger Entrance Group cache clear broadcast via RPC.
+   *
+   * <p>When an Entrance instance's labels are updated, all other Entrance instances need to clear
+   * their local Group cache so that the next task submission will recalculate concurrency settings
+   * based on the updated labels.
+   *
+   * @param instanceName the instance identifier that triggered the broadcast
+   */
+  private void triggerEntranceCacheClearBroadcast(String instanceName) {
+    try {
+      EntranceGroupCacheClearBroadcast broadcast =
+          new EntranceGroupCacheClearBroadcast(instanceName, System.currentTimeMillis());
+      Sender.getSender(Configuration.CLOUD_CONSOLE_ENTRANCE_SPRING_APPLICATION_NAME().getValue())
+          .send(broadcast);
+      logger.info("Successfully sent Entrance cache clear broadcast for instance: " + instanceName);
+    } catch (Exception e) {
+      // Broadcast failure should not affect the label update flow
+      logger.error(
+          "Failed to send Entrance cache clear broadcast for instance: " + instanceName, e);
+    }
   }
 }

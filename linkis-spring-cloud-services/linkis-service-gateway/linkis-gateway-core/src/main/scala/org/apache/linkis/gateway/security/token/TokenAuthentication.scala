@@ -17,7 +17,7 @@
 
 package org.apache.linkis.gateway.security.token
 
-import org.apache.linkis.common.utils.{Logging, MD5Utils, Utils}
+import org.apache.linkis.common.utils.{Logging, MD5Utils, TokenSensitiveUtils, Utils}
 import org.apache.linkis.gateway.authentication.service.TokenService
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
@@ -61,7 +61,12 @@ object TokenAuthentication extends Logging {
     var host = gatewayContext.getRequest.getRequestRealIpAddr()
     logger.info(
       String
-        .format("Use Linkis Auth : %s,User : %s,Ip : %s", encryptToken(token), tokenUser, host)
+        .format(
+          "Use Linkis Auth : %s,User : %s,Ip : %s",
+          TokenSensitiveUtils.maskToken(token),
+          tokenUser,
+          host
+        )
     )
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
       val cookieTokenOpt = Option(gatewayContext.getRequest.getCookies.get(TOKEN_KEY)).map(_.head)
@@ -107,11 +112,13 @@ object TokenAuthentication extends Logging {
     })
     if (ok) {
       logger.info(
-        s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser, host: $host."
+        s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: ${TokenSensitiveUtils
+          .maskToken(token)}, tokenUser: $tokenUser, host: $host."
       )
       if (login) {
         logger.info(
-          s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
+          s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: ${TokenSensitiveUtils
+            .maskToken(token)}, tokenUser: $tokenUser."
         )
         GatewaySSOUtils.setLoginUser(gatewayContext, tokenUser)
         val msg =
@@ -130,7 +137,8 @@ object TokenAuthentication extends Logging {
       true
     } else {
       logger.info(
-        s"Token authentication fail, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser, host: $host."
+        s"Token authentication fail, uri: ${gatewayContext.getRequest.getRequestURI}, token: ${TokenSensitiveUtils
+          .maskToken(token)}, tokenUser: $tokenUser, host: $host."
       )
       SecurityFilter.filterResponse(gatewayContext, authMsg)
       false

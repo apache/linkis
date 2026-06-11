@@ -17,8 +17,10 @@
 
 package org.apache.linkis.engineplugin.elasticsearch.executor.client.impl;
 
+import org.apache.linkis.common.utils.CodeUtils;
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration;
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.*;
+import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.storage.utils.StorageUtils;
 
@@ -70,7 +72,11 @@ public class ElasticSearchExecutorImpl implements ElasticSearchExecutor {
   @Override
   public ElasticSearchResponse executeLine(String code) {
     String realCode = code.trim();
-    logger.info("es client begins to run {} code:\n {}", runType, realCode.trim());
+    logger.info(
+        "es client begins to run {} code: {}",
+        runType,
+        CodeUtils.maskCode(
+            realCode.trim(), EngineType.ELASTICSEARCH().toString() + "-" + runType.toUpperCase()));
     CountDownLatch countDown = new CountDownLatch(1);
     ElasticSearchResponse[] executeResponse = {
       new ElasticSearchErrorResponse("INCOMPLETE", null, null)

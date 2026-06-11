@@ -26,6 +26,8 @@
 
   <artifactId>linkis-metadata</artifactId>
   <packaging>jar</packaging>
+  <name>linkis-metadata</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.trino.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
@@ -51,6 +51,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{
@@ -161,7 +162,9 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     }
 
     TrinoCode.checkCode(realCode)
-    logger.info(s"trino client begins to run psql code:\n $realCode")
+    logger.info(
+      s"trino client begins to run psql code: ${CodeUtils.maskCode(realCode, EngineType.TRINO.toString())}"
+    )
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     // Add task id in the first line, and trino will customize it after receiving it.(在第一行加taskid，trino接收后做定制化处理)
     realCode = s"--linkis_task_id=$jobId" + "\n" + realCode

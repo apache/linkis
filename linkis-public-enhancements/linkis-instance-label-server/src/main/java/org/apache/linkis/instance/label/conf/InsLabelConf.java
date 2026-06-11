@@ -48,4 +48,7 @@ public class InsLabelConf {
 
   public static final CommonVars<String> SERVICE_REGISTRY_ADDRESS =
       CommonVars.apply("linkis.discovery.server-address", "http://localhost:20303");
+
+  /** Entrance service application name */
+  public static final String ENTRANCE_SERVICE_NAME = "linkis-cg-entrance";
 }

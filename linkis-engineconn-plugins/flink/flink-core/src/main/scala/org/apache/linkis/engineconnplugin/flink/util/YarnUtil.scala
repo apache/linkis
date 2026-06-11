@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.util
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
 import org.apache.linkis.engineconnplugin.flink.client.config.FlinkVersionThreadLocal
@@ -72,26 +72,55 @@ object YarnUtil extends Logging {
   }
 
   private def createYarnClient(): YarnClient = {
-    val yarnClient = YarnClient.createYarnClient()
-    val hadoopConf = getHadoopConf()
-    val yarnConfiguration = new YarnConfiguration(hadoopConf)
-    yarnClient.init(yarnConfiguration)
-    yarnClient.start()
-    yarnClient
+    val startTime = System.currentTimeMillis()
+    logger.info("Creating YarnClient")
+
+    try {
+      val yarnClient = YarnClient.createYarnClient()
+      val hadoopConf = getHadoopConf()
+      val yarnConfiguration = new YarnConfiguration(hadoopConf)
+      yarnClient.init(yarnConfiguration)
+      yarnClient.start()
+
+      val duration = ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)
+      logger.info(s"YarnClient created and started successfully - duration: $duration")
+      yarnClient
+    } catch {
+      case e: Exception =>
+        val duration = ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)
+        logger.error(s"Failed to create YarnClient - duration: $duration", e)
+        throw e
+    }
   }
 
   private def getHadoopConf(): Configuration = {
-    val conf = new Configuration()
-    var confRoot = FlinkEnvConfiguration.HADOOP_CONF_DIR.getValue
-    if (StringUtils.isBlank(confRoot)) {
-      throw new JobExecutionException("HADOOP_CONF_DIR or linkis.flink.hadoop.conf.dir not set!")
+    val startTime = System.currentTimeMillis()
+    logger.info("Loading Hadoop configuration for YarnClient")
+
+    try {
+      val conf = new Configuration()
+      var confRoot = FlinkEnvConfiguration.HADOOP_CONF_DIR.getValue
+      if (StringUtils.isBlank(confRoot)) {
+        throw new JobExecutionException("HADOOP_CONF_DIR or linkis.flink.hadoop.conf.dir not set!")
+      }
+      confRoot = confRoot + "/"
+      logger.info(s"Hadoop config directory: $confRoot")
+      conf.addResource(confRoot + HDFS_SITE)
+      conf.addResource(confRoot + CORE_SITE)
+      conf.addResource(confRoot + MAPRED_SITE)
+      conf.addResource(confRoot + YARN_SITE)
+
+      val duration = ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)
+      logger.info(
+        s"Hadoop configuration loaded successfully - confRoot: $confRoot, duration: $duration"
+      )
+      conf
+    } catch {
+      case e: Exception =>
+        val duration = ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)
+        logger.error(s"Failed to load Hadoop configuration - duration: $duration", e)
+        throw e
     }
-    confRoot = confRoot + "/"
-    conf.addResource(confRoot + HDFS_SITE)
-    conf.addResource(confRoot + CORE_SITE)
-    conf.addResource(confRoot + MAPRED_SITE)
-    conf.addResource(confRoot + YARN_SITE)
-    conf
   }
 
   def setClusterEntrypointInfoToConfig(

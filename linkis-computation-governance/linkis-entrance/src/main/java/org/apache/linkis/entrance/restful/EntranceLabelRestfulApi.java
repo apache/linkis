@@ -21,11 +21,13 @@ import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.protocol.label.EntranceGroupCacheClearBroadcast;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
 import org.apache.linkis.protocol.label.InsLabelRemoveRequest;
 import org.apache.linkis.rpc.Sender;
@@ -100,6 +102,23 @@ public class EntranceLabelRestfulApi {
     synchronized (offlineFlag) { // NOSONAR
       offlineFlag = true;
     }
+    // 只有当功能开关启用时才发送缓存清理广播
+    if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
+      try {
+        // 构造广播消息
+        EntranceGroupCacheClearBroadcast broadcast =
+            new EntranceGroupCacheClearBroadcast(
+                Sender.getThisInstance(), System.currentTimeMillis());
+        // 获取entrance服务的Sender并发送广播
+        Sender.getSender(Sender.getThisServiceInstance()).send(broadcast);
+        logger.info("Successfully sent cache clear broadcast for entrance offline");
+      } catch (Exception e) {
+        // 广播失败不影响offline流程，只记录日志
+        logger.error("Failed to send cache clear broadcast, entrance offline continues", e);
+      }
+    } else {
+      logger.info("Group cache clear broadcast is disabled, skip sending broadcast");
+    }
     logger.info("Finished to modify the routelabel of entry to offline");
 
     logger.info("Prepare to update all not execution task instances to empty string");
@@ -125,6 +144,23 @@ public class EntranceLabelRestfulApi {
     InsLabelRemoveRequest insLabelRemoveRequest = new InsLabelRemoveRequest();
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().removeLabelsFromInstance(insLabelRemoveRequest);
+    // 只有当功能开关启用时才发送缓存清理广播
+    if (Configuration.ENTRANCE_GROUP_CACHE_CLEAR_ENABLED()) {
+      try {
+        // 构造广播消息
+        EntranceGroupCacheClearBroadcast broadcast =
+            new EntranceGroupCacheClearBroadcast(
+                Sender.getThisInstance(), System.currentTimeMillis());
+        // 获取entrance服务的Sender并发送广播
+        Sender.getSender(Sender.getThisServiceInstance()).send(broadcast);
+        logger.info("Successfully sent cache clear broadcast for entrance offline");
+      } catch (Exception e) {
+        // 广播失败不影响offline流程，只记录日志
+        logger.error("Failed to send cache clear broadcast, entrance offline continues", e);
+      }
+    } else {
+      logger.info("Group cache clear broadcast is disabled, skip sending broadcast");
+    }
     synchronized (offlineFlag) { // NOSONAR
       offlineFlag = false;
     }

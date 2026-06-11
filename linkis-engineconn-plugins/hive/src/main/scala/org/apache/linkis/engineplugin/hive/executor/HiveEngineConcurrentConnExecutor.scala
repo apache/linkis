@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
@@ -27,6 +27,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.{ConcurrentExecutor, ResourceFetchExecutor}
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
+import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration.HIVE_TAG_USER_ENABLE
 import org.apache.linkis.engineplugin.hive.creation.HiveEngineConnFactory
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
@@ -43,6 +44,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{
   CompletedExecuteResponse,
@@ -134,17 +136,37 @@ class HiveEngineConcurrentConnExecutor(
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    LOG.info(s"HiveEngineConcurrentConnExecutor Ready to executeLine: $code")
+    LOG.info(s"HiveEngineConcurrentConnExecutor Ready to executeLine: ${CodeUtils
+      .maskCode(code, EngineType.HIVE.toString())}")
     val taskId: String = engineExecutorContext.getJobId.getOrElse("udf_init")
     CSHiveHelper.setContextIDInfoToHiveConf(engineExecutorContext, hiveConf)
 
     val realCode = code.trim()
 
-    LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
+    LOG.info(
+      s"hive client begins to run hql code:\n ${CodeUtils.maskCode(realCode.trim, EngineType.HIVE.toString())}"
+    )
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     if (StringUtils.isNotBlank(jobId)) {
-      LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
-      hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
+      // Get username from engineExecutorContext
+      val submitUser = if (engineExecutorContext.getProperties != null) {
+        Utils.tryAndWarn {
+          engineExecutorContext.getProperties.get("submitUser") match {
+            case user: String => user
+            case _ => null
+          }
+        }
+      } else null
+
+      // Build tags with username information
+      val tags = if (HIVE_TAG_USER_ENABLE && StringUtils.isNotBlank(submitUser)) {
+        s"LINKIS_$jobId" + s"_$submitUser"
+      } else {
+        s"LINKIS_$jobId"
+      }
+
+      LOG.info(s"set mapreduce.job.tags=$tags")
+      hiveConf.set("mapreduce.job.tags", tags)
     }
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")
@@ -219,11 +241,11 @@ class HiveEngineConcurrentConnExecutor(
             var compileRet = -1
             Utils.tryCatch {
               compileRet = driver.compile(realCode)
-              logger.info(
-                s"driver compile realCode : \n ${realCode} \n finished, status : ${compileRet}"
-              )
+              logger.info(s"driver compile realCode : \n ${CodeUtils
+                .maskCode(realCode, EngineType.HIVE.toString())} \n finished, status : ${compileRet}")
               if (0 != compileRet) {
-                logger.warn(s"compile realCode : \n ${realCode} \n error status : ${compileRet}")
+                logger.warn(s"compile realCode : \n ${CodeUtils
+                  .maskCode(realCode, EngineType.HIVE.toString())} \n error status : ${compileRet}")
                 throw HiveQueryFailedException(
                   COMPILE_HIVE_QUERY_ERROR.getErrorCode,
                   COMPILE_HIVE_QUERY_ERROR.getErrorDesc

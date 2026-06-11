@@ -30,6 +30,7 @@ import org.apache.linkis.governance.common.entity.job.{
 }
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
@@ -154,79 +155,86 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   override def change(jobReqUpdate: JobReqUpdate): JobRespProtocol = {
     val jobReq = jobReqUpdate.jobReq
     jobReq.setExecutionCode(null)
-    logger.info(
-      "Update data to the database(往数据库中更新数据)：task " + jobReq.getId + "status:" + jobReq.getStatus
-    )
+    if (jobReq.getId != null) {
+      LoggerUtils.setJobIdMDC(jobReq.getId.toString)
+    }
     val jobResp = new JobRespProtocol
-    Utils.tryCatch {
-      if (jobReq.getErrorDesc != null) {
-        if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
-          logger.info(s"errorDesc is too long,we will cut some message")
-          jobReq.setErrorDesc(
-            jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN - 3) + "..."
-          )
-          logger.info(s"${jobReq.getErrorDesc}")
-        }
-      }
-      if (jobReq.getStatus != null) {
-        val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-        val startUpMap: util.Map[String, AnyRef] =
-          TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
-        val taskRetrySwitch: AnyRef = startUpMap.getOrDefault("linkis.task.retry.switch", "false")
-        if (
-            oldStatus != null && !shouldUpdate(
-              oldStatus,
-              jobReq.getStatus,
-              taskRetrySwitch.toString
+    try {
+      logger.info(
+        "Update data to the database(往数据库中更新数据)：task " + jobReq.getId + "status:" + jobReq.getStatus
+      )
+      Utils.tryCatch {
+        if (jobReq.getErrorDesc != null) {
+          if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
+            logger.info(s"errorDesc is too long,we will cut some message")
+            jobReq.setErrorDesc(
+              jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN - 3) + "..."
             )
+            logger.info(s"${jobReq.getErrorDesc}")
+          }
+        }
+        if (jobReq.getStatus != null) {
+          val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
+          val startUpMap: util.Map[String, AnyRef] =
+            TaskUtils.getStartupMap(jobReqUpdate.jobReq.getParams)
+          val taskRetrySwitch: AnyRef = startUpMap.getOrDefault("linkis.task.retry.switch", "false")
+          if (
+              oldStatus != null && !shouldUpdate(
+                oldStatus,
+                jobReq.getStatus,
+                taskRetrySwitch.toString
+              )
+          ) {
+            throw new QueryException(
+              120001,
+              s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +
+                s" newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
+            )
+          }
+        }
+
+        // metrics 增量更新逻辑
+        if (
+            Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
+            jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
         ) {
+          mergeMetrics(jobReq)
+        }
+
+        val jobUpdate = jobRequest2JobHistory(jobReq)
+        if (jobUpdate.getUpdatedTime == null) {
           throw new QueryException(
             120001,
-            s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +
-              s" newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
+            s"jobId:${jobReq.getId}，update job failed, updatetime needed(更新job相关信息失败，请指定该请求的更新时间)!"
           )
         }
-      }
-
-      // metrics 增量更新逻辑
-      if (
-          Configuration.METRICS_INCREMENTAL_UPDATE_ENABLE.getValue &&
-          jobReq.getMetrics != null && !jobReq.getMetrics.isEmpty
-      ) {
-        mergeMetrics(jobReq)
-      }
-
-      val jobUpdate = jobRequest2JobHistory(jobReq)
-      if (jobUpdate.getUpdatedTime == null) {
-        throw new QueryException(
-          120001,
-          s"jobId:${jobReq.getId}，update job failed, updatetime needed(更新job相关信息失败，请指定该请求的更新时间)!"
+        logger.info(
+          s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} ,status ${jobReq.getStatus}," +
+            s" updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}"
         )
+        jobHistoryMapper.updateJobHistory(jobUpdate)
+        val map = new util.HashMap[String, Object]
+        map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
+        jobResp.setStatus(0)
+        jobResp.setData(map)
+      } {
+        case exception: QueryException =>
+          logger.error(
+            s"Failed to update JobReqUpdate ${jobReq.getId},status ${jobReq.getStatus}",
+            exception
+          )
+          jobResp.setStatus(1)
+          jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
+        case exception: Exception =>
+          logger.error(
+            s"Failed to update JobReqUpdate ${jobReq.getId},status ${jobReq.getStatus}",
+            exception
+          )
+          jobResp.setStatus(2)
+          jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
       }
-      logger.info(
-        s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} ,status ${jobReq.getStatus}," +
-          s" updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}"
-      )
-      jobHistoryMapper.updateJobHistory(jobUpdate)
-      val map = new util.HashMap[String, Object]
-      map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
-      jobResp.setStatus(0)
-      jobResp.setData(map)
-    } {
-      case exception: QueryException =>
-        logger.error(
-          s"Failed to update JobReqUpdate ${jobReq.getId},status ${jobReq.getStatus}",
-          exception
-        )
-        jobResp.setStatus(1)
-        jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
-      case exception: Exception =>
-        logger.error(
-          s"Failed to update JobReqUpdate ${jobReq.getId},status ${jobReq.getStatus}",
-          exception
-        )
-        jobResp.setStatus(2)
-        jobResp.setMsg(ExceptionUtils.getRootCauseMessage(exception))
+    } finally {
+      LoggerUtils.removeJobIdMDC()
     }
     jobResp
   }

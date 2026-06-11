@@ -106,9 +106,8 @@ abstract class EntranceServer extends Logging {
         PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
-    logger.info(s"received a request,convert $jobRequest")
-
     LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
+    logger.info(s"received a request,convert $jobRequest")
 
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(
@@ -169,13 +168,6 @@ abstract class EntranceServer extends Logging {
         case entranceJob: EntranceJob =>
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
         case _ =>
-      }
-      Utils.tryCatch {
-        if (logAppender.length() > 0) {
-          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
-        }
-      } { t =>
-        logger.error("Failed to write init log, reason: ", t)
       }
 
       /**

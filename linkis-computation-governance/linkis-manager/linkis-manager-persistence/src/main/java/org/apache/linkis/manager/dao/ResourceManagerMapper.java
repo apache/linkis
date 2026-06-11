@@ -60,4 +60,11 @@ public interface ResourceManagerMapper {
   void deleteResourceRelByResourceId(@Param("ids") List<Integer> ids);
 
   PersistenceResource getResourceById(@Param("id") Integer id);
+
+  /**
+   * 查询资源为负数（异常）的资源记录
+   *
+   * @return 异常资源列表
+   */
+  List<PersistenceResource> getAbnormalResources();
 }

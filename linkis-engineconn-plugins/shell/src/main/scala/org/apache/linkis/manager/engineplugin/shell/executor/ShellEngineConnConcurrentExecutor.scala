@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, Logging, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -85,7 +85,7 @@ class ShellEngineConnConcurrentExecutor(id: Int)
       completedLine: String
   ): ExecuteResponse = {
     val newcode = completedLine + code
-    logger.debug("newcode is " + newcode)
+    logger.debug("newcode is " + CodeUtils.maskCode(newcode, "shell"))
     executeLine(engineExecutionContext, newcode)
   }
 

@@ -60,6 +60,12 @@ object EnvConfiguration {
     "Specify the option parameter of the java process (please modify it carefully!!!)"
   )
 
+  val ENGINE_CONN_KERBEROS_ENABLE = CommonVars(
+    "wds.linkis.keytab.enable",
+    false,
+    "Whether to enable Kerberos keytab, when enabled, will add -Dsun.net.inetaddr.ttl=0 -Dsun.security.jgss.native=false to engine JVM options"
+  )
+
   val ENGINE_CONN_JAVA_EXTRA_CLASSPATH = CommonVars(
     "wds.linkis.engineConn.extra.classpath",
     "",

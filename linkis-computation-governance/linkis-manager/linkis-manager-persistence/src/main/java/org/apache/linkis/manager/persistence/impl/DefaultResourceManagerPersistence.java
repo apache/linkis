@@ -211,4 +211,9 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
     PersistenceResource resource = resourceManagerMapper.getResourceById(id);
     return resource;
   }
+
+  @Override
+  public List<PersistenceResource> getAbnormalResources() {
+    return resourceManagerMapper.getAbnormalResources();
+  }
 }

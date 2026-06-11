@@ -40,6 +40,9 @@ nohup.out
 tools
 
 nul
+/docs/project-knowledge/*
 
 #claude
 .claude
+/deployment-materials/
+/install.bat

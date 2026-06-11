@@ -19,6 +19,7 @@ package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
+import org.apache.linkis.common.utils.TokenSensitiveUtils;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
@@ -203,7 +204,8 @@ public class ECResourceInfoRestfulApi {
     // check special admin token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        logger.warn("Token:{} has no permission to query ecList.", token);
+        logger.warn(
+            "Token:{} has no permission to query ecList.", TokenSensitiveUtils.maskToken(token));
         return Message.error("Token:" + token + " has no permission to query ecList.");
       }
     } else if (!Configuration.isAdmin(username)) {

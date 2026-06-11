@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
@@ -76,7 +76,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       completedLine: String
   ): ExecuteResponse = {
     val newcode = completedLine + code
-    logger.debug("newcode is " + newcode)
+    logger.debug("newcode is " + CodeUtils.maskCode(newcode, "shell"))
     executeLine(engineExecutionContext, newcode)
   }
 

@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, CodeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -29,6 +29,7 @@ import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
+import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration.HIVE_TAG_USER_ENABLE
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.{
   COMPILE_HIVE_QUERY_ERROR,
@@ -44,6 +45,7 @@ import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, Nod
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
@@ -161,16 +163,39 @@ class HiveEngineConnExecutor(
     singleCodeCompleted.set(false)
     currentSqlProgress = 0.0f
     val realCode = code.trim()
-    LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
+    LOG.info(
+      s"hive client begins to run hql code:\n ${CodeUtils.maskCode(realCode.trim, EngineType.HIVE.toString())}"
+    )
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
 
     if (StringUtils.isNotBlank(jobId)) {
       val jobTags = JobUtils.getJobSourceTagsFromObjectMap(engineExecutorContext.getProperties)
+
+      // Get username from engineExecutorContext
+      val submitUser = if (engineExecutorContext.getProperties != null) {
+        Utils.tryAndWarn {
+          engineExecutorContext.getProperties.get("submitUser") match {
+            case user: String => user
+            case _ => null
+          }
+        }
+      } else null
+
+      // Build tags with username information
       val tags = if (StringUtils.isAsciiPrintable(jobTags)) {
-        s"LINKIS_$jobId,$jobTags"
+        if (HIVE_TAG_USER_ENABLE && StringUtils.isNotBlank(submitUser)) {
+          s"LINKIS_$jobId" + s"_$submitUser,$jobTags"
+        } else {
+          s"LINKIS_$jobId,$jobTags"
+        }
       } else {
-        s"LINKIS_$jobId"
+        if (HIVE_TAG_USER_ENABLE && StringUtils.isNotBlank(submitUser)) {
+          s"LINKIS_$jobId" + s"_$submitUser"
+        } else {
+          s"LINKIS_$jobId"
+        }
       }
+
       LOG.info(s"set mapreduce.job.tags=$tags")
       hiveConf.set("mapreduce.job.tags", tags)
     }
@@ -257,11 +282,11 @@ class HiveEngineConnExecutor(
             var compileRet = -1
             Utils.tryCatch {
               compileRet = driver.compile(realCode)
-              logger.info(
-                s"driver compile realCode : \n ${realCode} \n finished, status : ${compileRet}"
-              )
+              logger.info(s"driver compile realCode : \n ${CodeUtils
+                .maskCode(realCode, EngineType.HIVE.toString())} \n finished, status : ${compileRet}")
               if (0 != compileRet) {
-                logger.warn(s"compile realCode : \n ${realCode} \n error status : ${compileRet}")
+                logger.warn(s"compile realCode : \n ${CodeUtils
+                  .maskCode(realCode, EngineType.HIVE.toString())} \n error status : ${compileRet}")
                 throw HiveQueryFailedException(
                   COMPILE_HIVE_QUERY_ERROR.getErrorCode,
                   COMPILE_HIVE_QUERY_ERROR.getErrorDesc
@@ -692,7 +717,11 @@ class HiveEngineConnExecutor(
             .getOrElse(Map.empty)
           hiveTmpConf.foreach { case (key, value) =>
             currentProps.get(key).filter(_ != value).foreach { userValue =>
-              logger.info(s"Resetting configuration key: $key,value: $value cover $userValue")
+              if (key.equals("hive.query.string") || key.equals("mapreduce.workflow.name")) {
+                // 会打印用户sql，涉及敏感信息不打印
+              } else {
+                logger.info(s"Resetting configuration key: $key,value: $value cover $userValue")
+              }
               sessionConf.set(key, value)
             }
           }

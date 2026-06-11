@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.9.0</revision>
+    <revision>2.0.0</revision>
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
@@ -119,7 +119,7 @@
     <netty.version>4.2.7.Final</netty.version>
     <okio.version>3.4.0</okio.version>
     <snappy-java.version>1.1.10.4</snappy-java.version>
-    <avro.version>1.11.4</avro.version>
+    <avro.version>1.11.5</avro.version>
     <aircompressor.version>0.27</aircompressor.version>
     <reactor-netty-http.version>1.0.39</reactor-netty-http.version>
 
@@ -144,8 +144,7 @@
     <druid.version>1.2.4</druid.version>
     <javassist.version>3.27.0-GA</javassist.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
@@ -182,7 +181,7 @@
 
     <!-- Query Engines -->
     <hive.version>2.3.3</hive.version>
-    <flink.version>1.16.2</flink.version>
+    <flink.version>1.12.2</flink.version>
     <trino.version>371</trino.version>
     <impala.version>3.4.0.7.2.15.0-147</impala.version>
     <presto.version>0.234</presto.version>
@@ -401,11 +400,7 @@
         <artifactId>commons-collections</artifactId>
         <version>${commons-collections.version}</version>
       </dependency>
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -1595,24 +1590,24 @@
     <profile>
       <id>spark-3</id>
       <properties>
-        <revision>1.9.0-spark3</revision>
+        <revision>2.0.0-spark3</revision>
         <json4s.version>3.7.0-M11</json4s.version>
         <spark.version>3.4.4</spark.version>
-        <scala.version>2.12.17</scala.version>
+        <scala.version>2.12.18</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
         <jackson-bom.version>2.14.2</jackson-bom.version>
       </properties>
     </profile>
 
     <!-- ==================================================== -->
-    <!-- Apache Open Source Profile (dev-1.9.0)              -->
+    <!-- Apache Open Source Profile (dev-2.0.0)              -->
     <!-- Usage: mvn clean install -Papache                    -->
     <!-- ==================================================== -->
     <profile>
       <id>apache</id>
       <properties>
         <!-- Core Version -->
-        <revision>1.9.0</revision>
+        <revision>2.0.0</revision>
 
         <!-- Hadoop Ecosystem -->
         <hadoop.version>3.3.4</hadoop.version>
@@ -1705,7 +1700,7 @@
         <jline.version>2.14.6</jline.version>
         <woodstox.version>6.4.0</woodstox.version>
         <sparkmeasure.version>0.24</sparkmeasure.version>
-        <flink.version>1.16.2</flink.version>
+        <flink.version>1.12.2</flink.version>
 
         <!-- Cloud Storage -->
         <hadoop-aliyun.version>3.3.4</hadoop-aliyun.version>

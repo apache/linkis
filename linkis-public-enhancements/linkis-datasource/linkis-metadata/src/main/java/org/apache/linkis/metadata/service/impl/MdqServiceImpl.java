@@ -318,39 +318,37 @@ public class MdqServiceImpl implements MdqService {
   public List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(
       List<String> partitions, String partitionPath, String partitionSort) {
     // part_name(year=2020/day=0605) => MdqTablePartitionStatisticInfoVO 这里只是返回name，没有相关的分区统计数据
-    ArrayList<MdqTablePartitionStatisticInfoVO> statisticInfoVOS = new ArrayList<>();
+    List<MdqTablePartitionStatisticInfoVO> statisticInfoVOS = new ArrayList<>();
     Map<String, List<Tunple<String, String>>> partitionsStr =
         partitions.stream()
             .map(this::splitStrByFirstSlanting)
             .filter(Objects::nonNull) // 去掉null的
             .collect(Collectors.groupingBy(Tunple::getKey));
-    partitionsStr.forEach(
-        (k, v) -> {
-          MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO =
-              new MdqTablePartitionStatisticInfoVO();
-          mdqTablePartitionStatisticInfoVO.setName(k);
-          String subPartitionPath = String.format("%s/%s", partitionPath, k);
-          mdqTablePartitionStatisticInfoVO.setPartitionPath(subPartitionPath);
-          List<String> subPartitions =
-              v.stream().map(Tunple::getValue).collect(Collectors.toList());
-          List<MdqTablePartitionStatisticInfoVO> childrens =
-              getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath, partitionSort);
-          // 排序
-          if ("asc".equals(partitionSort)) {
-            childrens =
-                childrens.stream()
-                    .sorted(Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName))
-                    .collect(Collectors.toList());
-          } else {
-            childrens =
-                childrens.stream()
-                    .sorted(
-                        Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName).reversed())
-                    .collect(Collectors.toList());
-          }
-          mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
-          statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
-        });
+    Comparator<MdqTablePartitionStatisticInfoVO> comparator =
+        "asc".equals(partitionSort)
+            ? Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName)
+            : Comparator.comparing(MdqTablePartitionStatisticInfoVO::getName).reversed();
+    for (Map.Entry<String, List<Tunple<String, String>>> entry : partitionsStr.entrySet()) {
+      MdqTablePartitionStatisticInfoVO mdqTablePartitionStatisticInfoVO =
+          new MdqTablePartitionStatisticInfoVO();
+      mdqTablePartitionStatisticInfoVO.setName(entry.getKey());
+      String subPartitionPath = String.format("%s/%s", partitionPath, entry.getKey());
+      mdqTablePartitionStatisticInfoVO.setPartitionPath(subPartitionPath);
+      List<String> subPartitions =
+          entry.getValue().stream()
+              .map(Tunple::getValue)
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+      if (subPartitions.isEmpty()) {
+        mdqTablePartitionStatisticInfoVO.setChildrens(new ArrayList<>());
+      } else {
+        List<MdqTablePartitionStatisticInfoVO> childrens =
+            getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath, partitionSort);
+        childrens.sort(comparator);
+        mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
+      }
+      statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
+    }
     return statisticInfoVOS;
   }
 

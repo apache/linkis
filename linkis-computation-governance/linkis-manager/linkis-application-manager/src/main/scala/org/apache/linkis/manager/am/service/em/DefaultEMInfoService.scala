@@ -214,23 +214,22 @@ class DefaultEMInfoService extends EMInfoService with Logging {
     // 用户资源重置
     if (AMConfiguration.AM_USER_RESET_RESOURCE && StringUtils.isNotBlank(username)) {
       // 获取用户的标签
-      val user = if (username.equals("*")) {
-        ""
+      val abnormalResources = if (username.equals("*")) {
+        resourceManagerPersistence.getAbnormalResources.asScala
       } else {
-        username
+        val labelValuePattern =
+          MessageFormat.format("%{0}%,%{1}%,%{2}%,%", "", username, "")
+        val userLabels = labelManagerPersistence.getLabelByPattern(
+          labelValuePattern,
+          "combined_userCreator_engineType",
+          null,
+          null
+        )
+        // 获取与这些标签关联的资源
+        resourceManagerPersistence.getResourceByLabels(userLabels).asScala
       }
-      val labelValuePattern =
-        MessageFormat.format("%{0}%,%{1}%,%{2}%,%", "", user, "")
-      val userLabels = labelManagerPersistence.getLabelByPattern(
-        labelValuePattern,
-        "combined_userCreator_engineType",
-        null,
-        null
-      )
-      // 获取与这些标签关联的资源
-      val userLabelResources = resourceManagerPersistence.getResourceByLabels(userLabels).asScala
       // 遍历用户标签资源
-      userLabelResources.foreach { userLabelResource =>
+      abnormalResources.foreach { userLabelResource =>
         val labelUser = LabelUtil.getFromLabelStr(userLabelResource.getCreator, "user")
         val resourceLabel = labelManagerPersistence.getLabelByResource(userLabelResource)
         resourceLabel.head.setStringValue(userLabelResource.getCreator)

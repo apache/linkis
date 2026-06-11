@@ -57,8 +57,14 @@ object Configuration extends Logging {
   val CLOUD_CONSOLE_VARIABLE_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
+  val MANAGER_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
+
   val JOBHISTORY_SPRING_APPLICATION_NAME =
     CommonVars("wds.linkis.jobhistory.application.name", "linkis-ps-jobhistory")
+
+  val CLOUD_CONSOLE_ENTRANCE_SPRING_APPLICATION_NAME =
+    CommonVars("wds.linkis.console.entrance.application.name", "linkis-cg-entrance")
 
   // read from env
   val PREFER_IP_ADDRESS: Boolean = CommonVars(
@@ -95,14 +101,53 @@ object Configuration extends Logging {
       "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
     )
 
-  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-UNAVAILABLE-TOKEN")
+  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "")
 
   val HDFS_HOUR_DIR_SWITCH = CommonVars("linkis.hdfs.hour.dir.switch", false).getValue
 
   val LINKIS_KEYTAB_SWITCH: Boolean = CommonVars("linkis.keytab.switch", false).getValue
 
+  val TOKEN_MASK_ENABLED: Boolean = CommonVars("linkis.log.token.mask.enable", true).getValue
+
+  val CODE_MASK_ENABLED: Boolean = CommonVars("linkis.log.code.mask.enable", true).getValue
+
   val METRICS_INCREMENTAL_UPDATE_ENABLE =
     CommonVars[Boolean]("linkis.jobhistory.metrics.incremental.update.enable", false)
+
+  /**
+   * Whether to enable secondary queue feature Default: true Description: true enables smart queue
+   * selection, false disables the feature
+   */
+  val SECONDARY_QUEUE_ENABLED: CommonVars[Boolean] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.enable", false)
+
+  /**
+   * Secondary queue resource usage threshold Default: 0.9 (90%) Description: Use secondary queue
+   * when usage <= this value, use primary queue when usage > this value
+   */
+  val SECONDARY_QUEUE_THRESHOLD: CommonVars[Double] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.threshold", 0.9)
+
+  /**
+   * Supported engine type list (comma-separated) Default: spark Description: Only engines in this
+   * list will execute smart queue selection Case-insensitive
+   */
+  val SECONDARY_QUEUE_ENGINES: CommonVars[String] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.engines", "spark")
+
+  /**
+   * Supported Creator list (comma-separated) Default: IDE Description: Only Creators in this list
+   * will execute smart queue selection Case-insensitive
+   */
+  val SECONDARY_QUEUE_CREATORS: CommonVars[String] =
+    CommonVars.apply("wds.linkis.rm.secondary.yarnqueue.creators", "IDE")
+
+  /**
+   * Entrance Group缓存清理功能总开关 控制以下功能是否启用：
+   *   1. Entrance offline时发送Group缓存清理广播 2. 接收并处理Group缓存清理广播 3. 手动清理Group缓存API
+   */
+  val ENTRANCE_GROUP_CACHE_CLEAR_ENABLED =
+    CommonVars[Boolean]("linkis.entrance.group.cache.clear.enabled", true).getValue
 
   val EXECUTE_ERROR_CODE_INDEX =
     CommonVars("execute.error.code.index", "-1")

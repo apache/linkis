@@ -40,6 +40,29 @@ case class DateType(value: CustomDateType) extends VariableType {
 
 }
 
+/**
+ * WeekType: A week-based date type following the same pattern as MonthType
+ *
+ * Arithmetic operations (+/-) are performed in units of weeks:
+ *   - run_week_begin - 1 means subtract 1 week (previous Monday)
+ *   - run_week_end + 2 means add 2 weeks (Sunday after 2 weeks)
+ *
+ * Uses CustomWeekType internally for week-specific calculations
+ */
+case class WeekType(value: CustomWeekType) extends VariableType {
+  override def getValue: String = value.toString
+
+  def calculator(signal: String, bValue: String): String = {
+    signal match {
+      case "+" => value + bValue.toInt
+      case "-" => value - bValue.toInt
+      case _ =>
+        throw new LinkisCommonErrorException(20046, s"WeekType is not supported to use:$signal")
+    }
+  }
+
+}
+
 case class MonthType(value: CustomMonthType) extends VariableType {
   override def getValue: String = value.toString
 

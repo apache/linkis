@@ -17,9 +17,10 @@
 
 package org.apache.linkis.engineplugin.spark.imexport
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{CodeUtils, Logging}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.imexport.util.BackGroundServiceUtils
+import org.apache.linkis.manager.label.entity.engine.EngineType
 
 import org.apache.spark.sql.SparkSession
 
@@ -113,7 +114,7 @@ object ExportData extends Logging {
     sql.append("select ").append(columns).append(" from ").append(s"$database.$tableName")
     if (isPartition) sql.append(" where ").append(s"$partition=$partitionValue")
     val sqlString = sql.toString()
-    logger.warn(s"export sql:$sqlString")
+    logger.warn(s"export sql:${CodeUtils.maskCode(sqlString, EngineType.SPARK.toString)}")
     sqlString
   }
 

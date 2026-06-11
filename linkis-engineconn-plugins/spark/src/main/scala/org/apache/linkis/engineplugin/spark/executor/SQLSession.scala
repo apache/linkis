@@ -17,11 +17,15 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
-import org.apache.linkis.engineplugin.spark.exception.SparkEngineException
+import org.apache.linkis.engineplugin.spark.exception.{
+  RuleCheckFailedException,
+  SparkEngineException
+}
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
@@ -73,11 +77,18 @@ object SQLSession extends Logging {
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)
 
     val iterator = Utils.tryThrow(dataFrame.toLocalIterator) { t =>
-      throw new SparkEngineException(
-        DATAFRAME_EXCEPTION.getErrorCode,
-        DATAFRAME_EXCEPTION.getErrorDesc,
-        t
-      )
+      {
+        // 如果是规则校验异常，阻断任务执行直接抛出
+        if (t.isInstanceOf[RuleCheckFailedException]) {
+          throw t
+        } else {
+          throw new SparkEngineException(
+            DATAFRAME_EXCEPTION.getErrorCode,
+            DATAFRAME_EXCEPTION.getErrorDesc,
+            t
+          )
+        }
+      }
     }
     // var columns: List[Attribute] = null
     // get field names
@@ -126,7 +137,9 @@ object SQLSession extends Logging {
 
     // 失败任务重试处理结果集
     val errorIndex: Integer = Integer.valueOf(
-      engineExecutionContext.getProperties.getOrDefault("execute.error.code.index", "-1").toString
+      engineExecutionContext.getProperties
+        .getOrDefault(Configuration.EXECUTE_ERROR_CODE_INDEX.key, "-1")
+        .toString
     )
     val hasSetResultSetNum: Boolean = engineExecutionContext.getProperties
       .getOrDefault("hasSetResultSetNum", "true")

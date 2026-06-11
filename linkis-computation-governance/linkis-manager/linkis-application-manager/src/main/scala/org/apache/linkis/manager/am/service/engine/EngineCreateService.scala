@@ -18,6 +18,10 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.governance.common.protocol.conf.{
+  SecondaryYarnRequest,
+  SecondaryYarnResponse
+}
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
 import org.apache.linkis.rpc.Sender
@@ -26,5 +30,10 @@ trait EngineCreateService {
 
   @throws[LinkisRetryException]
   def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
+
+  def performSmartQueueSelection(
+      secondaryYarnRequest: SecondaryYarnRequest,
+      sender: Sender
+  ): SecondaryYarnResponse
 
 }

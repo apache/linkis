@@ -195,23 +195,27 @@ public class SqlConnection implements Closeable {
    */
   private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
-    String url =
+    String baseUrl =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
     // deal with empty database
     if (StringUtils.isBlank(database)) {
-      url = url.substring(0, url.length() - 1);
+      baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
     }
-    if (!connectMessage.extraParams.isEmpty()) {
-      url += "?" + extraParamString;
+
+    // Use Properties-based connection to enforce security params override.
+    // Per MySQL Connector/J docs, Properties override URL query params on conflict.
+    Properties props = SecurityUtils.getMysqlSecurityParams();
+    props.setProperty("user", connectMessage.username);
+    props.setProperty("password", connectMessage.password);
+    for (Map.Entry<String, Object> entry : connectMessage.extraParams.entrySet()) {
+      if (!props.containsKey(entry.getKey())) {
+        props.setProperty(entry.getKey(), String.valueOf(entry.getValue()));
+      }
     }
-    return DriverManager.getConnection(
-        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
+    LOG.info("jdbc connection url: {}", baseUrl);
+    return DriverManager.getConnection(baseUrl, props);
   }
 
   /** Connect message */

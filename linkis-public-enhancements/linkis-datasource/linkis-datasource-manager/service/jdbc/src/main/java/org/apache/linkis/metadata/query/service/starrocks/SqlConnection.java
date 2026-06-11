@@ -26,7 +26,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,19 +205,23 @@ public class SqlConnection implements Closeable {
    */
   private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
-    String url =
+    String baseUrl =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
-      url += "?" + extraParamString;
+
+    // Use Properties-based connection to enforce security params override.
+    // Per MySQL Connector/J docs, Properties override URL query params on conflict.
+    Properties props = SecurityUtils.getMysqlSecurityParams();
+    props.setProperty("user", connectMessage.username);
+    props.setProperty("password", AESUtils.isDecryptByConf(connectMessage.password));
+    for (Map.Entry<String, Object> entry : connectMessage.extraParams.entrySet()) {
+      if (!props.containsKey(entry.getKey())) {
+        props.setProperty(entry.getKey(), String.valueOf(entry.getValue()));
+      }
     }
-    return DriverManager.getConnection(
-        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
+    LOG.info("starrocks jdbc connection url: {}", baseUrl);
+    return DriverManager.getConnection(baseUrl, props);
   }
 
   /** Connect message */

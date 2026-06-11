@@ -1,0 +1,28 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/linkis-engineconn-plugins/flink/flink-shims-1.16.2"
+    ignore:
+      # Flink shims modules are version-specific compatibility layers.
+      # Upgrading the Flink dependency in-place breaks the shims contract
+      # (module name must match the supported Flink version).
+      # If a new Flink version needs to be supported, create a new shims module
+      # (e.g. flink-shims-1.20.4) instead of modifying existing ones.
+      - dependency-name: "org.apache.flink:*"

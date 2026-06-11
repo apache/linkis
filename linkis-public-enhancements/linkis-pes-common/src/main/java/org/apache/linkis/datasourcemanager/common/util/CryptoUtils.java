@@ -23,8 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.security.MessageDigest;
 
@@ -62,7 +64,18 @@ public class CryptoUtils {
   public static Object string2Object(String str) {
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(new Base64().decode(str.getBytes()));
-      ObjectInputStream ois = new ObjectInputStream(bis);
+      ObjectInputStream ois =
+          new ObjectInputStream(bis) {
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass desc)
+                throws IOException, ClassNotFoundException {
+              if (!desc.getName().equals("java.lang.String")) {
+                throw new InvalidClassException(
+                    "Unauthorized deserialization attempt", desc.getName());
+              }
+              return super.resolveClass(desc);
+            }
+          };
       Object o = ois.readObject();
       bis.close();
       ois.close();

@@ -272,12 +272,18 @@ public abstract class SecurityUtils {
       return;
     }
 
-    // deal with url encode
+    // deal with url encode - loop until stable to prevent double-encoding bypass
     String paramUrl = parseParamsMapToMysqlParamUrl(paramsMap);
     try {
-      paramUrl = URLDecoder.decode(paramUrl, "UTF-8");
+      while (paramUrl.contains("%")) {
+        String decodedParamUrl = URLDecoder.decode(paramUrl, "UTF-8");
+        if (decodedParamUrl.equals(paramUrl)) {
+          break;
+        }
+        paramUrl = decodedParamUrl;
+      }
     } catch (UnsupportedEncodingException e) {
-      throw new LinkisSecurityException(35000, "mysql connection cul decode error: " + e);
+      throw new LinkisSecurityException(35000, "mysql connection url decode error: " + e);
     }
 
     Map<String, Object> newParamsMap = parseMysqlUrlParamsToMap(paramUrl);

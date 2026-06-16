@@ -58,13 +58,17 @@ github:
     merge:  true
     squash: true
     rebase: true
-  protected_branches:
-    master:
-      required_status_checks:
-        strict: true
-      required_pull_request_reviews:
-        dismiss_stale_reviews: true
-        required_approving_review_count: 1
+  # Temporarily disable master branch protection to allow force-push
+  # for cleaning sensitive information (passwords, internal IPs, domains)
+  # from historical commits per security ticket.
+  # Will be restored in a follow-up PR after the cleanup is complete.
+  # protected_branches:
+  #   master:
+  #     required_status_checks:
+  #       strict: true
+  #     required_pull_request_reviews:
+  #       dismiss_stale_reviews: true
+  #       required_approving_review_count: 1
 notifications:
   commits: commits@linkis.apache.org
   issues: dev@linkis.apache.org

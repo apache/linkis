@@ -158,6 +158,17 @@
       <artifactId>commons-beanutils</artifactId>
     </dependency>
 
+    <!-- 显式引入正确的 scala/hadoop 依赖，覆盖传递依赖中的错误版本 -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs-client</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>

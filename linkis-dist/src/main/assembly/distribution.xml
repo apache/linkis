@@ -301,6 +301,8 @@
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+                <exclude>com.fasterxml.jackson.module:jackson-module-scala_2.11:*</exclude>
+                <exclude>org.apache.hadoop:hadoop-hdfs:*</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

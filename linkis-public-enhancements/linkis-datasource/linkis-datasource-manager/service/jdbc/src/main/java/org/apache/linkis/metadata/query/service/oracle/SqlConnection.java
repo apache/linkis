@@ -19,6 +19,8 @@ package org.apache.linkis.metadata.query.service.oracle;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.AESUtils;
+import org.apache.linkis.common.utils.JdbcDriverType;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +29,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,10 +217,25 @@ public class SqlConnection implements Closeable {
   private Connection getDBConnection(
       ConnectMessage connectMessage, String database, String serviceName)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
+    // CVE-2023-49566 fix-up: validate params and build Properties via SecurityUtils so the
+    // Oracle denylist (oracle.net.tns_admin / javax.net.ssl.trustStore ...) is enforced.
+    SecurityUtils.checkJdbcConnParams(
+        JdbcDriverType.ORACLE,
+        connectMessage.host,
+        connectMessage.port,
+        connectMessage.username,
+        connectMessage.password,
+        database,
+        connectMessage.extraParams);
+    Properties prop =
+        SecurityUtils.buildSecureProperties(
+            JdbcDriverType.ORACLE,
+            connectMessage.username,
+            AESUtils.isDecryptByConf(connectMessage.password),
+            connectMessage.extraParams);
+    // Oracle-specific default that must always be present.
+    prop.put("remarksReporting", "true");
+
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url = "";
     if (StringUtils.isNotBlank(database)) {
@@ -234,14 +250,7 @@ public class SqlConnection implements Closeable {
               connectMessage.port,
               database);
     }
-
-    if (!connectMessage.extraParams.isEmpty()) {
-      url += "?" + extraParamString;
-    }
-    Properties prop = new Properties();
-    prop.put("user", connectMessage.username);
-    prop.put("password", AESUtils.isDecryptByConf(connectMessage.password));
-    prop.put("remarksReporting", "true");
+    LOG.info("jdbc connection url: {}", url);
     return DriverManager.getConnection(url, prop);
   }
 

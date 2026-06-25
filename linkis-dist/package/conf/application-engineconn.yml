@@ -15,11 +15,24 @@
 spring:
   application:
     name: linkis-cg-engineconn
+  main:
+    allow-bean-definition-overriding: true
+    # Spring Boot 2.7+ compatibility: required for springfox 3.0.0 + Linkis internal bean cycles
+    allow-circular-references: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    servlet:
+      path: /api/rest_j/v1
   servlet:
     multipart:
       max-file-size: 500MB
       max-request-size: 500MB
       file-size-threshold: 50MB
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
 eureka:
   instance:
     # prefer-ip-address: true

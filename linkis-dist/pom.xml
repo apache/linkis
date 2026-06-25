@@ -168,6 +168,12 @@
       <artifactId>hadoop-hdfs-client</artifactId>
       <version>${hadoop.version}</version>
     </dependency>
+    <!-- Eureka Client 依赖 commons-lang 2.x 的 ExceptionUtils -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
 
   </dependencies>
 

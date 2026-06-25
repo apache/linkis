@@ -145,6 +145,7 @@ public class JDBCHelper {
             case Types.BINARY:
                 retVal = BinaryType.typeName();
                 break;
+            case Types.NUMERIC:
             case Types.DECIMAL:
                 retVal = DecimalType.typeName();
                 break;

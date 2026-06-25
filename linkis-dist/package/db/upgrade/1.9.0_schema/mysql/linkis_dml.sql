@@ -285,3 +285,11 @@ UPDATE `linkis_ps_configuration_config_key` SET default_value = '60' WHERE `key`
 -- 更新错误码正则表达式
 UPDATE linkis_ps_error_code SET error_regex = "The ecm of labels" WHERE error_code = "01001";
 
+-- Backfill value_regex for JDBC data-source `instance` fields.
+-- Restrict the instance field to identifier characters so RegExpParameterValidateStrategy
+-- rejects values containing URL option separators before they reach the connection layer.
+UPDATE `linkis_ps_dm_datasource_type_key`
+SET `value_regex` = '^[A-Za-z0-9_.-]+$'
+WHERE `key` = 'instance'
+  AND `value_regex` IS NULL;
+

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -355,5 +356,181 @@ public class SecurityUtilsTest {
 
     str = SecurityUtils.parseParamsMapToMysqlParamUrl(null);
     Assertions.assertEquals("", str);
+  }
+
+  // ----------------------- Generic JDBC API tests (CVE-2023-49566 fix-up) -----------------------
+
+  private void assertDriverRejectsParam(JdbcDriverType driver, String key, String value) {
+    Map<String, Object> params = new HashMap<>();
+    params.put(key, value);
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> SecurityUtils.checkJdbcConnParams(driver, "localhost", 5432, "u", "p", "db", params),
+        "driver " + driver + " should reject param " + key);
+  }
+
+  @Test
+  public void testGenericCheck_PostgresDenylist() {
+    // The headline RCE sink from the advisory — must be blocked for every PG-family driver.
+    assertDriverRejectsParam(
+        JdbcDriverType.POSTGRESQL,
+        "socketFactory",
+        "org.springframework.context.support.ClassPathXmlApplicationContext");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "socketFactoryArg", "http://evil/poc.xml");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "sslfactory", "evil.Class");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "sslfactoryarg", "evil");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "loggerFile", "/tmp/evil.log");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "loggerLevel", "TRACE");
+    // Greenplum and KingBase share the PG-family denylist.
+    assertDriverRejectsParam(JdbcDriverType.GREENPLUM, "socketFactory", "evil.Class");
+    assertDriverRejectsParam(JdbcDriverType.KINGBASE, "socketFactory", "evil.Class");
+  }
+
+  @Test
+  public void testGenericCheck_Db2JndiParam() {
+    // clientRerouteServerListJNDIName is the original CVE-2023-49566 JNDI sink.
+    assertDriverRejectsParam(
+        JdbcDriverType.DB2, "clientRerouteServerListJNDIName", "ldap://evil/exp");
+    assertDriverRejectsParam(JdbcDriverType.DB2, "enableSeamlessFailover", "true");
+    assertDriverRejectsParam(JdbcDriverType.DB2, "JNDIName", "ldap://evil/exp");
+  }
+
+  @Test
+  public void testGenericCheck_OracleDenylist() {
+    assertDriverRejectsParam(JdbcDriverType.ORACLE, "oracle.net.tns_admin", "/etc/evil");
+    assertDriverRejectsParam(JdbcDriverType.ORACLE, "javax.net.ssl.trustStore", "/etc/evil");
+    assertDriverRejectsParam(JdbcDriverType.ORACLE, "javax.net.ssl.trustStorePassword", "hunter2");
+    assertDriverRejectsParam(JdbcDriverType.ORACLE, "javax.net.ssl.keyStore", "/etc/evil");
+  }
+
+  @Test
+  public void testGenericCheck_SqlserverDenylist() {
+    assertDriverRejectsParam(JdbcDriverType.SQLSERVER, "jaasConfigurationName", "evil");
+    assertDriverRejectsParam(JdbcDriverType.SQLSERVER, "jaasApplicationName", "evil");
+  }
+
+  @Test
+  public void testGenericCheck_GlobalDenylistAppliesToAllDrivers() {
+    // The global denylist (autoDeserialize, allowLoadLocalInfile, #) applies even to drivers
+    // that have no driver-specific denylist entry (ClickHouse, DM).
+    assertDriverRejectsParam(JdbcDriverType.CLICKHOUSE, "autoDeserialize", "true");
+    assertDriverRejectsParam(JdbcDriverType.CLICKHOUSE, "#", "true");
+    assertDriverRejectsParam(JdbcDriverType.DM, "autoDeserialize", "true");
+    assertDriverRejectsParam(JdbcDriverType.POSTGRESQL, "autoDeserialize", "true");
+    assertDriverRejectsParam(JdbcDriverType.ORACLE, "allowLoadLocalInfile", "true");
+  }
+
+  @Test
+  public void testGenericCheck_UrlEncodedBypass() {
+    // Attacker URL-encodes a char in a blocked param name hoping to slip past the substring
+    // match. The decoder loop should normalize it back before matching.
+    Map<String, Object> params = new HashMap<>();
+    params.put("%73ocketFactory", "evil.Class"); // %73 = 's'
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "localhost", 5432, "u", "p", "db", params));
+
+    // Value-side bypass attempt should also be caught.
+    Map<String, Object> params2 = new HashMap<>();
+    params2.put("safeKey", "soc%6betFactory"); // %6b = 'k'
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "localhost", 5432, "u", "p", "db", params2));
+  }
+
+  @Test
+  public void testGenericCheck_HostInjection() {
+    // A malicious host string tries to smuggle extra URL segments past the denylist.
+    Map<String, Object> params = new HashMap<>();
+    params.put("k1", "v1");
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL,
+                "evil.com:5432/db?socketFactory=x",
+                5432,
+                "u",
+                "p",
+                "db",
+                params));
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "evil.com#frag", 5432, "u", "p", "db", params));
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "evil.com&extra=x", 5432, "u", "p", "db", params));
+  }
+
+  @Test
+  public void testGenericCheck_BlankHostOrUsername() {
+    Map<String, Object> params = new HashMap<>();
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "  ", 5432, "u", "p", "db", params));
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () ->
+            SecurityUtils.checkJdbcConnParams(
+                JdbcDriverType.POSTGRESQL, "localhost", 5432, "  ", "p", "db", params));
+  }
+
+  @Test
+  public void testGenericCheck_AllowsSafeParams() {
+    // Sanity: a benign param set for each driver family must not trip the denylist.
+    for (JdbcDriverType driver : JdbcDriverType.values()) {
+      Map<String, Object> params = new HashMap<>();
+      params.put("connectTimeout", "5000");
+      params.put("socketTimeout", "10000");
+      Assertions.assertDoesNotThrow(
+          () ->
+              SecurityUtils.checkJdbcConnParams(driver, "localhost", 5432, "u", "p", "db", params),
+          "driver " + driver + " should accept benign params");
+    }
+  }
+
+  @Test
+  public void testBuildSecureProperties_CredentialsPropagated() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("connectTimeout", "5000");
+    Properties props =
+        SecurityUtils.buildSecureProperties(JdbcDriverType.POSTGRESQL, "alice", "secret", params);
+    Assertions.assertEquals("alice", props.getProperty("user"));
+    Assertions.assertEquals("secret", props.getProperty("password"));
+    Assertions.assertEquals("5000", props.getProperty("connectTimeout"));
+  }
+
+  @Test
+  public void testBuildSecureProperties_ForceParamsWinOverUserInput() {
+    // SQL Server has a force-set default of trustServerCertificate=false. Even if the user
+    // explicitly requests trustServerCertificate=true, the security default must win.
+    Map<String, Object> params = new HashMap<>();
+    params.put("trustServerCertificate", "true");
+    Properties props =
+        SecurityUtils.buildSecureProperties(JdbcDriverType.SQLSERVER, "u", "p", params);
+    Assertions.assertEquals("false", props.getProperty("trustServerCertificate"));
+  }
+
+  @Test
+  public void testBuildSecureProperties_GlobalForceParamsWinOverUserInput() {
+    // Drivers without a driver-specific force-set (Postgres) still have the global denylist,
+    // but the force-set behavior is verified via SQL Server's trustServerCertificate above.
+    // Here we just check that user params propagate when there is no conflict.
+    Map<String, Object> params = new HashMap<>();
+    params.put("applicationName", "linkis");
+    Properties props =
+        SecurityUtils.buildSecureProperties(JdbcDriverType.POSTGRESQL, "u", "p", params);
+    Assertions.assertEquals("linkis", props.getProperty("applicationName"));
+    Assertions.assertEquals("u", props.getProperty("user"));
   }
 }

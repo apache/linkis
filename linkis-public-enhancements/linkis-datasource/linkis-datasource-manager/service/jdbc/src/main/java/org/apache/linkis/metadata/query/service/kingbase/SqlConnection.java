@@ -19,6 +19,8 @@ package org.apache.linkis.metadata.query.service.kingbase;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.AESUtils;
+import org.apache.linkis.common.utils.JdbcDriverType;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import java.io.Closeable;
@@ -27,7 +29,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,24 +212,30 @@ public class SqlConnection implements Closeable {
    */
   private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
+    // CVE-2023-49566 fix-up: KingBase is PG-derived so it inherits the PG denylist
+    // (socketFactory / sslfactory ...). Route through Properties, never URL concatenation.
+    SecurityUtils.checkJdbcConnParams(
+        JdbcDriverType.KINGBASE,
+        connectMessage.host,
+        connectMessage.port,
+        connectMessage.username,
+        connectMessage.password,
+        database,
+        connectMessage.extraParams);
+    Properties props =
+        SecurityUtils.buildSecureProperties(
+            JdbcDriverType.KINGBASE,
+            connectMessage.username,
+            AESUtils.isDecryptByConf(connectMessage.password),
+            connectMessage.extraParams);
     Class.forName(SQL_DRIVER_CLASS.getValue());
+    // URL template already contains safe hardcoded defaults; user-controlled params go via
+    // Properties only.
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
-      url += "?" + extraParamString;
-    }
-    try {
-      return DriverManager.getConnection(
-          url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw e;
-    }
+    LOG.info("jdbc connection url: {}", url);
+    return DriverManager.getConnection(url, props);
   }
 
   /** Connect message */

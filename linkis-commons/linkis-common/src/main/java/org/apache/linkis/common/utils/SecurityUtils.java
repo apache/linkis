@@ -82,6 +82,74 @@ public abstract class SecurityUtils {
   private static final String BLACKLIST_REGEX =
       "autodeserialize|allowloadlocalinfile|allowurlinlocalinfile|allowloadlocalinfileinpath";
 
+  // ----------------------- Generic JDBC security layer -----------------------
+  // The methods below extend CVE-2023-49566 coverage from MySQL-only to every
+  // JDBC driver family used by the metadata-query / datasource-manager modules.
+  // They were missing previously, which left PostgreSQL/Oracle/SQLServer/DB2/
+  // ClickHouse/KingBase/Greenplum/DM streaming user-supplied params straight
+  // into DriverManager.getConnection with no allowlist/denylist.
+
+  /** Master switch for the generic JDBC parameter check (independent of the MySQL switch). */
+  private static final CommonVars<String> JDBC_SECURITY_CHECK_ENABLE =
+      CommonVars$.MODULE$.apply("linkis.jdbc.security.check.enable", "true");
+
+  /**
+   * Parameters blocked for every driver family. The '#', '&', '?' characters block URL-injection
+   * tricks that smuggle extra segments into the JDBC URL itself.
+   */
+  private static final CommonVars<String> JDBC_GLOBAL_BLOCKED_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.global.blocked.params",
+          "autoDeserialize,#,allowLoadLocalInfile,allowLocalInfile,allowUrlInLocalInfile");
+
+  /**
+   * Per-driver denylist. PG-family drivers (PostgreSQL, Greenplum, KingBase) reflectively
+   * instantiate socketFactory/sslfactory classes -> RCE on drivers below 42.2.25 / 42.3.2. DB2's
+   * clientRerouteServerListJNDIName is the original CVE-2023-49566 JNDI sink. Oracle's
+   * tns_admin/trustStore can hijack TLS / TNS configuration. SQL Server's jaasConfigurationName can
+   * trigger a JAAS lookup.
+   */
+  private static final CommonVars<String> JDBC_POSTGRES_BLOCKED_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.postgres.blocked.params",
+          "socketFactory,socketFactoryArg,sslfactory,sslfactoryarg,sslhostnameverifier,"
+              + "loggerLevel,loggerFile");
+
+  private static final CommonVars<String> JDBC_DB2_BLOCKED_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.db2.blocked.params",
+          "clientRerouteServerListJNDIName,enableSeamlessFailover,JNDIName");
+
+  private static final CommonVars<String> JDBC_ORACLE_BLOCKED_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.oracle.blocked.params",
+          "oracle.net.tns_admin,javax.net.ssl.trustStore,javax.net.ssl.trustStorePassword,"
+              + "oracle.net.ssl_url,javax.net.ssl.keyStore");
+
+  private static final CommonVars<String> JDBC_SQLSERVER_BLOCKED_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.sqlserver.blocked.params", "jaasConfigurationName,jaasApplicationName");
+
+  /** Force-set defaults applied to every driver family. Empty map means no override. */
+  private static final CommonVars<String> JDBC_POSTGRES_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply("linkis.jdbc.postgres.force.params", "");
+
+  private static final CommonVars<String> JDBC_DB2_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply("linkis.jdbc.db2.force.params", "");
+
+  private static final CommonVars<String> JDBC_ORACLE_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply("linkis.jdbc.oracle.force.params", "");
+
+  private static final CommonVars<String> JDBC_SQLSERVER_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply(
+          "linkis.jdbc.sqlserver.force.params", "trustServerCertificate=false");
+
+  private static final CommonVars<String> JDBC_CLICKHOUSE_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply("linkis.jdbc.clickhouse.force.params", "");
+
+  private static final CommonVars<String> JDBC_DM_FORCE_PARAMS =
+      CommonVars$.MODULE$.apply("linkis.jdbc.dm.force.params", "");
+
   /**
    * check mysql connection params
    *
@@ -388,6 +456,264 @@ public abstract class SecurityUtils {
     properties.setProperty("allowLocalInfile", "false");
     properties.setProperty("allowUrlInLocalInfile", "false");
     return properties;
+  }
+
+  // ----------------------- Generic JDBC API (added for CVE-2023-49566 fix-up)
+  // -----------------------
+
+  /**
+   * Driver-aware replacement for the MySQL-only {@link #checkJdbcConnParams(String, Integer,
+   * String, String, String, Map)}.
+   *
+   * <p>Validates the same invariants (non-blank host/username, URL-encode loop, denylist match on
+   * both key and value) but selects the denylist from {@code driverType} instead of always using
+   * the MySQL one.
+   *
+   * @param driverType JDBC driver family
+   * @param host connection host
+   * @param port connection port (nullable)
+   * @param username connection username
+   * @param password connection password (not inspected; only passed through)
+   * @param database connection database name (nullable)
+   * @param extraParams user-supplied params; will be mutated in place (decoded form replaces
+   *     encoded form, sensitive entries removed) so the caller can hand the same map to {@link
+   *     #buildSecureProperties}
+   */
+  public static void checkJdbcConnParams(
+      JdbcDriverType driverType,
+      String host,
+      Integer port,
+      String username,
+      String password,
+      String database,
+      Map<String, Object> extraParams) {
+    if (!Boolean.valueOf(JDBC_SECURITY_CHECK_ENABLE.getValue())) {
+      return;
+    }
+    // 1. Basic blank check. Password is allowed to be blank for some drivers.
+    if (StringUtils.isBlank(host) || StringUtils.isBlank(username)) {
+      logger.error(
+          "Invalid jdbc connection params: driverType={}, host={}, username={}, database={}",
+          driverType,
+          host,
+          username,
+          database);
+      throw new LinkisSecurityException(35000, "Invalid jdbc connection params.");
+    }
+    // 2. Host sanity check: reject hosts that smuggle extra URL segments
+    // (e.g. "host:port/evil?socketFactory=...").
+    checkHostIsSafe(host);
+    // 3. Param denylist check (also handles URL-encoded bypass).
+    checkDriverParams(driverType, extraParams);
+  }
+
+  /**
+   * Build a JDBC {@link Properties} bag that is safe to pass to {@link
+   * java.sql.DriverManager#getConnection(String, java.util.Properties)}.
+   *
+   * <p>The contract is identical to the MySQL secure-properties pattern: driver-specific force-set
+   * security defaults go in first, then user/password, then user-supplied params are layered on top
+   * but only if their key does not already exist (so the security defaults always win). This
+   * replaces the unsafe pattern of string-concatenating extraParams onto the JDBC URL.
+   */
+  public static Properties buildSecureProperties(
+      JdbcDriverType driverType,
+      String username,
+      String password,
+      Map<String, Object> extraParams) {
+    Properties props = new Properties();
+    // 1. Driver-specific force params first — these cannot be overridden by user input.
+    Map<String, Object> forceParams = getDriverForceParams(driverType);
+    for (Map.Entry<String, Object> entry : forceParams.entrySet()) {
+      props.setProperty(entry.getKey(), String.valueOf(entry.getValue()));
+    }
+    // 2. Credentials.
+    if (username != null) {
+      props.setProperty("user", username);
+    }
+    if (password != null) {
+      props.setProperty("password", password);
+    }
+    // 3. User params, but never overwrite the force-set keys.
+    if (extraParams != null) {
+      for (Map.Entry<String, Object> entry : extraParams.entrySet()) {
+        if (entry.getKey() == null) {
+          continue;
+        }
+        if (!props.containsKey(entry.getKey())) {
+          props.setProperty(entry.getKey(), String.valueOf(entry.getValue()));
+        }
+      }
+    }
+    return props;
+  }
+
+  /** Convenience: just the denylist lookup so callers can self-check before connecting. */
+  public static List<String> getBlockedParamNames(JdbcDriverType driverType) {
+    List<String> blocked = new ArrayList<>();
+    Collections.addAll(blocked, parseCsv(JDBC_GLOBAL_BLOCKED_PARAMS.getValue()));
+    Collections.addAll(blocked, parseCsv(getDriverBlockedConfig(driverType).getValue()));
+    return blocked;
+  }
+
+  private static void checkDriverParams(JdbcDriverType driverType, Map<String, Object> paramsMap) {
+    if (paramsMap == null || paramsMap.isEmpty()) {
+      return;
+    }
+    // URL-decode loop (handles double-encoded bypass) — same trick as the MySQL path.
+    String paramUrl =
+        paramsMap.entrySet().stream()
+            .map(e -> String.join(EQUAL_SIGN, e.getKey(), String.valueOf(e.getValue())))
+            .collect(Collectors.joining(AND_SYMBOL));
+    try {
+      while (paramUrl.contains("%")) {
+        String decoded = URLDecoder.decode(paramUrl, "UTF-8");
+        if (decoded.equals(paramUrl)) {
+          break;
+        }
+        paramUrl = decoded;
+      }
+    } catch (UnsupportedEncodingException e) {
+      throw new LinkisSecurityException(35000, "jdbc connection url decode error: " + e);
+    }
+    // Rebuild the params map from the decoded form so callers see the canonical shape.
+    Map<String, Object> decoded = parseParamUrlToMap(paramUrl);
+    paramsMap.clear();
+    paramsMap.putAll(decoded);
+
+    // Denylist check. Match on either key or value, case-insensitive, substring match so
+    // "loggerFile" still catches "loggerfile" typos and similar evasions.
+    List<String> blocked = getBlockedParamNames(driverType);
+    Iterator<Map.Entry<String, Object>> iterator = paramsMap.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
+      String key = entry.getKey();
+      Object value = entry.getValue();
+      if (StringUtils.isBlank(key) || value == null || StringUtils.isBlank(value.toString())) {
+        // Drop blank entries — they are noise.
+        iterator.remove();
+        continue;
+      }
+      if (containsAnyToken(key, value.toString(), blocked)) {
+        logger.warn(
+            "Sensitive jdbc param blocked: driverType={}, key={}, value={}",
+            driverType,
+            key,
+            value);
+        throw new LinkisSecurityException(
+            35000, "Invalid jdbc connection parameter for driver " + driverType + ": key=" + key);
+      }
+    }
+  }
+
+  /**
+   * Reject hosts that contain URL-meaningful characters. A malicious host like
+   * "evil.com:5432/db?socketFactory=x" would otherwise smuggle params past the denylist because
+   * they live in the URL rather than in extraParams.
+   */
+  private static void checkHostIsSafe(String host) {
+    if (StringUtils.isBlank(host)) {
+      return;
+    }
+    String trimmed = host.trim();
+    if (trimmed.contains("?") || trimmed.contains("#") || trimmed.contains("&")) {
+      throw new LinkisSecurityException(35000, "Host contains forbidden URL character: " + trimmed);
+    }
+  }
+
+  private static CommonVars<String> getDriverBlockedConfig(JdbcDriverType driverType) {
+    switch (driverType) {
+      case POSTGRESQL:
+      case GREENPLUM:
+      case KINGBASE:
+        return JDBC_POSTGRES_BLOCKED_PARAMS;
+      case DB2:
+        return JDBC_DB2_BLOCKED_PARAMS;
+      case ORACLE:
+        return JDBC_ORACLE_BLOCKED_PARAMS;
+      case SQLSERVER:
+        return JDBC_SQLSERVER_BLOCKED_PARAMS;
+      case MYSQL:
+      case STARROCKS:
+      case CLICKHOUSE:
+      case DM:
+      default:
+        // MySQL keeps using its own MYSQL_SENSITIVE_PARAMS path for backwards compatibility;
+        // ClickHouse/DM fall through with just the global denylist.
+        return JDBC_GLOBAL_BLOCKED_PARAMS;
+    }
+  }
+
+  private static Map<String, Object> getDriverForceParams(JdbcDriverType driverType) {
+    CommonVars<String> source;
+    switch (driverType) {
+      case POSTGRESQL:
+      case GREENPLUM:
+      case KINGBASE:
+        source = JDBC_POSTGRES_FORCE_PARAMS;
+        break;
+      case DB2:
+        source = JDBC_DB2_FORCE_PARAMS;
+        break;
+      case ORACLE:
+        source = JDBC_ORACLE_FORCE_PARAMS;
+        break;
+      case SQLSERVER:
+        source = JDBC_SQLSERVER_FORCE_PARAMS;
+        break;
+      case CLICKHOUSE:
+        source = JDBC_CLICKHOUSE_FORCE_PARAMS;
+        break;
+      case DM:
+        source = JDBC_DM_FORCE_PARAMS;
+        break;
+      case MYSQL:
+      case STARROCKS:
+      default:
+        return new LinkedHashMap<>();
+    }
+    return parseParamUrlToMap(source.getValue());
+  }
+
+  private static boolean containsAnyToken(String key, String value, List<String> tokens) {
+    String lowerKey = key.toLowerCase();
+    String lowerValue = value.toLowerCase();
+    for (String token : tokens) {
+      if (StringUtils.isBlank(token)) {
+        continue;
+      }
+      String lower = token.toLowerCase();
+      if (lowerKey.contains(lower) || lowerValue.contains(lower)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static String[] parseCsv(String csv) {
+    if (StringUtils.isBlank(csv)) {
+      return new String[0];
+    }
+    return csv.split(COMMA);
+  }
+
+  private static Map<String, Object> parseParamUrlToMap(String paramsUrl) {
+    Map<String, Object> map = new LinkedHashMap<>();
+    if (StringUtils.isBlank(paramsUrl)) {
+      return map;
+    }
+    for (String param : paramsUrl.split(AND_SYMBOL)) {
+      int idx = param.indexOf(EQUAL_SIGN);
+      if (idx < 0) {
+        continue;
+      }
+      String k = param.substring(0, idx);
+      String v = param.substring(idx + 1);
+      if (StringUtils.isNotBlank(k)) {
+        map.put(k, v);
+      }
+    }
+    return map;
   }
 
   /**

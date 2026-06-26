@@ -18,6 +18,9 @@
 package org.apache.linkis.metadata.query.service.dm;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.AESUtils;
+import org.apache.linkis.common.utils.JdbcDriverType;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +29,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,29 +199,29 @@ public class SqlConnection implements Closeable {
    */
   private Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
+    // CVE-2023-49566 fix-up: validate params and route through Properties.
+    SecurityUtils.checkJdbcConnParams(
+        JdbcDriverType.DM,
+        connectMessage.host,
+        connectMessage.port,
+        connectMessage.username,
+        connectMessage.password,
+        database,
+        connectMessage.extraParams);
+    // DM keeps AES-decrypting the stored password before handing it to the driver.
+    String decryptedPassword = AESUtils.isDecryptByConf(connectMessage.password);
+    Properties prop =
+        SecurityUtils.buildSecureProperties(
+            JdbcDriverType.DM, connectMessage.username, decryptedPassword, connectMessage.extraParams);
+    // DM-specific default kept from the historical implementation.
+    prop.put("remarksReporting", "true");
+
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
-      url += "?" + extraParamString;
-    }
-    try {
-      //            return DriverManager.getConnection(url, connectMessage.username,
-      // connectMessage.password);
-      Properties prop = new Properties();
-      prop.put("user", connectMessage.username);
-      prop.put("password", connectMessage.password);
-      prop.put("remarksReporting", "true");
-      return DriverManager.getConnection(url, prop);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw e;
-    }
+    LOG.info("jdbc connection url: {}", url);
+    return DriverManager.getConnection(url, prop);
   }
 
   /** Connect message */

@@ -17,7 +17,12 @@
 
 name: Build Backend
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
 
 env:
   MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dmaven.wagon.httpconnectionManager.ttlSeconds=30 -Xmx16g -XX:MetaspaceSize=4g -XX:ReservedCodeCacheSize=2g

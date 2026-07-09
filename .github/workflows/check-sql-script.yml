@@ -17,7 +17,12 @@
 
 name: Sql Script Check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
 
 jobs:
   sql-check:

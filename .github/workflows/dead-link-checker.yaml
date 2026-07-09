@@ -18,7 +18,12 @@
 
 name: Dead Link Check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
 
 jobs:
   dead-links-check:

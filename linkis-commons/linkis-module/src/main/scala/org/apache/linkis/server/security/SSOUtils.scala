@@ -17,7 +17,7 @@
 
 package org.apache.linkis.server.security
 
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.server.conf.{ServerConfiguration, SessionHAConfiguration}
 import org.apache.linkis.server.exception.{
@@ -184,10 +184,38 @@ object SSOUtils extends Logging {
       throw new NonLoginException(s"You are not logged in, please login first(您尚未登录，请先登录!)")
     )
 
+  // CVE-2026-XXXX (vuln C): always verify the server-side session map, even
+  // in the ignore-timeout path. The only exception is OTHER_SYSTEM_IGNORE_UM_USER
+  // (internal RPC identity), which carries its own header-based authentication.
+  //
+  // Escape hatch for non-HA deployments where gateway and backend have separate
+  // session maps: set linkis.security.ignore.timeout.require.session.map=false
+  // to restore the old behavior (skip session map check in fallback).
+  private val requireSessionMapInFallback: Boolean =
+    CommonVars("linkis.security.ignore.timeout.require.session.map", "true").getValue.toBoolean
+
   private[security] def getLoginUserIgnoreTimeout(
       getUserTicketId: String => Option[String]
   ): Option[String] =
-    getUserTicketId(USER_TICKET_ID_STRING).map(getUserAndLoginTime).flatMap(_.map(_._1))
+    getUserTicketId(USER_TICKET_ID_STRING).flatMap { t =>
+      getUserAndLoginTime(t).flatMap {
+        case (user, _) if user == SecurityFilter.OTHER_SYSTEM_IGNORE_UM_USER =>
+          Some(user) // internal RPC — exempt from session map check
+        case (user, _) if !requireSessionMapInFallback =>
+          Some(user) // escape hatch: skip session map check (legacy behavior)
+        case (user, _) =>
+          try {
+            isTimeoutOrNot(t) // normal user — must be in server-side session map
+            Some(user)
+          } catch {
+            case _: LoginExpireException =>
+              logger.warn(
+                "Ignore-timeout path rejected ticket: valid decryption " +
+                  "but ticket not present in server-side session map")
+              None
+          }
+      }
+    }
 
   def updateLastAccessTime(getCookies: => Array[Cookie]): Unit = updateLastAccessTime(_ =>
     Option(getCookies).flatMap(_.find(_.getName == USER_TICKET_ID_STRING).map(_.getValue))

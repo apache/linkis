@@ -18,7 +18,7 @@
 package org.apache.linkis.server.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
+import org.apache.linkis.common.utils.{DESUtil, Logging, TicketCipher, Utils}
 import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.BDPInitServerException
 
@@ -87,13 +87,20 @@ object ServerConfiguration extends Logging {
 
   val cryptKey = Base64.getMimeEncoder.encodeToString(cryptKeyRaw.getBytes)
 
+  // AES-256-GCM ticket cipher toggle. Default: true (use AES-GCM).
+  // Set to false to fall back to legacy DES if downstream systems
+  // have not yet been upgraded. Decryption auto-detects both formats.
+  private val useTicketCipherV2: Boolean =
+    CommonVars("linkis.ticket.cipher.v2.enabled", "true").getValue.toBoolean
+  val ticketCipher = new TicketCipher(cryptKeyRaw, useTicketCipherV2)
+
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 
   def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId)) {
     None
   } else {
-    val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
+    val userName = ticketCipher.decrypt(ticketId)
     if (userName.startsWith(ticketHeader)) Some(userName.substring(ticketHeader.length))
     else None
   }
@@ -107,9 +114,9 @@ object ServerConfiguration extends Logging {
       val time = userName.split(",")(1)
       val proxyUser = username + LINKIE_USERNAME_SUFFIX_NAME
       logger.info(s"$username will be proxied as ${proxyUser}")
-      DESUtil.encrypt(ticketHeader + proxyUser + "," + time, ServerConfiguration.cryptKey)
+      ticketCipher.encrypt(ticketHeader + proxyUser + "," + time)
     } else {
-      DESUtil.encrypt(ticketHeader + userName, ServerConfiguration.cryptKey)
+      ticketCipher.encrypt(ticketHeader + userName)
     }
   }
 

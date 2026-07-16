@@ -166,11 +166,16 @@ object SecurityFilter {
   def getLoginUserThrowsExceptionWhenTimeout(req: HttpServletRequest): Option[String] =
     Option(req.getCookies)
       .flatMap(cs => SSOUtils.getLoginUser(cs))
-      .orElse(
-        SSOUtils
-          .getLoginUserIgnoreTimeout(key => Option(req.getHeader(key)))
-          .filter(_ == OTHER_SYSTEM_IGNORE_UM_USER)
-      )
+      .orElse {
+        // Header-based internal RPC fallback must only be honoured for
+        // requests from trusted internal IPs. Reject external forgeries.
+        val clientIp = getClientIp(req)
+        if (!isTrustedInternal(clientIp)) None
+        else
+          SSOUtils
+            .getLoginUserIgnoreTimeout(key => Option(req.getHeader(key)))
+            .filter(_ == OTHER_SYSTEM_IGNORE_UM_USER)
+      }
 
   def getLoginUser(req: HttpServletRequest): Option[String] =
     Utils.tryCatch(getLoginUserThrowsExceptionWhenTimeout(req)) {

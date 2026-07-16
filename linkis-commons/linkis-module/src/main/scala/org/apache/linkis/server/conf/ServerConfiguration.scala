@@ -47,9 +47,46 @@ object ServerConfiguration extends Logging {
     )
   }
 
-  val cryptKey = Base64.getMimeEncoder.encodeToString(
-    CommonVars("wds.linkis.crypt.key", "bdp-for-server").getValue.getBytes
-  )
+  // CVE-2026-XXXX (session ticket auth bypass): remove hardcoded default cryptKey
+  private val INSECURE_DEFAULTS = Set("bdp-for-server", "")
+  private val CRYPT_KEY_MIN_LENGTH = 16
+
+  private val cryptKeyRaw: String = CommonVars("wds.linkis.crypt.key", "").getValue
+  private val allowInsecureCryptKey: Boolean = CommonVars("linkis.crypt.key.allow.insecure", "false").getValue.toBoolean
+
+  private def validateCryptKey(key: String): Unit = {
+    val issues = scala.collection.mutable.ArrayBuffer.empty[String]
+    if (key == null || key.isEmpty) {
+      issues += "wds.linkis.crypt.key not set"
+    } else {
+      if (INSECURE_DEFAULTS.contains(key)) {
+        issues += s"wds.linkis.crypt.key is the insecure default '$key'"
+      }
+      if (key.length < CRYPT_KEY_MIN_LENGTH) {
+        issues += s"wds.linkis.crypt.key length ${key.length} < $CRYPT_KEY_MIN_LENGTH"
+      }
+    }
+    if (issues.nonEmpty) {
+      if (allowInsecureCryptKey) {
+        logger.error("=" * 72)
+        logger.error("INSECURE CRYPT KEY IN USE — session ticket forgery risk!")
+        issues.foreach(s => logger.error(s"  - $s"))
+        logger.error("Rotate wds.linkis.crypt.key to a random 24+ char value immediately.")
+        logger.error("=" * 72)
+      } else {
+        throw new BDPInitServerException(
+          CRYPT_KEY_INSECURE.getErrorCode,
+          s"${CRYPT_KEY_INSECURE.getErrorDesc}: ${issues.mkString("; ")} " +
+            "(override with -Dlinkis.crypt.key.allow.insecure=true AT YOUR OWN RISK)"
+        )
+      }
+    }
+  }
+
+  validateCryptKey(cryptKeyRaw)
+
+  val cryptKey = Base64.getMimeEncoder.encodeToString(cryptKeyRaw.getBytes)
+
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 

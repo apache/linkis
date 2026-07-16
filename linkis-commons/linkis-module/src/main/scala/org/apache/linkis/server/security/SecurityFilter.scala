@@ -31,6 +31,7 @@ import org.apache.linkis.server.security.SecurityFilter.logger
 import org.apache.linkis.server.security.SSOUtils.sslEnable
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.net.util.SubnetUtils
 
 import javax.servlet._
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
@@ -151,6 +152,17 @@ object SecurityFilter {
   private[linkis] val OTHER_SYSTEM_IGNORE_UM_USER = "dataworkcloud_rpc_user"
   private[linkis] val ALLOW_ACCESS_WITHOUT_TIMEOUT = "dataworkcloud_inner_request"
 
+  // CVE-2026-XXXX: trusted internal source CIDRs for gateway-to-backend forwarding.
+  // Default: loopback + RFC1918. Override per-deployment to add gateway/load-balancer IPs.
+  private val trustedInternalSources: Array[String] =
+    CommonVars(
+      "linkis.security.trusted.internal.sources",
+      "127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    ).getValue.split(",").map(_.trim).filter(_.nonEmpty)
+
+  private val requireInternalIp: Boolean =
+    CommonVars("linkis.security.ignore.timeout.require.internal.ip", "true").getValue.toBoolean
+
   def getLoginUserThrowsExceptionWhenTimeout(req: HttpServletRequest): Option[String] =
     Option(req.getCookies)
       .flatMap(cs => SSOUtils.getLoginUser(cs))
@@ -174,9 +186,42 @@ object SecurityFilter {
       case t => throw t
     }
 
-  def isRequestIgnoreTimeout(req: HttpServletRequest): Boolean = Option(req.getCookies).exists(
-    _.exists(c => c.getName == ALLOW_ACCESS_WITHOUT_TIMEOUT && c.getValue == "true")
-  )
+  // CVE-2026-XXXX (vuln B): the ignore-timeout cookie must only be honoured when
+  // the request originates from a trusted internal source (gateway or same-network
+  // peer). External clients cannot set this cookie to trigger the bypass.
+  def isRequestIgnoreTimeout(req: HttpServletRequest): Boolean = {
+    val hasCookie = Option(req.getCookies).exists(
+      _.exists(c => c.getName == ALLOW_ACCESS_WITHOUT_TIMEOUT && c.getValue == "true"))
+    if (!hasCookie) return false
+    if (!requireInternalIp) return true // escape hatch for legacy deployments
+    val ip = getClientIp(req)
+    if (!isTrustedInternal(ip)) {
+      logger.warn(
+        s"Ignore-timeout cookie present but client IP $ip is not in " +
+          "linkis.security.trusted.internal.sources; rejecting as potential auth bypass")
+      return false
+    }
+    true
+  }
+
+  private def getClientIp(req: HttpServletRequest): String = {
+    val remote = req.getRemoteAddr
+    // Honour X-Forwarded-For only when the immediate upstream is already trusted
+    if (isTrustedInternal(remote)) {
+      val xff = req.getHeader("X-Forwarded-For")
+      if (xff != null && xff.nonEmpty) return xff.split(",").head.trim
+    }
+    remote
+  }
+
+  private def isTrustedInternal(ip: String): Boolean = {
+    if (ip == null || ip.isEmpty) return false
+    if (trustedInternalSources.contains(ip)) return true
+    trustedInternalSources.exists { cidr =>
+      try { new SubnetUtils(cidr).getInfo.isInRange(ip) }
+      catch { case _: Exception => false }
+    }
+  }
 
   def addIgnoreTimeoutSignal(response: HttpServletResponse): Unit =
     response.addCookie(ignoreTimeoutSignal())

@@ -44,7 +44,7 @@ object ProxyUserSSOUtils extends Logging {
   private def getProxyUsernameByTicket(ticketId: String): Option[String] =
     if (StringUtils.isBlank(ticketId)) None
     else {
-      val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
+      val userName = ServerConfiguration.ticketCipher.decrypt(ticketId)
       if (userName.startsWith(linkisTrustCode)) Some(userName.substring(linkisTrustCode.length))
       else None
     }
@@ -54,7 +54,7 @@ object ProxyUserSSOUtils extends Logging {
       logger.info(s"$trustCode error,will be use default username")
       userName
     } else {
-      DESUtil.encrypt(trustCode + userName, ServerConfiguration.cryptKey)
+      ServerConfiguration.ticketCipher.encrypt(trustCode + userName)
     }
   }
 

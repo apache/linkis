@@ -65,18 +65,19 @@ object GatewaySSOUtils extends Logging {
     case _ => host
   }
 
+  // CVE-2026-XXXX (vuln B): the gateway is the external trust boundary and
+  // must never honour the client-controllable dataworkcloud_inner_request
+  // cookie. Only the header-based OTHER_SYSTEM_IGNORE_UM_USER internal RPC
+  // path remains as a fallback.
   def getLoginUser(gatewayContext: GatewayContext): Option[String] = {
     val cookies = getCookies(gatewayContext)
     Utils.tryCatch(SSOUtils.getLoginUser(cookies)) {
-      case _: LoginExpireException
-          if Option(cookies).exists(
-            _.exists(c => c.getName == ALLOW_ACCESS_WITHOUT_TIMEOUT && c.getValue == "true")
-          ) =>
+      case _: LoginExpireException =>
         ServerSSOUtils
           .getLoginUserIgnoreTimeout(key =>
-            Option(cookies).flatMap(_.find(_.getName == key).map(_.getValue))
+            Option(gatewayContext.getRequest.getHeaders.get(key)).flatMap(_.headOption)
           )
-          .filter(_ != OTHER_SYSTEM_IGNORE_UM_USER)
+          .filter(_ == OTHER_SYSTEM_IGNORE_UM_USER)
       case t => throw t
     }
   }

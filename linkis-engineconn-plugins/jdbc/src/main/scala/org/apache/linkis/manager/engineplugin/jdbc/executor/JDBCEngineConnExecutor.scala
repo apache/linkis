@@ -76,6 +76,7 @@ import org.springframework.util.CollectionUtils
 import java.sql.{Connection, ResultSet, Statement}
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+import java.util.regex.{Matcher, Pattern}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -89,6 +90,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     new ConcurrentHashMap[String, ProgressMonitor[_]]()
 
   private val connectionCache: util.Map[String, Connection] = new util.HashMap[String, Connection]()
+
+  private val taskCodeMap: util.Map[String, String] = new ConcurrentHashMap[String, String]()
 
   override def init(): Unit = {
     logger.info("jdbc executor start init.")
@@ -176,6 +179,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   ): ExecuteResponse = {
 
     val taskId = engineExecutorContext.getJobId.get
+    // Store the code for potential DDL cleanup in killTask
+    taskCodeMap.put(taskId, code)
     val connection: Connection = getConnection(engineExecutorContext)
     var statement: Statement = null
     var resultSet: ResultSet = null
@@ -486,9 +491,82 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     logger.info("All query task has killed successfully.")
   }
 
+  /**
+   * Pattern to extract CREATE TABLE/VIEW statements and their object names.
+   * Captures: CREATE [TEMPORARY] TABLE [IF NOT EXISTS] <objectName>
+   *           CREATE [OR REPLACE] VIEW [IF NOT EXISTS] <objectName>
+   */
+  private val DDL_PATTERN: Pattern = Pattern.compile(
+    "(?i)CREATE\\s+(TEMPORARY\\s+)?(TABLE|VIEW)\\s+(IF\\s+NOT\\s+EXISTS\\s+|OR\\s+REPLACE\\s+)?([`\"\\[]?[\\w.-]+[`\"\\]]?)",
+    Pattern.CASE_INSENSITIVE
+  )
+
+  /**
+   * Extract cleanup DDL statements from the original SQL code.
+   * For each CREATE TABLE/VIEW found, generates a corresponding DROP IF EXISTS statement.
+   */
+  private def extractDDLStatements(code: String): List[String] = {
+    val matcher: Matcher = DDL_PATTERN.matcher(code)
+    val statements = scala.collection.mutable.ListBuffer[String]()
+    while (matcher.find()) {
+      val objectType = matcher.group(2).toUpperCase
+      val objectName = matcher.group(4)
+      if (StringUtils.isNotBlank(objectName)) {
+        objectType match {
+          case "TABLE" =>
+            statements += s"DROP TABLE IF EXISTS $objectName"
+          case "VIEW" =>
+            statements += s"DROP VIEW IF EXISTS $objectName"
+          case _ =>
+        }
+      }
+    }
+    statements.toList
+  }
+
+  /**
+   * Execute cleanup DDL statements to roll back partially created objects
+   * when a task is killed mid-execution.
+   */
+  private def cleanUpDDLState(taskId: String, code: String): Unit = {
+    val ddls = extractDDLStatements(code)
+    if (ddls.nonEmpty && connectionCache.containsKey(taskId)) {
+      val connection = connectionCache.get(taskId)
+      var statement: Statement = null
+      Utils.tryCatch {
+        statement = connection.createStatement()
+        ddls.foreach { ddl =>
+          logger.info(s"Executing cleanup DDL for task $taskId: $ddl")
+          Utils.tryCatch {
+            statement.execute(ddl)
+          } { case e: Throwable =>
+            logger.warn(s"Cleanup DDL failed for task $taskId: $ddl", e)
+          }
+        }
+      } { case e: Throwable =>
+        logger.warn(s"Failed to execute cleanup DDL for task $taskId", e)
+      }
+      Utils.tryFinally(null)(_ => {
+        if (statement != null) {
+          Utils.tryAndWarn(statement.close())
+        }
+      })
+    }
+  }
+
   override def killTask(taskId: String): Unit = {
     logger.info(s"Killing jdbc query task $taskId")
     connectionManager.cancelStatement(taskId)
+    // Clean up DDL state: if the task was executing DDL (CREATE TABLE/VIEW),
+    // attempt to drop the partially created objects
+    val code = taskCodeMap.remove(taskId)
+    if (StringUtils.isNotBlank(code)) {
+      Utils.tryCatch {
+        cleanUpDDLState(taskId, code)
+      } { case e: Throwable =>
+        logger.warn(s"Failed to clean up DDL state for task $taskId", e)
+      }
+    }
     super.killTask(taskId)
     logger.info(s"The query task $taskId has killed successfully.")
   }

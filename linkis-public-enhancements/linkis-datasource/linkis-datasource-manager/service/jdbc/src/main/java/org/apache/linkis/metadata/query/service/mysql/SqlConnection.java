@@ -131,7 +131,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
+      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), database, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -156,16 +156,17 @@ public class SqlConnection implements Closeable {
    * Get primary keys
    *
    * @param connection connection
+   * @param database database name
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+  private List<String> getPrimaryKeys(Connection connection, String database, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
       DatabaseMetaData dbMeta = connection.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
+      rs = dbMeta.getPrimaryKeys(database, null, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
       }

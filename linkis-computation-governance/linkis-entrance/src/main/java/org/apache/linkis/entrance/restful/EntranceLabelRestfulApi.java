@@ -21,6 +21,7 @@ import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.orchestrator.EntranceOrchestrationFactory;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
@@ -106,7 +107,17 @@ public class EntranceLabelRestfulApi {
     SchedulerContext schedulerContext =
         entranceServer.getEntranceContext().getOrCreateScheduler().getSchedulerContext();
     if (schedulerContext instanceof EntranceSchedulerContext) {
-      ((EntranceSchedulerContext) schedulerContext).setOfflineFlag(true);
+      EntranceSchedulerContext entranceSchedulerContext = (EntranceSchedulerContext) schedulerContext;
+      entranceSchedulerContext.setOfflineFlag(true);
+      if (entranceSchedulerContext.getOrCreateGroupFactory()
+          instanceof org.apache.linkis.entrance.scheduler.EntranceGroupFactory) {
+        ((org.apache.linkis.entrance.scheduler.EntranceGroupFactory)
+                entranceSchedulerContext.getOrCreateGroupFactory())
+            .refreshAllGroups();
+        invalidateUserParallelCache();
+        logger.info(
+            "Refreshed scheduler group cache and user parallel plugin cache after mark offline.");
+      }
     }
     entranceServer.updateAllNotExecutionTaskInstances(true);
     logger.info("Finished to update all not execution task instances to empty string");
@@ -128,8 +139,27 @@ public class EntranceLabelRestfulApi {
     synchronized (offlineFlag) { // NOSONAR
       offlineFlag = false;
     }
+    if (entranceServer.getEntranceContext().getOrCreateScheduler().getSchedulerContext()
+        instanceof EntranceSchedulerContext) {
+      EntranceSchedulerContext entranceSchedulerContext =
+          (EntranceSchedulerContext)
+              entranceServer.getEntranceContext().getOrCreateScheduler().getSchedulerContext();
+      if (entranceSchedulerContext.getOrCreateGroupFactory()
+          instanceof org.apache.linkis.entrance.scheduler.EntranceGroupFactory) {
+        ((org.apache.linkis.entrance.scheduler.EntranceGroupFactory)
+                entranceSchedulerContext.getOrCreateGroupFactory())
+            .refreshAllGroups();
+        invalidateUserParallelCache();
+        logger.info(
+            "Refreshed scheduler group cache and user parallel plugin cache after back online.");
+      }
+    }
     logger.info("Finished to backonline");
     return Message.ok();
+  }
+
+  private void invalidateUserParallelCache() {
+    new EntranceOrchestrationFactory().invalidateUserParallelPluginCache();
   }
 
   @ApiOperation(value = "isOnline", notes = "entrance isOnline", response = Message.class)

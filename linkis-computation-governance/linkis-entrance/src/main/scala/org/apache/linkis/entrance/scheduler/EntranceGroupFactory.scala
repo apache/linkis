@@ -28,6 +28,8 @@ import org.apache.linkis.governance.common.protocol.conf.{
   RequestQueryEngineConfigWithGlobalConfig,
   ResponseQueryConfig
 }
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -44,13 +46,37 @@ import java.util.regex.Pattern
 
 import com.google.common.cache.{Cache, CacheBuilder}
 
+import scala.collection.mutable
+import scala.collection.JavaConverters._
+
 class EntranceGroupFactory extends GroupFactory with Logging {
+
+  case class GroupMaxRunningJobsKey(creator: String, user: String, engineType: String)
+
+  private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   private val groupNameToGroups: Cache[String, Group] = CacheBuilder
     .newBuilder()
     .expireAfterAccess(EntranceConfiguration.GROUP_CACHE_EXPIRE_TIME.getValue, TimeUnit.MINUTES)
     .maximumSize(EntranceConfiguration.GROUP_CACHE_MAX.getValue)
     .build()
+
+  /** creator_user_engineType -> GroupMaxRunningJobsKey, used to recalculate maxRunningJobs */
+  private val groupNameToKey: mutable.Map[String, GroupMaxRunningJobsKey] = mutable.Map()
+
+  private def getGroupMaxRunningJobsKey(labels: java.util.List[Label[_]])
+      : GroupMaxRunningJobsKey = {
+    val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
+    val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
+    if (null == userCreatorLabel || null == engineTypeLabel) {
+      throw new EntranceErrorException(LABEL_NOT_NULL.getErrorCode, LABEL_NOT_NULL.getErrorDesc)
+    }
+    GroupMaxRunningJobsKey(
+      userCreatorLabel.getCreator,
+      userCreatorLabel.getUser,
+      engineTypeLabel.getEngineType
+    )
+  }
 
   private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 1000)
 
@@ -120,12 +146,52 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       group.setMaxRunningJobs(maxRunningJobs)
       group.setMaxAskExecutorTimes(maxAskExecutorTimes)
       groupNameToGroups.put(groupName, group)
+      groupNameToKey.put(groupName, getGroupMaxRunningJobsKey(labels))
       group
     }
     else {
       cacheGroup
     }
   }
+
+  /**
+   * Recalculate the maxRunningJobs of a cached group with the latest user configuration and the
+   * latest number of running entrance instances, and set it to the group.
+   * @param key
+   * @return
+   */
+  private def refreshMaxRunningJobs(key: GroupMaxRunningJobsKey): Unit = {
+    val groupName = s"${key.creator}_${key.user}_${key.engineType}"
+    val group = groupNameToGroups.getIfPresent(groupName)
+    if (null == group) return
+    val labels = labelFactory.createLabel[UserCreatorLabel](LabelKeyConstant.USER_CREATOR_TYPE_KEY)
+    labels.setCreator(key.creator)
+    labels.setUser(key.user)
+    val ecTypeLabel = labelFactory.createLabel[EngineTypeLabel](LabelKeyConstant.ENGINE_TYPE_KEY)
+    ecTypeLabel.setEngineType(key.engineType)
+    val sender: Sender =
+      Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+    val keyAndValue = Utils.tryAndWarnMsg {
+      sender
+        .ask(RequestQueryEngineConfigWithGlobalConfig(labels, ecTypeLabel))
+        .asInstanceOf[ResponseQueryConfig]
+        .getKeyAndValue
+    }(
+      "Get user configurations from configuration server failed! Next use the default value to continue."
+    )
+    val maxRunningJobs = EntranceGroupFactory.getUserMaxRunningJobs(keyAndValue)
+    group.asInstanceOf[ParallelGroup].setMaxRunningJobs(maxRunningJobs)
+    logger.info(s"Refreshed maxRunningJobs of group $groupName to $maxRunningJobs.")
+  }
+
+  /**
+   * Refresh maxRunningJobs for all cached groups, so that after entrances go offline/back online
+   * the concurrency is recalculated with the latest number of running entrance instances.
+   */
+  def refreshAllGroups(): Unit =
+    groupNameToGroups.asMap().keySet().asScala.foreach { groupName =>
+      groupNameToKey.get(groupName).foreach(refreshMaxRunningJobs)
+    }
 
   override def getGroup(groupName: String): Group = {
     val group = groupNameToGroups.getIfPresent(groupName)

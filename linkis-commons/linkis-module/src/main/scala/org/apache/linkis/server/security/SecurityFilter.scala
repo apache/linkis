@@ -17,7 +17,7 @@
 
 package org.apache.linkis.server.security
 
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.ILLEGAL_USER_TOKEN
 import org.apache.linkis.server.{Message, _}
@@ -196,14 +196,16 @@ object SecurityFilter {
   // peer). External clients cannot set this cookie to trigger the bypass.
   def isRequestIgnoreTimeout(req: HttpServletRequest): Boolean = {
     val hasCookie = Option(req.getCookies).exists(
-      _.exists(c => c.getName == ALLOW_ACCESS_WITHOUT_TIMEOUT && c.getValue == "true"))
+      _.exists(c => c.getName == ALLOW_ACCESS_WITHOUT_TIMEOUT && c.getValue == "true")
+    )
     if (!hasCookie) return false
     if (!requireInternalIp) return true // escape hatch for legacy deployments
     val ip = getClientIp(req)
     if (!isTrustedInternal(ip)) {
       logger.warn(
         s"Ignore-timeout cookie present but client IP $ip is not in " +
-          "linkis.security.trusted.internal.sources; rejecting as potential auth bypass")
+          "linkis.security.trusted.internal.sources; rejecting as potential auth bypass"
+      )
       return false
     }
     true

@@ -165,8 +165,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs-client</artifactId>
-      <version>${hadoop.version}</version>
+      <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
     </dependency>
     <!-- Eureka Client 依赖 commons-lang 2.x 的 ExceptionUtils -->
     <dependency>

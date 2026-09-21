@@ -211,7 +211,8 @@ object SSOUtils extends Logging {
             case _: LoginExpireException =>
               logger.warn(
                 "Ignore-timeout path rejected ticket: valid decryption " +
-                  "but ticket not present in server-side session map")
+                  "but ticket not present in server-side session map"
+              )
               None
           }
       }

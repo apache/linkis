@@ -37,8 +37,8 @@ import java.util.Base64;
  * <p>Solves CVE-2026-XXXX vulnerabilities E (weak DES 56-bit cipher) and F (no integrity /
  * anti-tamper protection) when V2 mode is enabled.
  *
- * <p>V2 (AES-256-GCM): key derivation via PBKDF2WithHmacSHA256 — deterministic across JVM
- * vendors. GCM AEAD provides both confidentiality and integrity in one pass.
+ * <p>V2 (AES-256-GCM): key derivation via PBKDF2WithHmacSHA256 — deterministic across JVM vendors.
+ * GCM AEAD provides both confidentiality and integrity in one pass.
  *
  * <p>V1 (DES): retained for backward compatibility. When the V2 switch is toggled off, new tickets
  * are issued in the legacy DES format so that downstream systems that have not yet upgraded can
@@ -54,8 +54,7 @@ public class TicketCipher {
   private static final int IV_LEN_BYTES = 12; // GCM standard 96-bit IV
   private static final int TAG_LEN_BITS = 128; // GCM auth tag
   private static final int PBKDF2_ITERATIONS = 10000;
-  private static final byte[] PBKDF2_SALT =
-      "linkis-ticket-v2".getBytes(StandardCharsets.UTF_8);
+  private static final byte[] PBKDF2_SALT = "linkis-ticket-v2".getBytes(StandardCharsets.UTF_8);
   private static final byte VERSION_V2 = 0x02;
 
   private final SecretKey encKey;
@@ -93,9 +92,9 @@ public class TicketCipher {
   }
 
   /**
-   * Decrypt data. Auto-detects V2 (version byte 0x02) vs legacy DES.
-   * V2 tampering is rejected with AEADBadTagException.
-   * V2 tickets issued before a rollback are still decrypted correctly even when V2 is disabled.
+   * Decrypt data. Auto-detects V2 (version byte 0x02) vs legacy DES. V2 tampering is rejected with
+   * AEADBadTagException. V2 tickets issued before a rollback are still decrypted correctly even
+   * when V2 is disabled.
    */
   public String decrypt(String data) throws Exception {
     if (StringUtils.isBlank(data)) {

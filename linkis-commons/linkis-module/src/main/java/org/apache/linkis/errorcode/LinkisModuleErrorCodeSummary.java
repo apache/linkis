@@ -41,7 +41,10 @@ public enum LinkisModuleErrorCodeSummary implements LinkisErrorCode {
       "The receive queue for WebSocket is full, please try again later(WebSocket的接收队列已满，请稍后重试)!"),
   WEBSOCKET_STOPPED(
       11035,
-      "WebSocket consumer has stopped, please contact the administrator to handle(WebSocket的消费器已停止，请联系管理员处理)!");
+      "WebSocket consumer has stopped, please contact the administrator to handle(WebSocket的消费器已停止，请联系管理员处理)!"),
+  CRYPT_KEY_INSECURE(
+      11036,
+      "The wds.linkis.crypt.key is missing or insecure, refusing to start(wds.linkis.crypt.key 缺失或不安全，拒绝启动)");
 
   /** error code(错误码) */
   private final int errorCode;

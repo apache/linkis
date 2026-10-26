@@ -58,6 +58,7 @@ public class TicketCipher {
       "linkis-ticket-v2".getBytes(StandardCharsets.UTF_8);
   private static final byte VERSION_V2 = 0x02;
 
+  private final boolean useV2;
   private final SecretKey encKey;
   private final String cryptKeyRaw;
   private final SecureRandom rng = new SecureRandom();
@@ -68,14 +69,11 @@ public class TicketCipher {
    */
   public TicketCipher(String cryptKeyRaw, boolean useV2) {
     this.cryptKeyRaw = cryptKeyRaw;
-    if (useV2) {
-      try {
-        this.encKey = deriveKey(cryptKeyRaw);
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to derive ticket encryption key", e);
-      }
-    } else {
-      this.encKey = null; // unused in V1 mode
+    this.useV2 = useV2;
+    try {
+      this.encKey = deriveKey(cryptKeyRaw);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to derive ticket encryption key", e);
     }
   }
 
@@ -86,7 +84,7 @@ public class TicketCipher {
    * When V2 is disabled: legacy DES (via DESUtil.encrypt).
    */
   public String encrypt(String plaintext) throws Exception {
-    if (encKey != null) {
+    if (useV2) {
       return encryptV2(plaintext);
     }
     return DESUtil.encrypt(plaintext, cryptKeyRaw);

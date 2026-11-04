@@ -45,7 +45,7 @@ public enum CommonErrMsg implements ErrorMsg {
 
   /** Executor */
   ExecutionInitErr("Fail when initiating execution. Message: {0}"),
-  ExecutionErr("Error occured during execution: {0}"),
+  ExecutionErr("Error occurred during execution: {0}"),
   ExecutionResultErr("Error occured when processing execute result: {0}"),
   /** Transformer */
   TransformerException("Transformer failed to transform: {0}"),

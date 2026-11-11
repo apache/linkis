@@ -113,9 +113,14 @@ class ResourceManagerMapperTest extends BaseDaoTest {
   @Test
   void deleteResourceByTicketId() {
     registerResource();
+    PersistenceResource otherResource = new PersistenceResource();
+    otherResource.setId(2);
+    otherResource.setTicketId("2");
+    resourceManagerMapper.registerResource(otherResource);
     resourceManagerMapper.deleteResourceByTicketId("1");
     PersistenceResource persistenceResource = resourceManagerMapper.getNodeResourceByTicketId("1");
     assertTrue(persistenceResource == null);
+    assertTrue(resourceManagerMapper.getNodeResourceByTicketId("2") != null);
   }
 
   @Test

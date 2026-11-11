@@ -100,7 +100,7 @@
             status = #{targetStatus}
         </set>
         <where>
-            <foreach collection="list" index="index" item="element" close=")" separator="," open="id in (">
+            <foreach collection="idList" index="index" item="element" close=")" separator="," open="id in (">
                 #{element}
             </foreach>
         </where>

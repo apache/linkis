@@ -16,11 +16,10 @@
 #
 
 name: Publish Snapshot
-
 on:
   schedule:
     - cron: '0 0 * * *'
-
+  workflow_dispatch:
 jobs:
   publish-snapshot:
     if: ${{ startsWith(github.repository, 'apache/') }}
@@ -40,17 +39,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 8
-
       - name: Get Version
         run: |
-          BRANCE="${{ matrix.branch }}"
-          echo "::set-output name=version::${BRANCE#*-}-SNAPSHOT"
+          BASE=$(grep -m1 -oP '(?<=<revision>)[^<]+' pom.xml)
+          case "$BASE" in
+            *-SNAPSHOT) VERSION="$BASE" ;;
+            *) VERSION="$BASE-SNAPSHOT" ;;
+          esac
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
         id: get_version
-
       - name: Publish snapshot - ${{ matrix.branch }}
         env:
           ASF_USERNAME: ${{ secrets.NEXUS_USER }}
           ASF_PASSWORD: ${{ secrets.NEXUS_PW }}
         run: |
-          ./mvnw versions:set -Drevision={{steps.get_version.outputs.version}} -DgenerateBackupPoms=false
-          ./mvnw deploy -s  ./.github/asf-settings.xml -Dmaven.test.skip=true -Dmaven.javadoc.skip=true  -DretryFailedDeploymentCount=10
+          ./mvnw versions:set-property -Dproperty=revision -DnewVersion=${{ steps.get_version.outputs.version }} -DgenerateBackupPoms=false
+          ./mvnw deploy -s ./.github/asf-settings.xml -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -DretryFailedDeploymentCount=10

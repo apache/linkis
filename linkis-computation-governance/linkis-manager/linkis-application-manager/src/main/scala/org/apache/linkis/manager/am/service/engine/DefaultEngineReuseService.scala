@@ -226,6 +226,12 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       }
       localEngineList
     } else getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
+    if (engineScoreList == null || engineScoreList.isEmpty) {
+      throw new LinkisRetryException(
+        AMConstant.ENGINE_ERROR_CODE,
+        s"No engine can be reused, engineScoreList is null or empty"
+      )
+    }
     logger.info(s"Task ${taskId} engineScoreList size: ${engineScoreList.length}")
 
     // reuse EC according to template name
@@ -289,7 +295,12 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
                 s"will be not reuse ${engine.getServiceInstance}, cause engine python version: $enginePythonVersion , param python version $pythonVersion is not match"
               )
             }
-            if (engine.getNodeResource.getUsedResource != null) {
+            if (engine.getNodeResource == null) {
+              logger.info(
+                s"will be not reuse ${engine.getServiceInstance}, cause engine nodeResource is null"
+              )
+              false
+            } else if (engine.getNodeResource.getUsedResource != null) {
               // 引擎资源只有满足需要的资源才复用
               pythonVersionMatch && engine.getNodeResource.getUsedResource
                 .notLess(resource.getMaxResource)

@@ -19,7 +19,8 @@ package org.apache.linkis.manager.am.selector
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.selector.rule.NodeSelectRule
-import org.apache.linkis.manager.common.entity.node.Node
+import org.apache.linkis.manager.common.entity.node.{Node, RMNode}
+import org.apache.linkis.manager.common.utils.ResourceUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service
 import java.util
 
 import scala.collection.JavaConverters._
+import scala.util.Random
 
 @Service
 class DefaultNodeSelector extends NodeSelector with Logging {
@@ -37,6 +39,8 @@ class DefaultNodeSelector extends NodeSelector with Logging {
   /**
    * Select the most suitable node from a series of nodes through selection rules
    *   1. Rule processing logic, defaults to the last priority
+   *   2. After rule filtering, use weighted random selection based on available resources
+   *      to avoid always picking the same best node, thereby improving EC distribution balance
    *
    * @param nodes
    * @return
@@ -56,9 +60,58 @@ class DefaultNodeSelector extends NodeSelector with Logging {
       if (resultNodes.isEmpty) {
         None
       } else {
-        Some(resultNodes(0))
+        Some(selectNodeWeightedRandom(resultNodes))
       }
     }
+  }
+
+  /**
+   * Weighted random selection based on node resource availability.
+   * Nodes with more remaining resources have higher probability of being selected,
+   * which helps distribute EngineConns more evenly across ECMs.
+   */
+  private def selectNodeWeightedRandom(nodes: Array[Node]): Node = {
+    if (nodes.length <= 1) {
+      return nodes(0)
+    }
+
+    val weights = nodes.map { node =>
+      Utils.tryCatch {
+        node match {
+          case rmNode: RMNode =>
+            val nodeResource = rmNode.getNodeResource
+            if (nodeResource != null && nodeResource.getLeftResource != null &&
+                nodeResource.getMaxResource != null) {
+              val rate = ResourceUtils.getLoadInstanceResourceRate(
+                nodeResource.getLeftResource,
+                nodeResource.getMaxResource
+              )
+              // Ensure minimum weight of 1.0 to avoid zero-weight nodes being excluded
+              Math.max(rate.toDouble, 1.0)
+            } else {
+              1.0
+            }
+          case _ => 1.0
+        }
+      } { case _: Throwable =>
+        1.0
+      }
+    }
+
+    val totalWeight = weights.sum
+    if (totalWeight <= 0) {
+      return nodes(0)
+    }
+
+    val random = Random.nextDouble() * totalWeight
+    var cumulativeWeight = 0.0
+    for (i <- nodes.indices) {
+      cumulativeWeight += weights(i)
+      if (cumulativeWeight >= random) {
+        return nodes(i)
+      }
+    }
+    nodes(0)
   }
 
   override def getNodeSelectRules(): Array[NodeSelectRule] = {

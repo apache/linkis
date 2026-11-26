@@ -97,6 +97,12 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     configCache.get(EntranceUtils.getUserCreatorEcTypeKey(userCreatorLabel, engineTypeLabel))
   }
 
+  /**
+   * Invalidate the cached user max running jobs, so that they are recalculated with the latest
+   * number of running entrance instances (e.g. after entrances go offline/back online).
+   */
+  def invalidateCache(): Unit = this.configCache.invalidateAll()
+
   override def isReady: Boolean = true
 
   override def start(): Unit = {}

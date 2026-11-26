@@ -52,4 +52,27 @@ object EntranceOrchestrationFactory {
 
   def getOrchestrationSession(): OrchestratorSession = orchestratorSession
 
+  /**
+   * Invalidate the cached user max running jobs so that they are recalculated with the latest
+   * number of running entrance instances (e.g. after entrances go offline/back online).
+   */
+  def invalidateUserParallelPluginCache(): Unit =
+    orchestratorSession.orchestrator.getOrchestratorContext match {
+      case ctx: AbstractOrchestratorContext =>
+        ctx.getOrchestratorPlugins.foreach {
+          case plugin: EntranceUserParallelOrchestratorPlugin => plugin.invalidateCache()
+          case _                                             =>
+        }
+      case _ =>
+    }
+
+}
+
+/**
+ * Java-visible companion of the `EntranceOrchestrationFactory` object. Scala 2.11 does not emit
+ * static forwarders for objects, so Java callers route through an instance method here.
+ */
+class EntranceOrchestrationFactory {
+  def invalidateUserParallelPluginCache(): Unit =
+    EntranceOrchestrationFactory.invalidateUserParallelPluginCache()
 }

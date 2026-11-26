@@ -177,6 +177,9 @@ object JDBCMultiDatasourceParser extends Logging {
         if (strObjIsBlank(instance) && strObjIsNotBlank(dbName)) {
           instance = dbName
         }
+        if (strObjIsBlank(instance)) {
+          instance = "postgres"
+        }
         jdbcUrl = String.format(POSTGRESQL_SQL_CONNECT_URL, host, port, instance)
       case _ =>
         jdbcUrl = s"jdbc:$dbType://$host:$port"

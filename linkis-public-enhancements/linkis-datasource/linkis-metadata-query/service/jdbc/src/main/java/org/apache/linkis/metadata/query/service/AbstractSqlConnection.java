@@ -37,6 +37,8 @@ public abstract class AbstractSqlConnection implements Closeable {
 
   public ConnectMessage connectMessage;
 
+  protected String database;
+
   public AbstractSqlConnection(
       String host,
       Integer port,
@@ -45,6 +47,7 @@ public abstract class AbstractSqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
+    this.database = database;
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
     conn = getDBConnection(connectMessage, database);
     // Try to create statement
@@ -63,7 +66,7 @@ public abstract class AbstractSqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys = getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(database, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -87,16 +90,17 @@ public abstract class AbstractSqlConnection implements Closeable {
   /**
    * Get primary keys // * @param connection connection
    *
+   * @param database database name
    * @param table table name
    * @return
    * @throws SQLException
    */
-  public List<String> getPrimaryKeys(String table) throws SQLException {
+  public List<String> getPrimaryKeys(String database, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
       DatabaseMetaData dbMeta = conn.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
+      rs = dbMeta.getPrimaryKeys(database, null, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
       }

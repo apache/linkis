@@ -109,16 +109,25 @@ jobs:
         run: |
           ./mvnw install -Pdocker -Dmysql.connector.scope=compile -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
-      - name: Set up chart-testing
-        uses: ./.github/actions/chart-testing-action
-
+      - name: Set up helm and kubectl
+        run: |
+          HELM_VERSION=v3.14.4
+          curl -sSL -o /tmp/helm.tgz "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz"
+          tar -xzf /tmp/helm.tgz -C /tmp linux-amd64/helm
+          sudo mv /tmp/linux-amd64/helm /usr/local/bin/helm
+          KUBECTL_VERSION=v1.23.4
+          curl -sLo /tmp/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+          chmod +x /tmp/kubectl && sudo mv /tmp/kubectl /usr/local/bin/kubectl
 
       - name: Create Kind cluster
-        uses: ./.github/actions/kind-action
-        with:
-          config: ${{ env.KIND_CONFIG_PATH }}
-          node_image: ${{ matrix.kubernetes-version }}
-          cluster_name: ${{ env.KIND_CLUSTER_NAME }}
+        run: |
+          KIND_VERSION=v0.20.0
+          curl -sLo /tmp/kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64"
+          chmod +x /tmp/kind && sudo mv /tmp/kind /usr/local/bin/kind
+          kind create cluster \
+            --config ${{ env.KIND_CONFIG_PATH }} \
+            --image ${{ matrix.kubernetes-version }} \
+            --name ${{ env.KIND_CLUSTER_NAME }}
 
       - name: Start Linkis Service
         run: |

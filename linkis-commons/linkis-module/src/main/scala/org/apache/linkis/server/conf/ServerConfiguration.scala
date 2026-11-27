@@ -52,7 +52,9 @@ object ServerConfiguration extends Logging {
   private val CRYPT_KEY_MIN_LENGTH = 16
 
   private val cryptKeyRaw: String = CommonVars("wds.linkis.crypt.key", "").getValue
-  private val allowInsecureCryptKey: Boolean = CommonVars("linkis.crypt.key.allow.insecure", "false").getValue.toBoolean
+
+  private val allowInsecureCryptKey: Boolean =
+    CommonVars("linkis.crypt.key.allow.insecure", "false").getValue.toBoolean
 
   private def validateCryptKey(key: String): Unit = {
     val issues = scala.collection.mutable.ArrayBuffer.empty[String]
@@ -92,8 +94,8 @@ object ServerConfiguration extends Logging {
   // have not yet been upgraded. Decryption auto-detects both formats.
   private val useTicketCipherV2: Boolean =
     CommonVars("linkis.ticket.cipher.v2.enabled", "true").getValue.toBoolean
-  val ticketCipher = new TicketCipher(cryptKeyRaw, useTicketCipherV2)
 
+  val ticketCipher = new TicketCipher(cryptKeyRaw, useTicketCipherV2)
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 

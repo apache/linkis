@@ -17,17 +17,20 @@
 
 package org.apache.linkis.server.security
 
+import javax.servlet.http.{Cookie, HttpServletRequest}
+
 import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 import org.mockito.Mockito.{mock, when}
-
-import javax.servlet.http.{Cookie, HttpServletRequest}
 
 class SecurityFilterTest {
 
   private val IGNORE_COOKIE_NAME = SecurityFilter.ALLOW_ACCESS_WITHOUT_TIMEOUT
 
-  private def mockRequest(remoteAddr: String, cookies: Array[Cookie] = null,
-                          xForwardedFor: String = null): HttpServletRequest = {
+  private def mockRequest(
+      remoteAddr: String,
+      cookies: Array[Cookie] = null,
+      xForwardedFor: String = null
+  ): HttpServletRequest = {
     val req = mock(classOf[HttpServletRequest])
     when(req.getRemoteAddr).thenReturn(remoteAddr)
     when(req.getCookies).thenReturn(cookies)
@@ -49,8 +52,7 @@ class SecurityFilterTest {
   @Test
   @DisplayName("isRequestIgnoreTimeout_returnsTrueWhenCookieFromLoopback")
   def isRequestIgnoreTimeoutFromLoopbackTest(): Unit = {
-    val req = mockRequest("127.0.0.1",
-      cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
+    val req = mockRequest("127.0.0.1", cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
     Assertions.assertTrue(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
@@ -58,50 +60,50 @@ class SecurityFilterTest {
   @DisplayName("isRequestIgnoreTimeout_returnsFalseWhenCookieFromExternalIP")
   def isRequestIgnoreTimeoutFromExternalIPTest(): Unit = {
     // 203.0.113.0/24 is TEST-NET-3, not in default RFC1918 trusted sources
-    val req = mockRequest("203.0.113.1",
-      cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
+    val req = mockRequest("203.0.113.1", cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
     Assertions.assertFalse(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
   @Test
   @DisplayName("isRequestIgnoreTimeout_returnsTrueFromPrivate10x")
   def isRequestIgnoreTimeoutFromPrivate10xTest(): Unit = {
-    val req = mockRequest("10.255.255.1",
-      cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
+    val req = mockRequest("10.255.255.1", cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
     Assertions.assertTrue(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
   @Test
   @DisplayName("isRequestIgnoreTimeout_returnsTrueFromPrivate172x")
   def isRequestIgnoreTimeoutFromPrivate172xTest(): Unit = {
-    val req = mockRequest("172.31.0.1",
-      cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
+    val req = mockRequest("172.31.0.1", cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")))
     Assertions.assertTrue(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
   @Test
   @DisplayName("isRequestIgnoreTimeout_returnsFalseWhenCookieValueIsFalse")
   def isRequestIgnoreTimeoutCookieFalseTest(): Unit = {
-    val req = mockRequest("127.0.0.1",
-      cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "false")))
+    val req = mockRequest("127.0.0.1", cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "false")))
     Assertions.assertFalse(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
   @Test
   @DisplayName("isRequestIgnoreTimeout_honorsXForwardedForFromTrustedUpstream")
   def isRequestIgnoreTimeoutWithXForwardedForTest(): Unit = {
-    val req = mockRequest("127.0.0.1",
+    val req = mockRequest(
+      "127.0.0.1",
       cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")),
-      xForwardedFor = "10.0.0.5, 203.0.113.1")
+      xForwardedFor = "10.0.0.5, 203.0.113.1"
+    )
     Assertions.assertTrue(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
   @Test
   @DisplayName("isRequestIgnoreTimeout_ignoresXForwardedForFromUntrustedUpstream")
   def isRequestIgnoreTimeoutXForwardedForUntrustedTest(): Unit = {
-    val req = mockRequest("203.0.113.1",
+    val req = mockRequest(
+      "203.0.113.1",
       cookies = Array(new Cookie(IGNORE_COOKIE_NAME, "true")),
-      xForwardedFor = "10.0.0.5")
+      xForwardedFor = "10.0.0.5"
+    )
     Assertions.assertFalse(SecurityFilter.isRequestIgnoreTimeout(req))
   }
 
@@ -122,4 +124,5 @@ class SecurityFilterTest {
     Assertions.assertEquals(-1, cookie.getMaxAge)
     Assertions.assertEquals("/", cookie.getPath)
   }
+
 }
